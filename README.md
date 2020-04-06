@@ -12,4 +12,4 @@
 
 Go to `settings.py` and set `PROFILE = True`
 
-*Then, make sure you run `scripts/run_profile.py`
+*Then, make sure you run `scripts/run_profile.py`*
