@@ -6,7 +6,7 @@
 
 ## Run container
 
-`docker run -it --name ztf-api -v $(pwd):/app -p 5000:5000 -e ZTF_HOST="18.211.226.219" -e ZTF_PASSWORD="ETgW4GTdR337gjP7" -e ZTF_USER="alerce" -e ZTF_DATABASE="new_pipeline" ztf-api`
+`docker run -it --name ztf-api -v $(pwd):/app -p 5000:5000 -e ZTF_HOST="" -e ZTF_PASSWORD="" -e ZTF_USER="" -e ZTF_DATABASE="" ztf-api`
 
 ## Profiling mode
 
