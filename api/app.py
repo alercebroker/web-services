@@ -19,7 +19,7 @@ cache.init_app(app)
 #Adding CORS for async calls
 CORS(app)
 # Get SQLAlchemy Session
-from apf.db.sql import get_session
+from db_plugins.db.sql import get_session
 session = get_session(DB_CONFIG)
 
 #Check if gunicorn for logging
@@ -34,10 +34,7 @@ if is_gunicorn:
 def index():
     return "Welcome to ALERCE PSQL API test"
 
-from .internal import internal_blueprint
-app.register_blueprint(internal_blueprint)
-
-from .external import external_blueprint
-app.register_blueprint(external_blueprint)
+from .sql.sql import sql_bp
+app.register_blueprint(sql_bp)
 
 flask_profiler.init_app(app)
