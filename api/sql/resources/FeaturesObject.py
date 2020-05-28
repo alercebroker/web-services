@@ -1,9 +1,10 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import jsonify
 from db_plugins.db.sql import query
-from db_plugins.db.sql.models import AstroObject
-from db_plugins.db.sql.serializers import AstroObjectSchema
+from db_plugins.db.sql.models import FeaturesObject
+from db_plugins.db.sql.serializers import FeaturesObjectSchema
 from api.app import session
+
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
@@ -12,9 +13,11 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 fields = {}
 
 class ObjectResource(Resource):
-    def get(self,oid):
-        result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
-        serializer = AstroObjectSchema()
+    def get(self, object_id, features_version):
+        result = query(session, FeaturesObject, None, None, None,
+                       FeaturesObject.object_id == object_id,
+                       FeaturesObject.features_version == features_version)
+        serializer = FeaturesObjectSchema()
         obj = result["results"][0]
         res = serializer.dump(obj)
         return jsonify(res)
@@ -22,7 +25,7 @@ class ObjectResource(Resource):
 
 class ObjectListResource(Resource):
     def get(self):
-        result = query(session, AstroObject, 1, 1)
-        serializer = AstroObjectSchema()
+        result = query(session, FeaturesObject, 1, 1)
+        serializer = FeaturesObjectSchema()
         res = [serializer.dump(obj) for obj in result["results"]]
         return jsonify(res)
