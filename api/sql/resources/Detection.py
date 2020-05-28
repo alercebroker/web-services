@@ -3,7 +3,7 @@ from flask import jsonify
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Detection
 from db_plugins.db.sql.serializers import DetectionSchema
-from api.app import session
+from .. import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
@@ -12,7 +12,7 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 # Or maybe combine both
 fields = {}
 
-class ObjectResource(Resource):
+class DetectionResource(Resource):
     def get(self, candid):
         result = query(session, Detection, None, None, None, Detection.candid == candid)
         serializer = DetectionSchema()
@@ -21,7 +21,7 @@ class ObjectResource(Resource):
         return jsonify(res)
 
 
-class ObjectListResource(Resource):
+class DetectionListResource(Resource):
     def get(self):
         result = query(session, Detection, 1, 1)
         serializer = DetectionSchema()

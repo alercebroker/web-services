@@ -3,7 +3,7 @@ from flask import jsonify
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Taxonomy
 from db_plugins.db.sql.serializers import TaxonomySchema
-from api.app import session
+from .. import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
@@ -12,7 +12,7 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 # Or maybe combine both
 fields = {}
 
-class ObjectResource(Resource):
+class TaxonomyResource(Resource):
     def get(self, name):
         result = query(session, Taxonomy, None, None, None, Taxonomy.name == name)
         serializer = TaxonomySchema()
@@ -21,7 +21,7 @@ class ObjectResource(Resource):
         return jsonify(res)
 
 
-class ObjectListResource(Resource):
+class TaxonomyListResource(Resource):
     def get(self):
         result = query(session, Taxonomy, 1, 1)
         serializer = TaxonomySchema()
