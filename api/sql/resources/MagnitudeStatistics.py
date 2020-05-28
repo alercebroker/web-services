@@ -3,7 +3,7 @@ from flask import jsonify
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import MagnitudeStatistics
 from db_plugins.db.sql.serializers import MagnitudeStatisticsSchema
-from api.app import session
+from .. import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
@@ -12,19 +12,19 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 # Or maybe combine both
 fields = {}
 
-class ObjectResource(Resource):
+class MagnitudesResource(Resource):
     def get(self, oid, magnitude_type, type):
         result = query(session, MagnitudeStatistics, None, None, None,
                        MagnitudeStatistics.oid == oid,
-                       MagnitudeStatistics.magnitude_type == magnitude_type,
-                       MagnitudeStatistics.type == type)
+                       MagnitudeStatistics.magnitude_type == magnitude_type
+        )
         serializer = MagnitudeStatisticsSchema()
         obj = result["results"][0]
         res = serializer.dump(obj)
         return jsonify(res)
 
 
-class ObjectListResource(Resource):
+class MagnitudesListResource(Resource):
     def get(self):
         result = query(session, MagnitudeStatistics, 1, 1)
         serializer = MagnitudeStatisticsSchema()

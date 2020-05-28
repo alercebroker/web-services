@@ -3,7 +3,7 @@ from flask import jsonify
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import NonDetection
 from db_plugins.db.sql.serializers import NonDetectionSchema
-from api.app import session
+from .. import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
@@ -12,7 +12,7 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 # Or maybe combine both
 fields = {}
 
-class ObjectResource(Resource):
+class NonDetectionResource(Resource):
     def get(self, oid, fid, datetime):
         result = query(session, NonDetection, None, None, None,
                        NonDetection.oid == oid,
@@ -24,7 +24,7 @@ class ObjectResource(Resource):
         return jsonify(res)
 
 
-class ObjectListResource(Resource):
+class NonDetectionListResource(Resource):
     def get(self):
         result = query(session, NonDetection, 1, 1)
         serializer = NonDetectionSchema()

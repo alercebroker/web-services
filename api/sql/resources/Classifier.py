@@ -3,7 +3,7 @@ from flask import jsonify
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Classifier
 from db_plugins.db.sql.serializers import ClassifierSchema
-from api.app import session
+from .. import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
@@ -12,7 +12,7 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 # Or maybe combine both
 fields = {}
 
-class ObjectResource(Resource):
+class ClassifierResource(Resource):
     def get(self, name):
         result = query(session, Classifier, None, None, None, Classifier.name == name)
         serializer = ClassifierSchema()
@@ -21,7 +21,7 @@ class ObjectResource(Resource):
         return jsonify(res)
 
 
-class ObjectListResource(Resource):
+class ClassifierListResource(Resource):
     def get(self):
         result = query(session, Classifier, 1, 1)
         serializer = ClassifierSchema()
