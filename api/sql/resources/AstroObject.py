@@ -39,9 +39,8 @@ class ObjectResource(Resource):
         }
     }
     )
-    def get(self, oid):
-        result = query(session, AstroObject, None, None,
-                       None, AstroObject.oid == oid)
+    def get(self,oid):
+        result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
         serializer = AstroObjectSchema()
         obj = result["results"][0]
         res = serializer.dump(obj)
