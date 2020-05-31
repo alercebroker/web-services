@@ -9,10 +9,11 @@ from .resources.FeaturesObject import *
 from .resources.MagnitudeStatistics import *
 from .resources.NonDetection import *
 from .resources.Taxonomy import *
+from .resources.Xmatch import *
 # import resources here
 
 sql_bp = Blueprint('sql', __name__)
-sql_api = Api(sql_bp, add_api_spec_resource=False)
+sql_api = Api(sql_bp, add_api_spec_resource=False )
 
 
 sql_api.add_resource(ObjectResource, "/astro_objects/<oid>")
@@ -39,3 +40,4 @@ sql_api.add_resource(NonDetectionResource,
 sql_api.add_resource(NonDetectionListResource, "/non_detection")
 sql_api.add_resource(TaxonomyResource, "/taxonomy/<name>")
 sql_api.add_resource(TaxonomyListResource, "/taxonomy")
+sql_api.add_resource(XmatchResource, "/xmatch/<oid>")
