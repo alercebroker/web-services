@@ -9,18 +9,6 @@ parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], type="string", dest='oid')
 
 
-class LinksModel(Schema):
-    type = 'object'
-    # properties = {
-    #     "x": {"type": "string"},
-    #     "y": {"type": "string"}
-    # }
-    resource_fields ={
-        "x": fields.String,
-        "y": fields.String
-    }
-
-
 class XmatchModel(Schema):
     type = 'object'
     resource_fields = {
@@ -30,13 +18,7 @@ class XmatchModel(Schema):
         "dist": fields.Float(attribute="distance"),
         "class_catalog": fields.String,
         "period": fields.Float,
-        "links": fields.Nested(LinksModel.resource_fields),
     }
-    # properties = {
-    #     "oid": {"type": "string"},
-    #     "links": LinksModel
-    # }
-
 
 
 class XmatchResource(Resource):
