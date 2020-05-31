@@ -8,3 +8,5 @@ P4J==0.27
 astropy==3.2.1
 requests==2.22.0
 flask_profiler==1.8.1
+flask-restful==0.3.8
+git+https://gitlab.com/dirodriguezm/flask-restful-swagger-3.git
