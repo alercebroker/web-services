@@ -19,7 +19,7 @@ class ObjectResource(Resource):
     Astro objects individual resource
     """
     @swagger.doc({
-        "summary":"Gets an individual object",
+        "summary": "Gets an individual object",
         "description":"long description",
         "parameters":[
             {
@@ -32,6 +32,54 @@ class ObjectResource(Resource):
                 }
             }
         ],
+        "requestBody:": {
+            "content": {
+                "/astro_object/oid": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "oid": {
+                                "description": "identifier of the object",
+                                "type": "string"
+                            },
+                            "nobs": {
+                                "description": "number of observations",
+                                "type": "integer"
+                            },
+                            "meanra": {
+                                "description": "",
+                                "type": "integer"
+                            },
+                            "meandec": {
+                                "description": "",
+                                "type": "integer"
+                            },
+                            "sigmara": {
+                                "description": "",
+                                "type": "integer"
+                            },
+                            "sigmadec": {
+                                "description": "",
+                                "type": "integer"
+                            },
+                            "deltajd": {
+                                "description": "",
+                                "type": "integer"
+                            },
+                            "lastmjd": {
+                                "description": "last mjd date",
+                                "type": "integer"
+                            },
+                            "firstmjd": {
+                                "description": "frist mjd date",
+                                "type": "integer"
+                            },
+                        },
+                        "required": ["oid"]
+                    }
+                }
+            }
+        },
         "responses":{
             '200': {
                 'description': 'Ok',
@@ -52,9 +100,60 @@ class ObjectListResource(Resource):
     Astro object list resource
     """
     @swagger.doc({
-        "summary":"Gets a list of objects",
-        "description":"long description",
-        "responses":{
+        "summary": "Gets a list of objects",
+        "description": "long description",
+        "requestBody:": {
+            "content": {
+                "/astro_object": {
+                    "schema": {
+                        "type": "list",
+                        "properties": {
+                            "type": "object",
+                            "properties": {
+                                "oid": {
+                                    "description": "identifier of the object",
+                                    "type": "string"
+                                },
+                                "nobs": {
+                                    "description": "number of observations",
+                                    "type": "integer"
+                                },
+                                "meanra": {
+                                    "description": "",
+                                    "type": "integer"
+                                },
+                                "meandec": {
+                                    "description": "",
+                                    "type": "integer"
+                                },
+                                "sigmara": {
+                                    "description": "",
+                                    "type": "integer"
+                                },
+                                "sigmadec": {
+                                    "description": "",
+                                    "type": "integer"
+                                },
+                                "deltajd": {
+                                    "description": "",
+                                    "type": "integer"
+                                },
+                                "lastmjd": {
+                                    "description": "last mjd date",
+                                    "type": "integer"
+                                },
+                                "firstmjd": {
+                                    "description": "frist mjd date",
+                                    "type": "integer"
+                                },
+                            },
+                            "required": ["oid"]
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
             '200': {
                 'description': 'Ok',
             }
