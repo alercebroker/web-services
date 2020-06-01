@@ -18,6 +18,7 @@ class ObjectResource(Resource):
     """
     Astro objects individual resource
     """
+    """
     @swagger.doc({
         "summary": "Gets an individual object",
         "description":"long description",
@@ -87,6 +88,7 @@ class ObjectResource(Resource):
         }
     }
     )
+    """
     def get(self,oid):
         result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
         serializer = AstroObjectSchema()
@@ -98,6 +100,7 @@ class ObjectResource(Resource):
 class ObjectListResource(Resource):
     """
     Astro object list resource
+    """
     """
     @swagger.doc({
         "summary": "Gets a list of objects",
@@ -160,6 +163,7 @@ class ObjectListResource(Resource):
         }
     }
     )
+    """
     def get(self):
         result = query(session, AstroObject, 1, 1)
         serializer = AstroObjectSchema()
