@@ -17,6 +17,7 @@ class ClassResource(Resource):
     """
     Class individual resource
     """
+    """
     @swagger.doc({
         "summary": "Gets an individual object",
         "description": "long description",
@@ -61,9 +62,12 @@ class ClassResource(Resource):
         }
     }
     )
+    """
     def get(self, name):
         result = query(session, Class, None, None, None, Class.name == name)
         serializer = ClassSchema()
+        print("--------")
+        print(result)
         obj = result["results"][0]
         res = serializer.dump(obj)
         return jsonify(res)
@@ -72,6 +76,7 @@ class ClassResource(Resource):
 class ClassListResource(Resource):
     """
     Class list resource
+    """
     """
     @swagger.doc({
         "summary": "Gets a list of classes",
@@ -109,7 +114,7 @@ class ClassListResource(Resource):
         }
     }
     )
-
+    """
     def get(self):
         result = query(session, Class, 1, 1)
         serializer = ClassSchema()
