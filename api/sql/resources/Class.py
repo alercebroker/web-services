@@ -13,6 +13,53 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 fields = {}
 
 class ClassResource(Resource):
+    """
+    Class individual resource
+    """
+    @swagger.doc({
+        "summary": "Gets an individual object",
+        "description": "long description",
+        "parameters": [
+            {
+                "name": "name",
+                "in": "path",
+                "description": "Name of the class",
+                "required": True,
+                "schema":{
+                    "type": "string"
+                }
+            }
+        ],
+        "requestBody:": {
+            "content": {
+                "/class/oid": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "description": "name of the class",
+                                "type": "string"
+                            },
+                            "acronym": {
+                                "description": "acronym of the class",
+                                "type": "string"
+                            },
+                        },
+                        "required": ["name"]
+                    }
+                }
+            }
+        },
+        "responses": {
+            '200': {
+                'description': 'Class got',
+                'content': {
+                    "application/json": {}
+                }
+            }
+        }
+    }
+    )
     def get(self, name):
         result = query(session, Class, None, None, None, Class.name == name)
         serializer = ClassSchema()
@@ -22,6 +69,46 @@ class ClassResource(Resource):
 
 
 class ClassListResource(Resource):
+    """
+    Class list resource
+    """
+    @swagger.doc({
+        "summary": "Gets a list of classes",
+        "description": "long description",
+        "requestBody:": {
+            "content": {
+                "/class": {
+                    "schema": {
+                        "type": "list",
+                        "properties": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "description": "name of the class",
+                                    "type": "string"
+                                },
+                                "acronym": {
+                                    "description": "acronym of the class",
+                                    "type": "string"
+                                },
+                            },
+                            "required": ["name"]
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            '200': {
+                'description': 'Class got',
+                'content': {
+                    "application/json": {}
+                }
+            }
+        }
+    }
+    )
+
     def get(self):
         result = query(session, Class, 1, 1)
         serializer = ClassSchema()
