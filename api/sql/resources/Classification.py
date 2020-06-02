@@ -3,7 +3,6 @@ from flask import jsonify
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Classification
 from db_plugins.db.sql.serializers import ClassificationSchema
-from .. import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
