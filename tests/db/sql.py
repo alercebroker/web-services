@@ -82,6 +82,7 @@ class ClassTest(unittest.TestCase):
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = Class(name="Super Nova", acronym="SN")
+        self.session.add(self.model)
         self.session.commit()
 
     def tearDown(self):
@@ -89,17 +90,8 @@ class ClassTest(unittest.TestCase):
         self.trans.rollback()
         self.connection.close()
 
-    """
-    def test_post(self):
-        instance = client.post("/class/Ceph")
-        self.assertEqual(instance.status_code, 200)
-    """
-
     def test_get(self):
-        #client.post("/class/Ceph")
         instance = client.get("/class/Ceph")
-        #class_object = {'name': 'Super Nova', 'acronym': "SN"}
-        #self.assertEqual(instance.json, class_object)
         self.assertEqual(instance.status_code, 200)
 
     def test_get_list(self):
@@ -118,6 +110,7 @@ class TaxonomyTest(unittest.TestCase):
         self.model.classes.append(class_object)
         classifier = Classifier(name="asdasd")
         self.model.classifiers.append(classifier)
+        self.session.add(self.model)
         self.session.commit()
 
     def tearDown(self):
@@ -143,6 +136,7 @@ class ClassifierTest(unittest.TestCase):
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = Classifier(name="Late Classifier")
+        self.session.add(self.model)
         self.session.commit()
 
     def tearDown(self):
@@ -172,6 +166,7 @@ class MagnitudeStatisticsTest(unittest.TestCase):
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = MagnitudeStatistics()
+        self.session.add(self.model)
         self.session.commit()
 
     def tearDown(self):
@@ -197,6 +192,7 @@ class ClassificationTest(unittest.TestCase):
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = Classification()
+        self.session.add(self.model)
         self.session.commit()
 
     def tearDown(self):
@@ -223,6 +219,7 @@ class AstroObjectTest(unittest.TestCase):
         self.session = Session(bind=self.connection)
         self.model = AstroObject(oid="ZTF1", nobs=1, lastmjd=1.0, meanra=1.0,
                                  meandec=1.0, sigmara=1.0, sigmadec=1.0, deltajd=1.0, firstmjd=1.0)
+        self.session.add(self.model)
         self.session.commit()
 
     def tearDown(self):
@@ -249,6 +246,7 @@ class FeaturesObjectTest(unittest.TestCase):
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = FeaturesObject()
+        self.session.add(self.model)
         self.session.commit()
 
     def tearDown(self):
@@ -267,7 +265,6 @@ class FeaturesObjectTest(unittest.TestCase):
         self.assertEqual(instance.status_code, 200)
 
 
-"""
 class DetectionTest(unittest.TestCase):
 
     def setUp(self):
@@ -275,6 +272,7 @@ class DetectionTest(unittest.TestCase):
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = Detection()
+        self.session.add(self.model)
         self.session.commit()
 
     def tearDown(self):
@@ -294,6 +292,7 @@ class DetectionTest(unittest.TestCase):
         self.assertEqual(instance.status_code, 200)
 
 
+"""
 class NonDetectionTest(unittest.TestCase):
 
     def setUp(self):
