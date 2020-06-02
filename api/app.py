@@ -1,21 +1,37 @@
-from .sql.sql import sql_api
 import os
 from flask_cors import CORS
 from flask import Flask
 import logging
 from flask_caching import Cache
-from settings import PROFILE_CONFIG
+from settings import PROFILE_CONFIG, DB_CONFIG
 import flask_profiler
 from flask_restful_swagger_3 import get_swagger_blueprint
 from flask_swagger_ui import get_swaggerui_blueprint
 
 
+def get_credentials_from_config(config):
+    db_credentials = None
+    if "PSQL" in config:
+        psql_config = config["PSQL"]
+        db_credentials = 'postgresql://{}:{}@{}:{}/{}'.format(
+            psql_config["USER"], psql_config["PASSWORD"], psql_config["HOST"], psql_config["PORT"], psql_config["DB_NAME"])
+    elif "SQLITE" in config:
+        db_credentials = 'sqlite:///:memory:'
+    return db_credentials
+
+
 # Starting Flask API
 cache = Cache(config={'CACHE_TYPE': 'simple'})
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
 app.config['JSON_SORT_KEYS'] = False
 
 app.config["flask_profiler"] = PROFILE_CONFIG
+db_credentials = get_credentials_from_config(DB_CONFIG)
+app.config["DATABASE"] = {"SQL": db_credentials}
+
+with app.app_context():
+    from api import db
+    db.init_app(app)
 
 
 # Init cache
@@ -38,6 +54,7 @@ def index():
 
 
 docs = []
+from .sql.sql import sql_api
 
 docs.append(sql_api.get_swagger_doc())
 app.register_blueprint(sql_api.blueprint)
@@ -49,7 +66,6 @@ app.register_blueprint(get_swaggerui_blueprint(
         "app_name": "ZTF API"
     }
 ), url_prefix='/docs')
-
 
 
 flask_profiler.init_app(app)

@@ -4,8 +4,7 @@ from flask_restful_swagger_3 import swagger
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Class
 from db_plugins.db.sql.serializers import ClassSchema
-from .. import session
-
+from api.db import session
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 

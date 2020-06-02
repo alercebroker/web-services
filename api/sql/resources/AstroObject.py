@@ -4,14 +4,13 @@ from flask_restful_swagger_3 import swagger
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import AstroObject
 from db_plugins.db.sql.serializers import AstroObjectSchema
-from .. import session
-
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
 # Eventually replace serializer with fields and marshal_with
 # Or maybe combine both
 fields = {}
+
 
 
 class ObjectResource(Resource):
