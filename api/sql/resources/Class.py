@@ -66,11 +66,16 @@ class ClassResource(Resource):
     def get(self, name):
         result = query(session, Class, None, None, None, Class.name == name)
         serializer = ClassSchema()
-        print("--------")
-        print(result)
         obj = result["results"][0]
         res = serializer.dump(obj)
         return jsonify(res)
+
+    """
+    def post(self, name):
+        data = request.args
+        response = put(session, data)
+        return jsonify(response)
+    """
 
 
 class ClassListResource(Resource):

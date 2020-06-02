@@ -23,7 +23,7 @@ sql_api.add_resource(ClassListResource, "/class")
 sql_api.add_resource(ClassificationResource,
                      "/classification/<astro_object>/<classifier_name>")
 sql_api.add_resource(
-    ClassificationListResource, "/classifitacion")
+    ClassificationListResource, "/classification")
 sql_api.add_resource(ClassifierResource, "/classifier/<name>")
 sql_api.add_resource(ClassifierListResource, "/classifier")
 sql_api.add_resource(DetectionResource, "/detection/<candid>")
