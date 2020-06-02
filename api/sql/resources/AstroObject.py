@@ -168,3 +168,37 @@ class ObjectListResource(Resource):
         serializer = AstroObjectSchema()
         res = [serializer.dump(obj) for obj in result["results"]]
         return jsonify(res)
+
+
+class ObjectClassificationsResource(Resource):
+
+    def get(self, oid):
+        result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
+        classifications = query(session, Classification, None, None, None, Classification.astro_object == oid)
+
+        serializer = AstroObjectSchema()
+        classification_serializer = ClassificationSchema()
+
+        obj = result["results"][0]
+        res = serializer.dump(obj)
+        obj_classification = classifications["results"][0]
+        res_classification = classification_serializer.dump(obj)
+        #TODO: como juntar estos datos
+        return jsonify(res)
+
+
+class ObjectXmatchResource(Resource):
+
+    def get(self, oid):
+        result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
+        xmatch = query(session, Xmatch, None, None, None, Classification.astro_object == oid)
+
+        serializer = AstroObjectSchema()
+        xmatch_serializer = XmatchSchema()
+
+        obj = result["results"][0]
+        res = serializer.dump(obj)
+        obj_xmatch = xmatch["results"][0]
+        res_xmatch = xmatch_serializer.dump(obj)
+        #TODO: como juntar estos datos
+        return jsonify(res)
