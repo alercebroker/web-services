@@ -198,6 +198,14 @@ class AstroObjectTest(unittest.TestCase):
         instance = client.get("/astro_objects")
         self.assertEqual(instance.status_code, 200)
 
+    def test_get_classifications(self):
+        instance = client.get("/astro_objects/ZTF19adamfha/classifications")
+        self.assertEqual(instance.status_code, 200)
+
+    def test_get_xmatch(self):
+        instance = client.get("/astro_objects/ZTF19adamfha/xmatch")
+        self.assertEqual(instance.status_code, 200)
+
 
 class FeaturesObjectTest(unittest.TestCase):
 
