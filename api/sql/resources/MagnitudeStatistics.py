@@ -13,7 +13,7 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 fields = {}
 
 class MagnitudesResource(Resource):
-    def get(self, oid, magnitude_type, type):
+    def get(self, oid, magnitude_type, fid):
         result = query(session, MagnitudeStatistics, None, None, None,
                        MagnitudeStatistics.oid == oid,
                        MagnitudeStatistics.magnitude_type == magnitude_type
