@@ -1,6 +1,8 @@
 from flask_restful import fields, marshal_with, reqparse, Resource, marshal
 from flask import jsonify
-from flask_restful_swagger_3 import swagger, Schema
+from flask_restful import fields
+from flask_restful_swagger_2 import Schema
+from flask_restful_swagger_3 import swagger
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Xmatch
 

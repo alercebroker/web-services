@@ -1,9 +1,13 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import jsonify
+from flask_restful import fields
+from flask_restful_swagger_2 import Schema
 from flask_restful_swagger_3 import swagger
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import AstroObject
 from db_plugins.db.sql.serializers import AstroObjectSchema
+from api.db import session
+
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
@@ -12,11 +16,20 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 fields = {}
 
 
+class ObjectModel(Schema):
+    type = 'object'
+    resource_fields = {
+        'oid': fields.Integer,
+        'ra': fields.Integer,
+        'dec': fields.Integer,
+        'num_detections': fields.Integer,
+        'date_range': fields.Integer
+    }
+
 
 class ObjectResource(Resource):
     """
     Astro objects individual resource
-    """
     """
     @swagger.doc({
         "summary": "Gets an individual object",
@@ -80,14 +93,18 @@ class ObjectResource(Resource):
                 }
             }
         },
-        "responses":{
+        "responses": {
             '200': {
                 'description': 'Ok',
+                'content': {
+                    'application/json': {
+                        'schema': ObjectModel
+                    }
+                }
             }
         }
     }
     )
-    """
     def get(self,oid):
         result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
         serializer = AstroObjectSchema()
@@ -99,7 +116,6 @@ class ObjectResource(Resource):
 class ObjectListResource(Resource):
     """
     Astro object list resource
-    """
     """
     @swagger.doc({
         "summary": "Gets a list of objects",
@@ -145,7 +161,7 @@ class ObjectListResource(Resource):
                                     "type": "integer"
                                 },
                                 "firstmjd": {
-                                    "description": "frist mjd date",
+                                    "description": "first mjd date",
                                     "type": "integer"
                                 },
                             },
@@ -158,11 +174,15 @@ class ObjectListResource(Resource):
         "responses": {
             '200': {
                 'description': 'Ok',
+                'content': {
+                    'application/json': {
+                        'schema': ObjectModel
+                    }
+                }
             }
         }
     }
     )
-    """
     def get(self):
         result = query(session, AstroObject, 1, 1)
         serializer = AstroObjectSchema()
