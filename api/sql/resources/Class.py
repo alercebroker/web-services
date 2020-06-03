@@ -1,16 +1,24 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import jsonify
+from flask_restful import fields
+from flask_restful_swagger_2 import Schema
 from flask_restful_swagger_3 import swagger
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Class
 from db_plugins.db.sql.serializers import ClassSchema
 from api.db import session
+
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
 # Eventually replace serializer with fields and marshal_with
 # Or maybe combine both
 fields = {}
+
+
+class ClassModel(Schema):
+    pass
+
 
 class ClassResource(Resource):
     """
