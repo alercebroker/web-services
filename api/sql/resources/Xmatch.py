@@ -5,6 +5,7 @@ from flask_restful_swagger_3 import Schema, swagger
 
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Xmatch
+from api.db import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], type="string", dest='oid')

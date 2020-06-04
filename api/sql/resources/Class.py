@@ -12,8 +12,6 @@ parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
 # Eventually replace serializer with fields and marshal_with
 # Or maybe combine both
-fields = {}
-
 
 class ClassModel(Schema):
     pass
@@ -38,26 +36,6 @@ class ClassResource(Resource):
                 }
             }
         ],
-        "requestBody:": {
-            "content": {
-                "/class/oid": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "description": "name of the class",
-                                "type": "string"
-                            },
-                            "acronym": {
-                                "description": "acronym of the class",
-                                "type": "string"
-                            },
-                        },
-                        "required": ["name"]
-                    }
-                }
-            }
-        },
         "responses": {
             '200': {
                 'description': 'Class got',
@@ -76,13 +54,6 @@ class ClassResource(Resource):
         res = serializer.dump(obj)
         return jsonify(res)
 
-    """
-    def post(self, name):
-        data = request.args
-        response = put(session, data)
-        return jsonify(response)
-    """
-
 
 class ClassListResource(Resource):
     """
@@ -92,29 +63,6 @@ class ClassListResource(Resource):
     @swagger.doc({
         "summary": "Gets a list of classes",
         "description": "long description",
-        "requestBody:": {
-            "content": {
-                "/class": {
-                    "schema": {
-                        "type": "list",
-                        "properties": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "description": "name of the class",
-                                    "type": "string"
-                                },
-                                "acronym": {
-                                    "description": "acronym of the class",
-                                    "type": "string"
-                                },
-                            },
-                            "required": ["name"]
-                        }
-                    }
-                }
-            }
-        },
         "responses": {
             '200': {
                 'description': 'Class got',

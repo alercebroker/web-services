@@ -26,6 +26,10 @@ class ObjectModel(Schema):
         "probability": fields.Float,
     }
 
+classifications_vacio = Classification(astro_object = "", classifier_name = "",  class_name = "",
+                                       probability = 0, probabilities = {} )
+
+xmatch_vacio = Xmatch(oid = "" , catalog_id = "", catalog_oid= "")
 
 class ObjectResource(Resource):
     """
@@ -113,37 +117,31 @@ class ObjectQueryListResource(Resource):
     )
     @marshal_with(ObjectModel.resource_fields)
     def get(self):
-        result = query(session, AstroObject, 1, 10, None)
+        result = query(session, AstroObject, 1, 20, None)
         astro_objects = result["results"]
         res = []
-
         for astro_object in astro_objects:
-
             oid = astro_object.oid
-
-            #result_classifications = query(session, Classification, 1, 1, None, Classification.astro_object == oid)
-            #classification = result_classifications["results"]
-
-            #result_xmatch = query(session, Xmatch, 1, 1, None, Xmatch.catalog_oid == oid)
-            #xmatch = result_xmatch["results"]
-            #if type(xmatch) == list:
-            #    print(xmatch)
-            #    xmatch = xmatch[0]
-
-            data = {
-                "oid": astro_object.oid,
-                "num_detections": astro_object.nobs,
-                "firstmjd": astro_object.firstmjd,
-                "lastmjf": astro_object.lastmjd,
-                "ra": astro_object.meanra,
-                "dec": astro_object.meandec,
-                #"xmatch_class_catalog": xmatch.catalog_id,
-                #"class": classification.class_name,
-                #"probability": classification.probability,
-            }
-
-            res.append(data)
-
+            result_classifications = query(session, Classification, None, None, None,
+                                           Classification.astro_object == oid)
+            classifications = result_classifications["results"] if len(result_classifications["results"]) > 0 \
+                else [classifications_vacio]
+            for classification in classifications:
+                result_xmatch = query(session, Xmatch, None, None, None, Xmatch.catalog_oid == oid)
+                xmatches = result_xmatch["results"] if len(result_xmatch["results"]) > 0 else [xmatch_vacio]
+                for xmatch in xmatches:
+                    data = {
+                        "oid": astro_object.oid,
+                        "num_detections": astro_object.nobs,
+                        "firstmjd": astro_object.firstmjd,
+                        "lastmjf": astro_object.lastmjd,
+                        "ra": astro_object.meanra,
+                        "dec": astro_object.meandec,
+                        "xmatch_class_catalog": xmatch.catalog_id,
+                        "class": classification.class_name,
+                        "probability": classification.probability,
+                    }
+                    res.append(data)
         return res
 
 
