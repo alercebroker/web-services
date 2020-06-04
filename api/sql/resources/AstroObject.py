@@ -5,7 +5,7 @@ from flask_restful_swagger_3 import Schema, swagger
 
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import AstroObject, Classification, Xmatch
-from db_plugins.db.sql.serializers import AstroObjectSchema, ClassificationSchema, XmatchSchema
+from db_plugins.db.sql.serializers import AstroObjectSchema, ClassificationSchema
 from api.db import session
 
 parser = reqparse.RequestParser()
@@ -16,13 +16,13 @@ class ObjectModel(Schema):
     type = 'object'
     resource_fields = {
         "oid": fields.String,
-        "num_detections": fields.Integer,
-        "first_date": fields.Float,
-        "last_date": fields.Float,
+        "ndet": fields.Integer,
+        "firstmjd": fields.Float,
+        "lastmjd": fields.Float,
         "ra": fields.Float,
         "dec": fields.Float,
         "xmatch_class_catalog": fields.String,
-        "class": fields.Float,
+        "class_name": fields.Float,
         "probability": fields.Float,
     }
 
@@ -113,34 +113,38 @@ class ObjectQueryListResource(Resource):
     )
     @marshal_with(ObjectModel.resource_fields)
     def get(self):
-        result = query(session, AstroObject, None, None, None)
-        serializer = AstroObjectSchema()
-        obj_astro = result["results"][0]
-        res_astro = serializer.dump(obj_astro)
+        result = query(session, AstroObject, 1, 10, None)
+        astro_objects = result["results"]
+        res = []
 
-        classifications = query(session, Classification, None, None, None)
-        classification_serializer = ClassificationSchema()
-        obj_classification = classifications["results"][0]
-        res_classification = classification_serializer.dump(obj_classification)
+        for astro_object in astro_objects:
 
-        xmatch = query(session, Xmatch, None, None, None)
-        xmatch_serializer = XmatchSchema()
-        obj_xmatch = xmatch["results"][0]
-        res_xmatch = xmatch_serializer.dump(obj_xmatch)
+            oid = astro_object.oid
 
-        res = {
-            "oid": 2,
-            "num_detections": None,
-            "first_date": None,
-            "last_date": None,
-            "ra": None,
-            "dec": None,
-            "xmatch_class_catalog": None,
-            "class": None,
-            "probability": None,
-        }
+            #result_classifications = query(session, Classification, 1, 1, None, Classification.astro_object == oid)
+            #classification = result_classifications["results"]
 
-        return jsonify(res)
+            #result_xmatch = query(session, Xmatch, 1, 1, None, Xmatch.catalog_oid == oid)
+            #xmatch = result_xmatch["results"]
+            #if type(xmatch) == list:
+            #    print(xmatch)
+            #    xmatch = xmatch[0]
+
+            data = {
+                "oid": astro_object.oid,
+                "num_detections": astro_object.nobs,
+                "firstmjd": astro_object.firstmjd,
+                "lastmjf": astro_object.lastmjd,
+                "ra": astro_object.meanra,
+                "dec": astro_object.meandec,
+                #"xmatch_class_catalog": xmatch.catalog_id,
+                #"class": classification.class_name,
+                #"probability": classification.probability,
+            }
+
+            res.append(data)
+
+        return res
 
 
 class ObjectClassificationsResource(Resource):
