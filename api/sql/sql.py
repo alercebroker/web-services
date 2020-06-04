@@ -20,7 +20,6 @@ sql_api.add_resource(ObjectResource, "/astro_objects/<oid>")
 sql_api.add_resource(ObjectListResource, "/astro_objects")
 sql_api.add_resource(ObjectClassificationsResource, "/astro_objects/<oid>/classifications")
 sql_api.add_resource(ObjectXmatchResource, "/astro_objects/<oid>/xmatch")
-sql_api.add_resource(ObjectQueryListResource, "/astro_objects_query")
 sql_api.add_resource(ClassResource, "/class/<name>")
 sql_api.add_resource(ClassListResource, "/class")
 sql_api.add_resource(ClassificationResource,
