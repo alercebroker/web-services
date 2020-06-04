@@ -5,12 +5,13 @@ from flask_restful_swagger_3 import Schema, swagger
 
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import AstroObject, Classification, Xmatch
-from db_plugins.db.sql.serializers import AstroObjectSchema, ClassificationSchema
 from api.db import session
 
 parser = reqparse.RequestParser()
-parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
-
+parser.add_argument('oid')
+parser.add_argument('classifier')
+parser.add_argument('class')
+parser.add_argument('ndet')
 
 class ObjectModel(Schema):
     type = 'object'
@@ -23,7 +24,13 @@ class ObjectModel(Schema):
         "dec": fields.Float,
         "xmatch_class_catalog": fields.String,
         "class_name": fields.Float,
-        "probability": fields.Float,
+        "probability": fields.Float
+    }
+class ResponseModel(Schema):
+    type = 'object'
+    resource_fields = {
+        "total": fields.Integer,
+        "results": fields.List(fields.Nested(ObjectModel.resource_fields))
     }
 
 
@@ -33,14 +40,14 @@ class ObjectResource(Resource):
     """
     @swagger.doc({
         "summary": "Gets an individual object",
-        "description":"long description",
-        "parameters":[
+        "description": "long description",
+        "parameters": [
             {
                 "name": "oid",
                 "in": "path",
                 "description": "Identifier for the object",
                 "required": True,
-                "schema":{
+                "schema": {
                     "type": "string"
                 }
             }
@@ -57,9 +64,9 @@ class ObjectResource(Resource):
         }
     }
     )
-    def get(self,oid):
-        result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
-        serializer = AstroObjectSchema()
+    def get(self, oid):
+        result = query(session, AstroObject, None, None,
+                       None, AstroObject.oid == oid)
         obj = result["results"][0]
         res = serializer.dump(obj)
         return jsonify(res)
@@ -77,82 +84,30 @@ class ObjectListResource(Resource):
                 'description': 'Ok',
                 'content': {
                     'application/json': {
-                        'schema': ObjectModel
+                        'schema': ResponseModel
                     }
                 }
             }
         }
     }
     )
-    @marshal_with(ObjectModel.resource_fields)
+    @marshal_with(ResponseModel.resource_fields)
     def get(self):
-        result = query(session, AstroObject, None, None, None, True)
-        serializer = AstroObjectSchema()
-        res = [serializer.dump(obj) for obj in result["results"]]
-        return jsonify(res)
+        args = parser.parse_args()
+        objects = query(session, AstroObject, 1, 10, None,)
+        return objects
 
 
-class ObjectQueryListResource(Resource):
-    """
-    Astro object list resource joining with Xmatch and Classifications
-    """
-    @swagger.doc({
-        "summary": "Gets a list of objects base on a query",
-        "description": "long description",
-        "responses": {
-            '200': {
-                'description': 'Ok',
-                'content': {
-                    'application/json': {
-                        'schema': ObjectModel
-                    }
-                }
-            }
-        }
-    }
-    )
-    @marshal_with(ObjectModel.resource_fields)
-    def get(self):
-        result = query(session, AstroObject, 1, 10, None)
-        astro_objects = result["results"]
-        res = []
 
-        for astro_object in astro_objects:
-
-            oid = astro_object.oid
-
-            #result_classifications = query(session, Classification, 1, 1, None, Classification.astro_object == oid)
-            #classification = result_classifications["results"]
-
-            #result_xmatch = query(session, Xmatch, 1, 1, None, Xmatch.catalog_oid == oid)
-            #xmatch = result_xmatch["results"]
-            #if type(xmatch) == list:
-            #    print(xmatch)
-            #    xmatch = xmatch[0]
-
-            data = {
-                "oid": astro_object.oid,
-                "num_detections": astro_object.nobs,
-                "firstmjd": astro_object.firstmjd,
-                "lastmjf": astro_object.lastmjd,
-                "ra": astro_object.meanra,
-                "dec": astro_object.meandec,
-                #"xmatch_class_catalog": xmatch.catalog_id,
-                #"class": classification.class_name,
-                #"probability": classification.probability,
-            }
-
-            res.append(data)
-
-        return res
 
 
 class ObjectClassificationsResource(Resource):
 
-    @marshal_with(ObjectModel.resource_fields)
     def get(self, oid):
-        result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
-        classifications = query(session, Classification, None, None, None, Classification.astro_object == oid)
+        result = query(session, AstroObject, None, None,
+                       None, AstroObject.oid == oid)
+        classifications = query(
+            session, Classification, None, None, None, Classification.astro_object == oid)
 
         serializer = AstroObjectSchema()
         classification_serializer = ClassificationSchema()
@@ -161,16 +116,17 @@ class ObjectClassificationsResource(Resource):
         res = serializer.dump(obj)
         obj_classification = classifications["results"][0]
         res_classification = classification_serializer.dump(obj_classification)
-        #TODO: como juntar estos datos
+        # TODO: como juntar estos datos
         return jsonify(res)
 
 
 class ObjectXmatchResource(Resource):
 
-    @marshal_with(ObjectModel.resource_fields)
     def get(self, oid):
-        result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
-        xmatch = query(session, Xmatch, None, None, None, Xmatch.astro_object == oid)
+        result = query(session, AstroObject, None, None,
+                       None, AstroObject.oid == oid)
+        xmatch = query(session, Xmatch, None, None,
+                       None, Xmatch.astro_object == oid)
 
         serializer = AstroObjectSchema()
         xmatch_serializer = XmatchSchema()
@@ -179,5 +135,5 @@ class ObjectXmatchResource(Resource):
         res = serializer.dump(obj)
         obj_xmatch = xmatch["results"][0]
         res_xmatch = xmatch_serializer.dump(obj_xmatch)
-        #TODO: como juntar estos datos
+        # TODO: como juntar estos datos
         return jsonify(res)
