@@ -10,7 +10,8 @@ import os
 import sys
 
 FILE_PATH = os.path.dirname(os.path.abspath(os.curdir))
-sys.path.append(FILE_PATH)
+print (FILE_PATH)
+sys.path.append(FILE_PATH + "/ztf-api-apf")
 
 from api import app, db
 
@@ -24,25 +25,25 @@ def init():
     return db_fd, temp, client
 
 
-class ClassTest(unittest.TestCase):
+#class ClassTest(unittest.TestCase):
 
-    def setUp(self):
-        self.fd, self.temp, self.client = init()
-        model = Class(name="SN")
-        db.session.add(model)
-        db.session.commit()
+#    def setUp(self):
+#        self.fd, self.temp, self.client = init()
+#        model = Class(name="SN")
+#        db.session.add(model)
+#        db.session.commit()
 
-    def tearDown(self):
-        os.close(self.fd)
-        os.unlink(self.temp)
+#    def tearDown(self):
+#        os.close(self.fd)
+#        os.unlink(self.temp)
 
-    # def test_get(self):
-    #     instance = self.client.get("/class/Ceph")
-    #     self.assertEqual(instance.status_code, 200)
+#    def test_get(self):
+#        instance = self.client.get("/class/Ceph")
+#        self.assertEqual(instance.status_code, 200)
 
-    def test_get_list(self):
-        instance = self.client.get("/class")
-        self.assertEqual(instance.status_code, 200)
+#    def test_get_list(self):
+#        instance = self.client.get("/class")
+#        self.assertEqual(instance.status_code, 200)
 
 
 # class TaxonomyTest(unittest.TestCase):
@@ -157,21 +158,18 @@ class ClassTest(unittest.TestCase):
 #         self.assertEqual(instance.status_code, 200)
 
 
-# class AstroObjectTest(unittest.TestCase):
+class AstroObjectTest(unittest.TestCase):
 
-#     def setUp(self):
-#         self.connection = engine.connect()
-#         self.trans = self.connection.begin()
-#         self.session = Session(bind=self.connection)
-#         self.model = AstroObject(oid="ZTF1", nobs=1, lastmjd=1.0, meanra=1.0,
-#                                  meandec=1.0, sigmara=1.0, sigmadec=1.0, deltajd=1.0, firstmjd=1.0)
-#         self.session.add(self.model)
-#         self.session.commit()
+    def setUp(self):
+        self.fd, self.temp, self.client = init()
+        #model = AstroObject(oid="ZTF1", nobs=1, lastmjd=1.0, meanra=1.0,
+        #                          meandec=1.0, sigmara=1.0, sigmadec=1.0, deltajd=1.0, firstmjd=1.0)
+        #db.session.add(model)
+        #db.session.commit()
 
-#     def tearDown(self):
-#         self.session.close()
-#         self.trans.rollback()
-#         self.connection.close()
+    def tearDown(self):
+        os.close(self.fd)
+        os.unlink(self.temp)
 
 #     def test_get(self):
 #         instance = client.get("/astro_objects/ZTF19adamfha")
@@ -183,6 +181,12 @@ class ClassTest(unittest.TestCase):
 #     def test_get_list(self):
 #         instance = client.get("/astro_objects")
 #         self.assertEqual(instance.status_code, 200)
+
+    def test_get_query(self):
+        instance = self.client.get("/astro_objects_query")
+        print ("---------ESTO----------")
+        print (instance.json)
+        self.assertEqual(instance.status_code, 200)
 
 
 # class FeaturesObjectTest(unittest.TestCase):
@@ -263,4 +267,4 @@ class ClassTest(unittest.TestCase):
 #         instance = client.get("/non_detection")
 #         print (instance.json)
 #         self.assertEqual(instance.status_code, 200)
-# """
+#
