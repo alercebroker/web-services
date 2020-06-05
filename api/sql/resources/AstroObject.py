@@ -7,11 +7,6 @@ from db_plugins.db.sql import query
 from db_plugins.db.sql.models import AstroObject, Classification, Xmatch
 from api.db import session
 
-parser = reqparse.RequestParser()
-parser.add_argument('oid')
-parser.add_argument('classifier')
-parser.add_argument('class')
-parser.add_argument('ndet')
 
 class ObjectModel(Schema):
     type = 'object'
@@ -23,35 +18,21 @@ class ObjectModel(Schema):
         "ra": fields.Float,
         "dec": fields.Float,
         "xmatch_class_catalog": fields.String,
-        "class_name": fields.Float,
+        "class_name": fields.String,
         "probability": fields.Float
     }
+
+
 class ResponseModel(Schema):
-    type = 'object'
-    resource_fields = {
-        "total": fields.Integer,
-        "results": fields.List(fields.Nested(ObjectModel.resource_fields))
-    }
+    type = 'array'
+    items = ObjectModel
 
 
 class ObjectResource(Resource):
-    """
-    Astro objects individual resource
-    """
+
     @swagger.doc({
         "summary": "Gets an individual object",
         "description": "long description",
-        "parameters": [
-            {
-                "name": "oid",
-                "in": "path",
-                "description": "Identifier for the object",
-                "required": True,
-                "schema": {
-                    "type": "string"
-                }
-            }
-        ],
         "responses": {
             '200': {
                 'description': 'Ok',
@@ -64,21 +45,51 @@ class ObjectResource(Resource):
         }
     }
     )
+    @marshal_with(ObjectModel.resource_fields)
     def get(self, oid):
-        result = query(session, AstroObject, None, None,
-                       None, AstroObject.oid == oid)
-        obj = result["results"][0]
-        res = serializer.dump(obj)
-        return jsonify(res)
+        obj = session.query(AstroObject).filter(AstroObject.oid == oid)
+        return obj.first()
 
 
 class ObjectListResource(Resource):
-    """
-    Astro object list resource
-    """
+    parser = reqparse.RequestParser()
+    parser.add_argument('classifier', type=str, dest='classifier' )
+    parser.add_argument('class', type=str, dest='class' )
+    parser.add_argument('ndet_min', type=int, dest='ndet_min' )
+    parser.add_argument('probability', type=float, dest="probability")
     @swagger.doc({
         "summary": "Gets a list of objects",
         "description": "long description",
+        "parameters":[
+            {
+                "name": "classifier",
+                "in": "path",
+                "description": "name of the classifier",
+                "required": False,
+                "schema": {"type": "string"}
+            },
+            {
+                "name": "class",
+                "in": "path",
+                "description": "name of the class",
+                "required": False,
+                "schema": {"type": "string"}
+            },
+            {
+                "name": "ndet_min",
+                "in": "path",
+                "description": "minimum number of detections",
+                "required": False,
+                "schema": {"type": "integer"}
+            },
+            {
+                "name": "probability",
+                "in": "path",
+                "description": "min class probability",
+                "required": False,
+                "schema": {"type": "integer"}
+            }
+        ],
         "responses": {
             '200': {
                 'description': 'Ok',
@@ -91,49 +102,34 @@ class ObjectListResource(Resource):
         }
     }
     )
-    @marshal_with(ResponseModel.resource_fields)
+    @marshal_with(ObjectModel.resource_fields)
     def get(self):
-        args = parser.parse_args()
-        objects = query(session, AstroObject, 1, 10, None,)
-        return objects
+        args = self.parser.parse_args()
+        params = self.parse_parameters(args)
+        ret = []
+        for obj, clf in session.query(AstroObject, Classification).join(Classification).\
+                filter(*params).limit(10).offset(0).all():
+            ret.append({**obj.__dict__, **clf.__dict__})
+        return ret
 
-
-
+    def parse_parameters(self, args):
+        classifier, class_ = True, True
+        for arg in args:
+            if args[arg] is not None:
+                if arg == 'classifier':
+                    classifier = Classification.classifier_name == args[arg]
+                if arg == 'class':
+                    class_ = Classification.class_name == args[arg]
+        return classifier, class_
 
 
 class ObjectClassificationsResource(Resource):
 
     def get(self, oid):
-        result = query(session, AstroObject, None, None,
-                       None, AstroObject.oid == oid)
-        classifications = query(
-            session, Classification, None, None, None, Classification.astro_object == oid)
-
-        serializer = AstroObjectSchema()
-        classification_serializer = ClassificationSchema()
-
-        obj = result["results"][0]
-        res = serializer.dump(obj)
-        obj_classification = classifications["results"][0]
-        res_classification = classification_serializer.dump(obj_classification)
-        # TODO: como juntar estos datos
-        return jsonify(res)
+        pass
 
 
 class ObjectXmatchResource(Resource):
 
     def get(self, oid):
-        result = query(session, AstroObject, None, None,
-                       None, AstroObject.oid == oid)
-        xmatch = query(session, Xmatch, None, None,
-                       None, Xmatch.astro_object == oid)
-
-        serializer = AstroObjectSchema()
-        xmatch_serializer = XmatchSchema()
-
-        obj = result["results"][0]
-        res = serializer.dump(obj)
-        obj_xmatch = xmatch["results"][0]
-        res_xmatch = xmatch_serializer.dump(obj_xmatch)
-        # TODO: como juntar estos datos
-        return jsonify(res)
+        pass
