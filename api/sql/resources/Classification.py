@@ -11,15 +11,18 @@ parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
 
-class ClassModel(Schema):
+class ClassificationModel(Schema):
     type = 'object'
     resource_fields = {
         "name": fields.String,
-        "acronym": fields.String
+        "classifier_name": fields.String,
+        "class_name": fields.String,
+        "probability": fields.Float,
+        "probabilities": fields.List(fields.Float)
     }
 
 
-class ClassResponseModel(Schema):
+class ClassificationResponseModel(Schema):
     type = 'array'
     items = ClassModel
 
