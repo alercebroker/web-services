@@ -23,8 +23,12 @@ class XmatchModel(Schema):
     }
 
 
+class XmatchResponseModel(Schema):
+    type = 'array'
+    items = XmatchModel
+
+
 class XmatchResource(Resource):
-    """
     @swagger.doc({
         "summary": "Gets xmatch information of an object",
         "parameters": [
@@ -50,6 +54,5 @@ class XmatchResource(Resource):
         }
     })
     @marshal_with(XmatchModel.resource_fields, envelope="resource")
-    """
     def get(self, oid):
         pass
