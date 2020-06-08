@@ -1,15 +1,34 @@
-from .core import *
-from apf.db.sql import *
-from apf.db.sql.models import *
+from db_plugins.db.sql import *
+from db_plugins.db.sql.models import *
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import unittest
 import json
 import requests
 
+import os
+import sys
+
+FILE_PATH = os.path.dirname(os.path.abspath(os.curdir))
+print (FILE_PATH)
+sys.path.append(FILE_PATH)
+
+from api.sql.resources.AstroObject import *
+from api.sql.resources.Class import *
+from api.sql.resources.Classification import *
+from api.sql.resources.Classifier import *
+from api.sql.resources.Detection import *
+from api.sql.resources.FeaturesObject import *
+from api.sql.resources.MagnitudeStatistics import *
+from api.sql.resources.NonDetection import *
+from api.sql.resources.Taxonomy import *
+
+
 engine = create_engine('sqlite:///:memory:')
 Session = sessionmaker()
 Base.metadata.create_all(engine)
+
+url = "http://localhost:8085/"
 
 
 class SQLMethodsTest(unittest.TestCase):
@@ -46,20 +65,13 @@ class SQLMethodsTest(unittest.TestCase):
         self.connection.close()
 
 
-class ClassTest(unittest.TestCase, GenericClassTest):
+class ClassTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = Class(name="Super Nova", acronym="SN")
-        astro_object = AstroObject(oid="ZTF1", nobs=1, lastmjd=1.0,
-                                   meanra=1.0, meandec=1.0, sigmadec=1.0, deltajd=1.0, firstmjd=1.0)
-        classifier = Classifier(name="test")
-        classification = Classification(
-            astro_object="ZTF1", classifier_name="test", class_name="SN")
-        self.model.classifications.append(classification)
-        self.session.add(astro_object)
         self.session.commit()
 
     def tearDown(self):
@@ -68,26 +80,33 @@ class ClassTest(unittest.TestCase, GenericClassTest):
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/class/Super Nova")
+        class_resource = ClassResource()
+        instance = class_resource.get("Super Nova")
+
+        """
+        instance = requests.get(url + "/class/Super Nova")
         self.assertIsInstance(instance, Class)
+        """
 
     def test_get_list(self):
-        instances = requests.get(engine + "/class")
+        """
+        instances = requests.get(url + "/class")
         for i in instances:
             self.assertIsInstance(i, Class)
+        """
 
-
-class TaxonomyTest(GenericTaxonomyTest, unittest.TestCase):
+"""
+class TaxonomyTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = Taxonomy(name="test")
-        class_ = Class(name="SN")
+        class_object = Class(name="SN")
+        self.model.classes.append(class_object)
         classifier = Classifier(name="asdasd")
         self.model.classifiers.append(classifier)
-        self.model.classes.append(class_)
         self.session.commit()
 
     def tearDown(self):
@@ -96,28 +115,21 @@ class TaxonomyTest(GenericTaxonomyTest, unittest.TestCase):
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/taxonomy/test")
+        instance = requests.get(url + "/taxonomy/test")
         self.assertIsInstance(instance, Taxonomy)
 
     def test_get_list(self):
-        instances = requests.get(engine + "/taxonomy")
+        instances = requests.get(url + "/taxonomy")
         for i in instances:
             self.assertIsInstance(i, Taxonomy)
 
-class ClassifierTest(GenericClassifierTest, unittest.TestCase):
+class ClassifierTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
         self.model = Classifier(name="Late Classifier")
-        astro_object = AstroObject(oid="ZTF1", nobs=1, lastmjd=1.0,
-                                   meanra=1.0, meandec=1.0, sigmadec=1.0, deltajd=1.0, firstmjd=1.0)
-        classifier = Classifier(name="test")
-        class_ = Class(name="SN")
-        classification = Classification(
-            astro_object="ZTF1", classifier_name="test", class_name="SN")
-        self.model.classifications.append(classification)
         self.session.commit()
 
     def tearDown(self):
@@ -126,20 +138,20 @@ class ClassifierTest(GenericClassifierTest, unittest.TestCase):
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/classifier/Late Classifier")
+        instance = requests.get(url + "/classifier/Late Classifier")
         self.assertIsInstance(instance, Classifier)
 
     def test_get_list(self):
-        instances = requests.get(engine + "/classifier")
+        instances = requests.get(url + "/classifier")
         for i in instances:
             self.assertIsInstance(i, Classifier)
 
 
-class XMatchTest(GenericXMatchTest, unittest.TestCase):
+class XMatchTest(unittest.TestCase):
     pass
 
 
-class MagnitudeStatisticsTest(GenericMagnitudeStatisticsTest, unittest.TestCase):
+class MagnitudeStatisticsTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
@@ -154,16 +166,16 @@ class MagnitudeStatisticsTest(GenericMagnitudeStatisticsTest, unittest.TestCase)
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/magnitude_statistics")
+        instance = requests.get(url + "/magnitude_statistics")
         self.assertIsInstance(instance, MagnitudeStatistics)
 
     def test_get_list(self):
-        instances = requests.get(engine + "/magnitude_statistics")
+        instances = requests.get(url + "/magnitude_statistics")
         for i in instances:
             self.assertIsInstance(i, MagnitudeStatistics)
 
 
-class ClassificationTest(GenericClassificationTest, unittest.TestCase):
+class ClassificationTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
@@ -178,45 +190,23 @@ class ClassificationTest(GenericClassificationTest, unittest.TestCase):
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/classification")
+        instance = requests.get(url + "/classification")
         self.assertIsInstance(instance, Classification)
 
     def test_get_list(self):
-        instances = requests.get(engine + "/classification")
+        instances = requests.get(url + "/classification")
         for i in instances:
             self.assertIsInstance(i, Classification)
 
 
-class AstroObjectTest(GenericAstroObjectTest, unittest.TestCase):
+class AstroObjectTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
         self.trans = self.connection.begin()
         self.session = Session(bind=self.connection)
-
-        class_ = Class(name="Super Nova", acronym="SN")
-        taxonomy = Taxonomy(name="Test")
-        class_.taxonomies.append(taxonomy)
-        classifier = Classifier(name="C1")
-        taxonomy.classifiers.append(classifier)
         self.model = AstroObject(oid="ZTF1", nobs=1, lastmjd=1.0, meanra=1.0,
                                  meandec=1.0, sigmara=1.0, sigmadec=1.0, deltajd=1.0, firstmjd=1.0)
-        self.model.xmatches.append(
-            Xmatch(catalog_id="C1", catalog_object_id="O1"))
-        self.model.magnitude_statistics = MagnitudeStatistics(
-            fid=1, magnitude_type="psf", mean=1.0, median=1.0, max_mag=1.0, min_mag=1.0, sigma=1.0, last=1.0, first=1.0)
-        self.model.classifications.append(Classification(
-            class_name="Super Nova", probability=1.0, classifier_name="C1"))
-
-        features_object = FeaturesObject(data=json.loads('{"test":"test"}'))
-        features_object.features = Features(version="V1")
-        self.model.features.append(features_object)
-        self.model.detections.append(Detection(candid="t", mjd=1, fid=1, ra=1, dec=1, rb=1,
-                                               magap=1, magpsf=1, sigmapsf=1, sigmagap=1,
-                                               alert=json.loads('{"test":"test"}')))
-        self.model.non_detections.append(
-            NonDetection(mjd=1, fid=1, diffmaglim=1))
-
         self.session.commit()
 
     def tearDown(self):
@@ -225,16 +215,16 @@ class AstroObjectTest(GenericAstroObjectTest, unittest.TestCase):
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/astro_object/ZTF1")
+        instance = requests.get(url + "/astro_object/ZTF1")
         self.assertIsInstance(instance, AstroObject)
 
     def test_get_list(self):
-        instances = requests.get(engine + "/astro_object")
+        instances = requests.get(url + "/astro_object")
         for i in instances:
             self.assertIsInstance(i, AstroObject)
 
 
-class FeaturesObjectTest(GenericFeaturesTest, unittest.TestCase):
+class FeaturesObjectTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
@@ -249,16 +239,16 @@ class FeaturesObjectTest(GenericFeaturesTest, unittest.TestCase):
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/features_object")
+        instance = requests.get(url + "/features_object")
         self.assertIsInstance(instance, FeaturesObject)
 
     def test_get_list(self):
-        instances = requests.get(engine + "/features_object")
+        instances = requests.get(url + "/features_object")
         for i in instances:
             self.assertIsInstance(i, FeaturesObject)
 
 
-class DetectionTest(GenericDetectionTest, unittest.TestCase):
+class DetectionTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
@@ -273,16 +263,16 @@ class DetectionTest(GenericDetectionTest, unittest.TestCase):
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/detection")
+        instance = requests.get(url + "/detection")
         self.assertIsInstance(instance, Detection)
 
     def test_get_list(self):
-        instances = requests.get(engine + "/detection")
+        instances = requests.get(url + "/detection")
         for i in instances:
             self.assertIsInstance(i, Detection)
 
 
-class NonDetectionTest(GenericNonDetectionTest, unittest.TestCase):
+class NonDetectionTest(unittest.TestCase):
 
     def setUp(self):
         self.connection = engine.connect()
@@ -297,10 +287,12 @@ class NonDetectionTest(GenericNonDetectionTest, unittest.TestCase):
         self.connection.close()
 
     def test_get(self):
-        instance = requests.get(engine + "/non_detection")
+        instance = requests.get(url + "/non_detection")
         self.assertIsInstance(instance, NonDetection)
 
     def test_get_list(self):
-        instances = requests.get(engine + "/non_detection")
+        instances = requests.get(url + "/non_detection")
         for i in instances:
             self.assertIsInstance(i, NonDetection)
+
+"""
