@@ -1,16 +1,21 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
-from flask import jsonify
 from db_plugins.db.sql import query
-from db_plugins.db.sql.models import Classifier
+from db_plugins.db.sql.models import Classifier, taxonomy_class, Taxonomy, Class
 from db_plugins.db.sql.serializers import ClassifierSchema
-from .. import session
+from flask_restful_swagger_3 import Schema, swagger
+from .Class import ClassSchema
+from api.db import session
 
-parser = reqparse.RequestParser()
-parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
-# Eventually replace serializer with fields and marshal_with
-# Or maybe combine both
-fields = {}
+class ClassifierSchema(Schema):
+    type = "object"
+    resource_fields = {
+        "name": fields.String,
+        "taxonomy_name": fields.String,
+        "classes": fields.List(fields.Nested(ClassSchema.resource_fields)),
+    }
+
+
 
 class ClassifierResource(Resource):
     def get(self, name):
@@ -22,8 +27,24 @@ class ClassifierResource(Resource):
 
 
 class ClassifierListResource(Resource):
+    @swagger.doc(
+        {
+            "summary": "Gets an individual object",
+            "description": "long description",
+            "responses": {
+                "200": {
+                    "description": "Ok",
+                    "content": {"application/json": {"schema": ClassifierSchema}},
+                }
+            },
+        }
+    )
+    @marshal_with(ClassifierSchema.resource_fields)
     def get(self):
-        result = query(session, Classifier, 1, 1)
-        serializer = ClassifierSchema()
-        res = [serializer.dump(obj) for obj in result["results"]]
-        return jsonify(res)
+        results = session.query(Classifier, Taxonomy).join(Taxonomy).all()
+        classifiers = []
+        for classifier, taxonomy in results:
+            classes = taxonomy.classes
+            classifier.classes = classes 
+            classifiers.append(classifier)
+        return classifiers

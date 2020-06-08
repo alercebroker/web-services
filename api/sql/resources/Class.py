@@ -1,23 +1,26 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import jsonify
+from flask_restful import fields
+from flask_restful_swagger_3 import Schema, swagger
+
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Class
-from db_plugins.db.sql.serializers import ClassSchema
-from .. import session
+from api.db import session
 
-parser = reqparse.RequestParser()
-parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
+class ClassSchema(Schema):
+    type="object"
+    resource_fields = {
+        "name": fields.String,
+        "acronym": fields.String
+    }  
 
-# Eventually replace serializer with fields and marshal_with
-# Or maybe combine both
-fields = {}
 
 class ClassResource(Resource):
     """
     Class individual resource
     """
     @swagger.doc({
-        "summary": "Gets an individual object",
+        "summary": "Gets an individual class",
         "description": "long description",
         "parameters": [
             {
@@ -30,87 +33,25 @@ class ClassResource(Resource):
                 }
             }
         ],
-        "requestBody:": {
-            "content": {
-                "/class/oid": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "name": {
-                                "description": "name of the class",
-                                "type": "string"
-                            },
-                            "acronym": {
-                                "description": "acronym of the class",
-                                "type": "string"
-                            },
-                        },
-                        "required": ["name"]
-                    }
-                }
-            }
-        },
         "responses": {
             '200': {
                 'description': 'Class got',
                 'content': {
-                    "application/json": {}
+                    "application/json": {
+                        'schema': ClassSchema
+                    }
                 }
             }
         }
     }
     )
     def get(self, name):
-        result = query(session, Class, None, None, None, Class.name == name)
-        serializer = ClassSchema()
-        obj = result["results"][0]
-        res = serializer.dump(obj)
-        return jsonify(res)
+        pass
 
 
 class ClassListResource(Resource):
     """
     Class list resource
     """
-    @swagger.doc({
-        "summary": "Gets a list of classes",
-        "description": "long description",
-        "requestBody:": {
-            "content": {
-                "/class": {
-                    "schema": {
-                        "type": "list",
-                        "properties": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "description": "name of the class",
-                                    "type": "string"
-                                },
-                                "acronym": {
-                                    "description": "acronym of the class",
-                                    "type": "string"
-                                },
-                            },
-                            "required": ["name"]
-                        }
-                    }
-                }
-            }
-        },
-        "responses": {
-            '200': {
-                'description': 'Class got',
-                'content': {
-                    "application/json": {}
-                }
-            }
-        }
-    }
-    )
-
     def get(self):
-        result = query(session, Class, 1, 1)
-        serializer = ClassSchema()
-        res = [serializer.dump(obj) for obj in result["results"]]
-        return jsonify(res)
+        pass
