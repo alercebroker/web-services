@@ -7,14 +7,12 @@ from db_plugins.db.sql.models import Class
 from db_plugins.db.sql.serializers import ClassSchema
 from api.db import session
 
-parser = reqparse.RequestParser()
-parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
-
-# Eventually replace serializer with fields and marshal_with
-# Or maybe combine both
-
-class ClassModel(Schema):
-    pass
+class ClassSchema(Schema):
+    type="object"
+    resource_fields = {
+        "name": fields.String,
+        "acronym": fields.String
+    }  
 
 
 class ClassResource(Resource):
