@@ -1,167 +1,124 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import jsonify
-from flask_restful_swagger_3 import swagger
+from flask_restful import fields
+from flask_restful_swagger_3 import Schema, swagger
+
 from db_plugins.db.sql import query
-from db_plugins.db.sql.models import AstroObject
-from db_plugins.db.sql.serializers import AstroObjectSchema
-from .. import session
+from db_plugins.db.sql.models import AstroObject, Classification, Xmatch
+from api.db import session
 
-parser = reqparse.RequestParser()
-parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
-# Eventually replace serializer with fields and marshal_with
-# Or maybe combine both
-fields = {}
+class ObjectModel(Schema):
+    type = "object"
+    resource_fields = {
+        "oid": fields.String,
+        "ndet": fields.Integer,
+        "firstmjd": fields.Float,
+        "lastmjd": fields.Float,
+        "ra": fields.Float,
+        "dec": fields.Float,
+        "xmatch_class_catalog": fields.String,
+        "class_name": fields.String,
+        "probability": fields.Float,
+    }
+
+
+class ResponseModel(Schema):
+    type = "array"
+    items = ObjectModel
 
 
 class ObjectResource(Resource):
-    """
-    Astro objects individual resource
-    """
-    @swagger.doc({
-        "summary": "Gets an individual object",
-        "description":"long description",
-        "parameters":[
-            {
-                "name": "oid",
-                "in": "path",
-                "description": "Identifier for the object",
-                "required": True,
-                "schema":{
-                    "type": "string"
+    @swagger.doc(
+        {
+            "summary": "Gets an individual object",
+            "description": "long description",
+            "responses": {
+                "200": {
+                    "description": "Ok",
+                    "content": {"application/json": {"schema": ObjectModel}},
                 }
-            }
-        ],
-        "requestBody:": {
-            "content": {
-                "/astro_object/oid": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "oid": {
-                                "description": "identifier of the object",
-                                "type": "string"
-                            },
-                            "nobs": {
-                                "description": "number of observations",
-                                "type": "integer"
-                            },
-                            "meanra": {
-                                "description": "",
-                                "type": "integer"
-                            },
-                            "meandec": {
-                                "description": "",
-                                "type": "integer"
-                            },
-                            "sigmara": {
-                                "description": "",
-                                "type": "integer"
-                            },
-                            "sigmadec": {
-                                "description": "",
-                                "type": "integer"
-                            },
-                            "deltajd": {
-                                "description": "",
-                                "type": "integer"
-                            },
-                            "lastmjd": {
-                                "description": "last mjd date",
-                                "type": "integer"
-                            },
-                            "firstmjd": {
-                                "description": "frist mjd date",
-                                "type": "integer"
-                            },
-                        },
-                        "required": ["oid"]
-                    }
-                }
-            }
-        },
-        "responses":{
-            '200': {
-                'description': 'Ok',
-            }
+            },
         }
-    }
     )
-    def get(self,oid):
-        result = query(session, AstroObject, None, None, None, AstroObject.oid == oid)
-        serializer = AstroObjectSchema()
-        obj = result["results"][0]
-        res = serializer.dump(obj)
-        return jsonify(res)
+    @marshal_with(ObjectModel.resource_fields)
+    def get(self, oid):
+        obj = session.query(AstroObject).filter(AstroObject.oid == oid)
+        return obj.first()
 
 
 class ObjectListResource(Resource):
-    """
-    Astro object list resource
-    """
-    @swagger.doc({
-        "summary": "Gets a list of objects",
-        "description": "long description",
-        "requestBody:": {
-            "content": {
-                "/astro_object": {
-                    "schema": {
-                        "type": "list",
-                        "properties": {
-                            "type": "object",
-                            "properties": {
-                                "oid": {
-                                    "description": "identifier of the object",
-                                    "type": "string"
-                                },
-                                "nobs": {
-                                    "description": "number of observations",
-                                    "type": "integer"
-                                },
-                                "meanra": {
-                                    "description": "",
-                                    "type": "integer"
-                                },
-                                "meandec": {
-                                    "description": "",
-                                    "type": "integer"
-                                },
-                                "sigmara": {
-                                    "description": "",
-                                    "type": "integer"
-                                },
-                                "sigmadec": {
-                                    "description": "",
-                                    "type": "integer"
-                                },
-                                "deltajd": {
-                                    "description": "",
-                                    "type": "integer"
-                                },
-                                "lastmjd": {
-                                    "description": "last mjd date",
-                                    "type": "integer"
-                                },
-                                "firstmjd": {
-                                    "description": "frist mjd date",
-                                    "type": "integer"
-                                },
-                            },
-                            "required": ["oid"]
-                        }
-                    }
-                }
-            }
-        },
-        "responses": {
-            '200': {
-                'description': 'Ok',
-            }
-        }
-    }
+    parser = reqparse.RequestParser()
+    parser.add_argument(
+        "classifier",
+        type=str,
+        dest="classifier",
+        location="args",
+        help="classifier name",
     )
+    parser.add_argument(
+        "class", type=str, dest="class", location="args", help="class name"
+    )
+    parser.add_argument(
+        "ndet_min",
+        type=int,
+        dest="ndet_min",
+        location="args",
+        help="minimum number of detections",
+    )
+    parser.add_argument(
+        "probability",
+        type=float,
+        dest="probability",
+        location="args",
+        help="minimum probability",
+    )
+
+    @swagger.doc(
+        {
+            "summary": "Gets a list of objects",
+            "description": "long description",
+            "reqparser": {"name": "object query parser", "parser": parser},
+            "responses": {
+                "200": {
+                    "description": "Ok",
+                    "content": {"application/json": {"schema": ResponseModel}},
+                }
+            },
+        }
+    )
+    @marshal_with(ObjectModel.resource_fields)
     def get(self):
-        result = query(session, AstroObject, 1, 1)
-        serializer = AstroObjectSchema()
-        res = [serializer.dump(obj) for obj in result["results"]]
-        return jsonify(res)
+        args = self.parser.parse_args()
+        params = self.parse_parameters(args)
+        ret = []
+        for obj, clf in (
+            session.query(AstroObject, Classification)
+            .join(Classification)
+            .filter(*params)
+            .limit(10)
+            .offset(0)
+            .all()
+        ):
+            ret.append({**obj.__dict__, **clf.__dict__})
+        return ret
+
+    def parse_parameters(self, args):
+        classifier, class_ = True, True
+        for arg in args:
+            if args[arg] is not None:
+                if arg == "classifier":
+                    classifier = Classification.classifier_name == args[arg]
+                if arg == "class":
+                    class_ = Classification.class_name == args[arg]
+        return classifier, class_
+
+
+class ObjectClassificationsResource(Resource):
+    def get(self, oid):
+        pass
+
+
+class ObjectXmatchResource(Resource):
+    def get(self, oid):
+        pass

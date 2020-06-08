@@ -1,8 +1,8 @@
 from db_plugins.db.sql import *
 from db_plugins.db.sql.models import *
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import tempfile
 import unittest
+import pytest
 import json
 import requests
 
@@ -11,140 +11,64 @@ import sys
 
 FILE_PATH = os.path.dirname(os.path.abspath(os.curdir))
 print (FILE_PATH)
-sys.path.append(FILE_PATH)
+sys.path.append(FILE_PATH + "/ztf-api-apf")
 
-from api.sql.resources.AstroObject import *
-from api.sql.resources.Class import *
-from api.sql.resources.Classification import *
-from api.sql.resources.Classifier import *
-from api.sql.resources.Detection import *
-from api.sql.resources.FeaturesObject import *
-from api.sql.resources.MagnitudeStatistics import *
-from api.sql.resources.NonDetection import *
-from api.sql.resources.Taxonomy import *
+from api import app, db
 
-
-engine = create_engine('sqlite:///:memory:')
-Session = sessionmaker()
-Base.metadata.create_all(engine)
-
-url = "http://localhost:8085/"
-
-
-class SQLMethodsTest(unittest.TestCase):
-
-    def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        class_object = Class()
-        self.session.add(class_object)
-        taxonomy = Taxonomy()
-        self.session.add(taxonomy)
-        classifier = Classifier()
-        self.session.add(classifier)
-        xmatch = Xmatch()
-        self.session.add(xmatch)
-        magnitude_statistics = MagnitudeStatistics()
-        self.session.add(magnitude_statistics)
-        classification = Classification()
-        self.session.add(classification)
-        astro_object = AstroObject()
-        self.session.add(astro_object)
-        features_object = FeaturesObject()
-        self.session.add(features_object)
-        detection = Detection()
-        self.session.add(detection)
-        non_detection = NonDetection()
-        self.session.add(non_detection)
-        self.session.commit()
-
-    def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
+def init():
+    db_fd, temp = tempfile.mkstemp()
+    app.config["DATABASE"]["SQL"] = "sqlite:///"+temp
+    app.config["TESTING"] = True
+    client = app.test_client()
+    print(app.config["DATABASE"]["SQL"])
+    # db.init_db()
+    return db_fd, temp, client
 
 
 class ClassTest(unittest.TestCase):
 
-    def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = Class(name="Super Nova", acronym="SN")
-        self.session.commit()
+   def setUp(self):
+       pass
+       
 
-    def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
+   def tearDown(self):
+       pass
 
-    def test_get(self):
-        class_resource = ClassResource()
-        instance = class_resource.get("Super Nova")
+   def test_get(self):
+       pass
 
-        """
-        instance = requests.get(url + "/class/Super Nova")
-        self.assertIsInstance(instance, Class)
-        """
+   def test_get_list(self):
+       pass
 
-    def test_get_list(self):
-        """
-        instances = requests.get(url + "/class")
-        for i in instances:
-            self.assertIsInstance(i, Class)
-        """
 
-"""
 class TaxonomyTest(unittest.TestCase):
 
     def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = Taxonomy(name="test")
-        class_object = Class(name="SN")
-        self.model.classes.append(class_object)
-        classifier = Classifier(name="asdasd")
-        self.model.classifiers.append(classifier)
-        self.session.commit()
+       pass 
 
     def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
+       pass 
 
     def test_get(self):
-        instance = requests.get(url + "/taxonomy/test")
-        self.assertIsInstance(instance, Taxonomy)
+       pass 
 
     def test_get_list(self):
-        instances = requests.get(url + "/taxonomy")
-        for i in instances:
-            self.assertIsInstance(i, Taxonomy)
+        pass
+
 
 class ClassifierTest(unittest.TestCase):
 
     def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = Classifier(name="Late Classifier")
-        self.session.commit()
+        pass
 
     def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
+        pass  
 
     def test_get(self):
-        instance = requests.get(url + "/classifier/Late Classifier")
-        self.assertIsInstance(instance, Classifier)
+        pass
 
     def test_get_list(self):
-        instances = requests.get(url + "/classifier")
-        for i in instances:
-            self.assertIsInstance(i, Classifier)
+        pass
 
 
 class XMatchTest(unittest.TestCase):
@@ -154,145 +78,75 @@ class XMatchTest(unittest.TestCase):
 class MagnitudeStatisticsTest(unittest.TestCase):
 
     def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = MagnitudeStatistics()
-        self.session.commit()
+        pass
 
     def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
+        pass
 
     def test_get(self):
-        instance = requests.get(url + "/magnitude_statistics")
-        self.assertIsInstance(instance, MagnitudeStatistics)
-
+        pass
     def test_get_list(self):
-        instances = requests.get(url + "/magnitude_statistics")
-        for i in instances:
-            self.assertIsInstance(i, MagnitudeStatistics)
-
+        pass
 
 class ClassificationTest(unittest.TestCase):
 
     def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = Classification()
-        self.session.commit()
-
+        pass
     def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
-
+        pass
     def test_get(self):
-        instance = requests.get(url + "/classification")
-        self.assertIsInstance(instance, Classification)
-
+        pass
     def test_get_list(self):
-        instances = requests.get(url + "/classification")
-        for i in instances:
-            self.assertIsInstance(i, Classification)
-
+        pass
 
 class AstroObjectTest(unittest.TestCase):
 
     def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = AstroObject(oid="ZTF1", nobs=1, lastmjd=1.0, meanra=1.0,
-                                 meandec=1.0, sigmara=1.0, sigmadec=1.0, deltajd=1.0, firstmjd=1.0)
-        self.session.commit()
-
+        pass
     def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
+        pass
 
     def test_get(self):
-        instance = requests.get(url + "/astro_object/ZTF1")
-        self.assertIsInstance(instance, AstroObject)
-
+        pass
     def test_get_list(self):
-        instances = requests.get(url + "/astro_object")
-        for i in instances:
-            self.assertIsInstance(i, AstroObject)
+        pass
 
+    def test_get_query(self):
+        pass
 
 class FeaturesObjectTest(unittest.TestCase):
 
     def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = FeaturesObject()
-        self.session.commit()
-
+       pass
     def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
-
+        pass
     def test_get(self):
-        instance = requests.get(url + "/features_object")
-        self.assertIsInstance(instance, FeaturesObject)
-
+        pass
     def test_get_list(self):
-        instances = requests.get(url + "/features_object")
-        for i in instances:
-            self.assertIsInstance(i, FeaturesObject)
+        pass
 
 
 class DetectionTest(unittest.TestCase):
 
     def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = Detection()
-        self.session.commit()
-
+        pass
     def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
+        pass
 
     def test_get(self):
-        instance = requests.get(url + "/detection")
-        self.assertIsInstance(instance, Detection)
-
+        pass
     def test_get_list(self):
-        instances = requests.get(url + "/detection")
-        for i in instances:
-            self.assertIsInstance(i, Detection)
-
+        pass
 
 class NonDetectionTest(unittest.TestCase):
 
     def setUp(self):
-        self.connection = engine.connect()
-        self.trans = self.connection.begin()
-        self.session = Session(bind=self.connection)
-        self.model = NonDetection()
-        self.session.commit()
+        pass
 
     def tearDown(self):
-        self.session.close()
-        self.trans.rollback()
-        self.connection.close()
+        pass
 
     def test_get(self):
-        instance = requests.get(url + "/non_detection")
-        self.assertIsInstance(instance, NonDetection)
-
+        pass
     def test_get_list(self):
-        instances = requests.get(url + "/non_detection")
-        for i in instances:
-            self.assertIsInstance(i, NonDetection)
-
-"""
+        pass

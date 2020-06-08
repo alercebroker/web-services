@@ -18,12 +18,14 @@ sql_api = Api(sql_bp, add_api_spec_resource=False )
 
 sql_api.add_resource(ObjectResource, "/astro_objects/<oid>")
 sql_api.add_resource(ObjectListResource, "/astro_objects")
+sql_api.add_resource(ObjectClassificationsResource, "/astro_objects/<oid>/classifications")
+sql_api.add_resource(ObjectXmatchResource, "/astro_objects/<oid>/xmatch")
 sql_api.add_resource(ClassResource, "/class/<name>")
 sql_api.add_resource(ClassListResource, "/class")
 sql_api.add_resource(ClassificationResource,
                      "/classification/<astro_object>/<classifier_name>")
 sql_api.add_resource(
-    ClassificationListResource, "/classifitacion")
+    ClassificationListResource, "/classification")
 sql_api.add_resource(ClassifierResource, "/classifier/<name>")
 sql_api.add_resource(ClassifierListResource, "/classifier")
 sql_api.add_resource(DetectionResource, "/detection/<candid>")

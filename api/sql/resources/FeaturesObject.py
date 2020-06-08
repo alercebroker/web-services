@@ -1,16 +1,27 @@
 from flask_restful import fields, marshal_with, reqparse, Resource
+from flask_restful_swagger_3 import Schema, swagger
 from flask import jsonify
+
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import FeaturesObject
 from db_plugins.db.sql.serializers import FeaturesSchema
-from .. import session
+from api.db import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], dest='oid')
 
-# Eventually replace serializer with fields and marshal_with
-# Or maybe combine both
-fields = {}
+
+class FeaturesModel(Schema):
+    type = 'object'
+    resource_fields = {
+        "version": fields.String
+    }
+
+
+class FeaturesResponseModel(Schema):
+    type = 'array'
+    items = FeaturesModel
+
 
 class FeaturesResource(Resource):
     def get(self, object_id, features_version):

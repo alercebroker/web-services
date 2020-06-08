@@ -1,24 +1,14 @@
 from flask_restful import fields, marshal_with, reqparse, Resource, marshal
 from flask import jsonify
-from flask_restful_swagger_3 import swagger, Schema
+from flask_restful import fields
+from flask_restful_swagger_3 import Schema, swagger
+
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Xmatch
-from .. import session
+from api.db import session
 
 parser = reqparse.RequestParser()
 parser.add_argument(['oid', 'object_id', 'id'], type="string", dest='oid')
-
-
-class LinksModel(Schema):
-    type = 'object'
-    # properties = {
-    #     "x": {"type": "string"},
-    #     "y": {"type": "string"}
-    # }
-    resource_fields ={
-        "x": fields.String,
-        "y": fields.String
-    }
 
 
 class XmatchModel(Schema):
@@ -30,13 +20,12 @@ class XmatchModel(Schema):
         "dist": fields.Float(attribute="distance"),
         "class_catalog": fields.String,
         "period": fields.Float,
-        "links": fields.Nested(LinksModel.resource_fields),
     }
-    # properties = {
-    #     "oid": {"type": "string"},
-    #     "links": LinksModel
-    # }
 
+
+class XmatchResponseModel(Schema):
+    type = 'array'
+    items = XmatchModel
 
 
 class XmatchResource(Resource):
