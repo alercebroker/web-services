@@ -2,6 +2,7 @@ from flask_restful import fields, marshal_with, reqparse, Resource
 from flask import jsonify
 from flask_restful import fields
 from flask_restful_swagger_3 import Schema, swagger
+
 from db_plugins.db.sql import query
 from db_plugins.db.sql.models import Class
 from db_plugins.db.sql.serializers import ClassSchema
@@ -19,9 +20,8 @@ class ClassResource(Resource):
     """
     Class individual resource
     """
-    """
     @swagger.doc({
-        "summary": "Gets an individual object",
+        "summary": "Gets an individual class",
         "description": "long description",
         "parameters": [
             {
@@ -38,13 +38,14 @@ class ClassResource(Resource):
             '200': {
                 'description': 'Class got',
                 'content': {
-                    "application/json": {}
+                    "application/json": {
+                        'schema': ClassModel
+                    }
                 }
             }
         }
     }
     )
-    """
     def get(self, name):
         result = query(session, Class, None, None, None, Class.name == name)
         serializer = ClassSchema()
@@ -57,21 +58,21 @@ class ClassListResource(Resource):
     """
     Class list resource
     """
-    """
     @swagger.doc({
         "summary": "Gets a list of classes",
         "description": "long description",
         "responses": {
             '200': {
-                'description': 'Class got',
+                'description': 'Classes got',
                 'content': {
-                    "application/json": {}
+                    "application/json": {
+                        'schema': ClassResponseModel
+                    }
                 }
             }
         }
     }
     )
-    """
     def get(self):
         result = query(session, Class, 1, 1)
         serializer = ClassSchema()
