@@ -28,15 +28,11 @@ PROFILE_CONFIG = {
 #   }
 # }
 
-DB_CONFIG = {
-  "PSQL": {
-    "HOST": "18.211.226.219",
-    "DB_NAME": "new_pipeline",
-    "USER": "***REMOVED***",
-    "PASSWORD": "***REMOVED***",
-    "PORT": ***REMOVED***,
-  }
-  # "SQLITE": {
 
-  # }
-}
+host = "18.211.226.219"
+db_name = "new_pipeline"
+user = "***REMOVED***"
+password = "***REMOVED***"
+port = ***REMOVED***
+DATABASE = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
+
