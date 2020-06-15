@@ -1,4 +1,4 @@
-# ztf-api-apf
+# ztf-api-apf [![Build Status](https://travis-ci.org/alercebroker/ztf-api-new.svg?branch=master)](https://travis-ci.org/alercebroker/ztf-api-new) [![codecov](https://codecov.io/gh/alercebroker/ztf-api-new/branch/master/graph/badge.svg)](https://codecov.io/gh/alercebroker/ztf-api-new)
 
 ## Build container
 
