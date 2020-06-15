@@ -1,21 +1,12 @@
 import os
-DB_CONFIG = {
-  "PSQL": {
-    "HOST": os.getenv("ZTF_HOST"),
-    "DB_NAME": os.getenv("ZTF_DATABASE"),
-    "USER": os.getenv("ZTF_USER"),
-    "PASSWORD": os.getenv("ZTF_PASSWORD"),
-    "PORT": ***REMOVED***,
-  }
-}
 
-PROFILE = True
+
+PROFILE = False
 
 PROFILE_CONFIG = {
     "enabled": PROFILE,
     "storage": {
-        "engine": "sqlalchemy",
-        "db_url": f"postgresql://{DB_CONFIG['PSQL']['USER']}:{DB_CONFIG['PSQL']['PASSWORD']}@{DB_CONFIG['PSQL']['HOST']}:{DB_CONFIG['PSQL']['PORT']}/{DB_CONFIG['PSQL']['DB_NAME']}"
+        "engine": "sqlite"
     },
     "basicAuth":{
         "enabled": True,
@@ -26,3 +17,27 @@ PROFILE_CONFIG = {
 	    "^/static/.*"
 	]
 }
+
+# DB_CONFIG = {
+#   "PSQL": {
+#     "HOST": os.getenv("ZTF_HOST"),
+#     "DB_NAME": os.getenv("ZTF_DATABASE"),
+#     "USER": os.getenv("ZTF_USER"),
+#     "PASSWORD": os.getenv("ZTF_PASSWORD"),
+#     "PORT": ***REMOVED***,
+#   }
+# }
+
+
+host = "3.226.200.73"
+db_name = "new_pipeline"
+user = "alerce"
+password = "ETgW4GTdR337gjP7"
+port = ***REMOVED***
+SQLALCHEMY_DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
+DATABASE = {
+    "SQL": {
+        "SQLALCHEMY_DATABASE_URL": SQLALCHEMY_DATABASE_URL
+    }
+}
+
