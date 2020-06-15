@@ -1,2 +1,5 @@
 TESTING = True
-DATABASE = 'sqlite:///:memory:'
+DATABASE = {"SQL": {
+    "SQLALCHEMY_DATABASE_URL": "sqlite:///:memory:"}
+}
+
