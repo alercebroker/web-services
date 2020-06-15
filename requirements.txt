@@ -3,4 +3,5 @@ psycopg2-binary==2.8.3
 flask_cors==3.0.8
 flask_profiler==1.8.1
 flask_restx==0.2.0
+astropy==4.0.1.post1
 -e git+https://git@github.com/alercebroker/db-plugins#egg=db-plugins
