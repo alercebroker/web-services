@@ -104,9 +104,9 @@ def test_conesearch(client):
 
 def test_object_list(client):
     rv = client.get("/objects/")
-    assert isinstance(rv.json, list)
-    assert len(rv.json) == 1
-    assert rv.json[0]["oid"] == "ZTF1"
+    assert isinstance(rv.json["results"], list)
+    assert len(rv.json["results"]) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF1"
 
 
 def test_objects_list_not_found(client):
@@ -120,8 +120,8 @@ def test_date_query_first(client):
     db.session.commit()
     args = {"firstmjd": [0, 1]}
     rv = client.get("/objects/", query_string=args)
-    assert rv.json[0]["oid"] == "ZTF1"
-    assert len(rv.json) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF1"
+    assert len(rv.json["results"]) == 1
 
 
 def test_date_query_first_2(client):
@@ -130,8 +130,8 @@ def test_date_query_first_2(client):
     db.session.commit()
     args = {"firstmjd": [2, 3]}
     rv = client.get("/objects/", query_string=args)
-    assert rv.json[0]["oid"] == "ZTF2"
-    assert len(rv.json) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF2"
+    assert len(rv.json["results"]) == 1
 
 
 def test_date_query_last(client):
@@ -140,8 +140,8 @@ def test_date_query_last(client):
     db.session.commit()
     args = {"lastmjd": [0, 1]}
     rv = client.get("/objects/", query_string=args)
-    assert rv.json[0]["oid"] == "ZTF1"
-    assert len(rv.json) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF1"
+    assert len(rv.json["results"]) == 1
 
 
 def test_date_query_last_2(client):
@@ -150,8 +150,8 @@ def test_date_query_last_2(client):
     db.session.commit()
     args = {"lastmjd": [2, 3]}
     rv = client.get("/objects/", query_string=args)
-    assert rv.json[0]["oid"] == "ZTF2"
-    assert len(rv.json) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF2"
+    assert len(rv.json["results"]) == 1
 
 
 def test_ndet_query(client):
@@ -160,8 +160,8 @@ def test_ndet_query(client):
     db.session.commit()
     args = {"ndet": [0, 1]}
     rv = client.get("/objects/", query_string=args)
-    assert len(rv.json) == 1
-    assert rv.json[0]["oid"] == "ZTF1"
+    assert len(rv.json["results"]) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF1"
 
 
 def test_ndet_query_2(client):
@@ -170,27 +170,27 @@ def test_ndet_query_2(client):
     db.session.commit()
     args = {"ndet": [2, 3]}
     rv = client.get("/objects/", query_string=args)
-    assert len(rv.json) == 1
-    assert rv.json[0]["oid"] == "ZTF2"
+    assert len(rv.json["results"]) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF2"
 
 
 def test_classifier_query(client):
     args = {"classifier": "C1"}
     rv = client.get("/objects/", query_string=args)
-    assert len(rv.json) == 1
-    assert rv.json[0]["oid"] == "ZTF1"
+    assert len(rv.json["results"]) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF1"
 
 def test_class_query(client):
     args = {"class":"Super Nova"}
     rv = client.get("/objects/", query_string=args)
-    assert len(rv.json) == 1
-    assert rv.json[0]["oid"] == "ZTF1"
+    assert len(rv.json["results"]) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF1"
 
 def test_class_classifier_query(client):
     args = {"classifier": "C1", "class": "Super Nova"}
     rv = client.get("/objects/", query_string=args)
-    assert len(rv.json) == 1
-    assert rv.json[0]["oid"] == "ZTF1"
+    assert len(rv.json["results"]) == 1
+    assert rv.json["results"][0]["oid"] == "ZTF1"
 
 def test_class_classifier_query_not_found(client):
     args = {"classifier": "C1", "class": "fake"}
