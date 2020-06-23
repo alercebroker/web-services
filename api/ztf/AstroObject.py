@@ -11,33 +11,78 @@ api = Namespace("objects", description="Objects related operations")
 
 
 object_list_item = api.model(
-    "ObjectListItem",
+    "Object List Item",
     {
         "oid": fields.String(description="Object identifier"),
-        "ndet": fields.String(description="Number of detections"),
+        "ndethist": fields.String(
+            description="Number of spatially-coincident detections falling within 1.5 arcsec going back to beginning of survey; only detections that fell on the same field and readout-channel ID where the input candidate was observed are counted. All raw detections down to a photometric S/N of ~ 3 are included."
+        ),
+        "ncovhist": fields.Integer(
+            description="Number of times input candidate position fell on any field and readout-channel going back to beginning of survey"
+        ),
+        "jdstarthist": fields.Float(
+            description="Earliest Julian date of epoch corresponding to ndethist [days]"
+        ),
+        "jdendhist": fields.Float(
+            description="Latest Julian date of epoch corresponding to ndethist [days]"
+        ),
+        "corrected": fields.Boolean(
+            description="whether the corrected light curve was computed and can be used"
+        ),
+        "stellar": fields.Boolean(
+            description="whether the object is a likely stellar-like source"
+        ),
+        "ndet": fields.Integer(description="total number of detections for the object"),
         "firstmjd": fields.Float(description="First detection's modified julian date"),
         "lastmjd": fields.Float(description="Last detection's modified julian date"),
-        "ra": fields.Float(description="Right Ascention", attribute="meanra"),
-        "dec": fields.Float(description="Declination", attribute="meandec"),
-        "xmatch_class_catalog": fields.String(description="class in other catalog"),
-        "class_name": fields.String(description="ALeRCE's classification"),
-        "probability": fields.Float(description="Probability of being <class_name>"),
+        "deltamjd": fields.Float(
+            description="difference between last and first detection date"
+        ),
+        "meanra": fields.Float(description="Mean Right Ascention"),
+        "meandec": fields.Float(description="Mean Declination"),
+        "sigmara": fields.Float(description="right ascension standard deviation"),
+        "sigmadec": fields.Float(description="declination standard deviation"),
+        "class": fields.String(description="Highest probability class"),
+        "probability": fields.Float(description="Highest probability")
     },
 )
 object_item = api.model(
-    "Object",
+    "Single Object",
     {
         "oid": fields.String(description="Object identifier"),
-        "ndet": fields.String(description="Number of detections"),
+        "ndethist": fields.String(
+            description="Number of spatially-coincident detections falling within 1.5 arcsec going back to beginning of survey; only detections that fell on the same field and readout-channel ID where the input candidate was observed are counted. All raw detections down to a photometric S/N of ~ 3 are included."
+        ),
+        "ncovhist": fields.Integer(
+            description="Number of times input candidate position fell on any field and readout-channel going back to beginning of survey"
+        ),
+        "jdstarthist": fields.Float(
+            description="Earliest Julian date of epoch corresponding to ndethist [days]"
+        ),
+        "jdendhist": fields.Float(
+            description="Latest Julian date of epoch corresponding to ndethist [days]"
+        ),
+        "corrected": fields.Boolean(
+            description="whether the corrected light curve was computed and can be used"
+        ),
+        "stellar": fields.Boolean(
+            description="whether the object is a likely stellar-like source"
+        ),
+        "ndet": fields.Integer(description="total number of detections for the object"),
         "firstmjd": fields.Float(description="First detection's modified julian date"),
         "lastmjd": fields.Float(description="Last detection's modified julian date"),
-        "ra": fields.Float(description="Right Ascention"),
-        "dec": fields.Float(description="Declination"),
+        "deltamjd": fields.Float(
+            description="difference between last and first detection date"
+        ),
+        "meanra": fields.Float(description="Mean Right Ascention"),
+        "meandec": fields.Float(description="Mean Declination"),
+        "sigmara": fields.Float(description="right ascension standard deviation"),
+        "sigmadec": fields.Float(descriptin="declination standard deviation"),
     },
 )
 
 object_list = api.model(
-    "ObjectList",
+    "Paginated Object List",
     {
         "total": fields.Integer(description="Total of objects in query"),
         "page": fields.Integer(description="Current page number"),
@@ -45,7 +90,7 @@ object_list = api.model(
         "has_next": fields.Boolean(description="Whether it has a next page"),
         "prev": fields.Integer(description="Previous page number"),
         "has_prev": fields.Boolean(description="Whether it has previous page"),
-        "results": fields.List(fields.Nested(object_list_item)),
+        "items": fields.List(fields.Nested(object_list_item)),
     },
 )
 
