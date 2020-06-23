@@ -1,9 +1,10 @@
-from db_plugins.db.sql import DatabaseConnection, BaseQuery
+from db_plugins.db import SQLDatabase
+from db_plugins.db.sql import SQLQuery
 
 session_options = {
     "autocommit": False,
     "autoflush": False,
-    "query_cls": BaseQuery,
+    "query_cls": SQLQuery,
 }
 
-db = DatabaseConnection()
+db = SQLDatabase()
