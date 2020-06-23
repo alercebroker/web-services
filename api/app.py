@@ -8,8 +8,7 @@ def create_app(config):
 
     with app.app_context():
         from .db import db, session_options
-        db.start(app.config["DATABASE"]["SQL"], session_options=session_options)
-        db.create_scoped_session()
+        db.connect(config=app.config["DATABASE"]["SQL"], session_options=session_options, use_scoped=True)
         def cleanup(e):
             db.session.remove()
             return e
