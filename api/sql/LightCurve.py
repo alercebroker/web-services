@@ -67,7 +67,10 @@ class LightCurve(Resource):
         Gets detections and non detections
         """
         result = db.query(AstroObject).filter(AstroObject.oid == id).one_or_none()
-        return result.get_lightcurve()
+        if result:
+            return result.get_lightcurve()
+        else:
+            raise NotFound("Object not found")
 
 
 @api.route("/<id>/detections")
@@ -82,7 +85,10 @@ class Detections(Resource):
         Just the detections
         """
         result = db.query(AstroObject).filter(AstroObject.oid == id).one_or_none()
-        return result.detections
+        if result:
+            return result.detections
+        else:
+            raise NotFound("Object not found")
 
 
 @api.route("/<id>/non_detections")
@@ -97,4 +103,7 @@ class NonDetections(Resource):
         Just non detections
         """
         result = db.query(AstroObject).filter(AstroObject.oid == id).one_or_none()
-        return result.non_detections
+        if result:
+            return result.non_detections
+        else:
+            raise NotFound("Object not found")
