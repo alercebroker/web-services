@@ -1,5 +1,4 @@
-from db_plugins.db import SQLDatabase
-from db_plugins.db.sql import SQLQuery
+from db_plugins.db.sql import SQLQuery, SQLConnection
 
 session_options = {
     "autocommit": False,
@@ -7,4 +6,4 @@ session_options = {
     "query_cls": SQLQuery,
 }
 
-db = SQLDatabase()
+db = SQLConnection()
