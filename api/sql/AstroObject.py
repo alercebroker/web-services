@@ -207,30 +207,30 @@ class ObjectList(Resource):
         params = self.parse_parameters(args)
         conesearch_args = self._parse_conesearch_args(args)
         ret = []
-        query = self._get_objects(params, conesearch_args).paginate(
+        page = self._get_objects(params, conesearch_args).paginate(
             args["page"], args["page_size"], args["count"]
         )
-        for obj, clf in query.items:
+        for obj, clf in page.items:
             obj = {**obj.__dict__}
             clf = {**clf.__dict__} if clf else {}
             ret.append({**obj, **clf})
 
         if len(ret):
             return {
-                "total": query.total,
-                "page": query.page,
-                "next": query.next_num,
-                "has_next": query.has_next,
-                "prev": query.prev_num,
-                "has_prev": query.has_prev,
-                "results": ret,
+                "total": page.total,
+                "page": page.page,
+                "next": page.next_num,
+                "has_next": page.has_next,
+                "prev": page.prev_num,
+                "has_prev": page.has_prev,
+                "items": ret,
             }
         else:
             raise NotFound("Objects not found")
 
     def _get_objects(self, params, conesearch_args):
         return (
-            db.session.query(AstroObject, Classification)
+            db.query(AstroObject, Classification)
             .outerjoin(AstroObject.classifications)
             .filter(*params)
             .params(**conesearch_args)
@@ -303,7 +303,7 @@ class Object(Resource):
     def get(self, id):
         """Fetch an object given its identifier"""
         result = (
-            db.session.query(AstroObject).filter(AstroObject.oid == id).one_or_none()
+            db.query(AstroObject).filter(AstroObject.oid == id).one_or_none()
         )
         if result:
             return result
