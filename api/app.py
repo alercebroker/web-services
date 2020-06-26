@@ -1,8 +1,9 @@
 from flask import Flask
 from flask_restx import Api
 
-from .sql.AstroObject import api as astro_object
-from .sql.LightCurve import api as light_curve
+from .sql.AstroObject.AstroObject import api as astro_object
+from .sql.LightCurve.LightCurve import api as light_curve
+from .sql.Magstats.Magstats import api as magstats
 
 
 ztf_api = Api(
@@ -13,6 +14,7 @@ ztf_api = Api(
 
 ztf_api.add_namespace(astro_object, path="/objects")
 ztf_api.add_namespace(light_curve, path="/objects")
+ztf_api.add_namespace(magstats, path="/objects")
 
 def create_app(config):
     app = Flask(__name__)
