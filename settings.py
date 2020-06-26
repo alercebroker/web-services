@@ -31,8 +31,8 @@ PROFILE_CONFIG = {
 
 host = "3.226.200.73"
 db_name = "new_pipeline"
-user = "alerce"
-password = "ETgW4GTdR337gjP7"
+user = "***REMOVED***"
+password = "***REMOVED***"
 port = ***REMOVED***
 SQLALCHEMY_DATABASE_URL = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
 DATABASE = {
