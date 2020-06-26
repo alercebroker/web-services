@@ -31,8 +31,9 @@ jobs:
       run: |
         cd tests
         coverage run --source ../api -m pytest
+        coverage xml
     - name: Codecov
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.xml
+        file: ./tests/coverage.xml
