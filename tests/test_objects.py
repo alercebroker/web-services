@@ -1,7 +1,7 @@
 import sys
 
 sys.path.append("..")
-from api.sql import AstroObject as AstroObjectResource
+from api.sql.AstroObject import AstroObject as AstroObjectResource
 from fixtures import client, db, BaseQuery, models
 
 
