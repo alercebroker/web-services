@@ -1,4 +1,4 @@
-# ztf-api-apf ![](https://github.com/alercebroker/ztf-api-new/Tests/badge.svg) [![codecov](https://codecov.io/gh/alercebroker/ztf-api-new/branch/master/graph/badge.svg)](https://codecov.io/gh/alercebroker/ztf-api-new)[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+# ztf-api-apf ![](https://github.com/alercebroker/ztf-api-new/workflows/Tests/badge.svg) [![codecov](https://codecov.io/gh/alercebroker/ztf-api-new/branch/master/graph/badge.svg)](https://codecov.io/gh/alercebroker/ztf-api-new)[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Build container
 
