@@ -7,6 +7,6 @@ install:
 before_script:
   - cd tests
 script:
-  - coverage run --source api -m pytest tests
+  - coverage run --source ../api -m pytest
 
 after_success: bash <(curl -s https://codecov.io/bash)
