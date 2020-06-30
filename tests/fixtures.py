@@ -34,16 +34,18 @@ def client():
                 firstmjd=1.0,
             )
             model.xmatches.append(models.Xmatch(catalog_id="C1", catalog_oid="O1"))
-            model.magnitude_statistics = models.MagnitudeStatistics(
-                fid=1,
-                magnitude_type="psf",
-                mean=1.0,
-                median=1.0,
-                max_mag=1.0,
-                min_mag=1.0,
-                sigma=1.0,
-                last=1.0,
-                first=1.0,
+            model.magnitude_statistics.append(
+                models.MagnitudeStatistics(
+                    fid=1,
+                    magnitude_type="psf",
+                    mean=1.0,
+                    median=1.0,
+                    max_mag=1.0,
+                    min_mag=1.0,
+                    sigma=1.0,
+                    last=1.0,
+                    first=1.0,
+                )
             )
             model.classifications.append(
                 models.Classification(

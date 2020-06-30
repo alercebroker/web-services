@@ -12,7 +12,7 @@ api.models[classification_model.name] = classification_model
 @api.param("id", "The object's identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
-class MagStats(Resource):
+class Probabilities(Resource):
     @api.doc("probabilities")
     @api.marshal_list_with(classification_model)
     def get(self, id):
