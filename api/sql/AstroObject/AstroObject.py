@@ -27,9 +27,11 @@ class ObjectList(Resource):
         params = self.parse_parameters(args)
         conesearch_args = self._parse_conesearch_args(args)
         ret = []
-        page = self._get_objects(params, conesearch_args).paginate(
-            args["page"], args["page_size"], args["count"]
-        )
+        query = self._get_objects(params, conesearch_args)
+        order_statement = self._parse_order_args(query, args)
+        query = query.order_by(order_statement)
+        page = query.paginate(args["page"], args["page_size"], args["count"])
+
         for obj, clf in page.items:
             obj = {**obj.__dict__}
             clf = {**clf.__dict__} if clf else {}
@@ -57,8 +59,33 @@ class ObjectList(Resource):
         )
 
     def parse_parameters(self, args):
-        classifier, class_, ndet, firstmjd, lastmjd, probability, conesearch = (
-            True,
+        classifier, class_, ndet, firstmjd, lastmjd, probability = self._parse_filters(
+            args
+        )
+        conesearch = self._create_conesearch_statement(args)
+        return classifier, class_, ndet, firstmjd, lastmjd, probability, conesearch
+
+    def _parse_order_args(self, query, args):
+        statement = None
+        cols = query.column_descriptions
+        order_by = args["order_by"]
+        if order_by:
+            for col in cols:
+                model = col["type"]
+                attr = getattr(model, order_by, None)
+                if attr:
+                    statement = attr
+                    break
+            order_mode = args["order_mode"]
+            if order_mode:
+                if order_mode == "ASC":
+                    statement = attr.asc()
+                if order_mode == "DESC":
+                    statement = attr.desc()
+        return statement
+
+    def _parse_filters(self, args):
+        classifier, class_, ndet, firstmjd, lastmjd, probability = (
             True,
             True,
             True,
@@ -66,30 +93,28 @@ class ObjectList(Resource):
             True,
             True,
         )
-        for arg in args:
-            if args[arg] is not None:
-                if arg == "classifier":
-                    classifier = models.Classification.classifier_name == args[arg]
-                if arg == "class":
-                    class_ = models.Classification.class_name == args[arg]
-                if arg == "ndet":
-                    ndet = models.AstroObject.nobs >= args[arg][0]
-                    if len(args[arg]) > 1:
-                        ndet = ndet & (models.AstroObject.nobs <= args[arg][1])
-                if arg == "firstmjd":
-                    firstmjd = models.AstroObject.firstmjd >= args[arg][0]
-                    if len(args[arg]) > 1:
-                        firstmjd = firstmjd & (
-                            models.AstroObject.firstmjd <= args[arg][1]
-                        )
-                if arg == "lastmjd":
-                    lastmjd = models.AstroObject.lastmjd >= args[arg][0]
-                    if len(args[arg]) > 1:
-                        lastmjd = lastmjd & (models.AstroObject.lastmjd <= args[arg][1])
-                if arg == "probability":
-                    probability = models.Classification.probability >= args[arg]
-        conesearch = self._create_conesearch_statement(args)
-        return classifier, class_, ndet, firstmjd, lastmjd, probability, conesearch
+        if args["classifier"]:
+            classifier = models.Classification.classifier_name == args["classifier"]
+        if args["class"]:
+            class_ = models.Classification.class_name == args["class"]
+        if args["ndet"]:
+            ndet = models.AstroObject.nobs >= args["ndet"][0]
+            if len(args["ndet"]) > 1:
+                ndet = ndet & (models.AstroObject.nobs <= args["ndet"][1])
+        if args["firstmjd"]:
+            firstmjd = models.AstroObject.firstmjd >= args["firstmjd"][0]
+            if len(args["firstmjd"]) > 1:
+                firstmjd = firstmjd & (
+                    models.AstroObject.firstmjd <= args["firstmjd"][1]
+                )
+        if args["lastmjd"]:
+            lastmjd = models.AstroObject.lastmjd >= args["lastmjd"][0]
+            if len(args["lastmjd"]) > 1:
+                lastmjd = lastmjd & (models.AstroObject.lastmjd <= args["lastmjd"][1])
+        if args["probability"]:
+            probability = models.Classification.probability >= args["probability"]
+
+        return classifier, class_, ndet, firstmjd, lastmjd, probability
 
     def _create_conesearch_statement(self, args):
         try:
