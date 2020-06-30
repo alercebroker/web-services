@@ -3,18 +3,65 @@ import sys
 sys.path.append("..")
 from api.sql.AstroObject import AstroObject as AstroObjectResource
 from fixtures import client, db, BaseQuery, models
+from unittest.mock import patch
 
 
 def test_conesearch(client):
     resource = AstroObjectResource.ObjectList()
     args = {"ra": 1, "dec": 1, "radius": 0.1}
-    params = resource.parse_parameters(args)
-    conesearch_args = resource._parse_conesearch_args(args)
-    query = resource._get_objects(params, conesearch_args)
-    assert isinstance(query, BaseQuery)
-    assert "q3c_radial_query(meanra, meandec,:ra, :dec, :radius)" in str(
-        query.statement
+    params = resource._parse_conesearch_args(args)
+    statement = resource._create_conesearch_statement(params)
+    assert "q3c_radial_query(meanra, meandec,:ra, :dec, :radius)" in str(statement)
+
+
+def test_order_by_desc(client):
+    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    db.session.add(obj)
+    db.session.commit()
+    args = {"order_by": "firstmjd", "order_mode": "DESC"}
+    r = client.get("/objects/", query_string=args)
+    assert len(r.json["items"]) == 2
+    assert r.json["items"][0]["oid"] == "ZTF2"
+
+
+def test_order_by_asc(client):
+    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    db.session.add(obj)
+    db.session.commit()
+    args = {"order_by": "firstmjd", "order_mode": "ASC"}
+    r = client.get("/objects/", query_string=args)
+    assert len(r.json["items"]) == 2
+    assert r.json["items"][0]["oid"] == "ZTF1"
+
+
+def test_order_by_class_attribute_desc(client):
+    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    classification = obj.classifications.append(
+        models.Classification(
+            class_name="Super Nova", probability=0.5, classifier_name="C1"
+        )
     )
+    db.session.add(obj)
+    db.session.commit()
+    args = {"order_by": "probability", "order_mode": "DESC"}
+    r = client.get("/objects/", query_string=args)
+    assert len(r.json["items"]) == 2
+    assert r.json["items"][0]["oid"] == "ZTF1"
+
+
+def test_order_by_class_attribute_asc(client):
+    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    classification = obj.classifications.append(
+        models.Classification(
+            class_name="Super Nova", probability=0.5, classifier_name="C1"
+        )
+    )
+    db.session.add(obj)
+    db.session.commit()
+    args = {"order_by": "probability", "order_mode": "ASC"}
+    r = client.get("/objects/", query_string=args)
+    assert len(r.json["items"]) == 2
+    assert r.json["items"][0]["oid"] == "ZTF2"
 
 
 def test_object_list(client):
