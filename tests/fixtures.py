@@ -79,10 +79,5 @@ def client():
             db.session.add(model)
             db.session.commit()
 
-            def cleanup(e):
-                db.session.remove()
-                return e
-
-            app.teardown_appcontext(cleanup)
         yield client
         db.drop_db()

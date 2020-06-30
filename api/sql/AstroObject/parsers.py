@@ -1,4 +1,11 @@
 from flask_restx import reqparse
+from db_plugins.db.sql import models
+
+columns = []
+for c in models.AstroObject.__table__.columns:
+    columns.append(str(c).split(".")[1])
+for c in models.Classification.__table__.columns:
+    columns.append(str(c).split(".")[1])
 
 
 def str2bool(v):
@@ -16,7 +23,9 @@ parser = reqparse.RequestParser()
 parser.add_argument(
     "classifier", type=str, dest="classifier", location="args", help="classifier name",
 )
-parser.add_argument("class", type=str, dest="class", location="args", help="class name")
+parser.add_argument(
+    "class", type=str, dest="class", location="args", help="class name",
+)
 parser.add_argument(
     "ndet",
     type=int,
@@ -88,4 +97,20 @@ parser.add_argument(
     dest="count",
     location="args",
     help="Whether to count total objects or not.",
+)
+parser.add_argument(
+    "order_by",
+    type=str,
+    dest="order_by",
+    location="args",
+    help="Column used for ordering",
+    choices=columns,
+)
+parser.add_argument(
+    "order_mode",
+    type=str,
+    dest="order_mode",
+    location="args",
+    choices=["ASC", "DESC"],
+    help="Ordering could be ascendent or descendent",
 )
