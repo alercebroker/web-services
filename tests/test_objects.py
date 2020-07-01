@@ -9,7 +9,7 @@ from unittest.mock import patch
 def test_conesearch(client):
     resource = AstroObjectResource.ObjectList()
     args = {"ra": 1, "dec": 1, "radius": 0.1}
-    params = resource._parse_conesearch_args(args)
+    params = resource._convert_conesearch_args(args)
     statement = resource._create_conesearch_statement(params)
     assert "q3c_radial_query(meanra, meandec,:ra, :dec, :radius)" in str(statement)
 
