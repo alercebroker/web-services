@@ -4,11 +4,12 @@ from .sql.AstroObject.AstroObject import api as astro_object
 from .sql.LightCurve.LightCurve import api as light_curve
 from .sql.Magstats.Magstats import api as magstats
 from .sql.Probabilities.probabilities import api as probabilities
-
+from flask_cors import CORS
 
 def create_app(config):
     app = Flask(__name__)
     app.config.from_object(config)
+    CORS(app)
 
     with app.app_context():
         from .db import db, session_options 
