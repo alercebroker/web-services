@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 from db_plugins.db.sql import models
 from ...sql.AstroObject.models import object_list_item, object_list, object_item
-from ...sql.AstroObject.parsers import parser
+from ...sql.AstroObject.parsers import create_parsers
 from sqlalchemy import text
 from astropy import units
 import argparse
@@ -13,24 +13,33 @@ api.models[object_list_item.name] = object_list_item
 api.models[object_list.name] = object_list
 api.models[object_item.name] = object_item
 
+filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
 
 @api.route("/")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectList(Resource):
     @api.doc("list_object")
-    @api.expect(parser)
+    @api.expect(filter_parser,conesearch_parser, pagination_parser, order_parser)
     @api.marshal_with(object_list)
     def get(self):
         """List all objects by given filters"""
-        args = parser.parse_args()
-        params = self.parse_parameters(args)
-        conesearch_args = self._parse_conesearch_args(args)
+        filter_args = filter_parser.parse_args()
+        conesearch_args = conesearch_parser.parse_args()
+        pagination_args = pagination_parser.parse_args()
+        order_args = order_parser.parse_args()
+        filters = self._parse_filters(filter_args)
+        conesearch_args = self._convert_conesearch_args(conesearch_args)
+        conesearch = self._create_conesearch_statement(conesearch_args)
         ret = []
-        query = self._get_objects(params, conesearch_args)
-        order_statement = self._parse_order_args(query, args)
+        query = self._get_objects(filters, conesearch, conesearch_args)
+        order_statement = self._create_order_statement(query, order_args)
         query = query.order_by(order_statement)
-        page = query.paginate(args["page"], args["page_size"], args["count"])
+        page = query.paginate(
+            pagination_args["page"],
+            pagination_args["page_size"],
+            pagination_args["count"],
+        )
 
         for obj, clf in page.items:
             obj = {**obj.__dict__}
@@ -50,22 +59,15 @@ class ObjectList(Resource):
         else:
             raise NotFound("Objects not found")
 
-    def _get_objects(self, params, conesearch_args):
+    def _get_objects(self, filters, conesearch, conesearch_args):
         return (
             db.query(models.AstroObject, models.Classification)
             .outerjoin(models.AstroObject.classifications)
-            .filter(*params)
+            .filter(*filters)
             .params(**conesearch_args)
         )
 
-    def parse_parameters(self, args):
-        classifier, class_, ndet, firstmjd, lastmjd, probability = self._parse_filters(
-            args
-        )
-        conesearch = self._create_conesearch_statement(args)
-        return classifier, class_, ndet, firstmjd, lastmjd, probability, conesearch
-
-    def _parse_order_args(self, query, args):
+    def _create_order_statement(self, query, args):
         statement = None
         cols = query.column_descriptions
         order_by = args["order_by"]
@@ -127,7 +129,7 @@ class ObjectList(Resource):
         else:
             return True
 
-    def _parse_conesearch_args(self, args):
+    def _convert_conesearch_args(self, args):
         try:
             ra, dec, radius = args["ra"], args["dec"], args["radius"]
         except KeyError:
