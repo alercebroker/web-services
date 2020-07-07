@@ -113,9 +113,9 @@ class ObjectList(Resource):
         if args["class"]:
             class_ = models.Classification.class_name == args["class"]
         if args["ndet"]:
-            ndet = models.Object.nobs >= args["ndet"][0]
+            ndet = models.Object.ndet >= args["ndet"][0]
             if len(args["ndet"]) > 1:
-                ndet = ndet & (models.Object.nobs <= args["ndet"][1])
+                ndet = ndet & (models.Object.ndet <= args["ndet"][1])
         if args["firstmjd"]:
             firstmjd = models.Object.firstmjd >= args["firstmjd"][0]
             if len(args["firstmjd"]) > 1:
