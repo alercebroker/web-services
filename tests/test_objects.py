@@ -117,7 +117,7 @@ def test_date_query_last_2(client):
 
 
 def test_ndet_query(client):
-    obj = models.Object(oid="ZTF2", nobs=2)
+    obj = models.Object(oid="ZTF2", ndet=2)
     db.session.add(obj)
     db.session.commit()
     args = {"ndet": [0, 1]}
@@ -127,7 +127,7 @@ def test_ndet_query(client):
 
 
 def test_ndet_query_2(client):
-    obj = models.Object(oid="ZTF2", nobs=2)
+    obj = models.Object(oid="ZTF2", ndet=2)
     db.session.add(obj)
     db.session.commit()
     args = {"ndet": [2, 3]}

@@ -24,27 +24,26 @@ def client():
             taxonomy.classifiers.append(classifier)
             model = models.Object(
                 oid="ZTF1",
-                nobs=1,
+                ndet=1,
                 lastmjd=1.0,
                 meanra=1.0,
                 meandec=1.0,
                 sigmara=1.0,
                 sigmadec=1.0,
-                deltajd=1.0,
+                deltamjd=1.0,
                 firstmjd=1.0,
             )
             model.xmatches.append(models.Xmatch(catalog_id="C1", catalog_oid="O1"))
             model.magnitude_statistics.append(
                 models.MagnitudeStatistics(
                     fid=1,
-                    magnitude_type="psf",
-                    mean=1.0,
-                    median=1.0,
-                    max_mag=1.0,
-                    min_mag=1.0,
-                    sigma=1.0,
-                    last=1.0,
-                    first=1.0,
+                    magmean=1.0,
+                    magmedian=1.0,
+                    magmax=1.0,
+                    magmin=1.0,
+                    magsigma=1.0,
+                    lastmjd=1.0,
+                    firstmjd=1.0,
                 )
             )
             model.classifications.append(
@@ -53,7 +52,9 @@ def client():
                 )
             )
 
-            features_object = models.FeaturesObject(data=json.loads('{"test":"test"}'))
+            features_object = models.FeaturesObject(
+                features_version="v1", data=json.loads('{"test":"test"}')
+            )
             features_object.features = models.Features(version="V1")
             model.features.append(features_object)
             model.detections.append(
@@ -68,7 +69,6 @@ def client():
                     magpsf=1,
                     sigmapsf=1,
                     sigmagap=1,
-                    alert=json.loads('{"test":"test"}'),
                 )
             )
             model.non_detections.append(
