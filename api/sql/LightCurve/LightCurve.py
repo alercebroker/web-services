@@ -28,8 +28,8 @@ class LightCurve(Resource):
         Gets detections and non detections
         """
         obj = (
-            db.query(models.AstroObject)
-            .filter(models.AstroObject.oid == id)
+            db.query(models.Object)
+            .filter(models.Object.oid == id)
             .one_or_none()
         )
         if obj:
@@ -53,8 +53,8 @@ class ObjectDetections(Resource):
         Just the detections
         """
         result = (
-            db.query(models.AstroObject)
-            .filter(models.AstroObject.oid == id)
+            db.query(models.Object)
+            .filter(models.Object.oid == id)
             .one_or_none()
         )
         if result:
@@ -75,8 +75,8 @@ class NonDetections(Resource):
         Just non detections
         """
         result = (
-            db.query(models.AstroObject)
-            .filter(models.AstroObject.oid == id)
+            db.query(models.Object)
+            .filter(models.Object.oid == id)
             .one_or_none()
         )
         if result:

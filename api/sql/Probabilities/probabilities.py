@@ -16,7 +16,7 @@ class Probabilities(Resource):
     @api.doc("probabilities")
     @api.marshal_list_with(classification_model)
     def get(self, id):
-        obj = db.query(models.AstroObject ).find_one(filter_by={"oid":id})
+        obj = db.query(models.Object ).find_one(filter_by={"oid":id})
         if obj:
             return obj.classifications
         else:

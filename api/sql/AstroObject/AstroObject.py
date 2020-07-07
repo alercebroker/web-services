@@ -74,8 +74,8 @@ class ObjectList(Resource):
 
     def _get_objects(self, filters, conesearch, conesearch_args):
         return (
-            db.query(models.AstroObject, models.Classification)
-            .outerjoin(models.AstroObject.classifications)
+            db.query(models.Object, models.Classification)
+            .outerjoin(models.Object.classifications)
             .filter(*filters)
             .params(**conesearch_args)
         )
@@ -113,19 +113,19 @@ class ObjectList(Resource):
         if args["class"]:
             class_ = models.Classification.class_name == args["class"]
         if args["ndet"]:
-            ndet = models.AstroObject.nobs >= args["ndet"][0]
+            ndet = models.Object.nobs >= args["ndet"][0]
             if len(args["ndet"]) > 1:
-                ndet = ndet & (models.AstroObject.nobs <= args["ndet"][1])
+                ndet = ndet & (models.Object.nobs <= args["ndet"][1])
         if args["firstmjd"]:
-            firstmjd = models.AstroObject.firstmjd >= args["firstmjd"][0]
+            firstmjd = models.Object.firstmjd >= args["firstmjd"][0]
             if len(args["firstmjd"]) > 1:
                 firstmjd = firstmjd & (
-                    models.AstroObject.firstmjd <= args["firstmjd"][1]
+                    models.Object.firstmjd <= args["firstmjd"][1]
                 )
         if args["lastmjd"]:
-            lastmjd = models.AstroObject.lastmjd >= args["lastmjd"][0]
+            lastmjd = models.Object.lastmjd >= args["lastmjd"][0]
             if len(args["lastmjd"]) > 1:
-                lastmjd = lastmjd & (models.AstroObject.lastmjd <= args["lastmjd"][1])
+                lastmjd = lastmjd & (models.Object.lastmjd <= args["lastmjd"][1])
         if args["probability"]:
             probability = models.Classification.probability >= args["probability"]
 
@@ -165,8 +165,8 @@ class Object(Resource):
     def get(self, id):
         """Fetch an object given its identifier"""
         result = (
-            db.query(models.AstroObject)
-            .filter(models.AstroObject.oid == id)
+            db.query(models.Object)
+            .filter(models.Object.oid == id)
             .one_or_none()
         )
         if result:

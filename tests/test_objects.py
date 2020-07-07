@@ -15,7 +15,7 @@ def test_conesearch(client):
 
 
 def test_order_by_desc(client):
-    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    obj = models.Object(oid="ZTF2", firstmjd=2.0)
     db.session.add(obj)
     db.session.commit()
     args = {"order_by": "firstmjd", "order_mode": "DESC"}
@@ -25,7 +25,7 @@ def test_order_by_desc(client):
 
 
 def test_order_by_asc(client):
-    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    obj = models.Object(oid="ZTF2", firstmjd=2.0)
     db.session.add(obj)
     db.session.commit()
     args = {"order_by": "firstmjd", "order_mode": "ASC"}
@@ -35,7 +35,7 @@ def test_order_by_asc(client):
 
 
 def test_order_by_class_attribute_desc(client):
-    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    obj = models.Object(oid="ZTF2", firstmjd=2.0)
     classification = obj.classifications.append(
         models.Classification(
             class_name="Super Nova", probability=0.5, classifier_name="C1"
@@ -50,7 +50,7 @@ def test_order_by_class_attribute_desc(client):
 
 
 def test_order_by_class_attribute_asc(client):
-    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    obj = models.Object(oid="ZTF2", firstmjd=2.0)
     classification = obj.classifications.append(
         models.Classification(
             class_name="Super Nova", probability=0.5, classifier_name="C1"
@@ -77,7 +77,7 @@ def test_objects_list_not_found(client):
 
 
 def test_date_query_first(client):
-    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    obj = models.Object(oid="ZTF2", firstmjd=2.0)
     db.session.add(obj)
     db.session.commit()
     args = {"firstmjd": [0, 1]}
@@ -87,7 +87,7 @@ def test_date_query_first(client):
 
 
 def test_date_query_first_2(client):
-    obj = models.AstroObject(oid="ZTF2", firstmjd=2.0)
+    obj = models.Object(oid="ZTF2", firstmjd=2.0)
     db.session.add(obj)
     db.session.commit()
     args = {"firstmjd": [2, 3]}
@@ -97,7 +97,7 @@ def test_date_query_first_2(client):
 
 
 def test_date_query_last(client):
-    obj = models.AstroObject(oid="ZTF2", lastmjd=2.0)
+    obj = models.Object(oid="ZTF2", lastmjd=2.0)
     db.session.add(obj)
     db.session.commit()
     args = {"lastmjd": [0, 1]}
@@ -107,7 +107,7 @@ def test_date_query_last(client):
 
 
 def test_date_query_last_2(client):
-    obj = models.AstroObject(oid="ZTF2", lastmjd=2.0)
+    obj = models.Object(oid="ZTF2", lastmjd=2.0)
     db.session.add(obj)
     db.session.commit()
     args = {"lastmjd": [2, 3]}
@@ -117,7 +117,7 @@ def test_date_query_last_2(client):
 
 
 def test_ndet_query(client):
-    obj = models.AstroObject(oid="ZTF2", nobs=2)
+    obj = models.Object(oid="ZTF2", nobs=2)
     db.session.add(obj)
     db.session.commit()
     args = {"ndet": [0, 1]}
@@ -127,7 +127,7 @@ def test_ndet_query(client):
 
 
 def test_ndet_query_2(client):
-    obj = models.AstroObject(oid="ZTF2", nobs=2)
+    obj = models.Object(oid="ZTF2", nobs=2)
     db.session.add(obj)
     db.session.commit()
     args = {"ndet": [2, 3]}

@@ -22,7 +22,7 @@ def client():
             class_.taxonomies.append(taxonomy)
             classifier = models.Classifier(name="C1")
             taxonomy.classifiers.append(classifier)
-            model = models.AstroObject(
+            model = models.Object(
                 oid="ZTF1",
                 nobs=1,
                 lastmjd=1.0,
