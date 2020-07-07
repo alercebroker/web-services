@@ -5,7 +5,7 @@ from .models import magstats_model
 from werkzeug.exceptions import NotFound
 from ...db import db
 
-api = Namespace("magstats", description="Magnitude Statistics related operations")
+api = Namespace("magnitude statistics", description="Magnitude Statistics related operations")
 api.models[magstats_model.name] = magstats_model
 
 @api.route("/<id>/magstats")
@@ -16,7 +16,7 @@ class MagStats(Resource):
     @api.doc("magstats")
     @api.marshal_list_with(magstats_model)
     def get(self, id):
-        obj = db.query(models.AstroObject).filter(models.AstroObject.oid == id).one_or_none()
+        obj = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
         if obj:
             return obj.magnitude_statistics
         else:
