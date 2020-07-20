@@ -1,7 +1,7 @@
 from flask_restx import Namespace, Resource
 from db_plugins.db.sql import models
-from ...sql.AstroObject.models import object_list_item, object_list, object_item
-from ...sql.AstroObject.parsers import create_parsers
+from .models import object_list_item, object_list, object_item
+from .parsers import create_parsers
 from sqlalchemy import text
 from astropy import units
 import argparse
