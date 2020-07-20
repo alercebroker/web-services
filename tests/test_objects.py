@@ -1,10 +1,8 @@
 import sys
 
 sys.path.append("..")
-from api.sql.AstroObject import AstroObject as AstroObjectResource
+from api.sql.astro_object import astro_object as AstroObjectResource
 from fixtures import client, db, BaseQuery, models
-from unittest.mock import patch
-
 
 def test_conesearch(client):
     resource = AstroObjectResource.ObjectList()
