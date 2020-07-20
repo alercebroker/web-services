@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource
 from flask_restx import reqparse
-from ...sql.LightCurve.models import (
+from .models import (
     light_curve_model,
     detection_model,
     non_detection_model,
