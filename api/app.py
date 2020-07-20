@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_restx import Api
-from .sql.AstroObject.AstroObject import api as astro_object
-from .sql.LightCurve.LightCurve import api as light_curve
-from .sql.Magstats.Magstats import api as magstats
-from .sql.Probabilities.probabilities import api as probabilities
+from .sql.astro_object.astro_object import api as astro_object
+from .sql.light_curve.light_curve import api as light_curve
+from .sql.magstats.magstats import api as magstats
+from .sql.probabilities.probabilities import api as probabilities
+from .sql.classes.classes import api as classes
+from .sql.classifier.classifier import api as classifier
 from flask_cors import CORS
 
 def create_app(config):
@@ -30,6 +32,8 @@ def create_app(config):
         ztf_api.add_namespace(light_curve, path="/objects")
         ztf_api.add_namespace(magstats, path="/objects")
         ztf_api.add_namespace(probabilities, path="/objects")
+        # ztf_api.add_namespace(classes, path="/classes")
+        ztf_api.add_namespace(classifier, path="/classifiers")
         ztf_api.init_app(app)
 
         def cleanup(e):
