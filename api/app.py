@@ -32,7 +32,7 @@ def create_app(config):
         ztf_api.add_namespace(light_curve, path="/objects")
         ztf_api.add_namespace(magstats, path="/objects")
         ztf_api.add_namespace(probabilities, path="/objects")
-        # ztf_api.add_namespace(classes, path="/classes")
+        ztf_api.add_namespace(classes, path="/classes")
         ztf_api.add_namespace(classifier, path="/classifiers")
         ztf_api.init_app(app)
 
