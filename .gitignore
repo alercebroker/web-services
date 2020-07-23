@@ -1,4 +1,4 @@
- 
+
 .idea/
 __pycache__/
 tests/tests.out
@@ -6,3 +6,4 @@ tests/tests.out
 .vscode/
 .coverage
 htmlcov/
+src
