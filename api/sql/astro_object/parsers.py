@@ -4,7 +4,7 @@ from db_plugins.db.sql import models
 columns = []
 for c in models.Object.__table__.columns:
     columns.append(str(c).split(".")[1])
-for c in models.Classification.__table__.columns:
+for c in models.Probability.__table__.columns:
     columns.append(str(c).split(".")[1])
 
 
