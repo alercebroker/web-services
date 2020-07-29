@@ -11,12 +11,36 @@ from ...db import db
 api = Namespace("features", description="Features related operations")
 api.models[feature_model.name] = feature_model
 
-@api.route("/<id>/<name>")
+@api.route("/features/<id>")
+@api.param("id", "The object's identifier")
+@api.response(200, "Success")
+@api.response(404, "Not found")
+class Features(Resource):
+    @api.doc("features")
+    @api.expect(fid_parser)
+    @api.marshal_list_with(feature_model)
+    def get(self, id):
+        """
+        Gets list of all features.
+        """
+        args = fid_parser.parse_args()
+        obj = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
+        if obj:
+            q = db.query(models.Feature).filter(models.Feature.oid == obj.oid)
+            if args.fid is not None:
+                q = q.filter(models.Feature.fid == args.fid)
+            if args.version is not None:
+                q = q.filter(models.Feature.version == args.version)
+            return q.all()
+        else:
+            raise NotFound("Object not found")
+
+@api.route("/features/<id>/<name>")
 @api.param("id", "The object's identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class Feature(Resource):
-    @api.doc("feature")
+    @api.doc("features")
     @api.expect(fid_parser)
     @api.marshal_with(feature_model)
     def get(self, id, name):
@@ -29,27 +53,8 @@ class Feature(Resource):
             q = db.query(models.Feature).filter(models.Feature.name == name).filter(models.Feature.oid == obj.oid)
             if args.fid is not None:
                 q = q.filter(models.Feature.fid == args.fid)
+            if args.version is not None:
+                q = q.filter(models.Feature.version == args.version)
             return q.all()
-        else:
-            raise NotFound("Object not found")
-
-
-
-@api.route("/<id>")
-@api.param("id", "The object's identifier")
-@api.response(200, "Success")
-@api.response(404, "Not found")
-class Features(Resource):
-    @api.doc("features")
-    @api.marshal_list_with(feature_model)
-    def get(self, id):
-        """
-        Gets list of all features.
-        """
-        print(id)
-        obj = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
-        print(obj)
-        if obj:
-            return obj.features
         else:
             raise NotFound("Object not found")
