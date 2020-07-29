@@ -24,10 +24,10 @@ class Probabilities(Resource):
             args = prob_parser.parse_args()
             probs = obj.probabilities
             if args["classifier"]:
-                probs = list(filter(lambda x: x.classifier_name == args["classifier"]))
+                probs = list(filter(lambda x: x.classifier_name == args["classifier"], probs))
             if args["classifier_version"]:
                 probs = list(
-                    filter(lambda x: x.classifier_version == args["classifier_version"])
+                    filter(lambda x: x.classifier_version == args["classifier_version"], probs)
                 )
             return probs
         else:
