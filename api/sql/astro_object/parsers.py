@@ -28,7 +28,16 @@ def create_parsers(classifiers=None, classes=None):
         dest="classifier",
         location="args",
         help="classifier name",
+        default="lc_classifier"
         choices=classifiers,
+    )
+    filter_parser.add_argument(
+        "classifier_version",
+        type=str,
+        dest="classifier_version",
+        location="args",
+        help="classifier version",
+        default="bulk_0.0.1",
     )
     filter_parser.add_argument(
         "class",
