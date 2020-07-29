@@ -6,3 +6,8 @@ fid_parser.add_argument(
     type=int,
     help="Feture fid name",
 )
+fid_parser.add_argument(
+    "version",
+    type=str,
+    help="Feture version",
+)
