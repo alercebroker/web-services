@@ -73,21 +73,12 @@ class ObjectList(Resource):
         )
 
     def _get_objects(self, filters, conesearch, conesearch_args):
-        # query = (
-        #     db.query(models.Object, models.LcClassification, models.StampClassification)
-        #     .outerjoin(models.LcClassification)
-        #     .outerjoin(models.StampClassification)
-        #     .filter(*filters)
-        #     .params(**conesearch_args)
-        # )
-
         return (
             db.query(models.Object, models.Probability)
             .outerjoin(models.Object.probabilities)
             .filter(*filters)
             .params(**conesearch_args)
         )
-
 
     def _create_order_statement(self, query, args):
         statement = None
@@ -109,14 +100,16 @@ class ObjectList(Resource):
         return statement
 
     def _parse_filters(self, args):
-        classifier, class_, ndet, firstmjd, lastmjd, probability = (
-            True,
-            True,
-            True,
-            True,
-            True,
-            True,
-        )
+        (
+            classifier,
+            classifier_version,
+            class_,
+            ndet,
+            firstmjd,
+            lastmjd,
+            probability,
+            ranking,
+        ) = (True, True, True, True, True, True, True, True)
         if args["classifier"]:
             classifier = models.Probability.classifier_name == args["classifier"]
         if args["class"]:
@@ -135,8 +128,23 @@ class ObjectList(Resource):
                 lastmjd = lastmjd & (models.Object.lastmjd <= args["lastmjd"][1])
         if args["probability"]:
             probability = models.Probability.probability >= args["probability"]
+        if args["ranking"]:
+            ranking = models.Probability.ranking == args["ranking"]
+        if args["classifier_version"]:
+            classifier_version = (
+                models.Probability.classifier_version == args["classifier_version"]
+            )
 
-        return classifier, class_, ndet, firstmjd, lastmjd, probability
+        return (
+            classifier,
+            classifier_version,
+            class_,
+            ndet,
+            firstmjd,
+            lastmjd,
+            probability,
+            ranking,
+        )
 
     def _create_conesearch_statement(self, args):
         try:
