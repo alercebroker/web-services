@@ -16,7 +16,7 @@ def str2bool(v):
     elif v.lower() in ("no", "false", "f", "n", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError("Boolean value expected.")
+        raise reqparse.ArgumentTypeError("Boolean value expected.")
 
 
 def create_parsers(classifiers=None, classes=None):
@@ -28,7 +28,7 @@ def create_parsers(classifiers=None, classes=None):
         dest="classifier",
         location="args",
         help="classifier name",
-        default="lc_classifier"
+        default="lc_classifier",
         choices=classifiers,
     )
     filter_parser.add_argument(
@@ -46,6 +46,14 @@ def create_parsers(classifiers=None, classes=None):
         location="args",
         help="class name",
         choices=classes,
+    )
+    filter_parser.add_argument(
+        "ranking",
+        type=int,
+        dest="ranking",
+        location="args",
+        help="Class ordering by probability from highest to lowest",
+        default=1,
     )
     filter_parser.add_argument(
         "ndet",
