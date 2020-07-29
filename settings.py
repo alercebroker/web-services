@@ -29,8 +29,8 @@ PROFILE_CONFIG = {
 # }
 
 
-host = "3.226.200.73"
-db_name = "new_pipeline"
+host = "***REMOVED***"
+db_name = "***REMOVED***"
 user = "***REMOVED***"
 password = "***REMOVED***"
 port = ***REMOVED***
