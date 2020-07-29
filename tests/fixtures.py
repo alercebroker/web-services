@@ -1,7 +1,7 @@
 import pytest
 import sys
 
-sys.path.append("..")
+# sys.path.append("..")
 from api.app import create_app
 from api.db import db
 from db_plugins.db.sql import BaseQuery, models
@@ -17,11 +17,8 @@ def client():
     with app.test_client() as client:
         with app.app_context():
             db.create_db()
-            class_ = models.Class(name="Super Nova", acronym="SN")
-            taxonomy = models.Taxonomy(name="Test")
-            class_.taxonomies.append(taxonomy)
-            classifier = models.Classifier(name="C1")
-            taxonomy.classifiers.append(classifier)
+            class_ = models.Class(fullname="Super Nova", name="SN")
+            classifier = models.Classifier(name="C1", version="1.0.0-test")
             model = models.Object(
                 oid="ZTF1",
                 ndet=1,
@@ -30,33 +27,49 @@ def client():
                 meandec=1.0,
                 sigmara=1.0,
                 sigmadec=1.0,
-                deltamjd=1.0,
+                deltajd=1.0,
                 firstmjd=1.0,
             )
-            model.xmatches.append(models.Xmatch(catalog_id="C1", catalog_oid="O1"))
-            model.magnitude_statistics.append(
-                models.MagnitudeStatistics(
+            model.magstats.append(
+                models.MagStats(
                     fid=1,
-                    magmean=1.0,
-                    magmedian=1.0,
-                    magmax=1.0,
-                    magmin=1.0,
-                    magsigma=1.0,
-                    lastmjd=1.0,
-                    firstmjd=1.0,
+                    stellar=True,
+                    corrected=True,
+                    ndet=1,
+                    ndubious=1,
+                    dmdt_first=0.13,
+                    dm_first=0.12,
+                    sigmadm_first=1.4,
+                    dt_first=2.0,
+                    magmean=19.0,
+                    magmedian=20,
+                    magmax=1.4,
+                    magmin=1.4,
+                    magsigma=1.4,
+                    maglast=1.4,
+                    magfirst=1.4,
+                    firstmjd=1.4,
+                    lastmjd=1.4,
+                    step_id_corr="testing_id",
                 )
             )
-            model.classifications.append(
-                models.Classification(
-                    class_name="Super Nova", probability=1.0, classifier_name="C1"
+            model.probabilities.append(
+                models.Probability(
+                    class_name=class_.name,
+                    probability=1.0,
+                    classifier_name=classifier.name,
+                    classifier_version=classifier.version,
+                    ranking=1,
                 )
             )
-
-            features_object = models.FeaturesObject(
-                features_version="v1", data=json.loads('{"test":"test"}')
+            feature_version = models.FeatureVersion(version="1.0.0-test")
+            feature = models.Feature(
+                oid=model.oid,
+                name="testfeature",
+                value=0.5,
+                fid=1,
+                version=feature_version.version,
             )
-            features_object.features = models.Features(version="V1")
-            model.features.append(features_object)
             model.detections.append(
                 models.Detection(
                     candid="t",
@@ -71,13 +84,8 @@ def client():
                     sigmagap=1,
                 )
             )
-            model.non_detections.append(
-                models.NonDetection(
-                    mjd=1, fid=1, diffmaglim=1, datetime=datetime.datetime.now()
-                )
-            )
+            model.non_detections.append(models.NonDetection(mjd=1, fid=1, diffmaglim=1))
             db.session.add(model)
             db.session.commit()
-
         yield client
         db.drop_db()

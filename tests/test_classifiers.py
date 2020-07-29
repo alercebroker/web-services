@@ -1,6 +1,3 @@
-import sys
-
-sys.path.append("..")
 from fixtures import client, db, BaseQuery, models
 from unittest.mock import patch
 
