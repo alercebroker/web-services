@@ -32,8 +32,8 @@ object_list_item = Model(
         "meandec": fields.Float(description="Mean Declination"),
         "sigmara": fields.Float(description="right ascension standard deviation"),
         "sigmadec": fields.Float(description="declination standard deviation"),
-        "class": fields.String(description="Highest probability class", attribute="class_name"),
-        "probability": fields.Float(description="Highest probability"),
+        "class": fields.String(description="Highest probability class or according to specified ranking", attribute="class_name"),
+        "probability": fields.Float(description="Highest probability or according to specified ranking"),
     },
 )
 object_item = Model(
