@@ -1,8 +1,6 @@
-import sys
-
-sys.path.append("..")
 from api.sql.astro_object import astro_object as AstroObjectResource
 from fixtures import client, db, BaseQuery, models
+
 
 def test_conesearch(client):
     resource = AstroObjectResource.ObjectList()
@@ -34,9 +32,13 @@ def test_order_by_asc(client):
 
 def test_order_by_class_attribute_desc(client):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    classification = obj.classifications.append(
-        models.Classification(
-            class_name="Super Nova", probability=0.5, classifier_name="C1"
+    classification = obj.probabilities.append(
+        models.Probability(
+            class_name="SN",
+            probability=0.5,
+            classifier_name="C1",
+            classifier_version="1.0.0-test",
+            ranking=2,
         )
     )
     db.session.add(obj)
@@ -49,9 +51,13 @@ def test_order_by_class_attribute_desc(client):
 
 def test_order_by_class_attribute_asc(client):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    classification = obj.classifications.append(
-        models.Classification(
-            class_name="Super Nova", probability=0.5, classifier_name="C1"
+    classification = obj.probabilities.append(
+        models.Probability(
+            class_name="SN",
+            probability=0.5,
+            classifier_name="C1",
+            classifier_version="1.0.0-test",
+            ranking=1,
         )
     )
     db.session.add(obj)
@@ -142,14 +148,14 @@ def test_classifier_query(client):
 
 
 def test_class_query(client):
-    args = {"class": "Super Nova"}
+    args = {"class": "SN"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
 def test_class_classifier_query(client):
-    args = {"classifier": "C1", "class": "Super Nova"}
+    args = {"classifier": "C1", "class": "SN"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
     assert rv.json["items"][0]["oid"] == "ZTF1"
