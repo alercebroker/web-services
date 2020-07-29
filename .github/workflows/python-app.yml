@@ -29,7 +29,7 @@ jobs:
       uses: lgeiger/black-action@v1.0.1
     - name: Test with pytest
       run: |
-        coverage run --source api/ -m pytest
+        coverage run --source api/ -m pytest tests/
         coverage xml
     - name: Codecov
       uses: codecov/codecov-action@v1
