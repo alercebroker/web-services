@@ -1,13 +1,17 @@
 from flask_restx import Resource, fields, Model
 
-class ProbabilitiesField(fields.Raw):
-    def format(self, value):
-        if isinstance(value, dict):
-            return value
 
-classification_model = Model("classification", {
-    "classifier_name": fields.String(description="Classifier that did the classification"),
-    "class_name": fields.String(description="Class with the highest probability"),
-    "probability": fields.String(description="Highest probability"),
-    "probabilities": ProbabilitiesField(description="Probabilities for all classes")
-})
+probability_model = Model(
+    "probability",
+    {
+        "classifier_name": fields.String(
+            description="Classifier that did the classification"
+        ),
+        "classifier_version": fields.String(description="Version of the classifier"),
+        "class_name": fields.String(description="Class name"),
+        "probability": fields.Float(description="Value of the probability for the class"),
+        "ranking": fields.Integer(
+            description="position of the probability against the others"
+        ),
+    },
+)
