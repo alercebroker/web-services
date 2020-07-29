@@ -18,6 +18,6 @@ class MagStats(Resource):
     def get(self, id):
         obj = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
         if obj:
-            return obj.magnitude_statistics
+            return obj.magstats
         else:
             raise NotFound("Object not found")

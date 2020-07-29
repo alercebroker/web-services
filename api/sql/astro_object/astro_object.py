@@ -47,10 +47,10 @@ class ObjectList(Resource):
 
     def serialize_items(self, data):
         ret = []
-        for obj, clf in data:
+        for obj, prob in data:
             obj = {**obj.__dict__}
-            clf = {**clf.__dict__} if clf else {}
-            ret.append({**obj, **clf})
+            prob = {**prob.__dict__} if prob else {}
+            ret.append({**obj, **prob})
         return ret
 
     def create_result_page(
@@ -73,12 +73,21 @@ class ObjectList(Resource):
         )
 
     def _get_objects(self, filters, conesearch, conesearch_args):
+        # query = (
+        #     db.query(models.Object, models.LcClassification, models.StampClassification)
+        #     .outerjoin(models.LcClassification)
+        #     .outerjoin(models.StampClassification)
+        #     .filter(*filters)
+        #     .params(**conesearch_args)
+        # )
+
         return (
-            db.query(models.Object, models.Classification)
-            .outerjoin(models.Object.classifications)
+            db.query(models.Object, models.Probability)
+            .outerjoin(models.Object.probabilities)
             .filter(*filters)
             .params(**conesearch_args)
         )
+
 
     def _create_order_statement(self, query, args):
         statement = None
@@ -109,9 +118,9 @@ class ObjectList(Resource):
             True,
         )
         if args["classifier"]:
-            classifier = models.Classification.classifier_name == args["classifier"]
+            classifier = models.Probability.classifier_name == args["classifier"]
         if args["class"]:
-            class_ = models.Classification.class_name == args["class"]
+            class_ = models.Probability.class_name == args["class"]
         if args["ndet"]:
             ndet = models.Object.ndet >= args["ndet"][0]
             if len(args["ndet"]) > 1:
@@ -119,15 +128,13 @@ class ObjectList(Resource):
         if args["firstmjd"]:
             firstmjd = models.Object.firstmjd >= args["firstmjd"][0]
             if len(args["firstmjd"]) > 1:
-                firstmjd = firstmjd & (
-                    models.Object.firstmjd <= args["firstmjd"][1]
-                )
+                firstmjd = firstmjd & (models.Object.firstmjd <= args["firstmjd"][1])
         if args["lastmjd"]:
             lastmjd = models.Object.lastmjd >= args["lastmjd"][0]
             if len(args["lastmjd"]) > 1:
                 lastmjd = lastmjd & (models.Object.lastmjd <= args["lastmjd"][1])
         if args["probability"]:
-            probability = models.Classification.probability >= args["probability"]
+            probability = models.Probability.probability >= args["probability"]
 
         return classifier, class_, ndet, firstmjd, lastmjd, probability
 
@@ -164,11 +171,7 @@ class Object(Resource):
     @api.marshal_with(object_item)
     def get(self, id):
         """Fetch an object given its identifier"""
-        result = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
-        )
+        result = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
         if result:
             return result
         else:
