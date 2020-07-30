@@ -28,7 +28,6 @@ def create_parsers(classifiers=None, classes=None):
         dest="classifier",
         location="args",
         help="classifier name",
-        default="lc_classifier",
         choices=classifiers,
     )
     filter_parser.add_argument(
@@ -37,7 +36,6 @@ def create_parsers(classifiers=None, classes=None):
         dest="classifier_version",
         location="args",
         help="classifier version",
-        default="bulk_0.0.1",
     )
     filter_parser.add_argument(
         "class",
@@ -53,7 +51,6 @@ def create_parsers(classifiers=None, classes=None):
         dest="ranking",
         location="args",
         help="Class ordering by probability from highest to lowest",
-        default=1,
     )
     filter_parser.add_argument(
         "ndet",
