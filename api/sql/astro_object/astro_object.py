@@ -3,6 +3,7 @@ from db_plugins.db.sql import models
 from .models import object_list_item, object_list, object_item
 from .parsers import create_parsers
 from sqlalchemy import text
+from sqlalchemy.orm import aliased
 from astropy import units
 import argparse
 from werkzeug.exceptions import NotFound
@@ -15,6 +16,9 @@ api.models[object_item.name] = object_item
 
 filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
 
+DEFAULT_CLASSIFIER = "lc_classifier"
+DEFAULT_VERSION = "bulk_0.0.1"
+DEFAULT_RANKING = 1
 
 @api.route("/")
 @api.response(200, "Success")
@@ -63,7 +67,8 @@ class ObjectList(Resource):
         filters = self._parse_filters(filter_args)
         conesearch_args = self._convert_conesearch_args(conesearch_args)
         conesearch = self._create_conesearch_statement(conesearch_args)
-        query = self._get_objects(filters, conesearch, conesearch_args)
+        use_default = False if (filter_args.get("classifier") is not None ) or (filter_args.get("classifier_version") is not None) or (filter_args.get("ranking") is not None) else True
+        query = self._get_objects(filters, conesearch, conesearch_args, default=use_default)
         order_statement = self._create_order_statement(query, order_args)
         query = query.order_by(order_statement)
         return query.paginate(
@@ -72,13 +77,22 @@ class ObjectList(Resource):
             pagination_args["count"],
         )
 
-    def _get_objects(self, filters, conesearch, conesearch_args):
-        return (
-            db.query(models.Object, models.Probability)
-            .outerjoin(models.Object.probabilities)
-            .filter(*filters)
-            .params(**conesearch_args)
-        )
+    def _get_objects(self, filters, conesearch, conesearch_args, default=True):
+        if not default:
+            join_table = models.Probability
+        else:
+            join_table = db.query(models.Probability) \
+                            .filter(models.Probability.classifier_name == DEFAULT_CLASSIFIER) \
+                            .filter(models.Probability.classifier_version == DEFAULT_VERSION) \
+                            .filter(models.Probability.ranking == DEFAULT_RANKING).subquery('probability')
+            join_table = aliased(models.Probability, join_table)
+
+        q = db.query(models.Object, join_table) \
+              .outerjoin(join_table) \
+              .filter(*filters) \
+              .params(**conesearch_args)
+        print(str(q))
+        return q
 
     def _create_order_statement(self, query, args):
         statement = None
