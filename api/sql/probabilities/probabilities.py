@@ -22,13 +22,11 @@ class Probabilities(Resource):
         obj = db.query(models.Object).find_one(filter_by={"oid": id})
         if obj:
             args = prob_parser.parse_args()
-            probs = obj.probabilities
+            probs = db.query(models.Probability).filter(models.Probability.oid == obj.oid) #obj.probabilities
             if args["classifier"]:
-                probs = list(filter(lambda x: x.classifier_name == args["classifier"], probs))
+                probs = probs.filter(models.Probability.classifier_name == args["classifier"] )
             if args["classifier_version"]:
-                probs = list(
-                    filter(lambda x: x.classifier_version == args["classifier_version"], probs)
-                )
-            return probs
+                probs = probs.filter(models.Probability.classifier_version == args["classifier_version"] )
+            return probs.all()
         else:
             raise NotFound("Object not found")
