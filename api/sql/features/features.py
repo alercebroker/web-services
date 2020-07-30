@@ -11,7 +11,7 @@ from ...db import db
 api = Namespace("features", description="Features related operations")
 api.models[feature_model.name] = feature_model
 
-@api.route("<id>/features")
+@api.route("/<id>/features")
 @api.param("id", "The object's identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
