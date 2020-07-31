@@ -10,11 +10,11 @@ object_list_item = Model(
         "ncovhist": fields.Integer(
             description="Number of times input candidate position fell on any field and readout-channel going back to beginning of survey"
         ),
-        "jdstarthist": fields.Float(
-            description="Earliest Julian date of epoch corresponding to ndethist [days]"
+        "mjdstarthist": fields.Float(
+            description="Earliest Modified Julian date of epoch corresponding to ndethist [days]"
         ),
-        "jdendhist": fields.Float(
-            description="Latest Julian date of epoch corresponding to ndethist [days]"
+        "mjdendhist": fields.Float(
+            description="Latest Modified Julian date of epoch corresponding to ndethist [days]"
         ),
         "corrected": fields.Boolean(
             description="whether the corrected light curve was computed and can be used"
@@ -23,9 +23,13 @@ object_list_item = Model(
             description="whether the object is a likely stellar-like source"
         ),
         "ndet": fields.Integer(description="total number of detections for the object"),
+        "g_r_max": fields.Float(description="difference between the minimum g and r band difference magnitudes"),
+        "g_r_max_corr": fields.Float(description="difference between the minimum g and r band corrected magnitudes"),
+        "g_r_mean": fields.Float(description="difference between the mean g and r band difference magnitudes"),
+        "g_r_mean_corr": fields.Float(description="difference between the mean g and r band corrected magnitudes"),
         "firstmjd": fields.Float(description="First detection's modified julian date"),
         "lastmjd": fields.Float(description="Last detection's modified julian date"),
-        "deltamjd": fields.Float(
+        "deltajd": fields.Float(
             description="difference between last and first detection date"
         ),
         "meanra": fields.Float(description="Mean Right Ascention"),
@@ -34,6 +38,7 @@ object_list_item = Model(
         "sigmadec": fields.Float(description="declination standard deviation"),
         "class": fields.String(description="Highest probability class or according to specified ranking", attribute="class_name"),
         "probability": fields.Float(description="Highest probability or according to specified ranking"),
+        "step_id_corr": fields.String(description="correction step pipeline version")
     },
 )
 object_item = Model(
@@ -46,11 +51,11 @@ object_item = Model(
         "ncovhist": fields.Integer(
             description="Number of times input candidate position fell on any field and readout-channel going back to beginning of survey"
         ),
-        "jdstarthist": fields.Float(
-            description="Earliest Julian date of epoch corresponding to ndethist [days]"
+        "mjdstarthist": fields.Float(
+            description="Earliest Modified Julian date of epoch corresponding to ndethist [days]"
         ),
-        "jdendhist": fields.Float(
-            description="Latest Julian date of epoch corresponding to ndethist [days]"
+        "mjdendhist": fields.Float(
+            description="Latest Modified Julian date of epoch corresponding to ndethist [days]"
         ),
         "corrected": fields.Boolean(
             description="whether the corrected light curve was computed and can be used"
@@ -59,15 +64,20 @@ object_item = Model(
             description="whether the object is a likely stellar-like source"
         ),
         "ndet": fields.Integer(description="total number of detections for the object"),
+        "g_r_max": fields.Float(description="difference between the minimum g and r band difference magnitudes"),
+        "g_r_max_corr": fields.Float(description="difference between the minimum g and r band corrected magnitudes"),
+        "g_r_mean": fields.Float(description="difference between the mean g and r band difference magnitudes"),
+        "g_r_mean_corr": fields.Float(description="difference between the mean g and r band corrected magnitudes"),
         "firstmjd": fields.Float(description="First detection's modified julian date"),
         "lastmjd": fields.Float(description="Last detection's modified julian date"),
-        "deltamjd": fields.Float(
+        "deltajd": fields.Float(
             description="difference between last and first detection date"
         ),
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
         "sigmara": fields.Float(description="right ascension standard deviation"),
-        "sigmadec": fields.Float(descriptin="declination standard deviation"),
+        "sigmadec": fields.Float(description="declination standard deviation"),
+        "step_id_corr": fields.String(description="correction step pipeline version")
     },
 )
 

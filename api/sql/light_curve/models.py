@@ -17,6 +17,7 @@ detection_model = Model(
         "magap_corr": fields.Float,
         "sigmapsf": fields.Float,
         "sigmapsf_corr": fields.Float,
+        "sigmapsf_corr_ext": fields.Float,
         "sigmagap": fields.Float,
         "sigmagap_corr": fields.Float,
         "ra": fields.Float,
@@ -33,6 +34,7 @@ detection_model = Model(
         "candid_alert": fields.String,
         "step_id_corr": fields.String,
         "phase": fields.Float,
+        "parent_candid": fields.Integer,
     },
 )
 
