@@ -89,9 +89,9 @@ class ObjectList(Resource):
 
         q = db.query(models.Object, join_table) \
               .outerjoin(join_table) \
+              .filter(conesearch) \
               .filter(*filters) \
               .params(**conesearch_args)
-        print(str(q))
         return q
 
     def _create_order_statement(self, query, args):
