@@ -53,7 +53,7 @@ class Classifier(Resource):
         #     for _class in taxonomy.classes:
         #         classes.append(_class)
         classes = {
-            "Light Curve": [
+            "lc_classifier": [
                 {"name": "Active Galactic Nuclei", "acronym": "AGN"},
                 {"name": "Blazar", "acronym": "Blazar"},
                 {"name": "CV/Nova", "acronym": "CV/Nova"},
