@@ -20,7 +20,7 @@ class ClassifierList(Resource):
         Gets all clasifiers
         """
         # classifiers = db.query(models.Classifier).all()
-        classifiers = [{"name": "Light Curve"}, {"name": "Stamp"}]
+        classifiers = [{"name": "lc_classifier"}]
         if len(classifiers):
             return classifiers
         else:
