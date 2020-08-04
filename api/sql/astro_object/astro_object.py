@@ -65,7 +65,6 @@ class ObjectList(Resource):
         pagination_args = pagination_parser.parse_args()
         order_args = order_parser.parse_args()
         filters = self._parse_filters(filter_args)
-        print(filters)
         conesearch_args = self._convert_conesearch_args(conesearch_args)
         conesearch = self._create_conesearch_statement(conesearch_args)
         use_default = False if (filter_args.get("classifier") is not None ) or (filter_args.get("classifier_version") is not None) or (filter_args.get("ranking") is not None) else True
