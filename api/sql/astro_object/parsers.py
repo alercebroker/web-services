@@ -23,6 +23,14 @@ def create_parsers(classifiers=None, classes=None):
 
     filter_parser = reqparse.RequestParser()
     filter_parser.add_argument(
+        "oid",
+        type=str,
+        dest="oid",
+        location="args",
+        help="Object id",
+        action="append",
+    )
+    filter_parser.add_argument(
         "classifier",
         type=str,
         dest="classifier",
