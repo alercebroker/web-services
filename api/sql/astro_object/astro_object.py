@@ -65,6 +65,7 @@ class ObjectList(Resource):
         pagination_args = pagination_parser.parse_args()
         order_args = order_parser.parse_args()
         filters = self._parse_filters(filter_args)
+        print(filters)
         conesearch_args = self._convert_conesearch_args(conesearch_args)
         conesearch = self._create_conesearch_statement(conesearch_args)
         use_default = False if (filter_args.get("classifier") is not None ) or (filter_args.get("classifier_version") is not None) or (filter_args.get("ranking") is not None) else True
@@ -123,7 +124,8 @@ class ObjectList(Resource):
             lastmjd,
             probability,
             ranking,
-        ) = (True, True, True, True, True, True, True, True)
+            oids
+        ) = (True, True, True, True, True, True, True, True, True)
         if args["classifier"]:
             classifier = models.Probability.classifier_name == args["classifier"]
         if args["class"]:
@@ -148,6 +150,12 @@ class ObjectList(Resource):
             classifier_version = (
                 models.Probability.classifier_version == args["classifier_version"]
             )
+        if args["oid"]:
+            if len(args["oid"]) == 1:
+                filtered_oid = args["oid"][0].replace("*","%")
+                oids = models.Object.oid.like(filtered_oid)
+            else:
+                oids = models.Object.oid.in_(args["oid"])
 
         return (
             classifier,
@@ -158,6 +166,7 @@ class ObjectList(Resource):
             lastmjd,
             probability,
             ranking,
+            oids
         )
 
     def _create_conesearch_statement(self, args):
