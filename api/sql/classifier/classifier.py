@@ -20,7 +20,7 @@ class ClassifierList(Resource):
         Gets all clasifiers
         """
         # classifiers = db.query(models.Classifier).all()
-        classifiers = [{"name": "Light Curve"}, {"name": "Stamp"}]
+        classifiers = [{"name": "lc_classifier"}]
         if len(classifiers):
             return classifiers
         else:
@@ -53,7 +53,7 @@ class Classifier(Resource):
         #     for _class in taxonomy.classes:
         #         classes.append(_class)
         classes = {
-            "Light Curve": [
+            "lc_classifier": [
                 {"name": "Active Galactic Nuclei", "acronym": "AGN"},
                 {"name": "Blazar", "acronym": "Blazar"},
                 {"name": "CV/Nova", "acronym": "CV/Nova"},
