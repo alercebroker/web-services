@@ -151,7 +151,11 @@ class ObjectList(Resource):
                 models.Probability.classifier_version == args["classifier_version"]
             )
         if args["oid"]:
-            oids = models.Object.oid.in_(args["oid"])
+            if len(args["oid"]) == 1:
+                filtered_oid = args["oid"][0].replace("*","%")
+                oids = models.Object.oid.like(filtered_oid)
+            else:
+                oids = models.Object.oid.in_(args["oid"])
 
         return (
             classifier,
