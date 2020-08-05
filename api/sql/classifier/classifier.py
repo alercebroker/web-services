@@ -39,4 +39,4 @@ class Classifier(Resource):
             classes = [{"name": c} for c in classifier.classes]
             return classes
         else:
-            return []
+            raise NotFound

@@ -38,7 +38,7 @@ class LightCurve(Resource):
                 det.phase = 0  # (det.mjd % obj.period) / obj.period
             return light_curve
         else:
-            return {}
+            raise NotFound
 
 
 @api.route("/<id>/detections")
@@ -60,7 +60,7 @@ class ObjectDetections(Resource):
         if result:
             return result.detections
         else:
-            return []
+            raise NotFound
 
 
 @api.route("/<id>/non_detections")
@@ -82,5 +82,5 @@ class NonDetections(Resource):
         if result:
             return result.non_detections
         else:
-            return []
+            raise NotFound
 
