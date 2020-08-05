@@ -111,7 +111,7 @@ def create_parsers(classifiers=None, classes=None):
         type=float,
         dest="radius",
         location="args",
-        help="Radius in arcsec for conesearch.",
+        help="Radius in arcsec for conesearch. (Default: 30 arcsec)",
     )
     pagination_parser = reqparse.RequestParser()
     pagination_parser.add_argument(
