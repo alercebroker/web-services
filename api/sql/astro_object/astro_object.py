@@ -64,7 +64,6 @@ class ObjectList(Resource):
         filters = self._parse_filters(filter_args)
         conesearch_args = self._convert_conesearch_args(conesearch_args)
         conesearch = self._create_conesearch_statement(conesearch_args)
-        print(conesearch_args)
         use_default = False if (filter_args.get("classifier") is not None ) or (filter_args.get("classifier_version") is not None) or (filter_args.get("ranking") is not None) else True
         query = self._get_objects(filters, conesearch, conesearch_args, default=use_default)
         order_statement = self._create_order_statement(query, order_args)
@@ -168,7 +167,7 @@ class ObjectList(Resource):
 
     def _create_conesearch_statement(self, args):
         try:
-            ra, dec, radius = args["ra"], args["dec"], args.get("radius",30)
+            ra, dec, radius = args["ra"], args["dec"], args["radius"]
         except KeyError:
             ra, dec, radius = None, None, None
 
@@ -179,13 +178,9 @@ class ObjectList(Resource):
 
     def _convert_conesearch_args(self, args):
         try:
-<<<<<<< HEAD
             ra, dec, radius = args["ra"], args["dec"], args.get("radius")
             if radius is None:
                 radius = 30.0
-=======
-            ra, dec, radius = args["ra"], args["dec"], args.get("radius",30)
->>>>>>> 4824140ef9ef15dd680ba27c6dc69bc6d1c1f388
         except KeyError:
             ra, dec, radius = None, None, None
 
