@@ -20,4 +20,4 @@ class MagStats(Resource):
         if obj:
             return obj.magstats
         else:
-            raise NotFound("Object not found")
+            return []
