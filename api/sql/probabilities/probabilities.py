@@ -29,4 +29,4 @@ class Probabilities(Resource):
                 probs = probs.filter(models.Probability.classifier_version == args["classifier_version"] )
             return probs.all()
         else:
-            raise NotFound("Object not found")
+            raise NotFound
