@@ -36,18 +36,15 @@ class ObjectList(Resource):
 
         serialized_items = self.serialize_items(page.items)
 
-        if len(serialized_items):
-            return {
-                "total": page.total,
-                "page": page.page,
-                "next": page.next_num,
-                "has_next": page.has_next,
-                "prev": page.prev_num,
-                "has_prev": page.has_prev,
-                "items": serialized_items,
-            }
-        else:
-            raise NotFound("Objects not found")
+        return {
+            "total": page.total,
+            "page": page.page,
+            "next": page.next_num,
+            "has_next": page.has_next,
+            "prev": page.prev_num,
+            "has_prev": page.has_prev,
+            "items": serialized_items,
+        }
 
     def serialize_items(self, data):
         ret = []

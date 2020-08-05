@@ -33,7 +33,7 @@ class Features(Resource):
                 q = q.filter(models.Feature.version == args.version)
             return q.all()
         else:
-            raise NotFound("Object not found")
+            raise NotFound
 
 @api.route("/<id>/features/<name>")
 @api.param("id", "The object's identifier")
@@ -57,4 +57,4 @@ class Feature(Resource):
                 q = q.filter(models.Feature.version == args.version)
             return q.all()
         else:
-            raise NotFound("Object not found")
+            raise NotFound
