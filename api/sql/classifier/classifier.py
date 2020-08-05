@@ -20,10 +20,7 @@ class ClassifierList(Resource):
         Gets all clasifiers
         """
         classifiers = db.query(models.Taxonomy).all()
-        if len(classifiers):
-            return classifiers
-        else:
-            raise NotFound
+        return classifiers
 
 
 @api.route("/<classifier_name>/<classifier_version>/classes")
@@ -38,9 +35,8 @@ class Classifier(Resource):
         classifier = db.query(models.Taxonomy) \
                        .filter(models.Taxonomy.classifier_name == classifier_name) \
                        .filter(models.Taxonomy.classifier_version == classifier_version).one_or_none()
-        print(classifier)
         if classifier is not None:
             classes = [{"name": c} for c in classifier.classes]
             return classes
         else:
-            raise NotFound
+            return []
