@@ -64,7 +64,12 @@ class ObjectList(Resource):
         filters = self._parse_filters(filter_args)
         conesearch_args = self._convert_conesearch_args(conesearch_args)
         conesearch = self._create_conesearch_statement(conesearch_args)
-        use_default = False if (filter_args.get("classifier") is not None ) or (filter_args.get("classifier_version") is not None) or (filter_args.get("ranking") is not None) else True
+        use_default = False if \
+                        (filter_args.get("classifier") is not None ) or \
+                        (filter_args.get("classifier_version") is not None) or \
+                        (filter_args.get("ranking") is not None) or \
+                        (filter_args.get("class") is not None) \
+                        else True
         query = self._get_objects(filters, conesearch, conesearch_args, default=use_default)
         order_statement = self._create_order_statement(query, order_args)
         query = query.order_by(order_statement)
@@ -81,7 +86,7 @@ class ObjectList(Resource):
             join_table = db.query(models.Probability) \
                             .filter(models.Probability.classifier_name == DEFAULT_CLASSIFIER) \
                             .filter(models.Probability.classifier_version == DEFAULT_VERSION) \
-                            .filter(models.Probability.ranking == DEFAULT_RANKING).subquery('probability')
+                            .filter(models.Probability.ranking == DEFAULT_RANKING).subquery()
             join_table = aliased(models.Probability, join_table)
 
         q = db.query(models.Object, join_table) \
@@ -89,6 +94,7 @@ class ObjectList(Resource):
               .filter(conesearch) \
               .filter(*filters) \
               .params(**conesearch_args)
+        print(str(q))
         return q
 
     def _create_order_statement(self, query, args):
@@ -142,6 +148,10 @@ class ObjectList(Resource):
             probability = models.Probability.probability >= args["probability"]
         if args["ranking"]:
             ranking = models.Probability.ranking == args["ranking"]
+        elif not args["ranking"] and ( args["classifier"] or args["class"] or args["classifier_version"]):
+            #Default ranking 1
+            ranking = models.Probability.ranking == 1
+
         if args["classifier_version"]:
             classifier_version = (
                 models.Probability.classifier_version == args["classifier_version"]
