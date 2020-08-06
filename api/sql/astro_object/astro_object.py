@@ -68,6 +68,7 @@ class ObjectList(Resource):
                         (filter_args.get("classifier") is not None ) or \
                         (filter_args.get("classifier_version") is not None) or \
                         (filter_args.get("ranking") is not None) or \
+                        (filter_args.get("probability") is not None) or \
                         (filter_args.get("class") is not None) \
                         else True
         query = self._get_objects(filters, conesearch, conesearch_args, default=use_default)
@@ -86,7 +87,7 @@ class ObjectList(Resource):
             join_table = db.query(models.Probability) \
                             .filter(models.Probability.classifier_name == DEFAULT_CLASSIFIER) \
                             .filter(models.Probability.classifier_version == DEFAULT_VERSION) \
-                            .filter(models.Probability.ranking == DEFAULT_RANKING).subquery()
+                            .filter(models.Probability.ranking == DEFAULT_RANKING).subquery('probability')
             join_table = aliased(models.Probability, join_table)
 
         q = db.query(models.Object, join_table) \
@@ -94,7 +95,6 @@ class ObjectList(Resource):
               .filter(conesearch) \
               .filter(*filters) \
               .params(**conesearch_args)
-        print(str(q))
         return q
 
     def _create_order_statement(self, query, args):
