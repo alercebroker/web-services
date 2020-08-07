@@ -237,9 +237,9 @@ class LimitValues(Resource):
     @api.marshal_with(limit_values_model)
     def get(self):
         """Gets min and max values for objects number of detections and detection dates"""
-        result = db.query(
+        return db.query(
             func.min(models.Object.ndet).label("min_ndet"),
             func.max(models.Object.ndet).label("max_ndet"),
             func.min(models.Object.firstmjd).label("min_firstmjd"),
             func.max(models.Object.firstmjd).label("max_firstmjd"),
-        )
+        ).first()
