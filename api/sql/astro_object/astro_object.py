@@ -1,8 +1,8 @@
 from flask_restx import Namespace, Resource
 from db_plugins.db.sql import models
-from .models import object_list_item, object_list, object_item
+from .models import object_list_item, object_list, object_item, limit_values_model
 from .parsers import create_parsers
-from sqlalchemy import text
+from sqlalchemy import text, func
 from sqlalchemy.orm import aliased
 from astropy import units
 import argparse
@@ -13,12 +13,14 @@ api = Namespace("objects", description="Objects related operations")
 api.models[object_list_item.name] = object_list_item
 api.models[object_list.name] = object_list
 api.models[object_item.name] = object_item
+api.models[limit_values_model.name] = limit_values_model
 
 filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
 
 DEFAULT_CLASSIFIER = "lc_classifier"
 DEFAULT_VERSION = "bulk_0.0.1"
 DEFAULT_RANKING = 1
+
 
 @api.route("/")
 @api.response(200, "Success")
@@ -64,8 +66,16 @@ class ObjectList(Resource):
         filters = self._parse_filters(filter_args)
         conesearch_args = self._convert_conesearch_args(conesearch_args)
         conesearch = self._create_conesearch_statement(conesearch_args)
-        use_default = False if (filter_args.get("classifier") is not None ) or (filter_args.get("classifier_version") is not None) or (filter_args.get("ranking") is not None) else True
-        query = self._get_objects(filters, conesearch, conesearch_args, default=use_default)
+        use_default = (
+            False
+            if (filter_args.get("classifier") is not None)
+            or (filter_args.get("classifier_version") is not None)
+            or (filter_args.get("ranking") is not None)
+            else True
+        )
+        query = self._get_objects(
+            filters, conesearch, conesearch_args, default=use_default
+        )
         order_statement = self._create_order_statement(query, order_args)
         query = query.order_by(order_statement)
         return query.paginate(
@@ -78,17 +88,22 @@ class ObjectList(Resource):
         if not default:
             join_table = models.Probability
         else:
-            join_table = db.query(models.Probability) \
-                            .filter(models.Probability.classifier_name == DEFAULT_CLASSIFIER) \
-                            .filter(models.Probability.classifier_version == DEFAULT_VERSION) \
-                            .filter(models.Probability.ranking == DEFAULT_RANKING).subquery('probability')
+            join_table = (
+                db.query(models.Probability)
+                .filter(models.Probability.classifier_name == DEFAULT_CLASSIFIER)
+                .filter(models.Probability.classifier_version == DEFAULT_VERSION)
+                .filter(models.Probability.ranking == DEFAULT_RANKING)
+                .subquery("probability")
+            )
             join_table = aliased(models.Probability, join_table)
 
-        q = db.query(models.Object, join_table) \
-              .outerjoin(join_table) \
-              .filter(conesearch) \
-              .filter(*filters) \
-              .params(**conesearch_args)
+        q = (
+            db.query(models.Object, join_table)
+            .outerjoin(join_table)
+            .filter(conesearch)
+            .filter(*filters)
+            .params(**conesearch_args)
+        )
         return q
 
     def _create_order_statement(self, query, args):
@@ -120,7 +135,7 @@ class ObjectList(Resource):
             lastmjd,
             probability,
             ranking,
-            oids
+            oids,
         ) = (True, True, True, True, True, True, True, True, True)
         if args["classifier"]:
             classifier = models.Probability.classifier_name == args["classifier"]
@@ -148,7 +163,7 @@ class ObjectList(Resource):
             )
         if args["oid"]:
             if len(args["oid"]) == 1:
-                filtered_oid = args["oid"][0].replace("*","%")
+                filtered_oid = args["oid"][0].replace("*", "%")
                 oids = models.Object.oid.like(filtered_oid)
             else:
                 oids = models.Object.oid.in_(args["oid"])
@@ -162,7 +177,7 @@ class ObjectList(Resource):
             lastmjd,
             probability,
             ranking,
-            oids
+            oids,
         )
 
     def _create_conesearch_statement(self, args):
@@ -203,3 +218,18 @@ class Object(Resource):
             return result
         else:
             raise NotFound("Object not found")
+
+
+@api.route("/limit_values")
+@api.response(200, "Success")
+class LimitValues(Resource):
+    @api.doc("limit_values")
+    @api.marshal_with(limit_values_model)
+    def get(self):
+        """Gets min and max values for objects number of detections and detection dates"""
+        result = db.query(
+            func.min(models.Object.ndet).label("min_ndet"),
+            func.max(models.Object.ndet).label("max_ndet"),
+            func.min(models.Object.firstmjd).label("min_firstmjd"),
+            func.max(models.Object.firstmjd).label("max_firstmjd"),
+        )

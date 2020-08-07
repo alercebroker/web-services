@@ -93,3 +93,13 @@ object_list = Model(
         "items": fields.List(fields.Nested(object_list_item)),
     },
 )
+
+limit_values_model = Model(
+    "Limit Values",
+    {
+        "min_ndet": fields.Integer(description="Min number of detections")
+        "max_ndet": fields.Integer(description="Max number of detections")
+        "min_firstmjd": fields.Float(description="Min firstmjd")
+        "max_firstmjd": fields.Float(description="Max firstmjd")
+    }
+)
