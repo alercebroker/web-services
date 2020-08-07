@@ -71,6 +71,8 @@ class ObjectList(Resource):
             if (filter_args.get("classifier") is not None)
             or (filter_args.get("classifier_version") is not None)
             or (filter_args.get("ranking") is not None)
+            or (filter_args.get("probability") is not None)
+            or (filter_args.get("class") is not None)
             else True
         )
         query = self._get_objects(
@@ -157,6 +159,12 @@ class ObjectList(Resource):
             probability = models.Probability.probability >= args["probability"]
         if args["ranking"]:
             ranking = models.Probability.ranking == args["ranking"]
+        elif not args["ranking"] and (
+            args["classifier"] or args["class"] or args["classifier_version"]
+        ):
+            # Default ranking 1
+            ranking = models.Probability.ranking == 1
+
         if args["classifier_version"]:
             classifier_version = (
                 models.Probability.classifier_version == args["classifier_version"]
@@ -193,7 +201,9 @@ class ObjectList(Resource):
 
     def _convert_conesearch_args(self, args):
         try:
-            ra, dec, radius = args["ra"], args["dec"], args["radius"]
+            ra, dec, radius = args["ra"], args["dec"], args.get("radius")
+            if radius is None:
+                radius = 30.0
         except KeyError:
             ra, dec, radius = None, None, None
 

@@ -18,12 +18,13 @@ PROFILE_CONFIG = {
 	]
 }
 
-HOST = os.getenv("DB_HOST", "localhost") #"3.226.200.73"
-DATABASE = os.getenv("DB_DATABASE", "postgres") #"new_pipeline"
-USER = os.getenv("DB_USER", "postgres") #"alerceread"
-PASSWORD = os.getenv("DB_PASSWORD", "password") #"alerce2020"
+HOST = os.getenv("DB_HOST", "localhost")
+DATABASE = os.getenv("DB_DATABASE", "postgres")
+USER = os.getenv("DB_USER", "postgres") 
+PASSWORD = os.getenv("DB_PASSWORD", "password")
 PORT = os.getenv("DB_PORT",5432)
 SQLALCHEMY_DATABASE_URL = f"postgresql://{USER}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
+
 DATABASE = {
     "SQL": {
         "SQLALCHEMY_DATABASE_URL": SQLALCHEMY_DATABASE_URL
