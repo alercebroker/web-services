@@ -4,6 +4,7 @@ from .models import object_list_item, object_list, object_item, limit_values_mod
 from .parsers import create_parsers
 from sqlalchemy import text, func
 from sqlalchemy.orm import aliased
+from sqlalchemy.sql.expression import nullslast
 from astropy import units
 import argparse
 from werkzeug.exceptions import NotFound
@@ -122,9 +123,9 @@ class ObjectList(Resource):
             order_mode = args["order_mode"]
             if order_mode:
                 if order_mode == "ASC":
-                    statement = attr.asc()
+                    statement = nullslast(attr.asc())
                 if order_mode == "DESC":
-                    statement = attr.desc()
+                    statement = nullslast(attr.desc())
         return statement
 
     def _parse_filters(self, args):
