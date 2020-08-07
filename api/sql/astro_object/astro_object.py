@@ -234,7 +234,7 @@ class Object(Resource):
 @api.response(200, "Success")
 class LimitValues(Resource):
     @api.doc("limit_values")
-    @api.marshal_with(limit_values_model)
+    @api.marshal_list_with(limit_values_model)
     def get(self):
         """Gets min and max values for objects number of detections and detection dates"""
         return db.query(
