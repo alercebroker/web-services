@@ -13,6 +13,7 @@ detection_model = Model(
         "distnr": fields.Float,
         "magpsf": fields.Float,
         "magpsf_corr": fields.Float,
+        "magpsf_corr_ext": fields.Float,
         "magap": fields.Float,
         "magap_corr": fields.Float,
         "sigmapsf": fields.Float,
