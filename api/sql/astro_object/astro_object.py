@@ -81,6 +81,7 @@ class ObjectList(Resource):
         )
         order_statement = self._create_order_statement(query, order_args)
         query = query.order_by(order_statement)
+        print(str(query))
         return query.paginate(
             pagination_args["page"],
             pagination_args["page_size"],
@@ -123,9 +124,9 @@ class ObjectList(Resource):
             order_mode = args["order_mode"]
             if order_mode:
                 if order_mode == "ASC":
-                    statement = nullslast(attr.asc())
+                    statement = attr.asc()
                 if order_mode == "DESC":
-                    statement = nullslast(attr.desc())
+                    statement = attr.desc()
         return statement
 
     def _parse_filters(self, args):
