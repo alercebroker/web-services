@@ -22,10 +22,12 @@ def create_app(config):
             use_scoped=True,
         )
 
+        description = open("../description.md")
+
         ztf_api = Api(
             title="ALeRCE API",
             version="0.0.1",
-            description="Routes for querying ALeRCE database",
+            description=description.read(),
         )
 
         ztf_api.add_namespace(astro_object, path="/objects")
