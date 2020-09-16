@@ -32,13 +32,10 @@ class ObjectList(Resource):
     @api.marshal_with(object_list)
     def get(self):
         """List all objects by given filters"""
-
         page = self.create_result_page(
             filter_parser, conesearch_parser, pagination_parser, order_parser
         )
-
         serialized_items = self.serialize_items(page.items)
-
         return {
             "total": page.total,
             "page": page.page,
@@ -79,9 +76,8 @@ class ObjectList(Resource):
         query = self._get_objects(
             filters, conesearch, conesearch_args, default=use_default
         )
-        order_statement = self._create_order_statement(query, order_args)
+        order_statement = self._create_order_statement(query, filter_args, order_args)
         query = query.order_by(order_statement)
-        print(str(query))
         return query.paginate(
             pagination_args["page"],
             pagination_args["page_size"],
@@ -110,10 +106,10 @@ class ObjectList(Resource):
         )
         return q
 
-    def _create_order_statement(self, query, args):
+    def _create_order_statement(self, query, filter_args, order_args):
         statement = None
         cols = query.column_descriptions
-        order_by = args["order_by"]
+        order_by = order_args["order_by"]
         if order_by:
             for col in cols:
                 model = col["type"]
@@ -121,12 +117,16 @@ class ObjectList(Resource):
                 if attr:
                     statement = attr
                     break
-            order_mode = args["order_mode"]
+            order_mode = order_args["order_mode"]
             if order_mode:
                 if order_mode == "ASC":
                     statement = attr.asc()
                 if order_mode == "DESC":
                     statement = attr.desc()
+        else:
+            oids_order = [f"object.oid!='{x}'" for x in filter_args["oid"]]
+            oids_order = ",".join(oids_order)
+            statement = text(oids_order)
         return statement
 
     def _parse_filters(self, args):
