@@ -124,9 +124,10 @@ class ObjectList(Resource):
                 if order_mode == "DESC":
                     statement = attr.desc()
         else:
-            oids_order = [f"object.oid!='{x}'" for x in filter_args["oid"]]
-            oids_order = ",".join(oids_order)
-            statement = text(oids_order)
+            if filter_args["oid"]:
+                oids_order = [f"object.oid!='{x}'" for x in filter_args["oid"]]
+                oids_order = ",".join(oids_order)
+                statement = text(oids_order)
         return statement
 
     def _parse_filters(self, args):
