@@ -24,7 +24,7 @@ def create_app(config):
             use_scoped=True,
         )
 
-        description = open("../description.md")
+        description = open("description.md")
 
         ztf_api = Api(
             title="ALeRCE API",
