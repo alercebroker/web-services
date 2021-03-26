@@ -28,7 +28,7 @@ def create_app(config):
 
         ztf_api = Api(
             title="ALeRCE API",
-            version="0.0.1",
+            version="1.0.0",
             description=description.read(),
         )
 
