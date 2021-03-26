@@ -8,4 +8,7 @@ RUN pip install -r requirements.txt
 COPY . /app
 EXPOSE 8082
 
-CMD ["gunicorn", "-w", "3", "--threads", "3", "-b", "0.0.0.0:8082", "-t", "360", "api.app:create_app('settings')"]
+ENV APP_WORKERS="3"
+ENV APP_THREADS="1"
+
+CMD ["/bin/bash","scripts/entrypoint.sh"]

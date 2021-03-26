@@ -8,3 +8,4 @@ tests/tests.out
 htmlcov/
 src
 .DS_Store
+.env
