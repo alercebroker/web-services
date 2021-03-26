@@ -7,7 +7,7 @@
 
 ## Official documentation 
 
-- [ALeRCE ZTF API Documentation](http://dev.api.alerce.online)
+- [ALeRCE ZTF API Documentation](https://api.alerce.online/ztf/v1/)
 
 ## For developers
 
