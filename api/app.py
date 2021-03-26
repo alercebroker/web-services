@@ -1,3 +1,4 @@
+from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
 from flask_restx import Api
 from .sql.astro_object.astro_object import api as astro_object
@@ -10,6 +11,7 @@ from flask_cors import CORS
 
 def create_app(config):
     app = Flask(__name__)
+    app.wsgi_app = ProxyFix(app.wsgi_app,x_host=1, x_prefix=1)
     app.config.from_object(config)
     CORS(app)
 
