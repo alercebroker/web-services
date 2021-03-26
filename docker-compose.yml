@@ -1,6 +1,6 @@
 version: "3"
 services:
-  ztf_api:
+  flask:
     build: .
     image: ztf_api:1.0.0
     env_file:
