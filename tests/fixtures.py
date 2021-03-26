@@ -17,8 +17,9 @@ def client():
     with app.test_client() as client:
         with app.app_context():
             db.create_db()
-            class_ = models.Class(fullname="Super Nova", name="SN")
-            classifier = models.Classifier(name="C1", version="1.0.0-test")
+            taxonomy = models.Taxonomy(
+                classifier_name="C1", classifier_version="1.0.0-test", classes=["SN"]
+            )
             model = models.Object(
                 oid="ZTF1",
                 ndet=1,
@@ -55,14 +56,32 @@ def client():
             )
             model.probabilities.append(
                 models.Probability(
-                    class_name=class_.name,
+                    class_name="SN",
                     probability=1.0,
-                    classifier_name=classifier.name,
-                    classifier_version=classifier.version,
+                    classifier_name=taxonomy.classifier_name,
+                    classifier_version=taxonomy.classifier_version,
                     ranking=1,
                 )
             )
-            feature_version = models.FeatureVersion(version="1.0.0-test")
+            step_feature = models.Step(
+                step_id="test_feature",
+                name="feature",
+                version="1",
+                comments="asd",
+                date=datetime.datetime.now(),
+            )
+            step_preprocess = models.Step(
+                step_id="test_preprocess",
+                name="preprocess",
+                version="1",
+                comments="asd",
+                date=datetime.datetime.now(),
+            )
+            feature_version = models.FeatureVersion(
+                version="1.0.0-test",
+                step_id_feature=step_feature.step_id,
+                step_id_preprocess=step_preprocess.step_id,
+            )
             feature = models.Feature(
                 oid=model.oid,
                 name="testfeature",
@@ -72,20 +91,30 @@ def client():
             )
             model.detections.append(
                 models.Detection(
-                    candid="t",
+                    candid=123,
                     mjd=1,
                     fid=1,
+                    pid=1,
+                    isdiffpos=1,
                     ra=1,
                     dec=1,
                     rb=1,
-                    magap=1,
                     magpsf=1,
                     sigmapsf=1,
-                    sigmagap=1,
+                    corrected=True,
+                    dubious=True,
+                    has_stamp=True,
+                    step_id_corr=step_preprocess.step_id,
                 )
             )
             model.non_detections.append(models.NonDetection(mjd=1, fid=1, diffmaglim=1))
+            db.session.add(taxonomy)
+            db.session.add_all([step_feature, step_preprocess])
+            db.session.commit()
+            db.session.add(feature_version)
             db.session.add(model)
             db.session.commit()
+            db.session.close()
         yield client
+        db.session.close()
         db.drop_db()
