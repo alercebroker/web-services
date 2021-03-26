@@ -7,3 +7,4 @@ tests/tests.out
 .coverage
 htmlcov/
 src
+.DS_Store
