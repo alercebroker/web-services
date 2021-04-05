@@ -1,4 +1,6 @@
 from flask_restx import Namespace, Resource
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from db_plugins.db.sql import models
 from .models import object_list_item, object_list, object_item, limit_values_model
 from .parsers import create_parsers
@@ -16,6 +18,11 @@ api.models[object_list.name] = object_list
 api.models[object_item.name] = object_item
 api.models[limit_values_model.name] = limit_values_model
 
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
+
 filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
 
 DEFAULT_CLASSIFIER = "lc_classifier"
@@ -24,6 +31,7 @@ DEFAULT_RANKING = 1
 
 
 @api.route("/")
+@limiter.limit("30/minute")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectList(Resource):
