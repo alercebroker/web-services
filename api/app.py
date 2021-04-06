@@ -16,6 +16,11 @@ def create_app(config):
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
     app.config.from_object(config)
     CORS(app)
+    # Check if app run trough gunicorn
+    is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
+
+    if is_gunicorn:
+        prometheus_metrics.init_app(app)
 
     with app.app_context():
         from .db import db, session_options
@@ -41,11 +46,11 @@ def create_app(config):
         ztf_api.add_namespace(classifier, path="/classifiers")
         ztf_api.add_namespace(features, path="/objects")
         ztf_api.init_app(app)
-        prometheus_metrics.init_app(app)
 
         def cleanup(e):
             db.session.remove()
             return e
 
         app.teardown_appcontext(cleanup)
+
     return app

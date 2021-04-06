@@ -1,3 +1,3 @@
-from prometheus_flask_exporter import PrometheusMetrics
+from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
 
-prometheus_metrics = PrometheusMetrics.for_app_factory()
+prometheus_metrics = GunicornInternalPrometheusMetrics.for_app_factory()
