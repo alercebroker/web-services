@@ -1,7 +1,7 @@
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
 from flask_restx import Api
-from .sql.astro_object.astro_object import api as astro_object
+from .sql.astro_object.astro_object import limiter, api as astro_object
 from .sql.light_curve.light_curve import api as light_curve
 from .sql.magstats.magstats import api as magstats
 from .sql.probabilities.probabilities import api as probabilities
@@ -9,9 +9,10 @@ from .sql.features.features import api as features
 from .sql.classifier.classifier import api as classifier
 from flask_cors import CORS
 
+
 def create_app(config):
     app = Flask(__name__)
-    app.wsgi_app = ProxyFix(app.wsgi_app,x_host=1, x_prefix=1)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
     app.config.from_object(config)
     CORS(app)
 
@@ -39,6 +40,7 @@ def create_app(config):
         ztf_api.add_namespace(classifier, path="/classifiers")
         ztf_api.add_namespace(features, path="/objects")
         ztf_api.init_app(app)
+        limiter.init_app(app)
 
         def cleanup(e):
             db.session.remove()
