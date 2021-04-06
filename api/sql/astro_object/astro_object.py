@@ -19,7 +19,7 @@ api.models[limit_values_model.name] = limit_values_model
 filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
 
 DEFAULT_CLASSIFIER = "lc_classifier"
-DEFAULT_VERSION = "bulk_0.0.1"
+DEFAULT_VERSION = "hierarchical_random_forest_1.0.0"
 DEFAULT_RANKING = 1
 
 
@@ -250,6 +250,6 @@ class LimitValues(Resource):
             "min_ndet": resp[0],
             "max_ndet": resp[1],
             "min_firstmjd": resp[2],
-            "max_firstmjd": resp[3]
+            "max_firstmjd": resp[3],
         }
         return resp
