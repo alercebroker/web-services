@@ -133,7 +133,7 @@ def create_parsers(classifiers=None, classes=None):
     pagination_parser.add_argument(
         "count",
         type=str2bool,
-        default=True,
+        default=False,
         dest="count",
         location="args",
         help="Whether to count total objects or not.",
