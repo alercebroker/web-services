@@ -87,7 +87,7 @@ def test_object_list(psql_service, client):
 
 
 def test_objects_list_not_found(psql_service, client):
-    rv = client.get("/objects/", query_string={"classifier": "Fake"})
+    rv = client.get("/objects/", query_string={"classifier": "Fake", "count": "true"})
     assert rv.json["total"] == 0
 
 
@@ -176,7 +176,6 @@ def test_class_classifier_query_not_found(psql_service, client):
     args = {"classifier": "C1", "class": "fake"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 0
-    assert rv.json["total"] == 0
 
 
 def test_single_object_query(psql_service, client):
