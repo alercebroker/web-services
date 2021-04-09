@@ -8,6 +8,8 @@ def before_request():
 
 
 def after_request(response, logger):
+    if request.fulll_path == "/metrics?":
+        return response
     elapsed = time() - g.pop("time")
     logger.info(
         "%s %s %s %s %s time:%s seconds",
