@@ -8,6 +8,11 @@ from .sql.probabilities.probabilities import api as probabilities
 from .sql.features.features import api as features
 from .sql.classifier.classifier import api as classifier
 from flask_cors import CORS
+from .extensions import prometheus_metrics
+import os
+import logging
+from .callbacks import after_request, before_request
+
 
 
 def create_app(config):
@@ -15,6 +20,22 @@ def create_app(config):
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
     app.config.from_object(config)
     CORS(app)
+    # Check if app run trough gunicorn
+    is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
+
+    if is_gunicorn:
+        prometheus_metrics.init_app(app)
+        gunicorn_logger = logging.getLogger("gunicorn.error")
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
+
+    @app.before_request
+    def beforerequest():
+        before_request()
+
+    @app.after_request
+    def afterrequest(response):
+        return after_request(response, app.logger)
 
     with app.app_context():
         from .db import db, session_options
@@ -47,4 +68,5 @@ def create_app(config):
             return e
 
         app.teardown_appcontext(cleanup)
+
     return app

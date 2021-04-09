@@ -23,7 +23,7 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["30/sec"])
 filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
 
 DEFAULT_CLASSIFIER = "lc_classifier"
-DEFAULT_VERSION = "bulk_0.0.1"
+DEFAULT_VERSION = "hierarchical_random_forest_1.0.0"
 DEFAULT_RANKING = 1
 
 

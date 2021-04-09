@@ -4,4 +4,5 @@ flask_profiler==1.8.1
 flask_restx==0.2.0
 flask-limiter==1.4
 astropy==4.0.1.post1
+prometheus-flask-exporter>=0.18.1
 -e git+https://git@github.com/alercebroker/db-plugins#egg=db-plugins
