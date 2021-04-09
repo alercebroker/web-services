@@ -1,8 +1,6 @@
 from flask_restx import Namespace, Resource
 from flask_restx import reqparse
-from .models import (
-    feature_model
-)
+from .models import feature_model
 from .parsers import fid_parser
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
@@ -10,6 +8,7 @@ from ...db import db
 
 api = Namespace("features", description="Features related operations")
 api.models[feature_model.name] = feature_model
+
 
 @api.route("/<id>/features")
 @api.param("id", "The object's identifier")
@@ -35,6 +34,7 @@ class Features(Resource):
         else:
             raise NotFound
 
+
 @api.route("/<id>/features/<name>")
 @api.param("id", "The object's identifier")
 @api.response(200, "Success")
@@ -48,9 +48,17 @@ class Feature(Resource):
         Gets a single Feature
         """
         args = fid_parser.parse_args()
-        obj = db.query(models.Object,models.Object.oid).filter(models.Object.oid == id).one_or_none()
+        obj = (
+            db.query(models.Object, models.Object.oid)
+            .filter(models.Object.oid == id)
+            .one_or_none()
+        )
         if obj:
-            q = db.query(models.Feature).filter(models.Feature.name == name).filter(models.Feature.oid == obj.oid)
+            q = (
+                db.query(models.Feature)
+                .filter(models.Feature.name == name)
+                .filter(models.Feature.oid == obj.oid)
+            )
             if args.fid is not None:
                 q = q.filter(models.Feature.fid == args.fid)
             if args.version is not None:

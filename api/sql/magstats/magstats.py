@@ -5,8 +5,11 @@ from .models import magstats_model
 from werkzeug.exceptions import NotFound
 from ...db import db
 
-api = Namespace("magnitude statistics", description="Magnitude Statistics related operations")
+api = Namespace(
+    "magnitude statistics", description="Magnitude Statistics related operations"
+)
 api.models[magstats_model.name] = magstats_model
+
 
 @api.route("/<id>/magstats")
 @api.param("id", "The object's identifier")

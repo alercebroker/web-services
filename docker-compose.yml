@@ -6,8 +6,9 @@ services:
     env_file:
       - .env
     environment:
-      - APP_WORKERS=3
-      - APP_THREADS=2
+      - APP_WORKERS=1
+      - APP_THREADS=1
       - prometheus_multiproc_dir=/tmp
+      - LOG_LEVEL=info
     ports:
     - 8082:8082

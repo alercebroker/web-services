@@ -27,7 +27,6 @@ magstats_model = Model(
         "lastmjd": fields.Float(
             description="the time of the last detection in the given fid"
         ),
-        "step_id_corr": fields.String(description="correction step pipeline version")
+        "step_id_corr": fields.String(description="correction step pipeline version"),
     },
 )
-
