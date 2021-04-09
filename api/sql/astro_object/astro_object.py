@@ -18,7 +18,7 @@ api.models[object_list.name] = object_list
 api.models[object_item.name] = object_item
 api.models[limit_values_model.name] = limit_values_model
 
-limiter = Limiter(key_func=get_remote_address, default_limits=["30/sec"])
+limiter = Limiter(key_func=get_remote_address, default_limits=["30/second"])
 
 filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
 
