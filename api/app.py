@@ -14,7 +14,6 @@ import logging
 from .callbacks import after_request, before_request
 
 
-
 def create_app(config):
     app = Flask(__name__)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
