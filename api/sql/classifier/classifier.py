@@ -31,10 +31,13 @@ class ClassifierList(Resource):
 class Classifier(Resource):
     @api.doc("get_classes")
     @api.marshal_list_with(class_model)
-    def get(self, classifier_name,classifier_version):
-        classifier = db.query(models.Taxonomy) \
-                       .filter(models.Taxonomy.classifier_name == classifier_name) \
-                       .filter(models.Taxonomy.classifier_version == classifier_version).one_or_none()
+    def get(self, classifier_name, classifier_version):
+        classifier = (
+            db.query(models.Taxonomy)
+            .filter(models.Taxonomy.classifier_name == classifier_name)
+            .filter(models.Taxonomy.classifier_version == classifier_version)
+            .one_or_none()
+        )
         if classifier is not None:
             classes = [{"name": c} for c in classifier.classes]
             return classes

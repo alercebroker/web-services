@@ -9,7 +9,9 @@ probability_model = Model(
         ),
         "classifier_version": fields.String(description="Version of the classifier"),
         "class_name": fields.String(description="Class name"),
-        "probability": fields.Float(description="Value of the probability for the class"),
+        "probability": fields.Float(
+            description="Value of the probability for the class"
+        ),
         "ranking": fields.Integer(
             description="position of the probability against the others"
         ),

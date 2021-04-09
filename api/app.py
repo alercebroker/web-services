@@ -10,6 +10,8 @@ from .sql.classifier.classifier import api as classifier
 from flask_cors import CORS
 from .extensions import prometheus_metrics
 import os
+import logging
+from .callbacks import after_request, before_request
 
 
 def create_app(config):
@@ -22,6 +24,17 @@ def create_app(config):
 
     if is_gunicorn:
         prometheus_metrics.init_app(app)
+        gunicorn_logger = logging.getLogger("gunicorn.error")
+        app.logger.handlers = gunicorn_logger.handlers
+        app.logger.setLevel(gunicorn_logger.level)
+
+    @app.before_request
+    def beforerequest():
+        before_request()
+
+    @app.after_request
+    def afterrequest(response):
+        return after_request(response, app.logger)
 
     with app.app_context():
         from .db import db, session_options

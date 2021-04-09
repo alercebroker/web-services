@@ -27,11 +27,7 @@ class LightCurve(Resource):
         """
         Gets detections and non detections
         """
-        obj = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
-        )
+        obj = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
         if obj:
             light_curve = obj.get_lightcurve()
             for det in light_curve["detections"]:
@@ -52,11 +48,7 @@ class ObjectDetections(Resource):
         """
         Just the detections
         """
-        result = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
-        )
+        result = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
         if result:
             return result.detections
         else:
@@ -74,13 +66,8 @@ class NonDetections(Resource):
         """
         Just non detections
         """
-        result = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
-        )
+        result = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
         if result:
             return result.non_detections
         else:
             raise NotFound
-
