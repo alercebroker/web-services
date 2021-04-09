@@ -18,9 +18,7 @@ api.models[object_list.name] = object_list
 api.models[object_item.name] = object_item
 api.models[limit_values_model.name] = limit_values_model
 
-limiter = Limiter(
-    key_func=get_remote_address, default_limits=["200 per day", "50 per hour"]
-)
+limiter = Limiter(key_func=get_remote_address, default_limits=["30/sec"])
 
 filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
 
@@ -33,7 +31,7 @@ DEFAULT_RANKING = 1
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectList(Resource):
-    decorators = [limiter.limit("30/minute")]
+    decorators = [limiter.limit("30/sec")]
 
     @api.doc("list_object")
     @api.expect(filter_parser, conesearch_parser, pagination_parser, order_parser)
