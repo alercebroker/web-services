@@ -22,15 +22,11 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        instance-ids: ${{ secrets.INSTANCE_ID }}
+        instance-ids: ${{ secrets.INSTANCE_ID_DEV }}
 
         working-directory: /opt/alerce/ztf_api
         command: git pull
         comment: Pull changes
-
-    # Catch SSM outputs
-    - name: Get the outputs
-      run: echo "The Command id is ${{ steps.ssm.outputs.command-id }}"
 
     - name: AWS SSM Send-Command
       uses: peterkimzz/aws-ssm-send-command@master
@@ -39,12 +35,8 @@ jobs:
         aws-region: ${{ secrets.AWS_REGION }}
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        instance-ids: ${{ secrets.INSTANCE_ID }}
+        instance-ids: ${{ secrets.INSTANCE_ID_DEV }}
 
         working-directory: /opt/alerce/ztf_api
         command: docker-compose up -d
         comment: Deploy api
-
-    # Catch SSM outputs
-    - name: Get the outputs
-      run: echo "The Command id is ${{ steps.ssm.outputs.command-id }}"
