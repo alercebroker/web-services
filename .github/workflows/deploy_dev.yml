@@ -38,5 +38,5 @@ jobs:
         instance-ids: ${{ secrets.INSTANCE_ID_DEV }}
 
         working-directory: /opt/alerce/ztf_api
-        command: docker-compose up -d
+        command: docker-compose up --build -d
         comment: Deploy api
