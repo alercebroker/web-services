@@ -63,10 +63,10 @@ class Probabilities(Resource):
 
     def order_probs(self, probs: List):
         def sorting_order(e):
-            if "lc_classifier" in e["classifier_name"]:
-                return LC_CLASSIFIER_ORDER[e["class_name"]]
-            elif "stamp_classifier" in e["classifier_name"]:
-                return STAMP_CLASSIFIER_ORDER[e["class_name"]]
+            if "lc_classifier" in e.classifier_name:
+                return LC_CLASSIFIER_ORDER[e.class_name]
+            elif "stamp_classifier" in e.classifier_name:
+                return STAMP_CLASSIFIER_ORDER[e.class_name]
 
         probs.sort(key=sorting_order)
         return probs
