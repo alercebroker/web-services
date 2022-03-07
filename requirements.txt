@@ -1,3 +1,4 @@
+itsdangerous==2.0.1
 Flask==1.1.1
 flask_cors==3.0.8
 flask_profiler==1.8.1
