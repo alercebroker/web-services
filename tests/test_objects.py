@@ -1,4 +1,4 @@
-from api.sql.astro_object import astro_object as AstroObjectResource
+from api.resources.astro_object import astro_object as AstroObjectResource
 from fixtures import client, db, BaseQuery, models
 
 
