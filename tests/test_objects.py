@@ -1,5 +1,5 @@
 from api.resources.astro_object import astro_object as AstroObjectResource
-from fixtures import client, db, BaseQuery, models
+from conftest import db, models
 
 
 def test_conesearch(psql_service, client):
