@@ -1,4 +1,5 @@
-from api.sql.probabilities.probabilities import Probabilities
+from fixtures import client
+from api.resources.probabilities.probabilities import Probabilities
 from db_plugins.db.sql.models import Probability, Taxonomy
 
 taxonomy = [
