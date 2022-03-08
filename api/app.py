@@ -1,7 +1,7 @@
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
 from flask_restx import Api
-from .resources.astro_object.astro_object import api as astro_object
+from .resources.astro_object.astro_object import api as astro_object, limiter
 from .resources.light_curve.light_curve import api as light_curve
 from .resources.magstats.magstats import api as magstats
 from .resources.probabilities.probabilities import api as probabilities
@@ -60,6 +60,7 @@ def create_app(config):
         ztf_api.add_namespace(classifier, path="/classifiers")
         ztf_api.add_namespace(features, path="/objects")
         ztf_api.init_app(app)
+        limiter.init_app(app)
 
         def cleanup(e):
             db.session.remove()

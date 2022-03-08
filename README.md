@@ -3,7 +3,7 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![pyVersion38](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/download/releases/3.8/)
 
-# ZTF API v1.0.0 
+# ALeRCE Alerts API
 
 ## Official documentation 
 
@@ -13,9 +13,9 @@
 
 Clone this repo using `git clone https://github.com/alercebroker/ztf-api.git` and install requirements with `pip install -r requirements.txt`.
 
-For modify an existing endpoint, go to `ztf-api/api/sql` and enter the folder of the endpoint that you want to modify. Only write code to specific task of this endpoint.
+For modify an existing endpoint, go to `api/sql` and enter the folder of the endpoint that you want to modify. Only write code to specific task of this endpoint.
 
-If you want to create a new endpoint, create a package with your new routines in `ztf-api/api/sql`. After that in the `ztf-api/api/app.py`, import the new logic in the top and add the namespace to `ztf_api`. 
+If you want to create a new endpoint, create a package with your new routines in `api/sql`. After that in the `api/app.py`, import the new logic in the top and add the namespace to the main api object. 
 
 To run in develop, first you must set the following environment variables:
 
