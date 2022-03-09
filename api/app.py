@@ -1,12 +1,12 @@
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
 from flask_restx import Api
-from .sql.astro_object.astro_object import limiter, api as astro_object
-from .sql.light_curve.light_curve import api as light_curve
-from .sql.magstats.magstats import api as magstats
-from .sql.probabilities.probabilities import api as probabilities
-from .sql.features.features import api as features
-from .sql.classifier.classifier import api as classifier
+from .resources.astro_object.astro_object import api as astro_object, limiter
+from .resources.light_curve.light_curve import api as light_curve
+from .resources.magstats.magstats import api as magstats
+from .resources.probabilities.probabilities import api as probabilities
+from .resources.features.features import api as features
+from .resources.classifier.classifier import api as classifier
 from flask_cors import CORS
 from .extensions import prometheus_metrics
 import os

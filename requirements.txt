@@ -1,4 +1,4 @@
-Flask==1.1.1
+Flask==2.0.3
 flask_cors==3.0.9
 flask_profiler==1.8.1
 flask_restx==0.5.1
