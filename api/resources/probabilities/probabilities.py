@@ -1,5 +1,4 @@
-from flask_restx import Namespace, Resource, fields
-from flask_restx import reqparse
+from flask_restx import Namespace, Resource
 from db_plugins.db.sql import models
 from .models import probability_model
 from .parsers import prob_parser

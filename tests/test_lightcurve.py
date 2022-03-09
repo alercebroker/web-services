@@ -1,6 +1,3 @@
-from fixtures import client
-
-
 def test_get_lightcurve(psql_service, client):
     rv = client.get("objects/ZTF1/lightcurve")
     assert rv.status_code == 200
