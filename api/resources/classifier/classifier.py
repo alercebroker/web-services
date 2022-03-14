@@ -1,6 +1,6 @@
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
-from ...db import db
+from ...database_access.psql_db import db
 from .models import classifier_model, class_model
 from flask_restx import Namespace, Resource
 

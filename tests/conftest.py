@@ -2,7 +2,7 @@ import pytest
 import os
 import psycopg2
 from api.app import create_app
-from api.db import db
+from api.database_access.psql_db import db
 from db_plugins.db.sql import BaseQuery, models
 import json
 import datetime

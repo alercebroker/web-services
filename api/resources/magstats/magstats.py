@@ -3,7 +3,7 @@ from flask_restx import reqparse
 from db_plugins.db.sql import models
 from .models import magstats_model
 from werkzeug.exceptions import NotFound
-from ...db import db
+from ...database_access.psql_db import db
 
 api = Namespace(
     "magnitude statistics", description="Magnitude Statistics related operations"

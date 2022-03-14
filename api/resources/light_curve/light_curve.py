@@ -7,8 +7,8 @@ from .models import (
 )
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
-from ...db import db
-
+from ...database_access.psql_db import db
+from ...database_access.control import GeneralQueries
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model
