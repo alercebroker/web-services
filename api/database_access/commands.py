@@ -1,5 +1,5 @@
 
-from interfaces import PSQLInterface, MongoInterface
+from .interfaces import PSQLInterface, MongoInterface
 
 
 ZTF_SURVEY_ID = "ztf"
@@ -25,7 +25,7 @@ class BaseCommand(object):
 
 class GetLightCurve(BaseCommand):
 
-  def __init__(self, survey_id, object_id) -> None:
+  def __init__(self, object_id, survey_id) -> None:
     super().__init__(survey_id)
     self.object_id = object_id
     self.database_interface = self.database_interface_selector()
@@ -36,7 +36,7 @@ class GetLightCurve(BaseCommand):
 
 class GetDetections(BaseCommand):
 
-  def __init__(self, survey_id, object_id) -> None:
+  def __init__(self, object_id, survey_id) -> None:
     super().__init__(survey_id)
     self.object_id = object_id
     self.database_interface = self.database_interface_selector()
@@ -47,7 +47,7 @@ class GetDetections(BaseCommand):
 
 class GetNonDetections(BaseCommand):
 
-  def __init__(self, survey_id, object_id) -> None:
+  def __init__(self, object_id, survey_id) -> None:
     super().__init__(survey_id)
     self.object_id = object_id
     self.database_interface = self.database_interface_selector()

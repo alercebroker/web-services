@@ -20,8 +20,7 @@ class PSQLInterface(DBInterface):
 
   @classmethod
   def _get_object_by_id(cls, object_id):
-    print(f"Geting object {object_id}")
-    query_result = psql_db.query(psql_models.Object).filter(psql_models.Object.oid == id).one_or_none()
+    query_result = psql_db.query(psql_models.Object).filter(psql_models.Object.oid == object_id).one_or_none()
 
     if query_result:
       return query_result
@@ -30,8 +29,7 @@ class PSQLInterface(DBInterface):
 
   @classmethod  
   def get_light_curve(cls, object_id):
-    print(f"getting PSQL light curve {object_id}")
-    astro_obj = cls.get_object_by_id(object_id,)
+    astro_obj = cls._get_object_by_id(object_id)
 
     light_curve = astro_obj.get_lightcurve()
     for det in light_curve["detections"]:
@@ -41,15 +39,13 @@ class PSQLInterface(DBInterface):
 
   @classmethod
   def get_detections(cls, object_id):
-    print(f"getting PSQL light curve detections for {object_id}")
-    astro_obj = cls.get_object_by_id(object_id,)
+    astro_obj = cls._get_object_by_id(object_id)
 
     return astro_obj.detections
 
   @classmethod
   def get_non_detections(cls, object_id):
-    print(f"getting PSQL light curve detections for {object_id}")
-    astro_obj = cls.get_object_by_id(object_id,)
+    astro_obj = cls._get_object_by_id(object_id)
 
     return astro_obj.non_detections
 
@@ -58,21 +54,20 @@ class MongoInterface(DBInterface):
 
   @classmethod
   def get_light_curve(cls, object_id):
-    print(f"getting MONGO light curve for {object_id}")
     light_curve = {
-      "detectioins": cls.get_light_curve_detections(object_id),
-      "non_detections": cls.get_light_curve_non_detections(object_id)
+      "detections": cls.get_detections(object_id),
+      "non_detections": cls.get_non_detections(object_id)
     }
 
+    ''' from psql get light curve
     for det in light_curve["detections"]:
       det.phase = 0  # (det.mjd % obj.period) / obj.period
-
+    '''
     return light_curve
 
   @classmethod
   def get_detections(cls, object_id):
-    print(f"getting MONGO light curve detections for {object_id}")
-    detections = mongo_db.query().find_one(
+    detections = mongo_db.query().find_all(
       model=mongo_models.Detection,
       filter_by={
         "oid": object_id
@@ -81,14 +76,13 @@ class MongoInterface(DBInterface):
     )
 
     if detections:
-      return detections
+      return list(detections)
     else:
       raise Exception(f"object {object_id} not found")
 
   @classmethod
   def get_non_detections(cls, object_id):
-    print(f"getting MONGO light curve non detections for {object_id}")
-    non_detections = mongo_db.query().find_one(
+    non_detections = mongo_db.query().find_all(
       model=mongo_models.NonDetection,
       filter_by={
         "oid": object_id
@@ -97,6 +91,6 @@ class MongoInterface(DBInterface):
     )
 
     if non_detections:
-      return non_detections
+      return list(non_detections)
     else:
       raise Exception(f"object {object_id} not found")
