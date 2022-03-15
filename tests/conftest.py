@@ -29,13 +29,14 @@ def is_responsive_psql(url):
         return False
 
 def is_responsive_mongo(url):
+    (host, port) = url.split(":")
     try:
         client = pymongo.MongoClient(
-            host="mongodb://localhost",  # <-- IP and port go here
+            host=host,  # <-- IP and port go here
             serverSelectionTimeoutMS=3000,  # 3 second timeout
             username="mongo",
             password="mongo",
-            port=27017,
+            port=int(port),
             authSource="database"
         )
         client.close()
