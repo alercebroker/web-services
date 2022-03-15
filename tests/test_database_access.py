@@ -159,7 +159,7 @@ def test_control_cleanup(psql_service, client):
         "CONNECT_MONGO": True
       }
       db_control = DBControl(test_app_config, {}, {})
-      db_control.cleanup_databases()
+      db_control.cleanup_databases("")
 
       mock_cleanup_psql.assert_called_once()
       mock_cleanup_mongo.assert_called_once()
@@ -171,7 +171,7 @@ def test_control_cleanup(psql_service, client):
         "CONNECT_MONGO": False
       }
       db_control = DBControl(test_app_config, {}, {})
-      db_control.connect_databases()
+      db_control.cleanup_databases("")
 
       mock_cleanup_psql.assert_called_once()
       mock_cleanup_mongo.assert_not_called()
@@ -183,7 +183,7 @@ def test_control_cleanup(psql_service, client):
         "CONNECT_MONGO": True
       }
       db_control = DBControl(test_app_config, {}, {})
-      db_control.connect_databases()
+      db_control.cleanup_databases("")
 
       mock_cleanup_psql.assert_not_called()
       mock_cleanup_mongo.assert_called_once()
