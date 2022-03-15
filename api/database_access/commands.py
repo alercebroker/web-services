@@ -34,7 +34,7 @@ class BaseCommand(object):
     db_interface = DATABASE_INTERFACES.get(self.survey_id)
 
     if db_interface:
-      return db_interface
+      return db_interface()
     else:
       raise InterfaceNotFound(self.survey_id)
 

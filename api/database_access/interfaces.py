@@ -83,10 +83,8 @@ class MongoInterface(DBInterface):
       "non_detections": cls.get_non_detections(object_id)
     }
 
-    ''' from psql get light curve
     for det in light_curve["detections"]:
-      det.phase = 0  # (det.mjd % obj.period) / obj.period
-    '''
+      det["phase"] = 0  # (det.mjd % obj.period) / obj.period
 
     return light_curve
 
@@ -103,7 +101,6 @@ class MongoInterface(DBInterface):
       paginate=False
     )
 
-    # se puede hacer de mejor forma?
     if detections:
       detections = list(detections)
       if len(detections) > 0:

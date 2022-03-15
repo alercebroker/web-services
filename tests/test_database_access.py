@@ -93,14 +93,14 @@ def test_base_command_interface_selector(psql_service, client):
   with pytest.raises(InterfaceNotFound):
     command = BaseCommand("Error")
     command.database_interface_selector()
-  # existe mejor forma?
+
   command = BaseCommand(ZTF_ID)
   db_interface = command.database_interface_selector()
-  assert db_interface is PSQLInterface
+  assert isinstance(db_interface, PSQLInterface)
 
   command = BaseCommand(ATLAS_ID)
   db_interface = command.database_interface_selector()
-  assert db_interface is MongoInterface
+  assert isinstance(db_interface, MongoInterface)
 
 def test_base_dbinterface(psql_service, client):
   with pytest.raises(NotImplementedError):
