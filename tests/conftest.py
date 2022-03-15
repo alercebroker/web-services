@@ -29,7 +29,19 @@ def is_responsive_psql(url):
         return False
 
 def is_responsive_mongo(url):
-    pass
+    try:
+        client = pymongo.MongoClient(
+            host="mongodb://localhost",  # <-- IP and port go here
+            serverSelectionTimeoutMS=3000,  # 3 second timeout
+            username="mongo",
+            password="mongo",
+            port=27017,
+            authSource="database"
+        )
+        client.close()
+        return True
+    except:
+        return False
 
 
 @pytest.fixture(scope="session")
@@ -43,7 +55,16 @@ def psql_service(docker_ip, docker_services):
     )
     return server
 
-#def mongo services
+@pytest.fixture(scope="session")
+def mongo_service(docker_ip, docker_services):
+    """Ensure that Kafka service is up and responsive."""
+    # `port_for` takes a container port and returns the corresponding host port
+    port = docker_services.port_for("mongo", 27017)
+    server = "{}:{}".format(docker_ip, port)
+    docker_services.wait_until_responsive(
+        timeout=30.0, pause=0.1, check=lambda: is_responsive_psql(server)
+    )
+    return server
 
 @pytest.fixture
 def client():

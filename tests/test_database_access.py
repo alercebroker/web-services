@@ -10,7 +10,7 @@ from api.database_access.interfaces import ObjectNotFound
 ZTF_ID = "ztf"
 ATLAS_ID = "atlas"
 
-def test_get_light_curve_mongo(psql_service, client):
+def test_get_light_curve_mongo(mongo_service, psql_service, client):
   command = GetLightCurve("ATLAS1", ATLAS_ID)
   result = command.execute()
 
@@ -29,7 +29,7 @@ def test_get_light_curve_mongo(psql_service, client):
   assert len(result["non_detections"]) == 0
   assert result["non_detections"] == []
 
-def test_get_light_curve_psql(psql_service, client):
+def test_get_light_curve_psql(mongo_service, psql_service, client):
   command = GetLightCurve("ZTF1", ZTF_ID)
   result = command.execute()
 
@@ -37,7 +37,7 @@ def test_get_light_curve_psql(psql_service, client):
 
   assert len(result["non_detections"]) == 1
 
-def test_get_light_curve_not_found(psql_service, client):
+def test_get_light_curve_not_found(mongo_service, psql_service, client):
   with pytest.raises(ObjectNotFound):
     command = GetLightCurve("ZTF1", ATLAS_ID)
     command.execute()
@@ -46,19 +46,19 @@ def test_get_light_curve_not_found(psql_service, client):
     command = GetLightCurve("ATLAS1", ZTF_ID)
     command.execute()
 
-def test_get_detections_mongo(psql_service, client):
+def test_get_detections_mongo(mongo_service, psql_service, client):
   command = GetDetections("ATLAS1", ATLAS_ID)
   result = command.execute()
 
   assert len(result) == 1
 
-def test_get_detections_psql(psql_service, client):
+def test_get_detections_psql(mongo_service, psql_service, client):
   command = GetDetections("ZTF1", ZTF_ID)
   result = command.execute()
 
   assert len(result) == 1
 
-def test_get_detections_not_found(psql_service, client):
+def test_get_detections_not_found(mongo_service, psql_service, client):
   with pytest.raises(ObjectNotFound):
     command = GetDetections("ATLAS1", ZTF_ID)
     command.execute()
@@ -67,19 +67,19 @@ def test_get_detections_not_found(psql_service, client):
     command = GetDetections("ZTF1", ATLAS_ID)
     command.execute()
 
-def test_get_non_detections_mongo(psql_service, client):
+def test_get_non_detections_mongo(mongo_service, psql_service, client):
   command = GetNonDetections("ATLAS1", ATLAS_ID)
   result = command.execute()
 
   assert len(result) == 1
 
-def test_get_non_detections_psql(psql_service, client):
+def test_get_non_detections_psql(mongo_service, psql_service, client):
   command = GetNonDetections("ZTF1", ZTF_ID)
   result = command.execute()
 
   assert len(result) == 1
 
-def test_get_non_detections_not_found(psql_service, client):
+def test_get_non_detections_not_found(mongo_service, psql_service, client):
   with pytest.raises(ObjectNotFound):
     command = GetNonDetections("ATLAS1", ZTF_ID)
     command.execute()
@@ -89,7 +89,7 @@ def test_get_non_detections_not_found(psql_service, client):
 
   assert len(result) == 0
 
-def test_base_command_interface_selector(psql_service, client):
+def test_base_command_interface_selector(mongo_service, psql_service, client):
   with pytest.raises(InterfaceNotFound):
     command = BaseCommand("Error")
     command.database_interface_selector()
@@ -102,7 +102,7 @@ def test_base_command_interface_selector(psql_service, client):
   db_interface = command.database_interface_selector()
   assert isinstance(db_interface, MongoInterface)
 
-def test_base_dbinterface(psql_service, client):
+def test_base_dbinterface(mongo_service, psql_service, client):
   with pytest.raises(NotImplementedError):
     DBInterface.get_light_curve("ATLAS1")
   
@@ -112,7 +112,7 @@ def test_base_dbinterface(psql_service, client):
   with pytest.raises(NotImplementedError):
     DBInterface.get_non_detections("ATLAS1")
 
-def test_control_connect(psql_service, client):
+def test_control_connect(mongo_service, psql_service, client):
   
   with patch.object(DBControl, 'connect_psql') as mock_connect_psql:
     with patch.object(DBControl, 'connect_mongo') as mock_connect_mongo:
@@ -150,7 +150,7 @@ def test_control_connect(psql_service, client):
       mock_connect_psql.assert_not_called()
       mock_connect_mongo.assert_called_once()
 
-def test_control_cleanup(psql_service, client):
+def test_control_cleanup(mongo_service, psql_service, client):
   
   with patch.object(DBControl, 'cleanup_psql') as mock_cleanup_psql:
     with patch.object(DBControl, 'cleanup_mongo') as mock_cleanup_mongo:
