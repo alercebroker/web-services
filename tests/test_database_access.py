@@ -3,7 +3,7 @@ import pytest
 from conftest import db, models, mongo_db, mongo_models
 from api.database_access.commands import  GetLightCurve, GetDetections, GetNonDetections, BaseCommand
 from api.database_access.commands import InterfaceNotFound
-from api.database_access.interfaces import DBInterface
+from api.database_access.interfaces import DBInterface, PSQLInterface, MongoInterface
 from api.database_access.interfaces import ObjectNotFound
 
 
@@ -93,6 +93,14 @@ def test_base_command_interface_selector(psql_service, client):
   with pytest.raises(InterfaceNotFound):
     command = BaseCommand("Error")
     command.database_interface_selector()
+  # existe mejor forma?
+  command = BaseCommand(ZTF_ID)
+  db_interface = command.database_interface_selector()
+  assert db_interface is PSQLInterface
+
+  command = BaseCommand(ATLAS_ID)
+  db_interface = command.database_interface_selector()
+  assert db_interface is MongoInterface
 
 def test_base_dbinterface(psql_service, client):
   with pytest.raises(NotImplementedError):
