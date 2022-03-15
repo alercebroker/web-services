@@ -25,6 +25,9 @@ MONGO_DATABASE = os.getenv("MONGO_DATABASE")
 MONGO_USER = os.getenv("MONGO_USER")
 MONGO_PASSWORD = os.getenv("MONGO_PASSWORD")
 
+CONNECT_PSQL = os.getenv("CONNECT_PSQL", "YES")
+CONNECT_MONGO = os.getenv("CONNECT_MONGO")
+
 DATABASE = {
     "SQL": {"SQLALCHEMY_DATABASE_URL": SQLALCHEMY_DATABASE_URL},
     "MONGO": {
@@ -33,6 +36,10 @@ DATABASE = {
         "PASSWORD": MONGO_PASSWORD,
         "PORT": MONGO_PORT, 
         "DATABASE": MONGO_DATABASE,
+    },
+    "APP_CONFIG": {
+        "CONNECT_PSQL": CONNECT_PSQL is not None,
+        "CONNECT_MONGO": CONNECT_MONGO is not None
     }
 }
 

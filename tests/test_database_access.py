@@ -1,6 +1,6 @@
-from platform import python_branch
+from unittest.mock import patch
 import pytest
-from conftest import db, models, mongo_db, mongo_models
+from api.database_access.control import DBControl
 from api.database_access.commands import  GetLightCurve, GetDetections, GetNonDetections, BaseCommand
 from api.database_access.commands import InterfaceNotFound
 from api.database_access.interfaces import DBInterface, PSQLInterface, MongoInterface
@@ -111,3 +111,41 @@ def test_base_dbinterface(psql_service, client):
 
   with pytest.raises(NotImplementedError):
     DBInterface.get_non_detections("ATLAS1")
+
+def test_control_connect(psql_service, client):
+  
+  with patch.object(DBControl, 'connect_psql') as mock_connect_psql:
+    with patch.object(DBControl, 'connect_mongo') as mock_connect_mongo:
+      test_app_config = {
+        "CONNECT_PSQL": True,
+        "CONNECT_MONGO": True
+      }
+      db_control = DBControl(test_app_config, {}, {})
+      db_control.connect_databases()
+
+      mock_connect_psql.assert_called_once()
+      mock_connect_mongo.assert_called_once()
+  
+  with patch.object(DBControl, 'connect_psql') as mock_connect_psql:
+    with patch.object(DBControl, 'connect_mongo') as mock_connect_mongo:
+      test_app_config = {
+        "CONNECT_PSQL": True,
+        "CONNECT_MONGO": False
+      }
+      db_control = DBControl(test_app_config, {}, {})
+      db_control.connect_databases()
+
+      mock_connect_psql.assert_called_once()
+      mock_connect_mongo.assert_not_called()
+
+  with patch.object(DBControl, 'connect_psql') as mock_connect_psql:
+    with patch.object(DBControl, 'connect_mongo') as mock_connect_mongo:
+      test_app_config = {
+        "CONNECT_PSQL": False,
+        "CONNECT_MONGO": True
+      }
+      db_control = DBControl(test_app_config, {}, {})
+      db_control.connect_databases()
+
+      mock_connect_psql.assert_not_called()
+      mock_connect_mongo.assert_called_once()

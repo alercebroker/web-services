@@ -9,5 +9,9 @@ DATABASE = {
     "PASSWORD": "mongo",
     "PORT": 27017, 
     "DATABASE": "database"
+  },
+  "APP_CONFIG": {
+      "CONNECT_PSQL": True,
+      "CONNECT_MONGO": True
   }
 }

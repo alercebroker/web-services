@@ -7,13 +7,16 @@ from .mongo_db import db as mongo_db
 class DBControl(object):
 
     # Initialization and cleanup methods
-    def __init__(self, psql_config: dict, mongo_config: dict) -> None:
+    def __init__(self, app_config: dict, psql_config: dict, mongo_config: dict) -> None:
+        self.app_config = app_config
         self.psql_config = psql_config
         self.mongo_config = mongo_config
 
     def connect_databases(self):
-        self.connect_psql()
-        self.connect_mongo()
+        if self.app_config["CONNECT_PSQL"]:
+            self.connect_psql()
+        if self.app_config["CONNECT_MONGO"]:
+            self.connect_mongo()
 
     def connect_psql(self):
         psql_db.connect(
