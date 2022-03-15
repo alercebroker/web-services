@@ -2,6 +2,21 @@
 from .interfaces import PSQLInterface, MongoInterface
 
 
+class InterfaceNotFound(Exception):
+  """
+  Exception commands initialized with invalid surveys ids.
+  The valid surey_ids are setted in configuration
+
+  Attributes:
+    survey_id : the id of the survey for the constructor
+  """
+  def __init__(self, survey_id) -> None:
+      super().__init__()
+      self.survey_id = survey_id
+
+  def __str__(self) -> str:
+      return f"Interface not found for {self.survey_id}"
+
 ZTF_SURVEY_ID = "ztf"
 ATLAS_SURVEY_ID = "atlas"
 
@@ -21,7 +36,7 @@ class BaseCommand(object):
     if db_interface:
       return db_interface
     else:
-      raise Exception(f"Interface not found for {self.survey_id}")
+      raise InterfaceNotFound(self.survey_id)
 
 class GetLightCurve(BaseCommand):
 

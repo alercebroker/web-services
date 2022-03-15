@@ -1,6 +1,7 @@
 import pytest
 import os
 import psycopg2
+import pymongo
 from api.app import create_app
 from api.database_access.psql_db import db
 from api.database_access.mongo_db import db as mongo_db
@@ -27,6 +28,9 @@ def is_responsive_psql(url):
     except:
         return False
 
+def is_responsive_mongo(url):
+    pass
+
 
 @pytest.fixture(scope="session")
 def psql_service(docker_ip, docker_services):
@@ -39,6 +43,7 @@ def psql_service(docker_ip, docker_services):
     )
     return server
 
+#def mongo services
 
 @pytest.fixture
 def client():
@@ -190,6 +195,32 @@ def client():
                 step_id_corr="step_id_corr",
                 rbversion="rbversion"
             )
+            mongo_detections_2 = mongo_models.Detection(
+                tid="tid",
+                aid="aid",
+                oid="ATLAS2",
+                candid="candid",
+                mjd="mjd",
+                fid="fid",
+                ra="ra",
+                dec="dec",
+                rb="rb",
+                mag="mag",
+                e_mag="e_mag",
+                rfid="rfid",
+                e_ra="e_ra",
+                e_dec="e_dec",
+                isdiffpos="isdiffpos",
+                magpsf_corr="magpsf_corr",
+                sigmapsf_corr="sigmapsf_corr",
+                sigmapsf_corr_ext="sigmapsf_corr_ext",
+                corrected="corrected",
+                dubious="dubious",
+                parent_candid="parent_candid",
+                has_stamp="has_stamp",
+                step_id_corr="step_id_corr",
+                rbversion="rbversion"
+            )
             moongo_non_detections = mongo_models.NonDetection(
                 aid="aid",
                 oid="ATLAS1",
@@ -200,6 +231,7 @@ def client():
             )
             mongo_db.query().get_or_create(mongo_object, model=mongo_models.Object)
             mongo_db.query().get_or_create(mongo_detections, model=mongo_models.Detection)
+            mongo_db.query().get_or_create(mongo_detections_2, model=mongo_models.Detection)
             mongo_db.query().get_or_create(moongo_non_detections, model=mongo_models.NonDetection)
 
         yield client
