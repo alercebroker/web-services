@@ -31,8 +31,10 @@ class DBControl(object):
         )
 
     def cleanup_databases(self, e):
-        self.cleanup_psql()
-        self.cleanup_mongo()
+        if self.app_config["CONNECT_PSQL"]:
+            self.cleanup_psql()
+        if self.app_config["CONNECT_MONGO"]:
+            self.cleanup_mongo()
         return e
 
     def cleanup_psql(self):
