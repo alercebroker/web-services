@@ -80,7 +80,7 @@ class MongoInterface(DBInterface):
   def get_light_curve(cls, object_id):
     light_curve = {
       "detections": cls.get_detections(object_id),
-      "non_detections": cls.get_non_detections(object_id)
+      "non_detections": cls._get_non_detections(object_id)
     }
 
     for det in light_curve["detections"]:
@@ -111,7 +111,7 @@ class MongoInterface(DBInterface):
       raise ObjectNotFound(object_id=object_id, survey_id=cls.survey_id)
 
   @classmethod
-  def get_non_detections(cls, object_id):
+  def _get_non_detections(cls, object_id):
     non_detections = mongo_db.query().find_all(
       model=mongo_models.NonDetection,
       filter_by={
@@ -121,3 +121,12 @@ class MongoInterface(DBInterface):
     )
 
     return list(non_detections)
+
+  @classmethod
+  def get_non_detections(cls, object_id):
+    non_detections = cls._get_non_detections(object_id)
+    
+    if len(non_detections) > 0:
+      return non_detections
+    else:
+      raise ObjectNotFound(object_id=object_id, survey_id=cls.survey_id)

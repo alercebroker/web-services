@@ -83,11 +83,9 @@ def test_get_non_detections_not_found(mongo_service, psql_service, client):
   with pytest.raises(ObjectNotFound):
     command = GetNonDetections("ATLAS1", ZTF_ID)
     command.execute()
-  
-  command = GetNonDetections("ZTF1", ATLAS_ID)
-  result = command.execute()
-
-  assert len(result) == 0
+  with pytest.raises(ObjectNotFound):
+    command = GetNonDetections("ZTF1", ATLAS_ID)
+    command.execute()
 
 def test_base_command_interface_selector(mongo_service, psql_service, client):
   with pytest.raises(InterfaceNotFound):
