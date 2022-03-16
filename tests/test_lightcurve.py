@@ -1,5 +1,5 @@
 import pytest
-from api.resources.light_curve.models import get_magpsf, get_sigmapsf, AttributeError
+from api.resources.light_curve.models import get_magpsf, get_sigmapsf
 from api.database_access.commands import GetDetections
 
 def test_get_lightcurve(mongo_service, psql_service, client):
@@ -67,7 +67,7 @@ def test_get_magpsf(mongo_service, psql_service, client):
     magpsf = get_magpsf(detection)
     assert magpsf == 1
 
-    with pytest.raises(AttributeError):
+    with pytest.raises(Exception):
         detection = {}
         magpsf = get_magpsf(detection)
 
@@ -82,6 +82,6 @@ def test_get_sigmapsf(mongo_service, psql_service, client):
     sigmapsf = get_sigmapsf(detection)
     assert sigmapsf == 1
 
-    with pytest.raises(AttributeError):
+    with pytest.raises(Exception):
         detection = {}
         sigmapsf = get_sigmapsf(detection)

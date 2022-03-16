@@ -1,36 +1,21 @@
 from attr import attr
 from flask_restx import Resource, fields, Model
 
-class AttributeError(Exception):
-    def __init__(self, attribute, raw_response) -> None:
-        super().__init__()
-        self.attribute = attribute
-        self.raw_response = raw_response
-    
-    def __str__(self) -> str:
-        return f"Coudnt find a value for {self.attribute} in {self.raw_response}"
-
 def get_magpsf(raw_response):
     try:
         magpsf = raw_response.magpsf
         return magpsf
-    except:
-        try:
-            mag = raw_response["mag"]
-            return mag
-        except:
-            raise AttributeError("magpsf", raw_response)
+    except AttributeError:
+        mag = raw_response["mag"]
+        return mag
 
 def get_sigmapsf(raw_response):
     try:
         sigmapsf = raw_response.sigmapsf
         return sigmapsf
-    except:
-        try:
-            e_mag = raw_response["e_mag"]
-            return e_mag
-        except:
-           raise AttributeError("sigmapsf", raw_response) 
+    except AttributeError:
+        e_mag = raw_response["e_mag"]
+        return e_mag
 
 detection_model = Model(
     "Detection",
