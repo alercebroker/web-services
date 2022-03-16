@@ -1,6 +1,6 @@
 from flask_restx import Resource, fields, Model
 from sqlalchemy import except_
-
+#wake up
 def get_magpsf(raw_response: dict):
     try:
         magpsf = raw_response.magpsf
