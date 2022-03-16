@@ -1,3 +1,8 @@
+from click import command
+from numpy import atleast_1d
+from api.resources.light_curve.models import get_magpsf, get_sigmapsf
+from api.database_access.commands import GetDetections
+
 def test_get_lightcurve(mongo_service, psql_service, client):
     rv = client.get("objects/ZTF1/lightcurve?survey_id=ztf")
     assert rv.status_code == 200
@@ -51,3 +56,33 @@ def test_bad_survey_id(mongo_service, psql_service, client):
 
     rv = client.get("objects/ZTF1/lightcurve?survey_id=error")
     assert rv.status_code == 400
+
+def test_get_magpsf(mongo_service, psql_service, client):
+    command = GetDetections("ZTF1", "ztf")
+    detection = command.execute()[0]
+    magpsf = get_magpsf(detection)
+    assert magpsf == 1
+
+    command = GetDetections("ATLAS1", "atlas")
+    detection = command.execute()[0]
+    magpsf = get_magpsf(detection)
+    assert magpsf == 1
+
+    detection = {}
+    magpsf = get_magpsf(detection)
+    assert magpsf == None
+
+def test_get_sigmapsf(mongo_service, psql_service, client):
+    command = GetDetections("ZTF1", "ztf")
+    detection = command.execute()[0]
+    sigmapsf = get_sigmapsf(detection)
+    assert sigmapsf == 1
+
+    command = GetDetections("ATLAS1", "atlas")
+    detection = command.execute()[0]
+    sigmapsf = get_sigmapsf(detection)
+    assert sigmapsf == 1
+
+    detection = {}
+    sigmapsf = get_sigmapsf(detection)
+    assert sigmapsf == None
