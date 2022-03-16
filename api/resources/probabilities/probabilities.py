@@ -3,7 +3,7 @@ from db_plugins.db.sql import models
 from .models import probability_model
 from .parsers import prob_parser
 from werkzeug.exceptions import NotFound
-from ...db import db
+from ...database_access.psql_db import db
 from typing import List
 
 api = Namespace("probabilities", description="Class probabilities related operations")

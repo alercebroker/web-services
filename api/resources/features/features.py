@@ -4,7 +4,7 @@ from .models import feature_model
 from .parsers import fid_parser
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
-from ...db import db
+from ...database_access.psql_db import db
 
 api = Namespace("features", description="Features related operations")
 api.models[feature_model.name] = feature_model

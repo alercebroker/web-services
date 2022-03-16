@@ -8,7 +8,7 @@ from sqlalchemy import text, func
 from sqlalchemy.orm import aliased
 from astropy import units
 from werkzeug.exceptions import NotFound
-from ...db import db
+from ...database_access.psql_db import db
 
 api = Namespace("objects", description="Objects related operations")
 api.models[object_list_item.name] = object_list_item

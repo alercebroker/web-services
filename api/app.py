@@ -36,13 +36,14 @@ def create_app(config):
         return after_request(response, app.logger)
 
     with app.app_context():
-        from .db import db, session_options
+        from .database_access.control import DBControl
 
-        db.connect(
-            config=app.config["DATABASE"]["SQL"],
-            session_options=session_options,
-            use_scoped=True,
+        db_control = DBControl(
+            app_config=app.config["DATABASE"]["APP_CONFIG"],
+            psql_config=app.config["DATABASE"]["SQL"],
+            mongo_config=app.config["DATABASE"]["MONGO"]
         )
+        db_control.connect_databases()
 
         description = open("description.md")
 
@@ -62,7 +63,7 @@ def create_app(config):
         limiter.init_app(app)
 
         def cleanup(e):
-            db.session.remove()
+            db_control.cleanup_databases(e)
             return e
 
         app.teardown_appcontext(cleanup)
