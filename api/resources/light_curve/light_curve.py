@@ -1,5 +1,7 @@
+from unittest import result
+from flask import request
 from flask_restx import Namespace, Resource
-from flask_restx import reqparse
+from .parsers import survey_id_parser
 from .models import (
     light_curve_model,
     detection_model,
@@ -7,7 +9,7 @@ from .models import (
 )
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
-from ...database_access.psql_db import db
+from ...database_access.commands import GetLightCurve, GetDetections, GetNonDetections
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model
@@ -21,18 +23,19 @@ api.models[non_detection_model.name] = non_detection_model
 @api.response(404, "Not found")
 class LightCurve(Resource):
     @api.doc("lightcurve")
-    @api.marshal_with(light_curve_model)
+    @api.marshal_with(light_curve_model, skip_none=True)
+    @api.expect(survey_id_parser)
     def get(self, id):
         """
         Gets detections and non detections
         """
-        obj = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
-        if obj:
-            light_curve = obj.get_lightcurve()
-            for det in light_curve["detections"]:
-                det.phase = 0  # (det.mjd % obj.period) / obj.period
-            return light_curve
-        else:
+        survey_id = survey_id_parser.parse_args()["survey_id"]
+
+        try:
+            get_lightcurve_command = GetLightCurve(id, survey_id)
+            result = get_lightcurve_command.execute()
+            return result
+        except:
             raise NotFound
 
 
@@ -42,15 +45,19 @@ class LightCurve(Resource):
 @api.response(404, "Not found")
 class ObjectDetections(Resource):
     @api.doc("detections")
-    @api.marshal_list_with(detection_model)
+    @api.marshal_list_with(detection_model, skip_none=True)
+    @api.expect(survey_id_parser)
     def get(self, id):
         """
         Just the detections
         """
-        result = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
-        if result:
-            return result.detections
-        else:
+        survey_id = survey_id_parser.parse_args()["survey_id"]
+
+        try:
+            get_detections_command = GetDetections(id, survey_id)
+            result = get_detections_command.execute()
+            return result
+        except:
             raise NotFound
 
 
@@ -60,13 +67,17 @@ class ObjectDetections(Resource):
 @api.response(404, "Not found")
 class NonDetections(Resource):
     @api.doc("non_detections")
-    @api.marshal_list_with(non_detection_model)
+    @api.marshal_list_with(non_detection_model, skip_none=True)
+    @api.expect(survey_id_parser)
     def get(self, id):
         """
         Just non detections
         """
-        result = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
-        if result:
-            return result.non_detections
-        else:
+        survey_id = survey_id_parser.parse_args()["survey_id"]
+
+        try:
+            get_detections_command = GetNonDetections(id, survey_id)
+            result = get_detections_command.execute()
+            return result
+        except:
             raise NotFound

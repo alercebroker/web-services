@@ -1,5 +1,27 @@
 from flask_restx import Resource, fields, Model
 
+def get_magpsf(raw_response: dict):
+    magpsf = raw_response.get("magpsf")
+    if magpsf:
+        return magpsf
+
+    mag = raw_response.get("mag")
+    if mag:
+        return mag
+
+    return None
+
+def get_sigmapsf(raw_response: dict):
+    sigmapsf = raw_response.get("sigmapsf")
+    if sigmapsf:
+        return sigmapsf
+        
+    e_mag = raw_response.get("e_mag")
+    if e_mag:
+        return e_mag
+
+    return None
+
 detection_model = Model(
     "Detection",
     {
@@ -11,12 +33,12 @@ detection_model = Model(
         "isdiffpos": fields.Integer,
         "nid": fields.Integer,
         "distnr": fields.Float,
-        "magpsf": fields.Float,
+        "magpsf": fields.Float(attribute=get_magpsf),
         "magpsf_corr": fields.Float,
         "magpsf_corr_ext": fields.Float,
         "magap": fields.Float,
         "magap_corr": fields.Float,
-        "sigmapsf": fields.Float,
+        "sigmapsf": fields.Float(attribute=get_sigmapsf),
         "sigmapsf_corr": fields.Float,
         "sigmapsf_corr_ext": fields.Float,
         "sigmagap": fields.Float,
