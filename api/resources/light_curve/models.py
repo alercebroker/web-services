@@ -1,7 +1,7 @@
 from flask_restx import Resource, fields, Model
 from sqlalchemy import except_
 
-def get_magpsf(raw_response: dict):
+def get_magpsf(raw_response):
     try:
         magpsf = raw_response.magpsf
         return magpsf
@@ -15,7 +15,7 @@ def get_magpsf(raw_response: dict):
 
     return None
 
-def get_sigmapsf(raw_response: dict):
+def get_sigmapsf(raw_response):
     try:
         sigmapsf = raw_response.sigmapsf
         return sigmapsf
