@@ -16,7 +16,7 @@ def get_magpsf(raw_response):
         return magpsf
     except:
         try:
-            mag = raw_response.get("mag")
+            mag = raw_response["mag"]
             return mag
         except:
             raise AttributeError("magpsf", raw_response)
@@ -27,7 +27,7 @@ def get_sigmapsf(raw_response):
         return sigmapsf
     except:
         try:
-            e_mag = raw_response.get("e_mag")
+            e_mag = raw_response["e_mag"]
             return e_mag
         except:
            raise AttributeError("sigmapsf", raw_response) 
