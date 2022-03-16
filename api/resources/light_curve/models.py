@@ -1,24 +1,31 @@
 from flask_restx import Resource, fields, Model
+from sqlalchemy import except_
 
 def get_magpsf(raw_response: dict):
-    magpsf = raw_response.get("magpsf")
-    if magpsf:
+    try:
+        magpsf = raw_response.magpsf
         return magpsf
-
-    mag = raw_response.get("mag")
-    if mag:
+    except:
+        pass
+    try:
+        mag = raw_response.get("mag")
         return mag
+    except:
+        pass
 
     return None
 
 def get_sigmapsf(raw_response: dict):
-    sigmapsf = raw_response.get("sigmapsf")
-    if sigmapsf:
+    try:
+        sigmapsf = raw_response.sigmapsf
         return sigmapsf
-        
-    e_mag = raw_response.get("e_mag")
-    if e_mag:
+    except:
+        pass
+    try:
+        e_mag = raw_response.get("e_mag")
         return e_mag
+    except:
+        pass
 
     return None
 
