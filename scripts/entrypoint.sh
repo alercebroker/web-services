@@ -1,4 +1,4 @@
 #!/bin/bash
 echo "Starting ZTF API"
-run="gunicorn --bind 0.0.0.0:8082 --workers $APP_WORKERS --threads $APP_THREADS --log-level=$LOG_LEVEL api.app:create_app('settings')"
+run="gunicorn -c gunicorn_config.py --bind 0.0.0.0:5000 --worker-class gevent -w $APP_WORKERS --log-level=$LOG_LEVEL api.patched:create_app('settings')"
 $run

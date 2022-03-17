@@ -16,8 +16,11 @@ PSQL_DATABASE = os.getenv("DB_DATABASE", "postgres")
 PSQL_USER = os.getenv("DB_USER", "postgres")
 PSQL_PASSWORD = os.getenv("DB_PASSWORD", "password")
 PSQL_PORT = os.getenv("DB_PORT", 5432)
-SQLALCHEMY_DATABASE_URL = f"postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:{PSQL_PORT}/{PSQL_DATABASE}"
+SQLALCHEMY_DATABASE_URL = (
+    f"postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:{PSQL_PORT}/{PSQL_DATABASE}"
+)
 
+DATABASE = {"SQL": {"SQLALCHEMY_DATABASE_URL": SQLALCHEMY_DATABASE_URL}}
 # MongoDB Config
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
 MONGO_PORT = int(os.getenv("MONGO_PORT", 27017))
@@ -34,13 +37,13 @@ DATABASE = {
         "HOST": MONGO_HOST,
         "USER": MONGO_USER,
         "PASSWORD": MONGO_PASSWORD,
-        "PORT": MONGO_PORT, 
+        "PORT": MONGO_PORT,
         "DATABASE": MONGO_DATABASE,
     },
     "APP_CONFIG": {
         "CONNECT_PSQL": CONNECT_PSQL is not None,
-        "CONNECT_MONGO": CONNECT_MONGO is not None
-    }
+        "CONNECT_MONGO": CONNECT_MONGO is not None,
+    },
 }
 
 RESTX_MASK_SWAGGER = False

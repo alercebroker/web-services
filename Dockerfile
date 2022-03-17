@@ -2,13 +2,16 @@ FROM python:3.7
 
 ADD requirements.txt /app/
 WORKDIR /app
-RUN pip install --upgrade pip && pip install gunicorn==19.9.0
+RUN pip install --upgrade pip && pip install gunicorn==20.1.0
+RUN pip install gunicorn[gevent]
+RUN pip install psycogreen
 RUN pip install -r requirements.txt
 
 COPY . /app
-EXPOSE 8082
+EXPOSE 5000
 
-ENV APP_WORKERS="3"
-ENV APP_THREADS="1"
+ENV APP_WORKERS="1"
+ENV ENVIRONMENT="production"
+ENV PROMETHEUS_MULTIPROC_DIR="/tmp"
 
 CMD ["/bin/bash","scripts/entrypoint.sh"]

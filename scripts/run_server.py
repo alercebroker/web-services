@@ -1,6 +1,3 @@
-import sys
-
-sys.path.append("..")
 from api.app import create_app
 import argparse
 
