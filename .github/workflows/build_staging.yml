@@ -33,6 +33,6 @@ jobs:
     needs: get_tag
     steps:
       - name: Build and push
-        uses: alercebroker/ztf_api/.github/workflows/build.yml
+        uses: alercebroker/ztf_api/.github/workflows/build.yml@develop
         with:
           tag: ${{needs.get_tag.outputs.tags}}
