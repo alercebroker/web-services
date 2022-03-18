@@ -15,16 +15,16 @@ def test_get_light_curve_mongo(mongo_service, psql_service, client):
   result = command.execute()
 
   assert len(result["detections"]) == 1
-  assert result["detections"][0]["oid"] == "ATLAS1"
+  assert result["detections"][0]["aid"] == "AID_ATLAS1"
 
   assert len(result["non_detections"]) == 1
-  assert result["non_detections"][0]["oid"] == "ATLAS1"
+  assert result["non_detections"][0]["aid"] == "AID_ATLAS1"
 
-  command = GetLightCurve("ATLAS2", ATLAS_ID)
+  command = GetLightCurve("ZTF2", ATLAS_ID)
   result = command.execute()
 
   assert len(result["detections"]) == 1
-  assert result["detections"][0]["oid"] == "ATLAS2"
+  assert result["detections"][0]["aid"] == "AID_ATLAS2"
 
   assert len(result["non_detections"]) == 0
   assert result["non_detections"] == []

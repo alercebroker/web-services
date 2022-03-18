@@ -77,10 +77,52 @@ class MongoInterface(DBInterface):
   survey_id = "atlas"
 
   @classmethod
+  def _get_object(cls, object_id):
+    astro_object = mongo_db.query().find_one(
+      model=mongo_models.Object,
+      filter_by={
+        "oid": object_id
+      }
+    )
+    if astro_object:
+      return astro_object
+    else:
+      raise ObjectNotFound(object_id=object_id, survey_id=cls.survey_id)
+
+  @classmethod
+  def _get_detections(cls, object_id):
+    detections = mongo_db.query().find_all(
+      model=mongo_models.Detection,
+      filter_by={
+        "aid": object_id,
+        "tid": {"$regex": 'ATLAS*'}
+      },
+      paginate=False
+    )
+
+    return list(detections)
+
+  @classmethod
+  def _get_non_detections(cls, object_id):
+    non_detections = mongo_db.query().find_all(
+      model=mongo_models.NonDetection,
+      filter_by={
+        "aid": object_id,
+        "tid": {"$regex": 'ATLAS*'}
+      },
+      paginate=False
+    )
+
+    return list(non_detections)
+  
+  @classmethod
   def get_light_curve(cls, object_id):
+    astro_object = cls._get_object(object_id)
+    aid = astro_object["aid"]
+    
     light_curve = {
-      "detections": cls.get_detections(object_id),
-      "non_detections": cls._get_non_detections(object_id)
+      "detections": cls._get_detections(aid),
+      "non_detections": cls._get_non_detections(aid)
     }
 
     for det in light_curve["detections"]:
@@ -90,43 +132,24 @@ class MongoInterface(DBInterface):
 
   @classmethod
   def get_detections(cls, object_id):
-    """
-      There is no object without detections
-    """
-    detections = mongo_db.query().find_all(
-      model=mongo_models.Detection,
-      filter_by={
-        "oid": object_id
-      },
-      paginate=False
-    )
+    astro_object = cls._get_object(object_id)
+    aid = astro_object["aid"]
+    
+    detections = cls._get_detections(aid)
 
-    if detections:
-      detections = list(detections)
-      if len(detections) > 0:
-        return list(detections)
-      else:
-        raise ObjectNotFound(object_id=object_id, survey_id=cls.survey_id)  
+    if detections and len(detections) > 0:
+        return detections
     else:
       raise ObjectNotFound(object_id=object_id, survey_id=cls.survey_id)
 
   @classmethod
-  def _get_non_detections(cls, object_id):
-    non_detections = mongo_db.query().find_all(
-      model=mongo_models.NonDetection,
-      filter_by={
-        "oid": object_id
-      },
-      paginate=False
-    )
-
-    return list(non_detections)
-
-  @classmethod
   def get_non_detections(cls, object_id):
-    non_detections = cls._get_non_detections(object_id)
+    astro_object = cls._get_object(object_id)
+    aid = astro_object["aid"]
+
+    non_detections = cls._get_non_detections(aid)
     
-    if len(non_detections) > 0:
+    if non_detections and len(non_detections) > 0:
       return non_detections
     else:
       raise ObjectNotFound(object_id=object_id, survey_id=cls.survey_id)
