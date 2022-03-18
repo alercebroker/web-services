@@ -183,8 +183,17 @@ def client():
 
             # mongo data
             mongo_object = mongo_models.Object(
-                aid="aid",
-                oid="ATLAS1",
+                aid="AID_ATLAS1",
+                oid=["ATLAS1"],
+                lastmjd="lastmjd",
+                firstmjd="firstmjd",
+                meanra=100.0,
+                meandec=50.0,
+                ndet="ndet"
+            )
+            mongo_object_2 = mongo_models.Object(
+                aid="AID_ATLAS2",
+                oid=["ATLAS2", "ZTF2"],
                 lastmjd="lastmjd",
                 firstmjd="firstmjd",
                 meanra=100.0,
@@ -193,8 +202,8 @@ def client():
             )
             mongo_detections = mongo_models.Detection(
                 tid="tid",
-                aid="aid",
-                oid="ATLAS1",
+                aid="AID_ATLAS1",
+                oid=["ATLAS1"],
                 candid="candid",
                 mjd=1,
                 fid=1,
@@ -219,8 +228,8 @@ def client():
             )
             mongo_detections_2 = mongo_models.Detection(
                 tid="tid",
-                aid="aid",
-                oid="ATLAS2",
+                aid="AID_ATLAS2",
+                oid=["ATLAS2", "ZTF2"],
                 candid="candid",
                 mjd=1,
                 fid=1,
@@ -244,14 +253,15 @@ def client():
                 rbversion="rbversion"
             )
             moongo_non_detections = mongo_models.NonDetection(
-                aid="aid",
-                oid="ATLAS1",
+                aid="AID_ATLAS1",
+                oid=["ATLAS1"],
                 tid="sid",
                 mjd=1,
                 diffmaglim=1,
                 fid=1
             )
             mongo_db.query().get_or_create(mongo_object, model=mongo_models.Object)
+            mongo_db.query().get_or_create(mongo_object_2, model=mongo_models.Object)
             mongo_db.query().get_or_create(mongo_detections, model=mongo_models.Detection)
             mongo_db.query().get_or_create(mongo_detections_2, model=mongo_models.Detection)
             mongo_db.query().get_or_create(moongo_non_detections, model=mongo_models.NonDetection)
