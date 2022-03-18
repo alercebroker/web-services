@@ -6,8 +6,6 @@ on:
 
 jobs:
   push_image:
-    name: Build image and push to GHCR
-    runs-on: ubuntu-latest
     uses: ./.github/workflows/build.yml
     with:
       release_type: rc
