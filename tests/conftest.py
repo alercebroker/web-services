@@ -201,7 +201,7 @@ def client():
                 ndet="ndet"
             )
             mongo_detections = mongo_models.Detection(
-                tid="tid",
+                tid="ATLAS01",
                 aid="AID_ATLAS1",
                 oid=["ATLAS1"],
                 candid="candid",
@@ -227,7 +227,7 @@ def client():
                 rbversion="rbversion"
             )
             mongo_detections_2 = mongo_models.Detection(
-                tid="tid",
+                tid="ATLAS02",
                 aid="AID_ATLAS2",
                 oid=["ATLAS2", "ZTF2"],
                 candid="candid",
@@ -255,7 +255,7 @@ def client():
             moongo_non_detections = mongo_models.NonDetection(
                 aid="AID_ATLAS1",
                 oid=["ATLAS1"],
-                tid="sid",
+                tid="ATLAS01",
                 mjd=1,
                 diffmaglim=1,
                 fid=1

@@ -94,7 +94,8 @@ class MongoInterface(DBInterface):
     detections = mongo_db.query().find_all(
       model=mongo_models.Detection,
       filter_by={
-        "aid": object_id
+        "aid": object_id,
+        "tid": {"$regex": 'ATLAS*'}
       },
       paginate=False
     )
@@ -106,7 +107,8 @@ class MongoInterface(DBInterface):
     non_detections = mongo_db.query().find_all(
       model=mongo_models.NonDetection,
       filter_by={
-        "aid": object_id
+        "aid": object_id,
+        "tid": {"$regex": 'ATLAS*'}
       },
       paginate=False
     )
