@@ -1,5 +1,4 @@
 from random import choices
-from tkinter.tix import Tree
 from flask_restx import reqparse
 
 SURVEY_ID_CHOICES = [
