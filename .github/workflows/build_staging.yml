@@ -10,6 +10,8 @@ jobs:
     outputs:
       tags: ${{ steps.prep.outputs.tags }}
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
       - name: Prepare
         id: prep
         run: |
