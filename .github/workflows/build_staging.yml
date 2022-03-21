@@ -6,6 +6,7 @@ on:
 
 jobs:
   get_tags:
+    runs-on: ubuntu-latest
     outputs:
       tags: ${{ steps.prep.outputs.tags }}
     steps:
