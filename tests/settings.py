@@ -8,7 +8,8 @@ DATABASE = {
     "USER": "mongo",
     "PASSWORD": "mongo",
     "PORT": 27017, 
-    "DATABASE": "database"
+    "DATABASE": "database",
+    "AUTH_SOURCE": "admin",
   },
   "APP_CONFIG": {
       "CONNECT_PSQL": True,
