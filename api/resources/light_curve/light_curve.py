@@ -6,6 +6,8 @@ from .models import (
     non_detection_model,
 )
 from ...database_access.commands import GetLightCurve, GetDetections, GetNonDetections
+from ...database_access.interfaces import ObjectNotFound
+from werkzeug.exceptions import NotFound, InternalServerError
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model
@@ -28,9 +30,11 @@ class LightCurve(Resource):
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
         get_lightcurve_command = GetLightCurve(id, survey_id)
-        result = get_lightcurve_command.execute()
-        return result
-
+        try:
+            result = get_lightcurve_command.execute()
+            return result
+        except ObjectNotFound:
+            raise NotFound()
 
 @api.route("/<id>/detections")
 @api.param("id", "The object's identifier")
@@ -47,8 +51,11 @@ class ObjectDetections(Resource):
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
         get_detections_command = GetDetections(id, survey_id)
-        result = get_detections_command.execute()
-        return result
+        try:
+            result = get_detections_command.execute()
+            return result
+        except ObjectNotFound:
+            raise NotFound()
 
 
 @api.route("/<id>/non_detections")
@@ -66,5 +73,8 @@ class NonDetections(Resource):
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
         get_detections_command = GetNonDetections(id, survey_id)
-        result = get_detections_command.execute()
-        return result
+        try:
+            result = get_detections_command.execute()
+            return result
+        except ObjectNotFound:
+            raise NotFound()
