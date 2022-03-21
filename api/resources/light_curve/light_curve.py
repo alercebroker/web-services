@@ -1,5 +1,3 @@
-from unittest import result
-from flask import request
 from flask_restx import Namespace, Resource
 from .parsers import survey_id_parser
 from .models import (
@@ -7,8 +5,6 @@ from .models import (
     detection_model,
     non_detection_model,
 )
-from db_plugins.db.sql import models
-from werkzeug.exceptions import NotFound
 from ...database_access.commands import GetLightCurve, GetDetections, GetNonDetections
 
 api = Namespace("lightcurve", description="LightCurve related operations")
@@ -31,12 +27,9 @@ class LightCurve(Resource):
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
-        try:
-            get_lightcurve_command = GetLightCurve(id, survey_id)
-            result = get_lightcurve_command.execute()
-            return result
-        except:
-            raise NotFound
+        get_lightcurve_command = GetLightCurve(id, survey_id)
+        result = get_lightcurve_command.execute()
+        return result
 
 
 @api.route("/<id>/detections")
@@ -53,12 +46,9 @@ class ObjectDetections(Resource):
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
-        try:
-            get_detections_command = GetDetections(id, survey_id)
-            result = get_detections_command.execute()
-            return result
-        except:
-            raise NotFound
+        get_detections_command = GetDetections(id, survey_id)
+        result = get_detections_command.execute()
+        return result
 
 
 @api.route("/<id>/non_detections")
@@ -75,9 +65,6 @@ class NonDetections(Resource):
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
-        try:
-            get_detections_command = GetNonDetections(id, survey_id)
-            result = get_detections_command.execute()
-            return result
-        except:
-            raise NotFound
+        get_detections_command = GetNonDetections(id, survey_id)
+        result = get_detections_command.execute()
+        return result
