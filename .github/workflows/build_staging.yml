@@ -5,7 +5,9 @@ on:
       - main
 
 jobs:
-  push_image:
+  get_tags:
+    outputs:
+      tags: ${{ steps.prep.outputs.tags }}
     steps:
       - name: Prepare
         id: prep
@@ -21,8 +23,10 @@ jobs:
             TAGS="$TAGS,${DOCKER_IMAGE}:rc-$SHA"
           fi
           echo ::set-output name=tags::${TAGS}
-      - uses: ./.github/workflows/build.yml
-        with:
-          tags: ${{ steps.prep.outputs.tags }}
-        secrets:
-          PUBLISH_IMAGE_TOKEN: ${{ secrets.PUBLISH_IMAGE_TOKEN }}
+  push_image:
+    needs: get_tags
+    uses: ./.github/workflows/build.yml
+    with:
+      tags: ${{ needs.get_tags.outputs.tags }}
+    secrets:
+      PUBLISH_IMAGE_TOKEN: ${{ secrets.PUBLISH_IMAGE_TOKEN }}
