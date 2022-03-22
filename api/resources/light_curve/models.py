@@ -27,13 +27,10 @@ def get_parent_candid(raw_response):
     except AttributeError:
         parent_candid = raw_response["parent_candid"]
 
-    try:
-        if isnan(parent_candid):
-            return None
-        else:
-            return parent_candid
-    except TypeError:
+    if parent_candid and isnan(parent_candid):
         return None
+    else:
+        return parent_candid
 
 
 detection_model = Model(
