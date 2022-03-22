@@ -13,9 +13,7 @@ import datetime
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
-    return os.path.join(
-        str(pytestconfig.rootdir), "tests", "docker-compose.yml"
-    )
+    return os.path.join(str(pytestconfig.rootdir), "tests", "docker-compose.yml")
 
 
 def is_responsive_psql(url):
@@ -28,6 +26,7 @@ def is_responsive_psql(url):
     except:
         return False
 
+
 def is_responsive_mongo(url):
     (host, port) = url.split(":")
     try:
@@ -37,7 +36,7 @@ def is_responsive_mongo(url):
             username="mongo",
             password="mongo",
             port=int(port),
-            authSource="database"
+            authSource="database",
         )
         client.close()
         return True
@@ -56,6 +55,7 @@ def psql_service(docker_ip, docker_services):
     )
     return server
 
+
 @pytest.fixture(scope="session")
 def mongo_service(docker_ip, docker_services):
     """Ensure that Kafka service is up and responsive."""
@@ -66,6 +66,7 @@ def mongo_service(docker_ip, docker_services):
         timeout=30.0, pause=0.1, check=lambda: is_responsive_psql(server)
     )
     return server
+
 
 @pytest.fixture
 def client():
@@ -170,9 +171,7 @@ def client():
                     step_id_corr=step_preprocess.step_id,
                 )
             )
-            model.non_detections.append(
-                models.NonDetection(mjd=1, fid=1, diffmaglim=1)
-            )
+            model.non_detections.append(models.NonDetection(mjd=1, fid=1, diffmaglim=1))
             db.session.add(taxonomy)
             db.session.add_all([step_feature, step_preprocess])
             db.session.commit()
@@ -189,7 +188,7 @@ def client():
                 firstmjd="firstmjd",
                 meanra=100.0,
                 meandec=50.0,
-                ndet="ndet"
+                ndet="ndet",
             )
             mongo_object_2 = mongo_models.Object(
                 aid="AID_ATLAS2",
@@ -198,7 +197,7 @@ def client():
                 firstmjd="firstmjd",
                 meanra=100.0,
                 meandec=50.0,
-                ndet="ndet"
+                ndet="ndet",
             )
             mongo_detections = mongo_models.Detection(
                 tid="ATLAS01",
@@ -224,7 +223,7 @@ def client():
                 parent_candid=1234,
                 has_stamp=True,
                 step_id_corr="step_id_corr",
-                rbversion="rbversion"
+                rbversion="rbversion",
             )
             mongo_detections_2 = mongo_models.Detection(
                 tid="ATLAS02",
@@ -247,10 +246,10 @@ def client():
                 sigmapsf_corr_ext=1,
                 corrected=True,
                 dubious=True,
-                parent_candid=1234,
+                parent_candid=float("nan"),
                 has_stamp=True,
                 step_id_corr="step_id_corr",
-                rbversion="rbversion"
+                rbversion="rbversion",
             )
             moongo_non_detections = mongo_models.NonDetection(
                 aid="AID_ATLAS1",
@@ -258,13 +257,19 @@ def client():
                 tid="ATLAS01",
                 mjd=1,
                 diffmaglim=1,
-                fid=1
+                fid=1,
             )
             mongo_db.query().get_or_create(mongo_object, model=mongo_models.Object)
             mongo_db.query().get_or_create(mongo_object_2, model=mongo_models.Object)
-            mongo_db.query().get_or_create(mongo_detections, model=mongo_models.Detection)
-            mongo_db.query().get_or_create(mongo_detections_2, model=mongo_models.Detection)
-            mongo_db.query().get_or_create(moongo_non_detections, model=mongo_models.NonDetection)
+            mongo_db.query().get_or_create(
+                mongo_detections, model=mongo_models.Detection
+            )
+            mongo_db.query().get_or_create(
+                mongo_detections_2, model=mongo_models.Detection
+            )
+            mongo_db.query().get_or_create(
+                moongo_non_detections, model=mongo_models.NonDetection
+            )
 
         yield client
         db.session.close()
