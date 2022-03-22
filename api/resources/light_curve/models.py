@@ -1,5 +1,7 @@
 from attr import attr
 from flask_restx import Resource, fields, Model
+from math import isnan
+
 
 def get_magpsf(raw_response):
     try:
@@ -9,6 +11,7 @@ def get_magpsf(raw_response):
         mag = raw_response["mag"]
         return mag
 
+
 def get_sigmapsf(raw_response):
     try:
         sigmapsf = raw_response.sigmapsf
@@ -16,6 +19,19 @@ def get_sigmapsf(raw_response):
     except AttributeError:
         e_mag = raw_response["e_mag"]
         return e_mag
+
+
+def get_parent_candid(raw_response):
+    try:
+        parent_candid = raw_response.parent_candid
+    except AttributeError:
+        parent_candid = raw_response["parent_candid"]
+
+    if parent_candid and isnan(parent_candid):
+        return None
+    else:
+        return parent_candid
+
 
 detection_model = Model(
     "Detection",
@@ -52,7 +68,7 @@ detection_model = Model(
         "candid_alert": fields.String,
         "step_id_corr": fields.String,
         "phase": fields.Float,
-        "parent_candid": fields.Integer,
+        "parent_candid": fields.Integer(attribute=get_parent_candid),
     },
 )
 
