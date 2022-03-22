@@ -48,16 +48,28 @@ After run
 python scripts/run_server.py
 ```
 
-## Production
+## Using Docker
 
 ### Build container
 
 ```
-docker build -t ztf-api:<version> .
+docker build -t alerts-api:<version> .
 ```
 
 ### Run container
 
 ```
-docker run -e DB_DATABASE=<DB_DATABASE> -e DB_HOST=<DB_HOST> -e DB_PASSWORD=<DB_PASSWORD> -e DB_USER=<DB_USER> -d --name ztf-api-<suffix> -p 8082:8082 ztf-api:<version>
+docker run -e [list of env variables] -d --name alerts-api -p 5000:5000 alerts-api:<version>
+```
+
+### Run image from the registry
+
+1. RC image (staging)
+```
+docker run -e [list of env variables] -d --name alerts-api -p 5000:5000 ghcr.io/alercebroker/alerts_api:rc-<hash>
+```
+
+2. Latest image (production)
+```
+docker run -e [list of env variables] -d --name alerts-api -p 5000:5000 ghcr.io/alercebroker/alerts_api:latest
 ```
