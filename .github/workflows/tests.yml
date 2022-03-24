@@ -5,7 +5,7 @@ name: Tests
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [ main ]
 
 jobs:
   test:
@@ -32,7 +32,7 @@ jobs:
         black tests/
     - name: Test with pytest
       run: |
-        coverage run --source api/ -m pytest tests/
+        coverage run --source api/ -m pytest -x tests/
         coverage xml
     - name: Codecov
       uses: codecov/codecov-action@v2
