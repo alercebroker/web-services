@@ -16,9 +16,7 @@ PSQL_DATABASE = os.getenv("DB_DATABASE", "postgres")
 PSQL_USER = os.getenv("DB_USER", "postgres")
 PSQL_PASSWORD = os.getenv("DB_PASSWORD", "password")
 PSQL_PORT = os.getenv("DB_PORT", 5432)
-SQLALCHEMY_DATABASE_URL = (
-    f"postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:{PSQL_PORT}/{PSQL_DATABASE}"
-)
+SQLALCHEMY_DATABASE_URL = f"postgresql://{PSQL_USER}:{PSQL_PASSWORD}@{PSQL_HOST}:{PSQL_PORT}/{PSQL_DATABASE}"
 
 # MongoDB Config
 MONGO_HOST = os.getenv("MONGO_HOST", "localhost")

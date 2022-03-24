@@ -13,7 +13,9 @@ import datetime
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
-    return os.path.join(str(pytestconfig.rootdir), "tests", "docker-compose.yml")
+    return os.path.join(
+        str(pytestconfig.rootdir), "tests", "docker-compose.yml"
+    )
 
 
 def is_responsive_psql(url):
@@ -171,7 +173,9 @@ def client():
                     step_id_corr=step_preprocess.step_id,
                 )
             )
-            model.non_detections.append(models.NonDetection(mjd=1, fid=1, diffmaglim=1))
+            model.non_detections.append(
+                models.NonDetection(mjd=1, fid=1, diffmaglim=1)
+            )
             db.session.add(taxonomy)
             db.session.add_all([step_feature, step_preprocess])
             db.session.commit()
@@ -259,8 +263,12 @@ def client():
                 diffmaglim=1,
                 fid=1,
             )
-            mongo_db.query().get_or_create(mongo_object, model=mongo_models.Object)
-            mongo_db.query().get_or_create(mongo_object_2, model=mongo_models.Object)
+            mongo_db.query().get_or_create(
+                mongo_object, model=mongo_models.Object
+            )
+            mongo_db.query().get_or_create(
+                mongo_object_2, model=mongo_models.Object
+            )
             mongo_db.query().get_or_create(
                 mongo_detections, model=mongo_models.Detection
             )

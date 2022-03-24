@@ -69,7 +69,9 @@ def test_order_probs():
         Probability(classifier_name="lc_classifier", class_name="DSCT"),
         Probability(classifier_name="lc_classifier", class_name="E"),
         Probability(classifier_name="lc_classifier", class_name="LPV"),
-        Probability(classifier_name="lc_classifier", class_name="Periodic-Other"),
+        Probability(
+            classifier_name="lc_classifier", class_name="Periodic-Other"
+        ),
         Probability(classifier_name="lc_classifier", class_name="QSO"),
         Probability(classifier_name="lc_classifier", class_name="RRL"),
         Probability(classifier_name="lc_classifier", class_name="SLSN"),
@@ -77,22 +79,47 @@ def test_order_probs():
         Probability(classifier_name="lc_classifier", class_name="SNIbc"),
         Probability(classifier_name="lc_classifier", class_name="SNII"),
         Probability(classifier_name="lc_classifier", class_name="YSO"),
-        Probability(classifier_name="lc_classifier_periodic", class_name="CEP"),
-        Probability(classifier_name="lc_classifier_periodic", class_name="DSCT"),
-        Probability(classifier_name="lc_classifier_periodic", class_name="E"),
-        Probability(classifier_name="lc_classifier_periodic", class_name="LPV"),
         Probability(
-            classifier_name="lc_classifier_periodic", class_name="Periodic-Other"
+            classifier_name="lc_classifier_periodic", class_name="CEP"
         ),
-        Probability(classifier_name="lc_classifier_periodic", class_name="RRL"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="AGN"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="Blazar"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="CV/Nova"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="QSO"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="YSO"),
-        Probability(classifier_name="lc_classifier_top", class_name="Periodic"),
-        Probability(classifier_name="lc_classifier_top", class_name="Stochastic"),
-        Probability(classifier_name="lc_classifier_top", class_name="Transient"),
+        Probability(
+            classifier_name="lc_classifier_periodic", class_name="DSCT"
+        ),
+        Probability(classifier_name="lc_classifier_periodic", class_name="E"),
+        Probability(
+            classifier_name="lc_classifier_periodic", class_name="LPV"
+        ),
+        Probability(
+            classifier_name="lc_classifier_periodic",
+            class_name="Periodic-Other",
+        ),
+        Probability(
+            classifier_name="lc_classifier_periodic", class_name="RRL"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="AGN"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="Blazar"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="CV/Nova"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="QSO"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="YSO"
+        ),
+        Probability(
+            classifier_name="lc_classifier_top", class_name="Periodic"
+        ),
+        Probability(
+            classifier_name="lc_classifier_top", class_name="Stochastic"
+        ),
+        Probability(
+            classifier_name="lc_classifier_top", class_name="Transient"
+        ),
         Probability(classifier_name="stamp_classifier", class_name="AGN"),
         Probability(classifier_name="stamp_classifier", class_name="asteroid"),
         Probability(classifier_name="stamp_classifier", class_name="bogus"),
@@ -104,31 +131,56 @@ def test_order_probs():
     ordered = probabilities_resource.order_probs(probs, taxonomy)
     expected = [
         Probability(classifier_name="lc_classifier", class_name="SNIa"),
-        Probability(classifier_name="lc_classifier_periodic", class_name="LPV"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="QSO"),
-        Probability(classifier_name="lc_classifier_top", class_name="Transient"),
+        Probability(
+            classifier_name="lc_classifier_periodic", class_name="LPV"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="QSO"
+        ),
+        Probability(
+            classifier_name="lc_classifier_top", class_name="Transient"
+        ),
         Probability(classifier_name="stamp_classifier", class_name="SN"),
         Probability(classifier_name="lc_classifier", class_name="SNIbc"),
         Probability(classifier_name="lc_classifier_periodic", class_name="E"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="AGN"),
-        Probability(classifier_name="lc_classifier_top", class_name="Stochastic"),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="AGN"
+        ),
+        Probability(
+            classifier_name="lc_classifier_top", class_name="Stochastic"
+        ),
         Probability(classifier_name="stamp_classifier", class_name="AGN"),
         Probability(classifier_name="lc_classifier", class_name="SNII"),
-        Probability(classifier_name="lc_classifier_periodic", class_name="DSCT"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="Blazar"),
-        Probability(classifier_name="lc_classifier_top", class_name="Periodic"),
+        Probability(
+            classifier_name="lc_classifier_periodic", class_name="DSCT"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="Blazar"
+        ),
+        Probability(
+            classifier_name="lc_classifier_top", class_name="Periodic"
+        ),
         Probability(classifier_name="stamp_classifier", class_name="VS"),
         Probability(classifier_name="lc_classifier", class_name="SLSN"),
-        Probability(classifier_name="lc_classifier_periodic", class_name="RRL"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="CV/Nova"),
+        Probability(
+            classifier_name="lc_classifier_periodic", class_name="RRL"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="CV/Nova"
+        ),
         Probability(classifier_name="stamp_classifier", class_name="asteroid"),
         Probability(classifier_name="lc_classifier", class_name="QSO"),
-        Probability(classifier_name="lc_classifier_periodic", class_name="CEP"),
-        Probability(classifier_name="lc_classifier_stochastic", class_name="YSO"),
+        Probability(
+            classifier_name="lc_classifier_periodic", class_name="CEP"
+        ),
+        Probability(
+            classifier_name="lc_classifier_stochastic", class_name="YSO"
+        ),
         Probability(classifier_name="stamp_classifier", class_name="bogus"),
         Probability(classifier_name="lc_classifier", class_name="AGN"),
         Probability(
-            classifier_name="lc_classifier_periodic", class_name="Periodic-Other"
+            classifier_name="lc_classifier_periodic",
+            class_name="Periodic-Other",
         ),
         Probability(classifier_name="lc_classifier", class_name="Blazar"),
         Probability(classifier_name="lc_classifier", class_name="CV/Nova"),
@@ -138,7 +190,9 @@ def test_order_probs():
         Probability(classifier_name="lc_classifier", class_name="DSCT"),
         Probability(classifier_name="lc_classifier", class_name="RRL"),
         Probability(classifier_name="lc_classifier", class_name="CEP"),
-        Probability(classifier_name="lc_classifier", class_name="Periodic-Other"),
+        Probability(
+            classifier_name="lc_classifier", class_name="Periodic-Other"
+        ),
     ]
 
     for i, proba in enumerate(ordered):

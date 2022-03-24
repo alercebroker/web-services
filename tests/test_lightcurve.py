@@ -2,6 +2,7 @@ import pytest
 from api.resources.light_curve.models import get_magpsf, get_sigmapsf
 from api.database_access.commands import GetDetections
 
+
 def test_get_lightcurve(mongo_service, psql_service, client):
     rv = client.get("objects/ZTF1/lightcurve?survey_id=ztf")
     assert rv.status_code == 200
@@ -49,12 +50,14 @@ def test_get_non_detections_not_found(mongo_service, psql_service, client):
     rv = client.get("objects/ATLAS3/non_detections?survey_id=atlas")
     assert rv.status_code == 404
 
+
 def test_bad_survey_id(mongo_service, psql_service, client):
     rv = client.get("objects/ZTF1/lightcurve")
     assert rv.status_code == 400
 
     rv = client.get("objects/ZTF1/lightcurve?survey_id=error")
     assert rv.status_code == 400
+
 
 def test_get_magpsf(mongo_service, psql_service, client):
     command = GetDetections("ZTF1", "ztf")
@@ -70,6 +73,7 @@ def test_get_magpsf(mongo_service, psql_service, client):
     with pytest.raises(Exception):
         detection = {}
         magpsf = get_magpsf(detection)
+
 
 def test_get_sigmapsf(mongo_service, psql_service, client):
     command = GetDetections("ZTF1", "ztf")

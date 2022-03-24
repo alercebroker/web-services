@@ -7,7 +7,9 @@ def test_conesearch(psql_service, client):
     args = {"ra": 1, "dec": 1, "radius": 0.1}
     params = resource._convert_conesearch_args(args)
     statement = resource._create_conesearch_statement(params)
-    assert "q3c_radial_query(meanra, meandec,:ra, :dec, :radius)" in str(statement)
+    assert "q3c_radial_query(meanra, meandec,:ra, :dec, :radius)" in str(
+        statement
+    )
 
 
 def test_order_by_desc(psql_service, client):
@@ -87,7 +89,9 @@ def test_object_list(psql_service, client):
 
 
 def test_objects_list_not_found(psql_service, client):
-    rv = client.get("/objects/", query_string={"classifier": "Fake", "count": "true"})
+    rv = client.get(
+        "/objects/", query_string={"classifier": "Fake", "count": "true"}
+    )
     assert rv.json["total"] == 0
 
 
