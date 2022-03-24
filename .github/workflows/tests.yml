@@ -1,15 +1,22 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Tests
+name: Lint and Test
 
 on:
   pull_request:
     branches: [ main ]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
+        with:
+          options: "--check --verbose"
+          src: "api/"
   test:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -26,10 +33,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install black pytest pytest-docker coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Black Code Format Check
-      run: |
-        black .
-        black tests/
     - name: Test with pytest
       run: |
         coverage run --source api/ -m pytest -x tests/
