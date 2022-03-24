@@ -1,4 +1,6 @@
-from prometheus_flask_exporter.multiprocess import GunicornInternalPrometheusMetrics
+from prometheus_flask_exporter.multiprocess import (
+    GunicornInternalPrometheusMetrics,
+)
 from prometheus_flask_exporter import PrometheusMetrics
 import os
 
@@ -7,7 +9,9 @@ environment = os.environ.get("ENVIRONMENT", "develop")
 
 if environment == "production":
     if is_gunicorn:
-        prometheus_metrics = GunicornInternalPrometheusMetrics.for_app_factory()
+        prometheus_metrics = (
+            GunicornInternalPrometheusMetrics.for_app_factory()
+        )
     else:
         prometheus_metrics = PrometheusMetrics.for_app_factory()
 else:

@@ -23,7 +23,11 @@ class Features(Resource):
         Gets list of all features.
         """
         args = fid_parser.parse_args()
-        obj = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
+        obj = (
+            db.query(models.Object)
+            .filter(models.Object.oid == id)
+            .one_or_none()
+        )
         if obj:
             q = db.query(models.Feature).filter(models.Feature.oid == obj.oid)
             if args.fid is not None:

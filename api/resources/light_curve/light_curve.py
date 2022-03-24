@@ -5,7 +5,11 @@ from .models import (
     detection_model,
     non_detection_model,
 )
-from ...database_access.commands import GetLightCurve, GetDetections, GetNonDetections
+from ...database_access.commands import (
+    GetLightCurve,
+    GetDetections,
+    GetNonDetections,
+)
 from ...database_access.interfaces import ObjectNotFound
 from werkzeug.exceptions import NotFound, InternalServerError
 
@@ -35,6 +39,7 @@ class LightCurve(Resource):
             return result
         except ObjectNotFound:
             raise NotFound()
+
 
 @api.route("/<id>/detections")
 @api.param("id", "The object's identifier")

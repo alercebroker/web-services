@@ -41,7 +41,7 @@ def create_app(config):
         db_control = DBControl(
             app_config=app.config["DATABASE"]["APP_CONFIG"],
             psql_config=app.config["DATABASE"]["SQL"],
-            mongo_config=app.config["DATABASE"]["MONGO"]
+            mongo_config=app.config["DATABASE"]["MONGO"],
         )
         db_control.connect_databases()
 

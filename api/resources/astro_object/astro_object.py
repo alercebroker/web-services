@@ -2,7 +2,12 @@ from flask_restx import Namespace, Resource
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from db_plugins.db.sql import models
-from .models import object_list_item, object_list, object_item, limit_values_model
+from .models import (
+    object_list_item,
+    object_list,
+    object_item,
+    limit_values_model,
+)
 from .parsers import create_parsers
 from sqlalchemy import text, func
 from sqlalchemy.orm import aliased
@@ -18,7 +23,12 @@ api.models[limit_values_model.name] = limit_values_model
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["30/second"])
 
-filter_parser, conesearch_parser, order_parser, pagination_parser = create_parsers()
+(
+    filter_parser,
+    conesearch_parser,
+    order_parser,
+    pagination_parser,
+) = create_parsers()
 
 DEFAULT_CLASSIFIER = "lc_classifier"
 DEFAULT_VERSION = "hierarchical_random_forest_1.0.0"
@@ -32,7 +42,9 @@ class ObjectList(Resource):
     decorators = [limiter.limit("30/sec")]
 
     @api.doc("list_object")
-    @api.expect(filter_parser, conesearch_parser, pagination_parser, order_parser)
+    @api.expect(
+        filter_parser, conesearch_parser, pagination_parser, order_parser
+    )
     @api.marshal_with(object_list)
     def get(self):
         """List all objects by given filters"""
@@ -80,7 +92,9 @@ class ObjectList(Resource):
         query = self._get_objects(
             filters, conesearch, conesearch_args, default=use_default
         )
-        order_statement = self._create_order_statement(query, filter_args, order_args)
+        order_statement = self._create_order_statement(
+            query, filter_args, order_args
+        )
         query = query.order_by(order_statement)
         return query.paginate(
             pagination_args["page"],
@@ -94,8 +108,12 @@ class ObjectList(Resource):
         else:
             join_table = (
                 db.query(models.Probability)
-                .filter(models.Probability.classifier_name == DEFAULT_CLASSIFIER)
-                .filter(models.Probability.classifier_version == DEFAULT_VERSION)
+                .filter(
+                    models.Probability.classifier_name == DEFAULT_CLASSIFIER
+                )
+                .filter(
+                    models.Probability.classifier_version == DEFAULT_VERSION
+                )
                 .filter(models.Probability.ranking == DEFAULT_RANKING)
                 .subquery("probability")
             )
@@ -147,7 +165,9 @@ class ObjectList(Resource):
             oids,
         ) = (True, True, True, True, True, True, True, True, True)
         if args["classifier"]:
-            classifier = models.Probability.classifier_name == args["classifier"]
+            classifier = (
+                models.Probability.classifier_name == args["classifier"]
+            )
         if args["class"]:
             class_ = models.Probability.class_name == args["class"]
         if args["ndet"]:
@@ -157,11 +177,15 @@ class ObjectList(Resource):
         if args["firstmjd"]:
             firstmjd = models.Object.firstmjd >= args["firstmjd"][0]
             if len(args["firstmjd"]) > 1:
-                firstmjd = firstmjd & (models.Object.firstmjd <= args["firstmjd"][1])
+                firstmjd = firstmjd & (
+                    models.Object.firstmjd <= args["firstmjd"][1]
+                )
         if args["lastmjd"]:
             lastmjd = models.Object.lastmjd >= args["lastmjd"][0]
             if len(args["lastmjd"]) > 1:
-                lastmjd = lastmjd & (models.Object.lastmjd <= args["lastmjd"][1])
+                lastmjd = lastmjd & (
+                    models.Object.lastmjd <= args["lastmjd"][1]
+                )
         if args["probability"]:
             probability = models.Probability.probability >= args["probability"]
         if args["ranking"]:
@@ -174,7 +198,8 @@ class ObjectList(Resource):
 
         if args["classifier_version"]:
             classifier_version = (
-                models.Probability.classifier_version == args["classifier_version"]
+                models.Probability.classifier_version
+                == args["classifier_version"]
             )
         if args["oid"]:
             if len(args["oid"]) == 1:
@@ -230,7 +255,11 @@ class Object(Resource):
     @api.marshal_with(object_item)
     def get(self, id):
         """Fetch an object given its identifier"""
-        result = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
+        result = (
+            db.query(models.Object)
+            .filter(models.Object.oid == id)
+            .one_or_none()
+        )
         if result:
             return result
         else:

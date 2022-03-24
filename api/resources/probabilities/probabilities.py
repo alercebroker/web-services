@@ -6,7 +6,9 @@ from werkzeug.exceptions import NotFound
 from ...database_access.psql_db import db
 from typing import List
 
-api = Namespace("probabilities", description="Class probabilities related operations")
+api = Namespace(
+    "probabilities", description="Class probabilities related operations"
+)
 api.models[probability_model.name] = probability_model
 
 
@@ -31,7 +33,8 @@ class Probabilities(Resource):
                 )
             if args["classifier_version"]:
                 probs = probs.filter(
-                    models.Probability.classifier_version == args["classifier_version"]
+                    models.Probability.classifier_version
+                    == args["classifier_version"]
                 )
 
             taxonomy = db.query(models.Taxonomy).all()
