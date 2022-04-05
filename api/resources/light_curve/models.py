@@ -1,4 +1,37 @@
+from attr import attr
 from flask_restx import Resource, fields, Model
+from math import isnan
+
+
+def get_magpsf(raw_response):
+    try:
+        magpsf = raw_response.magpsf
+        return magpsf
+    except AttributeError:
+        mag = raw_response["mag"]
+        return mag
+
+
+def get_sigmapsf(raw_response):
+    try:
+        sigmapsf = raw_response.sigmapsf
+        return sigmapsf
+    except AttributeError:
+        e_mag = raw_response["e_mag"]
+        return e_mag
+
+
+def get_parent_candid(raw_response):
+    try:
+        parent_candid = raw_response.parent_candid
+    except AttributeError:
+        parent_candid = raw_response["parent_candid"]
+
+    if parent_candid and isnan(parent_candid):
+        return None
+    else:
+        return parent_candid
+
 
 detection_model = Model(
     "Detection",
@@ -11,12 +44,12 @@ detection_model = Model(
         "isdiffpos": fields.Integer,
         "nid": fields.Integer,
         "distnr": fields.Float,
-        "magpsf": fields.Float,
+        "magpsf": fields.Float(attribute=get_magpsf),
         "magpsf_corr": fields.Float,
         "magpsf_corr_ext": fields.Float,
         "magap": fields.Float,
         "magap_corr": fields.Float,
-        "sigmapsf": fields.Float,
+        "sigmapsf": fields.Float(attribute=get_sigmapsf),
         "sigmapsf_corr": fields.Float,
         "sigmapsf_corr_ext": fields.Float,
         "sigmagap": fields.Float,
@@ -35,7 +68,7 @@ detection_model = Model(
         "candid_alert": fields.String,
         "step_id_corr": fields.String,
         "phase": fields.Float,
-        "parent_candid": fields.Integer,
+        "parent_candid": fields.Integer(attribute=get_parent_candid),
     },
 )
 

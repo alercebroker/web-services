@@ -1,7 +1,3 @@
-from fixtures import client, db, BaseQuery, models
-from unittest.mock import patch
-
-
 def test_classifier_list(psql_service, client):
     r = client.get("/classifiers/")
     # TODO Replace with actual assertion when classes are not hardcoded

@@ -22,7 +22,9 @@ object_list_item = Model(
         "stellar": fields.Boolean(
             description="whether the object is a likely stellar-like source"
         ),
-        "ndet": fields.Integer(description="total number of detections for the object"),
+        "ndet": fields.Integer(
+            description="total number of detections for the object"
+        ),
         "g_r_max": fields.Float(
             description="difference between the minimum g and r band difference magnitudes"
         ),
@@ -35,14 +37,20 @@ object_list_item = Model(
         "g_r_mean_corr": fields.Float(
             description="difference between the mean g and r band corrected magnitudes"
         ),
-        "firstmjd": fields.Float(description="First detection's modified julian date"),
-        "lastmjd": fields.Float(description="Last detection's modified julian date"),
+        "firstmjd": fields.Float(
+            description="First detection's modified julian date"
+        ),
+        "lastmjd": fields.Float(
+            description="Last detection's modified julian date"
+        ),
         "deltajd": fields.Float(
             description="difference between last and first detection date"
         ),
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
-        "sigmara": fields.Float(description="right ascension standard deviation"),
+        "sigmara": fields.Float(
+            description="right ascension standard deviation"
+        ),
         "sigmadec": fields.Float(description="declination standard deviation"),
         "class": fields.String(
             description="Highest probability class or according to specified ranking",
@@ -54,7 +62,9 @@ object_list_item = Model(
         "probability": fields.Float(
             description="Highest probability or according to specified ranking"
         ),
-        "step_id_corr": fields.String(description="correction step pipeline version"),
+        "step_id_corr": fields.String(
+            description="correction step pipeline version"
+        ),
     },
 )
 
@@ -80,7 +90,9 @@ object_item = Model(
         "stellar": fields.Boolean(
             description="whether the object is a likely stellar-like source"
         ),
-        "ndet": fields.Integer(description="total number of detections for the object"),
+        "ndet": fields.Integer(
+            description="total number of detections for the object"
+        ),
         "g_r_max": fields.Float(
             description="difference between the minimum g and r band difference magnitudes"
         ),
@@ -93,16 +105,24 @@ object_item = Model(
         "g_r_mean_corr": fields.Float(
             description="difference between the mean g and r band corrected magnitudes"
         ),
-        "firstmjd": fields.Float(description="First detection's modified julian date"),
-        "lastmjd": fields.Float(description="Last detection's modified julian date"),
+        "firstmjd": fields.Float(
+            description="First detection's modified julian date"
+        ),
+        "lastmjd": fields.Float(
+            description="Last detection's modified julian date"
+        ),
         "deltajd": fields.Float(
             description="difference between last and first detection date"
         ),
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
-        "sigmara": fields.Float(description="right ascension standard deviation"),
+        "sigmara": fields.Float(
+            description="right ascension standard deviation"
+        ),
         "sigmadec": fields.Float(description="declination standard deviation"),
-        "step_id_corr": fields.String(description="correction step pipeline version"),
+        "step_id_corr": fields.String(
+            description="correction step pipeline version"
+        ),
     },
 )
 

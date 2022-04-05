@@ -1,23 +1,30 @@
 # This workflow will install Python dependencies, run tests and lint with a single version of Python
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Tests
+name: Lint and Test
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 jobs:
-  build:
-
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: psf/black@stable
+        with:
+          options: "--check --verbose"
+          src: "api/"
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.6', '3.7', '3.8']
+        python-version: ['3.7']
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python 3.6
+    - uses: actions/checkout@master
+    - name: Set up Python 3.7
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
@@ -26,16 +33,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install black pytest pytest-docker coverage
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Black Code Format Check
-      run: |
-        black --check .
-        black --check tests/
     - name: Test with pytest
       run: |
-        coverage run --source api/ -m pytest tests/
+        coverage run --source api/ -m pytest -x tests/
         coverage xml
     - name: Codecov
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml

@@ -4,7 +4,7 @@ from .models import feature_model
 from .parsers import fid_parser
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
-from ...db import db
+from ...database_access.psql_db import db
 
 api = Namespace("features", description="Features related operations")
 api.models[feature_model.name] = feature_model
@@ -23,7 +23,11 @@ class Features(Resource):
         Gets list of all features.
         """
         args = fid_parser.parse_args()
-        obj = db.query(models.Object).filter(models.Object.oid == id).one_or_none()
+        obj = (
+            db.query(models.Object)
+            .filter(models.Object.oid == id)
+            .one_or_none()
+        )
         if obj:
             q = db.query(models.Feature).filter(models.Feature.oid == obj.oid)
             if args.fid is not None:
