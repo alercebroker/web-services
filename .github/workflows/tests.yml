@@ -42,3 +42,13 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
+
+  test_examples:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Test with behave and simulated environment
+      run: |
+        cd examples/examples/infrastructure
+        docker-compose up -d postgres mongo alerts_api
+        docker-compose up tests
