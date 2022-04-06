@@ -5,9 +5,8 @@ import pymongo
 from api.app import create_app
 from api.database_access.psql_db import db
 from api.database_access.mongo_db import db as mongo_db
-from db_plugins.db.sql import BaseQuery, models
+from db_plugins.db.sql import models
 from db_plugins.db.mongo import models as mongo_models
-import json
 import datetime
 
 
