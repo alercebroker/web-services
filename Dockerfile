@@ -1,4 +1,6 @@
-FROM python:3.7
+FROM python:3.7-slim
+
+RUN apt update && apt install -y git
 
 ADD requirements.txt /app/
 WORKDIR /app
