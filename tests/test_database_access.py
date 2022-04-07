@@ -157,3 +157,12 @@ def test_get_non_detections_unexpected_exception(mongo_service, psql_service, cl
         command = GetNonDetections("ATLAS1", ATLAS_SURVEY_ID, result_handler)
         with pytest.raises(InternalServerError):
             command.execute()
+
+def test_get_lightcurve_no_interface_exception(mongo_service, psql_service, client):
+
+    with patch.object(GetLightCurve, "database_interface_selector") as db_interface_selector_mock:
+        db_interface_selector_mock.side_effect = InterfaceNotFound("error")
+        result_handler = ViewResultHandler()
+        command = GetLightCurve("ZTF1", ZTF_SURVEY_ID, result_handler)
+        with pytest.raises(InterfaceNotFound):
+            command.execute()

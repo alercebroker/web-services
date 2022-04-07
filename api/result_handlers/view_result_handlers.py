@@ -25,8 +25,6 @@ class ViewResultHandler(object):
         exception = result.failure()
         if isinstance(exception.original_exception, ObjectNotFound):
             raise NotFound()
-        if isinstance(exception.original_exception, InterfaceNotFound):
-            raise BadRequest()
 
     def handle_server_error(self, result):
         raise InternalServerError()
