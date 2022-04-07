@@ -154,6 +154,7 @@ def client():
                 fid=1,
                 version=feature_version.version,
             )
+            model.features.append(feature)
             model.detections.append(
                 models.Detection(
                     candid=123,
