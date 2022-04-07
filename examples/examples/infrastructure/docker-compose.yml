@@ -22,7 +22,7 @@ services:
   alerts_api:
     build:
       context: ../../../
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.testing
     ports:
       - 5000:5000
     environment:
@@ -36,6 +36,10 @@ services:
       - MONGO_USER=mongo
       - MONGO_PASSWORD=mongo
       - CONNECT_MONGO=YES
+      - EXAMPLES_TESTING=TRUE
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - ../../../:/coverage-output
   tests:
     depends_on:
       - postgres

@@ -9,6 +9,7 @@ from .resources.features.features import api as features
 from .resources.classifier.classifier import api as classifier
 from flask_cors import CORS
 from .extensions import prometheus_metrics
+from .coverage_ext import Coverage
 import os
 import logging
 from .callbacks import after_request, before_request
@@ -25,7 +26,9 @@ def create_app(config):
     if is_gunicorn:
         gunicorn_logger = logging.getLogger("gunicorn.error")
         app.logger.handlers = gunicorn_logger.handlers
-        app.logger.setLevel(gunicorn_logger.level)
+        app.logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
+    if os.getenv("EXAMPLES_TESTING"):
+        Coverage(app)
 
     @app.before_request
     def beforerequest():
