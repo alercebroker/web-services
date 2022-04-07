@@ -45,6 +45,7 @@ jobs:
         flags: unittests
 
   test_examples:
+    needs: test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
