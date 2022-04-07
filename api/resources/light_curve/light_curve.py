@@ -1,3 +1,4 @@
+from flask import make_response
 from flask_restx import Namespace, Resource
 from .parsers import survey_id_parser
 from .models import (
@@ -10,8 +11,7 @@ from ...database_access.commands import (
     GetDetections,
     GetNonDetections,
 )
-from ...database_access.interfaces import ObjectNotFound
-from werkzeug.exceptions import NotFound, InternalServerError
+from ...result_handlers.view_result_handlers import ViewResultHandler2 as ViewResultHandler
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model
@@ -33,13 +33,13 @@ class LightCurve(Resource):
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
-        get_lightcurve_command = GetLightCurve(id, survey_id)
-        try:
-            result = get_lightcurve_command.execute()
-            return result
-        except ObjectNotFound:
-            raise NotFound()
+        response = make_response()
+        result_handler = ViewResultHandler(response)
 
+        get_lightcurve_command = GetLightCurve(id, survey_id, result_handler)
+        get_lightcurve_command.execute()
+
+        return result_handler.get_result()
 
 @api.route("/<id>/detections")
 @api.param("id", "The object's identifier")
@@ -55,13 +55,13 @@ class ObjectDetections(Resource):
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
-        get_detections_command = GetDetections(id, survey_id)
-        try:
-            result = get_detections_command.execute()
-            return result
-        except ObjectNotFound:
-            raise NotFound()
+        response = make_response()
+        result_handler = ViewResultHandler(response)
 
+        get_lightcurve_command = GetDetections(id, survey_id, result_handler)
+        get_lightcurve_command.execute()
+        
+        return result_handler.get_result()
 
 @api.route("/<id>/non_detections")
 @api.param("id", "The object's identifier")
@@ -77,9 +77,10 @@ class NonDetections(Resource):
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
-        get_detections_command = GetNonDetections(id, survey_id)
-        try:
-            result = get_detections_command.execute()
-            return result
-        except ObjectNotFound:
-            raise NotFound()
+        response = make_response()
+        result_handler = ViewResultHandler(response)
+
+        get_lightcurve_command = GetNonDetections(id, survey_id, result_handler)
+        get_lightcurve_command.execute()
+        
+        return result_handler.get_result()

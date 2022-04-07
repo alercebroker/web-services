@@ -1,21 +1,11 @@
+from sre_constants import FAILURE
 from .interfaces import PSQLInterface, MongoInterface
-
-
-class InterfaceNotFound(Exception):
-    """
-    Exception commands initialized with invalid surveys ids.
-    The valid surey_ids are setted in configuration
-
-    Attributes:
-      survey_id : the id of the survey for the constructor
-    """
-
-    def __init__(self, survey_id) -> None:
-        super().__init__()
-        self.survey_id = survey_id
-
-    def __str__(self) -> str:
-        return f"Interface not found for {self.survey_id}"
+from ..result_handlers.helper_functions import is_failure, is_success
+from ..result_handlers.exceptions import (
+    InterfaceNotFound,
+    SERVER_EXCEPTION_CODE,
+    CLIENT_EXCEPTION_CODE
+)
 
 
 ZTF_SURVEY_ID = "ztf"
@@ -28,8 +18,10 @@ DATABASE_INTERFACES = {
 
 
 class BaseCommand(object):
-    def __init__(self, survey_id) -> None:
+    def __init__(self, survey_id, result_handler) -> None:
         self.survey_id = survey_id
+        self.result_handler = result_handler
+        self.method = None
 
     def database_interface_selector(self):
         db_interface = DATABASE_INTERFACES.get(self.survey_id)
@@ -39,32 +31,40 @@ class BaseCommand(object):
         else:
             raise InterfaceNotFound(self.survey_id)
 
+    def execute(self):
+        database_interface = self.database_interface_selector()
+        result = database_interface.get_interface_query(self.method)(self.object_id)
+        if is_success(result):
+            self.result_handler.handle_success(result)
+        else:
+            code = result.failure().code
+            if code == CLIENT_EXCEPTION_CODE:
+                self.result_handler.handle_client_error(result)
+            else:
+                self.result_handler.handle_server_error(result)
+
+
 
 class GetLightCurve(BaseCommand):
-    def __init__(self, object_id, survey_id) -> None:
-        super().__init__(survey_id)
-        self.object_id = object_id
-        self.database_interface = self.database_interface_selector()
 
-    def execute(self):
-        return self.database_interface.get_light_curve(self.object_id)
+    def __init__(self, object_id, survey_id, result_handler) -> None:
+        super().__init__(survey_id, result_handler)
+        self.object_id = object_id
+        self.method = "get_light_curve"
 
 
 class GetDetections(BaseCommand):
-    def __init__(self, object_id, survey_id) -> None:
-        super().__init__(survey_id)
-        self.object_id = object_id
-        self.database_interface = self.database_interface_selector()
 
-    def execute(self):
-        return self.database_interface.get_detections(self.object_id)
+    def __init__(self, object_id, survey_id, result_handler) -> None:
+        super().__init__(survey_id, result_handler)
+        self.object_id = object_id
+        self.method = "get_detections"
 
 
 class GetNonDetections(BaseCommand):
-    def __init__(self, object_id, survey_id) -> None:
-        super().__init__(survey_id)
-        self.object_id = object_id
-        self.database_interface = self.database_interface_selector()
 
-    def execute(self):
-        return self.database_interface.get_non_detections(self.object_id)
+    def __init__(self, object_id, survey_id, result_handler) -> None:
+        super().__init__(survey_id, result_handler)
+        self.object_id = object_id
+        self.method = "get_non_detections"
+
