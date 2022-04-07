@@ -33,15 +33,15 @@ class BaseCommand(object):
 
     def execute(self):
         database_interface = self.database_interface_selector()
-        result = database_interface.get_interface_query(self.method)(self.object_id)
-        if is_success(result):
-            self.result_handler.handle_success(result)
+        query_result = database_interface.get_interface_query(self.method)(self.object_id)
+        if is_success(query_result):
+            self.result_handler.handle_success(query_result)
         else:
-            exception = result.failure()
+            exception = query_result.failure()
             if isinstance(exception, ClientErrorException):
-                self.result_handler.handle_client_error(result)
+                self.result_handler.handle_client_error(query_result)
             else:
-                self.result_handler.handle_server_error(result)
+                self.result_handler.handle_server_error(query_result)
 
 
 class GetLightCurve(BaseCommand):

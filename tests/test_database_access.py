@@ -1,13 +1,19 @@
 from unittest.mock import patch
 import pytest
+from werkzeug.exceptions import NotFound, InternalServerError, BadRequest
 from api.database_access.control import DBControl
 from api.database_access.commands import (
+    ATLAS_SURVEY_ID,
+    ZTF_SURVEY_ID,
     GetLightCurve,
     GetDetections,
     GetNonDetections,
     BaseCommand,
 )
-from api.database_access.commands import InterfaceNotFound
+
+from db_plugins.db.mongo import MongoConnection
+from db_plugins.db.sql import SQLConnection
+from api.result_handlers.view_result_handlers import ViewResultHandler
 from api.database_access.interfaces import (
     DBInterface,
     PSQLInterface,
@@ -105,3 +111,49 @@ def test_control_cleanup(mongo_service, psql_service, client):
 
             mock_cleanup_psql.assert_not_called()
             mock_cleanup_mongo.assert_called_once()
+
+def test_get_light_curve_unexpected_exception(mongo_service, psql_service, client):
+    with patch.object(MongoConnection, "query") as mongo_connection_mock:
+        mongo_connection_mock.side_effect = Exception("unexpected error")
+        result_handler = ViewResultHandler()
+        command = GetLightCurve("ATLAS1", ATLAS_SURVEY_ID, result_handler)
+        with pytest.raises(InternalServerError):
+            command.execute()
+
+    with patch.object(SQLConnection, "query") as psql_connection_mock:
+        psql_connection_mock.side_effect = Exception("unexpected error")
+        result_handler = ViewResultHandler()
+        command = GetLightCurve("ZTF1", ZTF_SURVEY_ID, result_handler)
+        with pytest.raises(InternalServerError):
+            command.execute()
+
+def test_get_detections_unexpected_exception(mongo_service, psql_service, client):
+    with patch.object(MongoConnection, "query") as mongo_connection_mock:
+        mongo_connection_mock.side_effect = Exception("unexpected error")
+        result_handler = ViewResultHandler()
+        command = GetDetections("ATLAS1", ATLAS_SURVEY_ID, result_handler)
+        with pytest.raises(InternalServerError):
+            command.execute()
+
+    with patch.object(SQLConnection, "query") as psql_connection_mock:
+        psql_connection_mock.side_effect = Exception("unexpected error")
+        result_handler = ViewResultHandler()
+        command = GetDetections("ZTF1", ZTF_SURVEY_ID, result_handler)
+        with pytest.raises(InternalServerError):
+            command.execute()
+
+def test_get_non_detections_unexpected_exception(mongo_service, psql_service, client):
+
+    with patch.object(SQLConnection, "query") as psql_connection_mock:
+        psql_connection_mock.side_effect = Exception("unexpected error")
+        result_handler = ViewResultHandler()
+        command = GetNonDetections("ZTF1", ZTF_SURVEY_ID, result_handler)
+        with pytest.raises(InternalServerError):
+            command.execute()
+
+    with patch.object(MongoConnection, "query") as mongo_connection_mock:
+        mongo_connection_mock.side_effect = Exception("unexpected error")
+        result_handler = ViewResultHandler()
+        command = GetNonDetections("ATLAS1", ATLAS_SURVEY_ID, result_handler)
+        with pytest.raises(InternalServerError):
+            command.execute()

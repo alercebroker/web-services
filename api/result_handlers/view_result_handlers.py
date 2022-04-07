@@ -11,7 +11,7 @@ from ..result_handlers.exceptions import (
 
 class ViewResultHandler(object): 
 
-    def __init__(self, callbacks_dict={2, "loger"}):
+    def __init__(self, callbacks_dict={}):
         self.callbacks = callbacks_dict
         self.result_operation = None
 

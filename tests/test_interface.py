@@ -56,16 +56,6 @@ def test_get_light_curve_not_found(mongo_service, psql_service, client):
     assert isinstance(result, Failure)
     assert isinstance(result.failure(), ClientErrorException)
 
-def test_get_light_curve_unexpected_exception(mongo_service, psql_service, client):
-    
-    with patch.object(MongoConnection, "find_one"):
-        pass
-
-    with patch.object(SQLQuery, "query"):
-        pass
-    
-    pass
-
 def test_get_detections_mongo(mongo_service, psql_service, client):
     result = MongoInterface.get_detections("ATLAS1").unwrap()
 
@@ -87,9 +77,6 @@ def test_get_detections_not_found(mongo_service, psql_service, client):
     assert isinstance(result, Failure)
     assert isinstance(result.failure(), ClientErrorException)
 
-def test_get_detections_unexpected_exception(mongo_service, psql_service, client):
-    pass
-
 def test_get_non_detections_mongo(mongo_service, psql_service, client):
     result = MongoInterface.get_non_detections("ATLAS1").unwrap()
 
@@ -110,6 +97,3 @@ def test_get_non_detections_not_found(mongo_service, psql_service, client):
     result = MongoInterface.get_non_detections("ZTF1")
     assert isinstance(result, Failure)
     assert isinstance(result.failure(), ClientErrorException)
-
-def test_get_non_detections_unexpected_exception(mongo_service, psql_service, client):
-    pass
