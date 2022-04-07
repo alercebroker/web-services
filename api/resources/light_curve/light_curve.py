@@ -11,7 +11,7 @@ from ...database_access.commands import (
     GetDetections,
     GetNonDetections,
 )
-from ...result_handlers.view_result_handlers import ViewResultHandler2 as ViewResultHandler
+from ...result_handlers.view_result_handlers import ViewResultHandler
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model
@@ -77,8 +77,7 @@ class NonDetections(Resource):
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
 
-        response = make_response()
-        result_handler = ViewResultHandler(response)
+        result_handler = ViewResultHandler()
 
         get_lightcurve_command = GetNonDetections(id, survey_id, result_handler)
         get_lightcurve_command.execute()

@@ -2,9 +2,9 @@ from sre_constants import FAILURE
 from .interfaces import PSQLInterface, MongoInterface
 from ..result_handlers.helper_functions import is_failure, is_success
 from ..result_handlers.exceptions import (
+    ClientErrorException,
+    ServerErrorException,
     InterfaceNotFound,
-    SERVER_EXCEPTION_CODE,
-    CLIENT_EXCEPTION_CODE
 )
 
 
@@ -37,12 +37,11 @@ class BaseCommand(object):
         if is_success(result):
             self.result_handler.handle_success(result)
         else:
-            code = result.failure().code
-            if code == CLIENT_EXCEPTION_CODE:
+            exception = result.failure()
+            if isinstance(exception, ClientErrorException):
                 self.result_handler.handle_client_error(result)
             else:
                 self.result_handler.handle_server_error(result)
-
 
 
 class GetLightCurve(BaseCommand):

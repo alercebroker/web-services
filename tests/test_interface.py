@@ -9,8 +9,8 @@ from api.database_access.interfaces import (
     MongoInterface,
 )
 from api.result_handlers.exceptions import (
-    SERVER_EXCEPTION_CODE,
-    CLIENT_EXCEPTION_CODE,
+    ClientErrorException,
+    ServerErrorException,
     ObjectNotFound,
 )
 
@@ -47,11 +47,11 @@ def test_get_light_curve_psql(mongo_service, psql_service, client):
 def test_get_light_curve_not_found(mongo_service, psql_service, client):
     result = PSQLInterface.get_light_curve("ATLAS1")
     assert isinstance(result, Failure)
-    assert result.failure().code == CLIENT_EXCEPTION_CODE
+    assert isinstance(result.failure(), ClientErrorException)
 
     result = MongoInterface.get_light_curve("ZTF1")
     assert isinstance(result, Failure)
-    assert result.failure().code == CLIENT_EXCEPTION_CODE
+    assert isinstance(result.failure(), ClientErrorException)
 
 
 def test_get_detections_mongo(mongo_service, psql_service, client):
@@ -69,11 +69,11 @@ def test_get_detections_psql(mongo_service, psql_service, client):
 def test_get_detections_not_found(mongo_service, psql_service, client):
     result = PSQLInterface.get_detections("ATLAS1")
     assert isinstance(result, Failure)
-    assert result.failure().code == CLIENT_EXCEPTION_CODE
+    assert isinstance(result.failure(), ClientErrorException)
 
     result = MongoInterface.get_detections("ZTF1")
     assert isinstance(result, Failure)
-    assert result.failure().code == CLIENT_EXCEPTION_CODE
+    assert isinstance(result.failure(), ClientErrorException)
 
 
 def test_get_non_detections_mongo(mongo_service, psql_service, client):
@@ -91,8 +91,9 @@ def test_get_non_detections_psql(mongo_service, psql_service, client):
 def test_get_non_detections_not_found(mongo_service, psql_service, client):
     result = PSQLInterface.get_non_detections("ATLAS1")
     assert isinstance(result, Failure)
-    assert result.failure().code == CLIENT_EXCEPTION_CODE
+    assert isinstance(result.failure(), ClientErrorException)
 
     result = MongoInterface.get_non_detections("ZTF1")
     assert isinstance(result, Failure)
-    assert result.failure().code == CLIENT_EXCEPTION_CODE
+    assert isinstance(result.failure(), ClientErrorException)
+    

@@ -6,10 +6,9 @@ from ..result_handlers.helper_functions import is_failure, is_success, get_failu
 from .psql_db import db as psql_db
 from .mongo_db import db as mongo_db
 from ..result_handlers.exceptions import (
-    WrapperException,
+    ClientErrorException,
+    ServerErrorException,
     ObjectNotFound,
-    SERVER_EXCEPTION_CODE,
-    CLIENT_EXCEPTION_CODE
 )
 
 
@@ -48,10 +47,10 @@ class PSQLInterface(DBInterface):
                 return Success(query_result)
             else:
                 return Failure(
-                    WrapperException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id), CLIENT_EXCEPTION_CODE)
+                    ClientErrorException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id))
                 )
         except Exception as e:
-            return Failure(WrapperException(e, SERVER_EXCEPTION_CODE))
+            return Failure(ServerErrorException(e))
 
     @classmethod
     def get_light_curve(cls, object_id):
@@ -99,10 +98,10 @@ class MongoInterface(DBInterface):
                 return Success(astro_object)
             else:
                 return Failure(
-                    WrapperException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id), CLIENT_EXCEPTION_CODE)
+                    ClientErrorException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id))
                 )
         except Exception as e:
-            return Failure(WrapperException(e, SERVER_EXCEPTION_CODE))
+            return Failure(ServerErrorException(e))
 
     @classmethod
     def _get_detections(cls, object_id):
@@ -115,7 +114,7 @@ class MongoInterface(DBInterface):
 
             return Success(list(detections))
         except Exception as e:
-            return Failure(WrapperException(e, SERVER_EXCEPTION_CODE))
+            return Failure(ServerErrorException(e))
 
     @classmethod
     def _get_non_detections(cls, object_id):
@@ -127,7 +126,7 @@ class MongoInterface(DBInterface):
             )
             return Success(list(non_detections))
         except Exception as e:
-            return Failure(WrapperException(e, SERVER_EXCEPTION_CODE))
+            return Failure(ServerErrorException(e))
 
     @classmethod
     def get_light_curve(cls, object_id):
@@ -168,7 +167,7 @@ class MongoInterface(DBInterface):
                 return detections
             else:
                 raise Failure( 
-                    WrapperException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id), CLIENT_EXCEPTION_CODE)
+                    ClientErrorException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id))
                 )
         else:
             return astro_object
@@ -185,7 +184,7 @@ class MongoInterface(DBInterface):
                 return non_detections
             else:
                 raise Failure( 
-                    WrapperException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id), CLIENT_EXCEPTION_CODE)
+                    ClientErrorException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id))
                 )
         else:
             return astro_object
