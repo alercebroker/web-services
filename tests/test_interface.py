@@ -1,4 +1,3 @@
-from numpy import isin
 from returns.result import Success, Failure
 from unittest.mock import patch
 import pytest
@@ -8,6 +7,10 @@ from api.database_access.interfaces import (
     PSQLInterface,
     MongoInterface,
 )
+from db_plugins.db.mongo import MongoConnection
+from db_plugins.db.sql import SQLQuery, SQLConnection
+from api.database_access.mongo_db import db as mongo_db
+from api.database_access.psql_db import db as psql_db
 from api.result_handlers.exceptions import (
     ClientErrorException,
     ServerErrorException,
@@ -53,6 +56,15 @@ def test_get_light_curve_not_found(mongo_service, psql_service, client):
     assert isinstance(result, Failure)
     assert isinstance(result.failure(), ClientErrorException)
 
+def test_get_light_curve_unexpected_exception(mongo_service, psql_service, client):
+    
+    with patch.object(MongoConnection, "find_one"):
+        pass
+
+    with patch.object(SQLQuery, "query"):
+        pass
+    
+    pass
 
 def test_get_detections_mongo(mongo_service, psql_service, client):
     result = MongoInterface.get_detections("ATLAS1").unwrap()
@@ -75,6 +87,8 @@ def test_get_detections_not_found(mongo_service, psql_service, client):
     assert isinstance(result, Failure)
     assert isinstance(result.failure(), ClientErrorException)
 
+def test_get_detections_unexpected_exception(mongo_service, psql_service, client):
+    pass
 
 def test_get_non_detections_mongo(mongo_service, psql_service, client):
     result = MongoInterface.get_non_detections("ATLAS1").unwrap()
@@ -96,4 +110,6 @@ def test_get_non_detections_not_found(mongo_service, psql_service, client):
     result = MongoInterface.get_non_detections("ZTF1")
     assert isinstance(result, Failure)
     assert isinstance(result.failure(), ClientErrorException)
-    
+
+def test_get_non_detections_unexpected_exception(mongo_service, psql_service, client):
+    pass
