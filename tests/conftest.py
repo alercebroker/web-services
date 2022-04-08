@@ -283,3 +283,10 @@ def client():
         db.session.close()
         db.drop_db()
         mongo_db.drop_db()
+
+
+@pytest.fixture
+def client_app():
+    app = create_app("settings")
+    with app.test_client() as client:
+        yield client, app
