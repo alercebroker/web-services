@@ -19,14 +19,15 @@ def create_app(config):
     app = Flask(__name__)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
     app.config.from_object(config)
-    CORS(app)
-    prometheus_metrics.init_app(app)
     # Check if app run trough gunicorn
     is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
     if is_gunicorn:
         gunicorn_logger = logging.getLogger("gunicorn.error")
         app.logger.handlers = gunicorn_logger.handlers
-        app.logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
+        app.logger.setLevel(os.getenv("LOG_LEVEL", gunicorn_logger.level))
+    # set up extensions
+    CORS(app)
+    prometheus_metrics.init_app(app)
     if os.getenv("EXAMPLES_TESTING"):
         Coverage(app)
 
