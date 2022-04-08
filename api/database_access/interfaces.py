@@ -144,8 +144,8 @@ class MongoInterface(DBInterface):
                 return failure_found
             else:
                 light_curve = {
-                    "detections": cls._get_detections(aid).unwrap(),
-                    "non_detections": cls._get_non_detections(aid).unwrap(),
+                    "detections": light_curve_data[0].unwrap(),
+                    "non_detections": light_curve_data[1].unwrap(),
                 }
 
                 for det in light_curve["detections"]:

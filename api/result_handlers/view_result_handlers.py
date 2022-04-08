@@ -1,5 +1,3 @@
-from gc import callbacks
-from http import HTTPStatus
 from werkzeug.exceptions import NotFound, InternalServerError, BadRequest
 from ..result_handlers.exceptions import (
     ClientErrorException,

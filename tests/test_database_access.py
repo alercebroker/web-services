@@ -30,14 +30,14 @@ ATLAS_ID = "atlas"
 
 def test_base_command_interface_selector(mongo_service, psql_service, client):
     with pytest.raises(InterfaceNotFound):
-        command = BaseCommand("Error", None)
+        command = BaseCommand({}, "Error", None)
         command.database_interface_selector()
 
-    command = BaseCommand(ZTF_ID, None)
+    command = BaseCommand({}, ZTF_ID, None)
     db_interface = command.database_interface_selector()
     assert isinstance(db_interface, PSQLInterface)
 
-    command = BaseCommand(ATLAS_ID, None)
+    command = BaseCommand({}, ATLAS_ID, None)
     db_interface = command.database_interface_selector()
     assert isinstance(db_interface, MongoInterface)
 

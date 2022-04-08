@@ -1,4 +1,3 @@
-from sre_constants import FAILURE
 from .interfaces import PSQLInterface, MongoInterface
 from ..result_handlers.helper_functions import is_failure, is_success
 from ..result_handlers.exceptions import (
@@ -18,9 +17,10 @@ DATABASE_INTERFACES = {
 
 
 class BaseCommand(object):
-    def __init__(self, survey_id, result_handler) -> None:
+    def __init__(self, payload, survey_id, result_handler) -> None:
         self.survey_id = survey_id
         self.result_handler = result_handler
+        self.payload = payload
         self.method = None
 
     def database_interface_selector(self):
@@ -33,29 +33,30 @@ class BaseCommand(object):
 
     def execute(self):
         database_interface = self.database_interface_selector()
-        query_result = database_interface.get_interface_query(self.method)(self.object_id)
+        query_result = database_interface.get_interface_query(self.method)(self.payload["object_id"])
         if is_success(query_result):
             self.result_handler.handle_success(query_result)
         else:
             exception = query_result.failure()
             if isinstance(exception, ClientErrorException):
                 self.result_handler.handle_client_error(query_result)
-            else:
+            elif isinstance(exception, ServerErrorException):
                 self.result_handler.handle_server_error(query_result)
+            else:
+                raise query_result.failure()
 
 
 class GetLightCurve(BaseCommand):
 
     def __init__(self, object_id, survey_id, result_handler) -> None:
-        super().__init__(survey_id, result_handler)
-        self.object_id = object_id
+        super().__init__({"object_id": object_id}, survey_id, result_handler)
         self.method = "get_light_curve"
 
 
 class GetDetections(BaseCommand):
 
     def __init__(self, object_id, survey_id, result_handler) -> None:
-        super().__init__(survey_id, result_handler)
+        super().__init__({"object_id": object_id}, survey_id, result_handler)
         self.object_id = object_id
         self.method = "get_detections"
 
@@ -63,7 +64,7 @@ class GetDetections(BaseCommand):
 class GetNonDetections(BaseCommand):
 
     def __init__(self, object_id, survey_id, result_handler) -> None:
-        super().__init__(survey_id, result_handler)
+        super().__init__({"object_id": object_id}, survey_id, result_handler)
         self.object_id = object_id
         self.method = "get_non_detections"
 
