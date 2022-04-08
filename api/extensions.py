@@ -7,7 +7,7 @@ import os
 is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
 environment = os.environ.get("ENVIRONMENT", "develop")
 
-if environment == "production":
+if environment == "production":  # pragma: no cover
     if is_gunicorn:
         prometheus_metrics = (
             GunicornInternalPrometheusMetrics.for_app_factory()
