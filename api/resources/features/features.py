@@ -1,5 +1,4 @@
 from flask_restx import Namespace, Resource
-from flask_restx import reqparse
 from .models import feature_model
 from .parsers import fid_parser
 from db_plugins.db.sql import models

@@ -1,5 +1,5 @@
-from flask import Flask, request, g
-from time import strftime, time
+from flask import request, g
+from time import time
 import traceback
 
 
@@ -8,10 +8,10 @@ def before_request():
 
 
 def after_request(response, logger):
-    if request.full_path == "/metrics?":
+    if request.full_path == "/metrics?":  # pragma: no cover
         return response
     elapsed = time() - g.pop("time")
-    logger.info(
+    logger.debug(
         "%s %s %s %s %s time:%s seconds",
         request.remote_addr,
         request.method,
@@ -25,7 +25,6 @@ def after_request(response, logger):
 
 def exceptions(e, logger):
     tb = traceback.format_exc()
-    timestamp = strftime("[%Y-%b-%d %H:%M]")
     logger.error(
         "%s %s %s %s ERROR\n%s",
         request.remote_addr,

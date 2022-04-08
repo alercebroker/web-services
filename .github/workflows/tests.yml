@@ -35,10 +35,30 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       run: |
-        coverage run --source api/ -m pytest -x tests/
+        coverage run --source api/ --omit api/coverage_ext.py -m pytest -x tests/
         coverage xml
     - name: Codecov
       uses: codecov/codecov-action@v2
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         file: ./coverage.xml
+        flags: unittests
+
+  test_examples:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Test with behave and simulated environment
+      shell: 'script -q -e -c "bash {0}"'
+      run: |
+        cd examples/examples/infrastructure
+        docker-compose up -d postgres mongo alerts_api
+        docker-compose up tests
+        docker-compose exec alerts_api killall gunicorn
+    - name: Codecov
+      uses: codecov/codecov-action@v2
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        flags: behavior,examples

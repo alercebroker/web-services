@@ -12,6 +12,8 @@ from ...database_access.commands import (
     GetNonDetections,
 )
 from ...result_handlers.view_result_handlers import ViewResultHandler
+from ...database_access.interfaces import ObjectNotFound
+from werkzeug.exceptions import NotFound
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model

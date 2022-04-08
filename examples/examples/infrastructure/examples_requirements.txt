@@ -1,0 +1,4 @@
+behave
+requests
+coverage
+-e git+https://git@github.com/alercebroker/db-plugins@2.1.2#egg=db-plugins
