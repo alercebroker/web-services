@@ -75,8 +75,12 @@ class DBControl(object):
         def timeout_handler(signum, frame):
             raise Exception("Timed out waiting for postgres service")
 
-        signal.signal(signal.SIGALRM, timeout_handler)
-        signal.alarm(timeout)
+        try:
+            signal.signal(signal.SIGALRM, timeout_handler)
+            signal.alarm(timeout)
+        except ValueError:
+            # signal does not work on threads
+            pass
 
         while True:
             conn = callback()
