@@ -4,8 +4,10 @@ from returns.result import Success, Failure
 def is_success(result):
     return isinstance(result, Success)
 
+
 def is_failure(result):
     return isinstance(result, Failure)
+
 
 def get_failure_from_list(results_list):
     # returns the first failure from a list of results

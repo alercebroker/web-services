@@ -33,7 +33,9 @@ class BaseCommand(object):
 
     def execute(self):
         database_interface = self.database_interface_selector()
-        query_result = database_interface.get_interface_query(self.method)(self.payload["object_id"])
+        query_result = database_interface.get_interface_query(self.method)(
+            self.payload["object_id"]
+        )
         if is_success(query_result):
             self.result_handler.handle_success(query_result)
         else:
@@ -47,14 +49,12 @@ class BaseCommand(object):
 
 
 class GetLightCurve(BaseCommand):
-
     def __init__(self, object_id, survey_id, result_handler) -> None:
         super().__init__({"object_id": object_id}, survey_id, result_handler)
         self.method = "get_light_curve"
 
 
 class GetDetections(BaseCommand):
-
     def __init__(self, object_id, survey_id, result_handler) -> None:
         super().__init__({"object_id": object_id}, survey_id, result_handler)
         self.object_id = object_id
@@ -62,9 +62,7 @@ class GetDetections(BaseCommand):
 
 
 class GetNonDetections(BaseCommand):
-
     def __init__(self, object_id, survey_id, result_handler) -> None:
         super().__init__({"object_id": object_id}, survey_id, result_handler)
         self.object_id = object_id
         self.method = "get_non_detections"
-

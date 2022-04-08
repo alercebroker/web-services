@@ -43,6 +43,7 @@ class LightCurve(Resource):
 
         return result_handler.get_result()
 
+
 @api.route("/<id>/detections")
 @api.param("id", "The object's identifier")
 @api.response(200, "Success")
@@ -62,8 +63,9 @@ class ObjectDetections(Resource):
 
         get_lightcurve_command = GetDetections(id, survey_id, result_handler)
         get_lightcurve_command.execute()
-        
+
         return result_handler.get_result()
+
 
 @api.route("/<id>/non_detections")
 @api.param("id", "The object's identifier")
@@ -81,7 +83,9 @@ class NonDetections(Resource):
 
         result_handler = ViewResultHandler()
 
-        get_lightcurve_command = GetNonDetections(id, survey_id, result_handler)
+        get_lightcurve_command = GetNonDetections(
+            id, survey_id, result_handler
+        )
         get_lightcurve_command.execute()
-        
+
         return result_handler.get_result()

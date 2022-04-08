@@ -7,8 +7,7 @@ from ..result_handlers.exceptions import (
 )
 
 
-class ViewResultHandler(object): 
-
+class ViewResultHandler(object):
     def __init__(self, callbacks_dict={}):
         self.callbacks = callbacks_dict
         self.result_operation = None
@@ -18,7 +17,7 @@ class ViewResultHandler(object):
 
     def handle_success(self, result):
         self.result_operation = result.unwrap
-    
+
     def handle_client_error(self, result):
         exception = result.failure()
         if isinstance(exception.original_exception, ObjectNotFound):
@@ -26,5 +25,3 @@ class ViewResultHandler(object):
 
     def handle_server_error(self, result):
         raise InternalServerError()
-
-

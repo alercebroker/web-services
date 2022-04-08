@@ -2,7 +2,11 @@ from db_plugins.db.sql import models as psql_models
 from db_plugins.db.mongo import models as mongo_models
 from returns.result import Success, Failure
 
-from ..result_handlers.helper_functions import is_failure, is_success, get_failure_from_list
+from ..result_handlers.helper_functions import (
+    is_failure,
+    is_success,
+    get_failure_from_list,
+)
 from .psql_db import db as psql_db
 from .mongo_db import db as mongo_db
 from ..result_handlers.exceptions import (
@@ -13,7 +17,6 @@ from ..result_handlers.exceptions import (
 
 
 class DBInterface(object):
-
     @classmethod
     def get_interface_query(cls, query_name):
         return getattr(cls, query_name)
@@ -47,7 +50,11 @@ class PSQLInterface(DBInterface):
                 return Success(query_result)
             else:
                 return Failure(
-                    ClientErrorException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id))
+                    ClientErrorException(
+                        ObjectNotFound(
+                            object_id=object_id, survey_id=cls.survey_id
+                        )
+                    )
                 )
         except Exception as e:
             return Failure(ServerErrorException(e))
@@ -55,7 +62,7 @@ class PSQLInterface(DBInterface):
     @classmethod
     def get_light_curve(cls, object_id):
         astro_obj = cls._get_object_by_id(object_id)
-        
+
         if is_success(astro_obj):
             light_curve = astro_obj.unwrap().get_lightcurve()
             for det in light_curve["detections"]:
@@ -67,7 +74,7 @@ class PSQLInterface(DBInterface):
     @classmethod
     def get_detections(cls, object_id):
         astro_obj = cls._get_object_by_id(object_id)
-        
+
         if is_success(astro_obj):
             detections = astro_obj.unwrap().detections
             return Success(detections)
@@ -98,7 +105,11 @@ class MongoInterface(DBInterface):
                 return Success(astro_object)
             else:
                 return Failure(
-                    ClientErrorException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id))
+                    ClientErrorException(
+                        ObjectNotFound(
+                            object_id=object_id, survey_id=cls.survey_id
+                        )
+                    )
                 )
         except Exception as e:
             return Failure(ServerErrorException(e))
@@ -137,8 +148,10 @@ class MongoInterface(DBInterface):
             light_curve_data = [
                 cls._get_detections(aid),
                 cls._get_non_detections(aid),
-            ]            
-            failure_found = get_failure_from_list(results_list=light_curve_data)
+            ]
+            failure_found = get_failure_from_list(
+                results_list=light_curve_data
+            )
 
             if failure_found:
                 return failure_found
@@ -166,8 +179,12 @@ class MongoInterface(DBInterface):
             if is_success(detections) and len(detections.unwrap()) > 0:
                 return detections
             else:
-                raise Failure( 
-                    ClientErrorException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id))
+                raise Failure(
+                    ClientErrorException(
+                        ObjectNotFound(
+                            object_id=object_id, survey_id=cls.survey_id
+                        )
+                    )
                 )
         else:
             return astro_object
@@ -183,8 +200,12 @@ class MongoInterface(DBInterface):
             if is_success(non_detections) and len(non_detections.unwrap()) > 0:
                 return non_detections
             else:
-                raise Failure( 
-                    ClientErrorException(ObjectNotFound(object_id=object_id, survey_id=cls.survey_id))
+                raise Failure(
+                    ClientErrorException(
+                        ObjectNotFound(
+                            object_id=object_id, survey_id=cls.survey_id
+                        )
+                    )
                 )
         else:
             return astro_object
