@@ -11,7 +11,7 @@ from ...database_access.commands import (
     GetNonDetections,
 )
 from ...database_access.interfaces import ObjectNotFound
-from werkzeug.exceptions import NotFound, InternalServerError
+from werkzeug.exceptions import NotFound
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model

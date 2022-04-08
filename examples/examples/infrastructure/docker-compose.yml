@@ -1,0 +1,50 @@
+version: "3"
+services:
+  #postgres database for alerts
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=mongo
+      - MONGO_INITDB_DATABASE=database
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+  alerts_api:
+    build:
+      context: ../../../
+      dockerfile: Dockerfile.testing
+    ports:
+      - 5000:5000
+    environment:
+      - DB_HOST=postgres
+      - DB_DATABASE=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - MONGO_HOST=mongo
+      - MONGO_DATABASE=database
+      - MONGO_AUTH_SOURCE=database
+      - MONGO_USER=mongo
+      - MONGO_PASSWORD=mongo
+      - CONNECT_MONGO=YES
+      - EXAMPLES_TESTING=TRUE
+      - LOG_LEVEL=DEBUG
+    volumes:
+      - ../../../:/coverage-output
+  tests:
+    depends_on:
+      - postgres
+      - mongo
+      - alerts_api
+    build:
+      context: ../../../
+      dockerfile: Dockerfile.bdd

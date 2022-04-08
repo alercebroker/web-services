@@ -1,4 +1,4 @@
-from flask_restx import Resource, fields, Model
+from flask_restx import fields, Model
 
 feature_model = Model(
     "Feature",

@@ -5,9 +5,8 @@ import pymongo
 from api.app import create_app
 from api.database_access.psql_db import db
 from api.database_access.mongo_db import db as mongo_db
-from db_plugins.db.sql import BaseQuery, models
+from db_plugins.db.sql import models
 from db_plugins.db.mongo import models as mongo_models
-import json
 import datetime
 
 
@@ -155,6 +154,7 @@ def client():
                 fid=1,
                 version=feature_version.version,
             )
+            model.features.append(feature)
             model.detections.append(
                 models.Detection(
                     candid=123,
@@ -283,3 +283,10 @@ def client():
         db.session.close()
         db.drop_db()
         mongo_db.drop_db()
+
+
+@pytest.fixture
+def client_app():
+    app = create_app("settings")
+    with app.test_client() as client:
+        yield client, app
