@@ -6,7 +6,6 @@ tests/tests.out
 .vscode/
 .coverage
 htmlcov/
-src
 .DS_Store
 .env
 .log/
