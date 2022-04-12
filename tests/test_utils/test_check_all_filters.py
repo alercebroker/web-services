@@ -33,4 +33,4 @@ def test_key_with_invalid_value():
     result = check_all_filters(TEST_FILTERS_LIST, test_callbacks_dict)
 
     assert not result[0]
-    assert result[1] == ["Bad value for filter1", "Bad value for filter2"]
+    assert result[1] == ["Bad value for filter1", "Bad value for filter3"]

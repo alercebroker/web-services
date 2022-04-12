@@ -18,9 +18,9 @@ class Ralidator(object):
 
     def authenticate_token(self, secret_key, token=None):
         """Decript the token received, then validate the structure of
-        result and store the permisions and the filters of the user.
+        result and store the permissions and the filters of the user.
         If no token is used, the autentication will use the default
-        user permisions and filters.
+        user permissions and filters.
 
         :param secret_key: The secret string that will be used to decript
             the JWT token.
@@ -31,30 +31,30 @@ class Ralidator(object):
         """
         raise  NotImplementedError()
 
-    def set_required_permisions(self, permisions_list):
-        """Setter for the required permisions attribute.
+    def set_required_permissions(self, permissions_list):
+        """Setter for the required permissions attribute.
 
-        :param permisions_list: The list of permisions to be stored
-            in the required_permisions attibute
-        :type permisions_list: list
+        :param permissions_list: The list of permissions to be stored
+            in the required_permissions attibute
+        :type permissions_list: list
         """
         raise  NotImplementedError()
 
-    def set_given_permisions(self, permisions_list):
-        """Setter for the given permisions attibute.
+    def set_given_permissions(self, permissions_list):
+        """Setter for the given permissions attibute.
 
-        :param permisions_list: The list of permisions to be stored
-            in the given_permisions attibute
-        :type permisions_list: list
+        :param permissions_list: The list of permissions to be stored
+            in the given_permissions attibute
+        :type permissions_list: list
         """
         raise  NotImplementedError()
 
     def check_if_allowed(self):
-        """Search for at least one of the required_permisions in the
+        """Search for at least one of the required_permissions in the
         given_permmisions.
 
-        :return: True if at least one of the required permisions is
-            present in the given permisions, false if not.
+        :return: True if at least one of the required permissions is
+            present in the given permissions, false if not.
         :rtype: bool
         """
         raise  NotImplementedError()

@@ -3,7 +3,7 @@ from datetime import datetime, timezone, timedelta
 import jwt
 
 TEST_FILTERS = ["filter1", "filter2", "filter3"]
-TEST_PERMISIONS = ["permision1", "permision2", "permisoin3"]
+TEST_permissions = ["permision1", "permision2", "permisoin3"]
 TEST_SECRET_KEY = "secret_key"
 
 
@@ -27,7 +27,7 @@ def test_authenticate_token_valid():
         'exp': datetime.now(tz=timezone.utc) + timedelta(hours=1),
         'jti': 'test_jti',
         'user_id': 1,
-        "permisions": ["permision1", "permision2"],
+        "permissions": ["permision1", "permision2"],
         "filters": ["filter1", "filter2"    ]
     }
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
@@ -35,7 +35,7 @@ def test_authenticate_token_valid():
     ralidator = Ralidator(test_callbacks_dict)
     ralidator.authenticate_token(TEST_SECRET_KEY, encripted_token)
     
-    assert ralidator.given_permisions == ["permision1", "permision2"]
+    assert ralidator.given_permissions == ["permision1", "permision2"]
     assert ralidator.given_filters == ["filter1", "filter2"]
 
 def test_authenticate_token_invalid():
@@ -50,7 +50,7 @@ def test_authenticate_token_invalid():
         'exp': datetime.now(tz=timezone.utc) + timedelta(hours=-1),
         'jti': 'test_jti',
         'user_id': 1,
-        "permisions": ["permision1", "permision2"],
+        "permissions": ["permision1", "permision2"],
         "filters": ["filter1", "filter2"]
     }
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
@@ -70,7 +70,7 @@ def test_authenticate_token_default_token():
     ralidator.authenticate_token(TEST_SECRET_KEY, None)
     
     # definir donde y cuales
-    assert ralidator.given_permisions == []
+    assert ralidator.given_permissions == []
     assert ralidator.given_filters == []
 
 def test_check_allowed_allowed():
@@ -84,14 +84,14 @@ def test_check_allowed_allowed():
         'exp': datetime.now(tz=timezone.utc) + timedelta(hours=1),
         'jti': 'test_jti',
         'user_id': 1,
-        "permisions": ["permision1", "permision2"],
+        "permissions": ["permision1", "permision2"],
         "filters": ["filter1", "filter2"    ]
     }
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(test_callbacks_dict)
     ralidator.authenticate_token(TEST_SECRET_KEY, encripted_token)
-    ralidator.set_required_permisions(["permision1"])
+    ralidator.set_required_permissions(["permision1"])
     result = ralidator.check_if_allowed()
     assert result
 
@@ -106,14 +106,14 @@ def test_check_allowed_not_allowed():
         'exp': datetime.now(tz=timezone.utc) + timedelta(hours=1),
         'jti': 'test_jti',
         'user_id': 1,
-        "permisions": ["permision1", "permision2"],
+        "permissions": ["permision1", "permision2"],
         "filters": ["filter1", "filter2"    ]
     }
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(test_callbacks_dict)
     ralidator.authenticate_token(TEST_SECRET_KEY, encripted_token)
-    ralidator.set_required_permisions(["permision3"])
+    ralidator.set_required_permissions(["permision3"])
     result = ralidator.check_if_allowed()
     assert not result
 
