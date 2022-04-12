@@ -4,6 +4,11 @@ from db_plugins.db.sql import models as psql_models
 from db_plugins.db.mongo import models as mongo_models
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
+from shared.error.exceptions import (
+    ClientErrorException,
+    ServerErrorException,
+    ObjectNotFound,
+)
 import abc
 
 
@@ -37,8 +42,8 @@ class PSQLDetectionRepository(DetectionRepository):
         except Exception as e:
             return Failure(ServerErrorException(e))
 
-    def get(self, object_id):
-        astro_obj = self._get_object_by_id(object_id)
+    def get(self, object_id, survey_id):
+        astro_obj = self._get_object_by_id(object_id, survey_id)
 
         if is_successful(astro_obj):
             detections = astro_obj.unwrap().detections
@@ -51,7 +56,7 @@ class MongoDetectionRepository(DetectionRepository):
     def __init__(self, db: MongoConnection):
         self.db = db
 
-    def _get_object(self, object_id):
+    def _get_object(self, object_id, survey_id):
         try:
             astro_object = self.db.query().find_one(
                 model=mongo_models.Object, filter_by={"oid": object_id}
@@ -62,7 +67,7 @@ class MongoDetectionRepository(DetectionRepository):
                 return Failure(
                     ClientErrorException(
                         ObjectNotFound(
-                            object_id=object_id, survey_id=self.survey_id
+                            object_id=object_id, survey_id=survey_id
                         )
                     )
                 )
@@ -81,8 +86,8 @@ class MongoDetectionRepository(DetectionRepository):
         except Exception as e:
             return Failure(ServerErrorException(e))
 
-    def get(self, object_id):
-        astro_object = self._get_object(object_id)
+    def get(self, object_id, survey_id):
+        astro_object = self._get_object(object_id, survey_id)
 
         if is_successful(astro_object):
             aid = astro_object.unwrap()["aid"]

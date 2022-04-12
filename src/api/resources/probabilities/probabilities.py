@@ -3,7 +3,8 @@ from db_plugins.db.sql import models
 from .models import probability_model
 from .parsers import prob_parser
 from werkzeug.exceptions import NotFound
-from ...database_access.psql_db import db
+from dependency_injector.wiring import inject, Provide
+from api.container import AppContainer, SQLConnection
 from typing import List
 
 api = Namespace(
@@ -20,7 +21,8 @@ class Probabilities(Resource):
     @api.doc("probabilities")
     @api.expect(prob_parser)
     @api.marshal_list_with(probability_model)
-    def get(self, id):
+    @inject
+    def get(self, id, db: SQLConnection = Provide[AppContainer.psql_db]):
         obj = db.query(models.Object).find_one(filter_by={"oid": id})
         if obj:
             args = prob_parser.parse_args()

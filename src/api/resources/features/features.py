@@ -3,7 +3,8 @@ from .models import feature_model
 from .parsers import fid_parser
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
-from ...database_access.psql_db import db
+from dependency_injector.wiring import inject, Provide
+from api.container import AppContainer, SQLConnection
 
 api = Namespace("features", description="Features related operations")
 api.models[feature_model.name] = feature_model
@@ -17,7 +18,8 @@ class Features(Resource):
     @api.doc("features")
     @api.expect(fid_parser)
     @api.marshal_list_with(feature_model)
-    def get(self, id):
+    @inject
+    def get(self, id, db: SQLConnection = Provide[AppContainer.psql_db]):
         """
         Gets list of all features.
         """
@@ -46,7 +48,8 @@ class Feature(Resource):
     @api.doc("features")
     @api.expect(fid_parser)
     @api.marshal_with(feature_model)
-    def get(self, id, name):
+    @inject
+    def get(self, id, name, db: SQLConnection = Provide[AppContainer.psql_db]):
         """
         Gets a single Feature
         """

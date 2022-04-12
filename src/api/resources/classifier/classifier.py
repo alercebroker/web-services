@@ -1,8 +1,9 @@
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
-from ...database_access.psql_db import db
 from .models import classifier_model, class_model
 from flask_restx import Namespace, Resource
+from dependency_injector.wiring import inject, Provide
+from api.container import AppContainer, SQLConnection
 
 api = Namespace("classifier", description="Classifier routes")
 api.models[classifier_model.name] = classifier_model
@@ -15,7 +16,8 @@ api.models[class_model.name] = class_model
 class ClassifierList(Resource):
     @api.doc("classifier")
     @api.marshal_with(classifier_model)
-    def get(self):
+    @inject
+    def get(self, db: SQLConnection() = Provide[AppContainer.psql_db]):
         """
         Gets all clasifiers
         """
@@ -31,7 +33,13 @@ class ClassifierList(Resource):
 class Classifier(Resource):
     @api.doc("get_classes")
     @api.marshal_list_with(class_model)
-    def get(self, classifier_name, classifier_version):
+    @inject
+    def get(
+        self,
+        classifier_name,
+        classifier_version,
+        db: SQLConnection = Provide[AppContainer.psql_db],
+    ):
         classifier = (
             db.query(models.Taxonomy)
             .filter(models.Taxonomy.classifier_name == classifier_name)

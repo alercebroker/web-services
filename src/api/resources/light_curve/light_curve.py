@@ -1,4 +1,3 @@
-from flask import make_response
 from flask_restx import Namespace, Resource
 from .parsers import survey_id_parser
 from .models import (
@@ -7,8 +6,11 @@ from .models import (
     non_detection_model,
 )
 from dependency_injector.wiring import inject, Provide
-from core.light_curve.domain.lightcurve_service import LightcurveService
+from dependency_injector.providers import Factory
 from api.container import AppContainer
+from shared.interface.command import Command
+from shared.interface.command import ResultHandler
+from core.light_curve.domain.lightcurve_service import LightcurveServicePayload
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model
@@ -28,19 +30,23 @@ class LightCurve(Resource):
     def get(
         self,
         id,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.lightcurve_package.get_lightcurve_command.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
     ):
         """
         Gets detections and non detections
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
-
-        response = make_response()
-        result_handler = ViewResultHandler(response)
-
-        get_lightcurve_command = GetLightCurve(id, survey_id, result_handler)
-        get_lightcurve_command.execute()
-
-        return result_handler.get_result()
+        command = command_factory(
+            payload=LightcurveServicePayload(id, survey_id),
+            handler=result_handler,
+        )
+        command.execute()
+        return result_handler.result
 
 
 @api.route("/<id>/detections")
@@ -51,19 +57,27 @@ class ObjectDetections(Resource):
     @api.doc("detections")
     @api.marshal_list_with(detection_model, skip_none=True)
     @api.expect(survey_id_parser)
-    def get(self, id):
+    @inject
+    def get(
+        self,
+        id,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.lightcurve_package.get_detections_command.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
+    ):
         """
         Just the detections
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
-
-        response = make_response()
-        result_handler = ViewResultHandler(response)
-
-        get_lightcurve_command = GetDetections(id, survey_id, result_handler)
-        get_lightcurve_command.execute()
-
-        return result_handler.get_result()
+        command = command_factory(
+            payload=LightcurveServicePayload(id, survey_id),
+            handler=result_handler,
+        )
+        command.execute()
+        return result_handler.result
 
 
 @api.route("/<id>/non_detections")
@@ -74,17 +88,24 @@ class NonDetections(Resource):
     @api.doc("non_detections")
     @api.marshal_list_with(non_detection_model, skip_none=True)
     @api.expect(survey_id_parser)
-    def get(self, id):
+    @inject
+    def get(
+        self,
+        id,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.lightcurve_package.get_non_detections_command.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
+    ):
         """
         Just non detections
         """
         survey_id = survey_id_parser.parse_args()["survey_id"]
-
-        result_handler = ViewResultHandler()
-
-        get_lightcurve_command = GetNonDetections(
-            id, survey_id, result_handler
+        command = command_factory(
+            payload=LightcurveServicePayload(id, survey_id),
+            handler=result_handler,
         )
-        get_lightcurve_command.execute()
-
-        return result_handler.get_result()
+        command.execute()
+        return result_handler.result

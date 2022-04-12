@@ -1,9 +1,9 @@
-from flask_restx import Namespace, Resource, fields
-from flask_restx import reqparse
+from flask_restx import Namespace, Resource
 from db_plugins.db.sql import models
 from .models import magstats_model
 from werkzeug.exceptions import NotFound
-from ...database_access.psql_db import db
+from dependency_injector.wiring import inject, Provide
+from api.container import AppContainer, SQLConnection
 
 api = Namespace(
     "magnitude statistics",
@@ -19,7 +19,8 @@ api.models[magstats_model.name] = magstats_model
 class MagStats(Resource):
     @api.doc("magstats")
     @api.marshal_list_with(magstats_model)
-    def get(self, id):
+    @inject
+    def get(self, id, db: SQLConnection = Provide[AppContainer.psql_db]):
         obj = (
             db.query(models.Object)
             .filter(models.Object.oid == id)

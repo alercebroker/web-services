@@ -13,7 +13,8 @@ from sqlalchemy import text, func
 from sqlalchemy.orm import aliased
 from astropy import units
 from werkzeug.exceptions import NotFound
-from ...database_access.psql_db import db
+from dependency_injector.wiring import inject, Provide
+from api.container import AppContainer, SQLConnection
 
 api = Namespace("objects", description="Objects related operations")
 api.models[object_list_item.name] = object_list_item
@@ -102,7 +103,15 @@ class ObjectList(Resource):
             pagination_args["count"],
         )
 
-    def _get_objects(self, filters, conesearch, conesearch_args, default=True):
+    @inject
+    def _get_objects(
+        self,
+        filters,
+        conesearch,
+        conesearch_args,
+        default=True,
+        db: SQLConnection = Provide[AppContainer.psql_db],
+    ):
         if not default:
             join_table = models.Probability
         else:
@@ -253,7 +262,12 @@ class ObjectList(Resource):
 class Object(Resource):
     @api.doc("get_object")
     @api.marshal_with(object_item)
-    def get(self, id):
+    @inject
+    def get(
+        self,
+        id,
+        db: SQLConnection = Provide[AppContainer.psql_db],
+    ):
         """Fetch an object given its identifier"""
         result = (
             db.query(models.Object)
@@ -271,7 +285,11 @@ class Object(Resource):
 class LimitValues(Resource):
     @api.doc("limit_values")
     @api.marshal_with(limit_values_model)
-    def get(self):
+    @inject
+    def get(
+        self,
+        db: SQLConnection = Provide[AppContainer.psql_db],
+    ):
         """Gets min and max values for objects number of detections and detection dates"""
         resp = db.query(
             func.min(models.Object.ndet).label("min_ndet"),
