@@ -7,7 +7,6 @@ import pymongo
 from db_plugins.db.sql import models
 from db_plugins.db.mongo import models as mongo_models
 import datetime
-from dependency_injector import providers
 
 sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve() / "src/"))
 
