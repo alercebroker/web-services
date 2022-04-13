@@ -91,10 +91,7 @@ class MongoNonDetectionRepository(NonDetectionRepository):
             aid = astro_object.unwrap()["aid"]
             non_detections = self._get_non_detections(aid)
 
-            if (
-                is_successful(non_detections)
-                and len(non_detections.unwrap()) > 0
-            ):
+            if is_successful(non_detections):
                 return non_detections
             else:
                 return Failure(
