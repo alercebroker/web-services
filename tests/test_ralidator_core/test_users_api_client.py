@@ -1,0 +1,54 @@
+import requests
+from unittest.mock import patch
+from package.ralidator_core.users_api_client import UsersApiClient
+
+
+class MockResponse(object):
+    def __init__(self, status, response):
+        self.status_code = status
+        self.response = response
+    
+    def json(self):
+        return self.response
+
+
+TEST_API_URL = "www.users.api"
+TEST_API_TOKEN = "test-token"
+TEST_FILTERS_LIST = ["filter1", "filter2", "filter3"]
+
+def test_get_all_filters_correct():
+    client = UsersApiClient(TEST_API_URL, TEST_API_TOKEN)
+
+    with patch.object(requests, "get") as mock_request:
+        mock_request.return_value = MockResponse(200, {"filters": TEST_FILTERS_LIST})
+        result = client.get_all_filters()
+
+        assert result == TEST_FILTERS_LIST
+
+def test_get_all_filters_bad_response():
+    client = UsersApiClient(TEST_API_URL, TEST_API_TOKEN)
+
+    with patch.object(requests, "get") as mock_request:
+        mock_request.return_value = MockResponse(403, {})
+        result = client.get_all_filters()
+
+        assert result == None
+
+def test_get_all_filters_forbiden():
+    client = UsersApiClient(TEST_API_URL, TEST_API_TOKEN)
+
+    with patch.object(requests, "get") as mock_request:
+        mock_request.return_value = MockResponse(403, "")
+        result = client.get_all_filters()
+
+        assert result == None
+
+def test_get_all_filters_server_error():
+    client = UsersApiClient(TEST_API_URL, TEST_API_TOKEN)
+
+    with patch.object(requests, "get") as mock_request:
+        mock_request.return_value = MockResponse(500, "")
+        result = client.get_all_filters()
+
+        assert result == None
+

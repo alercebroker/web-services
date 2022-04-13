@@ -15,10 +15,6 @@ def generate_valid_token(timestap_time=False, remove_keys=[]):
         'permissions': ["permision1", "permision2"],
         'filters': ["filter1", "filter2"]
     }
-    #if timestap_time:
-    #    token["exp"] = (datetime.now(tz=timezone.utc) + timedelta(hours=1)).timestamp()
-    #else:
-    #    token["exp"] = datetime.now(tz=timezone.utc) + timedelta(hours=1)
     for key in remove_keys:
         token.pop(key)
     return token

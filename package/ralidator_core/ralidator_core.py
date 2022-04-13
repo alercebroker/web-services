@@ -3,16 +3,19 @@ class Ralidator(object):
     """The ralidator core class manage the permision to resources
     and the filtering of a potential response. It require to be
     instanciated wtith a dictionary of callables wich are related
-    to each filter name.
-
-    :param filter_callables: Required and validated dictionary
-        that is suposed to map each filter name to a callable defined
-        in the service using Ralidator
-    :type filter_callables: dict
+    to each filter name and a settings dict.
     """
 
-    def __init__(self, filters_callables) -> None:
+    def __init__(self, settings, filters_callables) -> None:
         """Constructor method
+
+        :param settings: a dictionary with the configuration variables
+            for the difent services used by ralidator
+        :type settings: dict
+        :param filter_callables: Required and validated dictionary
+            that is suposed to map each filter name to a callable defined
+            in the service using Ralidator
+        :type filter_callables: dict
         """
         raise  NotImplementedError()
 
@@ -57,6 +60,9 @@ class Ralidator(object):
             present in the given permissions, false if not.
         :rtype: bool
         """
+        if not self.valid_token:
+            return False
+        
         raise  NotImplementedError()
 
     def set_required_filters(self, filters_list):
@@ -85,6 +91,7 @@ class Ralidator(object):
         :param result_value: the raw return value to be given to the client.
             Some of the values may be removed from result_value after the
             filters are apllied.
+        :raise missing filter:
         """
         raise  NotImplementedError()
     
