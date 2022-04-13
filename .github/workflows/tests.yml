@@ -15,7 +15,7 @@ jobs:
       - uses: psf/black@stable
         with:
           options: "--check --verbose"
-          src: "api/"
+          src: "src/"
   test:
     runs-on: ubuntu-latest
     strategy:
@@ -35,7 +35,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
       run: |
-        coverage run --source api/ --omit api/coverage_ext.py -m pytest -x tests/
+        coverage run --source src/ --omit src/api/coverage_ext.py -m pytest -x tests/
         coverage xml
     - name: Codecov
       uses: codecov/codecov-action@v2
