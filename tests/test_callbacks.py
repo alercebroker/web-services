@@ -2,15 +2,13 @@ from flask import g
 import logging
 
 
-def test_before_request(psql_service, client_app):
-    client, app = client_app
+def test_before_request(app):
     with app.test_request_context("/"):
         app.preprocess_request()
         assert g.time is not None
 
 
-def test_after_request(caplog, psql_service, client_app):
-    client, app = client_app
+def test_after_request(caplog, app):
     caplog.set_level(logging.DEBUG)
     with app.test_request_context("/"):
         app.preprocess_request()

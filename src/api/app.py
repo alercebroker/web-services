@@ -19,11 +19,11 @@ from api.callbacks import after_request, before_request
 from api.container import AppContainer
 
 
-def create_app(config):
+def create_app(config_path):
     container = AppContainer()
+    container.config.from_yaml(config_path)
     app = Flask(__name__)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
-    app.config.from_object(config)
     app.container = container
     # Check if app run trough gunicorn
     is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")

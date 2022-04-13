@@ -17,7 +17,7 @@ class ClassifierList(Resource):
     @api.doc("classifier")
     @api.marshal_with(classifier_model)
     @inject
-    def get(self, db: SQLConnection() = Provide[AppContainer.psql_db]):
+    def get(self, db: SQLConnection = Provide[AppContainer.psql_db]):
         """
         Gets all clasifiers
         """

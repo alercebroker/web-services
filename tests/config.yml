@@ -1,0 +1,19 @@
+---
+TESTING: true
+DATABASE:
+  SQL:
+    HOST: localhost
+    DATABASE: postgres
+    USER: postgres
+    PASSWORD: postgres
+    PORT: 5432
+  MONGO:
+    HOST: "mongodb://localhost"
+    USER: mongo
+    PASSWORD: mongo
+    PORT: 27017
+    DATABASE: database
+    AUTH_SOURCE: admin
+  APP_CONFIG:
+    CONNECT_PSQL: true
+    CONNECT_MONGO: true

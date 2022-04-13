@@ -39,7 +39,7 @@ class LightcurveService:
                 "non_detections": light_curve_data[1].unwrap(),
             }
 
-            for det in light_curve["detections"]:
-                det["phase"] = 0  # (det.mjd % obj.period) / obj.period
+            # for det in light_curve["detections"]:
+            #     det["phase"] = 0  # (det.mjd % obj.period) / obj.period
 
             return Success(light_curve)

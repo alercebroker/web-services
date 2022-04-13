@@ -4,10 +4,15 @@ from db_plugins.db.sql import models as psql_models
 from db_plugins.db.mongo import models as mongo_models
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
+from shared.error.exceptions import (
+    ClientErrorException,
+    ServerErrorException,
+    ObjectNotFound,
+)
 
 
 class NonDetectionRepository:
-    def get(self, object_id):
+    def get(self, object_id, survey_id):
         raise NotImplementedError()
 
 
@@ -36,8 +41,8 @@ class PSQLNonDetectionRepository(NonDetectionRepository):
         except Exception as e:
             return Failure(ServerErrorException(e))
 
-    def get(self, object_id):
-        astro_obj = self._get_object_by_id(object_id)
+    def get(self, object_id, survey_id):
+        astro_obj = self._get_object_by_id(object_id, survey_id)
 
         if is_successful(astro_obj):
             non_detections = astro_obj.unwrap().non_detections
@@ -50,7 +55,7 @@ class MongoNonDetectionRepository(NonDetectionRepository):
     def __init__(self, db: MongoConnection):
         self.db = db
 
-    def _get_object(self, object_id):
+    def _get_object(self, object_id, survey_id):
         try:
             astro_object = self.db.query().find_one(
                 model=mongo_models.Object, filter_by={"oid": object_id}
@@ -61,7 +66,7 @@ class MongoNonDetectionRepository(NonDetectionRepository):
                 return Failure(
                     ClientErrorException(
                         ObjectNotFound(
-                            object_id=object_id, survey_id=self.survey_id
+                            object_id=object_id, survey_id=survey_id
                         )
                     )
                 )
@@ -70,7 +75,7 @@ class MongoNonDetectionRepository(NonDetectionRepository):
 
     def _get_non_detections(self, object_id):
         try:
-            non_detections = mongo_db.query().find_all(
+            non_detections = self.db.query().find_all(
                 model=mongo_models.NonDetection,
                 filter_by={"aid": object_id, "tid": {"$regex": "ATLAS*"}},
                 paginate=False,
@@ -79,8 +84,8 @@ class MongoNonDetectionRepository(NonDetectionRepository):
         except Exception as e:
             return Failure(ServerErrorException(e))
 
-    def get(self, object_id):
-        astro_object = self._get_object(object_id)
+    def get(self, object_id, survey_id):
+        astro_object = self._get_object(object_id, survey_id)
 
         if is_successful(astro_object):
             aid = astro_object.unwrap()["aid"]
@@ -92,10 +97,10 @@ class MongoNonDetectionRepository(NonDetectionRepository):
             ):
                 return non_detections
             else:
-                raise Failure(
+                return Failure(
                     ClientErrorException(
                         ObjectNotFound(
-                            object_id=object_id, survey_id=self.survey_id
+                            object_id=object_id, survey_id=survey_id
                         )
                     )
                 )
