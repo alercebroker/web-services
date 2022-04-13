@@ -30,12 +30,15 @@ services:
       - DB_DATABASE=postgres
       - DB_USER=postgres
       - DB_PASSWORD=postgres
+      - DB_PORT=5432
       - MONGO_HOST=mongo
       - MONGO_DATABASE=database
       - MONGO_AUTH_SOURCE=database
       - MONGO_USER=mongo
       - MONGO_PASSWORD=mongo
+      - MONGO_PORT=27017
       - CONNECT_MONGO=YES
+      - CONNECT_PSQL=YES
       - EXAMPLES_TESTING=TRUE
       - LOG_LEVEL=DEBUG
     volumes:

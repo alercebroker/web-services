@@ -12,7 +12,7 @@ class Coverage(object):
 
         app.logger.info("Using Coverage Extension")
         app.coverage = coverage.Coverage(
-            data_file="/coverage-output/.coverage", source=["api/"]
+            data_file="/coverage-output/.coverage", source=["src/"]
         )
         app.coverage.start()
         atexit.register(self.save_coverage)

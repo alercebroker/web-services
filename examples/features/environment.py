@@ -42,7 +42,7 @@ def mongo_ready():
         return False
 
 
-def wait_for_service(timeout: int, pause: float, callback):
+def wait_for_service(timeout: int, pause: float, callback, service):
     """Wait until postgres service is ready.
 
     Params
@@ -58,7 +58,7 @@ def wait_for_service(timeout: int, pause: float, callback):
     """
 
     def timeout_handler(signum, frame):
-        raise Exception("Timed out waiting for postgres service")
+        raise Exception(f"Timed out waiting for {service} service")
 
     signal.signal(signal.SIGALRM, timeout_handler)
     signal.alarm(timeout)
@@ -71,8 +71,11 @@ def wait_for_service(timeout: int, pause: float, callback):
 
 
 def before_all(context):
-    wait_for_service(timeout=30, pause=1, callback=psql_ready)
-    wait_for_service(timeout=30, pause=1, callback=mongo_ready)
+    wait_for_service(timeout=30, pause=1, callback=psql_ready, service="PSQL")
+    wait_for_service(
+        timeout=30, pause=1, callback=mongo_ready, service="Mongo"
+    )
+    context.db_created = "YES"
 
 
 def after_scenario(context, scenario):
