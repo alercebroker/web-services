@@ -1,4 +1,3 @@
-
 class Ralidator(object):
     """The ralidator core class manage the permision to resources
     and the filtering of a potential response. It require to be
@@ -12,9 +11,8 @@ class Ralidator(object):
     """
 
     def __init__(self, filters_callables) -> None:
-        """Constructor method
-        """
-        raise  NotImplementedError()
+        """Constructor method"""
+        raise NotImplementedError()
 
     def authenticate_token(self, secret_key, token=None):
         """Decript the token received, then validate the structure of
@@ -29,7 +27,7 @@ class Ralidator(object):
             auth token included in the http requests. Defaults to none
         :type token: str
         """
-        raise  NotImplementedError()
+        raise NotImplementedError()
 
     def set_required_permisions(self, permisions_list):
         """Setter for the required permisions attribute.
@@ -38,16 +36,16 @@ class Ralidator(object):
             in the required_permisions attibute
         :type permisions_list: list
         """
-        raise  NotImplementedError()
+        raise NotImplementedError()
 
-    def set_given_permisions(self, permisions_list):
+    def set_user_permisions(self, permisions_list):
         """Setter for the given permisions attibute.
 
         :param permisions_list: The list of permisions to be stored
             in the given_permisions attibute
         :type permisions_list: list
         """
-        raise  NotImplementedError()
+        raise NotImplementedError()
 
     def check_if_allowed(self):
         """Search for at least one of the required_permisions in the
@@ -57,27 +55,26 @@ class Ralidator(object):
             present in the given permisions, false if not.
         :rtype: bool
         """
-        raise  NotImplementedError()
+        raise NotImplementedError()
 
-    def set_required_filters(self, filters_list):
-        """Setter for the required filters.
+    def set_user_filters(self, filters_list):
+        """Setter for the user's filters.
 
         :param filters_list: The list of filters to be stored in the
             required_filters attribute.
         :type filters_list: list
         """
-        raise  NotImplementedError()
+        raise NotImplementedError()
 
-    
-    def set_given_filters(self, filters_list):
-        """Setter for the given filters.
+    def set_app_filters(self, filters_list):
+        """Setter for the application defined filters.
 
         :param filters_list: The list of filters to be stored in the
             given_filters attribute.
         :type filters_list: list
         """
-        raise  NotImplementedError()
-    
+        raise NotImplementedError()
+
     def apply_filters(self, result_value):
         """Search for every filter in given filters that is in required
         filters. It apply every filter found this way to the result.
@@ -86,8 +83,8 @@ class Ralidator(object):
             Some of the values may be removed from result_value after the
             filters are apllied.
         """
-        raise  NotImplementedError()
-    
+        raise NotImplementedError()
+
     def _apply_filter_atomic(self, filter_list, result_value):
         """It apply all the filters in filter_list to the result value, one
         after the other.
@@ -96,4 +93,4 @@ class Ralidator(object):
         :type  filters_list: list
         :param result_value: the valur to with the filters must be applied
         """
-        raise  NotImplementedError()
+        raise NotImplementedError()
