@@ -75,7 +75,7 @@ class RalidatorCoreSettingsFactory(object):
         error_messages = []
         for err in self.value_settings_error:
             error_messages.append(
-                f"Bad balue for {err['key']}. Received: {err['vaue']} expected {err['expected']}"
+                f"Bad balue for {err['key']}. Received: {err['value']} expected {err['expected']}"
             )
         for err in self.missing_setting_errors:
             error_messages.append(
@@ -106,8 +106,8 @@ class RalidatorCoreSettingsFactory(object):
 
         for key in dict_setting:
             ralidator_setting._add_setting(key, dict_setting[key])
-        
-        if ralidator_setting._check_setting:
+
+        if ralidator_setting._check_setting():
             return ralidator_setting
         else:
             error_msg = ralidator_setting.get_errors()
