@@ -1,6 +1,6 @@
 import jwt
-from package.ralidator_core.ralidator_core import Ralidator
-from package.ralidator_core.settings_factory import (
+from src.ralidator_core.ralidator_core import Ralidator
+from src.ralidator_core.settings_factory import (
     RalidatorCoreSettingsFactory,
 )
 from datetime import datetime, timezone, timedelta
@@ -31,9 +31,9 @@ def test_authenticate_token_valid():
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(encripted_token)
 
-    assert ralidator.valid_token == True
-    assert ralidator.given_permissions == ["permission1", "permission2"]
-    assert ralidator.given_filters == ["filter1", "filter2"]
+    assert ralidator.valid_token
+    assert ralidator.user_permissions == ["permission1", "permission2"]
+    assert ralidator.user_filters == ["filter1", "filter2"]
 
 
 def test_authenticate_token_invalid():
@@ -58,7 +58,7 @@ def test_authenticate_token_invalid():
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(encripted_token)
 
-    assert ralidator.valid_token == False
+    assert not ralidator.valid_token
 
 
 def test_authenticate_token_default_token():
@@ -98,7 +98,7 @@ def test_check_allowed_allowed():
     ralidator.authenticate_token(encripted_token)
     ralidator.set_required_permissions(["permission1"])
     result = ralidator.check_if_allowed()
-    assert result == True
+    assert result
 
 
 def test_check_allowed_not_allowed():
@@ -123,7 +123,7 @@ def test_check_allowed_not_allowed():
     ralidator.authenticate_token(encripted_token)
     ralidator.set_required_permissions(["permission3"])
     result = ralidator.check_if_allowed()
-    assert result == False
+    assert not result
 
 
 def test_apply_filters():
@@ -148,7 +148,7 @@ def test_apply_filters():
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(encripted_token)
-    ralidator.set_required_filters(["filter1", "filter2", "filter3"])
+    ralidator.set_app_filters(["filter1", "filter2", "filter3"])
     result = ralidator.apply_filters(test_values)
     assert result == [6, 7, 8, 9]
 
@@ -164,6 +164,6 @@ def test_apply_filters():
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(encripted_token)
-    ralidator.set_required_filters(["filter1", "filter2", "filter3"])
+    ralidator.set_app_filters(["filter1", "filter2", "filter3"])
     result = ralidator.apply_filters(8)
-    assert result == None
+    assert not result

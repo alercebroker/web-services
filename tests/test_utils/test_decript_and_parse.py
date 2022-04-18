@@ -1,8 +1,7 @@
-import re
 import jwt
 from datetime import datetime, timedelta, timezone
 from returns.pipeline import is_successful
-from package.utils.utils import decript_and_parse
+from src.utils.utils import decript_and_parse
 
 
 TEST_SECRET_KEY = "secret_key"
@@ -32,7 +31,7 @@ def test_decript_correct_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == True
+    assert is_successful(result)
     assert result.unwrap() == assert_token
 
     test_token = generate_valid_token()
@@ -46,7 +45,7 @@ def test_decript_correct_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == True
+    assert is_successful(result)
     assert result.unwrap() == assert_token
 
 
@@ -56,7 +55,7 @@ def test_decript_bad_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
 
 def test_decipt_invalid_token():
@@ -68,7 +67,7 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
     # missing attributes
     test_token = generate_valid_token(remove_keys=["token_type"])
@@ -77,7 +76,7 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
     test_token = generate_valid_token(remove_keys=["exp"])
     encripted_test_token = jwt.encode(
@@ -85,7 +84,7 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
     test_token = generate_valid_token(remove_keys=["jti"])
     encripted_test_token = jwt.encode(
@@ -93,7 +92,7 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
     test_token = generate_valid_token(remove_keys=["user_id"])
     encripted_test_token = jwt.encode(
@@ -101,7 +100,7 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
     test_token = generate_valid_token(remove_keys=["permissions"])
     encripted_test_token = jwt.encode(
@@ -109,7 +108,7 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
     test_token = generate_valid_token(remove_keys=["filters"])
     encripted_test_token = jwt.encode(
@@ -117,7 +116,7 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
     # bad permissions and filters values
 
@@ -128,7 +127,7 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
 
     test_token = generate_valid_token()
     test_token["filters"] = "bad value"
@@ -137,4 +136,4 @@ def test_decipt_invalid_token():
     )
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert is_successful(result) == False
+    assert not is_successful(result)

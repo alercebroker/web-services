@@ -1,7 +1,7 @@
 import requests
 from unittest.mock import patch
 from returns.pipeline import is_successful
-from package.ralidator_core.users_api_client import UsersApiClient
+from src.ralidator_core.users_api_client import UsersApiClient
 
 
 class MockResponse(object):
@@ -25,7 +25,7 @@ def test_get_all_filters_correct():
         mock_request.return_value = MockResponse(200, TEST_FILTERS_LIST)
         result = client.get_all_filters()
 
-        assert is_successful(result) == True
+        assert is_successful(result)
         assert result.unwrap() == TEST_FILTERS_LIST
 
 
@@ -36,7 +36,7 @@ def test_get_all_filters_bad_response():
         mock_request.return_value = MockResponse(400, {})
         result = client.get_all_filters()
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
     assert result.failure().code == 400
 
 
@@ -47,7 +47,7 @@ def test_get_all_filters_forbiden():
         mock_request.return_value = MockResponse(403, "")
         result = client.get_all_filters()
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
     assert result.failure().code == 403
 
 
@@ -58,5 +58,5 @@ def test_get_all_filters_server_error():
         mock_request.return_value = MockResponse(500, "")
         result = client.get_all_filters()
 
-    assert is_successful(result) == False
+    assert not is_successful(result)
     assert result.failure().code == 500

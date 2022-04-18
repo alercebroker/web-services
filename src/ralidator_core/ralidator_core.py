@@ -48,8 +48,8 @@ class Ralidator(object):
             if is_successful(auth_dict_result):
                 self.valid_token = True
                 auth_dict = auth_dict_result.unwrap()
-                self.set_given_permissions(auth_dict["permissions"])
-                self.set_given_filters(auth_dict["filters"])
+                self.set_user_permissions(auth_dict["permissions"])
+                self.set_user_filters(auth_dict["filters"])
             else:
                 # error handler insertado?
                 self.valid_token = False
@@ -66,7 +66,7 @@ class Ralidator(object):
         """
         self.required_permissions = permissions_list
 
-    def set_given_permissions(self, permissions_list):
+    def set_user_permissions(self, permissions_list):
         """Setter for the given permissions attibute.
 
 
@@ -74,9 +74,7 @@ class Ralidator(object):
             in the given_permissions attibute
         :type permissions_list: list
         """
-        self.given_permissions = permissions_list
-
-        raise NotImplementedError()
+        self.user_permissions = permissions_list
 
     def check_if_allowed(self):
         """Search for at least one of the required_permissions in the
@@ -90,7 +88,7 @@ class Ralidator(object):
             return False
 
         for permission in self.required_permissions:
-            if permission in self.given_permissions:
+            if permission in self.user_permissions:
                 return True
 
         return False
@@ -99,10 +97,10 @@ class Ralidator(object):
         """Setter for the user's filters.
 
         :param filters_list: The list of filters to be stored in the
-            required_filters attribute.
+            user_filters attribute.
         :type filters_list: list
         """
-        self.required_filters = filters_list
+        self.user_filters = filters_list
 
     def set_app_filters(self, filters_list):
         """Setter for the application defined filters.
@@ -111,7 +109,7 @@ class Ralidator(object):
             given_filters attribute.
         :type filters_list: list
         """
-        self.given_filters = filters_list
+        self.app_filters = filters_list
 
     def apply_filters(self, result_value):
         """Search for every filter in given filters that is in required
@@ -128,8 +126,8 @@ class Ralidator(object):
         filters_to_apply = []
         missing_filters = []
 
-        for filter in self.required_filters:
-            if filter in self.given_filters:
+        for filter in self.app_filters:
+            if filter in self.user_filters:
                 if filter not in self.filters_callable:
                     missing_filters.append(filter)
                 filters_to_apply.append(filter)
