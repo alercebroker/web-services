@@ -10,6 +10,7 @@ from ..utils.exceptions import (
 )
 from .settings_factory import RalidatorCoreSettingsFactory
 
+
 class Ralidator(object):
     """The ralidator core class manage the permission to resources
     and the filtering of a potential response. It require to be
@@ -71,11 +72,14 @@ class Ralidator(object):
     def set_given_permissions(self, permissions_list):
         """Setter for the given permissions attibute.
 
+
         :param permissions_list: The list of permissions to be stored
             in the given_permissions attibute
         :type permissions_list: list
         """
         self.given_permissions = permissions_list
+
+        raise NotImplementedError()
 
     def check_if_allowed(self):
         """Search for at least one of the required_permissions in the
@@ -94,8 +98,9 @@ class Ralidator(object):
         
         return False
 
-    def set_required_filters(self, filters_list):
-        """Setter for the required filters.
+
+    def set_user_filters(self, filters_list):
+        """Setter for the user's filters.
 
         :param filters_list: The list of filters to be stored in the
             required_filters attribute.
@@ -103,9 +108,9 @@ class Ralidator(object):
         """
         self.required_filters = filters_list
 
-    
-    def set_given_filters(self, filters_list):
-        """Setter for the given filters.
+
+    def set_app_filters(self, filters_list):
+        """Setter for the application defined filters.
 
         :param filters_list: The list of filters to be stored in the
             given_filters attribute.
@@ -113,6 +118,7 @@ class Ralidator(object):
         """
         self.given_filters = filters_list
     
+
     def apply_filters(self, result_value):
         """Search for every filter in given filters that is in required
         filters. It apply every filter found this way to the result.
@@ -149,7 +155,7 @@ class Ralidator(object):
                 return result_value
             else:
                 return None
-    
+
     def _apply_filter_atomic(self, filter_list, result_value):
         """It apply all the filters in filter_list to the result value, one
         after the other.
@@ -170,3 +176,4 @@ class Ralidator(object):
             if not result:
                 return False
         return True
+
