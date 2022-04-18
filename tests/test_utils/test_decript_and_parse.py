@@ -1,5 +1,7 @@
+import re
 import jwt
 from datetime import datetime, timedelta, timezone
+from returns.pipeline import is_successful
 from package.utils.utils import decript_and_parse
 
 
@@ -12,7 +14,7 @@ def generate_valid_token(timestap_time=False, remove_keys=[]):
         'exp': int((datetime.now(tz=timezone.utc) + timedelta(hours=1)).timestamp()),
         'jti': 'test_jti',
         'user_id': 1,
-        'permissions': ["permision1", "permision2"],
+        'permissions': ["permission1", "permission2"],
         'filters': ["filter1", "filter2"]
     }
     for key in remove_keys:
@@ -25,8 +27,8 @@ def test_decript_correct_token():
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert result[0]
-    assert result[1] == assert_token
+    assert is_successful(result) == True
+    assert result.unwrap() == assert_token
 
     test_token = generate_valid_token() 
     test_token["permissions"] = []
@@ -37,14 +39,14 @@ def test_decript_correct_token():
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert result[0]
-    assert result[1] == assert_token
+    assert is_successful(result) == True
+    assert result.unwrap() == assert_token
 
 def test_decript_bad_token():
     encripted_test_token = "eyJ0eXAiOiIGJbnQgdGhhdCB0aGUgand0IHdvcmtzIn0._zMfzK5Ay-4ymIop6mqe8"
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
 def test_decipt_invalid_token():
     # expired
@@ -53,44 +55,44 @@ def test_decipt_invalid_token():
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
     # missing attributes
     test_token = generate_valid_token(remove_keys=["token_type"])
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
     test_token = generate_valid_token(remove_keys=["exp"])
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
     test_token = generate_valid_token(remove_keys=["jti"])
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
     test_token = generate_valid_token(remove_keys=["user_id"])
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
     test_token = generate_valid_token(remove_keys=["permissions"])
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
     test_token = generate_valid_token(remove_keys=["filters"])
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
     # bad permissions and filters values
 
@@ -99,12 +101,12 @@ def test_decipt_invalid_token():
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 
     test_token = generate_valid_token()
     test_token["filters"] = "bad value"
     encripted_test_token = jwt.encode(test_token, TEST_SECRET_KEY, algorithm="HS256")
     result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
 
-    assert not result[0]
+    assert is_successful(result) == False
 

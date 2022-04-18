@@ -1,6 +1,9 @@
-from distutils.log import error
 import jwt
-#results? para no usar bools
+from returns.result import Success, Failure
+from returns.pipeline import is_successful
+from ..utils.exceptions import (
+    MissingFilterException
+)
 
 def decript_and_parse(token, secret_key):
     """Decript the token using the key secret string. The result should
@@ -12,9 +15,8 @@ def decript_and_parse(token, secret_key):
     :param key: The secret key used to decript the auth token in the users
     api, used here to decript the token.
     :type key: str
-    :return: a 2 tupe, the first element is a boolean that represent if the
-        token was valid or not. The seccond is the dict with the user data.
-    :rtype: tupe. boolean, dict
+    :return: Result, if sucess returns the dict with the auth data.
+    :rtype: Result
     """
 
     try:
@@ -27,11 +29,11 @@ def decript_and_parse(token, secret_key):
             }
         )
         if isinstance(decripted_token["permissions"], list) and isinstance(decripted_token["filters"], list):
-            return True, decripted_token
+            return Success(decripted_token)
         else:
-            return False, {}
-    except:
-        return False, {}
+            return Failure(Exception("Bad permission or filter value"))
+    except Exception as e:
+        return Failure(e)
 
 def check_all_filters(filters_list, callbacks_map):
     """Check if every element of the filters list has a key in the dict
@@ -44,19 +46,21 @@ def check_all_filters(filters_list, callbacks_map):
         the name of a filter and the value a callable.
     :type callbacks_map: dict
     :return: a 2 tuple, the first element is a boolean that represent if
-        the callbacks_map was correct or not, the seccond element is a list
-        of error found, if any.
-    :rtype: tuple. boolean, list
+        the callbacks_map was correct or not, the seccond element is a dict
+        of errors found, if any.
+    :rtype: tuple. boolean, dict
     """
-    errors = []
+    missing_filters = []
+    bad_values = []
     for filter in filters_list:
         if filter in callbacks_map:
             if not callable(callbacks_map[filter]):
-                errors.append(f"Bad value for {filter}")
+                bad_values.append(filter)
         else:
-            errors.append(f"Missing {filter}")
+            missing_filters.append(filter)
         
-    if len(errors) == 0:
-        return True, []
+    if len(missing_filters) == 0 and len(bad_values) == 0:
+        return True, None
     else:
-        return False, errors
+        errors_dict = {"missing_filter": missing_filters, "bad_values": bad_values}
+        return False, errors_dict

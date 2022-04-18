@@ -1,5 +1,9 @@
-from telnetlib import STATUS
 import requests
+from returns.result import Success, Failure
+from returns.pipeline import is_successful
+from ..utils.exceptions import (
+    ClientRequestException
+)
 
 
 class UsersApiClient():
@@ -23,27 +27,23 @@ class UsersApiClient():
         """Makes a request to the users api to get all the filters
         defined in the service.
         Expepct a json response with the filters list:
-        {'filters': []}
+        {["filter_example_1", ...]}
 
         :return: Returns a list of strings, that represent all the
         filters in the user api.
         :rtype: list
         """
-        request_url = f"{self.base_url}"
-        request_header = {
-            'Authorization': f"bearer {self.auth_token}"
-        }
-        response = requests.get(request_url, request_header)
+        try:
+            request_url = f"{self.base_url}"
+            request_header = {
+                'Authorization': f"bearer {self.auth_token}"
+            }
+            response = requests.get(request_url, request_header)
 
-        if response.status_code == 200:
-            filters = response.json().get("filters")
-            if filters:
-                return filters
+            if response.status_code == 200:
+                filters = response.json()
+                return Success(filters)
             else:
-                return None
-        elif response.status_code == 403:
-            return None
-        elif response.status_code == 500:
-            return None
-        else:
-            return None
+                return Failure(ClientRequestException(response.status_code))
+        except Exception as e:
+            return Failure(e)
