@@ -1,13 +1,6 @@
-from returns.result import Success, Failure
 from returns.pipeline import is_successful
-from ..utils.utils import (
-    decript_and_parse,
-    check_all_filters
-)
-from ..utils.exceptions import (
-    MissingFilterException,
-    FilterExecutionException
-)
+from ..utils.utils import decript_and_parse
+from ..utils.exceptions import MissingFilterException, FilterExecutionException
 from .settings_factory import RalidatorCoreSettingsFactory
 
 
@@ -18,11 +11,13 @@ class Ralidator(object):
     to each filter name and a settings dict.
 
     A filter must be a function that receive a single argument, and
-    returns true if the element is fine to be in the response and 
+    returns true if the element is fine to be in the response and
     false if not.
     """
 
-    def __init__(self, settings: RalidatorCoreSettingsFactory, filters_callables) -> None:
+    def __init__(
+        self, settings: RalidatorCoreSettingsFactory, filters_callables
+    ) -> None:
         """Constructor method
 
         :param settings: a dictionary with the configuration variables
@@ -32,8 +27,8 @@ class Ralidator(object):
             that is suposed to map each filter name to a callable defined
             in the service using Ralidator
         :type filter_callables: dict
-    """
-        self.settings = settings 
+        """
+        self.settings = settings
         self.filters_callable = filters_callables
 
     def authenticate_token(self, token=None):
@@ -47,7 +42,9 @@ class Ralidator(object):
         :type token: str
         """
         if token:
-            auth_dict_result = decript_and_parse(token, self.settings.settings.get("secret_key"))
+            auth_dict_result = decript_and_parse(
+                token, self.settings.settings.get("secret_key")
+            )
             if is_successful(auth_dict_result):
                 self.valid_token = True
                 auth_dict = auth_dict_result.unwrap()
@@ -91,13 +88,12 @@ class Ralidator(object):
         """
         if not self.valid_token:
             return False
-        
+
         for permission in self.required_permissions:
             if permission in self.given_permissions:
                 return True
-        
-        return False
 
+        return False
 
     def set_user_filters(self, filters_list):
         """Setter for the user's filters.
@@ -108,7 +104,6 @@ class Ralidator(object):
         """
         self.required_filters = filters_list
 
-
     def set_app_filters(self, filters_list):
         """Setter for the application defined filters.
 
@@ -117,7 +112,6 @@ class Ralidator(object):
         :type filters_list: list
         """
         self.given_filters = filters_list
-    
 
     def apply_filters(self, result_value):
         """Search for every filter in given filters that is in required
@@ -136,13 +130,13 @@ class Ralidator(object):
 
         for filter in self.required_filters:
             if filter in self.given_filters:
-                if not filter in self.filters_callable:
+                if filter not in self.filters_callable:
                     missing_filters.append(filter)
                 filters_to_apply.append(filter)
 
         if len(missing_filters) > 0:
             raise MissingFilterException(missing_filters)
-        
+
         if isinstance(result_value, list):
             filtered_result = []
             for ele in result_value:
@@ -172,8 +166,7 @@ class Ralidator(object):
             try:
                 result = self.filters_callable[filter](result_value)
             except Exception as e:
-                raise FilterExecutionException(e) 
+                raise FilterExecutionException(e)
             if not result:
                 return False
         return True
-

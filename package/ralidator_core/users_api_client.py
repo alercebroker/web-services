@@ -1,12 +1,10 @@
 import requests
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
-from ..utils.exceptions import (
-    ClientRequestException
-)
+from ..utils.exceptions import ClientRequestException
 
 
-class UsersApiClient():
+class UsersApiClient:
     """The client encapsulates the requests to the users api in a
     centralized class.
     """
@@ -35,9 +33,7 @@ class UsersApiClient():
         """
         try:
             request_url = f"{self.base_url}"
-            request_header = {
-                'Authorization': f"bearer {self.auth_token}"
-            }
+            request_header = {"Authorization": f"bearer {self.auth_token}"}
             response = requests.get(request_url, request_header)
 
             if response.status_code == 200:

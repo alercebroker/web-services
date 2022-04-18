@@ -1,9 +1,8 @@
 import jwt
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
-from ..utils.exceptions import (
-    MissingFilterException
-)
+from ..utils.exceptions import MissingFilterException
+
 
 def decript_and_parse(token, secret_key):
     """Decript the token using the key secret string. The result should
@@ -25,20 +24,30 @@ def decript_and_parse(token, secret_key):
             secret_key,
             algorithms=["HS256"],
             options={
-                "require": ["token_type", "exp", "jti", "user_id", "permissions", "filters"]                
-            }
+                "require": [
+                    "token_type",
+                    "exp",
+                    "jti",
+                    "user_id",
+                    "permissions",
+                    "filters",
+                ]
+            },
         )
-        if isinstance(decripted_token["permissions"], list) and isinstance(decripted_token["filters"], list):
+        if isinstance(decripted_token["permissions"], list) and isinstance(
+            decripted_token["filters"], list
+        ):
             return Success(decripted_token)
         else:
             return Failure(Exception("Bad permission or filter value"))
     except Exception as e:
         return Failure(e)
 
+
 def check_all_filters(filters_list, callbacks_map):
     """Check if every element of the filters list has a key in the dict
     callabacks_map, and that the value for that key is a callable.
-    
+
     :param filters_list: a list of string, it represent the filters
         in the roles system.
     :type filters_list: list
@@ -58,9 +67,12 @@ def check_all_filters(filters_list, callbacks_map):
                 bad_values.append(filter)
         else:
             missing_filters.append(filter)
-        
+
     if len(missing_filters) == 0 and len(bad_values) == 0:
         return True, None
     else:
-        errors_dict = {"missing_filter": missing_filters, "bad_values": bad_values}
+        errors_dict = {
+            "missing_filter": missing_filters,
+            "bad_values": bad_values,
+        }
         return False, errors_dict

@@ -1,4 +1,3 @@
-
 SECRET_KEY = ""
 DEFAULT_TOKEN = ""
 

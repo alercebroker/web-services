@@ -1,28 +1,22 @@
 import json
-from ..utils.exceptions import (
-    BadSettingException
-)
+from ..utils.exceptions import BadSettingException
+
 
 class RalidatorCoreSettingsFactory(object):
     """The settings parser and validator for the ralidator core.
-    It have a variable to configure the accepted settings keys with 
+    It have a variable to configure the accepted settings keys with
     the expected type, an a variable to identify the required settings.
     """
 
-    REQUIERED_SETTINGS = [
-        "user_api_url",
-        "user_api_token",
-        "secret_key"
-    ]
+    REQUIERED_SETTINGS = ["user_api_url", "user_api_token", "secret_key"]
     SETTINGS_KEYS = {
         "user_api_url": str,
         "user_api_token": str,
-        "secret_key": str
+        "secret_key": str,
     }
 
     def __init__(self) -> None:
-        """Constructor Method
-        """
+        """Constructor Method"""
         self.settings = {}
         self.value_settings_error = []
         self.missing_setting_errors = []
@@ -38,14 +32,21 @@ class RalidatorCoreSettingsFactory(object):
         :type setting_value: any
         """
         if setting_key in RalidatorCoreSettingsFactory.SETTINGS_KEYS:
-            if isinstance(setting_value, RalidatorCoreSettingsFactory.SETTINGS_KEYS[setting_key]):
+            if isinstance(
+                setting_value,
+                RalidatorCoreSettingsFactory.SETTINGS_KEYS[setting_key],
+            ):
                 self.settings[setting_key] = setting_value
             else:
-                self.value_settings_error.append({
-                    "key": setting_key,
-                    "value": setting_value,
-                    "expected": RalidatorCoreSettingsFactory.SETTINGS_KEYS[setting_key]
-                })
+                self.value_settings_error.append(
+                    {
+                        "key": setting_key,
+                        "value": setting_value,
+                        "expected": RalidatorCoreSettingsFactory.SETTINGS_KEYS[
+                            setting_key
+                        ],
+                    }
+                )
 
     def _check_setting(self):
         """It check if all the required settings are defined, if not,
@@ -60,7 +61,10 @@ class RalidatorCoreSettingsFactory(object):
             if not sett in self.settings:
                 self.missing_setting_errors.append(sett)
 
-        if len(self.value_settings_error) == 0 and len(self.missing_setting_errors) == 0:
+        if (
+            len(self.value_settings_error) == 0
+            and len(self.missing_setting_errors) == 0
+        ):
             return True
         return False
 
@@ -78,11 +82,9 @@ class RalidatorCoreSettingsFactory(object):
                 f"Bad balue for {err['key']}. Received: {err['value']} expected {err['expected']}"
             )
         for err in self.missing_setting_errors:
-            error_messages.append(
-                f"Missing key: {err}"
-            )
+            error_messages.append(f"Missing key: {err}")
         return error_messages
-    
+
     def get_settings(self) -> dict:
         """Getter for the settings attribute
 
@@ -91,11 +93,11 @@ class RalidatorCoreSettingsFactory(object):
         :rtype: dict
         """
         return self.settings
-    
+
     @classmethod
     def from_dict(cls, dict_setting: dict):
         """Constructor for settings from a dict variable.
-        
+
         :param dict_setting: a dictionary where the keys map
             to the spected setting keys.
         :type dict_setting: dict
@@ -120,7 +122,7 @@ class RalidatorCoreSettingsFactory(object):
     @classmethod
     def from_json(cls, json_setting):
         """Constructor for settings from a json string.
-        
+
         :param dict_setting: json string with the settings
             variables declared
         :type dict_setting: str
