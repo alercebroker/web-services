@@ -3,6 +3,7 @@ name = "ralidator-core"
 version = "1.0.0"
 description = ""
 authors = ["ALeRCE Broker <alercebroker@gmail.com>"]
+packages = [{include = "ralidator_core", from = "src"}, {include = "utils", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
