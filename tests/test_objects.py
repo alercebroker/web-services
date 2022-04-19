@@ -1,8 +1,8 @@
 from api.resources.astro_object import astro_object as AstroObjectResource
-from conftest import db, models
+from conftest import models
 
 
-def test_conesearch(psql_service, client):
+def test_conesearch(client):
     resource = AstroObjectResource.ObjectList()
     args = {"ra": 1, "dec": 1, "radius": 0.1}
     params = resource._convert_conesearch_args(args)
@@ -12,8 +12,9 @@ def test_conesearch(psql_service, client):
     )
 
 
-def test_order_by_desc(psql_service, client):
+def test_order_by_desc(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
+    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     db.session.close()
@@ -23,8 +24,9 @@ def test_order_by_desc(psql_service, client):
     assert r.json["items"][0]["oid"] == "ZTF2"
 
 
-def test_order_by_asc(psql_service, client):
+def test_order_by_asc(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
+    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"order_by": "firstmjd", "order_mode": "ASC"}
@@ -33,9 +35,10 @@ def test_order_by_asc(psql_service, client):
     assert r.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_order_by_class_attribute_desc(psql_service, client):
+def test_order_by_class_attribute_desc(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    classification = obj.probabilities.append(
+    db = app.container.psql_db()
+    obj.probabilities.append(
         models.Probability(
             class_name="SN",
             probability=0.5,
@@ -57,9 +60,10 @@ def test_order_by_class_attribute_desc(psql_service, client):
     assert r.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_order_by_class_attribute_asc(psql_service, client):
+def test_order_by_class_attribute_asc(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    classification = obj.probabilities.append(
+    db = app.container.psql_db()
+    obj.probabilities.append(
         models.Probability(
             class_name="VS",
             probability=0.5,
@@ -81,22 +85,23 @@ def test_order_by_class_attribute_asc(psql_service, client):
     assert r.json["items"][0]["oid"] == "ZTF2"
 
 
-def test_object_list(psql_service, client):
+def test_object_list(client):
     rv = client.get("/objects/")
     assert isinstance(rv.json["items"], list)
     assert len(rv.json["items"]) == 1
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_objects_list_not_found(psql_service, client):
+def test_objects_list_not_found(client):
     rv = client.get(
         "/objects/", query_string={"classifier": "Fake", "count": "true"}
     )
     assert rv.json["total"] == 0
 
 
-def test_date_query_first(psql_service, client):
+def test_date_query_first(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
+    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"firstmjd": [0, 1]}
@@ -105,8 +110,9 @@ def test_date_query_first(psql_service, client):
     assert len(rv.json["items"]) == 1
 
 
-def test_date_query_first_2(psql_service, client):
+def test_date_query_first_2(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
+    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"firstmjd": [2, 3]}
@@ -115,8 +121,9 @@ def test_date_query_first_2(psql_service, client):
     assert len(rv.json["items"]) == 1
 
 
-def test_date_query_last(psql_service, client):
+def test_date_query_last(client, app):
     obj = models.Object(oid="ZTF2", lastmjd=2.0)
+    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"lastmjd": [0, 1]}
@@ -125,8 +132,9 @@ def test_date_query_last(psql_service, client):
     assert len(rv.json["items"]) == 1
 
 
-def test_date_query_last_2(psql_service, client):
+def test_date_query_last_2(client, app):
     obj = models.Object(oid="ZTF2", lastmjd=2.0)
+    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"lastmjd": [2, 3]}
@@ -135,8 +143,9 @@ def test_date_query_last_2(psql_service, client):
     assert len(rv.json["items"]) == 1
 
 
-def test_ndet_query(psql_service, client):
+def test_ndet_query(client, app):
     obj = models.Object(oid="ZTF2", ndet=2)
+    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"ndet": [0, 1]}
@@ -145,8 +154,9 @@ def test_ndet_query(psql_service, client):
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_ndet_query_2(psql_service, client):
+def test_ndet_query_2(client, app):
     obj = models.Object(oid="ZTF2", ndet=2)
+    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"ndet": [2, 3]}
@@ -155,34 +165,34 @@ def test_ndet_query_2(psql_service, client):
     assert rv.json["items"][0]["oid"] == "ZTF2"
 
 
-def test_classifier_query(psql_service, client):
+def test_classifier_query(client):
     args = {"classifier": "C1"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_class_query(psql_service, client):
+def test_class_query(client):
     args = {"class": "SN"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_class_classifier_query(psql_service, client):
+def test_class_classifier_query(client):
     args = {"classifier": "C1", "class": "SN"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_class_classifier_query_not_found(psql_service, client):
+def test_class_classifier_query_not_found(client):
     args = {"classifier": "C1", "class": "fake"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 0
 
 
-def test_single_object_query(psql_service, client):
+def test_single_object_query(client):
     rv = client.get("/objects/ZTF1")
     assert rv.status_code == 200
     assert rv.json["oid"] == "ZTF1"
