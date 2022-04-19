@@ -7,7 +7,7 @@ authors = ["ALeRCE Broker <alercebroker@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 Flask = "^2.1.0"
-ralidator_core = { git = "https://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@github.com/alercebroker/ralidator-core", branch="main", rev = "1b7e5e5"}
+ralidator_core = { git = "https://git@github.com/alercebroker/ralidator-core", branch="main", rev = "1b7e5e5"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
