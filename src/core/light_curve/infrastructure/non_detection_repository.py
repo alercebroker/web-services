@@ -9,6 +9,10 @@ from shared.error.exceptions import (
     ServerErrorException,
     ObjectNotFound,
 )
+from core.light_curve.infrastructure.repository import (
+    PSQLRepository,
+    MongoRepository,
+)
 
 
 class NonDetectionRepository:
@@ -16,30 +20,9 @@ class NonDetectionRepository:
         raise NotImplementedError()
 
 
-class PSQLNonDetectionRepository(NonDetectionRepository):
+class PSQLNonDetectionRepository(NonDetectionRepository, PSQLRepository):
     def __init__(self, db: SQLConnection):
         self.db = db
-
-    def _get_object_by_id(self, object_id: str, survey_id: str):
-        try:
-            query_result = (
-                self.db.query(psql_models.Object)
-                .filter(psql_models.Object.oid == object_id)
-                .one_or_none()
-            )
-
-            if query_result:
-                return Success(query_result)
-            else:
-                return Failure(
-                    ClientErrorException(
-                        ObjectNotFound(
-                            object_id=object_id, survey_id=survey_id
-                        )
-                    )
-                )
-        except Exception as e:
-            return Failure(ServerErrorException(e))
 
     def get(self, object_id, survey_id):
         astro_obj = self._get_object_by_id(object_id, survey_id)
@@ -51,27 +34,9 @@ class PSQLNonDetectionRepository(NonDetectionRepository):
             return astro_obj
 
 
-class MongoNonDetectionRepository(NonDetectionRepository):
+class MongoNonDetectionRepository(NonDetectionRepository, MongoRepository):
     def __init__(self, db: MongoConnection):
         self.db = db
-
-    def _get_object(self, object_id, survey_id):
-        try:
-            astro_object = self.db.query().find_one(
-                model=mongo_models.Object, filter_by={"oid": object_id}
-            )
-            if astro_object:
-                return Success(astro_object)
-            else:
-                return Failure(
-                    ClientErrorException(
-                        ObjectNotFound(
-                            object_id=object_id, survey_id=survey_id
-                        )
-                    )
-                )
-        except Exception as e:
-            return Failure(ServerErrorException(e))
 
     def _get_non_detections(self, object_id):
         try:
