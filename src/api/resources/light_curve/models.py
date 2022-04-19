@@ -67,7 +67,7 @@ detection_model = Model(
         "dubious": fields.Boolean,
         "candid_alert": fields.String,
         "step_id_corr": fields.String,
-        "phase": fields.Float,
+        "phase": fields.Float(default=0.0),
         "parent_candid": fields.Integer(attribute=get_parent_candid),
     },
 )
