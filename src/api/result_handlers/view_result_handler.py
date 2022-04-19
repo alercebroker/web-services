@@ -8,7 +8,7 @@ class ViewResultHandler:
         self.result = None
 
     def handle_success(self, result):
-        self.result = result.unwrap()
+        self.result = result
 
     def handle_client_error(self, exception: Exception):
         current_app.logger.error(exception)

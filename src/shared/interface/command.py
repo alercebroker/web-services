@@ -28,7 +28,7 @@ class Command:
 
     def _post_execute(self, result) -> None:
         if is_successful(result):
-            self.handler.handle_success(result)
+            self.handler.handle_success(result.unwrap())
         else:
             exception = result.failure()
             if isinstance(exception, ClientErrorException):
