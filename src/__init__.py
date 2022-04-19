@@ -1,2 +1,0 @@
-from src.ralidator_core.ralidator_core import Ralidator
-from src.ralidator_core.settings_factory import RalidatorCoreSettingsFactory

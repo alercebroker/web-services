@@ -1,7 +1,7 @@
 import requests
 from unittest.mock import patch
 from returns.pipeline import is_successful
-from src.ralidator_core.users_api_client import UsersApiClient
+from ralidator_core.users_api_client import UsersApiClient
 
 
 class MockResponse(object):

@@ -1,5 +1,5 @@
 import json
-from ..utils.exceptions import BadSettingException
+from utils.exceptions import BadSettingException
 
 
 class RalidatorCoreSettingsFactory(object):

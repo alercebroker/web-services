@@ -1,7 +1,5 @@
 import jwt
 from returns.result import Success, Failure
-from returns.pipeline import is_successful
-from ..utils.exceptions import MissingFilterException
 
 
 def decript_and_parse(token, secret_key):

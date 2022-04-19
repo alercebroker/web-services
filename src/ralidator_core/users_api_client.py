@@ -1,7 +1,6 @@
 import requests
 from returns.result import Success, Failure
-from returns.pipeline import is_successful
-from ..utils.exceptions import ClientRequestException
+from utils.exceptions import ClientRequestException
 
 
 class UsersApiClient:
