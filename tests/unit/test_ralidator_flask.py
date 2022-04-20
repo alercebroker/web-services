@@ -12,12 +12,14 @@ def test_init():
     assert rf.filters_map == {}
     app = Flask(__name__)
     app.config["FILTERS_MAP"] = filters_map
+    app.config["RALIDATOR_SETTINGS"] = {"secret_key": "test_key"}
     rf.init_app(app)
     assert rf.filters_map == filters_map
 
     # init with app
     app = Flask(__name__)
     app.config["FILTERS_MAP"] = filters_map
+    app.config["RALIDATOR_SETTINGS"] = {"secret_key": "test_key"}
     rf = RalidatorFlask(app)
     assert rf.filters_map == filters_map
 

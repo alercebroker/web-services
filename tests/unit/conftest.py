@@ -8,7 +8,7 @@ def app() -> Flask:
     app = Flask(__name__)
     filters_map = {"test": "ok"}
     app.config["FILTERS_MAP"] = filters_map
-    app.config["RALIDATOR"] = {}
+    app.config["RALIDATOR_SETTINGS"] = {"secret_key": "test_key"}
     return app
 
 
