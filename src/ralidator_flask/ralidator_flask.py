@@ -1,6 +1,7 @@
 from flask import _request_ctx_stack, request
 from ralidator_core.ralidator_core import Ralidator
 from ralidator_core.settings_factory import RalidatorCoreSettingsFactory
+import json
 
 
 class RalidatorFlask(object):
@@ -32,7 +33,7 @@ class RalidatorFlask(object):
                     filtered_data = self.ralidator.apply_filters(
                         response.get_data()
                     )
-                response.set_data(str(filtered_data))
+                response.set_data(json.dumps(filtered_data))
             return response
 
     def set_ralidator_on_context(self):
