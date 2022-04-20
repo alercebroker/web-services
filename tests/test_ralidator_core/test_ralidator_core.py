@@ -173,7 +173,7 @@ def test_apply_all_filters():
     # the test consider the response a list of integers
     test_callbacks_dict = {
         "filter1": lambda x: x > 5,  # allow values over 5
-        "filter2": lambda x: (x%2)==0,  # only allow evens
+        "filter2": lambda x: (x % 2) == 0,  # only allow evens
         "filter3": lambda x: x < 10,  # allow values under 10
     }
     test_values = [1, 2, 3, 4, 5, 6, 7, 8, 9]

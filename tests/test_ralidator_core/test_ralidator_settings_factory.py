@@ -27,9 +27,7 @@ def test_from_dict_correct():
 
 
 def test_from_dict_missing_key():
-    test_settings_dict = {
-        "user_api_url": "test_url.com"
-    }
+    test_settings_dict = {"user_api_url": "test_url.com"}
 
     with pytest.raises(BadSettingException) as e:
         ralidator_settings = RalidatorCoreSettingsFactory.from_dict(
