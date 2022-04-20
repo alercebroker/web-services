@@ -24,9 +24,14 @@ class RalidatorFlask(object):
         @app.after_request
         def after_request(response):
             if response.status_code < 400:
-                filtered_data = self.ralidator.apply_filters(
-                    response.get_json()
-                )
+                if response.is_json:
+                    filtered_data = self.ralidator.apply_filters(
+                        response.get_json()
+                    )
+                else:
+                    filtered_data = self.ralidator.apply_filters(
+                        response.get_data()
+                    )
                 response.set_data(str(filtered_data))
             return response
 

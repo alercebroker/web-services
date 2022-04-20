@@ -17,7 +17,7 @@ def app_step(context):
 
 @given("App with factory method is running")
 def app_factory_step(context):
-    from simple_factory_app import create_app
+    from simple_factory_app.app import create_app
 
     app = create_app()
     app.testing = True
@@ -31,4 +31,4 @@ def user_makes_request_step(context):
 
 @then("Request returns without errors")
 def request_returns_step(context):
-    assert context.response == "Hello World"
+    assert context.response.status_code == 200
