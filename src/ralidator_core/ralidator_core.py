@@ -1,10 +1,10 @@
 from returns.pipeline import is_successful
-from utils.utils import decript_and_parse
-from utils.exceptions import (
+from src.utils.utils import decript_and_parse
+from src.utils.exceptions import (
     MissingFilterException,
     FilterExecutionException,
 )
-from ralidator_core.settings_factory import RalidatorCoreSettingsFactory
+from src.ralidator_core.settings_factory import RalidatorCoreSettingsFactory
 
 
 class Ralidator(object):
@@ -117,6 +117,7 @@ class Ralidator(object):
     def apply_filters(self, result_value):
         """Search for every filter in given filters that is in required
         filters. It apply every filter found this way to the result.
+        User filters "*" mean that all the app filters will be applied.
 
         :param result_value: the raw return value to be given to the client.
             Some of the values may be removed from result_value after the
@@ -128,9 +129,10 @@ class Ralidator(object):
         """
         filters_to_apply = []
         missing_filters = []
+        apply_all = "*" in self.user_filters
 
         for filter in self.app_filters:
-            if filter in self.user_filters:
+            if filter in self.user_filters or apply_all:
                 if filter not in self.filters_callable:
                     missing_filters.append(filter)
                 filters_to_apply.append(filter)

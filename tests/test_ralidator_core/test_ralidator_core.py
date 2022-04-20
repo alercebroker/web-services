@@ -1,6 +1,6 @@
 import jwt
-from ralidator_core.ralidator_core import Ralidator
-from ralidator_core.settings_factory import (
+from src.ralidator_core.ralidator_core import Ralidator
+from src.ralidator_core.settings_factory import (
     RalidatorCoreSettingsFactory,
 )
 from datetime import datetime, timezone, timedelta
@@ -167,3 +167,30 @@ def test_apply_filters():
     ralidator.set_app_filters(["filter1", "filter2", "filter3"])
     result = ralidator.apply_filters(8)
     assert not result
+
+
+def test_apply_all_filters():
+    # the test consider the response a list of integers
+    test_callbacks_dict = {
+        "filter1": lambda x: x > 5,  # allow values over 5
+        "filter2": lambda x: (x%2)==0,  # only allow evens
+        "filter3": lambda x: x < 10,  # allow values under 10
+    }
+    test_values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    token = {
+        "token_type": "access",
+        "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
+        "jti": "test_jti",
+        "user_id": 1,
+        "permissions": ["permission1", "permission2"],
+        "filters": ["*"],
+    }
+    ralidator_settings = RalidatorCoreSettingsFactory()
+    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
+
+    ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
+    ralidator.authenticate_token(encripted_token)
+    ralidator.set_app_filters(["filter1", "filter2", "filter3"])
+    result = ralidator.apply_filters(test_values)
+    assert result == [6, 8]

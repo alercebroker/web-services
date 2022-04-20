@@ -1,23 +1,32 @@
 import json
-from utils.exceptions import BadSettingException
+from src.utils.exceptions import BadSettingException
 
 
 class RalidatorCoreSettingsFactory(object):
     """The settings parser and validator for the ralidator core.
     It have a variable to configure the accepted settings keys with
     the expected type, an a variable to identify the required settings.
+
+    User filters "*" mean that all the app filters will be applied.
     """
 
-    REQUIERED_SETTINGS = ["user_api_url", "user_api_token", "secret_key"]
+    REQUIERED_SETTINGS = ["secret_key"]
     SETTINGS_KEYS = {
         "user_api_url": str,
         "user_api_token": str,
         "secret_key": str,
+        "default_user_permisions": list,
+        "default_user_filters": list,
     }
 
     def __init__(self) -> None:
         """Constructor Method"""
-        self.settings = {}
+        self.settings = {
+            "user_api_url": None,
+            "user_api_token": None,
+            "default_user_permisions": ["basic_user"],
+            "default_user_filters": ["*"],
+        }
         self.value_settings_error = []
         self.missing_setting_errors = []
 
