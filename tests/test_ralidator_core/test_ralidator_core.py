@@ -72,8 +72,9 @@ def test_authenticate_token_default_token():
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(None)
 
-    # definir donde y cuales
-    pass
+    assert ralidator.valid_token == True
+    assert ralidator.user_permissions == ralidator_settings.settings.get("default_user_permisions")
+    assert ralidator.user_filters == ralidator_settings.settings.get("default_user_filters")
 
 
 def test_check_allowed_allowed():

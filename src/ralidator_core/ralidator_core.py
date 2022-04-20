@@ -58,7 +58,8 @@ class Ralidator(object):
                 self.valid_token = False
         else:
             self.valid_token = True
-            # set default values
+            self.set_user_permissions(self.settings.settings.get("default_user_permisions"))
+            self.set_user_filters((self.settings.settings.get("default_user_filters")))
 
     def set_required_permissions(self, permissions_list):
         """Setter for the required permissions attribute.
