@@ -1,11 +1,11 @@
 from unittest import result
 from returns.pipeline import is_successful
-from src.utils.utils import decript_and_parse
-from src.utils.exceptions import (
+from utils.utils import decript_and_parse
+from utils.exceptions import (
     MissingFilterException,
     FilterExecutionException,
 )
-from src.ralidator_core.settings_factory import RalidatorCoreSettingsFactory
+from ralidator_core.settings_factory import RalidatorCoreSettingsFactory
 
 
 class Ralidator(object):

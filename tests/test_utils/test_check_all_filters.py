@@ -1,4 +1,4 @@
-from src.utils.utils import check_all_filters
+from utils.utils import check_all_filters
 
 TEST_FILTERS_LIST = ["filter1", "filter2", "filter3"]
 

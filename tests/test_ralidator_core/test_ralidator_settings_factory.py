@@ -1,10 +1,10 @@
 import json
 
 import pytest
-from src.ralidator_core.settings_factory import (
+from ralidator_core.settings_factory import (
     RalidatorCoreSettingsFactory,
 )
-from src.utils.exceptions import BadSettingException
+from utils.exceptions import BadSettingException
 
 
 def test_from_dict_correct():

@@ -1,6 +1,6 @@
 import jwt
-from src.ralidator_core.ralidator_core import Ralidator
-from src.ralidator_core.settings_factory import RalidatorCoreSettingsFactory
+from ralidator_core.ralidator_core import Ralidator
+from ralidator_core.settings_factory import RalidatorCoreSettingsFactory
 from datetime import datetime, timezone, timedelta
 
 TEST_FILTERS = ["filter1", "filter2", "filter3"]
