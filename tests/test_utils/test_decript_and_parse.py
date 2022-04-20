@@ -1,7 +1,7 @@
 import jwt
 from datetime import datetime, timedelta, timezone
 from returns.pipeline import is_successful
-from src.utils.utils import decript_and_parse
+from utils.utils import decript_and_parse
 
 
 TEST_SECRET_KEY = "secret_key"
