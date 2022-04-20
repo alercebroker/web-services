@@ -71,6 +71,7 @@ def test_authenticate_token_default_token():
 
     assert ralidator.valid_token == True
 
+
 def test_check_allowed_allowed():
     test_callbacks_dict = {
         "filter1": lambda x: x,
@@ -95,6 +96,7 @@ def test_check_allowed_allowed():
     result = ralidator.check_if_allowed()
     assert result == True
 
+
 def test_check_allowed_empty_required():
     test_callbacks_dict = {
         "filter1": lambda x: x,
@@ -117,6 +119,7 @@ def test_check_allowed_empty_required():
     ralidator.authenticate_token(encripted_token)
     result = ralidator.check_if_allowed()
     assert result == True
+
 
 def test_check_allowed_not_allowed():
     test_callbacks_dict = {
@@ -141,6 +144,7 @@ def test_check_allowed_not_allowed():
     ralidator.set_required_permissions(["permission3"])
     result = ralidator.check_if_allowed()
     assert result == False
+
 
 def test_apply_filters():
     # the test consider the response a list of integers
@@ -186,6 +190,7 @@ def test_apply_filters():
 
     result = ralidator.apply_filters([8])
     assert result == []
+
 
 def test_apply_filters():
     # the test consider the response a list of integers

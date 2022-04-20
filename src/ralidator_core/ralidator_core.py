@@ -134,7 +134,7 @@ class Ralidator(object):
         """
         filters_to_apply = []
         missing_filters = []
-        
+
         if self.app_filters == []:
             return result_value
 

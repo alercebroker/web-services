@@ -1,6 +1,7 @@
 import json
 from src.utils.exceptions import BadSettingException
 
+
 class RalidatorCoreSettingsFactory(object):
     """The settings parser and validator for the ralidator core.
     It have a variable to configure the accepted settings keys with
