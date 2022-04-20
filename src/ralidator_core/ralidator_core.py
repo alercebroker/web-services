@@ -33,6 +33,8 @@ class Ralidator(object):
         """
         self.settings = settings
         self.filters_callable = filters_callables
+        self.required_permissions = []
+        self.app_filters = []
 
     def authenticate_token(self, token=None):
         """Decript the token received, then validate the structure of
@@ -58,8 +60,12 @@ class Ralidator(object):
                 self.valid_token = False
         else:
             self.valid_token = True
-            self.set_user_permissions(self.settings.settings.get("default_user_permisions"))
-            self.set_user_filters((self.settings.settings.get("default_user_filters")))
+            self.set_user_permissions(
+                self.settings.settings.get("default_user_permisions")
+            )
+            self.set_user_filters(
+                (self.settings.settings.get("default_user_filters"))
+            )
 
     def set_required_permissions(self, permissions_list):
         """Setter for the required permissions attribute.
@@ -90,6 +96,9 @@ class Ralidator(object):
         """
         if not self.valid_token:
             return False
+
+        if self.required_permissions == []:
+            return True
 
         for permission in self.required_permissions:
             if permission in self.user_permissions:
@@ -131,6 +140,9 @@ class Ralidator(object):
         filters_to_apply = []
         missing_filters = []
         apply_all = "*" in self.user_filters
+
+        if self.app_filters == []:
+            return result_value
 
         for filter in self.app_filters:
             if filter in self.user_filters or apply_all:
