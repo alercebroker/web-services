@@ -1,10 +1,11 @@
+from unittest import result
 from returns.pipeline import is_successful
-from utils.utils import decript_and_parse
-from utils.exceptions import (
+from src.utils.utils import decript_and_parse
+from src.utils.exceptions import (
     MissingFilterException,
     FilterExecutionException,
 )
-from ralidator_core.settings_factory import RalidatorCoreSettingsFactory
+from src.ralidator_core.settings_factory import RalidatorCoreSettingsFactory
 
 
 class Ralidator(object):
@@ -33,6 +34,8 @@ class Ralidator(object):
         """
         self.settings = settings
         self.filters_callable = filters_callables
+        self.required_permissions = []
+        self.app_filters = []
 
     def authenticate_token(self, token=None):
         """Decript the token received, then validate the structure of
@@ -90,6 +93,9 @@ class Ralidator(object):
         if not self.valid_token:
             return False
 
+        if self.required_permissions == []:
+            return True
+
         for permission in self.required_permissions:
             if permission in self.user_permissions:
                 return True
@@ -128,6 +134,9 @@ class Ralidator(object):
         """
         filters_to_apply = []
         missing_filters = []
+        
+        if self.app_filters == []:
+            return result_value
 
         for filter in self.app_filters:
             if filter in self.user_filters:

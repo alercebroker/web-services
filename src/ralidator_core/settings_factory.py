@@ -1,6 +1,5 @@
 import json
-from utils.exceptions import BadSettingException
-
+from src.utils.exceptions import BadSettingException
 
 class RalidatorCoreSettingsFactory(object):
     """The settings parser and validator for the ralidator core.
