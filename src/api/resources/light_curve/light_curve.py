@@ -11,6 +11,11 @@ from api.container import AppContainer
 from shared.interface.command import Command
 from shared.interface.command import ResultHandler
 from core.light_curve.domain.lightcurve_service import LightcurveServicePayload
+from ralidator_flask.decorators import (
+    set_permissions_decorator,
+    set_filters_decorator,
+    check_permissions_decorator
+)
 
 api = Namespace("lightcurve", description="LightCurve related operations")
 api.models[light_curve_model.name] = light_curve_model
@@ -23,6 +28,9 @@ api.models[non_detection_model.name] = non_detection_model
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class LightCurve(Resource):
+    @set_permissions_decorator(["admin", "basic_user"])
+    @set_filters_decorator(["filter_atlas_lightcurve"])
+    @check_permissions_decorator
     @api.doc("lightcurve")
     @api.marshal_with(light_curve_model, skip_none=True)
     @api.expect(survey_id_parser)
@@ -54,6 +62,9 @@ class LightCurve(Resource):
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectDetections(Resource):
+    @set_permissions_decorator(["admin", "basic_user"])
+    @set_filters_decorator(["filter_atlas_detections"])
+    @check_permissions_decorator
     @api.doc("detections")
     @api.marshal_list_with(detection_model, skip_none=True)
     @api.expect(survey_id_parser)
@@ -85,6 +96,9 @@ class ObjectDetections(Resource):
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class NonDetections(Resource):
+    @set_permissions_decorator(["admin", "basic_user"])
+    @set_filters_decorator(["filter_atlas_non_detections"])
+    @check_permissions_decorator
     @api.doc("non_detections")
     @api.marshal_list_with(non_detection_model, skip_none=True)
     @api.expect(survey_id_parser)
