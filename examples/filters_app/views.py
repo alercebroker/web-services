@@ -18,7 +18,12 @@ filtered_views = Blueprint("filtered", __name__)
 data = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
-@filtered_views.route("/filtered1")
+@filtered_views.route("/filter_even")
 @set_filters_decorator(["filter_even"])
 def filtered1():
+    return jsonify(data)
+
+
+@filtered_views.route("/no_filters")
+def no_filters():
     return jsonify(data)
