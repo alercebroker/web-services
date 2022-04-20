@@ -232,9 +232,9 @@ returns = "0.19.0"
 
 [package.source]
 type = "git"
-url = "https://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@github.com/alercebroker/ralidator-core"
+url = "https://github.com/alercebroker/ralidator-core.git"
 reference = "main"
-resolved_reference = "1b7e5e5ca133d5f9ec534e0e1948ce8ec02338d3"
+resolved_reference = "3843f1c3ee101451a820a519ece7cc77d44ed7b5"
 
 [[package]]
 name = "requests"
@@ -320,7 +320,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "69b30a0ce4bb56349b7ea54f1e0ac36d126183ebf4aa0614b802d80f1b2f05fc"
+content-hash = "0e5149ddbf80944c274e3f84e5e78b2c2b2599ad85ac77b450278e4ae33bccb5"
 
 [metadata.files]
 atomicwrites = [

@@ -1,4 +1,4 @@
-from flask import _request_ctx_stack
+from flask import _request_ctx_stack, request
 from ralidator_core.ralidator_core import Ralidator
 from ralidator_core.settings_factory import RalidatorCoreSettingsFactory
 
@@ -11,19 +11,23 @@ class RalidatorFlask(object):
             self.init_app(app)
 
     def init_app(self, app):
-        self.ralidator_settings = RalidatorCoreSettingsFactory()
+        self.ralidator_settings = RalidatorCoreSettingsFactory.from_dict(
+            app.config["RALIDATOR_SETTINGS"]
+        )
         self.filters_map = app.config["FILTERS_MAP"]
 
         @app.before_request
         def before_request():
-            self.set_ralidator_on_context()
+            ctx = self.set_ralidator_on_context()
+            ctx.ralidator.authenticate_token(request.headers.get("AUTH_TOKEN"))
 
         @app.after_request
         def after_request(response):
             if response.status_code < 400:
-                response.set_data(
-                    self.ralidator.apply_filters(response.get_json())
+                filtered_data = self.ralidator.apply_filters(
+                    response.get_json()
                 )
+                response.set_data(str(filtered_data))
             return response
 
     def set_ralidator_on_context(self):
