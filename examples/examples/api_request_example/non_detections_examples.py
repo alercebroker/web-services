@@ -1,5 +1,5 @@
 import requests
-
+from token_builder import build_admin_token
 
 BASE_URL = "http://alerts_api:5000/"
 HEADER_ADMIN_TOKEN = {
