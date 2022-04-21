@@ -35,6 +35,9 @@ jobs:
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Allow installing private repos
+      run: |
+        git config --global url."https://${{ secrets.ACCESS_PRIVATE_REPO }}@github.com/".insteadOf "https://github.com/"
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
@@ -69,6 +72,9 @@ jobs:
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Allow installing private repos
+      run: |
+        git config --global url."https://${{ secrets.ACCESS_PRIVATE_REPO }}@github.com/".insteadOf "https://github.com/"
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
