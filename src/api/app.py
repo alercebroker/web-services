@@ -17,7 +17,7 @@ import os
 import logging
 from api.callbacks import after_request, before_request
 from api.container import AppContainer
-from api.filters import get_fiilters_map
+from api.filters import get_filters_map
 
 
 def create_app(config_path):
@@ -26,8 +26,8 @@ def create_app(config_path):
     app = Flask(__name__)
     app.wsgi_app = ProxyFix(app.wsgi_app, x_host=1, x_prefix=1)
     app.container = container
-    app.config["RALIDATOR_SETTINGS"] = {"secret_key": "a_secret_key"}
-    app.config["FILTERS_MAP"] = get_fiilters_map()
+    app.config["RALIDATOR_SETTINGS"] = container.config.RALIDATOR_SETTINGS()
+    app.config["FILTERS_MAP"] = get_filters_map()
     # Check if app run trough gunicorn
     is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
     if is_gunicorn:  # pragma: no cover
