@@ -9,4 +9,4 @@ returns==0.19.0
 dependency-injector>=4.0,<5.0
 dependency-injector[yaml]
 -e git+https://git@github.com/alercebroker/db-plugins@2.1.2#egg=db-plugins
--e git+https://github.com/alercebroker/ralidator-flask.git#egg=ralidator_flask
+-e git+https://github.com/alercebroker/ralidator-flask.git@9c1699b#egg=ralidator_flask
