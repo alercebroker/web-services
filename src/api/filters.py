@@ -6,7 +6,7 @@ def update_config_dict(config_dict):
     }
 
 
-def get_fiilters_map():
+def get_filters_map():
     return {
         "filter_atlas_detections": filter_atlas_detection_non_detection,
         "filter_atlas_non_detections": filter_atlas_detection_non_detection,

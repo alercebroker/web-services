@@ -35,7 +35,7 @@ def test_get_lightcurve_not_found(client):
 
 
 def test_get_lightcurve_forbidden(client, app):
-    test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
+    test_secret_key = app.config["RALIDATOR_SETTINGS"]["SECRET_KEY"]
     token = create_token(["useles_permission"], [], test_secret_key)
     headers = {"AUTH_TOKEN": token}
     rv = client.get("objects/ZTF1/lightcurve?survey_id=ztf", headers=headers)
@@ -43,7 +43,7 @@ def test_get_lightcurve_forbidden(client, app):
 
 
 def test_get_lightcurve_filters(client, app):
-    test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
+    test_secret_key = app.config["RALIDATOR_SETTINGS"]["SECRET_KEY"]
     token = create_token(
         ["basic_user"], ["filter_atlas_lightcurve"], test_secret_key
     )
@@ -72,7 +72,7 @@ def test_get_detections_not_found(client):
 
 
 def test_get_detections_forbidden(client, app):
-    test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
+    test_secret_key = app.config["RALIDATOR_SETTINGS"]["SECRET_KEY"]
     token = create_token(["useles_permission"], [], test_secret_key)
     headers = {"AUTH_TOKEN": token}
     rv = client.get("objects/ZTF1/detections?survey_id=ztf", headers=headers)
@@ -80,7 +80,7 @@ def test_get_detections_forbidden(client, app):
 
 
 def test_get_detections_filters(client, app):
-    test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
+    test_secret_key = app.config["RALIDATOR_SETTINGS"]["SECRET_KEY"]
     token = create_token(
         ["basic_user"], ["filter_atlas_detections"], test_secret_key
     )
@@ -109,7 +109,7 @@ def test_get_non_detections_not_found(client):
 
 
 def test_get_non_detections_forbidden(client, app):
-    test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
+    test_secret_key = app.config["RALIDATOR_SETTINGS"]["SECRET_KEY"]
     token = create_token(["useles_permission"], [], test_secret_key)
     headers = {"AUTH_TOKEN": token}
     rv = client.get(
@@ -119,7 +119,7 @@ def test_get_non_detections_forbidden(client, app):
 
 
 def test_get_non_detections_filters(client, app):
-    test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
+    test_secret_key = app.config["RALIDATOR_SETTINGS"]["SECRET_KEY"]
     token = create_token(
         ["basic_user"], ["filter_atlas_non_detections"], test_secret_key
     )
