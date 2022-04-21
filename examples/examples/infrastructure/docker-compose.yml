@@ -23,6 +23,8 @@ services:
     build:
       context: ../../../
       dockerfile: Dockerfile.testing
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
     ports:
       - 5000:5000
     environment:
@@ -51,3 +53,5 @@ services:
     build:
       context: ../../../
       dockerfile: Dockerfile.bdd
+      args:
+        - GITHUB_TOKEN=${GITHUB_TOKEN}
