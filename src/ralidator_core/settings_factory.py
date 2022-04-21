@@ -10,22 +10,22 @@ class RalidatorCoreSettingsFactory(object):
     User filters "*" mean that all the app filters will be applied.
     """
 
-    REQUIERED_SETTINGS = ["secret_key"]
+    REQUIERED_SETTINGS = ["SECRET_KEY"]
     SETTINGS_KEYS = {
-        "user_api_url": str,
-        "user_api_token": str,
-        "secret_key": str,
-        "default_user_permisions": list,
-        "default_user_filters": list,
+        "USER_API_URL": str,
+        "USER_API_TOKEN": str,
+        "SECRET_KEY": str,
+        "DEFAULT_USER_PERMISIONS": list,
+        "DEFAULT_USER_FILTERS": list,
     }
 
     def __init__(self) -> None:
         """Constructor Method"""
         self.settings = {
-            "user_api_url": None,
-            "user_api_token": None,
-            "default_user_permisions": ["basic_user"],
-            "default_user_filters": ["*"],
+            "USER_API_URL": None,
+            "USER_API_TOKEN": None,
+            "DEFAULT_USER_PERMISIONS": ["basic_user"],
+            "DEFAULT_USER_FILTERS": ["*"],
         }
         self.value_settings_error = []
         self.missing_setting_errors = []
