@@ -35,6 +35,9 @@ jobs:
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Allow installing private repos
+      run: |
+        git config --global url."https://${{ secrets.ACCESS_PRIVATE_REPO }}@github.com/".insteadOf "https://github.com/"
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
@@ -53,7 +56,7 @@ jobs:
         flags: unittests
 
   examples_test:
-    needs: test
+    needs: unit_test
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
@@ -69,12 +72,15 @@ jobs:
       with:
         path: .venv
         key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Allow installing private repos
+      run: |
+        git config --global url."https://${{ secrets.ACCESS_PRIVATE_REPO }}@github.com/".insteadOf "https://github.com/"
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root
     - name: Install library
       run: poetry install --no-interaction
-    - name: Test with pytest
+    - name: Test with behave
       run: |
         source .venv/bin/activate
         coverage run --source src/ -m behave tests/features/
