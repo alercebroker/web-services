@@ -19,6 +19,7 @@ from api.callbacks import after_request, before_request
 from api.container import AppContainer
 from api.filters import get_fiilters_map
 
+
 def create_app(config_path):
     container = AppContainer()
     container.config.from_yaml(config_path)

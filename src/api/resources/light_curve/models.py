@@ -87,7 +87,8 @@ non_detection_model = Model(
         "tid": fields.String(attribute=get_tid),
         "mjd": fields.Float,
         "fid": fields.Integer,
-        "diffmaglim": fields.Float},
+        "diffmaglim": fields.Float,
+    },
 )
 
 light_curve_model = Model(

@@ -4,6 +4,7 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from api.resources.light_curve.models import get_magpsf, get_sigmapsf
 
+
 def create_token(permisions, filters, secret_key):
     token = {
         "token_type": "access",
@@ -15,6 +16,7 @@ def create_token(permisions, filters, secret_key):
     }
     encripted_token = jwt.encode(token, secret_key, algorithm="HS256")
     return encripted_token
+
 
 def test_get_lightcurve(client):
     rv = client.get("objects/ZTF1/lightcurve?survey_id=ztf")
@@ -35,20 +37,20 @@ def test_get_lightcurve_not_found(client):
 def test_get_lightcurve_forbidden(client, app):
     test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
     token = create_token(["useles_permission"], [], test_secret_key)
-    headers = {
-        'AUTH_TOKEN': token
-    }
+    headers = {"AUTH_TOKEN": token}
     rv = client.get("objects/ZTF1/lightcurve?survey_id=ztf", headers=headers)
     assert rv.status_code == 403
 
 
 def test_get_lightcurve_filters(client, app):
     test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
-    token = create_token(["basic_user"], ["filter_atlas_lightcurve"], test_secret_key)
-    headers = {
-        'AUTH_TOKEN': token
-    }
-    rv = client.get("objects/ATLAS1/lightcurve?survey_id=atlas", headers=headers)
+    token = create_token(
+        ["basic_user"], ["filter_atlas_lightcurve"], test_secret_key
+    )
+    headers = {"AUTH_TOKEN": token}
+    rv = client.get(
+        "objects/ATLAS1/lightcurve?survey_id=atlas", headers=headers
+    )
     assert rv.status_code == 200
     assert rv.json == None
 
@@ -72,20 +74,20 @@ def test_get_detections_not_found(client):
 def test_get_detections_forbidden(client, app):
     test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
     token = create_token(["useles_permission"], [], test_secret_key)
-    headers = {
-        'AUTH_TOKEN': token
-    }
+    headers = {"AUTH_TOKEN": token}
     rv = client.get("objects/ZTF1/detections?survey_id=ztf", headers=headers)
     assert rv.status_code == 403
 
 
 def test_get_detections_filters(client, app):
     test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
-    token = create_token(["basic_user"], ["filter_atlas_detections"], test_secret_key)
-    headers = {
-        'AUTH_TOKEN': token
-    }
-    rv = client.get("objects/ATLAS1/detections?survey_id=atlas", headers=headers)
+    token = create_token(
+        ["basic_user"], ["filter_atlas_detections"], test_secret_key
+    )
+    headers = {"AUTH_TOKEN": token}
+    rv = client.get(
+        "objects/ATLAS1/detections?survey_id=atlas", headers=headers
+    )
     assert rv.status_code == 200
     assert rv.json == []
 
@@ -109,20 +111,22 @@ def test_get_non_detections_not_found(client):
 def test_get_non_detections_forbidden(client, app):
     test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
     token = create_token(["useles_permission"], [], test_secret_key)
-    headers = {
-        'AUTH_TOKEN': token
-    }
-    rv = client.get("objects/ZTF1/non_detections?survey_id=ztf", headers=headers)
+    headers = {"AUTH_TOKEN": token}
+    rv = client.get(
+        "objects/ZTF1/non_detections?survey_id=ztf", headers=headers
+    )
     assert rv.status_code == 403
 
 
 def test_get_non_detections_filters(client, app):
     test_secret_key = app.config["RALIDATOR_SETTINGS"]["secret_key"]
-    token = create_token(["basic_user"], ["filter_atlas_non_detections"], test_secret_key)
-    headers = {
-        'AUTH_TOKEN': token
-    }
-    rv = client.get("objects/ATLAS1/non_detections?survey_id=atlas", headers=headers)
+    token = create_token(
+        ["basic_user"], ["filter_atlas_non_detections"], test_secret_key
+    )
+    headers = {"AUTH_TOKEN": token}
+    rv = client.get(
+        "objects/ATLAS1/non_detections?survey_id=atlas", headers=headers
+    )
     assert rv.status_code == 200
     assert rv.json == []
 

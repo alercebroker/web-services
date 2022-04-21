@@ -14,7 +14,7 @@ from core.light_curve.domain.lightcurve_service import LightcurveServicePayload
 from ralidator_flask.decorators import (
     set_permissions_decorator,
     set_filters_decorator,
-    check_permissions_decorator
+    check_permissions_decorator,
 )
 
 api = Namespace("lightcurve", description="LightCurve related operations")
