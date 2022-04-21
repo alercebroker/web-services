@@ -32,4 +32,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ inputs.tags }}
-          build-args: GITHUB_TOKEN=${{ secrets.INSTALL_PRIVATE_REPO }}
+          build-args:
+            - GITHUB_TOKEN=${{ secrets.INSTALL_PRIVATE_REPO }}
