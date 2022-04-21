@@ -30,11 +30,6 @@ class RalidatorFlask(object):
                         response.get_json()
                     )
                     response.set_data(json.dumps(filtered_data))
-                else:
-                    filtered_data = self.ralidator.apply_filters(
-                        response.get_data()
-                    )
-                    response.set_data(str(filtered_data))
             return response
 
     def set_ralidator_on_context(self):
