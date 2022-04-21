@@ -8,7 +8,7 @@ ADD examples/examples/infrastructure/examples_requirements.txt /app/
 WORKDIR /app
 
 RUN pip install --upgrade pip
-RUN pip install jwt
+RUN pip install PyJWT
 RUN pip install -r examples_requirements.txt
 
 COPY . /app
