@@ -1,5 +1,5 @@
 from src.api.filters import (
-    get_fiilters_map,
+    get_filters_map,
     filter_atlas_detection_non_detection,
     filter_atlas_lightcurve,
 )
