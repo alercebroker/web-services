@@ -1,6 +1,7 @@
 FROM python:3.8-slim
 
 RUN apt update && apt install -y git
+RUN git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
 
 ADD requirements.txt /app/
 WORKDIR /app
