@@ -48,7 +48,7 @@ class Ralidator(object):
         """
         if token:
             auth_dict_result = decript_and_parse(
-                token, self.settings.settings.get("secret_key")
+                token, self.settings.settings.get("SECRET_KEY")
             )
             if is_successful(auth_dict_result):
                 self.valid_token = True
@@ -61,10 +61,10 @@ class Ralidator(object):
         else:
             self.valid_token = True
             self.set_user_permissions(
-                self.settings.settings.get("default_user_permisions")
+                self.settings.settings.get("DEFAULT_USER_PERMISIONS")
             )
             self.set_user_filters(
-                (self.settings.settings.get("default_user_filters"))
+                (self.settings.settings.get("DEFAULT_USER_FILTERS"))
             )
 
     def set_required_permissions(self, permissions_list):
