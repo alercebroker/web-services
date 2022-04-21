@@ -33,9 +33,18 @@ def get_parent_candid(raw_response):
         return parent_candid
 
 
+def get_tid(raw_response):
+    try:
+        tid = raw_response["tid"]
+        return "atlas"
+    except KeyError:
+        return "ztf"
+
+
 detection_model = Model(
     "Detection",
     {
+        "tid": fields.String(attribute=get_tid),
         "mjd": fields.Float,
         "candid": fields.String,
         "fid": fields.Integer,
@@ -74,7 +83,12 @@ detection_model = Model(
 
 non_detection_model = Model(
     "Non Detection",
-    {"mjd": fields.Float, "fid": fields.Integer, "diffmaglim": fields.Float},
+    {
+        "tid": fields.String(attribute=get_tid),
+        "mjd": fields.Float,
+        "fid": fields.Integer,
+        "diffmaglim": fields.Float,
+    },
 )
 
 light_curve_model = Model(

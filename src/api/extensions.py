@@ -2,8 +2,11 @@ from prometheus_flask_exporter.multiprocess import (
     GunicornInternalPrometheusMetrics,
 )
 from prometheus_flask_exporter import PrometheusMetrics
+from ralidator_flask.ralidator_flask import RalidatorFlask
 import os
 
+
+ralidator = RalidatorFlask()
 is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
 environment = os.environ.get("ENVIRONMENT", "develop")
 
