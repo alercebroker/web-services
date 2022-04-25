@@ -19,4 +19,3 @@ DATABASE:
     CONNECT_MONGO: true
 RALIDATOR_SETTINGS:
   SECRET_KEY: a_secret_key
-  DEFAULT_USER_FILTERS: ['no_filter']
