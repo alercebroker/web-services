@@ -43,6 +43,7 @@ services:
       - CONNECT_PSQL=YES
       - EXAMPLES_TESTING=TRUE
       - LOG_LEVEL=DEBUG
+      - SECRET_KEY=a_secret_key
     volumes:
       - ../../../:/coverage-output
   tests:
