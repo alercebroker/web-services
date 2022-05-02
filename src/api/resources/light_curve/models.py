@@ -1,4 +1,4 @@
-from attr import attr
+from attr import Attribute, attr
 from flask_restx import Resource, fields, Model
 from math import isnan
 
@@ -31,6 +31,17 @@ def get_parent_candid(raw_response):
         return None
     else:
         return parent_candid
+    
+def get_rfid(raw_response):
+    try:
+        rfid = raw_response.rfid
+    except AttributeError:
+        rfid = raw_response["rfid"]
+
+    if rfid and isnan(rfid):
+        return None
+    else:
+        return rfid
 
 
 def get_tid(raw_response):
@@ -70,7 +81,7 @@ detection_model = Model(
         "drb": fields.Float,
         "magapbig": fields.Float,
         "sigmagapbig": fields.Float,
-        "rfid": fields.Integer,
+        "rfid": fields.Integer(attribute=get_rfid),
         "has_stamp": fields.Boolean,
         "corrected": fields.Boolean,
         "dubious": fields.Boolean,
