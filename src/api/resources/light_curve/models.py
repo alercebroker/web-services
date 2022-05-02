@@ -31,7 +31,8 @@ def get_parent_candid(raw_response):
         return None
     else:
         return parent_candid
-    
+
+
 def get_rfid(raw_response):
     try:
         rfid = raw_response.rfid
