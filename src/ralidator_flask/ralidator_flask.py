@@ -20,7 +20,7 @@ class RalidatorFlask(object):
         @app.before_request
         def before_request():
             ctx = self.set_ralidator_on_context()
-            ctx.ralidator.authenticate_token(request.headers.get("AUTH_TOKEN"))
+            ctx.ralidator.authenticate_token(request.headers.get("AUTH-TOKEN"))
 
         @app.after_request
         def after_request(response):
