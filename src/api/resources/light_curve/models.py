@@ -53,35 +53,40 @@ def get_tid(raw_response):
         return "ztf"
 
 
+class NotNanFloat(fields.Raw):
+    def format(self, value):
+        return None if isnan(value) else value
+
+
 detection_model = Model(
     "Detection",
     {
         "tid": fields.String(attribute=get_tid),
-        "mjd": fields.Float,
+        "mjd": NotNanFloat(attribute='mjd'),
         "candid": fields.String,
         "fid": fields.Integer,
         "pid": fields.Integer,
-        "diffmaglim": fields.Float,
+        "diffmaglim": NotNanFloat(attribute='diffmaglim'),
         "isdiffpos": fields.Integer,
         "nid": fields.Integer,
-        "distnr": fields.Float,
+        "distnr": NotNanFloat(attribute='distnr'),
         "magpsf": fields.Float(attribute=get_magpsf),
-        "magpsf_corr": fields.Float,
-        "magpsf_corr_ext": fields.Float,
-        "magap": fields.Float,
-        "magap_corr": fields.Float,
+        "magpsf_corr": NotNanFloat(attribute='magpsf_corr'),
+        "magpsf_corr_ext": NotNanFloat(attribute='magpsf_corr_ext'),
+        "magap": NotNanFloat(attribute='magap'),
+        "magap_corr": NotNanFloat(attribute='magap_corr'),
         "sigmapsf": fields.Float(attribute=get_sigmapsf),
-        "sigmapsf_corr": fields.Float,
-        "sigmapsf_corr_ext": fields.Float,
-        "sigmagap": fields.Float,
-        "sigmagap_corr": fields.Float,
-        "ra": fields.Float,
-        "dec": fields.Float,
-        "rb": fields.Float,
+        "sigmapsf_corr": NotNanFloat(attribute='sigmapsf_corr'),
+        "sigmapsf_corr_ext": NotNanFloat(attribute='sigmapsf_corr_ext'),
+        "sigmagap": NotNanFloat(attribute='sigmagap'),
+        "sigmagap_corr": NotNanFloat(attribute='sigmagap_corr'),
+        "ra": NotNanFloat(attribute='ra'),
+        "dec": NotNanFloat(attribute='dec'),
+        "rb": NotNanFloat(attribute='rb'),
         "rbversion": fields.String,
-        "drb": fields.Float,
-        "magapbig": fields.Float,
-        "sigmagapbig": fields.Float,
+        "drb": NotNanFloat(attribute='drb'),
+        "magapbig": NotNanFloat(attribute='magapbig'),
+        "sigmagapbig": NotNanFloat(attribute='sigmagapbig'),
         "rfid": fields.Integer(attribute=get_rfid),
         "has_stamp": fields.Boolean,
         "corrected": fields.Boolean,
@@ -97,9 +102,9 @@ non_detection_model = Model(
     "Non Detection",
     {
         "tid": fields.String(attribute=get_tid),
-        "mjd": fields.Float,
+        "mjd": NotNanFloat(attribute='mjd'),
         "fid": fields.Integer,
-        "diffmaglim": fields.Float,
+        "diffmaglim": NotNanFloat(attribute='diffmaglim'),
     },
 )
 
