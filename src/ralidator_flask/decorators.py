@@ -34,6 +34,9 @@ def check_permissions_decorator(arg_function):
         if allowed:
             return arg_function(*args, **kwargs)
         else:
-            return "Forbidden", code
+            if code == 401:
+                return "Expired Token", code
+            else:
+                return "Forbidden", code
 
     return decorator_function
