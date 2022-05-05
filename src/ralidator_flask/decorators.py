@@ -30,9 +30,10 @@ def set_permissions_decorator(permissions_list):
 def check_permissions_decorator(arg_function):
     def decorator_function(*args, **kwargs):
         ctx = _request_ctx_stack.top
-        if ctx.ralidator.check_if_allowed():
+        allowed, code = ctx.ralidator.check_if_allowed()
+        if allowed:
             return arg_function(*args, **kwargs)
         else:
-            return "Forbidden", 403
+            return "Forbidden", code
 
     return decorator_function
