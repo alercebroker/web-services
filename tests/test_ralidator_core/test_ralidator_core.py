@@ -23,7 +23,7 @@ def test_authenticate_token_valid():
         "filters": ["filter1", "filter2"],
     }
     ralidator_settings = RalidatorCoreSettingsFactory()
-    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
@@ -50,12 +50,30 @@ def test_authenticate_token_invalid():
         "filters": ["filter1", "filter2"],
     }
     ralidator_settings = RalidatorCoreSettingsFactory()
-    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(encripted_token)
     assert ralidator.valid_token == False
+    assert ralidator.auth_error_code == 401
+
+    # token invalid
+    token = {
+        "token_type": "access",
+        "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
+        "jti": "test_jti",
+        "user_id": 1,
+        "permissions": ["permission1", "permission2"]
+    }
+    ralidator_settings = RalidatorCoreSettingsFactory()
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
+    encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
+
+    ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
+    ralidator.authenticate_token(encripted_token)
+    assert ralidator.valid_token == False
+    assert ralidator.auth_error_code == 403
 
 
 def test_authenticate_token_default_token():
@@ -65,7 +83,7 @@ def test_authenticate_token_default_token():
         "filter3": lambda x: x,
     }
     ralidator_settings = RalidatorCoreSettingsFactory()
-    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(None)
 
@@ -93,14 +111,14 @@ def test_check_allowed_allowed():
         "filters": ["filter1", "filter2"],
     }
     ralidator_settings = RalidatorCoreSettingsFactory()
-    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(encripted_token)
     ralidator.set_required_permissions(["permission1"])
     result = ralidator.check_if_allowed()
-    assert result == True
+    assert result == (True, None)
 
 
 def test_check_allowed_empty_required():
@@ -118,13 +136,13 @@ def test_check_allowed_empty_required():
         "filters": ["filter1", "filter2"],
     }
     ralidator_settings = RalidatorCoreSettingsFactory()
-    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(encripted_token)
     result = ralidator.check_if_allowed()
-    assert result == True
+    assert result == (True, None)
 
 
 def test_check_allowed_not_allowed():
@@ -133,6 +151,7 @@ def test_check_allowed_not_allowed():
         "filter2": lambda x: x,
         "filter3": lambda x: x,
     }
+    # not allowed
     token = {
         "token_type": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
@@ -142,14 +161,33 @@ def test_check_allowed_not_allowed():
         "filters": ["filter1", "filter2"],
     }
     ralidator_settings = RalidatorCoreSettingsFactory()
-    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
     ralidator.authenticate_token(encripted_token)
     ralidator.set_required_permissions(["permission3"])
     result = ralidator.check_if_allowed()
-    assert result == False
+    assert result == (False, 403)
+
+    # expired
+    token = {
+        "token_type": "access",
+        "exp": datetime.now(tz=timezone.utc) + timedelta(hours=-1),
+        "jti": "test_jti",
+        "user_id": 1,
+        "permissions": ["permission1", "permission2"],
+        "filters": ["filter1", "filter2"],
+    }
+    ralidator_settings = RalidatorCoreSettingsFactory()
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
+    encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
+
+    ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
+    ralidator.authenticate_token(encripted_token)
+    ralidator.set_required_permissions(["permission3"])
+    result = ralidator.check_if_allowed()
+    assert result == (False, 401)
 
 
 def test_apply_filters():
@@ -169,7 +207,7 @@ def test_apply_filters():
         "filters": ["filter1", "filter3"],
     }
     ralidator_settings = RalidatorCoreSettingsFactory()
-    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)
@@ -212,7 +250,7 @@ def test_apply_all_filters():
         "filters": ["*"],
     }
     ralidator_settings = RalidatorCoreSettingsFactory()
-    ralidator_settings.settings = {"secret_key": TEST_SECRET_KEY}
+    ralidator_settings.settings = {"SECRET_KEY": TEST_SECRET_KEY}
     encripted_token = jwt.encode(token, TEST_SECRET_KEY, algorithm="HS256")
 
     ralidator = Ralidator(ralidator_settings, test_callbacks_dict)

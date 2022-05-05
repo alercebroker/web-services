@@ -5,6 +5,7 @@ from utils.exceptions import (
     FilterExecutionException,
 )
 from ralidator_core.settings_factory import RalidatorCoreSettingsFactory
+from jwt.exceptions import ExpiredSignatureError
 
 
 class Ralidator(object):
@@ -35,6 +36,7 @@ class Ralidator(object):
         self.filters_callable = filters_callables
         self.required_permissions = []
         self.app_filters = []
+        self.auth_error_code = 403
 
     def authenticate_token(self, token=None):
         """Decript the token received, then validate the structure of
@@ -56,7 +58,9 @@ class Ralidator(object):
                 self.set_user_permissions(auth_dict["permissions"])
                 self.set_user_filters(auth_dict["filters"])
             else:
-                # error handler insertado?
+                exception = auth_dict_result.failure()
+                if isinstance(exception, ExpiredSignatureError):
+                    self.auth_error_code = 401
                 self.valid_token = False
         else:
             self.valid_token = True
@@ -90,21 +94,22 @@ class Ralidator(object):
         """Search for at least one of the required_permissions in the
         given_permmisions.
 
-        :return: True if at least one of the required permissions is
-            present in the given permissions, false if not.
+        :return: Tuple Boolean, Int. True if at least one of the required permissions is
+            present in the given permissions, false if not, and the error code. 403 for not
+            allowed, 401 for expired token.
         :rtype: bool
         """
         if not self.valid_token:
-            return False
+            return False, self.auth_error_code
 
         if self.required_permissions == []:
-            return True
+            return True, None
 
         for permission in self.required_permissions:
             if permission in self.user_permissions:
-                return True
+                return True, None
 
-        return False
+        return False, self.auth_error_code
 
     def set_user_filters(self, filters_list):
         """Setter for the user's filters.
