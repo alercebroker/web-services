@@ -37,6 +37,7 @@ def test_check_permissions_decorator(ralidator_flask, app):
         pass
 
     with patch.object(Ralidator, "check_if_allowed") as ralidator_mock:
+        ralidator_mock.return_value = True, None
         with app.test_request_context():
             ralidator_flask.set_ralidator_on_context()
             function()
