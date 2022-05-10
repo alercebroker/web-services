@@ -53,7 +53,7 @@ class Ralidator(object):
                 token, self.settings.settings.get("SECRET_KEY")
             )
             if is_successful(auth_dict_result):
-                self.valid_token = True
+                self.valid_auth = True
                 auth_dict = auth_dict_result.unwrap()
                 self.set_user_permissions(auth_dict["permissions"])
                 self.set_user_filters(auth_dict["filters"])
@@ -61,15 +61,24 @@ class Ralidator(object):
                 exception = auth_dict_result.failure()
                 if isinstance(exception, ExpiredSignatureError):
                     self.auth_error_code = 401
-                self.valid_token = False
+                    self.valid_auth = False
+                else:
+                    if self.settings.settings.get("ON_AUTH_ERROR_DEFAULT_USER"):
+                        self._set_default_permissions_and_filters()
+                    else:
+                        self.valid_auth = False
+                        self.auth_error_code = 403
         else:
-            self.valid_token = True
-            self.set_user_permissions(
-                self.settings.settings.get("DEFAULT_USER_PERMISIONS")
-            )
-            self.set_user_filters(
-                (self.settings.settings.get("DEFAULT_USER_FILTERS"))
-            )
+            self._set_default_permissions_and_filters()
+        
+    def _set_default_permissions_and_filters(self):
+        self.valid_auth = True
+        self.set_user_permissions(
+            self.settings.settings.get("DEFAULT_USER_PERMISSIONS")
+        )
+        self.set_user_filters(
+            (self.settings.settings.get("DEFAULT_USER_FILTERS"))
+        )
 
     def set_required_permissions(self, permissions_list):
         """Setter for the required permissions attribute.
@@ -99,7 +108,7 @@ class Ralidator(object):
             allowed, 401 for expired token.
         :rtype: bool
         """
-        if not self.valid_token:
+        if not self.valid_auth:
             return False, self.auth_error_code
 
         if self.required_permissions == []:

@@ -12,19 +12,21 @@ class RalidatorCoreSettingsFactory(object):
 
     REQUIERED_SETTINGS = ["SECRET_KEY"]
     SETTINGS_KEYS = {
+        "ON_AUTH_ERROR_DEFAULT_USER": bool,
         "USER_API_URL": str,
         "USER_API_TOKEN": str,
         "SECRET_KEY": str,
-        "DEFAULT_USER_PERMISIONS": list,
+        "DEFAULT_USER_PERMISSIONS": list,
         "DEFAULT_USER_FILTERS": list,
     }
 
     def __init__(self) -> None:
         """Constructor Method"""
         self.settings = {
+            "ON_AUTH_ERROR_DEFAULT_USER": False,
             "USER_API_URL": None,
             "USER_API_TOKEN": None,
-            "DEFAULT_USER_PERMISIONS": ["basic_user"],
+            "DEFAULT_USER_PERMISSIONS": ["basic_user"],
             "DEFAULT_USER_FILTERS": ["*"],
         }
         self.value_settings_error = []
@@ -40,10 +42,10 @@ class RalidatorCoreSettingsFactory(object):
         :param setting_value: The value to stored with the setting_key
         :type setting_value: any
         """
-        if setting_key in RalidatorCoreSettingsFactory.SETTINGS_KEYS:
+        if setting_key in self.SETTINGS_KEYS:
             if isinstance(
                 setting_value,
-                RalidatorCoreSettingsFactory.SETTINGS_KEYS[setting_key],
+                self.SETTINGS_KEYS[setting_key]
             ):
                 self.settings[setting_key] = setting_value
             else:
@@ -66,7 +68,7 @@ class RalidatorCoreSettingsFactory(object):
             any errors.
         :rtype: bool
         """
-        for sett in RalidatorCoreSettingsFactory.REQUIERED_SETTINGS:
+        for sett in self.REQUIERED_SETTINGS:
             if not sett in self.settings:
                 self.missing_setting_errors.append(sett)
 

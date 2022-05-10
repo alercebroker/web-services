@@ -14,10 +14,11 @@ def test_from_dict_correct():
         "SECRET_KEY": "test_secret_key",
     }
     expected_settings_dict = {
+        "ON_AUTH_ERROR_DEFAULT_USER": False,
         "USER_API_URL": "test_url.com",
         "USER_API_TOKEN": "test_token",
         "SECRET_KEY": "test_secret_key",
-        "DEFAULT_USER_PERMISIONS": ["basic_user"],
+        "DEFAULT_USER_PERMISSIONS": ["basic_user"],
         "DEFAULT_USER_FILTERS": ["*"],
     }
     ralidator_settings = RalidatorCoreSettingsFactory.from_dict(
@@ -63,10 +64,11 @@ def test_from_json():
         "SECRET_KEY": "test_secret_key",
     }
     expected_settings_dict = {
+        "ON_AUTH_ERROR_DEFAULT_USER": False,
         "USER_API_URL": "test_url.com",
         "USER_API_TOKEN": "test_token",
         "SECRET_KEY": "test_secret_key",
-        "DEFAULT_USER_PERMISIONS": ["basic_user"],
+        "DEFAULT_USER_PERMISSIONS": ["basic_user"],
         "DEFAULT_USER_FILTERS": ["*"],
     }
     test_settings_json = json.dumps(test_settings_dict)
