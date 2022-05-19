@@ -9,7 +9,7 @@ TEST_SECRET_KEY = "secret_key"
 
 def generate_valid_token(timestap_time=False, remove_keys=[]):
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": int(
             (datetime.now(tz=timezone.utc) + timedelta(hours=1)).timestamp()
         ),
@@ -70,14 +70,6 @@ def test_decipt_invalid_token():
     assert not is_successful(result)
 
     # missing attributes
-    test_token = generate_valid_token(remove_keys=["token_type"])
-    encripted_test_token = jwt.encode(
-        test_token, TEST_SECRET_KEY, algorithm="HS256"
-    )
-    result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
-
-    assert not is_successful(result)
-
     test_token = generate_valid_token(remove_keys=["exp"])
     encripted_test_token = jwt.encode(
         test_token, TEST_SECRET_KEY, algorithm="HS256"
