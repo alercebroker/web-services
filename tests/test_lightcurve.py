@@ -7,7 +7,7 @@ from api.resources.light_curve.models import get_magpsf, get_sigmapsf
 
 def create_token(permisions, filters, secret_key):
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
