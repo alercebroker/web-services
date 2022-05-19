@@ -26,7 +26,7 @@ def request_permissions(context, endpoint):
     for row in context.table:
         user_permissions.append(row["permissions"])
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
