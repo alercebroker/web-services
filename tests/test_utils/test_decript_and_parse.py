@@ -70,6 +70,14 @@ def test_decipt_invalid_token():
     assert not is_successful(result)
 
     # missing attributes
+    test_token = generate_valid_token(remove_keys=["access"])
+    encripted_test_token = jwt.encode(
+        test_token, TEST_SECRET_KEY, algorithm="HS256"
+    )
+    result = decript_and_parse(encripted_test_token, TEST_SECRET_KEY)
+
+    assert not is_successful(result)
+
     test_token = generate_valid_token(remove_keys=["exp"])
     encripted_test_token = jwt.encode(
         test_token, TEST_SECRET_KEY, algorithm="HS256"

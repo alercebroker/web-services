@@ -23,6 +23,7 @@ def decript_and_parse(token, secret_key):
             algorithms=["HS256"],
             options={
                 "require": [
+                    "access",
                     "exp",
                     "jti",
                     "user_id",
