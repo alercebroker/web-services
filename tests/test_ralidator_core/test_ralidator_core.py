@@ -15,7 +15,7 @@ def test_authenticate_token_valid():
         "filter3": lambda x: x,
     }
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
@@ -42,7 +42,7 @@ def test_authenticate_token_invalid():
     }
     # token expired
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=-1),
         "jti": "test_jti",
         "user_id": 1,
@@ -60,7 +60,7 @@ def test_authenticate_token_invalid():
 
     # token invalid
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
@@ -103,7 +103,7 @@ def test_check_allowed_allowed():
         "filter3": lambda x: x,
     }
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
@@ -128,7 +128,7 @@ def test_check_allowed_empty_required():
         "filter3": lambda x: x,
     }
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
@@ -153,7 +153,7 @@ def test_check_allowed_with_bad_token():
     }
     # not allowed
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1
@@ -181,7 +181,7 @@ def test_check_allowed_not_allowed():
     }
     # not allowed
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
@@ -200,7 +200,7 @@ def test_check_allowed_not_allowed():
 
     # expired
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=-1),
         "jti": "test_jti",
         "user_id": 1,
@@ -227,7 +227,7 @@ def test_apply_filters():
     }
     test_values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
@@ -245,7 +245,7 @@ def test_apply_filters():
     assert result == [6, 7, 8, 9]
 
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
@@ -270,7 +270,7 @@ def test_apply_all_filters():
     }
     test_values = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     token = {
-        "token_type": "access",
+        "access": "access",
         "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
         "jti": "test_jti",
         "user_id": 1,
