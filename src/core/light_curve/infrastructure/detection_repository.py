@@ -62,7 +62,7 @@ class MongoDetectionRepository(DetectionRepository, MongoRepository):
                 raise Failure(
                     ClientErrorException(
                         ObjectNotFound(
-                            object_id=object_id, survey_id=self.survey_id
+                            object_id=object_id, survey_id=survey_id
                         )
                     )
                 )
