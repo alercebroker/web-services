@@ -59,7 +59,7 @@ class MongoDetectionRepository(DetectionRepository, MongoRepository):
             if is_successful(detections) and len(detections.unwrap()) > 0:
                 return detections
             else:
-                raise Failure(
+                return Failure(
                     ClientErrorException(
                         ObjectNotFound(
                             object_id=object_id, survey_id=survey_id
