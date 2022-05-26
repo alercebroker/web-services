@@ -24,6 +24,7 @@ def test_get_lightcurve(client):
 
     rv = client.get("objects/ZTF1/lightcurve")
     assert rv.status_code == 200
+    assert rv.json["detections"][0]["tid"] == "ztf"
 
     rv = client.get("objects/ATLAS1/lightcurve?survey_id=atlas")
     assert rv.status_code == 200
@@ -64,6 +65,8 @@ def test_get_detections(client):
 
     rv = client.get("objects/ZTF1/detections")
     assert rv.status_code == 200
+    assert rv.json[0]["tid"] == "ztf"
+
 
     rv = client.get("objects/ATLAS1/detections?survey_id=atlas")
     assert rv.status_code == 200
@@ -104,6 +107,7 @@ def test_get_non_detections(client):
 
     rv = client.get("objects/ZTF1/non_detections")
     assert rv.status_code == 200
+    assert rv.json[0]["tid"] == "ztf"
 
     rv = client.get("objects/ATLAS1/non_detections?survey_id=atlas")
     assert rv.status_code == 200
