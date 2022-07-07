@@ -1,9 +1,12 @@
-from flask_restx import Namespace, Resource
-from db_plugins.db.sql import models
-from .models import magstats_model
-from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
-from api.container import AppContainer, SQLConnection
+from dependency_injector.providers import Factory
+from flask_restx import Namespace, Resource
+
+from .models import magstats_model
+from .parsers import survey_id_parser
+from api.container import AppContainer
+from core.magstats.domain.magstats_service import MagStatsServicePayload
+from shared.interface.command import Command, ResultHandler
 
 api = Namespace(
     "magnitude statistics",
@@ -18,15 +21,22 @@ api.models[magstats_model.name] = magstats_model
 @api.response(404, "Not found")
 class MagStats(Resource):
     @api.doc("magstats")
-    @api.marshal_list_with(magstats_model)
+    @api.marshal_list_with(magstats_model, skip_none=True)
+    @api.expect(survey_id_parser)
     @inject
-    def get(self, id, db: SQLConnection = Provide[AppContainer.psql_db]):
-        obj = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
+    def get(
+            self,
+            id,
+            command_factory: Factory[Command] = Provide[
+                AppContainer.magstats_package.command.provider
+            ],
+            result_handler: ResultHandler = Provide[
+                AppContainer.view_result_handler]
+    ):
+        survey_id = survey_id_parser.parse_args()["survey_id"]
+        command = command_factory(
+            payload=MagStatsServicePayload(id, survey_id),
+            handler=result_handler,
         )
-        if obj:
-            return obj.magstats
-        else:
-            raise NotFound
+        command.execute()
+        return result_handler.result
