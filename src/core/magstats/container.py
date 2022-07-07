@@ -9,8 +9,5 @@ class MagStatsContainer(containers.DeclarativeContainer):
     db = providers.Dependency(instance_of=MongoConnection)
     repository = providers.Factory(MongoMagStatsRepository, db=db)
 
-    service = providers.Factory(
-        MagStatsService,
-        magstats_repository_factory=repository
-    )
+    service = providers.Factory(MagStatsService, repository=repository)
     command = providers.Factory(GetMagStats, service=service)
