@@ -8,9 +8,8 @@ class MagStatsServicePayload:
 
 
 class MagStatsService:
-    def __init__(self, magstats_repository_factory):
-        self.magstats_repository_factory = magstats_repository_factory
+    def __init__(self, repository):
+        self.repository = repository
 
     def get_magstats(self, payload: MagStatsServicePayload):
-        repository = self.magstats_repository_factory()
-        return repository.get(payload.oid, payload.survey_id)
+        return self.repository.get(payload.oid, payload.survey_id)
