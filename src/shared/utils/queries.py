@@ -58,7 +58,7 @@ class QueryFactory(ABC):
     def clean_query(self):
         return {
             key: self._generate_value(key)
-            for key in self._rules if not self._is_null(key)
+            for key in self._rules if self._is_present(key)
         }
 
     def _generate_value(self, key):
@@ -70,9 +70,9 @@ class QueryFactory(ABC):
             return {rule.query_key: value}
         return {qkey: val for qkey, val in zip(rule.query_key, value)}
 
-    def _is_null(self, key):
+    def _is_present(self, key):
         rule = self._rules[key]
-        return any(self.raw_query[rkey] is None for rkey in rule.raw_key)
+        return all(rkey in self.raw_query for rkey in rule.raw_key)
 
 
 class ObjectQueryFactory(QueryFactory):
