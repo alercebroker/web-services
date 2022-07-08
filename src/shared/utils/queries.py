@@ -41,7 +41,7 @@ class QueryFactory(ABC):
     raw_query : dict
         Input arguments
     clean_query : dict
-        Query ready dictionary. It skips keys if the required args are `None`
+        Query ready dictionary
     """
     _rules: Dict[str, QueryRules]
 
