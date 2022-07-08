@@ -76,7 +76,7 @@ class QueryFactory(ABC):
 
 
 class ObjectQueryFactory(QueryFactory):
-    class HelperFunctions:
+    class QueryHelpers:
         @staticmethod
         def loc_query(ra, dec, radius):
             return {'$centerSphere': [[ra, dec], math.radians(radius / 3600)]}
@@ -88,11 +88,11 @@ class ObjectQueryFactory(QueryFactory):
             return list(oid)
 
     _rules = {
-        'oid': QueryRules(['oid'], '$in', HelperFunctions.oid_query),
+        'oid': QueryRules(['oid'], '$in', QueryHelpers.oid_query),
         'firstmjd': QueryRules(['firstmjd'], '$gte', float),
         'lastmjd': QueryRules(['lastmjd'], '$lte', float),
         'ndet': QueryRules(['ndet'], ['$gte', '$lte'], list),
         'loc': QueryRules(
-            ['ra', 'dec', 'radius'], '$geoWithin', HelperFunctions.loc_query
+            ['ra', 'dec', 'radius'], '$geoWithin', QueryHelpers.loc_query
         )
     }
