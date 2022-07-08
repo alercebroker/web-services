@@ -70,6 +70,8 @@ class QueryFactory(ABC):
         value = rule.process(*[self.raw_query[key] for key in rule.raw_key])
         if rule.query_key is None:
             return value
+        elif isinstance(rule.query_key, str):
+            return {rule.query_key: value}
         return {qkey: val for qkey, val in zip(rule.query_key, value)}
 
     def _is_null(self, key):
