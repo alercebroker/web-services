@@ -4,10 +4,6 @@ from dataclasses import dataclass
 from typing import Union, Callable, Dict, Sequence
 
 
-def _loc_query(ra, dec, radius):
-    return {'$centerSphere': [[ra, dec], math.radians(radius / 3600)]}
-
-
 @dataclass
 class QueryRules:
     """
@@ -80,10 +76,23 @@ class QueryFactory(ABC):
 
 
 class ObjectQueryFactory(QueryFactory):
+    class HelperFunctions:
+        @staticmethod
+        def loc_query(ra, dec, radius):
+            return {'$centerSphere': [[ra, dec], math.radians(radius / 3600)]}
+
+        @staticmethod
+        def oid_query(oid):
+            if isinstance(oid, str):
+                return [oid]
+            return list(oid)
+
     _rules = {
-        'oid': QueryRules(['oid'], '$in', list),
+        'oid': QueryRules(['oid'], '$in', HelperFunctions.oid_query),
         'firstmjd': QueryRules(['firstmjd'], '$gte', float),
         'lastmjd': QueryRules(['lastmjd'], '$lte', float),
         'ndet': QueryRules(['ndet'], ['$gte', '$lte'], list),
-        'loc': QueryRules(['ra', 'dec', 'radius'], '$geoWithin', _loc_query)
+        'loc': QueryRules(
+            ['ra', 'dec', 'radius'], '$geoWithin', HelperFunctions.loc_query
+        )
     }
