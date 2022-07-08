@@ -10,8 +10,8 @@ def _loc_query(ra, dec, radius):
 
 @dataclass
 class QueryRules:
-    raw_key: Union[str, Sequence]
-    query_key: Union[str, Sequence, None]
+    raw_key: Sequence[str]  # Key(s) from raw dict that are arguments for process
+    query_key: Union[str, Sequence, None]  # Key(s) that represent the mongo query
     process: Callable
 
 
@@ -30,12 +30,7 @@ class QueryFactory(ABC):
 
     def _generate_value(self, key):
         rule = self._rules[key]
-        if isinstance(rule.raw_key, str):
-            value = rule.process(self.raw_query[rule.raw_key])
-        else:
-            value = rule.process(
-                *[self.raw_query[key] for key in rule.raw_key]
-            )
+        value = rule.process(*[self.raw_query[key] for key in rule.raw_key])
         if rule.query_key is None:
             return value
         elif isinstance(rule.query_key, str):
@@ -45,16 +40,14 @@ class QueryFactory(ABC):
 
     def _is_null(self, key):
         rule = self._rules[key]
-        if isinstance(rule.raw_key, str):
-            return self.raw_query[rule.raw_key] is None
         return any(self.raw_query[rkey] is None for rkey in rule.raw_key)
 
 
 class ObjectQueryFactory(QueryFactory):
     _rules = {
-        'oid': QueryRules('oid', '$in', list),
-        'firstmjd': QueryRules('firstmjd', '$gte', float),
-        'lastmjd': QueryRules('lastmjd', '$lte', float),
-        'ndet': QueryRules('ndet', ('$gte', '$lte'), list),
-        'loc': QueryRules(('ra', 'dec', 'radius'), '$geoWithin', _loc_query)
+        'oid': QueryRules(['oid'], '$in', list),
+        'firstmjd': QueryRules(['firstmjd'], '$gte', float),
+        'lastmjd': QueryRules(['lastmjd'], '$lte', float),
+        'ndet': QueryRules(['ndet'], ['$gte', '$lte'], list),
+        'loc': QueryRules(['ra', 'dec', 'radius'], '$geoWithin', _loc_query)
     }
