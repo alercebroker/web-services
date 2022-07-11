@@ -1,7 +1,13 @@
+import abc
 import math
-from abc import ABC
 from dataclasses import dataclass
 from typing import Union, Callable, Dict, Sequence
+
+
+def _ensure_list(arg, argtype):
+    if isinstance(arg, argtype):
+        return [arg]
+    return list(arg)
 
 
 @dataclass
@@ -30,7 +36,7 @@ class QueryRules:
     process: Callable
 
 
-class QueryFactory(ABC):
+class QueryFactory(abc.ABC):
     """Base class for mongo query generation.
 
     Subclasses must define the `_rules` dictionary, mapping fields in the
@@ -44,6 +50,19 @@ class QueryFactory(ABC):
         Query ready dictionary
     """
     _rules: Dict[str, QueryRules]
+
+    class QueryHelpers:
+        @staticmethod
+        def list_of_str(arg):
+            return _ensure_list(arg, str)
+
+        @staticmethod
+        def list_of_int(arg):
+            return _ensure_list(arg, int)
+
+        @staticmethod
+        def list_of_float(arg):
+            return _ensure_list(arg, float)
 
     def __init__(self, parsed_dict):
         """
@@ -76,23 +95,27 @@ class QueryFactory(ABC):
 
 
 class ObjectQueryFactory(QueryFactory):
-    class QueryHelpers:
+    class ObjectQueryHelpers(QueryFactory.QueryHelpers):
         @staticmethod
-        def loc_query(ra, dec, radius):
+        def query_for_locs(ra, dec, radius):
             return {'$centerSphere': [[ra, dec], math.radians(radius / 3600)]}
 
-        @staticmethod
-        def oid_query(oid):
-            if isinstance(oid, str):
-                return [oid]
-            return list(oid)
-
     _rules = {
-        'oid': QueryRules(['oid'], '$in', QueryHelpers.oid_query),
+        'oid': QueryRules(
+            ['oid'],
+            '$in',
+            ObjectQueryHelpers.list_of_str
+        ),
         'firstmjd': QueryRules(['firstmjd'], '$gte', float),
         'lastmjd': QueryRules(['lastmjd'], '$lte', float),
-        'ndet': QueryRules(['ndet'], ['$gte', '$lte'], list),
+        'ndet': QueryRules(
+            ['ndet'],
+            ['$gte', '$lte'],
+            ObjectQueryHelpers.list_of_int
+        ),
         'loc': QueryRules(
-            ['ra', 'dec', 'radius'], '$geoWithin', QueryHelpers.loc_query
+            ['ra', 'dec', 'radius'],
+            '$geoWithin',
+            ObjectQueryHelpers.query_for_locs
         )
     }
