@@ -18,6 +18,13 @@ class ServerErrorException(WrapperException):
         super().__init__(original_e, subcode)
 
 
+class EmptyQuery(BaseException):
+    """
+    Exception for empty queries.
+    """
+    pass
+
+
 class ObjectNotFound(BaseException):
     """
     Exception for empty queries for object data.
