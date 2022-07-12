@@ -1,5 +1,6 @@
 import math
-from shared.utils.queries import ObjectQueryFactory
+from core.astro_object.domain.astro_object_service import AstroObjectPayload
+
 
 def create_object_args_dict(remove=[]):
     base_args_dict = {
@@ -16,6 +17,7 @@ def create_object_args_dict(remove=[]):
     
     return base_args_dict
 
+
 def create_object_query_dict(remove=[]):
     base_query_dict = {
         'oid': {'$in': ["oid1", "oid2"]},
@@ -29,66 +31,67 @@ def create_object_query_dict(remove=[]):
     
     return base_query_dict
 
+
 def test_object_full_query():
     request_args = create_object_args_dict()
     expected_query = create_object_query_dict()
 
-    result = ObjectQueryFactory(request_args)
+    result = AstroObjectPayload(request_args)
 
-    assert result.clean_query == expected_query
+    assert result.filter_by == expected_query
 
 def test_object_empty_quert():
     request_args = {}
     expected_query = {}
 
-    result = ObjectQueryFactory(request_args)
+    result = AstroObjectPayload(request_args)
 
-    assert result.clean_query == expected_query
+    assert result.filter_by == expected_query
 
 def test_object_query_missing_args():
     # no oid
     request_args = create_object_args_dict(remove=['oid'])
     expected_query = create_object_query_dict(remove=['oid'])
 
-    result = ObjectQueryFactory(request_args)
-    assert result.clean_query == expected_query
+    result = AstroObjectPayload(request_args)
+    assert result.filter_by == expected_query
 
     request_args = create_object_args_dict(remove=['firstmjd'])
     expected_query = create_object_query_dict(remove=['firstmjd'])
 
-    result = ObjectQueryFactory(request_args)
-    assert result.clean_query == expected_query
+    result = AstroObjectPayload(request_args)
+    assert result.filter_by == expected_query
 
     request_args = create_object_args_dict(remove=['lastmjd'])
     expected_query = create_object_query_dict(remove=['lastmjd'])
 
-    result = ObjectQueryFactory(request_args)
-    assert result.clean_query == expected_query
+    result = AstroObjectPayload(request_args)
+    assert result.filter_by == expected_query
 
     request_args = create_object_args_dict(remove=['ndet'])
     expected_query = create_object_query_dict(remove=['ndet'])
 
-    result = ObjectQueryFactory(request_args)
-    assert result.clean_query == expected_query
+    result = AstroObjectPayload(request_args)
+    assert result.filter_by == expected_query
 
 def test_missing_loc_data():
     request_args = create_object_args_dict(remove=['ra'])
     expected_query = create_object_query_dict(remove=['loc'])
 
-    result = ObjectQueryFactory(request_args)
-    assert result.clean_query == expected_query
+    result = AstroObjectPayload(request_args)
+    assert result.filter_by == expected_query
 
     request_args = create_object_args_dict(remove=['dec'])
     expected_query = create_object_query_dict(remove=['loc'])
 
-    result = ObjectQueryFactory(request_args)
-    assert result.clean_query == expected_query
+    result = AstroObjectPayload(request_args)
+    assert result.filter_by == expected_query
 
     request_args = create_object_args_dict(remove=['radius'])
     expected_query = create_object_query_dict(remove=['loc'])
 
-    result = ObjectQueryFactory(request_args)
-    assert result.clean_query == expected_query
+    result = AstroObjectPayload(request_args)
+    assert result.filter_by == expected_query
 
 def test_object_query_single_oid():
     request_args = create_object_args_dict()
@@ -96,6 +99,6 @@ def test_object_query_single_oid():
     expected_query = create_object_query_dict()
     expected_query['oid']['$in'] = ["oid1"]
 
-    result = ObjectQueryFactory(request_args)
+    result = AstroObjectPayload(request_args)
 
-    assert result.clean_query == expected_query
+    assert result.filter_by == expected_query
