@@ -11,12 +11,13 @@ class ListAstroObjectRepository(MongoRepository):
         return self.db.query().find_all(
             model=models.Object,
             filter_by=payload.filter_by,
-            paginate=True
+            paginate=True,
+            count=False
         )
 
     def _wrap_results(self, result):
-        if result.total > 0:
-            return Success(list(result))
+        if result.total is None or result.total > 0:
+            return Success(result)
         else:
             return Failure(ClientErrorException(EmptyQuery()))
 

@@ -76,7 +76,7 @@ class PayloadFactory(abc.ABC):
     def filter_by(self):
         return {
             key: self._generate_value(key)
-            for key in self._rules if self._is_present(key)
+            for key in self._rules if not self._is_null(key)
         }
 
     def _generate_value(self, key):
@@ -88,6 +88,6 @@ class PayloadFactory(abc.ABC):
             return {rule.query_key: value}
         return {qkey: val for qkey, val in zip(rule.query_key, value)}
 
-    def _is_present(self, key):
+    def _is_null(self, key):
         rule = self._rules[key]
-        return all(rkey in self.raw_query for rkey in rule.raw_key)
+        return any(self.raw_query.get(rkey) is None for rkey in rule.raw_key)

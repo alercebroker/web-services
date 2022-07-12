@@ -16,7 +16,7 @@ class MongoRepository(abc.ABC):
         except Exception as e:
             return Failure(ServerErrorException(e))
 
-        self._wrap_results(result)
+        return self._wrap_results(result)
 
     @abc.abstractmethod
     def _query(self, payload: PayloadFactory):
