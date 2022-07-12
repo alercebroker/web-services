@@ -10,6 +10,11 @@ class AstroObjectPayload(PayloadFactory):
             return {'$centerSphere': [[ra, dec], math.radians(radius / 3600)]}
 
     _rules = {
+        'aid': FilterRules(
+            ['aid'],
+            None,
+            str
+        ),
         'oid': FilterRules(
             ['oid'],
             '$in',
