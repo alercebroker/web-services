@@ -11,7 +11,7 @@ def _ensure_list(arg, argtype):
 
 
 @dataclass
-class QueryRules:
+class FilterRules:
     """
     Rules to transform argument dictionary into a query for mongo.
 
@@ -36,7 +36,7 @@ class QueryRules:
     process: Callable
 
 
-class QueryFactory(abc.ABC):
+class PayloadFactory(abc.ABC):
     """Base class for mongo query generation.
 
     Subclasses must define the `_rules` dictionary, mapping fields in the
@@ -49,9 +49,9 @@ class QueryFactory(abc.ABC):
     clean_query : dict
         Query ready dictionary
     """
-    _rules: Dict[str, QueryRules]
+    _rules: Dict[str, FilterRules]
 
-    class QueryHelpers:
+    class Helpers:
         @staticmethod
         def list_of_str(arg):
             return _ensure_list(arg, str)
@@ -74,7 +74,7 @@ class QueryFactory(abc.ABC):
         self.raw_query = parsed_dict
 
     @property
-    def clean_query(self):
+    def filter_by(self):
         return {
             key: self._generate_value(key)
             for key in self._rules if self._is_present(key)
@@ -92,30 +92,3 @@ class QueryFactory(abc.ABC):
     def _is_present(self, key):
         rule = self._rules[key]
         return all(rkey in self.raw_query for rkey in rule.raw_key)
-
-
-class ObjectQueryFactory(QueryFactory):
-    class ObjectQueryHelpers(QueryFactory.QueryHelpers):
-        @staticmethod
-        def query_for_locs(ra, dec, radius):
-            return {'$centerSphere': [[ra, dec], math.radians(radius / 3600)]}
-
-    _rules = {
-        'oid': QueryRules(
-            ['oid'],
-            '$in',
-            ObjectQueryHelpers.list_of_str
-        ),
-        'firstmjd': QueryRules(['firstmjd'], '$gte', float),
-        'lastmjd': QueryRules(['lastmjd'], '$lte', float),
-        'ndet': QueryRules(
-            ['ndet'],
-            ['$gte', '$lte'],
-            ObjectQueryHelpers.list_of_int
-        ),
-        'loc': QueryRules(
-            ['ra', 'dec', 'radius'],
-            '$geoWithin',
-            ObjectQueryHelpers.query_for_locs
-        )
-    }
