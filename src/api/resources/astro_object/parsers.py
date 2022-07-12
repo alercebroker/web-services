@@ -19,8 +19,7 @@ def str2bool(v):
         raise reqparse.ArgumentTypeError("Boolean value expected.")
 
 
-def create_parsers(classifiers=None, classes=None):
-
+def create_parsers():
     filter_parser = reqparse.RequestParser()
     filter_parser.add_argument(
         "oid",
@@ -31,49 +30,12 @@ def create_parsers(classifiers=None, classes=None):
         action="append",
     )
     filter_parser.add_argument(
-        "classifier",
-        type=str,
-        dest="classifier",
-        location="args",
-        help="classifier name",
-        choices=classifiers,
-    )
-    filter_parser.add_argument(
-        "classifier_version",
-        type=str,
-        dest="classifier_version",
-        location="args",
-        help="classifier version",
-    )
-    filter_parser.add_argument(
-        "class",
-        type=str,
-        dest="class",
-        location="args",
-        help="class name",
-        choices=classes,
-    )
-    filter_parser.add_argument(
-        "ranking",
-        type=int,
-        dest="ranking",
-        location="args",
-        help="Class ordering by probability from highest to lowest. (Default 1)",
-    )
-    filter_parser.add_argument(
         "ndet",
         type=int,
         dest="ndet",
         location="args",
         help="Range of detections.",
         action="append",
-    )
-    filter_parser.add_argument(
-        "probability",
-        type=float,
-        dest="probability",
-        location="args",
-        help="Minimum probability.",
     )
     filter_parser.add_argument(
         "firstmjd",
@@ -91,28 +53,29 @@ def create_parsers(classifiers=None, classes=None):
         help="Last detection date range in mjd.",
         action="append",
     )
-    conesearch_parser = reqparse.RequestParser()
-    conesearch_parser.add_argument(
+    filter_parser.add_argument(
         "ra",
         type=float,
         dest="ra",
         location="args",
         help="Ra in degrees for conesearch.",
     )
-    conesearch_parser.add_argument(
+    filter_parser.add_argument(
         "dec",
         type=float,
         dest="dec",
         location="args",
         help="Dec in degrees for conesearch.",
     )
-    conesearch_parser.add_argument(
+    filter_parser.add_argument(
         "radius",
+        default=30.,
         type=float,
         dest="radius",
         location="args",
         help="Radius in arcsec for conesearch. (Default: 30 arcsec)",
     )
+
     pagination_parser = reqparse.RequestParser()
     pagination_parser.add_argument(
         "page",
@@ -138,6 +101,7 @@ def create_parsers(classifiers=None, classes=None):
         location="args",
         help="Whether to count total objects or not.",
     )
+
     order_parser = reqparse.RequestParser()
     order_parser.add_argument(
         "order_by",
@@ -153,7 +117,7 @@ def create_parsers(classifiers=None, classes=None):
         dest="order_mode",
         location="args",
         choices=["ASC", "DESC"],
-        help="Ordering could be ascendent or descendent",
+        help="Order could be ascending or descending",
     )
 
-    return filter_parser, conesearch_parser, order_parser, pagination_parser
+    return filter_parser, order_parser, pagination_parser
