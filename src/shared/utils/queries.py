@@ -1,5 +1,4 @@
 import abc
-import math
 from dataclasses import dataclass
 from typing import Union, Callable, Dict, Sequence
 
@@ -62,7 +61,7 @@ class PayloadFactory(abc.ABC):
 
         @staticmethod
         def list_of_float(arg):
-            return _ensure_list(arg, float)
+            return _ensure_list(arg, (int, float))
 
     def __init__(self, parsed_dict):
         """

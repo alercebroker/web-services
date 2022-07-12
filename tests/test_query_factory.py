@@ -1,8 +1,9 @@
 import math
-from core.astro_object.domain.astro_object_service import AstroObjectPayload
+from core.astro_object.payload import AstroObjectPayload
 
 
-def create_object_args_dict(remove=[]):
+def create_object_args_dict(remove=None):
+    remove = [] if remove is None else remove
     base_args_dict = {
         'oid': ["oid1", "oid2"],
         'firstmjd': 100,
@@ -10,7 +11,7 @@ def create_object_args_dict(remove=[]):
         'ndet': [1, 100],
         'ra': 1,
         'dec': 2,
-        'radius': 3600 # revisar si no viene ya en radianes
+        'radius': 3600  # revisar si no viene ya en radianes
     }
     for key in remove:
         del base_args_dict[key]
@@ -18,11 +19,12 @@ def create_object_args_dict(remove=[]):
     return base_args_dict
 
 
-def create_object_query_dict(remove=[]):
+def create_object_query_dict(remove=None):
+    remove = [] if remove is None else remove
     base_query_dict = {
         'oid': {'$in': ["oid1", "oid2"]},
         'firstmjd': {'$gte': 100},
-        'lastmjd': {'$lte': 200},
+        'lastmjd': {'$gte': 200},
         'ndet': {'$gte': 1, '$lte': 100},
         'loc': {'$geoWithin': {'$centerSphere': [[1, 2], math.radians(1)]}}
     }
@@ -39,6 +41,7 @@ def test_object_full_query():
     result = AstroObjectPayload(request_args)
 
     assert result.filter_by == expected_query
+
 
 def test_object_empty_quert():
     request_args = {}
