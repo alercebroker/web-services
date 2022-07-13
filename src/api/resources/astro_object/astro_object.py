@@ -60,16 +60,7 @@ class ObjectList(Resource):
             handler=result_handler
         )
         command.execute()
-        page = result_handler.result
-        return {
-            "total": page.total,
-            "page": page.page,
-            "next": page.next_num,
-            "has_next": page.has_next,
-            "prev": page.prev_num,
-            "has_prev": page.has_prev,
-            "items": page.items,
-        }
+        return result_handler.result
 
 
 @api.route("/<id>")
