@@ -2,27 +2,38 @@ import unittest
 from conftest import mongo_models
 
 
-# def test_order_by_desc(client, app):
-#     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-#     db = app.container.psql_db()
-#     db.session.add(obj)
-#     db.session.commit()
-#     db.session.close()
-#     args = {"order_by": "firstmjd", "order_mode": "DESC"}
-#     r = client.get("/objects/", query_string=args)
-#     assert len(r.json["items"]) == 2
-#     assert r.json["items"][0]["oid"] == "ZTF2"
-#
-#
-# def test_order_by_asc(client, app):
-#     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-#     db = app.container.psql_db()
-#     db.session.add(obj)
-#     db.session.commit()
-#     args = {"order_by": "firstmjd", "order_mode": "ASC"}
-#     r = client.get("/objects/", query_string=args)
-#     assert len(r.json["items"]) == 2
-#     assert r.json["items"][0]["oid"] == "ZTF1"
+def test_order_by_desc(client, app):
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF1"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    args = {"oid": ["ZTF1"], "order_by": "firstmjd", "order_mode": "DESC"}
+    r = client.get("/objects/", query_string=args)
+    assert len(r.json["items"]) == 2
+    assert r.json["items"][0]["aid"] == "ALERCE2"
+
+
+def test_order_by_asc(client, app):
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF1"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    args = {"oid": ["ZTF1"], "order_by": "firstmjd", "order_mode": "ASC"}
+    r = client.get("/objects/", query_string=args)
+    assert len(r.json["items"]) == 2
+    assert r.json["items"][0]["aid"] == "ALERCE1"
 
 
 @unittest.skip("Classifier not implemented in mongo")
@@ -94,7 +105,7 @@ def test_objects_list_not_found(client):
 def test_date_query_first(client, app):
     obj = mongo_models.Object(
         aid="ALERCE2",
-        oid=["ZTF2"],
+        oid=["ZTF1"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -111,7 +122,7 @@ def test_date_query_first(client, app):
 def test_date_query_first_2(client, app):
     obj = mongo_models.Object(
         aid="ALERCE2",
-        oid=["ZTF2"],
+        oid=["ZTF1"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -128,7 +139,7 @@ def test_date_query_first_2(client, app):
 def test_date_query_last(client, app):
     obj = mongo_models.Object(
         aid="ALERCE2",
-        oid=["ZTF2"],
+        oid=["ZTF1"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -145,7 +156,7 @@ def test_date_query_last(client, app):
 def test_date_query_last_2(client, app):
     obj = mongo_models.Object(
         aid="ALERCE2",
-        oid=["ZTF2"],
+        oid=["ZTF1"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -162,7 +173,7 @@ def test_date_query_last_2(client, app):
 def test_ndet_query(client, app):
     obj = mongo_models.Object(
         aid="ALERCE2",
-        oid=["ZTF2"],
+        oid=["ZTF1"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -179,7 +190,7 @@ def test_ndet_query(client, app):
 def test_ndet_query_2(client, app):
     obj = mongo_models.Object(
         aid="ALERCE2",
-        oid=["ZTF2"],
+        oid=["ZTF1"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
