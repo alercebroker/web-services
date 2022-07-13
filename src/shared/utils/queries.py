@@ -1,6 +1,7 @@
 import abc
+import pymongo
 from dataclasses import dataclass
-from typing import Union, Callable, Dict, Sequence
+from typing import Union, Callable, Dict, Sequence, TypedDict
 
 
 def _ensure_list(arg, argtype):
@@ -35,20 +36,35 @@ class FilterRules:
     process: Callable
 
 
-class PayloadFactory(abc.ABC):
+class PaginateMap(TypedDict, total=False):
+    page: str
+    per_page: str
+    count: str
+    max_results: str
+
+
+class OrderMap(TypedDict):
+    key: str
+    direction: str
+
+
+class Payload(abc.ABC):
     """Base class for mongo query generation.
 
-    Subclasses must define the `_rules` dictionary, mapping fields in the
-    database to `QueryRules`.
+    Subclasses must define the `_filter_rules` dictionary, mapping fields
+    in the database to `QueryRules`.
 
     Attributes
     ----------
-    raw_query : dict
+    raw_filter : dict
         Input arguments
-    clean_query : dict
+    filter_by : dict
         Query ready dictionary
     """
-    _rules: Dict[str, FilterRules]
+    _filter_rules: Dict[str, FilterRules]
+    _paginate_map: PaginateMap
+    _order_map: OrderMap
+    _direction_map: Dict[str, int]  # Values should be 1 (asc) and -1 (desc)
 
     class Helpers:
         @staticmethod
@@ -63,31 +79,60 @@ class PayloadFactory(abc.ABC):
         def list_of_float(arg):
             return _ensure_list(arg, (int, float))
 
-    def __init__(self, parsed_dict):
+    def __init__(self, filter_args, paginate_args=None, order_args=None):
         """
         Parameters
         ----------
-        parsed_dict : dict
+        filter_args : dict
             Input arguments (usually parsed from `get` methods)
         """
-        self.raw_query = parsed_dict
+        self.raw_filter = filter_args
+        self.raw_paginate = paginate_args if paginate_args else {}
+        self.raw_sort = order_args if order_args else {}
 
     @property
     def filter_by(self):
         return {
             key: self._generate_value(key)
-            for key in self._rules if not self._is_null(key)
+            for key in self._filter_rules if not self._is_null(key)
         }
 
+    @property
+    def paginate(self):
+        return {
+            key: self.raw_paginate[key] for key in self._paginate_map
+            if self.raw_paginate.get(key) is not None
+        }
+
+    @property
+    def sort(self):
+        try:
+            keys = self.Helpers.list_of_str(
+                self.raw_sort.get(self._order_map['key'])
+            )
+            directions = self.Helpers.list_of_str(
+                self.raw_sort.get(self._order_map['direction'])
+            )
+        except AttributeError:
+            return None
+        return [
+            (key, self._direction_map[direction])
+            for key, direction in zip(keys, directions)
+        ]
+
     def _generate_value(self, key):
-        rule = self._rules[key]
-        value = rule.process(*[self.raw_query[key] for key in rule.raw_key])
+        rule = self._filter_rules[key]
+        value = rule.process(*[self.raw_filter[key] for key in rule.raw_key])
         if rule.query_key is None:
             return value
         elif isinstance(rule.query_key, str):
             return {rule.query_key: value}
         return {qkey: val for qkey, val in zip(rule.query_key, value)}
 
+    @staticmethod
+    def _is_key_missing(dictionary, key):
+        return dictionary.get(key) is None
+
     def _is_null(self, key):
-        rule = self._rules[key]
-        return any(self.raw_query.get(rkey) is None for rkey in rule.raw_key)
+        rule = self._filter_rules[key]
+        return any(self.raw_filter.get(rkey) is None for rkey in rule.raw_key)

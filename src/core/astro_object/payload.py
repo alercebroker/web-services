@@ -1,15 +1,15 @@
 import math
 
-from shared.utils.queries import PayloadFactory, FilterRules
+from shared.utils.queries import Payload, FilterRules
 
 
-class AstroObjectPayload(PayloadFactory):
-    class AstroObjectHelpers(PayloadFactory.Helpers):
+class AstroObjectPayload(Payload):
+    class AstroObjectHelpers(Payload.Helpers):
         @staticmethod
         def query_for_locs(ra, dec, radius):
             return {'$centerSphere': [[ra, dec], math.radians(radius / 3600)]}
 
-    _rules = {
+    _filter_rules = {
         'aid': FilterRules(
             ['aid'],
             '$in',
