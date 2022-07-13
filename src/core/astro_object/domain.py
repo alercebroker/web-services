@@ -2,12 +2,12 @@ from .payload import AstroObjectPayload
 
 
 class AstroObjectService:
-    def __init__(self, list_repository, single_repository):
-        self.list_repository = list_repository
-        self.single_repository = single_repository
+    def __init__(self, repo_object_list, repo_single_object):
+        self.repo_object_list = repo_object_list
+        self.repo_single_object = repo_single_object
 
     def get_list_object(self, payload: AstroObjectPayload):
-        return self.list_repository.get(payload)
+        return self.repo_object_list.get(payload)
 
     def get_single_object(self, payload: AstroObjectPayload):
-        return self.single_repository.get(payload)
+        return self.repo_single_object.get(payload)
