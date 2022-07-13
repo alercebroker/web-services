@@ -25,7 +25,7 @@ class EmptyQuery(BaseException):
     pass
 
 
-class ObjectNotFound(BaseException):
+class ObjectNotFound(EmptyQuery):
     """
     Exception for empty queries for object data.
     Revelevan for any api with the object/<id> path.
