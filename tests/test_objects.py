@@ -1,40 +1,31 @@
-from api.resources.astro_object import astro_object as AstroObjectResource
-from conftest import models
+import unittest
+from conftest import mongo_models
 
 
-def test_conesearch(client):
-    resource = AstroObjectResource.ObjectList()
-    args = {"ra": 1, "dec": 1, "radius": 0.1}
-    params = resource._convert_conesearch_args(args)
-    statement = resource._create_conesearch_statement(params)
-    assert "q3c_radial_query(meanra, meandec,:ra, :dec, :radius)" in str(
-        statement
-    )
+# def test_order_by_desc(client, app):
+#     obj = models.Object(oid="ZTF2", firstmjd=2.0)
+#     db = app.container.psql_db()
+#     db.session.add(obj)
+#     db.session.commit()
+#     db.session.close()
+#     args = {"order_by": "firstmjd", "order_mode": "DESC"}
+#     r = client.get("/objects/", query_string=args)
+#     assert len(r.json["items"]) == 2
+#     assert r.json["items"][0]["oid"] == "ZTF2"
+#
+#
+# def test_order_by_asc(client, app):
+#     obj = models.Object(oid="ZTF2", firstmjd=2.0)
+#     db = app.container.psql_db()
+#     db.session.add(obj)
+#     db.session.commit()
+#     args = {"order_by": "firstmjd", "order_mode": "ASC"}
+#     r = client.get("/objects/", query_string=args)
+#     assert len(r.json["items"]) == 2
+#     assert r.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_order_by_desc(client, app):
-    obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
-    db.session.add(obj)
-    db.session.commit()
-    db.session.close()
-    args = {"order_by": "firstmjd", "order_mode": "DESC"}
-    r = client.get("/objects/", query_string=args)
-    assert len(r.json["items"]) == 2
-    assert r.json["items"][0]["oid"] == "ZTF2"
-
-
-def test_order_by_asc(client, app):
-    obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
-    db.session.add(obj)
-    db.session.commit()
-    args = {"order_by": "firstmjd", "order_mode": "ASC"}
-    r = client.get("/objects/", query_string=args)
-    assert len(r.json["items"]) == 2
-    assert r.json["items"][0]["oid"] == "ZTF1"
-
-
+@unittest.skip("Classifier not implemented in mongo")
 def test_order_by_class_attribute_desc(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
     db = app.container.psql_db()
@@ -60,6 +51,7 @@ def test_order_by_class_attribute_desc(client, app):
     assert r.json["items"][0]["oid"] == "ZTF1"
 
 
+@unittest.skip("Classifier not implemented in mongo")
 def test_order_by_class_attribute_asc(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
     db = app.container.psql_db()
@@ -88,83 +80,120 @@ def test_order_by_class_attribute_asc(client, app):
 def test_object_list(client):
     rv = client.get("/objects/")
     assert isinstance(rv.json["items"], list)
-    assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"] == "ZTF1"
+    assert len(rv.json["items"]) == 3
 
 
 def test_objects_list_not_found(client):
     rv = client.get(
-        "/objects/", query_string={"classifier": "Fake", "count": "true"}
+        "/objects/", query_string={"oid": "fake"}  # , "count": "true"
     )
-    assert rv.json["total"] == 0
+    assert len(rv.json["items"]) == 0
+    # assert rv.json["total"] == 0
 
 
 def test_date_query_first(client, app):
-    obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
-    db.session.add(obj)
-    db.session.commit()
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF2"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
     args = {"firstmjd": [0, 1]}
     rv = client.get("/objects/", query_string=args)
-    assert rv.json["items"][0]["oid"] == "ZTF1"
+    assert rv.json["items"][0]["aid"] == "ALERCE1"
     assert len(rv.json["items"]) == 1
 
 
 def test_date_query_first_2(client, app):
-    obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
-    db.session.add(obj)
-    db.session.commit()
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF2"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
     args = {"firstmjd": [2, 3]}
     rv = client.get("/objects/", query_string=args)
-    assert rv.json["items"][0]["oid"] == "ZTF2"
+    assert rv.json["items"][0]["aid"] == "ALERCE2"
     assert len(rv.json["items"]) == 1
 
 
 def test_date_query_last(client, app):
-    obj = models.Object(oid="ZTF2", lastmjd=2.0)
-    db = app.container.psql_db()
-    db.session.add(obj)
-    db.session.commit()
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF2"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
     args = {"lastmjd": [0, 1]}
     rv = client.get("/objects/", query_string=args)
-    assert rv.json["items"][0]["oid"] == "ZTF1"
+    assert rv.json["items"][0]["aid"] == "ALERCE1"
     assert len(rv.json["items"]) == 1
 
 
 def test_date_query_last_2(client, app):
-    obj = models.Object(oid="ZTF2", lastmjd=2.0)
-    db = app.container.psql_db()
-    db.session.add(obj)
-    db.session.commit()
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF2"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
     args = {"lastmjd": [2, 3]}
     rv = client.get("/objects/", query_string=args)
-    assert rv.json["items"][0]["oid"] == "ZTF2"
+    assert rv.json["items"][0]["aid"] == "ALERCE2"
     assert len(rv.json["items"]) == 1
 
 
 def test_ndet_query(client, app):
-    obj = models.Object(oid="ZTF2", ndet=2)
-    db = app.container.psql_db()
-    db.session.add(obj)
-    db.session.commit()
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF2"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
     args = {"ndet": [0, 1]}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"] == "ZTF1"
+    assert rv.json["items"][0]["aid"] == "ALERCE1"
 
 
 def test_ndet_query_2(client, app):
-    obj = models.Object(oid="ZTF2", ndet=2)
-    db = app.container.psql_db()
-    db.session.add(obj)
-    db.session.commit()
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF2"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
     args = {"ndet": [2, 3]}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"] == "ZTF2"
+    assert rv.json["items"][0]["aid"] == "ALERCE2"
 
 
+@unittest.skip("Classifier not implemented in mongo")
 def test_classifier_query(client):
     args = {"classifier": "C1"}
     rv = client.get("/objects/", query_string=args)
@@ -172,6 +201,7 @@ def test_classifier_query(client):
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
+@unittest.skip("Classifier not implemented in mongo")
 def test_class_query(client):
     args = {"class": "SN"}
     rv = client.get("/objects/", query_string=args)
@@ -179,6 +209,7 @@ def test_class_query(client):
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
+@unittest.skip("Classifier not implemented in mongo")
 def test_class_classifier_query(client):
     args = {"classifier": "C1", "class": "SN"}
     rv = client.get("/objects/", query_string=args)
@@ -186,6 +217,7 @@ def test_class_classifier_query(client):
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
+@unittest.skip("Classifier not implemented in mongo")
 def test_class_classifier_query_not_found(client):
     args = {"classifier": "C1", "class": "fake"}
     rv = client.get("/objects/", query_string=args)
@@ -193,6 +225,6 @@ def test_class_classifier_query_not_found(client):
 
 
 def test_single_object_query(client):
-    rv = client.get("/objects/ZTF1")
+    rv = client.get("/objects/ALERCE1")
     assert rv.status_code == 200
-    assert rv.json["oid"] == "ZTF1"
+    assert rv.json["aid"] == "ALERCE1"
