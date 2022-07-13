@@ -17,10 +17,8 @@ class ListAstroObjectRepository(MongoRepository):
         )
 
     def _wrap_results(self, result):
-        if result.total is None or result.total > 0:
-            return Success(result)
-        else:
-            return Failure(ClientErrorException(EmptyQuery()))
+        # There is no failure if query is empty in this case
+        return Success(result)
 
 
 class SingleAstroObjectRepository(MongoRepository):

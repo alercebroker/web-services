@@ -99,8 +99,9 @@ class Payload(abc.ABC):
     @property
     def paginate(self):
         return {
-            key: self.raw_paginate[key] for key in self._paginate_map
-            if self.raw_paginate.get(key) is not None
+            key: self.raw_paginate[value]
+            for key, value in self._paginate_map.items()
+            if self.raw_paginate.get(value) is not None
         }
 
     @property
