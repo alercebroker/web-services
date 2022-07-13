@@ -278,3 +278,32 @@ def test_single_object_query(client):
     rv = client.get("/objects/ALERCE1")
     assert rv.status_code == 200
     assert rv.json["aid"] == "ALERCE1"
+
+
+def test_limit_values(client, app):
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF1"],
+        firstmjd=-1.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=-1
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF1"],
+        firstmjd=1000.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=1000
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    rv = client.get("/objects/limit_values")
+    assert rv.status_code == 200
+    assert rv.json["min_ndet"] == -1
+    assert rv.json["max_ndet"] == 1000
+    assert rv.json["min_firstmjd"] == -1
+    assert rv.json["max_firstmjd"] == 1000

@@ -90,27 +90,25 @@ class Object(Resource):
         return result_handler.result
 
 
-# @api.route("/limit_values")
-# @api.response(200, "Success")
-# class LimitValues(Resource):
-#     @api.doc("limit_values")
-#     @api.marshal_with(limit_values_model)
-#     @inject
-#     def get(
-#         self,
-#         db: SQLConnection = Provide[AppContainer.psql_db],
-#     ):
-#         """Gets min and max values for objects number of detections and detection dates"""
-#         resp = db.query(
-#             func.min(models.Object.ndet).label("min_ndet"),
-#             func.max(models.Object.ndet).label("max_ndet"),
-#             func.min(models.Object.firstmjd).label("min_firstmjd"),
-#             func.max(models.Object.firstmjd).label("max_firstmjd"),
-#         ).first()
-#         resp = {
-#             "min_ndet": resp[0],
-#             "max_ndet": resp[1],
-#             "min_firstmjd": resp[2],
-#             "max_firstmjd": resp[3],
-#         }
-#         return resp
+@api.route("/limit_values")
+@api.response(200, "Success")
+class LimitValues(Resource):
+    @api.doc("limit_values")
+    @api.marshal_with(limit_values_model)
+    @inject
+    def get(
+            self,
+            command_factory: Factory[Command] = Provide[
+                AppContainer.astro_object_package.get_limits.provider
+            ],
+            result_handler: ResultHandler = Provide[
+                AppContainer.view_result_handler
+            ]
+    ):
+        """Gets min and max values for objects number of detections and detection dates"""
+        command = command_factory(
+            payload=AstroObjectPayload({}),
+            handler=result_handler
+        )
+        command.execute()
+        return result_handler.result
