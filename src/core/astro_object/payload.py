@@ -11,7 +11,7 @@ class AstroObjectPayload(Payload):
                 '$centerSphere': [[ra - 180, dec], math.radians(radius / 3600)]
             }
 
-    _filter_rules = {
+    filter_rules = {
         'aid': FilterRules(
             ['aid'],
             '$in',
@@ -43,16 +43,16 @@ class AstroObjectPayload(Payload):
             AstroObjectHelpers.query_for_locs
         )
     }
-    _paginate_map = {
+    paginate_map = {
         'page': 'page',
         'per_page': 'page_size',
         'count': 'count'
     }
-    _order_map = {
+    sort_map = {
         'key': 'order_by',
         'direction': 'order_mode'
     }
-    _direction_map = {
+    direction_map = {
         'ASC': 1,
         'DESC': -1
     }

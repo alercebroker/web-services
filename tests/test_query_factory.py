@@ -40,7 +40,7 @@ def test_object_full_query():
 
     result = AstroObjectPayload(request_args)
 
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
 
 def test_object_empty_quert():
@@ -49,7 +49,7 @@ def test_object_empty_quert():
 
     result = AstroObjectPayload(request_args)
 
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
 def test_object_query_missing_args():
     # no oid
@@ -57,44 +57,44 @@ def test_object_query_missing_args():
     expected_query = create_object_query_dict(remove=['oid'])
 
     result = AstroObjectPayload(request_args)
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
     request_args = create_object_args_dict(remove=['firstmjd'])
     expected_query = create_object_query_dict(remove=['firstmjd'])
 
     result = AstroObjectPayload(request_args)
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
     request_args = create_object_args_dict(remove=['lastmjd'])
     expected_query = create_object_query_dict(remove=['lastmjd'])
 
     result = AstroObjectPayload(request_args)
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
     request_args = create_object_args_dict(remove=['ndet'])
     expected_query = create_object_query_dict(remove=['ndet'])
 
     result = AstroObjectPayload(request_args)
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
 def test_missing_loc_data():
     request_args = create_object_args_dict(remove=['ra'])
     expected_query = create_object_query_dict(remove=['loc'])
 
     result = AstroObjectPayload(request_args)
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
     request_args = create_object_args_dict(remove=['dec'])
     expected_query = create_object_query_dict(remove=['loc'])
 
     result = AstroObjectPayload(request_args)
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
     request_args = create_object_args_dict(remove=['radius'])
     expected_query = create_object_query_dict(remove=['loc'])
 
     result = AstroObjectPayload(request_args)
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query
 
 def test_object_query_single_oid():
     request_args = create_object_args_dict()
@@ -104,4 +104,4 @@ def test_object_query_single_oid():
 
     result = AstroObjectPayload(request_args)
 
-    assert result.filter_by == expected_query
+    assert result.filter == expected_query

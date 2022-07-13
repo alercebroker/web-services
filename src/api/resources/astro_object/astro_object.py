@@ -55,7 +55,7 @@ class ObjectList(Resource):
             payload=AstroObjectPayload(
                 filter_parser.parse_args(),
                 paginate_args=pagination_parser.parse_args(),
-                order_args=order_parser.parse_args()
+                sort_args=order_parser.parse_args()
             ),
             handler=result_handler
         )

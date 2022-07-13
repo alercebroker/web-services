@@ -10,7 +10,7 @@ class ListAstroObjectRepository(MongoRepository):
     def _query(self, payload: AstroObjectPayload):
         return self.db.query().find_all(
             model=models.Object,
-            filter_by=payload.filter_by,
+            filter_by=payload.filter,
             paginate=True,
             sort=payload.sort,
             **payload.paginate
@@ -34,7 +34,7 @@ class SingleAstroObjectRepository(MongoRepository):
     def _query(self, payload: AstroObjectPayload):
         return self.db.query().find_one(
             model=models.Object,
-            filter_by=payload.filter_by
+            filter_by=payload.filter
         )
 
     def _wrap_results(self, result):
