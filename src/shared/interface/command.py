@@ -24,6 +24,7 @@ class Command:
     def execute(self) -> Result:
         action = getattr(self.service, self.action)
         result = action(self.payload)
+        print(result)
         self._post_execute(result)
 
     def _post_execute(self, result) -> None:

@@ -12,7 +12,8 @@ class ListAstroObjectRepository(MongoRepository):
             model=models.Object,
             filter_by=payload.filter_by,
             paginate=True,
-            count=False
+            sort=payload.sort,
+            **payload.paginate
         )
 
     def _wrap_results(self, result):

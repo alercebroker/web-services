@@ -106,18 +106,15 @@ class Payload(abc.ABC):
     @property
     def sort(self):
         try:
-            keys = self.Helpers.list_of_str(
-                self.raw_sort.get(self._order_map['key'])
-            )
-            directions = self.Helpers.list_of_str(
-                self.raw_sort.get(self._order_map['direction'])
-            )
+            keys = self.raw_sort.get(self._order_map['key'])
+            directions = self.raw_sort.get(self._order_map['direction'])
         except AttributeError:
             return None
         return [
             (key, self._direction_map[direction])
-            for key, direction in zip(keys, directions)
-        ]
+            for key, direction in zip(self.Helpers.list_of_str(keys),
+                                      self.Helpers.list_of_str(directions))
+        ] if None not in [keys, directions] else None
 
     def _generate_value(self, key):
         rule = self._filter_rules[key]

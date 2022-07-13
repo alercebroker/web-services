@@ -41,3 +41,16 @@ class AstroObjectPayload(Payload):
             AstroObjectHelpers.query_for_locs
         )
     }
+    _paginate_map = {
+        'page': 'page',
+        'per_page': 'page_size',
+        'count': 'count'
+    }
+    _order_map = {
+        'key': 'order_by',
+        'direction': 'order_mode'
+    }
+    _direction_map = {
+        'ASC': 1,
+        'DESC': -1
+    }
