@@ -94,12 +94,18 @@ def test_object_list(client):
     assert len(rv.json["items"]) == 3
 
 
+def test_object_pagination(client):
+    rv = client.get("/objects/", query_string={"count": "true", "page_size": 2})
+    assert len(rv.json["items"]) == 2
+    assert rv.json["total"] == 3
+
+
 def test_objects_list_not_found(client):
     rv = client.get(
-        "/objects/", query_string={"oid": "fake"}  # , "count": "true"
+        "/objects/", query_string={"oid": "fake", "count": "true"}
     )
     assert len(rv.json["items"]) == 0
-    # assert rv.json["total"] == 0
+    assert rv.json["total"] == 0
 
 
 def test_date_query_first(client, app):
@@ -117,6 +123,39 @@ def test_date_query_first(client, app):
     rv = client.get("/objects/", query_string=args)
     assert rv.json["items"][0]["aid"] == "ALERCE1"
     assert len(rv.json["items"]) == 1
+
+
+def test_conesearch_success(client, app):
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF1"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=50.0,
+        meandec=45.0,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    args = {'ra': 50, 'dec': 45, 'radius': 30}
+    rv = client.get("/objects/", query_string=args)
+    assert len(rv.json["items"]) == 1
+    assert rv.json["items"][0]["aid"] == "ALERCE2"
+
+
+def test_conesearch_failure(client, app):
+    obj = mongo_models.Object(
+        aid="ALERCE2",
+        oid=["ZTF1"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=50.0,
+        meandec=45.6,
+        ndet=2
+    )
+    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    args = {'ra': 50, 'dec': 45, 'radius': 30}
+    rv = client.get("/objects/", query_string=args)
+    assert len(rv.json["items"]) == 0
 
 
 def test_date_query_first_2(client, app):
