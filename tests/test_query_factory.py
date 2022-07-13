@@ -26,7 +26,7 @@ def create_object_query_dict(remove=None):
         'firstmjd': {'$gte': 100},
         'lastmjd': {'$gte': 200},
         'ndet': {'$gte': 1, '$lte': 100},
-        'loc': {'$geoWithin': {'$centerSphere': [[1, 2], math.radians(1)]}}
+        'loc': {'$geoWithin': {'$centerSphere': [[1 - 180, 2], math.radians(1)]}}
     }
     for key in remove:
         del base_query_dict[key]

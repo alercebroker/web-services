@@ -7,7 +7,9 @@ class AstroObjectPayload(Payload):
     class AstroObjectHelpers(Payload.Helpers):
         @staticmethod
         def query_for_locs(ra, dec, radius):
-            return {'$centerSphere': [[ra, dec], math.radians(radius / 3600)]}
+            return {
+                '$centerSphere': [[ra - 180, dec], math.radians(radius / 3600)]
+            }
 
     _filter_rules = {
         'aid': FilterRules(
