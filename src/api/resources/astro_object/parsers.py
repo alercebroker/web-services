@@ -69,7 +69,7 @@ def create_parsers():
     )
     filter_parser.add_argument(
         "radius",
-        default=30.,
+        default=30.0,
         type=float,
         dest="radius",
         location="args",

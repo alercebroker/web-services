@@ -5,7 +5,7 @@ from .domain import AstroObjectService
 from .infrastructure import (
     ListAstroObjectRepository,
     SingleAstroObjectRepository,
-    LimitsRepository
+    LimitsRepository,
 )
 from .use_case import GetSingleAstroObject, GetListAstroObject, GetLimits
 
@@ -21,7 +21,7 @@ class AstroObjectContainer(containers.DeclarativeContainer):
         AstroObjectService,
         repo_single_object=repo_single_object,
         repo_object_list=repo_object_list,
-        repo_limits=repo_limits
+        repo_limits=repo_limits,
     )
 
     get_single_object = providers.Factory(

@@ -22,6 +22,7 @@ class EmptyQuery(BaseException):
     """
     Exception for empty queries.
     """
+
     pass
 
 

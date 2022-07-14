@@ -42,22 +42,22 @@ class ObjectList(Resource):
     @api.marshal_with(object_list)
     @inject
     def get(
-            self,
-            command_factory: Factory[Command] = Provide[
-                AppContainer.astro_object_package.get_object_list.provider
-            ],
-            result_handler: ResultHandler = Provide[
-                AppContainer.view_result_handler
-            ]
+        self,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.astro_object_package.get_object_list.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
     ):
         """List all objects by given filters"""
         command = command_factory(
             payload=AstroObjectPayload(
                 filter_parser.parse_args(),
                 paginate_args=pagination_parser.parse_args(),
-                sort_args=order_parser.parse_args()
+                sort_args=order_parser.parse_args(),
             ),
-            handler=result_handler
+            handler=result_handler,
         )
         command.execute()
         return result_handler.result
@@ -72,19 +72,18 @@ class Object(Resource):
     @api.marshal_with(object_item)
     @inject
     def get(
-            self,
-            id,
-            command_factory: Factory[Command] = Provide[
-                AppContainer.astro_object_package.get_single_object.provider
-            ],
-            result_handler: ResultHandler = Provide[
-                AppContainer.view_result_handler
-            ]
+        self,
+        id,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.astro_object_package.get_single_object.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
     ):
         """Fetch an object given its identifier"""
         command = command_factory(
-            payload=AstroObjectPayload({'aid': id}),
-            handler=result_handler
+            payload=AstroObjectPayload({"aid": id}), handler=result_handler
         )
         command.execute()
         return result_handler.result
@@ -97,18 +96,17 @@ class LimitValues(Resource):
     @api.marshal_with(limit_values_model)
     @inject
     def get(
-            self,
-            command_factory: Factory[Command] = Provide[
-                AppContainer.astro_object_package.get_limits.provider
-            ],
-            result_handler: ResultHandler = Provide[
-                AppContainer.view_result_handler
-            ]
+        self,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.astro_object_package.get_limits.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
     ):
         """Gets min and max values for objects number of detections and detection dates"""
         command = command_factory(
-            payload=AstroObjectPayload({}),
-            handler=result_handler
+            payload=AstroObjectPayload({}), handler=result_handler
         )
         command.execute()
         return result_handler.result

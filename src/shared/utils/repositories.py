@@ -22,6 +22,7 @@ class MongoRepository(abc.ABC):
     db : MongoConnection
         Connection to mongo database
     """
+
     def __init__(self, db: MongoConnection):
         """
         Parameters

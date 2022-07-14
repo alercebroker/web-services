@@ -24,8 +24,13 @@ class FilterRules:
     process: callable
         Takes `raw_key` values as inputs and outputs value(s) for `query_key`
     """
-    raw_key: Sequence[str]  # Key(s) from raw dict that are arguments for process
-    query_key: Union[str, Sequence, None]  # Key(s) that represent the mongo query
+
+    raw_key: Sequence[
+        str
+    ]  # Key(s) from raw dict that are arguments for process
+    query_key: Union[
+        str, Sequence, None
+    ]  # Key(s) that represent the mongo query
     process: Callable
 
 
@@ -75,6 +80,7 @@ class Payload(abc.ABC):
     raw_sort : dict, optional
         Input arguments for sorting, e.g., `{'key': 'a', 'direction': 'ASC'}`
     """
+
     filter_rules: Dict[str, FilterRules]
     paginate_map: PaginateMap
     sort_map: SortMap
@@ -82,6 +88,7 @@ class Payload(abc.ABC):
 
     class Helpers:
         """Class with static methods used for filter processing"""
+
         @staticmethod
         def list_of_str(arg):
             """Makes sure to return a list, even if single string is passed.
@@ -162,7 +169,8 @@ class Payload(abc.ABC):
         """dict: Query ready dictionary, e.g., `{'a': {'$gt': 10.0}}`"""
         return {
             key: self._generate_filter_value(key)
-            for key in self.filter_rules if not self._is_null(key)
+            for key in self.filter_rules
+            if not self._is_null(key)
         }
 
     @property
@@ -178,15 +186,21 @@ class Payload(abc.ABC):
     def sort(self):
         """list[tuple] or None: Value for sorting, e.g., `[('a', 1)]`"""
         try:
-            keys = self.raw_sort.get(self.sort_map['key'])
-            directions = self.raw_sort.get(self.sort_map['direction'])
+            keys = self.raw_sort.get(self.sort_map["key"])
+            directions = self.raw_sort.get(self.sort_map["direction"])
         except AttributeError:
             return None
-        return [
-            (key, self.direction_map[direction])
-            for key, direction in zip(self.Helpers.list_of_str(keys),
-                                      self.Helpers.list_of_str(directions))
-        ] if None not in [keys, directions] else None
+        return (
+            [
+                (key, self.direction_map[direction])
+                for key, direction in zip(
+                    self.Helpers.list_of_str(keys),
+                    self.Helpers.list_of_str(directions),
+                )
+            ]
+            if None not in [keys, directions]
+            else None
+        )
 
     def _generate_filter_value(self, key):
         """Creates the value for mongo style query dictionary.
