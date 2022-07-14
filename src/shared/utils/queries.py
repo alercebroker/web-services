@@ -3,12 +3,6 @@ from dataclasses import dataclass
 from typing import Union, Callable, Dict, Sequence, TypedDict
 
 
-def _ensure_list(arg, argtype):
-    if isinstance(arg, argtype):
-        return [arg]
-    return list(arg)
-
-
 @dataclass
 class FilterRules:
     """
@@ -55,67 +49,117 @@ class Payload(abc.ABC):
     `sort_map` and `direction_map` are optional. If one of the latter two
     are defined, the other must be defined as well.
 
-    Parameters
-    ----------
-    filter_args : dict
-        Input arguments for filtering (usually parsed from `get` methods)
-    paginate_args : dict, None
-        Input arguments for pagination (usually parsed from `get` methods)
-    sort_args : dict, None
-        Input arguments for sorting (usually parsed from `get` methods)
+    Generally, it shouldn't be necessary to override any methods. Just
+    defining rule and mapping dictionaries properly gives the full
+    functionality. The inner class `Helpers` contains some generally
+    used methods for processing parameters
 
     Attributes
     ----------
     filter_rules: dict[str, FilterRules]
         Mapping from field name to rules, e.g.,
         `{'a': FilterRules(['b'], '$gt', float)}`
-    raw_filter : dict
-        Input arguments for filtering, e.g., `{'b': '10'}`
-    filter : dict
-        Query ready dictionary, e.g., `{'a': {'$gt': 10.0}}`
     paginate_map : PaginateMap
         Mapping from pagination arguments to corresponding parser keys, e.g.,
         `{'page': 'page', 'per_page': 'page_size'}`
-    raw_paginate : dict, None
-        Input arguments for pagination, e.g., `{'page_size': 2}`
-    paginate : dict
-        Pagination parameters, e.g., `{'per_page': 2}`
     sort_map : SortMap
         Mapping from sorting arguments to corresponding parser keys, e.g.,
         `{'key': 'order_by', 'direction': 'order_mode'}`
     direction_map : dict[str, int]
         Mapping from direction values to either 1 (ascending) or -1
         (descending), e.g., `{'ASC': 1, 'DESC': -1}`
-    raw_sort : dict, None
+    raw_filter : dict
+        Input arguments for filtering, e.g., `{'b': '10'}`
+    raw_paginate : dict, optional
+        Input arguments for pagination, e.g., `{'page_size': 2}`
+    raw_sort : dict, optional
         Input arguments for sorting, e.g., `{'key': 'a', 'direction': 'ASC'}`
-    sort : list[tuple], None
-        Value for sorting, e.g., `[('a', 1)]`
     """
     filter_rules: Dict[str, FilterRules]
     paginate_map: PaginateMap
     sort_map: SortMap
-    direction_map: Dict[str, int]  # Values are 1 (asc) and -1 (desc)
+    direction_map: Dict[str, int]
 
     class Helpers:
+        """Class with static methods used for filter processing"""
         @staticmethod
         def list_of_str(arg):
+            """Makes sure to return a list, even if single string is passed.
+
+            Does not change the types of individual elements if a non-string
+            sequence is passed. If a single string is passed, a list of size
+            one containing the string is created.
+
+            Parameters
+            ----------
+            arg : str, Sequence
+                Argument to turn into list
+
+            Returns
+            -------
+            list
+                Argument as a list
+            """
             return _ensure_list(arg, str)
 
         @staticmethod
         def list_of_int(arg):
+            """Makes sure to return a list, even if single integer is passed.
+
+            Does not change the types of individual elements if a sequence
+            is passed. If a single integer is passed, a list of size
+            one containing the integer is created.
+
+            Parameters
+            ----------
+            arg : int, Sequence
+                Argument to turn into list
+
+            Returns
+            -------
+            list
+                Argument as a list
+            """
             return _ensure_list(arg, int)
 
         @staticmethod
         def list_of_float(arg):
+            """Makes sure to return a list, even if single float is passed.
+
+            Does not change the types of individual elements if a sequence
+            is passed. If a single float (or integer) is passed, a list of
+            size one containing the number is created.
+
+            Parameters
+            ----------
+            arg : float, int, Sequence
+                Argument to turn into list
+
+            Returns
+            -------
+            list
+                Argument as a list
+            """
             return _ensure_list(arg, (int, float))
 
     def __init__(self, filter_args, paginate_args=None, sort_args=None):
+        """
+        Parameters
+        ----------
+        filter_args : dict
+            Input arguments for filtering (usually parsed from `get` methods)
+        paginate_args : dict, None
+            Input arguments for pagination (usually parsed from `get` methods)
+        sort_args : dict, None
+            Input arguments for sorting (usually parsed from `get` methods)
+        """
         self.raw_filter = filter_args
         self.raw_paginate = paginate_args if paginate_args else {}
         self.raw_sort = sort_args if sort_args else {}
 
     @property
     def filter(self):
+        """dict: Query ready dictionary, e.g., `{'a': {'$gt': 10.0}}`"""
         return {
             key: self._generate_filter_value(key)
             for key in self.filter_rules if not self._is_null(key)
@@ -123,6 +167,7 @@ class Payload(abc.ABC):
 
     @property
     def paginate(self):
+        """dict: Pagination parameters, e.g., `{'per_page': 2}`"""
         return {
             key: self.raw_paginate[value]
             for key, value in self.paginate_map.items()
@@ -131,6 +176,7 @@ class Payload(abc.ABC):
 
     @property
     def sort(self):
+        """list[tuple] or None: Value for sorting, e.g., `[('a', 1)]`"""
         try:
             keys = self.raw_sort.get(self.sort_map['key'])
             directions = self.raw_sort.get(self.sort_map['direction'])
@@ -143,6 +189,19 @@ class Payload(abc.ABC):
         ] if None not in [keys, directions] else None
 
     def _generate_filter_value(self, key):
+        """Creates the value for mongo style query dictionary.
+
+        The values are generated based on the given :class:`FilterRules`.
+
+        Parameters
+        ----------
+        key : Query dictionary key
+
+        Returns
+        -------
+        dict
+            Value of query dictionary
+        """
         rule = self.filter_rules[key]
         value = rule.process(*[self.raw_filter[key] for key in rule.raw_key])
         if rule.query_key is None:
@@ -169,3 +228,9 @@ class Payload(abc.ABC):
         """
         rule = self.filter_rules[key]
         return any(self.raw_filter.get(rkey) is None for rkey in rule.raw_key)
+
+
+def _ensure_list(arg, argtype):
+    if isinstance(arg, argtype):
+        return [arg]
+    return list(arg)
