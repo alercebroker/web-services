@@ -4,7 +4,7 @@ from typing import Union, Callable, Dict, Sequence, TypedDict
 
 
 @dataclass
-class FilterRules:
+class MongoFilterRules:
     """
     Rules to transform argument dictionary into a query for mongo.
 
@@ -25,12 +25,8 @@ class FilterRules:
         Takes `raw_key` values as inputs and outputs value(s) for `query_key`
     """
 
-    raw_key: Sequence[
-        str
-    ]  # Key(s) from raw dict that are arguments for process
-    query_key: Union[
-        str, Sequence, None
-    ]  # Key(s) that represent the mongo query
+    raw_key: Sequence[str]
+    query_key: Union[str, Sequence, None]
     process: Callable
 
 
@@ -46,7 +42,7 @@ class SortMap(TypedDict):
     direction: str
 
 
-class Payload(abc.ABC):
+class MongoPayload(abc.ABC):
     """Base class for mongo query generation.
 
     Subclasses must define the `filter_rules` dictionary, mapping fields
@@ -61,7 +57,7 @@ class Payload(abc.ABC):
 
     Attributes
     ----------
-    filter_rules: dict[str, FilterRules]
+    filter_rules: dict[str, MongoFilterRules]
         Mapping from field name to rules, e.g.,
         `{'a': FilterRules(['b'], '$gt', float)}`
     paginate_map : PaginateMap
@@ -81,7 +77,7 @@ class Payload(abc.ABC):
         Input arguments for sorting, e.g., `{'key': 'a', 'direction': 'ASC'}`
     """
 
-    filter_rules: Dict[str, FilterRules]
+    filter_rules: Dict[str, MongoFilterRules]
     paginate_map: PaginateMap
     sort_map: SortMap
     direction_map: Dict[str, int]
@@ -205,7 +201,7 @@ class Payload(abc.ABC):
     def _generate_filter_value(self, key):
         """Creates the value for mongo style query dictionary.
 
-        The values are generated based on the given :class:`FilterRules`.
+        The values are generated based on the corresponding filter rules.
 
         Parameters
         ----------

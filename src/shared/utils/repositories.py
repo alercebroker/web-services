@@ -2,7 +2,7 @@ import abc
 from db_plugins.db.mongo.connection import MongoConnection
 from returns.result import Failure
 
-from .queries import Payload
+from .queries import MongoPayload
 from ..error.exceptions import ServerErrorException
 
 
@@ -32,12 +32,12 @@ class MongoRepository(abc.ABC):
         """
         self.db = db
 
-    def get(self, payload: Payload):
+    def get(self, payload: MongoPayload):
         """Makes a request to the repository.
 
         Parameters
         ----------
-        payload : Payload
+        payload : MongoPayload
             Payload used to query the database
 
         Returns
@@ -53,7 +53,7 @@ class MongoRepository(abc.ABC):
         return self._wrap_results(result)
 
     @abc.abstractmethod
-    def _query(self, payload: Payload):
+    def _query(self, payload: MongoPayload):
         pass
 
     @abc.abstractmethod
