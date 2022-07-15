@@ -1,4 +1,5 @@
 import abc
+from db_plugins.db.mongo import models
 from db_plugins.db.mongo.connection import MongoConnection
 from returns.result import Failure
 
@@ -51,6 +52,11 @@ class MongoRepository(abc.ABC):
             return Failure(ServerErrorException(e))
 
         return self._wrap_results(result)
+
+    def check_object_exists(self, aid):
+        return self.db.query().check_exists(
+            model=models.Object, filter_by={"aid": aid}
+        )
 
     @abc.abstractmethod
     def _query(self, payload: MongoPayload):
