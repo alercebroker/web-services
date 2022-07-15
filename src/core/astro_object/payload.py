@@ -12,8 +12,12 @@ class AstroObjectPayload(MongoPayload):
             }
 
     filter_rules = {
-        "aid": MongoFilterRules(["aid"], "$in", AstroObjectHelpers.list_of_str),
-        "oid": MongoFilterRules(["oid"], "$in", AstroObjectHelpers.list_of_str),
+        "aid": MongoFilterRules(
+            ["aid"], "$in", AstroObjectHelpers.list_of_str
+        ),
+        "oid": MongoFilterRules(
+            ["oid"], "$in", AstroObjectHelpers.list_of_str
+        ),
         "firstmjd": MongoFilterRules(
             ["firstmjd"], ["$gte", "$lte"], AstroObjectHelpers.list_of_float
         ),
