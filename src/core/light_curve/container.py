@@ -9,7 +9,7 @@ from .domain import LightCurveService
 from .use_case import GetDetections, GetNonDetections, GetLightCurve
 
 
-class LightcurveContainer(containers.DeclarativeContainer):
+class LightCurveContainer(containers.DeclarativeContainer):
     db = providers.Dependency(instance_of=MongoConnection)
 
     repo_detections = providers.Factory(DetectionRepository, db=db)

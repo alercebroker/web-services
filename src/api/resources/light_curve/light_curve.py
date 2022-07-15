@@ -10,7 +10,7 @@ from dependency_injector.providers import Factory
 from api.container import AppContainer
 from shared.interface.command import Command
 from shared.interface.command import ResultHandler
-from core.light_curve.domain.lightcurve_service import LightcurveServicePayload
+from core.light_curve.payload import LightCurvePayload
 from ralidator_flask.decorators import (
     set_permissions_decorator,
     set_filters_decorator,
@@ -39,7 +39,7 @@ class LightCurve(Resource):
         self,
         id,
         command_factory: Factory[Command] = Provide[
-            AppContainer.lightcurve_package.get_lightcurve_command.provider
+            AppContainer.lightcurve_package.get_lightcurve.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
@@ -48,9 +48,9 @@ class LightCurve(Resource):
         """
         Gets detections and non detections
         """
-        survey_id = survey_id_parser.parse_args()["survey_id"]
+        args = {"aid": id, **survey_id_parser.parse_args()}
         command = command_factory(
-            payload=LightcurveServicePayload(id, survey_id),
+            payload=LightCurvePayload(args),
             handler=result_handler,
         )
         command.execute()
@@ -73,7 +73,7 @@ class ObjectDetections(Resource):
         self,
         id,
         command_factory: Factory[Command] = Provide[
-            AppContainer.lightcurve_package.get_detections_command.provider
+            AppContainer.lightcurve_package.get_detections.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
@@ -82,9 +82,9 @@ class ObjectDetections(Resource):
         """
         Just the detections
         """
-        survey_id = survey_id_parser.parse_args()["survey_id"]
+        args = {"aid": id, **survey_id_parser.parse_args()}
         command = command_factory(
-            payload=LightcurveServicePayload(id, survey_id),
+            payload=LightCurvePayload(args),
             handler=result_handler,
         )
         command.execute()
@@ -107,7 +107,7 @@ class NonDetections(Resource):
         self,
         id,
         command_factory: Factory[Command] = Provide[
-            AppContainer.lightcurve_package.get_non_detections_command.provider
+            AppContainer.lightcurve_package.get_non_detections.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
@@ -116,9 +116,9 @@ class NonDetections(Resource):
         """
         Just non detections
         """
-        survey_id = survey_id_parser.parse_args()["survey_id"]
+        args = {"aid": id, **survey_id_parser.parse_args()}
         command = command_factory(
-            payload=LightcurveServicePayload(id, survey_id),
+            payload=LightCurvePayload(args),
             handler=result_handler,
         )
         command.execute()

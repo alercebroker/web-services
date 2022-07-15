@@ -8,10 +8,8 @@ class LightCurvePayload(MongoPayload):
             return f"{string.upper()}*"
 
     filter_rules = {
-        "aid": MongoFilterRules(
-            ["oid"], "$in", LightCurveHelpers.list_of_str
-        ),
+        "aid": MongoFilterRules(["aid"], None, str),
         "oid": MongoFilterRules(
-            ["tid"], "$regex", LightCurveHelpers.generate_tid_regex
+            ["survey_id"], "$regex", LightCurveHelpers.generate_tid_regex
         ),
     }
