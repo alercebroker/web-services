@@ -32,7 +32,10 @@ class NonDetectionRepository(_DetectionNonDetectionRepository):
         return self._find_all_from_model(models.NonDetection, payload)
 
     def _wrap_results(self, result):
-        return Success(list(result))
+        non_detections = list(result)
+        if len(non_detections):
+            return Success(non_detections)
+        return Failure(ClientErrorException(EmptyQuery()))
 
 
 class LightCurveRepository(_DetectionNonDetectionRepository):
