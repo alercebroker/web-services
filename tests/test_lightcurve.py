@@ -1,8 +1,5 @@
-from email import headerregistry
-import pytest
 import jwt
 from datetime import datetime, timedelta, timezone
-from api.resources.light_curve.models import get_magpsf, get_sigmapsf
 
 
 def create_token(permisions, filters, secret_key):
@@ -19,14 +16,14 @@ def create_token(permisions, filters, secret_key):
 
 
 def test_get_lightcurve(client):
-    rv = client.get("objects/ZTF1/lightcurve?survey_id=ztf")
+    rv = client.get("objects/AID_ZTF2/lightcurve?survey_id=ztf")
     assert rv.status_code == 200
 
-    rv = client.get("objects/ZTF1/lightcurve")
+    rv = client.get("objects/AID_ZTF2/lightcurve")
     assert rv.status_code == 200
-    assert rv.json["detections"][0]["tid"] == "ztf"
+    assert rv.json["detections"][0]["tid"].startswith("ZTF")
 
-    rv = client.get("objects/ATLAS1/lightcurve?survey_id=atlas")
+    rv = client.get("objects/AID_ATLAS1/lightcurve?survey_id=atlas")
     assert rv.status_code == 200
 
 
@@ -53,30 +50,29 @@ def test_get_lightcurve_filters(client, app):
     )
     headers = {"AUTH-TOKEN": token}
     rv = client.get(
-        "objects/ATLAS1/lightcurve?survey_id=atlas", headers=headers
+        "objects/AID_ATLAS1/lightcurve?survey_id=atlas", headers=headers
     )
     assert rv.status_code == 200
-    assert rv.json == None
+    assert rv.json is None
 
 
 def test_get_detections(client):
-    rv = client.get("objects/ZTF1/detections?survey_id=ztf")
+    rv = client.get("objects/AID_ZTF2/detections?survey_id=ztf")
     assert rv.status_code == 200
 
-    rv = client.get("objects/ZTF1/detections")
+    rv = client.get("objects/AID_ZTF2/detections")
     assert rv.status_code == 200
-    assert rv.json[0]["tid"] == "ztf"
+    assert rv.json[0]["tid"].startswith("ZTF")
 
-
-    rv = client.get("objects/ATLAS1/detections?survey_id=atlas")
+    rv = client.get("objects/AID_ATLAS1/detections?survey_id=atlas")
     assert rv.status_code == 200
 
 
 def test_get_detections_not_found(client):
-    rv = client.get("objects/ZTF2/detections?survey_id=ztf")
+    rv = client.get("objects/AID_ZTF3/detections?survey_id=ztf")
     assert rv.status_code == 404
 
-    rv = client.get("objects/ATLAS3/detections?survey_id=atlas")
+    rv = client.get("objects/AID_ATLAS3/detections?survey_id=atlas")
     assert rv.status_code == 404
 
 
@@ -95,21 +91,21 @@ def test_get_detections_filters(client, app):
     )
     headers = {"AUTH-TOKEN": token}
     rv = client.get(
-        "objects/ATLAS1/detections?survey_id=atlas", headers=headers
+        "objects/AID_ATLAS1/detections?survey_id=atlas", headers=headers
     )
     assert rv.status_code == 200
     assert rv.json == []
 
 
 def test_get_non_detections(client):
-    rv = client.get("objects/ZTF1/non_detections?survey_id=ztf")
+    rv = client.get("objects/AID_ZTF2/non_detections?survey_id=ztf")
     assert rv.status_code == 200
 
-    rv = client.get("objects/ZTF1/non_detections")
+    rv = client.get("objects/AID_ZTF2/non_detections")
     assert rv.status_code == 200
-    assert rv.json[0]["tid"] == "ztf"
+    assert rv.json[0]["tid"].startswith("ZTF")
 
-    rv = client.get("objects/ATLAS1/non_detections?survey_id=atlas")
+    rv = client.get("objects/AID_ATLAS1/non_detections?survey_id=atlas")
     assert rv.status_code == 200
 
 
@@ -138,7 +134,7 @@ def test_get_non_detections_filters(client, app):
     )
     headers = {"AUTH-TOKEN": token}
     rv = client.get(
-        "objects/ATLAS1/non_detections?survey_id=atlas", headers=headers
+        "objects/AID_ATLAS1/non_detections?survey_id=atlas", headers=headers
     )
     assert rv.status_code == 200
     assert rv.json == []
@@ -147,41 +143,3 @@ def test_get_non_detections_filters(client, app):
 def test_bad_survey_id(client):
     rv = client.get("objects/ZTF1/lightcurve?survey_id=error")
     assert rv.status_code == 400
-
-
-def test_get_magpsf(populate_databases):
-    app = populate_databases
-    repo = app.container.lightcurve_package.detection_repository_factory("ztf")
-    detection = repo.get("ZTF1", "ztf").unwrap()[0]
-    magpsf = get_magpsf(detection)
-    assert magpsf == 1
-
-    repo = app.container.lightcurve_package.detection_repository_factory(
-        "atlas"
-    )
-    detection = repo.get("ATLAS1", "atlas").unwrap()[0]
-    magpsf = get_magpsf(detection)
-    assert magpsf == 1
-
-    with pytest.raises(Exception):
-        detection = {}
-        magpsf = get_magpsf(detection)
-
-
-def test_get_sigmapsf(populate_databases):
-    app = populate_databases
-    repo = app.container.lightcurve_package.detection_repository_factory("ztf")
-    detection = repo.get("ZTF1", "ztf").unwrap()[0]
-    sigmapsf = get_sigmapsf(detection)
-    assert sigmapsf == 1
-
-    repo = app.container.lightcurve_package.detection_repository_factory(
-        "atlas"
-    )
-    detection = repo.get("ATLAS1", "atlas").unwrap()[0]
-    sigmapsf = get_sigmapsf(detection)
-    assert sigmapsf == 1
-
-    with pytest.raises(Exception):
-        detection = {}
-        sigmapsf = get_sigmapsf(detection)
