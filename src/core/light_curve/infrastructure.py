@@ -18,51 +18,35 @@ class _DetectionNonDetectionRepository(MongoRepository, abc.ABC):
 
 class DetectionRepository(_DetectionNonDetectionRepository):
     def _query(self, payload: LightCurvePayload):
-        if self.check_object_exists(payload.raw_filter["aid"]):
-            return self._find_all(models.Detection, payload)
-        return None
+        return self._find_all(models.Detection, payload)
 
     def _wrap_results(self, result):
-        try:
-            detections = list(result)
-            if len(detections):
-                return Success(detections)
-        except TypeError:
-            pass
+        detections = list(result)
+        if len(detections):
+            return Success(detections)
         return Failure(ClientErrorException(EmptyQuery()))
 
 
 class NonDetectionRepository(_DetectionNonDetectionRepository):
     def _query(self, payload: LightCurvePayload):
-        if self.check_object_exists(payload.raw_filter["aid"]):
-            return self._find_all(models.NonDetection, payload)
-        return None
+        return self._find_all(models.NonDetection, payload)
 
     def _wrap_results(self, result):
-        try:
-            return Success(list(result))
-        except TypeError:
-            pass
-        return Failure(ClientErrorException(EmptyQuery()))
+        return Success(list(result))
 
 
 class LightCurveRepository(_DetectionNonDetectionRepository):
     def _query(self, payload: LightCurvePayload):
-        if self.check_object_exists(payload.raw_filter["aid"]):
-            return (
-                self._find_all(models.Detection, payload),
-                self._find_all(models.NonDetection, payload),
-            )
-        return None
+        return (
+            self._find_all(models.Detection, payload),
+            self._find_all(models.NonDetection, payload),
+        )
 
     def _wrap_results(self, result):
-        try:
-            detections, non_detections = [list(res) for res in result]
-            if len(detections):
-                return Success({
-                    "detections": detections,
-                    "non_detections": non_detections
-                })
-        except TypeError:
-            pass
+        detections, non_detections = [list(res) for res in result]
+        if len(detections):
+            return Success({
+                "detections": detections,
+                "non_detections": non_detections
+            })
         return Failure(ClientErrorException(EmptyQuery()))
