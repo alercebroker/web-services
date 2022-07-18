@@ -15,7 +15,7 @@ def get_filters_map():
 
 
 def filter_atlas_detection_non_detection(lc_object):
-    if lc_object["tid"] == "atlas":
+    if lc_object["tid"].upper().startswith("ATLAS"):
         return False
     return True
 
