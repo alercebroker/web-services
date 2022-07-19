@@ -20,7 +20,7 @@ class LightCurveContainer(containers.DeclarativeContainer):
         LightCurveService,
         repo_detections=repo_detections,
         repo_non_detections=repo_non_detections,
-        repo_lightcurve=repo_lightcurve
+        repo_lightcurve=repo_lightcurve,
     )
     get_detections = providers.Factory(GetDetections, service=service)
     get_non_detections = providers.Factory(GetNonDetections, service=service)

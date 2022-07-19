@@ -48,8 +48,7 @@ class LightCurveRepository(_DetectionNonDetectionRepository):
     def _wrap_results(self, result):
         detections, non_detections = [list(res) for res in result]
         if len(detections):
-            return Success({
-                "detections": detections,
-                "non_detections": non_detections
-            })
+            return Success(
+                {"detections": detections, "non_detections": non_detections}
+            )
         return Failure(ClientErrorException(EmptyQuery()))

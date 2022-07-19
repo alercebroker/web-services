@@ -20,7 +20,7 @@ detection_model = Model(
         "has_stamp": fields.Boolean,
         "corrected": fields.Boolean,
         "step_id_corr": fields.String,
-        "parent_candid": fields.String
+        "parent_candid": fields.String,
     },
 )
 

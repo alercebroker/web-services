@@ -38,9 +38,7 @@ class AppContainer(containers.DeclarativeContainer):
     view_result_handler = providers.Factory(ViewResultHandler)
 
     # packages
-    lightcurve_package = providers.Container(
-        LightCurveContainer, db=mongo_db
-    )
+    lightcurve_package = providers.Container(LightCurveContainer, db=mongo_db)
     astro_object_package = providers.Container(
         AstroObjectContainer, db=mongo_db
     )

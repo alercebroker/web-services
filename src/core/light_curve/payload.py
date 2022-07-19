@@ -10,6 +10,8 @@ class LightCurvePayload(MongoPayload):
     filter_rules = {
         "aid": MongoFilterRules(["aid"], None, str),
         "tid": MongoFilterRules(
-            ["survey_id"], ["$regex", "$options"], LightCurveHelpers.generate_tid_regex
+            ["survey_id"],
+            ["$regex", "$options"],
+            LightCurveHelpers.generate_tid_regex,
         ),
     }
