@@ -1,8 +1,5 @@
 from flask_restx import reqparse
-from db_plugins.db.mongo import models
-
-SKIP = ['loc', 'extra_fields']
-COLUMNS = [field for field in models.Object._meta.fields if field not in SKIP]
+from .models import object_item
 
 
 def str2bool(v):
@@ -114,7 +111,7 @@ def create_parsers():
         dest="order_by",
         location="args",
         help="Column used for ordering",
-        choices=COLUMNS,
+        choices=list(object_item),
     )
     order_parser.add_argument(
         "order_mode",
