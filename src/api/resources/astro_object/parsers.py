@@ -1,11 +1,8 @@
 from flask_restx import reqparse
-from db_plugins.db.sql import models
+from db_plugins.db.mongo import models
 
-columns = []
-for c in models.Object.__table__.columns:
-    columns.append(str(c).split(".")[1])
-for c in models.Probability.__table__.columns:
-    columns.append(str(c).split(".")[1])
+SKIP = ['loc', 'extra_fields']
+COLUMNS = [field for field in models.Object._meta.fields if field not in SKIP]
 
 
 def str2bool(v):
@@ -109,7 +106,7 @@ def create_parsers():
         dest="order_by",
         location="args",
         help="Column used for ordering",
-        choices=columns,
+        choices=COLUMNS,
     )
     order_parser.add_argument(
         "order_mode",
