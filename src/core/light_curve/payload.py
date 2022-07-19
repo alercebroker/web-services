@@ -5,11 +5,11 @@ class LightCurvePayload(MongoPayload):
     class LightCurveHelpers(MongoPayload.Helpers):
         @staticmethod
         def generate_tid_regex(string):
-            return f"{string.upper()}.*"
+            return f"{string}.*", "i"
 
     filter_rules = {
         "aid": MongoFilterRules(["aid"], None, str),
-        "oid": MongoFilterRules(
-            ["survey_id"], "$regex", LightCurveHelpers.generate_tid_regex
+        "tid": MongoFilterRules(
+            ["survey_id"], ["$regex", "$options"], LightCurveHelpers.generate_tid_regex
         ),
     }
