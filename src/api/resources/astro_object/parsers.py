@@ -19,6 +19,14 @@ def str2bool(v):
 def create_parsers():
     filter_parser = reqparse.RequestParser()
     filter_parser.add_argument(
+        "aid",
+        type=str,
+        dest="aid",
+        location="args",
+        help="ALeRCE id",
+        action="append",
+    )
+    filter_parser.add_argument(
         "oid",
         type=str,
         dest="oid",
