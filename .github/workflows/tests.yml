@@ -48,7 +48,6 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Test with behave and simulated environment
-      shell: 'script -q -e -c "bash {0}"'
       run: |
         cd examples/examples/infrastructure
         export GITHUB_TOKEN=${{ secrets.INSTALL_PRIVATE_REPO }}
