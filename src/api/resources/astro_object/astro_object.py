@@ -83,7 +83,7 @@ class Object(Resource):
     ):
         """Fetch an object given its identifier"""
         command = command_factory(
-            payload=AstroObjectPayload({"aid": id}), handler=result_handler
+            payload=AstroObjectPayload({"oid": id}), handler=result_handler
         )
         command.execute()
         return result_handler.result
