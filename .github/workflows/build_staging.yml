@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - multistream
+      - devop/multistream
 
 jobs:
   get_tags:
