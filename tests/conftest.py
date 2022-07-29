@@ -196,20 +196,29 @@ def populate_databases(app):
         mongo_object = mongo_models.Object(
             aid="AID_ATLAS1",
             oid=["ATLAS1"],
-            lastmjd="lastmjd",
-            firstmjd="firstmjd",
+            lastmjd=99.,
+            firstmjd=99.,
             meanra=100.0,
             meandec=50.0,
-            ndet="ndet",
+            ndet=10,
         )
         mongo_object_2 = mongo_models.Object(
             aid="AID_ATLAS2",
             oid=["ATLAS2", "ZTF2"],
-            lastmjd="lastmjd",
-            firstmjd="firstmjd",
+            lastmjd=99.,
+            firstmjd=99.,
             meanra=100.0,
             meandec=50.0,
-            ndet="ndet",
+            ndet=10,
+        )
+        mongo_object_3 = mongo_models.Object(
+            aid="ALERCE1",
+            oid=["ZTF1"],
+            ndet=1,
+            lastmjd=1.0,
+            meanra=1.0,
+            meandec=1.0,
+            firstmjd=1.0,
         )
         mongo_detections = mongo_models.Detection(
             tid="ATLAS01",
@@ -274,6 +283,9 @@ def populate_databases(app):
         mongo_db.query().get_or_create(mongo_object, model=mongo_models.Object)
         mongo_db.query().get_or_create(
             mongo_object_2, model=mongo_models.Object
+        )
+        mongo_db.query().get_or_create(
+            mongo_object_3, model=mongo_models.Object
         )
         mongo_db.query().get_or_create(
             mongo_detections, model=mongo_models.Detection

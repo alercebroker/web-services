@@ -2,6 +2,7 @@ from dependency_injector import containers, providers
 from db_plugins.db.sql.connection import SQLConnection
 from db_plugins.db.mongo.connection import MongoConnection
 from core.light_curve.container import LightcurveContainer
+from core.astro_object.container import AstroObjectContainer
 from shared.database.control import DBControl
 from api.result_handlers.view_result_handler import ViewResultHandler
 
@@ -39,4 +40,7 @@ class AppContainer(containers.DeclarativeContainer):
     # packages
     lightcurve_package = providers.Container(
         LightcurveContainer, psql_db=psql_db, mongo_db=mongo_db
+    )
+    astro_object_package = providers.Container(
+        AstroObjectContainer, db=mongo_db
     )
