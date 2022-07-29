@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - multistream
-      - refactor/astro-objects
 
 jobs:
   get_tags:
