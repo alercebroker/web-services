@@ -5,7 +5,7 @@ name: Lint and Test
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [ multistream ]
 
 jobs:
   lint:
