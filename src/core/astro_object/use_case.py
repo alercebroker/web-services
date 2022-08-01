@@ -1,6 +1,5 @@
 from shared.interface.command import Command, ResultHandler
-from .domain import AstroObjectService
-from .payload import AstroObjectPayload
+from .domain import AstroObjectService, AstroObjectPayload
 
 
 class GetListAstroObject(Command):

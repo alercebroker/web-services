@@ -13,7 +13,7 @@ from dependency_injector.providers import Factory
 from api.container import AppContainer
 from shared.interface.command import Command
 from shared.interface.command import ResultHandler
-from core.astro_object.payload import AstroObjectPayload
+from core.astro_object.domain import AstroObjectPayload
 from dependency_injector.wiring import inject, Provide
 
 api = Namespace("objects", description="Objects related operations")

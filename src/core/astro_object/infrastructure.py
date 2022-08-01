@@ -3,7 +3,7 @@ from db_plugins.db.mongo import models
 
 from shared.error.exceptions import ClientErrorException, EmptyQuery
 from shared.utils.repositories import MongoRepository
-from .payload import AstroObjectPayload
+from .domain import AstroObjectPayload
 
 
 class ListAstroObjectRepository(MongoRepository):
