@@ -1,5 +1,11 @@
 from flask_restx import reqparse
-from .models import object_item
+from db_plugins.db.sql import models
+
+columns = []
+for c in models.Object.__table__.columns:
+    columns.append(str(c).split(".")[1])
+for c in models.Probability.__table__.columns:
+    columns.append(str(c).split(".")[1])
 
 
 def str2bool(v):
@@ -13,16 +19,9 @@ def str2bool(v):
         raise reqparse.ArgumentTypeError("Boolean value expected.")
 
 
-def create_parsers():
+def create_parsers(classifiers=None, classes=None):
+
     filter_parser = reqparse.RequestParser()
-    filter_parser.add_argument(
-        "aid",
-        type=str,
-        dest="aid",
-        location="args",
-        help="ALeRCE id",
-        action="append",
-    )
     filter_parser.add_argument(
         "oid",
         type=str,
@@ -32,12 +31,49 @@ def create_parsers():
         action="append",
     )
     filter_parser.add_argument(
+        "classifier",
+        type=str,
+        dest="classifier",
+        location="args",
+        help="classifier name",
+        choices=classifiers,
+    )
+    filter_parser.add_argument(
+        "classifier_version",
+        type=str,
+        dest="classifier_version",
+        location="args",
+        help="classifier version",
+    )
+    filter_parser.add_argument(
+        "class",
+        type=str,
+        dest="class",
+        location="args",
+        help="class name",
+        choices=classes,
+    )
+    filter_parser.add_argument(
+        "ranking",
+        type=int,
+        dest="ranking",
+        location="args",
+        help="Class ordering by probability from highest to lowest. (Default 1)",
+    )
+    filter_parser.add_argument(
         "ndet",
         type=int,
         dest="ndet",
         location="args",
         help="Range of detections.",
         action="append",
+    )
+    filter_parser.add_argument(
+        "probability",
+        type=float,
+        dest="probability",
+        location="args",
+        help="Minimum probability.",
     )
     filter_parser.add_argument(
         "firstmjd",
@@ -55,29 +91,28 @@ def create_parsers():
         help="Last detection date range in mjd.",
         action="append",
     )
-    filter_parser.add_argument(
+    conesearch_parser = reqparse.RequestParser()
+    conesearch_parser.add_argument(
         "ra",
         type=float,
         dest="ra",
         location="args",
         help="Ra in degrees for conesearch.",
     )
-    filter_parser.add_argument(
+    conesearch_parser.add_argument(
         "dec",
         type=float,
         dest="dec",
         location="args",
         help="Dec in degrees for conesearch.",
     )
-    filter_parser.add_argument(
+    conesearch_parser.add_argument(
         "radius",
-        default=30.0,
         type=float,
         dest="radius",
         location="args",
         help="Radius in arcsec for conesearch. (Default: 30 arcsec)",
     )
-
     pagination_parser = reqparse.RequestParser()
     pagination_parser.add_argument(
         "page",
@@ -103,7 +138,6 @@ def create_parsers():
         location="args",
         help="Whether to count total objects or not.",
     )
-
     order_parser = reqparse.RequestParser()
     order_parser.add_argument(
         "order_by",
@@ -111,7 +145,7 @@ def create_parsers():
         dest="order_by",
         location="args",
         help="Column used for ordering",
-        choices=list(object_item),
+        choices=columns,
     )
     order_parser.add_argument(
         "order_mode",
@@ -119,7 +153,7 @@ def create_parsers():
         dest="order_mode",
         location="args",
         choices=["ASC", "DESC"],
-        help="Order could be ascending or descending",
+        help="Ordering could be ascendent or descendent",
     )
 
-    return filter_parser, order_parser, pagination_parser
+    return filter_parser, conesearch_parser, order_parser, pagination_parser

@@ -31,7 +31,7 @@ def mongo_ready():
         settings = {
             "HOST": "mongo",
             "DATABASE": "database",
-            "USERNAME": "mongo",
+            "USER": "mongo",
             "PASSWORD": "mongo",
             "PORT": 27017,
         }
@@ -155,7 +155,7 @@ def insert_mongo_data(context):
     settings = {
         "HOST": "mongo",
         "DATABASE": "database",
-        "USERNAME": "mongo",
+        "USER": "mongo",
         "PASSWORD": "mongo",
         "PORT": 27017,
     }

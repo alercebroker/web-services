@@ -18,15 +18,7 @@ class ServerErrorException(WrapperException):
         super().__init__(original_e, subcode)
 
 
-class EmptyQuery(BaseException):
-    """
-    Exception for empty queries.
-    """
-
-    pass
-
-
-class ObjectNotFound(EmptyQuery):
+class ObjectNotFound(BaseException):
     """
     Exception for empty queries for object data.
     Revelevan for any api with the object/<id> path.

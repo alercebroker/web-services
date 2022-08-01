@@ -9,7 +9,7 @@ DATABASE:
     PORT: 5432
   MONGO:
     HOST: "mongodb://localhost"
-    USERNAME: mongo
+    USER: mongo
     PASSWORD: mongo
     PORT: 27017
     DATABASE: database
