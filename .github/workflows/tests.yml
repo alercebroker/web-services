@@ -48,13 +48,12 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: Test with behave and simulated environment
-      shell: 'script -q -e -c "bash {0}"'
       run: |
         cd examples/examples/infrastructure
         export GITHUB_TOKEN=${{ secrets.INSTALL_PRIVATE_REPO }}
         docker-compose up -d postgres mongo alerts_api
-        docker-compose up tests
-        docker-compose exec alerts_api killall gunicorn
+        docker-compose up --exit-code-from tests tests
+        docker-compose exec -T alerts_api killall gunicorn
     - name: Codecov
       uses: codecov/codecov-action@v2
       with:
