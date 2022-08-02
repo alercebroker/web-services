@@ -29,6 +29,4 @@ class AstroObjectContainer(containers.DeclarativeContainer):
     get_object_list = providers.Factory(
         use_case.GetListAstroObject, service=service
     )
-    get_limits = providers.Factory(
-        use_case.GetLimits, service=service
-    )
+    get_limits = providers.Factory(use_case.GetLimits, service=service)
