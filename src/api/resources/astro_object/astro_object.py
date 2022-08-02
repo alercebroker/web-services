@@ -39,7 +39,7 @@ class ObjectList(Resource):
     def get(
         self,
         command_factory: Factory[Command] = Provide[
-            AppContainer.astro_object_package.get_object_list.provider
+            AppContainer.astro_object_package.get_list_object.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
