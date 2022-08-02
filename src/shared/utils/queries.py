@@ -157,8 +157,8 @@ class MongoPayload(abc.ABC):
             Input arguments for sorting (usually parsed from `get` methods)
         """
         self.raw_filter = filter_args
-        self.raw_paginate = paginate_args if paginate_args else {}
-        self.raw_sort = sort_args if sort_args else {}
+        self.raw_paginate = paginate_args
+        self.raw_sort = sort_args
 
     @property
     def filter(self):
@@ -176,7 +176,7 @@ class MongoPayload(abc.ABC):
             key: self.raw_paginate[value]
             for key, value in self.paginate_map.items()
             if self.raw_paginate.get(value) is not None
-        }
+        } if self.raw_paginate is not None else {}
 
     @property
     def sort(self):

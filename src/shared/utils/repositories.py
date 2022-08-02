@@ -58,3 +58,16 @@ class MongoRepository(abc.ABC):
     @abc.abstractmethod
     def _wrap_results(self, result):
         pass
+
+    def _find_all(self, model, payload: MongoPayload):
+        paginate = True if payload.paginate else False
+        return self.db.query().find_all(
+            model=model,
+            filter_by=payload.filter,
+            paginate=paginate,
+            sort=payload.sort,
+            **payload.paginate
+        )
+
+    def _find_one(self, model, payload: MongoPayload):
+        return self.db.query().find_one(model=model, filter_by=payload.filter)
