@@ -1,6 +1,6 @@
 from shared.interface.command import Command, ResultHandler
 from .domain import LightCurveService
-from .payload import LightCurvePayload
+from core.light_curve.domain.light_curve_payload import LightCurvePayload
 
 
 class GetDetections(Command):

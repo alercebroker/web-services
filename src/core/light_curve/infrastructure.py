@@ -3,7 +3,7 @@ from db_plugins.db.mongo import models
 
 from shared.error.exceptions import ClientErrorException, EmptyQuery
 from shared.utils.repositories import MongoRepository
-from .payload import LightCurvePayload
+from core.light_curve.domain.light_curve_payload import LightCurvePayload
 
 
 class DetectionRepository(MongoRepository):

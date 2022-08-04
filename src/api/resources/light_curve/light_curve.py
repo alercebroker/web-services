@@ -10,7 +10,7 @@ from dependency_injector.providers import Factory
 from api.container import AppContainer
 from shared.interface.command import Command
 from shared.interface.command import ResultHandler
-from core.light_curve.payload import LightCurvePayload
+from core.light_curve.domain.light_curve_payload import LightCurvePayload
 from ralidator_flask.decorators import (
     set_permissions_decorator,
     set_filters_decorator,

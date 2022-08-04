@@ -1,4 +1,4 @@
-from .payload import LightCurvePayload
+from .light_curve_payload import LightCurvePayload
 
 
 class LightCurveService:
