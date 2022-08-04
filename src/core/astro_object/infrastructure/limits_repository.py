@@ -7,7 +7,7 @@ from ..domain import AstroObjectPayload
 
 class LimitsRepository(MongoRepository):
     def _query(self, payload: AstroObjectPayload):
-        return self.db.query().find_all(model=models.Object, paginate=False)
+        return self._find_all(models.Object, payload)
 
     def _wrap_results(self, result):
         result = {

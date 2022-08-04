@@ -7,13 +7,7 @@ from ..domain import AstroObjectPayload
 
 class ListAstroObjectRepository(MongoRepository):
     def _query(self, payload: AstroObjectPayload):
-        return self.db.query().find_all(
-            model=models.Object,
-            filter_by=payload.filter,
-            paginate=True,
-            sort=payload.sort,
-            **payload.paginate
-        )
+        return self._find_all(models.Object, payload)
 
     def _wrap_results(self, result):
         # There is no failure if query is empty in this case
