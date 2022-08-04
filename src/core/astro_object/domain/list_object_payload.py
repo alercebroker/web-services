@@ -7,14 +7,13 @@ class AstroObjectPayload(MongoPayload):
     class AstroObjectHelpers(MongoPayload.Helpers):
         @staticmethod
         def query_for_probs(
-            classifier, version, class_name, ranking, probability
+            classifier, version, class_name, probability
         ):
             output = {
                 "classifier_name": classifier,
                 "classifier_version": version,
                 "class_name": class_name,
                 "probability": {"$gte": probability} if probability else None,
-                "ranking": ranking,
             }
             return {
                 key: value
@@ -26,7 +25,7 @@ class AstroObjectPayload(MongoPayload):
         def query_for_locs(ra, dec, radius):
             return {
                 "$centerSphere": [[ra - 180, dec], math.radians(radius / 3600)]
-            }
+            } if None not in (ra, dec, radius) else None
 
         @staticmethod
         def filter_aid(arg):
@@ -66,7 +65,6 @@ class AstroObjectPayload(MongoPayload):
                 "classifier",
                 "classifier_version",
                 "class",
-                "ranking",
                 "probability",
             ],
             "$elemMatch",

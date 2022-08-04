@@ -77,6 +77,34 @@ def create_parsers():
         location="args",
         help="Radius in arcsec for conesearch. (Default: 30 arcsec)",
     )
+    filter_parser.add_argument(
+        "classifier",
+        type=str,
+        dest="classifier",
+        location="args",
+        help="classifier name",  # TODO: Should have choices
+    )
+    filter_parser.add_argument(
+        "classifier_version",
+        type=str,
+        dest="classifier_version",
+        location="args",
+        help="Classifier version",  # TODO: Should have choices
+    )
+    filter_parser.add_argument(
+        "class",
+        type=str,
+        dest="class",
+        location="args",
+        help="Class name",  # TODO: Should have choices
+    )
+    filter_parser.add_argument(
+        "probability",
+        type=float,
+        dest="probability",
+        location="args",
+        help="Minimum probability",
+    )
 
     pagination_parser = reqparse.RequestParser()
     pagination_parser.add_argument(
