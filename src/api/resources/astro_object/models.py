@@ -1,6 +1,6 @@
 from flask_restx import fields, Model
 
-object_list_item = Model(
+object_item = Model(
     "Object List Item",
     {
         "aid": fields.String(description="ALeRCE object identifier"),
@@ -19,7 +19,7 @@ object_list_item = Model(
     },
 )
 
-object_item = Model(
+object_single = Model(
     "Single Object",
     {
         "aid": fields.String(description="ALeRCE object identifier"),
@@ -47,11 +47,11 @@ object_list = Model(
         "has_next": fields.Boolean(description="Whether it has a next page"),
         "prev": fields.Integer(description="Previous page number"),
         "has_prev": fields.Boolean(description="Whether it has previous page"),
-        "items": fields.List(fields.Nested(object_list_item)),
+        "items": fields.List(fields.Nested(object_item)),
     },
 )
 
-limit_values_model = Model(
+limit_values = Model(
     "Limit Values",
     {
         "min_ndet": fields.Integer(description="Min number of detections"),

@@ -1,11 +1,5 @@
 from flask_restx import reqparse
-from db_plugins.db.sql import models
-
-columns = []
-for c in models.Object.__table__.columns:
-    columns.append(str(c).split(".")[1])
-for c in models.Probability.__table__.columns:
-    columns.append(str(c).split(".")[1])
+from .models import object_item
 
 
 def str2bool(v):
@@ -21,6 +15,14 @@ def str2bool(v):
 
 def create_parsers():
     filter_parser = reqparse.RequestParser()
+    filter_parser.add_argument(
+        "aid",
+        type=str,
+        dest="aid",
+        location="args",
+        help="ALeRCE id",
+        action="append",
+    )
     filter_parser.add_argument(
         "oid",
         type=str,
@@ -109,7 +111,7 @@ def create_parsers():
         dest="order_by",
         location="args",
         help="Column used for ordering",
-        choices=columns,
+        choices=list(object_item),
     )
     order_parser.add_argument(
         "order_mode",

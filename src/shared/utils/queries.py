@@ -55,6 +55,12 @@ class MongoPayload(abc.ABC):
     functionality. The inner class `Helpers` contains some generally
     used methods for processing parameters
 
+    NOTE: If the result of a given `FilterRules.process` is `None` for a
+    given parameter, it will be ignored, i.e., it is not possible to search
+    for null values. If `FilterRules.query_key` expects multiple values,
+    each individual `None` will be ignored but the full filter will still be
+    used unless there all the expected values are `None`.
+
     Attributes
     ----------
     filter_rules: dict[str, MongoFilterRules]
@@ -163,10 +169,13 @@ class MongoPayload(abc.ABC):
     @property
     def filter(self):
         """dict: Query ready dictionary, e.g., `{'a': {'$gt': 10.0}}`"""
-        return {
+        output = {
             key: self._generate_filter_value(key)
             for key in self.filter_rules
             if not self._is_null(key)
+        }
+        return {
+            key: value for key, value in output.items() if value is not None
         }
 
     @property
@@ -217,8 +226,12 @@ class MongoPayload(abc.ABC):
         if rule.query_key is None:
             return value
         elif isinstance(rule.query_key, str):
-            return {rule.query_key: value}
-        return {qkey: val for qkey, val in zip(rule.query_key, value)}
+            return {rule.query_key: value} if value is not None else None
+        return {
+            qkey: val
+            for qkey, val in zip(rule.query_key, value)
+            if val is not None
+        } or None
 
     def _is_null(self, key):
         """Checks if any of the raw keys for filter is missing from input.

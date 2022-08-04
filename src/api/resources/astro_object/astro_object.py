@@ -1,26 +1,21 @@
+from dependency_injector.providers import Factory
+from dependency_injector.wiring import inject, Provide
 from flask_restx import Namespace, Resource
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from .models import (
-    object_list_item,
-    object_list,
-    object_item,
-    limit_values_model,
-)
-from .parsers import create_parsers
 
-from dependency_injector.providers import Factory
 from api.container import AppContainer
-from shared.interface.command import Command
-from shared.interface.command import ResultHandler
-from core.astro_object.payload import AstroObjectPayload
-from dependency_injector.wiring import inject, Provide
+from core.astro_object.domain import AstroObjectPayload
+from shared.interface.command import Command, ResultHandler
+
+from . import models, parsers
+
 
 api = Namespace("objects", description="Objects related operations")
-api.models[object_list_item.name] = object_list_item
-api.models[object_list.name] = object_list
-api.models[object_item.name] = object_item
-api.models[limit_values_model.name] = limit_values_model
+api.models[models.object_item.name] = models.object_item
+api.models[models.object_list.name] = models.object_list
+api.models[models.object_single.name] = models.object_single
+api.models[models.limit_values.name] = models.limit_values
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["30/second"])
 
@@ -28,7 +23,7 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["30/second"])
     filter_parser,
     order_parser,
     pagination_parser,
-) = create_parsers()
+) = parsers.create_parsers()
 
 
 @api.route("/")
@@ -39,12 +34,12 @@ class ObjectList(Resource):
 
     @api.doc("list_object")
     @api.expect(filter_parser, pagination_parser, order_parser)
-    @api.marshal_with(object_list)
+    @api.marshal_with(models.object_list)
     @inject
     def get(
         self,
         command_factory: Factory[Command] = Provide[
-            AppContainer.astro_object_package.get_object_list.provider
+            AppContainer.astro_object_package.get_list_object.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
@@ -69,7 +64,7 @@ class ObjectList(Resource):
 @api.response(404, "Object not found")
 class Object(Resource):
     @api.doc("get_object")
-    @api.marshal_with(object_item)
+    @api.marshal_with(models.object_single)
     @inject
     def get(
         self,
@@ -83,7 +78,7 @@ class Object(Resource):
     ):
         """Fetch an object given its identifier"""
         command = command_factory(
-            payload=AstroObjectPayload({"aid": id}), handler=result_handler
+            payload=AstroObjectPayload({"oid": id}), handler=result_handler
         )
         command.execute()
         return result_handler.result
@@ -93,7 +88,7 @@ class Object(Resource):
 @api.response(200, "Success")
 class LimitValues(Resource):
     @api.doc("limit_values")
-    @api.marshal_with(limit_values_model)
+    @api.marshal_with(models.limit_values)
     @inject
     def get(
         self,

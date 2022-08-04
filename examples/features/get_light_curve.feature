@@ -27,16 +27,16 @@ Feature: Ask for a lightcurve data
 
   Scenario: ask for lightcurve for non stored object
     Given the databases have ztf and altas alerts
-    When request lightcurve endpoint for object AID? in ZTF survey
+    When request lightcurve endpoint for object ZTF999 in ZTF survey
     Then the request should return 404 error
 
   Scenario: ask for detections for non stored object
     Given the databases have ztf and altas alerts
-    When request detections endpoint for object AID? in ZTF survey
+    When request detections endpoint for object ZTF999 in ZTF survey
     Then the request should return 404 error
 
   Scenario: ask for non detections for non stored object
     Given the databases have ztf and altas alerts
-    When request non_detections endpoint for object AID? in ZTF survey
+    When request non_detections endpoint for object ZTF999 in ZTF survey
     Then the request should return 404 error
 

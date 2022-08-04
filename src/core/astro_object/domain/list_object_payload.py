@@ -11,13 +11,25 @@ class AstroObjectPayload(MongoPayload):
                 "$centerSphere": [[ra - 180, dec], math.radians(radius / 3600)]
             }
 
+        @staticmethod
+        def filter_aid(arg):
+            return [
+                aid
+                for aid in MongoPayload.Helpers.list_of_str(arg)
+                if aid.startswith("AL")
+            ] or None
+
+        @staticmethod
+        def filter_oid(arg):
+            return [
+                oid
+                for oid in MongoPayload.Helpers.list_of_str(arg)
+                if not oid.startswith("AL")
+            ] or None
+
     filter_rules = {
-        "aid": MongoFilterRules(
-            ["aid"], "$in", AstroObjectHelpers.list_of_str
-        ),
-        "oid": MongoFilterRules(
-            ["oid"], "$in", AstroObjectHelpers.list_of_str
-        ),
+        "aid": MongoFilterRules(["oid"], "$in", AstroObjectHelpers.filter_aid),
+        "oid": MongoFilterRules(["oid"], "$in", AstroObjectHelpers.filter_oid),
         "firstmjd": MongoFilterRules(
             ["firstmjd"], ["$gte", "$lte"], AstroObjectHelpers.list_of_float
         ),
