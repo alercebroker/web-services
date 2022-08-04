@@ -1,5 +1,5 @@
 import math
-from core.astro_object.payload import AstroObjectPayload
+from core.astro_object.domain import AstroObjectPayload
 
 
 def create_object_args_dict(remove=None):
