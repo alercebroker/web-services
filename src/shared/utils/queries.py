@@ -181,11 +181,15 @@ class MongoPayload(abc.ABC):
     @property
     def paginate(self):
         """dict: Pagination parameters, e.g., `{'per_page': 2}`"""
-        return {
-            key: self.raw_paginate[value]
-            for key, value in self.paginate_map.items()
-            if self.raw_paginate.get(value) is not None
-        } if self.raw_paginate is not None else {}
+        return (
+            {
+                key: self.raw_paginate[value]
+                for key, value in self.paginate_map.items()
+                if self.raw_paginate.get(value) is not None
+            }
+            if self.raw_paginate is not None
+            else {}
+        )
 
     @property
     def sort(self):
