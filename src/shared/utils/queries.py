@@ -59,7 +59,7 @@ class MongoPayload(abc.ABC):
     given parameter, it will be ignored, i.e., it is not possible to search
     for null values. If `FilterRules.query_key` expects multiple values,
     each individual `None` will be ignored but the full filter will still be
-    used unless there all the expected values are `None`.
+    used unless all the expected values are `None`.
 
     Attributes
     ----------
