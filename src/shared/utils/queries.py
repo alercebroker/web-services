@@ -259,11 +259,12 @@ class MongoPayload(abc.ABC):
         return all(self.raw_filter.get(rkey) is None for rkey in rule.raw_key)
 
 
-class SingleObjectPayload(MongoPayload):
+class SingleObjectPayload(MongoPayload, abc.ABC):
     filter_rules = {"aid": MongoFilterRules(["aid"], None, str)}
 
-    def __init__(self, aid):
+    def __init__(self, aid, **kwargs):
         super().__init__({"aid": aid})
+        self.extra_kwargs = kwargs
 
 
 def _ensure_list(arg, argtype):

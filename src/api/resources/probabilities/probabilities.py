@@ -36,7 +36,7 @@ class Probabilities(Resource):
     ):
         args = parsers.prob_parser.parse_args()
         command = command_factory(
-            payload=ProbabilitiesPayload(id),
+            payload=ProbabilitiesPayload(id, **args),
             handler=result_handler,
         )
         command.execute()

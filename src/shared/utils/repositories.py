@@ -74,14 +74,26 @@ class MongoRepository(abc.ABC):
         return self.db.query().find_one(model=model, filter_by=payload.filter)
 
 
-class ObjectRepository(MongoRepository):
+class ObjectRepository(MongoRepository, abc.ABC):
     field = None
+
+    def get(self, payload: SingleObjectPayload):
+        try:
+            result = self._query(payload)
+        except Exception as e:
+            return Failure(ServerErrorException(e))
+        return self._wrap_results(result, **payload.extra_kwargs)
 
     def _query(self, payload: SingleObjectPayload):
         return self._find_one(Object, payload)
 
-    def _wrap_results(self, result):
+    def _wrap_results(self, result, **kwargs):
         if result:
-            return Success(result[self.field] if self.field else result)
+            result = result[self.field] if self.field else result
+            return Success(self._post_process(result, **kwargs))
         else:
             return Failure(ClientErrorException(EmptyQuery()))
+
+    @abc.abstractmethod
+    def _post_process(self, result, **kwargs):
+        pass
