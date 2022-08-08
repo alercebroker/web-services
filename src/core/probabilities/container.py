@@ -13,7 +13,8 @@ class ProbabilitiesContainer(containers.DeclarativeContainer):
     )
 
     service = providers.Factory(
-        ProbabilitiesService,
-        repo_probabilities=repo_probabilities
+        ProbabilitiesService, repo_probabilities=repo_probabilities
     )
-    get_probabilities = providers.Factory(use_case.GetProbabilities, service=service)
+    get_probabilities = providers.Factory(
+        use_case.GetProbabilities, service=service
+    )

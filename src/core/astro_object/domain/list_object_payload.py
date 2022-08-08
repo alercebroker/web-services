@@ -52,10 +52,16 @@ class ListAstroObjectPayload(MongoPayload):
             ] or None
 
     filter_rules = {
-        "aid": MongoFilterRules(["oid"], "$in", ListAstroObjectHelpers.filter_aid),
-        "oid": MongoFilterRules(["oid"], "$in", ListAstroObjectHelpers.filter_oid),
+        "aid": MongoFilterRules(
+            ["oid"], "$in", ListAstroObjectHelpers.filter_aid
+        ),
+        "oid": MongoFilterRules(
+            ["oid"], "$in", ListAstroObjectHelpers.filter_oid
+        ),
         "firstmjd": MongoFilterRules(
-            ["firstmjd"], ["$gte", "$lte"], ListAstroObjectHelpers.list_of_float
+            ["firstmjd"],
+            ["$gte", "$lte"],
+            ListAstroObjectHelpers.list_of_float,
         ),
         "lastmjd": MongoFilterRules(
             ["lastmjd"], ["$gte", "$lte"], ListAstroObjectHelpers.list_of_float

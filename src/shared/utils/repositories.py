@@ -4,7 +4,11 @@ from db_plugins.db.mongo.models import Object, Base
 from returns.result import Failure, Success
 
 from .queries import MongoPayload, SingleObjectPayload
-from ..error.exceptions import ClientErrorException, EmptyQuery, ServerErrorException
+from ..error.exceptions import (
+    ClientErrorException,
+    EmptyQuery,
+    ServerErrorException,
+)
 
 
 class MongoRepository(abc.ABC):
