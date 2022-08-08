@@ -50,10 +50,9 @@ class MongoRepository(abc.ABC):
             Output or error from database query
         """
         try:
-            result = self._query(payload)
+            return self._wrap_results(self._query(payload))
         except Exception as e:
             return Failure(ServerErrorException(e))
-        return self._wrap_results(result)
 
     @abc.abstractmethod
     def _query(self, payload: MongoPayload):
@@ -82,10 +81,11 @@ class ObjectRepository(MongoRepository, abc.ABC):
 
     def get(self, payload: SingleObjectPayload):
         try:
-            result = self._query(payload)
+            return self._wrap_results(
+                self._query(payload), **payload.extra_kwargs
+            )
         except Exception as e:
             return Failure(ServerErrorException(e))
-        return self._wrap_results(result, **payload.extra_kwargs)
 
     def _query(self, payload: SingleObjectPayload):
         return self._find_one(models.Object, payload)
