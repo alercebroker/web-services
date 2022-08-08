@@ -16,14 +16,6 @@ def str2bool(v):
 def create_parsers():
     filter_parser = reqparse.RequestParser()
     filter_parser.add_argument(
-        "aid",
-        type=str,
-        dest="aid",
-        location="args",
-        help="ALeRCE id",
-        action="append",
-    )
-    filter_parser.add_argument(
         "oid",
         type=str,
         dest="oid",
@@ -82,28 +74,35 @@ def create_parsers():
         type=str,
         dest="classifier",
         location="args",
-        help="classifier name",  # TODO: Should have choices
+        help="classifier name",
     )
     filter_parser.add_argument(
         "classifier_version",
         type=str,
         dest="classifier_version",
         location="args",
-        help="Classifier version",  # TODO: Should have choices
+        help="Classifier version",
     )
     filter_parser.add_argument(
         "class",
         type=str,
         dest="class",
         location="args",
-        help="Class name",  # TODO: Should have choices
+        help="Class name",
+    )
+    filter_parser.add_argument(
+        "ranking",
+        type=int,
+        dest="ranking",
+        location="args",
+        help="Class ranking within classifier",
     )
     filter_parser.add_argument(
         "probability",
         type=float,
         dest="probability",
         location="args",
-        help="Minimum probability",
+        help="Minimum probability of belonging to given class",
     )
 
     pagination_parser = reqparse.RequestParser()
