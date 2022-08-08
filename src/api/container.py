@@ -3,6 +3,7 @@ from db_plugins.db.sql.connection import SQLConnection
 from db_plugins.db.mongo.connection import MongoConnection
 from core.light_curve.container import LightCurveContainer
 from core.astro_object.container import AstroObjectContainer
+from core.probabilities.container import ProbabilitiesContainer
 from shared.database.control import DBControl
 from api.result_handlers.view_result_handler import ViewResultHandler
 
@@ -41,4 +42,7 @@ class AppContainer(containers.DeclarativeContainer):
     lightcurve_package = providers.Container(LightCurveContainer, db=mongo_db)
     astro_object_package = providers.Container(
         AstroObjectContainer, db=mongo_db
+    )
+    probabilities_package = providers.Container(
+        ProbabilitiesContainer, db=mongo_db
     )
