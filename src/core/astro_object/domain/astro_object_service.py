@@ -1,5 +1,6 @@
 from .list_object_payload import ListAstroObjectPayload
 from .single_object_payload import SingleAstroObjectPayload
+from .limits_payload import LimitsAstroObjectPayload
 
 
 class AstroObjectService:
@@ -14,5 +15,5 @@ class AstroObjectService:
     def get_single_object(self, payload: SingleAstroObjectPayload):
         return self.repo_single_object.get(payload)
 
-    def get_limits(self, payload: ListAstroObjectPayload):
+    def get_limits(self, payload: LimitsAstroObjectPayload):
         return self.repo_limits.get(payload)

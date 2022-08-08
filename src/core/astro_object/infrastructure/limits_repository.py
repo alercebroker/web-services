@@ -2,11 +2,11 @@ from db_plugins.db.mongo import models
 from returns.result import Success
 
 from shared.utils.repositories import MongoRepository
-from ..domain import ListAstroObjectPayload
+from ..domain import LimitsAstroObjectPayload
 
 
-class LimitsRepository(MongoRepository):
-    def _query(self, payload: ListAstroObjectPayload):
+class LimitsAstroObjectRepository(MongoRepository):
+    def _query(self, payload: LimitsAstroObjectPayload):
         return self._find_all(models.Object, payload)
 
     def _wrap_results(self, result):

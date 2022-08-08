@@ -14,7 +14,7 @@ class AstroObjectContainer(containers.DeclarativeContainer):
     repo_list_object = providers.Factory(
         infrastructure.ListAstroObjectRepository, db=db
     )
-    repo_limits = providers.Factory(infrastructure.LimitsRepository, db=db)
+    repo_limits = providers.Factory(infrastructure.LimitsAstroObjectRepository, db=db)
 
     service = providers.Factory(
         AstroObjectService,
@@ -29,4 +29,4 @@ class AstroObjectContainer(containers.DeclarativeContainer):
     get_list_object = providers.Factory(
         use_case.GetListAstroObject, service=service
     )
-    get_limits = providers.Factory(use_case.GetLimits, service=service)
+    get_limits = providers.Factory(use_case.GetLimitsAstroObject, service=service)

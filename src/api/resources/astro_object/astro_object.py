@@ -100,7 +100,7 @@ class LimitValues(Resource):
     ):
         """Gets min and max values for objects number of detections and detection dates"""
         command = command_factory(
-            payload=domain.ListAstroObjectPayload(), handler=result_handler
+            payload=domain.LimitsAstroObjectPayload(), handler=result_handler
         )
         command.execute()
         return result_handler.result
