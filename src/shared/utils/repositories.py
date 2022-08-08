@@ -1,8 +1,9 @@
 import abc
 from db_plugins.db.mongo.connection import MongoConnection
+from db_plugins.db.mongo.models import Object, Base
 from returns.result import Failure
 
-from .queries import MongoPayload
+from .queries import MongoPayload, SingleObjectPayload
 from ..error.exceptions import ServerErrorException
 
 
@@ -59,7 +60,7 @@ class MongoRepository(abc.ABC):
     def _wrap_results(self, result):
         pass
 
-    def _find_all(self, model, payload: MongoPayload):
+    def _find_all(self, model: Base, payload: MongoPayload):
         paginate = True if payload.paginate else False
         return self.db.query().find_all(
             model=model,
@@ -69,5 +70,10 @@ class MongoRepository(abc.ABC):
             **payload.paginate
         )
 
-    def _find_one(self, model, payload: MongoPayload):
+    def _find_one(self, model: Base, payload: MongoPayload):
         return self.db.query().find_one(model=model, filter_by=payload.filter)
+
+
+class ObjectRepository(MongoRepository, abc.ABC):
+    def _query(self, payload: SingleObjectPayload):
+        return self._find_one(Object, payload)

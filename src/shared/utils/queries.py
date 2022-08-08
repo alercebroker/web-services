@@ -151,7 +151,7 @@ class MongoPayload(abc.ABC):
             """
             return _ensure_list(arg, (int, float))
 
-    def __init__(self, filter_args, paginate_args=None, sort_args=None):
+    def __init__(self, filter_args=None, paginate_args=None, sort_args=None):
         """
         Parameters
         ----------
@@ -162,7 +162,7 @@ class MongoPayload(abc.ABC):
         sort_args : dict, None
             Input arguments for sorting (usually parsed from `get` methods)
         """
-        self.raw_filter = filter_args
+        self.raw_filter = filter_args or {}
         self.raw_paginate = paginate_args
         self.raw_sort = sort_args
 
@@ -257,6 +257,13 @@ class MongoPayload(abc.ABC):
         """
         rule = self.filter_rules[key]
         return all(self.raw_filter.get(rkey) is None for rkey in rule.raw_key)
+
+
+class SingleObjectPayload(MongoPayload):
+    filter_rules = {"aid": MongoFilterRules("aid", None, str)}
+
+    def __init__(self, aid):
+        super().__init__({"aid": aid})
 
 
 def _ensure_list(arg, argtype):
