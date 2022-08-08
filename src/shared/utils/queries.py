@@ -226,7 +226,9 @@ class MongoPayload(abc.ABC):
             Value of query dictionary
         """
         rule = self.filter_rules[key]
-        value = rule.process(*[self.raw_filter.get(key) for key in rule.raw_key])
+        value = rule.process(
+            *[self.raw_filter.get(key) for key in rule.raw_key]
+        )
         if rule.query_key is None:
             return value
         elif isinstance(rule.query_key, str):
