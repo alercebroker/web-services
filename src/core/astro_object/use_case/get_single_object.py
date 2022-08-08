@@ -1,12 +1,12 @@
 from shared.interface.command import Command, ResultHandler
-from ..domain import AstroObjectService, AstroObjectPayload
+from ..domain import AstroObjectService, SingleAstroObjectPayload
 
 
 class GetSingleAstroObject(Command):
     def __init__(
         self,
         service: AstroObjectService,
-        payload: AstroObjectPayload,
+        payload: SingleAstroObjectPayload,
         handler: ResultHandler,
     ):
         super().__init__(service, payload, handler)

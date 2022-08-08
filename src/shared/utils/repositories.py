@@ -1,10 +1,10 @@
 import abc
 from db_plugins.db.mongo.connection import MongoConnection
 from db_plugins.db.mongo.models import Object, Base
-from returns.result import Failure
+from returns.result import Failure, Success
 
 from .queries import MongoPayload, SingleObjectPayload
-from ..error.exceptions import ServerErrorException
+from ..error.exceptions import ClientErrorException, EmptyQuery, ServerErrorException
 
 
 class MongoRepository(abc.ABC):
@@ -74,6 +74,14 @@ class MongoRepository(abc.ABC):
         return self.db.query().find_one(model=model, filter_by=payload.filter)
 
 
-class ObjectRepository(MongoRepository, abc.ABC):
+class ObjectRepository(MongoRepository):
+    field = None
+
     def _query(self, payload: SingleObjectPayload):
         return self._find_one(Object, payload)
+
+    def _wrap_results(self, result):
+        if result:
+            return Success(result[self.field] if self.field else result)
+        else:
+            return Failure(ClientErrorException(EmptyQuery()))
