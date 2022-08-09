@@ -196,7 +196,7 @@ class MongoPayload(abc.ABC):
         """list[tuple] or None: Value for sorting, e.g., `[('a', 1)]`"""
         try:
             keys = self.raw_sort.get(self.sort_map["key"])
-            directions = self.raw_sort.get(self.sort_map["direction"])
+            directions = self.raw_sort.get(self.sort_map["direction"], 1)
         except AttributeError:
             return None
         return (
@@ -207,7 +207,7 @@ class MongoPayload(abc.ABC):
                     self.Helpers.list_of_str(directions),
                 )
             ]
-            if None not in [keys, directions]
+            if keys is not None
             else None
         )
 
