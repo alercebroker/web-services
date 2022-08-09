@@ -26,7 +26,7 @@ class LightCurve(Resource):
     @decorators.check_permissions_decorator
     @api.doc("lightcurve")
     @api.marshal_with(models.light_curve_model, skip_none=True)
-    @api.expect(parsers.survey_id_parser)
+    @api.expect(parsers.filters)
     @inject
     def get(
         self,
@@ -41,7 +41,7 @@ class LightCurve(Resource):
         """
         Gets detections and non detections
         """
-        args = {"aid": id, **parsers.survey_id_parser.parse_args()}
+        args = {"aid": id, **parsers.filters.parse_args()}
         command = command_factory(
             payload=LightCurvePayload(args),
             handler=result_handler,
@@ -60,7 +60,7 @@ class ObjectDetections(Resource):
     @decorators.check_permissions_decorator
     @api.doc("detections")
     @api.marshal_list_with(models.detection_model, skip_none=True)
-    @api.expect(parsers.survey_id_parser)
+    @api.expect(parsers.filters, parsers.pagination, parsers.order)
     @inject
     def get(
         self,
@@ -75,9 +75,11 @@ class ObjectDetections(Resource):
         """
         Just the detections
         """
-        args = {"aid": id, **parsers.survey_id_parser.parse_args()}
+        args = {"aid": id, **parsers.filters.parse_args()}
+        paginate_args = parsers.pagination.parse_args()
+        sort_args = parsers.order.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(args),
+            payload=LightCurvePayload(args, paginate_args, sort_args),
             handler=result_handler,
         )
         command.execute()
@@ -94,7 +96,7 @@ class NonDetections(Resource):
     @decorators.check_permissions_decorator
     @api.doc("non_detections")
     @api.marshal_list_with(models.non_detection_model, skip_none=True)
-    @api.expect(parsers.survey_id_parser)
+    @api.expect(parsers.filters, parsers.pagination, parsers.order)
     @inject
     def get(
         self,
@@ -109,9 +111,11 @@ class NonDetections(Resource):
         """
         Just non detections
         """
-        args = {"aid": id, **parsers.survey_id_parser.parse_args()}
+        args = {"aid": id, **parsers.filters.parse_args()}
+        paginate_args = parsers.pagination.parse_args()
+        sort_args = parsers.order.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(args),
+            payload=LightCurvePayload(args, paginate_args, sort_args),
             handler=result_handler,
         )
         command.execute()
