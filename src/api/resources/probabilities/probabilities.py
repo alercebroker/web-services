@@ -12,7 +12,7 @@ from . import models, parsers
 api = Namespace(
     "probabilities", description="Class probabilities related operations"
 )
-api.models[models.probability_model.name] = models.probability_model
+api.models[models.probability.name] = models.probability
 
 
 @api.route("/<id>/probabilities")
@@ -21,8 +21,8 @@ api.models[models.probability_model.name] = models.probability_model
 @api.response(404, "Not found")
 class Probabilities(Resource):
     @api.doc("probabilities")
-    @api.marshal_list_with(models.probability_model)
-    @api.expect(parsers.prob_parser)
+    @api.marshal_list_with(models.probability)
+    @api.expect(parsers.filters)
     @inject
     def get(
         self,
@@ -34,7 +34,7 @@ class Probabilities(Resource):
             AppContainer.view_result_handler
         ],
     ):
-        args = parsers.prob_parser.parse_args()
+        args = parsers.filters.parse_args()
         command = command_factory(
             payload=ProbabilitiesPayload(id, **args),
             handler=result_handler,

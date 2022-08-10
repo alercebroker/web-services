@@ -1,7 +1,7 @@
 from flask_restx import fields, Model
 
 
-probability_model = Model(
+probability = Model(
     "Probability",
     {
         "classifier_name": fields.String(
