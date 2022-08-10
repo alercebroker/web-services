@@ -77,7 +77,7 @@ class MongoRepository(abc.ABC):
 
 
 class ObjectRepository(MongoRepository, abc.ABC):
-    field = None
+    field: str
 
     def get(self, payload: SingleObjectPayload):
         try:
@@ -93,10 +93,16 @@ class ObjectRepository(MongoRepository, abc.ABC):
     def _wrap_results(self, result, **kwargs):
         if result:
             result = result[self.field] if self.field else result
-            return Success(self._post_process(result, **kwargs))
-        else:
-            return Failure(ClientErrorException(EmptyQuery()))
+            return Success(self._post_filter(result, **kwargs))
+        return Failure(ClientErrorException(EmptyQuery()))
 
-    @abc.abstractmethod
-    def _post_process(self, result, **kwargs):
-        pass
+    def _post_filter(self, result, **kwargs):
+        if kwargs:
+            return [elem for elem in result if self._match(elem, kwargs)]
+        return result
+
+    @staticmethod
+    def _match(elem, filters):
+        return all(
+            elem[key] == (value or elem[key]) for key, value in filters.items()
+        )
