@@ -15,7 +15,7 @@ probability = Model(
             description="Value of the probability for the class"
         ),
         "ranking": fields.Integer(
-            description="position of the probability against the others"
+            description="Position of the probability against the others"
         ),
     },
 )
