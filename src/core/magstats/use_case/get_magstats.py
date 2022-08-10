@@ -1,12 +1,12 @@
 from shared.interface.command import Command, ResultHandler
-from ..domain.magstats_service import MagStatsServicePayload
+from ..domain import MagStatsService, MagStatsPayload
 
 
 class GetMagStats(Command):
     def __init__(
         self,
-        service,
-        payload: MagStatsServicePayload,
+        service: MagStatsService,
+        payload: MagStatsPayload,
         handler: ResultHandler,
     ):
         super().__init__(service, payload, handler)

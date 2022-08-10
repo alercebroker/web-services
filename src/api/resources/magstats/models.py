@@ -1,6 +1,6 @@
 from flask_restx import fields, Model
 
-magstats_model = Model(
+magstats = Model(
     "Magstats",
     {
         "fid": fields.Integer(description="Filter ID (1=g; 2=r, 3=i"),
