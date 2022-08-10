@@ -11,9 +11,9 @@ from . import models, parsers
 
 
 api = Namespace("lightcurve", description="LightCurve related operations")
-api.models[models.light_curve_model.name] = models.light_curve_model
-api.models[models.detection_model.name] = models.detection_model
-api.models[models.non_detection_model.name] = models.non_detection_model
+api.models[models.light_curve.name] = models.light_curve
+api.models[models.detection.name] = models.detection
+api.models[models.non_detection.name] = models.non_detection
 
 
 @api.route("/<id>/lightcurve")
@@ -25,7 +25,7 @@ class LightCurve(Resource):
     @decorators.set_filters_decorator(["filter_atlas_lightcurve"])
     @decorators.check_permissions_decorator
     @api.doc("lightcurve")
-    @api.marshal_with(models.light_curve_model, skip_none=True)
+    @api.marshal_with(models.light_curve, skip_none=True)
     @api.expect(parsers.filters)
     @inject
     def get(
@@ -59,7 +59,7 @@ class ObjectDetections(Resource):
     @decorators.set_filters_decorator(["filter_atlas_detections"])
     @decorators.check_permissions_decorator
     @api.doc("detections")
-    @api.marshal_list_with(models.detection_model, skip_none=True)
+    @api.marshal_list_with(models.detection, skip_none=True)
     @api.expect(parsers.filters, parsers.pagination, parsers.order)
     @inject
     def get(
@@ -95,7 +95,7 @@ class NonDetections(Resource):
     @decorators.set_filters_decorator(["filter_atlas_non_detections"])
     @decorators.check_permissions_decorator
     @api.doc("non_detections")
-    @api.marshal_list_with(models.non_detection_model, skip_none=True)
+    @api.marshal_list_with(models.non_detection, skip_none=True)
     @api.expect(parsers.filters, parsers.pagination, parsers.order)
     @inject
     def get(
