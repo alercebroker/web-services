@@ -1,12 +1,12 @@
 from shared.interface.command import Command, ResultHandler
-from core.light_curve.domain.lightcurve_service import LightcurveServicePayload
+from ..domain import LightCurveService, LightCurvePayload
 
 
-class GetNonDetection(Command):
+class GetNonDetections(Command):
     def __init__(
         self,
-        service,
-        payload: LightcurveServicePayload,
+        service: LightCurveService,
+        payload: LightCurvePayload,
         handler: ResultHandler,
     ):
         super().__init__(service, payload, handler)

@@ -1,8 +1,8 @@
-from flask_restx import Resource, fields, Model
+from flask_restx import fields, Model
 
 
 probability_model = Model(
-    "probability",
+    "Probability",
     {
         "classifier_name": fields.String(
             description="Classifier that did the classification"

@@ -1,26 +1,19 @@
-from flask_restx import Namespace, Resource
-from .parsers import survey_id_parser
-from .models import (
-    light_curve_model,
-    detection_model,
-    non_detection_model,
-)
 from dependency_injector.wiring import inject, Provide
 from dependency_injector.providers import Factory
+from flask_restx import Namespace, Resource
+from ralidator_flask import decorators
+
 from api.container import AppContainer
+from core.light_curve.domain import LightCurvePayload
 from shared.interface.command import Command
 from shared.interface.command import ResultHandler
-from core.light_curve.domain.lightcurve_service import LightcurveServicePayload
-from ralidator_flask.decorators import (
-    set_permissions_decorator,
-    set_filters_decorator,
-    check_permissions_decorator,
-)
+from . import models, parsers
+
 
 api = Namespace("lightcurve", description="LightCurve related operations")
-api.models[light_curve_model.name] = light_curve_model
-api.models[detection_model.name] = detection_model
-api.models[non_detection_model.name] = non_detection_model
+api.models[models.light_curve_model.name] = models.light_curve_model
+api.models[models.detection_model.name] = models.detection_model
+api.models[models.non_detection_model.name] = models.non_detection_model
 
 
 @api.route("/<id>/lightcurve")
@@ -28,18 +21,18 @@ api.models[non_detection_model.name] = non_detection_model
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class LightCurve(Resource):
-    @set_permissions_decorator(["admin", "basic_user"])
-    @set_filters_decorator(["filter_atlas_lightcurve"])
-    @check_permissions_decorator
+    @decorators.set_permissions_decorator(["admin", "basic_user"])
+    @decorators.set_filters_decorator(["filter_atlas_lightcurve"])
+    @decorators.check_permissions_decorator
     @api.doc("lightcurve")
-    @api.marshal_with(light_curve_model, skip_none=True)
-    @api.expect(survey_id_parser)
+    @api.marshal_with(models.light_curve_model, skip_none=True)
+    @api.expect(parsers.survey_id_parser)
     @inject
     def get(
         self,
         id,
         command_factory: Factory[Command] = Provide[
-            AppContainer.lightcurve_package.get_lightcurve_command.provider
+            AppContainer.lightcurve_package.get_lightcurve.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
@@ -48,9 +41,9 @@ class LightCurve(Resource):
         """
         Gets detections and non detections
         """
-        survey_id = survey_id_parser.parse_args()["survey_id"]
+        args = parsers.survey_id_parser.parse_args()
         command = command_factory(
-            payload=LightcurveServicePayload(id, survey_id),
+            payload=LightCurvePayload(id, args),
             handler=result_handler,
         )
         command.execute()
@@ -62,18 +55,18 @@ class LightCurve(Resource):
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectDetections(Resource):
-    @set_permissions_decorator(["admin", "basic_user"])
-    @set_filters_decorator(["filter_atlas_detections"])
-    @check_permissions_decorator
+    @decorators.set_permissions_decorator(["admin", "basic_user"])
+    @decorators.set_filters_decorator(["filter_atlas_detections"])
+    @decorators.check_permissions_decorator
     @api.doc("detections")
-    @api.marshal_list_with(detection_model, skip_none=True)
-    @api.expect(survey_id_parser)
+    @api.marshal_list_with(models.detection_model, skip_none=True)
+    @api.expect(parsers.survey_id_parser)
     @inject
     def get(
         self,
         id,
         command_factory: Factory[Command] = Provide[
-            AppContainer.lightcurve_package.get_detections_command.provider
+            AppContainer.lightcurve_package.get_detections.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
@@ -82,9 +75,9 @@ class ObjectDetections(Resource):
         """
         Just the detections
         """
-        survey_id = survey_id_parser.parse_args()["survey_id"]
+        args = parsers.survey_id_parser.parse_args()
         command = command_factory(
-            payload=LightcurveServicePayload(id, survey_id),
+            payload=LightCurvePayload(id, args),
             handler=result_handler,
         )
         command.execute()
@@ -96,18 +89,18 @@ class ObjectDetections(Resource):
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class NonDetections(Resource):
-    @set_permissions_decorator(["admin", "basic_user"])
-    @set_filters_decorator(["filter_atlas_non_detections"])
-    @check_permissions_decorator
+    @decorators.set_permissions_decorator(["admin", "basic_user"])
+    @decorators.set_filters_decorator(["filter_atlas_non_detections"])
+    @decorators.check_permissions_decorator
     @api.doc("non_detections")
-    @api.marshal_list_with(non_detection_model, skip_none=True)
-    @api.expect(survey_id_parser)
+    @api.marshal_list_with(models.non_detection_model, skip_none=True)
+    @api.expect(parsers.survey_id_parser)
     @inject
     def get(
         self,
         id,
         command_factory: Factory[Command] = Provide[
-            AppContainer.lightcurve_package.get_non_detections_command.provider
+            AppContainer.lightcurve_package.get_non_detections.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
@@ -116,9 +109,9 @@ class NonDetections(Resource):
         """
         Just non detections
         """
-        survey_id = survey_id_parser.parse_args()["survey_id"]
+        args = parsers.survey_id_parser.parse_args()
         command = command_factory(
-            payload=LightcurveServicePayload(id, survey_id),
+            payload=LightCurvePayload(id, args),
             handler=result_handler,
         )
         command.execute()

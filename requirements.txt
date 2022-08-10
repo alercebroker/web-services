@@ -6,7 +6,8 @@ flask-limiter==1.4
 astropy==4.0.1.post1
 prometheus-flask-exporter>=0.18.1
 returns==0.19.0
+werkzeug==2.1.2
 dependency-injector>=4.0,<5.0
 dependency-injector[yaml]
--e git+https://git@github.com/alercebroker/db-plugins@2.1.2#egg=db-plugins
+-e git+https://git@github.com/alercebroker/db-plugins@bf40b7f#egg=db-plugins
 -e git+https://github.com/alercebroker/ralidator-flask.git@50825f9#egg=ralidator_flask
