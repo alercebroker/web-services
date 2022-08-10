@@ -1,3 +1,5 @@
+import unittest
+
 from api.resources.probabilities.probabilities import Probabilities
 from db_plugins.db.sql.models import Probability, Taxonomy
 
@@ -60,6 +62,7 @@ def test_get_probabilities_not_found(client):
     assert r.status_code == 404
 
 
+@unittest.skip("No equivalent to taxonomy implemented yet")
 def test_order_probs():
     probs = [
         Probability(classifier_name="lc_classifier", class_name="AGN"),
