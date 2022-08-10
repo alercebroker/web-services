@@ -34,7 +34,7 @@ object_item = Model(
     },
 )
 
-object_single = Model(
+single_object = Model(
     "Single Object",
     {
         "aid": fields.String(description="ALeRCE object identifier"),
