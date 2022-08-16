@@ -45,9 +45,9 @@ class ObjectList(Resource):
         """List all objects by given filters"""
         command = command_factory(
             payload=ListAstroObjectPayload(
-                filter_parser.parse_args(),
-                paginate_args=pagination_parser.parse_args(),
-                sort_args=order_parser.parse_args(),
+                parsers.filters.parse_args(),
+                paginate_args=parsers.pagination.parse_args(),
+                sort_args=parsers.order.parse_args(),
             ),
             handler=result_handler,
         )
