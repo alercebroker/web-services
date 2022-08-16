@@ -59,7 +59,7 @@ class MongoPayload(abc.ABC):
     given parameter, it will be ignored, i.e., it is not possible to search
     for null values. If `FilterRules.query_key` expects multiple values,
     each individual `None` will be ignored but the full filter will still be
-    used unless there all the expected values are `None`.
+    used unless all the expected values are `None`.
 
     Attributes
     ----------
@@ -226,7 +226,9 @@ class MongoPayload(abc.ABC):
             Value of query dictionary
         """
         rule = self.filter_rules[key]
-        value = rule.process(*[self.raw_filter[key] for key in rule.raw_key])
+        value = rule.process(
+            *[self.raw_filter.get(key) for key in rule.raw_key]
+        )
         if rule.query_key is None:
             return value
         elif isinstance(rule.query_key, str):
@@ -238,7 +240,7 @@ class MongoPayload(abc.ABC):
         } or None
 
     def _is_null(self, key):
-        """Checks if any of the raw keys for filter is missing from input.
+        """Checks if all the raw keys for filter is missing from input.
 
         It considers them missing if they have a value of `None` or if the
         raw key itself is not present in the arguments.
@@ -254,7 +256,7 @@ class MongoPayload(abc.ABC):
             Whether any of the required input keys is missing
         """
         rule = self.filter_rules[key]
-        return any(self.raw_filter.get(rkey) is None for rkey in rule.raw_key)
+        return all(self.raw_filter.get(rkey) is None for rkey in rule.raw_key)
 
 
 def _ensure_list(arg, argtype):
