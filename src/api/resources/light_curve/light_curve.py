@@ -41,9 +41,9 @@ class LightCurve(Resource):
         """
         Gets detections and non detections
         """
-        args = {"aid": id, **parsers.survey_id_parser.parse_args()}
+        args = parsers.survey_id_parser.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(args),
+            payload=LightCurvePayload(id, args),
             handler=result_handler,
         )
         command.execute()
@@ -75,9 +75,9 @@ class ObjectDetections(Resource):
         """
         Just the detections
         """
-        args = {"aid": id, **parsers.survey_id_parser.parse_args()}
+        args = parsers.survey_id_parser.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(args),
+            payload=LightCurvePayload(id, args),
             handler=result_handler,
         )
         command.execute()
@@ -109,9 +109,9 @@ class NonDetections(Resource):
         """
         Just non detections
         """
-        args = {"aid": id, **parsers.survey_id_parser.parse_args()}
+        args = parsers.survey_id_parser.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(args),
+            payload=LightCurvePayload(id, args),
             handler=result_handler,
         )
         command.execute()

@@ -3,8 +3,8 @@ import math
 from shared.utils.queries import MongoPayload, MongoFilterRules
 
 
-class AstroObjectPayload(MongoPayload):
-    class AstroObjectHelpers(MongoPayload.Helpers):
+class ListAstroObjectPayload(MongoPayload):
+    class ListAstroObjectHelpers(MongoPayload.Helpers):
         @staticmethod
         def query_for_probs(
             classifier, version, class_name, ranking, probability
@@ -52,21 +52,27 @@ class AstroObjectPayload(MongoPayload):
             ] or None
 
     filter_rules = {
-        "aid": MongoFilterRules(["oid"], "$in", AstroObjectHelpers.filter_aid),
-        "oid": MongoFilterRules(["oid"], "$in", AstroObjectHelpers.filter_oid),
+        "aid": MongoFilterRules(
+            ["oid"], "$in", ListAstroObjectHelpers.filter_aid
+        ),
+        "oid": MongoFilterRules(
+            ["oid"], "$in", ListAstroObjectHelpers.filter_oid
+        ),
         "firstmjd": MongoFilterRules(
-            ["firstmjd"], ["$gte", "$lte"], AstroObjectHelpers.list_of_float
+            ["firstmjd"],
+            ["$gte", "$lte"],
+            ListAstroObjectHelpers.list_of_float,
         ),
         "lastmjd": MongoFilterRules(
-            ["lastmjd"], ["$gte", "$lte"], AstroObjectHelpers.list_of_float
+            ["lastmjd"], ["$gte", "$lte"], ListAstroObjectHelpers.list_of_float
         ),
         "ndet": MongoFilterRules(
-            ["ndet"], ["$gte", "$lte"], AstroObjectHelpers.list_of_int
+            ["ndet"], ["$gte", "$lte"], ListAstroObjectHelpers.list_of_int
         ),
         "loc": MongoFilterRules(
             ["ra", "dec", "radius"],
             "$geoWithin",
-            AstroObjectHelpers.query_for_locs,
+            ListAstroObjectHelpers.query_for_locs,
         ),
         "probabilities": MongoFilterRules(
             [
@@ -77,7 +83,7 @@ class AstroObjectPayload(MongoPayload):
                 "probability",
             ],
             "$elemMatch",
-            AstroObjectHelpers.query_for_probs,
+            ListAstroObjectHelpers.query_for_probs,
         ),
     }
     paginate_map = {"page": "page", "per_page": "page_size", "count": "count"}

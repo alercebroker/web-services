@@ -15,3 +15,6 @@ class LightCurvePayload(MongoPayload):
             LightCurveHelpers.generate_tid_regex,
         ),
     }
+
+    def __init__(self, aid, filter_args, paginate_args=None, sort_args=None):
+        super().__init__({"aid": aid, **filter_args}, paginate_args, sort_args)
