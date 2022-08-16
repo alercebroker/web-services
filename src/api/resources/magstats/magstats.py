@@ -23,13 +23,14 @@ class MagStats(Resource):
     @api.marshal_list_with(models.magstats, skip_none=True)
     @inject
     def get(
-            self,
-            id,
-            command_factory: Factory[Command] = Provide[
-                AppContainer.magstats_package.command.provider
-            ],
-            result_handler: ResultHandler = Provide[
-                AppContainer.view_result_handler]
+        self,
+        id,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.magstats_package.command.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
     ):
         command = command_factory(
             payload=MagStatsPayload(id),
