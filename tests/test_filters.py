@@ -1,11 +1,10 @@
 from src.api.filters import (
-    get_filters_map,
     filter_atlas_detection_non_detection,
     filter_atlas_lightcurve,
 )
 
 TEST_ATLAS_DETECTION = {
-    "tid": "atlas",
+    "tid": "ATLAS",
     "mjd": 58372.27195600001,
     "candid": "618271950015010002",
     "fid": 1,
@@ -67,13 +66,13 @@ TEST_ZTF_DETECTION = {
     "parent_candid": 624294431315010000,
 }
 TEST_ATLAS_NON_DETECTION = {
-    "tid": "atlas",
+    "tid": "ATLAS",
     "mjd": 58426.16753470013,
     "fid": 1,
     "diffmaglim": 19.7014,
 }
 TEST_ZTF_NON_DETECTION = {
-    "tid": "ztf",
+    "tid": "ZTF",
     "mjd": 58426.16753470013,
     "fid": 1,
     "diffmaglim": 19.7014,

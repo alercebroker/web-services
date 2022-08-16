@@ -1,11 +1,3 @@
-def update_config_dict(config_dict):
-    config_dict["FILTERS_MAP"] = {
-        "filter_atlas_detections": filter_atlas_detection_non_detection,
-        "filter_atlas_non_detections": filter_atlas_detection_non_detection,
-        "filter_atlas_lightcurve": filter_atlas_lightcurve,
-    }
-
-
 def get_filters_map():
     return {
         "filter_atlas_detections": filter_atlas_detection_non_detection,
@@ -15,7 +7,7 @@ def get_filters_map():
 
 
 def filter_atlas_detection_non_detection(lc_object):
-    if lc_object["tid"] == "atlas":
+    if lc_object["tid"].upper().startswith("ATLAS"):
         return False
     return True
 

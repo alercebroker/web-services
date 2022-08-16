@@ -223,7 +223,7 @@ def populate_databases(app):
         mongo_detections = mongo_models.Detection(
             tid="ATLAS01",
             aid="AID_ATLAS1",
-            oid=["ATLAS1"],
+            oid="ATLAS1",
             candid="candid",
             mjd=1,
             fid=1,
@@ -247,9 +247,9 @@ def populate_databases(app):
             rbversion="rbversion",
         )
         mongo_detections_2 = mongo_models.Detection(
-            tid="ATLAS02",
-            aid="AID_ATLAS2",
-            oid=["ATLAS2", "ZTF2"],
+            tid="ZTF02",
+            aid="AID_ZTF2",
+            oid="ZTF2",
             candid="candid",
             mjd=1,
             fid=1,
@@ -272,10 +272,18 @@ def populate_databases(app):
             step_id_corr="step_id_corr",
             rbversion="rbversion",
         )
-        moongo_non_detections = mongo_models.NonDetection(
+        mongo_non_detections = mongo_models.NonDetection(
             aid="AID_ATLAS1",
-            oid=["ATLAS1"],
+            oid="ATLAS1",
             tid="ATLAS01",
+            mjd=1,
+            diffmaglim=1,
+            fid=1,
+        )
+        mongo_non_detections2 = mongo_models.NonDetection(
+            aid="AID_ZTF2",
+            oid="ZTF2",
+            tid="ZTF02",
             mjd=1,
             diffmaglim=1,
             fid=1,
@@ -294,7 +302,10 @@ def populate_databases(app):
             mongo_detections_2, model=mongo_models.Detection
         )
         mongo_db.query().get_or_create(
-            moongo_non_detections, model=mongo_models.NonDetection
+            mongo_non_detections, model=mongo_models.NonDetection
+        )
+        mongo_db.query().get_or_create(
+            mongo_non_detections2, model=mongo_models.NonDetection
         )
 
     yield app

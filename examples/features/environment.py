@@ -206,7 +206,7 @@ def insert_mongo_data(context):
         rbversion="rbversion",
     )
     mongo_detections_2 = mongo_models.Detection(
-        tid="ATLAS02",
+        tid="ZTF02",
         aid="AID2",
         oid="ZTF1",
         candid="candid",
@@ -231,8 +231,34 @@ def insert_mongo_data(context):
         step_id_corr="step_id_corr",
         rbversion="rbversion",
     )
+    mongo_detections_3 = mongo_models.Detection(
+        tid="ATLAS02",
+        aid="AID2",
+        oid="ATLAS2",
+        candid="candid",
+        mjd=1,
+        fid=1,
+        ra=1,
+        dec=1,
+        rb=1,
+        mag=1,
+        e_mag=1,
+        rfid=1,
+        e_ra=1,
+        e_dec=1,
+        isdiffpos=1,
+        magpsf_corr=1,
+        sigmapsf_corr=1,
+        sigmapsf_corr_ext=1,
+        corrected=True,
+        dubious=True,
+        parent_candid=float("nan"),
+        has_stamp=True,
+        step_id_corr="step_id_corr",
+        rbversion="rbversion",
+    )
     mongo_non_detections = mongo_models.NonDetection(
-        aid="AID1",
+        aid="AID2",
         oid="ZTF1",
         tid="ZTF",
         mjd=1,
@@ -250,6 +276,9 @@ def insert_mongo_data(context):
     )
     context.mongo_db.query().get_or_create(
         mongo_detections_2, model=mongo_models.Detection
+    )
+    context.mongo_db.query().get_or_create(
+        mongo_detections_3, model=mongo_models.Detection
     )
     context.mongo_db.query().get_or_create(
         mongo_non_detections, model=mongo_models.NonDetection
