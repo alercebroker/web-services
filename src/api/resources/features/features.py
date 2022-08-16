@@ -25,7 +25,7 @@ class Features(Resource):
         self,
         id,
         command_factory: Factory[Command] = Provide[
-            AppContainer.probabilities_package.get_probabilities.provider
+            AppContainer.features_package.get_features.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
@@ -57,7 +57,7 @@ class Feature(Resource):
         id,
         name,
         command_factory: Factory[Command] = Provide[
-            AppContainer.probabilities_package.get_probabilities.provider
+            AppContainer.features_package.get_features.provider
         ],
         result_handler: ResultHandler = Provide[
             AppContainer.view_result_handler
