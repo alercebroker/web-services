@@ -163,7 +163,6 @@ class MongoPayload(abc.ABC):
             Input arguments for sorting (usually parsed from `get` methods)
         """
         filter_args = filter_args or {}
-        self.__verify_filter(filter_args)
         self.raw_filter = filter_args
         self.raw_paginate = paginate_args
         self.raw_sort = sort_args

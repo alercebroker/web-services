@@ -5,7 +5,11 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from api.container import AppContainer
-from core.astro_object import domain
+from core.astro_object.domain import (
+    ListAstroObjectPayload,
+    SingleAstroObjectPayload,
+    LimitsAstroObjectPayload,
+)
 from shared.interface.command import Command, ResultHandler
 
 from . import models, parsers
@@ -40,7 +44,7 @@ class ObjectList(Resource):
     ):
         """List all objects by given filters"""
         command = command_factory(
-            payload=domain.ListAstroObjectPayload(
+            payload=ListAstroObjectPayload(
                 filter_parser.parse_args(),
                 paginate_args=pagination_parser.parse_args(),
                 sort_args=order_parser.parse_args(),
@@ -71,7 +75,7 @@ class Object(Resource):
     ):
         """Fetch an object given its identifier"""
         command = command_factory(
-            payload=domain.SingleAstroObjectPayload(id), handler=result_handler
+            payload=SingleAstroObjectPayload(id), handler=result_handler
         )
         command.execute()
         return result_handler.result
@@ -94,7 +98,7 @@ class LimitValues(Resource):
     ):
         """Gets min and max values for objects number of detections and detection dates"""
         command = command_factory(
-            payload=domain.LimitsAstroObjectPayload(), handler=result_handler
+            payload=LimitsAstroObjectPayload(), handler=result_handler
         )
         command.execute()
         return result_handler.result
