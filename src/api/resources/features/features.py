@@ -1,13 +1,15 @@
-from flask_restx import Namespace, Resource
-from .models import feature_model
-from .parsers import fid_parser
-from db_plugins.db.sql import models
-from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
-from api.container import AppContainer, SQLConnection
+from dependency_injector.providers import Factory
+from flask_restx import Namespace, Resource
+
+from api.container import AppContainer
+from core.features.domain import FeaturesPayload
+from shared.interface.command import Command
+from shared.interface.command import ResultHandler
+from . import models, parsers
 
 api = Namespace("features", description="Features related operations")
-api.models[feature_model.name] = feature_model
+api.models[models.feature.name] = models.feature
 
 
 @api.route("/<id>/features")
@@ -16,28 +18,29 @@ api.models[feature_model.name] = feature_model
 @api.response(404, "Not found")
 class Features(Resource):
     @api.doc("features")
-    @api.expect(fid_parser)
-    @api.marshal_list_with(feature_model)
+    @api.expect(parsers.filters)
+    @api.marshal_list_with(models.feature)
     @inject
-    def get(self, id, db: SQLConnection = Provide[AppContainer.psql_db]):
+    def get(
+        self,
+        id,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.probabilities_package.get_probabilities.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
+    ):
         """
         Gets list of all features.
         """
-        args = fid_parser.parse_args()
-        obj = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
+        args = parsers.filters.parse_args()
+        command = command_factory(
+            payload=FeaturesPayload(id, **args),
+            handler=result_handler,
         )
-        if obj:
-            q = db.query(models.Feature).filter(models.Feature.oid == obj.oid)
-            if args.fid is not None:
-                q = q.filter(models.Feature.fid == args.fid)
-            if args.version is not None:
-                q = q.filter(models.Feature.version == args.version)
-            return q.all()
-        else:
-            raise NotFound
+        command.execute()
+        return result_handler.result
 
 
 @api.route("/<id>/features/<name>")
@@ -46,29 +49,27 @@ class Features(Resource):
 @api.response(404, "Not found")
 class Feature(Resource):
     @api.doc("features")
-    @api.expect(fid_parser)
-    @api.marshal_with(feature_model)
+    @api.expect(parsers.filters)
+    @api.marshal_with(models.feature)
     @inject
-    def get(self, id, name, db: SQLConnection = Provide[AppContainer.psql_db]):
+    def get(
+        self,
+        id,
+        name,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.probabilities_package.get_probabilities.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
+    ):
         """
         Gets a single Feature
         """
-        args = fid_parser.parse_args()
-        obj = (
-            db.query(models.Object, models.Object.oid)
-            .filter(models.Object.oid == id)
-            .one_or_none()
+        args = parsers.filters.parse_args()
+        command = command_factory(
+            payload=FeaturesPayload(id, name=name, **args),
+            handler=result_handler,
         )
-        if obj:
-            q = (
-                db.query(models.Feature)
-                .filter(models.Feature.name == name)
-                .filter(models.Feature.oid == obj.oid)
-            )
-            if args.fid is not None:
-                q = q.filter(models.Feature.fid == args.fid)
-            if args.version is not None:
-                q = q.filter(models.Feature.version == args.version)
-            return q.all()
-        else:
-            raise NotFound
+        command.execute()
+        return result_handler.result

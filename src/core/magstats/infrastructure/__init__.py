@@ -1,0 +1,1 @@
+from .magstats_repository import MagStatsRepository
