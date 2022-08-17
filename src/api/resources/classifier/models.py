@@ -1,6 +1,6 @@
-from flask_restx import Resource, fields, Model
+from flask_restx import fields, Model
 
-classifier_model = Model(
+classifiers = Model(
     "Classifier Model",
     {
         "classifier_name": fields.String(
@@ -15,4 +15,4 @@ classifier_model = Model(
     },
 )
 
-class_model = Model("Class", {"name": fields.String()})
+classes = Model("Class", {"name": fields.String()})
