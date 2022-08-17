@@ -5,7 +5,7 @@ from .domain import ClassifierService
 from . import infrastructure, use_case
 
 
-class AstroObjectContainer(containers.DeclarativeContainer):
+class ClassifierContainer(containers.DeclarativeContainer):
     db = providers.Dependency(instance_of=MongoConnection)
 
     repo_classifiers = providers.Factory(
