@@ -20,14 +20,15 @@ class ClassifierList(Resource):
     @api.doc("classifier")
     @api.marshal_with(models.classifiers)
     @inject
-    def get(self,
-            command_factory: Factory[Command] = Provide[
-                AppContainer.classifier_package.get_classifiers.provider
-            ],
-            result_handler: ResultHandler = Provide[
-                AppContainer.view_result_handler
-            ],
-            ):
+    def get(
+        self,
+        command_factory: Factory[Command] = Provide[
+            AppContainer.classifier_package.get_classifiers.provider
+        ],
+        result_handler: ResultHandler = Provide[
+            AppContainer.view_result_handler
+        ],
+    ):
         """
         Gets all classifiers
         """
@@ -60,8 +61,10 @@ class Classifier(Resource):
         ],
     ):
         command = command_factory(
-            payload=ClassifiersPayload(classifier_name=classifier_name,
-                                       classifier_version=classifier_version),
+            payload=ClassifiersPayload(
+                classifier_name=classifier_name,
+                classifier_version=classifier_version,
+            ),
             handler=result_handler,
         )
         command.execute()

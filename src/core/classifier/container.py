@@ -11,9 +11,7 @@ class ClassifierContainer(containers.DeclarativeContainer):
     repo_classifiers = providers.Factory(
         infrastructure.ClassifiersRepository, db=db
     )
-    repo_classes = providers.Factory(
-        infrastructure.ClassesRepository, db=db
-    )
+    repo_classes = providers.Factory(infrastructure.ClassesRepository, db=db)
 
     service = providers.Factory(
         ClassifierService,
@@ -24,6 +22,4 @@ class ClassifierContainer(containers.DeclarativeContainer):
     get_classifiers = providers.Factory(
         use_case.GetClassifiers, service=service
     )
-    get_classes = providers.Factory(
-        use_case.GetClasses, service=service
-    )
+    get_classes = providers.Factory(use_case.GetClasses, service=service)
