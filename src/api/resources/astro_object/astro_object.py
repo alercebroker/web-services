@@ -17,6 +17,7 @@ from . import models, parsers
 
 api = Namespace("objects", description="Objects related operations")
 api.models[models.object_list.name] = models.object_list
+api.models[models.object_item.name] = models.object_item
 api.models[models.single_object.name] = models.single_object
 api.models[models.limit_values.name] = models.limit_values
 
