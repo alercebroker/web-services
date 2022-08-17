@@ -1,9 +1,13 @@
-from .classifier_payload import ClassifierPayload
+from .classifier_payload import ClassifiersPayload
 
 
 class ClassifierService:
-    def __init__(self, repo_classifier):
-        self.repo_classifier = repo_classifier
+    def __init__(self, repo_classifiers, repo_classes):
+        self.repo_classifiers = repo_classifiers
+        self.repo_classes = repo_classes
 
-    def get_classifier(self, payload: ClassifierPayload):
-        return self.repo_classifier.get(payload)
+    def get_classifiers(self, payload: ClassifiersPayload):
+        return self.repo_classifiers.get(payload)
+
+    def get_classes(self, payload: ClassifiersPayload):
+        return self.repo_classifiers.get(payload)

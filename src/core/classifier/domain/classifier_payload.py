@@ -1,7 +1,7 @@
 from shared.utils.queries import MongoPayload, MongoFilterRules
 
 
-class ClassifierPayload(MongoPayload):
+class ClassifiersPayload(MongoPayload):
     filter_rules = {
         "classifier_name": MongoFilterRules(["classifier_name"], None, str),
         "classifier_version": MongoFilterRules(["classifier_version"], None, str),
