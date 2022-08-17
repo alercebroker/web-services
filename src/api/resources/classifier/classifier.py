@@ -9,8 +9,8 @@ from shared.interface.command import Command, ResultHandler
 from . import models
 
 api = Namespace("classifier", description="Classifier routes")
-api.models[models.classifiers] = models.classifiers
-api.models[models.classes] = models.classes
+api.models[models.classifiers.name] = models.classifiers
+api.models[models.classes.name] = models.classes
 
 
 @api.route("/")
