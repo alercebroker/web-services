@@ -219,6 +219,13 @@ def populate_databases(app):
             meanra=1.0,
             meandec=1.0,
             firstmjd=1.0,
+            probabilities=[dict(
+                class_name="SN",
+                probability=1.0,
+                classifier_name="C1",
+                classifier_version="1.0.0-test",
+                ranking=1,
+            )]
         )
         mongo_detections = mongo_models.Detection(
             tid="ATLAS01",

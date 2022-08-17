@@ -1,3 +1,5 @@
+import unittest
+
 from api.resources.probabilities.probabilities import Probabilities
 from db_plugins.db.sql.models import Probability, Taxonomy
 
@@ -50,16 +52,17 @@ taxonomy = [
 
 
 def test_get_probabilities(client):
-    r = client.get("objects/ZTF1/probabilities")
+    r = client.get("objects/ALERCE1/probabilities")
     assert r.status_code == 200
     assert isinstance(r.json, list)
 
 
 def test_get_probabilities_not_found(client):
-    r = client.get("objects/ZTF2/probabilities")
+    r = client.get("objects/ALERCE2/probabilities")
     assert r.status_code == 404
 
 
+@unittest.skip("No equivalent to taxonomy implemented yet")
 def test_order_probs():
     probs = [
         Probability(classifier_name="lc_classifier", class_name="AGN"),

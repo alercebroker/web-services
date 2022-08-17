@@ -36,7 +36,7 @@ def test_order_by_asc(client, app):
     assert r.json["items"][0]["aid"] == "ALERCE1"
 
 
-@unittest.skip("Classifier not implemented in mongo")
+@unittest.skip("Classifier based sorting is not available")
 def test_order_by_class_attribute_desc(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
     db = app.container.psql_db()
@@ -62,7 +62,7 @@ def test_order_by_class_attribute_desc(client, app):
     assert r.json["items"][0]["oid"] == "ZTF1"
 
 
-@unittest.skip("Classifier not implemented in mongo")
+@unittest.skip("Classifier based sorting is not available")
 def test_order_by_class_attribute_asc(client, app):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
     db = app.container.psql_db()
@@ -243,31 +243,27 @@ def test_ndet_query_2(client, app):
     assert rv.json["items"][0]["aid"] == "ALERCE2"
 
 
-@unittest.skip("Classifier not implemented in mongo")
 def test_classifier_query(client):
     args = {"classifier": "C1"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"] == "ZTF1"
+    assert rv.json["items"][0]["oid"][0] == "ZTF1"
 
 
-@unittest.skip("Classifier not implemented in mongo")
 def test_class_query(client):
     args = {"class": "SN"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"] == "ZTF1"
+    assert rv.json["items"][0]["oid"][0] == "ZTF1"
 
 
-@unittest.skip("Classifier not implemented in mongo")
 def test_class_classifier_query(client):
     args = {"classifier": "C1", "class": "SN"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"] == "ZTF1"
+    assert rv.json["items"][0]["oid"][0] == "ZTF1"
 
 
-@unittest.skip("Classifier not implemented in mongo")
 def test_class_classifier_query_not_found(client):
     args = {"classifier": "C1", "class": "fake"}
     rv = client.get("/objects/", query_string=args)

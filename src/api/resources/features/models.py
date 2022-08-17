@@ -1,6 +1,6 @@
 from flask_restx import fields, Model
 
-feature_model = Model(
+feature = Model(
     "Feature",
     {
         "name": fields.String(description="ALeRCE Feature value"),

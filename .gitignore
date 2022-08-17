@@ -1,4 +1,4 @@
-
+.pytest_cache
 .idea/
 __pycache__/
 tests/tests.out
@@ -10,3 +10,4 @@ htmlcov/
 .env
 .log/
 coverage.*
+.python-version
