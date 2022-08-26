@@ -26,7 +26,6 @@ class AppContainer(containers.DeclarativeContainer):
     config = providers.Configuration()
 
     # gateways
-    psql_db = providers.ThreadSafeSingleton(SQLConnection)
     mongo_db = providers.ThreadSafeSingleton(MongoConnection)
     database_config = config.DATABASE
     db_control = providers.ThreadSafeSingleton(

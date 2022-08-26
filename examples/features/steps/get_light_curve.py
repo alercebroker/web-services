@@ -1,5 +1,5 @@
 from behave import when, given, then
-from examples.features.environment import insert_mongo_data, insert_psql_data
+from examples.features.environment import insert_mongo_data
 from examples.examples.api_request_example.detections_examples import (
     get_detections_from_ztf,
     get_detections_from_ztf_with_params,
@@ -41,7 +41,6 @@ examples = {
 
 @given("the databases have ztf and altas alerts")
 def database_setup_ztf_atlas(context):
-    insert_psql_data(context)
     insert_mongo_data(context)
 
 

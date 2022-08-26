@@ -51,7 +51,7 @@ jobs:
       run: |
         cd examples/examples/infrastructure
         export GITHUB_TOKEN=${{ secrets.INSTALL_PRIVATE_REPO }}
-        docker-compose up -d postgres mongo alerts_api
+        docker-compose up -d mongo alerts_api
         docker-compose up --exit-code-from tests tests
         docker-compose exec -T alerts_api killall gunicorn
     - name: Codecov
