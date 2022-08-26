@@ -3,7 +3,6 @@ from flask import Flask
 from flask_restx import Api
 from api.resources.astro_object.astro_object import (
     api as astro_object,
-    limiter,
 )
 from api.resources.light_curve.light_curve import api as light_curve
 from api.resources.magstats.magstats import api as magstats
@@ -69,7 +68,6 @@ def create_app(config_path):
         ztf_api.add_namespace(classifier, path="/classifiers")
         ztf_api.add_namespace(features, path="/objects")
         ztf_api.init_app(app)
-        limiter.init_app(app)
 
         def cleanup(e):
             db_control.cleanup_databases(e)

@@ -1,6 +1,4 @@
 from flask_restx import Namespace, Resource
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 from db_plugins.db.sql import models
 from .models import (
     object_list_item,
@@ -22,7 +20,6 @@ api.models[object_list.name] = object_list
 api.models[object_item.name] = object_item
 api.models[limit_values_model.name] = limit_values_model
 
-limiter = Limiter(key_func=get_remote_address, default_limits=["30/second"])
 
 (
     filter_parser,
@@ -40,8 +37,6 @@ DEFAULT_RANKING = 1
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectList(Resource):
-    decorators = [limiter.limit("30/sec")]
-
     @api.doc("list_object")
     @api.expect(
         filter_parser, conesearch_parser, pagination_parser, order_parser
