@@ -31,10 +31,7 @@ class AppContainer(containers.DeclarativeContainer):
     database_config = config.DATABASE
     db_control = providers.ThreadSafeSingleton(
         DBControl,
-        app_config=database_config.APP_CONFIG,
-        psql_config=database_config.SQL,
         mongo_config=database_config.MONGO,
-        psql_db=psql_db,
         mongo_db=mongo_db,
     )
 

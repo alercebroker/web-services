@@ -3,7 +3,6 @@ flask_cors==3.0.9
 flask_profiler==1.8.1
 flask_restx==0.5.1
 flask-limiter==1.4
-astropy==4.0.1.post1
 prometheus-flask-exporter>=0.18.1
 returns==0.19.0
 werkzeug==2.1.2

@@ -1,9 +1,9 @@
 import unittest
-from conftest import mongo_models
+from conftest import models
 
 
 def test_order_by_desc(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -12,7 +12,7 @@ def test_order_by_desc(client, app):
         meandec=50.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {"oid": ["ZTF1"], "order_by": "firstmjd", "order_mode": "DESC"}
     r = client.get("/objects/", query_string=args)
     assert len(r.json["items"]) == 2
@@ -20,7 +20,7 @@ def test_order_by_desc(client, app):
 
 
 def test_order_by_asc(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -29,7 +29,7 @@ def test_order_by_asc(client, app):
         meandec=50.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {"oid": ["ZTF1"], "order_by": "firstmjd", "order_mode": "ASC"}
     r = client.get("/objects/", query_string=args)
     assert len(r.json["items"]) == 2
@@ -109,7 +109,7 @@ def test_objects_list_not_found(client):
 
 
 def test_date_query_first(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -118,7 +118,7 @@ def test_date_query_first(client, app):
         meandec=50.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {"firstmjd": [0, 1]}
     rv = client.get("/objects/", query_string=args)
     assert rv.json["items"][0]["aid"] == "ALERCE1"
@@ -126,7 +126,7 @@ def test_date_query_first(client, app):
 
 
 def test_conesearch_success(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -135,7 +135,7 @@ def test_conesearch_success(client, app):
         meandec=45.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {'ra': 50, 'dec': 45, 'radius': 30}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
@@ -143,7 +143,7 @@ def test_conesearch_success(client, app):
 
 
 def test_conesearch_failure(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -152,14 +152,14 @@ def test_conesearch_failure(client, app):
         meandec=45.6,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {'ra': 50, 'dec': 45, 'radius': 30}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 0
 
 
 def test_date_query_first_2(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -168,7 +168,7 @@ def test_date_query_first_2(client, app):
         meandec=50.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {"firstmjd": [2, 3]}
     rv = client.get("/objects/", query_string=args)
     assert rv.json["items"][0]["aid"] == "ALERCE2"
@@ -176,7 +176,7 @@ def test_date_query_first_2(client, app):
 
 
 def test_date_query_last(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -185,7 +185,7 @@ def test_date_query_last(client, app):
         meandec=50.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {"lastmjd": [0, 1]}
     rv = client.get("/objects/", query_string=args)
     assert rv.json["items"][0]["aid"] == "ALERCE1"
@@ -193,7 +193,7 @@ def test_date_query_last(client, app):
 
 
 def test_date_query_last_2(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -202,7 +202,7 @@ def test_date_query_last_2(client, app):
         meandec=50.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {"lastmjd": [2, 3]}
     rv = client.get("/objects/", query_string=args)
     assert rv.json["items"][0]["aid"] == "ALERCE2"
@@ -210,7 +210,7 @@ def test_date_query_last_2(client, app):
 
 
 def test_ndet_query(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -219,7 +219,7 @@ def test_ndet_query(client, app):
         meandec=50.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {"ndet": [0, 1]}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
@@ -227,7 +227,7 @@ def test_ndet_query(client, app):
 
 
 def test_ndet_query_2(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=2.0,
@@ -236,7 +236,7 @@ def test_ndet_query_2(client, app):
         meandec=50.0,
         ndet=2
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {"ndet": [2, 3]}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
@@ -277,7 +277,7 @@ def test_single_object_query(client):
 
 
 def test_limit_values(client, app):
-    obj = mongo_models.Object(
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=-1.0,
@@ -286,8 +286,8 @@ def test_limit_values(client, app):
         meandec=50.0,
         ndet=-1
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
-    obj = mongo_models.Object(
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
+    obj = models.Object(
         aid="ALERCE2",
         oid=["ZTF1"],
         firstmjd=1000.0,
@@ -296,7 +296,7 @@ def test_limit_values(client, app):
         meandec=50.0,
         ndet=1000
     )
-    app.container.mongo_db().query().get_or_create(obj, model=mongo_models.Object)
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     rv = client.get("/objects/limit_values")
     assert rv.status_code == 200
     assert rv.json["min_ndet"] == -1
