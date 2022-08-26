@@ -12,6 +12,14 @@ sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve() / "src/"))
 
 
 @pytest.fixture(scope="session")
+def docker_compose_command():
+    compose_version = os.getenv("COMPOSE_VERSION", "v1")
+    if compose_version == "v1":
+        return "docker-compose"
+    return "docker compose"
+
+
+@pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
     return os.path.join(
         str(pytestconfig.rootdir), "tests", "docker-compose.yml"
