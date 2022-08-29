@@ -21,12 +21,12 @@ api.models[models.non_detection.name] = models.non_detection
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class LightCurve(Resource):
+    @api.doc("lightcurve")
+    @api.expect(parsers.filters)
+    @api.marshal_with(models.light_curve, skip_none=True)
     @decorators.set_permissions_decorator(["admin", "basic_user"])
     @decorators.set_filters_decorator(["filter_atlas_lightcurve"])
     @decorators.check_permissions_decorator
-    @api.doc("lightcurve")
-    @api.marshal_with(models.light_curve, skip_none=True)
-    @api.expect(parsers.filters)
     @inject
     def get(
         self,
@@ -55,12 +55,12 @@ class LightCurve(Resource):
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectDetections(Resource):
+    @api.doc("detections")
+    @api.expect(parsers.filters, parsers.pagination, parsers.order)
+    @api.marshal_list_with(models.detection, skip_none=True)
     @decorators.set_permissions_decorator(["admin", "basic_user"])
     @decorators.set_filters_decorator(["filter_atlas_detections"])
     @decorators.check_permissions_decorator
-    @api.doc("detections")
-    @api.marshal_list_with(models.detection, skip_none=True)
-    @api.expect(parsers.filters, parsers.pagination, parsers.order)
     @inject
     def get(
         self,
@@ -91,12 +91,12 @@ class ObjectDetections(Resource):
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class NonDetections(Resource):
+    @api.doc("non_detections")
+    @api.expect(parsers.filters, parsers.pagination, parsers.order)
+    @api.marshal_list_with(models.non_detection, skip_none=True)
     @decorators.set_permissions_decorator(["admin", "basic_user"])
     @decorators.set_filters_decorator(["filter_atlas_non_detections"])
     @decorators.check_permissions_decorator
-    @api.doc("non_detections")
-    @api.marshal_list_with(models.non_detection, skip_none=True)
-    @api.expect(parsers.filters, parsers.pagination, parsers.order)
     @inject
     def get(
         self,
