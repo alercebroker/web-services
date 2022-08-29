@@ -69,40 +69,6 @@ def test_get_detections(client):
     assert rv.status_code == 200
 
 
-def test_get_detection_in_date_range(client, app):
-    det = mongo_models.Detection(
-            tid="ZTF02",
-            aid="AID_ZTF2",
-            oid="ZTF22",
-            candid="candid",
-            mjd=0,
-            fid=1,
-            ra=1,
-            dec=1,
-            rb=1,
-            mag=1,
-            e_mag=1,
-            rfid=1,
-            e_ra=1,
-            e_dec=1,
-            isdiffpos=1,
-            magpsf_corr=1,
-            sigmapsf_corr=1,
-            sigmapsf_corr_ext=1,
-            corrected=True,
-            dubious=True,
-            parent_candid=1234,
-            has_stamp=True,
-            step_id_corr="step_id_corr",
-            rbversion="rbversion",
-        )
-    app.container.mongo_db().query().get_or_create(det, model=mongo_models.Detection)
-    rv = client.get("objects/AID_ZTF2/detections?mjd=0&mjd=0")
-    assert rv.status_code == 200
-    assert len(rv.json) == 1
-    assert rv.json[0]["oid"] == "ZTF22"
-
-
 def test_sort_detections_by_date_descending(client, app):
     det = mongo_models.Detection(
             tid="ZTF02",
@@ -205,23 +171,6 @@ def test_paginated_detections_result(client, app):
     assert rv.status_code == 200
     assert len(rv.json) == 1
     assert rv.json[0]["oid"] == "ZTF22"
-
-
-def test_get_non_detection_in_date_range(client, app):
-    det = mongo_models.NonDetection(
-            tid="ZTF02",
-            aid="AID_ZTF2",
-            oid="ZTF22",
-            mjd=0,
-            diffmaglim=1,
-            fid=1,
-        )
-    app.container.mongo_db().query().get_or_create(det, model=mongo_models.NonDetection)
-    rv = client.get("objects/AID_ZTF2/non_detections?mjd=0&mjd=0")
-    assert rv.status_code == 200
-    assert len(rv.json) == 1
-    print(rv.json)
-    assert rv.json[0]["mjd"] == 0
 
 
 def test_sort_non_detections_by_date_ascending(client, app):

@@ -15,7 +15,7 @@ class LightCurvePayload(MongoPayload):
             LightCurveHelpers.generate_tid_regex,
         ),
     }
-    paginate_map = {"page": "page", "per_page": "page_size", "count": "count"}
+    paginate_map = {"page": "page", "per_page": "page_size"}
     sort_map = {"key": "order_by", "direction": "order_mode"}
     direction_map = {"ASC": 1, "DESC": -1}
 

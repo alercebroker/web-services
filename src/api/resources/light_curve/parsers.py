@@ -11,14 +11,6 @@ filters.add_argument(
     help="Survey identifier",
     choices=SURVEY_ID_CHOICES,
 )
-filters.add_argument(
-    "mjd",
-    type=float,
-    dest="mjd",
-    location="args",
-    help="Range of detection modified Julian dates",
-    action="append",
-)
 
 
 pagination = reqparse.RequestParser()
