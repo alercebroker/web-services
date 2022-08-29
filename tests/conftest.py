@@ -295,6 +295,12 @@ def populate_databases(app):
             diffmaglim=1,
             fid=1,
         )
+        mongo_taxonomy = mongo_models.Taxonomy(
+            classifier_name="C1",
+            classifier_version="1.0.0-test",
+            classes=["SN"],
+        )
+        mongo_db.query().get_or_create(mongo_taxonomy, model=mongo_models.Taxonomy)
         mongo_db.query().get_or_create(mongo_object, model=mongo_models.Object)
         mongo_db.query().get_or_create(
             mongo_object_2, model=mongo_models.Object

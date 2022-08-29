@@ -6,6 +6,7 @@ from core.astro_object.container import AstroObjectContainer
 from core.probabilities.container import ProbabilitiesContainer
 from core.features.container import FeaturesContainer
 from core.magstats.container import MagStatsContainer
+from core.classifier.container import ClassifierContainer
 from shared.database.control import DBControl
 from api.result_handlers.view_result_handler import ViewResultHandler
 
@@ -50,3 +51,4 @@ class AppContainer(containers.DeclarativeContainer):
     )
     features_package = providers.Container(FeaturesContainer, db=mongo_db)
     magstats_package = providers.Container(MagStatsContainer, db=mongo_db)
+    classifier_package = providers.Container(ClassifierContainer, db=mongo_db)
