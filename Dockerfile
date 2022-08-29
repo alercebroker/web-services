@@ -8,7 +8,6 @@ ADD requirements.txt /app/
 WORKDIR /app
 RUN pip install --upgrade pip && pip install gunicorn==20.1.0
 RUN pip install gunicorn[gevent]
-RUN pip install psycogreen
 RUN pip install -r requirements.txt
 
 COPY . /app
