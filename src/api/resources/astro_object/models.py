@@ -1,5 +1,16 @@
 from flask_restx import fields, Model
 
+probabilities = Model(
+    "Classifier probabilities",
+    {
+        "classifier_name": fields.String(description="Classifier name"),
+        "classifier_version": fields.String(description="Classifier version"),
+        "class_name": fields.String(description="Class name"),
+        "ranking": fields.String(description="Class ranking in classifier"),
+        "probability": fields.String(description="Class probability"),
+    },
+)
+
 object_item = Model(
     "Object List Item",
     {
@@ -16,10 +27,14 @@ object_item = Model(
         ),
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
+        "probabilities": fields.List(
+            fields.Nested(probabilities),
+            description="Classifier probabilities",
+        ),
     },
 )
 
-object_single = Model(
+single_object = Model(
     "Single Object",
     {
         "aid": fields.String(description="ALeRCE object identifier"),

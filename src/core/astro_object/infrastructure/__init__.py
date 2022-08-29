@@ -1,3 +1,3 @@
-from .limits_repository import LimitsRepository
+from .limits_repository import LimitsAstroObjectRepository
 from .list_object_repository import ListAstroObjectRepository
 from .single_object_repository import SingleAstroObjectRepository

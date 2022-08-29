@@ -41,9 +41,9 @@ class LightCurve(Resource):
         """
         Gets detections and non detections
         """
-        args = {"aid": id, **parsers.filters.parse_args()}
+        args = parsers.filters.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(args),
+            payload=LightCurvePayload(id, args),
             handler=result_handler,
         )
         command.execute()
@@ -75,11 +75,11 @@ class ObjectDetections(Resource):
         """
         Just the detections
         """
-        args = {"aid": id, **parsers.filters.parse_args()}
+        args = parsers.filters.parse_args()
         paginate_args = parsers.pagination.parse_args()
         sort_args = parsers.order.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(args, paginate_args, sort_args),
+            payload=LightCurvePayload(id, args, paginate_args, sort_args),
             handler=result_handler,
         )
         command.execute()
@@ -111,11 +111,11 @@ class NonDetections(Resource):
         """
         Just non detections
         """
-        args = {"aid": id, **parsers.filters.parse_args()}
+        args = parsers.filters.parse_args()
         paginate_args = parsers.pagination.parse_args()
         sort_args = parsers.order.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(args, paginate_args, sort_args),
+            payload=LightCurvePayload(id, args, paginate_args, sort_args),
             handler=result_handler,
         )
         command.execute()

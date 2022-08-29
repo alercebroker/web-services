@@ -5,25 +5,24 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 from api.container import AppContainer
-from core.astro_object.domain import AstroObjectPayload
+from core.astro_object.domain import (
+    ListAstroObjectPayload,
+    SingleAstroObjectPayload,
+    LimitsAstroObjectPayload,
+)
 from shared.interface.command import Command, ResultHandler
 
 from . import models, parsers
 
 
 api = Namespace("objects", description="Objects related operations")
-api.models[models.object_item.name] = models.object_item
 api.models[models.object_list.name] = models.object_list
-api.models[models.object_single.name] = models.object_single
+api.models[models.object_item.name] = models.object_item
+api.models[models.probabilities.name] = models.probabilities
+api.models[models.single_object.name] = models.single_object
 api.models[models.limit_values.name] = models.limit_values
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["30/second"])
-
-(
-    filter_parser,
-    order_parser,
-    pagination_parser,
-) = parsers.create_parsers()
 
 
 @api.route("/")
@@ -33,7 +32,7 @@ class ObjectList(Resource):
     decorators = [limiter.limit("30/sec")]
 
     @api.doc("list_object")
-    @api.expect(filter_parser, pagination_parser, order_parser)
+    @api.expect(parsers.filters, parsers.pagination, parsers.order)
     @api.marshal_with(models.object_list)
     @inject
     def get(
@@ -47,10 +46,10 @@ class ObjectList(Resource):
     ):
         """List all objects by given filters"""
         command = command_factory(
-            payload=AstroObjectPayload(
-                filter_parser.parse_args(),
-                paginate_args=pagination_parser.parse_args(),
-                sort_args=order_parser.parse_args(),
+            payload=ListAstroObjectPayload(
+                parsers.filters.parse_args(),
+                paginate_args=parsers.pagination.parse_args(),
+                sort_args=parsers.order.parse_args(),
             ),
             handler=result_handler,
         )
@@ -64,7 +63,7 @@ class ObjectList(Resource):
 @api.response(404, "Object not found")
 class Object(Resource):
     @api.doc("get_object")
-    @api.marshal_with(models.object_single)
+    @api.marshal_with(models.single_object)
     @inject
     def get(
         self,
@@ -78,7 +77,7 @@ class Object(Resource):
     ):
         """Fetch an object given its identifier"""
         command = command_factory(
-            payload=AstroObjectPayload({"oid": id}), handler=result_handler
+            payload=SingleAstroObjectPayload(id), handler=result_handler
         )
         command.execute()
         return result_handler.result
@@ -101,7 +100,7 @@ class LimitValues(Resource):
     ):
         """Gets min and max values for objects number of detections and detection dates"""
         command = command_factory(
-            payload=AstroObjectPayload({}), handler=result_handler
+            payload=LimitsAstroObjectPayload(), handler=result_handler
         )
         command.execute()
         return result_handler.result
