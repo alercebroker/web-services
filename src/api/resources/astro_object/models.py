@@ -65,7 +65,7 @@ single_object = Model(
         "magstats": fields.List(
             fields.Nested(magstats),
             description="Magnitude statistics",
-        )
+        ),
     },
 )
 
