@@ -1,5 +1,9 @@
 from flask_restx import fields, Model
 
+from api.resources.features.models import feature
+from api.resources.magstats.models import magstats
+from api.resources.probabilities.models import probability
+
 probabilities = Model(
     "Classifier probabilities",
     {
@@ -28,7 +32,7 @@ object_item = Model(
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
         "probabilities": fields.List(
-            fields.Nested(probabilities),
+            fields.Nested(probability),
             description="Classifier probabilities",
         ),
     },
@@ -50,6 +54,18 @@ single_object = Model(
         ),
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
+        "probabilities": fields.List(
+            fields.Nested(probability),
+            description="Classifier probabilities",
+        ),
+        "features": fields.List(
+            fields.Nested(feature),
+            description="Features",
+        ),
+        "magstats": fields.List(
+            fields.Nested(magstats),
+            description="Magnitude statistics",
+        )
     },
 )
 
