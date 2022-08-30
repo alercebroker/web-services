@@ -28,7 +28,7 @@ def create_app(config_path):
     app.container = container
     app.config["RALIDATOR_SETTINGS"] = container.config.RALIDATOR_SETTINGS()
     app.config["FILTERS_MAP"] = get_filters_map()
-    # Check if app run trough gunicorn
+    # Check if app run through gunicorn
     is_gunicorn = "gunicorn" in os.environ.get("SERVER_SOFTWARE", "")
     if is_gunicorn:  # pragma: no cover
         gunicorn_logger = logging.getLogger("gunicorn.error")
