@@ -35,6 +35,7 @@ order.add_argument(
     type=str,
     dest="order_by",
     location="args",
+    choices=["mjd"],
     help="Column used for ordering results",
 )
 order.add_argument(
