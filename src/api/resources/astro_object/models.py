@@ -4,14 +4,13 @@ from api.resources.features.models import feature
 from api.resources.magstats.models import magstats
 from api.resources.probabilities.models import probability
 
-probabilities = Model(
-    "Classifier probabilities",
+
+xmatch = Model(
+    "Cross match",
     {
-        "classifier_name": fields.String(description="Classifier name"),
-        "classifier_version": fields.String(description="Classifier version"),
-        "class_name": fields.String(description="Class name"),
-        "ranking": fields.String(description="Class ranking in classifier"),
-        "probability": fields.String(description="Class probability"),
+        "catid": fields.String(description="Catalogue ID"),
+        "oid_catalog": fields.String(description="Object ID in catalogue"),
+        "dist": fields.Float(description="Distance in degrees"),
     },
 )
 
@@ -58,13 +57,17 @@ single_object = Model(
             fields.Nested(probability),
             description="Classifier probabilities",
         ),
-        "features": fields.List(
-            fields.Nested(feature),
-            description="Features",
-        ),
         "magstats": fields.List(
             fields.Nested(magstats),
             description="Magnitude statistics",
+        ),
+        "xmatch": fields.List(
+            fields.Nested(xmatch),
+            description="Cross matches",
+        ),
+        "features": fields.List(
+            fields.Nested(feature),
+            description="Features",
         ),
     },
 )
