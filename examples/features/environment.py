@@ -1,28 +1,7 @@
 from db_plugins.db.mongo.connection import MongoDatabaseCreator
-from db_plugins.db.sql.connection import SQLDatabaseCreator
-from db_plugins.db.sql import models as psql_models
-from db_plugins.db.mongo import models as mongo_models
-import datetime
+from db_plugins.db.mongo import models
 import signal
 import time
-
-
-def psql_ready():
-    try:
-        conn = SQLDatabaseCreator().create_database()
-        settings = {
-            "ENGINE": "postgresql",
-            "HOST": "postgres",
-            "DB_NAME": "postgres",
-            "USER": "postgres",
-            "PASSWORD": "postgres",
-            "PORT": 5432,
-        }
-        conn.connect(settings)
-        conn.create_db()
-        return True
-    except Exception:
-        return False
 
 
 def mongo_ready():
@@ -71,7 +50,6 @@ def wait_for_service(timeout: int, pause: float, callback, service):
 
 
 def before_all(context):
-    wait_for_service(timeout=30, pause=1, callback=psql_ready, service="PSQL")
     wait_for_service(
         timeout=30, pause=1, callback=mongo_ready, service="Mongo"
     )
@@ -79,74 +57,11 @@ def before_all(context):
 
 
 def after_scenario(context, scenario):
-    tear_down_psql(context.sql_db)
     tear_down_mongo(context.mongo_db)
-
-
-def tear_down_psql(db):
-    db.session.close()
-    db.drop_db()
 
 
 def tear_down_mongo(db):
     db.drop_db()
-
-
-def insert_psql_data(context):
-    creator = SQLDatabaseCreator()
-    context.sql_db = creator.create_database()
-    settings = {
-        "ENGINE": "postgresql",
-        "HOST": "postgres",
-        "DB_NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "PORT": 5432,
-    }
-    context.sql_db.connect(settings)
-    context.sql_db.create_db()
-    model = psql_models.Object(
-        oid="ZTF1",
-        ndet=1,
-        lastmjd=1.0,
-        meanra=1.0,
-        meandec=1.0,
-        sigmara=1.0,
-        sigmadec=1.0,
-        deltajd=1.0,
-        firstmjd=1.0,
-    )
-    step = psql_models.Step(
-        step_id="test_step",
-        name="preprocess",
-        version="1",
-        comments="asd",
-        date=datetime.datetime.now(),
-    )
-    model.detections.append(
-        psql_models.Detection(
-            candid=123,
-            mjd=1,
-            fid=1,
-            pid=1,
-            isdiffpos=1,
-            ra=1,
-            dec=1,
-            rb=1,
-            magpsf=1,
-            sigmapsf=1,
-            corrected=True,
-            dubious=True,
-            has_stamp=True,
-            step_id_corr=step.step_id,
-        )
-    )
-    model.non_detections.append(
-        psql_models.NonDetection(mjd=1, fid=1, diffmaglim=1)
-    )
-    context.sql_db.session.add(model)
-    context.sql_db.session.commit()
-    context.sql_db.session.close()
 
 
 def insert_mongo_data(context):
@@ -161,7 +76,7 @@ def insert_mongo_data(context):
     }
     context.mongo_db.connect(settings)
     context.mongo_db.create_db()
-    mongo_object = mongo_models.Object(
+    mongo_object = models.Object(
         aid="AID1",
         oid=["ATLAS1"],
         lastmjd="lastmjd",
@@ -170,7 +85,7 @@ def insert_mongo_data(context):
         meandec=50.0,
         ndet="ndet",
     )
-    mongo_object_2 = mongo_models.Object(
+    mongo_object_2 = models.Object(
         aid="AID2",
         oid=["ATLAS2", "ZTF1"],
         lastmjd="lastmjd",
@@ -179,7 +94,7 @@ def insert_mongo_data(context):
         meandec=50.0,
         ndet="ndet",
     )
-    mongo_detections = mongo_models.Detection(
+    mongo_detections = models.Detection(
         tid="ATLAS01",
         aid="AID1",
         oid="ATLAS1",
@@ -205,7 +120,7 @@ def insert_mongo_data(context):
         step_id_corr="step_id_corr",
         rbversion="rbversion",
     )
-    mongo_detections_2 = mongo_models.Detection(
+    mongo_detections_2 = models.Detection(
         tid="ZTF02",
         aid="AID2",
         oid="ZTF1",
@@ -231,7 +146,7 @@ def insert_mongo_data(context):
         step_id_corr="step_id_corr",
         rbversion="rbversion",
     )
-    mongo_detections_3 = mongo_models.Detection(
+    mongo_detections_3 = models.Detection(
         tid="ATLAS02",
         aid="AID2",
         oid="ATLAS2",
@@ -257,7 +172,7 @@ def insert_mongo_data(context):
         step_id_corr="step_id_corr",
         rbversion="rbversion",
     )
-    mongo_non_detections = mongo_models.NonDetection(
+    mongo_non_detections = models.NonDetection(
         aid="AID2",
         oid="ZTF1",
         tid="ZTF",
@@ -266,20 +181,20 @@ def insert_mongo_data(context):
         fid=1,
     )
     context.mongo_db.query().get_or_create(
-        mongo_object, model=mongo_models.Object
+        mongo_object, model=models.Object
     )
     context.mongo_db.query().get_or_create(
-        mongo_object_2, model=mongo_models.Object
+        mongo_object_2, model=models.Object
     )
     context.mongo_db.query().get_or_create(
-        mongo_detections, model=mongo_models.Detection
+        mongo_detections, model=models.Detection
     )
     context.mongo_db.query().get_or_create(
-        mongo_detections_2, model=mongo_models.Detection
+        mongo_detections_2, model=models.Detection
     )
     context.mongo_db.query().get_or_create(
-        mongo_detections_3, model=mongo_models.Detection
+        mongo_detections_3, model=models.Detection
     )
     context.mongo_db.query().get_or_create(
-        mongo_non_detections, model=mongo_models.NonDetection
+        mongo_non_detections, model=models.NonDetection
     )

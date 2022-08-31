@@ -2,11 +2,8 @@ import pytest
 import sys
 import pathlib
 import os
-import psycopg2
 import pymongo
-from db_plugins.db.sql import models
-from db_plugins.db.mongo import models as mongo_models
-import datetime
+from db_plugins.db.mongo import models
 
 sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve() / "src/"))
 
@@ -16,17 +13,6 @@ def docker_compose_file(pytestconfig):
     return os.path.join(
         str(pytestconfig.rootdir), "tests", "docker-compose.yml"
     )
-
-
-def is_responsive_psql(url):
-    try:
-        conn = psycopg2.connect(
-            "dbname='postgres' user='postgres' host=localhost password='postgres'"
-        )
-        conn.close()
-        return True
-    except Exception:
-        return False
 
 
 def is_responsive_mongo(url):
@@ -47,31 +33,19 @@ def is_responsive_mongo(url):
 
 
 @pytest.fixture(scope="session")
-def psql_service(docker_ip, docker_services):
-    """Ensure that Kafka service is up and responsive."""
-    # `port_for` takes a container port and returns the corresponding host port
-    port = docker_services.port_for("postgres", 5432)
-    server = "{}:{}".format(docker_ip, port)
-    docker_services.wait_until_responsive(
-        timeout=30.0, pause=0.1, check=lambda: is_responsive_psql(server)
-    )
-    return server
-
-
-@pytest.fixture(scope="session")
 def mongo_service(docker_ip, docker_services):
     """Ensure that Kafka service is up and responsive."""
     # `port_for` takes a container port and returns the corresponding host port
     port = docker_services.port_for("mongo", 27017)
     server = "{}:{}".format(docker_ip, port)
     docker_services.wait_until_responsive(
-        timeout=30.0, pause=0.1, check=lambda: is_responsive_psql(server)
+        timeout=30.0, pause=0.1, check=lambda: is_responsive_mongo(server)
     )
     return server
 
 
 @pytest.fixture
-def app(psql_service, mongo_service):
+def app(mongo_service):
     from api.app import create_app
 
     app = create_app("./tests/config.yml")
@@ -82,118 +56,11 @@ def app(psql_service, mongo_service):
 @pytest.fixture
 def populate_databases(app):
     with app.app_context():
-        db = app.container.psql_db()
-        mongo_db = app.container.mongo_db()
+        db = app.container.mongo_db()
         db.create_db()
-        mongo_db.create_db()
-
-        # psql data
-        taxonomy = models.Taxonomy(
-            classifier_name="C1",
-            classifier_version="1.0.0-test",
-            classes=["SN"],
-        )
-        model = models.Object(
-            oid="ZTF1",
-            ndet=1,
-            lastmjd=1.0,
-            meanra=1.0,
-            meandec=1.0,
-            sigmara=1.0,
-            sigmadec=1.0,
-            deltajd=1.0,
-            firstmjd=1.0,
-        )
-        model.magstats.append(
-            models.MagStats(
-                fid=1,
-                stellar=True,
-                corrected=True,
-                ndet=1,
-                ndubious=1,
-                dmdt_first=0.13,
-                dm_first=0.12,
-                sigmadm_first=1.4,
-                dt_first=2.0,
-                magmean=19.0,
-                magmedian=20,
-                magmax=1.4,
-                magmin=1.4,
-                magsigma=1.4,
-                maglast=1.4,
-                magfirst=1.4,
-                firstmjd=1.4,
-                lastmjd=1.4,
-                step_id_corr="testing_id",
-            )
-        )
-        model.probabilities.append(
-            models.Probability(
-                class_name="SN",
-                probability=1.0,
-                classifier_name=taxonomy.classifier_name,
-                classifier_version=taxonomy.classifier_version,
-                ranking=1,
-            )
-        )
-        step_feature = models.Step(
-            step_id="test_feature",
-            name="feature",
-            version="1",
-            comments="asd",
-            date=datetime.datetime.now(),
-        )
-        step_preprocess = models.Step(
-            step_id="test_preprocess",
-            name="preprocess",
-            version="1",
-            comments="asd",
-            date=datetime.datetime.now(),
-        )
-        feature_version = models.FeatureVersion(
-            version="1.0.0-test",
-            step_id_feature=step_feature.step_id,
-            step_id_preprocess=step_preprocess.step_id,
-        )
-        feature = models.Feature(
-            oid=model.oid,
-            name="testfeature",
-            value=0.5,
-            fid=1,
-            version=feature_version.version,
-        )
-        model.features.append(feature)
-        model.detections.append(
-            models.Detection(
-                candid=123,
-                mjd=1,
-                fid=1,
-                pid=1,
-                isdiffpos=1,
-                ra=1,
-                dec=1,
-                rb=1,
-                magpsf=1,
-                sigmapsf=1,
-                corrected=True,
-                dubious=True,
-                has_stamp=True,
-                step_id_corr=step_preprocess.step_id,
-            )
-        )
-        model.non_detections.append(
-            models.NonDetection(mjd=1, fid=1, diffmaglim=1)
-        )
-        db.session.add(taxonomy)
-        db.session.add_all([step_feature, step_preprocess])
-        db.session.commit()
-        db.session.add(feature_version)
-        db.session.add(model)
-        db.session.commit()
-        db.session.close()
 
         # mongo data
-        mongo_object = mongo_models.Object(
+        object = models.Object(
             aid="AID_ATLAS1",
             oid=["ATLAS1"],
             lastmjd=99.,
@@ -202,7 +69,7 @@ def populate_databases(app):
             meandec=50.0,
             ndet=10,
         )
-        mongo_object_2 = mongo_models.Object(
+        object_2 = models.Object(
             aid="AID_ATLAS2",
             oid=["ATLAS2", "ZTF2"],
             lastmjd=99.,
@@ -211,7 +78,7 @@ def populate_databases(app):
             meandec=50.0,
             ndet=10,
         )
-        mongo_object_3 = mongo_models.Object(
+        object_3 = models.Object(
             aid="ALERCE1",
             oid=["ZTF1"],
             ndet=1,
@@ -227,7 +94,7 @@ def populate_databases(app):
                 ranking=1,
             )]
         )
-        mongo_detections = mongo_models.Detection(
+        detections = models.Detection(
             tid="ATLAS01",
             aid="AID_ATLAS1",
             oid="ATLAS1",
@@ -253,7 +120,7 @@ def populate_databases(app):
             step_id_corr="step_id_corr",
             rbversion="rbversion",
         )
-        mongo_detections_2 = mongo_models.Detection(
+        detections_2 = models.Detection(
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF2",
@@ -279,7 +146,7 @@ def populate_databases(app):
             step_id_corr="step_id_corr",
             rbversion="rbversion",
         )
-        mongo_non_detections = mongo_models.NonDetection(
+        non_detections = models.NonDetection(
             aid="AID_ATLAS1",
             oid="ATLAS1",
             tid="ATLAS01",
@@ -287,7 +154,7 @@ def populate_databases(app):
             diffmaglim=1,
             fid=1,
         )
-        mongo_non_detections2 = mongo_models.NonDetection(
+        non_detections2 = models.NonDetection(
             aid="AID_ZTF2",
             oid="ZTF2",
             tid="ZTF02",
@@ -295,36 +162,34 @@ def populate_databases(app):
             diffmaglim=1,
             fid=1,
         )
-        mongo_taxonomy = mongo_models.Taxonomy(
+        taxonomy = models.Taxonomy(
             classifier_name="C1",
             classifier_version="1.0.0-test",
             classes=["SN"],
         )
-        mongo_db.query().get_or_create(mongo_taxonomy, model=mongo_models.Taxonomy)
-        mongo_db.query().get_or_create(mongo_object, model=mongo_models.Object)
-        mongo_db.query().get_or_create(
-            mongo_object_2, model=mongo_models.Object
+        db.query().get_or_create(taxonomy, model=models.Taxonomy)
+        db.query().get_or_create(object, model=models.Object)
+        db.query().get_or_create(
+            object_2, model=models.Object
         )
-        mongo_db.query().get_or_create(
-            mongo_object_3, model=mongo_models.Object
+        db.query().get_or_create(
+            object_3, model=models.Object
         )
-        mongo_db.query().get_or_create(
-            mongo_detections, model=mongo_models.Detection
+        db.query().get_or_create(
+            detections, model=models.Detection
         )
-        mongo_db.query().get_or_create(
-            mongo_detections_2, model=mongo_models.Detection
+        db.query().get_or_create(
+            detections_2, model=models.Detection
         )
-        mongo_db.query().get_or_create(
-            mongo_non_detections, model=mongo_models.NonDetection
+        db.query().get_or_create(
+            non_detections, model=models.NonDetection
         )
-        mongo_db.query().get_or_create(
-            mongo_non_detections2, model=mongo_models.NonDetection
+        db.query().get_or_create(
+            non_detections2, model=models.NonDetection
         )
 
     yield app
-    db.session.close()
     db.drop_db()
-    mongo_db.drop_db()
 
 
 @pytest.fixture

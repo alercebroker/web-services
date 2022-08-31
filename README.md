@@ -13,20 +13,13 @@
 
 Clone this repo using `git clone https://github.com/alercebroker/ztf-api.git` and install requirements with `pip install -r requirements.txt`.
 
-For modify an existing endpoint, go to `api/resources` and enter the folder of the endpoint that you want to modify. Only write code to specific task of this endpoint.
+To modify an existing endpoint, go to `api/resources` and enter the folder of the endpoint that you want to modify. Only write code to specific task of this endpoint.
 
 If you want to create a new endpoint, create a package with your new routines in `api/resources`. After that in the `api/app.py`, import the new logic in the top and add the namespace to the main api object. 
 
 To run in develop, first you must set the following environment variables:
 
 ```
-# Config to connect to the PSQL Database
-PSQL_HOST = 
-PSQL_DATABASE = 
-PSQL_USER = 
-PSQL_PASSWORD = 
-PSQL_PORT = 
-
 # Config to connect to the MongoDB Database
 MONGO_HOST = 
 MONGO_PORT = 
@@ -34,13 +27,9 @@ MONGO_DATABASE =
 MONGO_AUTH_SOURCE = 
 MONGO_USER = 
 MONGO_PASSWORD = 
-
-# optional config to indicate if the app should connect to a especific database.
-CONNECT_PSQL = "default yes" 
-CONNECT_MONGO = "default not set"
 ```
 
-**Note:** If you don't have a database, you can create it using [db-plugins](https://github.com/alercebroker/db-plugins) and [Docker](https://github.com/alercebroker/pipeline-integration-test/blob/main/initdb/Dockerfile).
+**Note:** If you don't have a database, you can create one using [db-plugins](https://github.com/alercebroker/db-plugins) and [Docker](https://github.com/alercebroker/pipeline-integration-test/blob/main/initdb/Dockerfile).
 
 After run 
 
