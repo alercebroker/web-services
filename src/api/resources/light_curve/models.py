@@ -1,7 +1,7 @@
 from flask_restx import fields, Model
 
 
-detection_model = Model(
+detection = Model(
     "Detection",
     {
         "aid": fields.String,
@@ -24,7 +24,7 @@ detection_model = Model(
     },
 )
 
-non_detection_model = Model(
+non_detection = Model(
     "Non Detection",
     {
         "tid": fields.String,
@@ -34,10 +34,10 @@ non_detection_model = Model(
     },
 )
 
-light_curve_model = Model(
+light_curve = Model(
     "Light Curve",
     {
-        "detections": fields.List(fields.Nested(detection_model)),
-        "non_detections": fields.List(fields.Nested(non_detection_model)),
+        "detections": fields.List(fields.Nested(detection)),
+        "non_detections": fields.List(fields.Nested(non_detection)),
     },
 )

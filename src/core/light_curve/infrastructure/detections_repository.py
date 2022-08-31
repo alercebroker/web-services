@@ -11,7 +11,10 @@ class DetectionRepository(MongoRepository):
         return self._find_all(models.Detection, payload)
 
     def _wrap_results(self, result):
-        detections = list(result)
+        try:
+            detections = list(result)
+        except TypeError:  # Pagination is being used
+            detections = result.items
         if len(detections):
             return Success(detections)
         return Failure(ClientErrorException(EmptyQuery()))

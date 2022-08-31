@@ -217,7 +217,7 @@ class MongoPayload(abc.ABC):
                     self.Helpers.list_of_str(directions),
                 )
             ]
-            if None not in [keys, directions]
+            if keys is not None
             else None
         )
 

@@ -11,9 +11,9 @@ from . import models, parsers
 
 
 api = Namespace("lightcurve", description="LightCurve related operations")
-api.models[models.light_curve_model.name] = models.light_curve_model
-api.models[models.detection_model.name] = models.detection_model
-api.models[models.non_detection_model.name] = models.non_detection_model
+api.models[models.light_curve.name] = models.light_curve
+api.models[models.detection.name] = models.detection
+api.models[models.non_detection.name] = models.non_detection
 
 
 @api.route("/<id>/lightcurve")
@@ -22,8 +22,8 @@ api.models[models.non_detection_model.name] = models.non_detection_model
 @api.response(404, "Not found")
 class LightCurve(Resource):
     @api.doc("lightcurve")
-    @api.expect(parsers.survey_id_parser)
-    @api.marshal_with(models.light_curve_model, skip_none=True)
+    @api.expect(parsers.filters)
+    @api.marshal_with(models.light_curve, skip_none=True)
     @decorators.set_permissions_decorator(["admin", "basic_user"])
     @decorators.set_filters_decorator(["filter_atlas_lightcurve"])
     @decorators.check_permissions_decorator
@@ -41,7 +41,7 @@ class LightCurve(Resource):
         """
         Gets detections and non detections
         """
-        args = parsers.survey_id_parser.parse_args()
+        args = parsers.filters.parse_args()
         command = command_factory(
             payload=LightCurvePayload(id, args),
             handler=result_handler,
@@ -56,8 +56,8 @@ class LightCurve(Resource):
 @api.response(404, "Not found")
 class ObjectDetections(Resource):
     @api.doc("detections")
-    @api.marshal_list_with(models.detection_model, skip_none=True)
-    @api.expect(parsers.survey_id_parser)
+    @api.expect(parsers.filters, parsers.pagination, parsers.order)
+    @api.marshal_list_with(models.detection, skip_none=True)
     @decorators.set_permissions_decorator(["admin", "basic_user"])
     @decorators.set_filters_decorator(["filter_atlas_detections"])
     @decorators.check_permissions_decorator
@@ -75,9 +75,11 @@ class ObjectDetections(Resource):
         """
         Just the detections
         """
-        args = parsers.survey_id_parser.parse_args()
+        args = parsers.filters.parse_args()
+        paginate_args = parsers.pagination.parse_args()
+        sort_args = parsers.order.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(id, args),
+            payload=LightCurvePayload(id, args, paginate_args, sort_args),
             handler=result_handler,
         )
         command.execute()
@@ -90,8 +92,8 @@ class ObjectDetections(Resource):
 @api.response(404, "Not found")
 class NonDetections(Resource):
     @api.doc("non_detections")
-    @api.marshal_list_with(models.non_detection_model, skip_none=True)
-    @api.expect(parsers.survey_id_parser)
+    @api.expect(parsers.filters, parsers.pagination, parsers.order)
+    @api.marshal_list_with(models.non_detection, skip_none=True)
     @decorators.set_permissions_decorator(["admin", "basic_user"])
     @decorators.set_filters_decorator(["filter_atlas_non_detections"])
     @decorators.check_permissions_decorator
@@ -109,9 +111,11 @@ class NonDetections(Resource):
         """
         Just non detections
         """
-        args = parsers.survey_id_parser.parse_args()
+        args = parsers.filters.parse_args()
+        paginate_args = parsers.pagination.parse_args()
+        sort_args = parsers.order.parse_args()
         command = command_factory(
-            payload=LightCurvePayload(id, args),
+            payload=LightCurvePayload(id, args, paginate_args, sort_args),
             handler=result_handler,
         )
         command.execute()

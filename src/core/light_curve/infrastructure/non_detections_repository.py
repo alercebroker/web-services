@@ -11,7 +11,10 @@ class NonDetectionRepository(MongoRepository):
         return self._find_all(models.NonDetection, payload)
 
     def _wrap_results(self, result):
-        non_detections = list(result)
+        try:
+            non_detections = list(result)
+        except TypeError:  # Pagination is being used
+            non_detections = result.items
         if len(non_detections):
             return Success(non_detections)
         return Failure(ClientErrorException(EmptyQuery()))
