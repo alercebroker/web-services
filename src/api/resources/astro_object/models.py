@@ -1,13 +1,16 @@
 from flask_restx import fields, Model
 
-probabilities = Model(
-    "Classifier probabilities",
+from api.resources.features.models import feature
+from api.resources.magstats.models import magstats
+from api.resources.probabilities.models import probability
+
+
+xmatch = Model(
+    "Cross match",
     {
-        "classifier_name": fields.String(description="Classifier name"),
-        "classifier_version": fields.String(description="Classifier version"),
-        "class_name": fields.String(description="Class name"),
-        "ranking": fields.String(description="Class ranking in classifier"),
-        "probability": fields.String(description="Class probability"),
+        "catid": fields.String(description="Catalogue ID"),
+        "oid_catalog": fields.String(description="Object ID in catalogue"),
+        "dist": fields.Float(description="Distance in degrees"),
     },
 )
 
@@ -28,7 +31,7 @@ object_item = Model(
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
         "probabilities": fields.List(
-            fields.Nested(probabilities),
+            fields.Nested(probability),
             description="Classifier probabilities",
         ),
     },
@@ -50,6 +53,22 @@ single_object = Model(
         ),
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
+        "probabilities": fields.List(
+            fields.Nested(probability),
+            description="Classifier probabilities",
+        ),
+        "magstats": fields.List(
+            fields.Nested(magstats),
+            description="Magnitude statistics",
+        ),
+        "xmatch": fields.List(
+            fields.Nested(xmatch),
+            description="Cross matches",
+        ),
+        "features": fields.List(
+            fields.Nested(feature),
+            description="Features",
+        ),
     },
 )
 
