@@ -36,21 +36,24 @@ def test_order_by_asc(client, app):
     assert r.json["items"][0]["aid"] == "ALERCE1"
 
 
-@unittest.skip("Classifier based sorting is not available")
 def test_order_by_class_attribute_desc(client, app):
-    obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
-    obj.probabilities.append(
-        models.Probability(
+    obj = models.Object(
+        aid="ALERCE2",
+        oid=["ZTF1"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2,
+        probabilities=[dict(
             class_name="SN",
             probability=0.5,
             classifier_name="C1",
             classifier_version="1.0.0-test",
             ranking=1,
-        )
+        )]
     )
-    db.session.add(obj)
-    db.session.commit()
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {
         "classifier": "C1",
         "classifier_version": "1.0.0-test",
@@ -59,24 +62,27 @@ def test_order_by_class_attribute_desc(client, app):
     }
     r = client.get("/objects/", query_string=args)
     assert len(r.json["items"]) == 2
-    assert r.json["items"][0]["oid"] == "ZTF1"
+    assert r.json["items"][0]["aid"] == "ALERCE1"
 
 
-@unittest.skip("Classifier based sorting is not available")
 def test_order_by_class_attribute_asc(client, app):
-    obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
-    obj.probabilities.append(
-        models.Probability(
-            class_name="VS",
+    obj = models.Object(
+        aid="ALERCE2",
+        oid=["ZTF1"],
+        firstmjd=2.0,
+        lastmjd=2.0,
+        meanra=100.0,
+        meandec=50.0,
+        ndet=2,
+        probabilities=[dict(
+            class_name="SN",
             probability=0.5,
             classifier_name="C1",
             classifier_version="1.0.0-test",
             ranking=1,
-        )
+        )]
     )
-    db.session.add(obj)
-    db.session.commit()
+    app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     args = {
         "classifier": "C1",
         "classifier_version": "1.0.0-test",
@@ -85,7 +91,7 @@ def test_order_by_class_attribute_asc(client, app):
     }
     r = client.get("/objects/", query_string=args)
     assert len(r.json["items"]) == 2
-    assert r.json["items"][0]["oid"] == "ZTF2"
+    assert r.json["items"][0]["aid"] == "ALERCE2"
 
 
 def test_object_list(client):
