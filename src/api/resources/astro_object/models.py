@@ -18,7 +18,6 @@ object_item = Model(
     "Object List Item",
     {
         "aid": fields.String(description="ALeRCE object identifier"),
-        "oid": fields.List(fields.String, description="Object identifier"),
         "ndet": fields.Integer(
             description="total number of detections for the object"
         ),
@@ -30,10 +29,11 @@ object_item = Model(
         ),
         "meanra": fields.Float(description="Mean Right Ascention"),
         "meandec": fields.Float(description="Mean Declination"),
-        "probabilities": fields.List(
-            fields.Nested(probability),
-            description="Classifier probabilities",
-        ),
+        "classifier_name": fields.String(description="Classifier name"),
+        "classifier_version": fields.String(description="Classifier version"),
+        "class_name": fields.String(description="Classifier class"),
+        "probability": fields.Float(description="Class probability"),
+        "ranking": fields.Integer(description="Class ranking"),
     },
 )
 

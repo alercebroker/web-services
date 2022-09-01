@@ -247,21 +247,21 @@ def test_classifier_query(client):
     args = {"classifier": "C1"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"][0] == "ZTF1"
+    assert rv.json["items"][0]["aid"] == "ALERCE1"
 
 
 def test_class_query(client):
     args = {"class": "SN"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"][0] == "ZTF1"
+    assert rv.json["items"][0]["aid"] == "ALERCE1"
 
 
 def test_class_classifier_query(client):
     args = {"classifier": "C1", "class": "SN"}
     rv = client.get("/objects/", query_string=args)
     assert len(rv.json["items"]) == 1
-    assert rv.json["items"][0]["oid"][0] == "ZTF1"
+    assert rv.json["items"][0]["aid"] == "ALERCE1"
 
 
 def test_class_classifier_query_not_found(client):

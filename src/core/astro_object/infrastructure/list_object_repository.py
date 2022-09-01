@@ -7,7 +7,67 @@ from ..domain import ListAstroObjectPayload
 
 class ListAstroObjectRepository(MongoRepository):
     def _query(self, payload: ListAstroObjectPayload):
-        return self._find_all(models.Object, payload)
+        variable_as = "item"  # Used as alias when filtering by probabilities
+        fields = (
+            "aid",
+            "ndet",
+            "firstmjd",
+            "lastmjd",
+            "meanra",
+            "meandec",
+            "probabilities",
+        )
+        probabilities = (
+            "classifier_name",
+            "classifier_version",
+            "class_name",
+            "probability",
+            "ranking",
+        )
+
+        pipe = [
+            {"$match": payload.filter},
+            {"$project": {field: True for field in fields}},
+        ]
+        probability_filter = payload.probability_filter(variable_as)
+        if probability_filter:
+            pipe[-1]["$project"].update(
+                {
+                    "probabilities": {
+                        "$filter": {
+                            "input": "$probabilities",
+                            "as": variable_as,
+                            "cond": probability_filter,
+                        }
+                    }
+                }
+            )
+        pipe.append(
+            {
+                "$unwind": {
+                    "path": "$probabilities",
+                    "preserveNullAndEmptyArrays": True,
+                }
+            }
+        )
+        pipe.append(
+            {
+                "$set": {
+                    field: f"$probabilities.{field}" for field in probabilities
+                }
+            }
+        )
+        pipe.append({"$unset": "probabilities"})
+        if payload.sort:
+            pipe.append({"$sort": payload.sort})
+
+        paginate = True if payload.paginate else False
+        return self.db.query().find_all(
+            model=models.Object,
+            filter_by=pipe,
+            paginate=paginate,
+            **payload.paginate,
+        )
 
     def _wrap_results(self, result):
         # There is no failure if query is empty in this case
