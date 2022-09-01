@@ -64,11 +64,13 @@ class MongoRepository(abc.ABC):
 
     def _find_all(self, model: models.Base, payload: MongoPayload):
         paginate = True if payload.paginate else False
+        filter_by = [{"$match": payload.filter}]
+        if payload.sort:
+            filter_by.append({"$sort": payload.sort})
         return self.db.query().find_all(
             model=model,
-            filter_by=payload.filter,
+            filter_by=filter_by,
             paginate=paginate,
-            sort=payload.sort,
             **payload.paginate
         )
 
