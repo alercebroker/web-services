@@ -1,8 +1,6 @@
 from dependency_injector.providers import Factory
 from dependency_injector.wiring import inject, Provide
 from flask_restx import Namespace, Resource
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 
 from api.container import AppContainer
 from core.astro_object.domain import (
@@ -22,15 +20,11 @@ api.models[models.single_object.name] = models.single_object
 api.models[models.limit_values.name] = models.limit_values
 api.models[models.xmatch.name] = models.xmatch
 
-limiter = Limiter(key_func=get_remote_address, default_limits=["30/second"])
-
 
 @api.route("/")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectList(Resource):
-    decorators = [limiter.limit("30/sec")]
-
     @api.doc("list_object")
     @api.expect(parsers.filters, parsers.pagination, parsers.order)
     @api.marshal_with(models.object_list)

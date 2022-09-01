@@ -10,11 +10,11 @@ class ListAstroObjectPayload(MongoPayload):
             classifier, version, class_name, ranking, probability
         ):
             output = {
-                "classifier_name": classifier,
-                "classifier_version": version,
-                "class_name": class_name,
+                "classifier_name": {"$eq": classifier} if classifier else None,
+                "classifier_version": {"$eq": version} if version else None,
+                "class_name": {"$eq": class_name} if class_name else None,
                 "probability": {"$gte": probability} if probability else None,
-                "ranking": ranking,
+                "ranking": {"$eq": ranking} if ranking else None,
             }
             return {
                 key: value
@@ -89,3 +89,17 @@ class ListAstroObjectPayload(MongoPayload):
     paginate_map = {"page": "page", "per_page": "page_size", "count": "count"}
     sort_map = {"key": "order_by", "direction": "order_mode"}
     direction_map = {"ASC": 1, "DESC": -1}
+
+    def probability_filter(self, variable_as):
+        pfilter = self.filter.get("probabilities")
+        try:
+            pfilter = pfilter.get(self.filter_rules["probabilities"].query_key)
+        except AttributeError:
+            return
+        return {
+            "$and": [
+                {query: [f"$${variable_as}.{field}", value]}
+                for field, cond in pfilter.items()
+                for query, value in cond.items()
+            ]
+        }

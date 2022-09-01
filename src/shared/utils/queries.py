@@ -210,13 +210,13 @@ class MongoPayload(abc.ABC):
         except AttributeError:
             return None
         return (
-            [
-                (key, self.direction_map[direction])
+            {
+                key: self.direction_map[direction]
                 for key, direction in zip(
                     self.Helpers.list_of_str(keys),
                     self.Helpers.list_of_str(directions),
                 )
-            ]
+            }
             if keys is not None
             else None
         )

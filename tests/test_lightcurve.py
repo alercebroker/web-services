@@ -1,6 +1,6 @@
 import jwt
 from datetime import datetime, timedelta, timezone
-from conftest import mongo_models
+from conftest import models
 
 
 def create_token(permisions, filters, secret_key):
@@ -70,7 +70,7 @@ def test_get_detections(client):
 
 
 def test_sort_detections_by_date_descending(client, app):
-    det = mongo_models.Detection(
+    det = models.Detection(
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF22",
@@ -96,7 +96,7 @@ def test_sort_detections_by_date_descending(client, app):
             step_id_corr="step_id_corr",
             rbversion="rbversion",
         )
-    app.container.mongo_db().query().get_or_create(det, model=mongo_models.Detection)
+    app.container.mongo_db().query().get_or_create(det, model=models.Detection)
     rv = client.get("objects/AID_ZTF2/detections?order_by=mjd&order_mode=DESC")
     assert rv.status_code == 200
     assert len(rv.json) == 2
@@ -105,7 +105,7 @@ def test_sort_detections_by_date_descending(client, app):
 
 
 def test_sort_detections_by_date_ascending(client, app):
-    det = mongo_models.Detection(
+    det = models.Detection(
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF22",
@@ -131,7 +131,7 @@ def test_sort_detections_by_date_ascending(client, app):
             step_id_corr="step_id_corr",
             rbversion="rbversion",
         )
-    app.container.mongo_db().query().get_or_create(det, model=mongo_models.Detection)
+    app.container.mongo_db().query().get_or_create(det, model=models.Detection)
     rv = client.get("objects/AID_ZTF2/detections?order_by=mjd&order_mode=ASC")
     assert rv.status_code == 200
     assert len(rv.json) == 2
@@ -140,7 +140,7 @@ def test_sort_detections_by_date_ascending(client, app):
 
 
 def test_paginated_detections_result(client, app):
-    det = mongo_models.Detection(
+    det = models.Detection(
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF22",
@@ -166,7 +166,7 @@ def test_paginated_detections_result(client, app):
             step_id_corr="step_id_corr",
             rbversion="rbversion",
         )
-    app.container.mongo_db().query().get_or_create(det, model=mongo_models.Detection)
+    app.container.mongo_db().query().get_or_create(det, model=models.Detection)
     rv = client.get("objects/AID_ZTF2/detections?order_by=mjd&order_mode=ASC&page_size=1")
     assert rv.status_code == 200
     assert len(rv.json) == 1
@@ -174,7 +174,7 @@ def test_paginated_detections_result(client, app):
 
 
 def test_sort_non_detections_by_date_ascending(client, app):
-    det = mongo_models.NonDetection(
+    det = models.NonDetection(
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF22",
@@ -182,7 +182,7 @@ def test_sort_non_detections_by_date_ascending(client, app):
             diffmaglim=1,
             fid=1,
         )
-    app.container.mongo_db().query().get_or_create(det, model=mongo_models.NonDetection)
+    app.container.mongo_db().query().get_or_create(det, model=models.NonDetection)
     rv = client.get("objects/AID_ZTF2/non_detections?order_by=mjd&order_mode=ASC")
     assert rv.status_code == 200
     assert len(rv.json) == 2
@@ -191,7 +191,7 @@ def test_sort_non_detections_by_date_ascending(client, app):
 
 
 def test_sort_non_detections_by_date_descending(client, app):
-    det = mongo_models.NonDetection(
+    det = models.NonDetection(
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF22",
@@ -199,7 +199,7 @@ def test_sort_non_detections_by_date_descending(client, app):
             diffmaglim=1,
             fid=1,
         )
-    app.container.mongo_db().query().get_or_create(det, model=mongo_models.NonDetection)
+    app.container.mongo_db().query().get_or_create(det, model=models.NonDetection)
     rv = client.get("objects/AID_ZTF2/non_detections?order_by=mjd&order_mode=DESC")
     assert rv.status_code == 200
     assert len(rv.json) == 2
@@ -208,7 +208,7 @@ def test_sort_non_detections_by_date_descending(client, app):
 
 
 def test_paginated_non_detections_result(client, app):
-    det = mongo_models.NonDetection(
+    det = models.NonDetection(
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF22",
@@ -216,7 +216,7 @@ def test_paginated_non_detections_result(client, app):
             diffmaglim=1,
             fid=1,
         )
-    app.container.mongo_db().query().get_or_create(det, model=mongo_models.NonDetection)
+    app.container.mongo_db().query().get_or_create(det, model=models.NonDetection)
     rv = client.get("objects/AID_ZTF2/non_detections?order_by=mjd&order_mode=ASC&page_size=1")
     assert rv.status_code == 200
     assert len(rv.json) == 1
