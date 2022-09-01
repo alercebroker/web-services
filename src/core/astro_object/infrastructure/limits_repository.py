@@ -7,22 +7,19 @@ from ..domain import LimitsAstroObjectPayload
 
 class LimitsAstroObjectRepository(MongoRepository):
     def _query(self, payload: LimitsAstroObjectPayload):
-        pipe = [
-            {
-                "$group": {
-                    "_id": None,
-                    "min_ndet": {"$min": "$ndet"},
-                    "max_ndet": {"$max": "$ndet"},
-                    "min_firstmjd": {"$min": "$firstmjd"},
-                    "max_firstmjd": {"$max": "$firstmjd"},
-                }
-            }
-        ]
-        return self.db.query().find_all(
-            model=models.Object, filter_by=pipe, paginate=False
-        )
+        collection = self.db.query()
+        collection.init_collection(models.Object)
+        return collection.find()
 
     def _wrap_results(self, result):
-        result = result.next()
-        result.pop("_id")
+        result = {
+            "min_ndet": result.sort([("ndet", 1)]).limit(1)[0]["ndet"],
+            "max_ndet": result.sort([("ndet", -1)]).limit(1)[0]["ndet"],
+            "min_firstmjd": result.sort([("firstmjd", 1)]).limit(1)[0][
+                "firstmjd"
+            ],
+            "max_firstmjd": result.sort([("firstmjd", -1)]).limit(1)[0][
+                "firstmjd"
+            ],
+        }
         return Success(result)
