@@ -32,6 +32,7 @@ class MagStats(Resource):
             AppContainer.view_result_handler
         ],
     ):
+        """Gets list of magnitude statistics (one per filter)"""
         command = command_factory(
             payload=MagStatsPayload(id),
             handler=result_handler,

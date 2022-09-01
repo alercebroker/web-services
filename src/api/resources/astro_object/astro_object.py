@@ -69,7 +69,7 @@ class Object(Resource):
             AppContainer.view_result_handler
         ],
     ):
-        """Fetch an object given its identifier"""
+        """Fetch an object given its ALeRCE identifier"""
         command = command_factory(
             payload=SingleAstroObjectPayload(id), handler=result_handler
         )
@@ -92,7 +92,7 @@ class LimitValues(Resource):
             AppContainer.view_result_handler
         ],
     ):
-        """Gets min and max values for objects number of detections and detection dates"""
+        """Gets min and max values for number of detections and first detection dates"""
         command = command_factory(
             payload=LimitsAstroObjectPayload(), handler=result_handler
         )

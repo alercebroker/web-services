@@ -34,6 +34,7 @@ class Probabilities(Resource):
             AppContainer.view_result_handler
         ],
     ):
+        """Gets list of all classification probabilities for the object"""
         args = parsers.filters.parse_args()
         command = command_factory(
             payload=ProbabilitiesPayload(id, **args),

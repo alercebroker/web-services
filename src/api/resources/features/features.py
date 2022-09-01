@@ -31,9 +31,7 @@ class Features(Resource):
             AppContainer.view_result_handler
         ],
     ):
-        """
-        Gets list of all features.
-        """
+        """Gets list of all features"""
         args = parsers.filters.parse_args()
         command = command_factory(
             payload=FeaturesPayload(id, **args),
@@ -63,9 +61,7 @@ class Feature(Resource):
             AppContainer.view_result_handler
         ],
     ):
-        """
-        Gets a single Feature
-        """
+        """Gets a single feature"""
         args = parsers.filters.parse_args()
         command = command_factory(
             payload=FeaturesPayload(id, name=name, **args),

@@ -29,9 +29,7 @@ class ClassifierList(Resource):
             AppContainer.view_result_handler
         ],
     ):
-        """
-        Gets all classifiers
-        """
+        """Gets all classifiers"""
         command = command_factory(
             payload=ClassifiersPayload(),
             handler=result_handler,
@@ -60,6 +58,7 @@ class Classifier(Resource):
             AppContainer.view_result_handler
         ],
     ):
+        """Gets all classes for a given classifier and version"""
         command = command_factory(
             payload=ClassifiersPayload(
                 classifier_name=classifier_name,
