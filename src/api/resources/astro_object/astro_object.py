@@ -52,7 +52,7 @@ class ObjectList(Resource):
 
 
 @api.route("/<id>")
-@api.param("id", "The object's identifier")
+@api.param("id", "The object ALeRCE identifier")
 @api.response(200, "Success")
 @api.response(404, "Object not found")
 class Object(Resource):

@@ -39,8 +39,8 @@ class ClassifierList(Resource):
 
 
 @api.route("/<classifier_name>/<classifier_version>/classes")
-@api.param("classifier_name", "The classifier's name")
-@api.param("classifier_version", "Classifier's Version")
+@api.param("classifier_version", "Classifier version")
+@api.param("classifier_name", "The classifier name")
 @api.response(200, "Success")
 @api.response(404, "Classifier Not found")
 class Classifier(Resource):

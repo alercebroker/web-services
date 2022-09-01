@@ -13,7 +13,7 @@ api.models[models.feature.name] = models.feature
 
 
 @api.route("/<id>/features")
-@api.param("id", "The object's identifier")
+@api.param("id", "The object ALeRCE identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class Features(Resource):
@@ -42,7 +42,8 @@ class Features(Resource):
 
 
 @api.route("/<id>/features/<name>")
-@api.param("id", "The object's identifier")
+@api.param("name", "The feature name")
+@api.param("id", "The object ALeRCE identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class Feature(Resource):

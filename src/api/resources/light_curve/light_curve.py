@@ -17,7 +17,7 @@ api.models[models.non_detection.name] = models.non_detection
 
 
 @api.route("/<id>/lightcurve")
-@api.param("id", "The object's identifier")
+@api.param("id", "The object ALeRCE identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class LightCurve(Resource):
@@ -49,7 +49,7 @@ class LightCurve(Resource):
 
 
 @api.route("/<id>/detections")
-@api.param("id", "The object's identifier")
+@api.param("id", "The object ALeRCE identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectDetections(Resource):
@@ -83,7 +83,7 @@ class ObjectDetections(Resource):
 
 
 @api.route("/<id>/non_detections")
-@api.param("id", "The object's identifier")
+@api.param("id", "The object ALeRCE identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class NonDetections(Resource):

@@ -16,7 +16,7 @@ api.models[models.probability.name] = models.probability
 
 
 @api.route("/<id>/probabilities")
-@api.param("id", "The object's identifier")
+@api.param("id", "The object ALeRCE identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class Probabilities(Resource):
