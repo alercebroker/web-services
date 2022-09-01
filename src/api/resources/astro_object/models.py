@@ -9,7 +9,9 @@ xmatch = Model(
     "Cross match",
     {
         "catid": fields.String(description="Catalogue identifier"),
-        "oid_catalog": fields.String(description="Object identifier in catalogue"),
+        "oid_catalog": fields.String(
+            description="Object identifier in catalogue"
+        ),
         "dist": fields.Float(description="Distance in degrees"),
     },
 )
@@ -41,7 +43,9 @@ single_object = Model(
     "Single Object",
     {
         "aid": fields.String(description="ALeRCE object identifier"),
-        "oid": fields.List(fields.String, description="Survey object identifiers"),
+        "oid": fields.List(
+            fields.String, description="Survey object identifiers"
+        ),
         "ndet": fields.Integer(
             description="Total number of detections for the object"
         ),
@@ -90,7 +94,11 @@ limit_values = Model(
     {
         "min_ndet": fields.Integer(description="Minimum number of detections"),
         "max_ndet": fields.Integer(description="Maximum number of detections"),
-        "min_firstmjd": fields.Float(description="Minimum first detection's modified Julian date"),
-        "max_firstmjd": fields.Float(description="Maximum first detection's modified Julian date"),
+        "min_firstmjd": fields.Float(
+            description="First detection's minimum modified Julian date"
+        ),
+        "max_firstmjd": fields.Float(
+            description="First detection's maximum modified Julian date"
+        ),
     },
 )
