@@ -1,5 +1,4 @@
 from dependency_injector import containers, providers
-from db_plugins.db.sql.connection import SQLConnection
 from db_plugins.db.mongo.connection import MongoConnection
 from core.light_curve.container import LightCurveContainer
 from core.astro_object.container import AstroObjectContainer
