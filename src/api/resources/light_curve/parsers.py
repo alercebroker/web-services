@@ -44,5 +44,5 @@ order.add_argument(
     dest="order_mode",
     location="args",
     choices=["ASC", "DESC"],
-    help="Set order as ascending or descending",
+    help="Ordering direction",
 )
