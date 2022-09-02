@@ -13,7 +13,7 @@ def get_detections_from_ztf(object_id):
         f"{BASE_URL}/objects/{object_id}/detections?survey_id=ztf",
         headers=HEADER_ADMIN_TOKEN
     )
-    if res.status_code >= 200 and res.status_code < 400:
+    if 200 <= res.status_code < 400:
         # Handle successful requests
         return res.json()
     else:
@@ -26,7 +26,7 @@ def get_detections_from_ztf_with_params(object_id):
         f"{BASE_URL}/objects/{object_id}/detections", params=params,
         headers=HEADER_ADMIN_TOKEN
     )
-    if res.status_code >= 200 and res.status_code < 400:
+    if 200 <= res.status_code < 400:
         # Handle successful requests
         return res.json()
     else:
@@ -38,7 +38,7 @@ def get_detections_from_atlas(object_id):
         f"{BASE_URL}/objects/{object_id}/detections?survey_id=atlas",
         headers=HEADER_ADMIN_TOKEN
     )
-    if res.status_code >= 200 and res.status_code < 400:
+    if 200 <= res.status_code < 400:
         # Handle successful requests
         return res.json()
     else:

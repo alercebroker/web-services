@@ -12,7 +12,7 @@ def get_non_detections_from_ztf(object_id):
         f"{BASE_URL}/objects/{object_id}/non_detections?survey_id=ztf",
         headers=HEADER_ADMIN_TOKEN
     )
-    if res.status_code > 200 and res.status_code < 400:
+    if 200 < res.status_code < 400:
         # Handle successful requests
         return res.json()
     else:
@@ -25,7 +25,7 @@ def get_non_detections_from_ztf_with_params(object_id):
         f"{BASE_URL}/objects/{object_id}/non_detections", params=params,
         headers=HEADER_ADMIN_TOKEN
     )
-    if res.status_code >= 200 and res.status_code < 400:
+    if 200 <= res.status_code < 400:
         # Handle successful requests
         return res.json()
     else:
