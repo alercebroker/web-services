@@ -2,6 +2,23 @@ from db_plugins.db.mongo.connection import MongoDatabaseCreator
 from db_plugins.db.mongo import models
 import signal
 import time
+import jwt
+from datetime import datetime, timedelta, timezone
+
+SECRET_KEY = "a_secret_key"  # from text/config.yml
+
+
+def build_admin_token():
+    token = {
+        "access": "access",
+        "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
+        "jti": "test_jti",
+        "user_id": 1,
+        "permissions": ["admin"],
+        "filters": [],
+    }
+    encripted_token = jwt.encode(token, SECRET_KEY, algorithm="HS256")
+    return encripted_token
 
 
 def mongo_ready():

@@ -1,54 +1,30 @@
+import requests
 from behave import when, given, then
-from examples.features.environment import insert_mongo_data
-from examples.examples.api_request_example.detections_examples import (
-    get_detections_from_ztf,
-    get_detections_from_ztf_with_params,
-    get_detections_from_atlas,
-)
-from examples.examples.api_request_example.non_detections_examples import (
-    get_non_detections_from_ztf,
-    get_non_detections_from_ztf_with_params,
-)
-from examples.examples.api_request_example.lightcurve_examples import (
-    get_lightcurve_from_ztf,
-    get_lightcurve_from_ztf_with_params,
-    get_lightcurve_from_atlas,
-)
+from examples.features.environment import insert_mongo_data, build_admin_token
 
-examples = {
-    "detections": {
-        "ZTF": [
-            get_detections_from_ztf,
-            get_detections_from_ztf_with_params,
-        ],
-        "ATLAS": [get_detections_from_atlas],
-    },
-    "non_detections": {
-        "ZTF": [
-            get_non_detections_from_ztf,
-            get_non_detections_from_ztf_with_params,
-        ],
-    },
-    "lightcurve": {
-        "ZTF": [
-            get_lightcurve_from_ztf,
-            get_lightcurve_from_ztf_with_params,
-        ],
-        "ATLAS": [get_lightcurve_from_atlas],
-    },
+
+BASE_URL = "http://alerts_api:5000/"
+HEADER_ADMIN_TOKEN = {
+    "AUTH-TOKEN": build_admin_token()
 }
 
 
-@given("the databases have ztf and altas alerts")
+@given("the databases have ztf and atlas alerts")
 def database_setup_ztf_atlas(context):
     insert_mongo_data(context)
 
 
 @when("request {endpoint} endpoint for object {aid} in {survey_id} survey")
 def request_to_endpoint(context, endpoint, aid, survey_id):
-    for request in examples[endpoint][survey_id]:
-        result = request(aid)
-    context.result = result
+    res = requests.get(
+        f"{BASE_URL}/objects/{aid}/{endpoint}?survey_id={survey_id.lower()}",
+        headers=HEADER_ADMIN_TOKEN
+    )
+    if 200 <= res.status_code <= 400:
+        # Handle successful requests
+        context.result = res.json()
+    else:
+        context.result = res
 
 
 @then(
