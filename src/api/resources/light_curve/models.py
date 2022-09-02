@@ -28,6 +28,7 @@ non_detection = Model(
     "Non Detection",
     {
         "tid": fields.String,
+        "oid": fields.String,
         "mjd": fields.Float,
         "fid": fields.Integer,
         "diffmaglim": fields.Float,

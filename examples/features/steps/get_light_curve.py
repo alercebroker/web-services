@@ -34,7 +34,7 @@ def request_to_endpoint(context, endpoint, aid, survey_id, has):
     context.result = requests.get(req_string, **kwargs)
 
 
-@then("retrieve detections with identifiers {oids}")
+@then("retrieve results with identifiers {oids}")
 def check_output_candid(context, oids):
     assert context.result.status_code == 200
     if oids == "none":  # Special case for empty return

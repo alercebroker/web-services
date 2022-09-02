@@ -117,6 +117,20 @@ def insert_in_database(context, model, **kwargs):
             step_id_corr="",
             rbversion="",
         )
-        defaults.update({key: type(defaults[key])(value) for key, value in kwargs.items()})
-        detection = models.Detection(**defaults)
-        context.mongo_db.query().get_or_create(detection, model=models.Detection)
+        model_class = models.Detection
+    elif model == "non_detections":
+        defaults = dict(
+            aid="ALERCE",
+            oid="OID",
+            tid="TID",
+            mjd=1.,
+            fid=1,
+            diffmaglim=1.,
+        )
+        model_class = models.NonDetection
+    else:
+        raise ValueError(f"Unrecognized model {model}")
+    defaults.update({key: type(defaults[key])(value) for key, value in kwargs.items()})
+    element = model_class(**defaults)
+    context.mongo_db.query().get_or_create(element, model=model_class)
+
