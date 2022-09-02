@@ -1,8 +1,11 @@
+from functools import wraps
+
 from flask import _request_ctx_stack
 
 
 def set_filters_decorator(filter_list):
     def wrapper_decorator(arg_function):
+        @wraps(arg_function)
         def decorator_function(*args, **kwargs):
             ctx = _request_ctx_stack.top
             ctx.ralidator.set_app_filters(filter_list)
@@ -16,6 +19,7 @@ def set_filters_decorator(filter_list):
 
 def set_permissions_decorator(permissions_list):
     def wrapper_decorator(arg_function):
+        @wraps(arg_function)
         def decorator_function(*args, **kwargs):
             ctx = _request_ctx_stack.top
             ctx.ralidator.set_required_permissions(permissions_list)
@@ -28,6 +32,7 @@ def set_permissions_decorator(permissions_list):
 
 
 def check_permissions_decorator(arg_function):
+    @wraps(arg_function)
     def decorator_function(*args, **kwargs):
         ctx = _request_ctx_stack.top
         allowed, code = ctx.ralidator.check_if_allowed()
