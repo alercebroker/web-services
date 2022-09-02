@@ -9,18 +9,16 @@ detection = Model(
         "tid": fields.String(description="Telescope identifier"),
         "mjd": fields.Float(description="Modified Julian date of observation"),
         "candid": fields.String(description="Candidate identifier"),
-        "fid": fields.Integer(description="Filter ID (1=g; 2=r; 3=i)"),
-        "isdiffpos": fields.Integer,
+        "fid": fields.Integer(
+            description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
+        ),
+        "isdiffpos": fields.Integer(
+            description="1 if difference magnitude difference is positive, 0 otherwise"
+        ),
         "mag": fields.Float(description="Magnitude of detection"),
         "e_mag": fields.Float(description="Error associated to magnitude"),
         "ra": fields.Float(description="Right ascension"),
         "dec": fields.Float(description="Declination"),
-        "rb": fields.Float,
-        "rbversion": fields.String,
-        "has_stamp": fields.Boolean,
-        "corrected": fields.Boolean,
-        "step_id_corr": fields.String,
-        "parent_candid": fields.String,
     },
 )
 
@@ -29,7 +27,9 @@ non_detection = Model(
     {
         "tid": fields.String(description="Telescope identifier"),
         "mjd": fields.Float(description="Modified Julian date of observation"),
-        "fid": fields.Integer(description="Filter ID (1=g; 2=r; 3=i)"),
+        "fid": fields.Integer(
+            description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
+        ),
         "diffmaglim": fields.Float(
             description="Upper limit on magnitude difference with template"
         ),

@@ -3,7 +3,9 @@ from flask_restx import fields, Model
 magstats = Model(
     "Magnitude statistics",
     {
-        "fid": fields.Integer(description="Filter ID (1=g; 2=r; 3=i)"),
+        "fid": fields.Integer(
+            description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
+        ),
         "ndet": fields.Integer(
             description="Number of detections in the given filter"
         ),
