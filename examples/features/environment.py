@@ -94,8 +94,8 @@ def tear_down_mongo(db):
 
 
 def insert_in_database(context, model, **kwargs):
-    if model == "detection":
-        detection = dict(
+    if model == "detections":
+        defaults = dict(
             aid="ALERCE",
             oid="OID",
             candid="CANDID",
@@ -117,6 +117,6 @@ def insert_in_database(context, model, **kwargs):
             step_id_corr="",
             rbversion="",
         )
-        detection.update(kwargs)
-        detection = models.Detection(**detection)
+        defaults.update({key: type(defaults[key])(value) for key, value in kwargs.items()})
+        detection = models.Detection(**defaults)
         context.mongo_db.query().get_or_create(detection, model=models.Detection)

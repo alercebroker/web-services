@@ -3,9 +3,11 @@ from behave import when, given, then
 from examples.features import environment
 
 
-@given("there is {model} for object {aid} with id {oid} from telescope {tid}")
-def insert_all_detections(context, model, aid, oid, tid):
-    environment.insert_in_database(context, model, aid=aid, oid=oid, tid=tid)
+@given("there are {model} in database with following parameters")
+def insert_all_detections(context, model):
+    for row in context.table:
+        kwargs = {heading: value for heading, value in zip(row.headings, row.cells)}
+        environment.insert_in_database(context, model, **kwargs)
 
 
 @when("request {endpoint} for object {aid} in {survey_id} survey {has} permission")

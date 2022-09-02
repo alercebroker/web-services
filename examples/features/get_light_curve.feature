@@ -1,11 +1,12 @@
 Feature: Ask for a lightcurve data
-  Background: initialize database
 
   Scenario Outline: ask for detections for object from ztf survey data
-    Given there is detection for object ALERCE1 with id ZTF1 from telescope ZTF
-    And there is detection for object ALERCE1 with id ZTF2 from telescope ZTF
-    And there is detection for object ALERCE1 with id ATLAS1 from telescope ATLAS1
-    And there is detection for object ALERCE1 with id ATLAS2 from telescope ATLAS2
+    Given there are detections in database with following parameters
+      | aid     | oid    | tid     |
+      | ALERCE1 | ZTF1   | ZTF     |
+      | ALERCE1 | ZTF2   | ZTF     |
+      | ALERCE1 | ATLAS1 | ATLAS-1 |
+      | ALERCE1 | ATLAS2 | ATLAS-2 |
     When request detections for object ALERCE1 in <survey> survey <has permission>
     Then retrieve detections with identifiers <oids>
     Examples:
