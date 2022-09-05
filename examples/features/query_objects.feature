@@ -1,5 +1,23 @@
 Feature: Ask for astro object data
 
+  Scenario Outline: query objects by number of detections
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects with ndet between <min> and <max> in <order> order by <sorter>
+    Then retrieve objects <objects> in that order
+    Examples:
+      | min | max | order | sorter   | objects                         |
+      | 1   | 6   | DESC  | ndet     | ALERCE4,ALERCE1,ALERCE2         |
+      | 1   | 6   | ASC   | ndet     | ALERCE2,ALERCE1,ALERCE4         |
+      | 2   | 7   | DESC  | firstmjd | ALERCE3,ALERCE4,ALERCE1         |
+      | 2   | 7   | ASC   | lastmjd  | ALERCE1,ALERCE3,ALERCE4         |
+      | 1   | 10  | DESC  | meanra   | ALERCE4,ALERCE3,ALERCE2,ALERCE1 |
+      | 1   | 10  | ASC   | meandec  | ALERCE3,ALERCE4,ALERCE1,ALERCE2 |
+
   Scenario Outline: query objects by ranking
     Given object ALERCE1 is in the database with following probabilities
       | classifier_name | classifier_version | class_name | probability | ranking |
@@ -103,7 +121,7 @@ Feature: Ask for astro object data
       | lc2    | lc         | lc2,lc2         | ALERCE1,ALERCE3         |
       | stamp1 | stamp      | stamp1,stamp1   | ALERCE1,ALERCE2         |
 
-  Scenario Outline: list sorting by probabilities
+  Scenario Outline: object sorting by probabilities
     Given object ALERCE1 is in the database with following probabilities
       | classifier_name | classifier_version | class_name | probability | ranking |
       | stamp           | 1.1                | stamp1     | 0.4         | 2       |

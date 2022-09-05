@@ -18,6 +18,21 @@ def insert_object_with_probabilities(context, aid):
     environment.insert_in_database(context, "objects", aid=aid, probabilities=probabilities)
 
 
+@given("objects are in the database with following probabilities")
+def insert_object(context):
+    for row in context.table:
+        kwargs = {heading: value for heading, value in zip(row.headings, row.cells)}
+        environment.insert_in_database(context, "objects", **kwargs)
+
+
+@when("request objects with {parameter} between {minimum} and {maximum} in {direction} order by {sort}")
+def request_range_with_sort(context, parameter, minimum, maximum, direction, sort):
+    params = {parameter: [minimum, maximum], "order_by": sort, "order_mode": direction}
+    url = f"{environment.BASE_URL}/objects"
+
+    context.result = requests.get(url, params=params)
+
+
 @when("request objects with {parameter} {value} and classifier {classifier} in {direction} order by {sort}")
 def request_parameter_and_classifier(context, parameter, value, classifier, direction, sort):
     params = {}
