@@ -3,10 +3,11 @@ from behave import when, given, then
 from examples.features import environment
 
 
-@given("there are {model} in database with following parameters")
-def insert_all_detections(context, model):
+@given("there are {model} for object {aid} with following parameters")
+def insert_all_detections(context, model, aid):
     for row in context.table:
         kwargs = {heading: value for heading, value in zip(row.headings, row.cells)}
+        kwargs["aid"] = aid
         environment.insert_in_database(context, model, **kwargs)
 
 
@@ -37,10 +38,12 @@ def request_to_endpoint(context, endpoint, aid, survey_id, has):
 @then("retrieve {results} with identifiers {oids}")
 def check_output_candid(context, results, oids):
     assert context.result.status_code == 200
-    if results == "results":
-        output = context.result.json()
-    else:
-        output = context.result.json()[results]
+    output = context.result.json()
+    if results != "results" and oids == "none":
+        assert output is None
+        return
+    elif results != "results":
+        output = output[results]
     if oids == "none":  # Special case for empty return
         assert len(output) == 0
         return
@@ -49,3 +52,8 @@ def check_output_candid(context, results, oids):
         assert detection["oid"] in oids
         oids.remove(detection["oid"])
     assert len(oids) == 0
+
+
+@then("retrieve error code {error_code:d}")
+def check_output_candid(context, error_code):
+    assert context.result.status_code == error_code
