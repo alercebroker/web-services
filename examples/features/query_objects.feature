@@ -1,5 +1,22 @@
 Feature: Ask for astro object data
 
+  Scenario Outline: query objects by identifier
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects with identifiers <oids> in ASC order by ndet
+    Then retrieve objects <objects> in that order
+    Examples:
+      | oids              | objects                 |
+      | ZTF1              | ALERCE2,ALERCE1         |
+      | ZTF1,ZTF2         | ALERCE2,ALERCE1,ALERCE3 |
+      | ZTF1,ATLAS1       | ALERCE2,ALERCE1         |
+      | ALERCE1,ATLAS2    | ALERCE2,ALERCE1,ALERCE4 |
+      | ALERCE1,ZTF1,ZTF2 | ALERCE2,ALERCE1,ALERCE3 |
+
   Scenario Outline: query objects by number of detections
     Given objects are in the database with following probabilities
       | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
@@ -10,13 +27,40 @@ Feature: Ask for astro object data
     When request objects with ndet between <min> and <max> in <order> order by <sorter>
     Then retrieve objects <objects> in that order
     Examples:
-      | min | max | order | sorter   | objects                         |
-      | 1   | 6   | DESC  | ndet     | ALERCE4,ALERCE1,ALERCE2         |
-      | 1   | 6   | ASC   | ndet     | ALERCE2,ALERCE1,ALERCE4         |
-      | 2   | 7   | DESC  | firstmjd | ALERCE3,ALERCE4,ALERCE1         |
-      | 2   | 7   | ASC   | lastmjd  | ALERCE1,ALERCE3,ALERCE4         |
-      | 1   | 10  | DESC  | meanra   | ALERCE4,ALERCE3,ALERCE2,ALERCE1 |
-      | 1   | 10  | ASC   | meandec  | ALERCE3,ALERCE4,ALERCE1,ALERCE2 |
+      | min | max | order | sorter   | objects                 |
+      | 1   | 6   | DESC  | ndet     | ALERCE4,ALERCE1,ALERCE2 |
+      | 1   | 6   | ASC   | ndet     | ALERCE2,ALERCE1,ALERCE4 |
+      | 2   | 7   | DESC  | firstmjd | ALERCE3,ALERCE4,ALERCE1 |
+
+  Scenario Outline: query objects by first detection date
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects with firstmjd between <min> and <max> in <order> order by <sorter>
+    Then retrieve objects <objects> in that order
+    Examples:
+      | min | max | order | sorter   | objects                 |
+      | 1   | 4   | DESC  | firstmjd | ALERCE4,ALERCE2,ALERCE1 |
+      | 1   | 4   | ASC   | firstmjd | ALERCE1,ALERCE2,ALERCE4 |
+      | 2   | 7   | DESC  | ndet     | ALERCE3,ALERCE4,ALERCE2 |
+
+  Scenario Outline: query objects by last detection date
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects with lastmjd between <min> and <max> in <order> order by <sorter>
+    Then retrieve objects <objects> in that order
+    Examples:
+      | min | max | order | sorter   | objects                 |
+      | 5   | 10  | DESC  | lastmjd  | ALERCE3,ALERCE1         |
+      | 5   | 10  | ASC   | lastmjd  | ALERCE1,ALERCE3         |
+      | 1   | 10  | DESC  | ndet     | ALERCE3,ALERCE1,ALERCE2 |
 
   Scenario Outline: query objects by ranking
     Given object ALERCE1 is in the database with following probabilities

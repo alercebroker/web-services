@@ -22,7 +22,17 @@ def insert_object_with_probabilities(context, aid):
 def insert_object(context):
     for row in context.table:
         kwargs = {heading: value for heading, value in zip(row.headings, row.cells)}
+        if "oid" in kwargs:
+            kwargs["oid"] = kwargs["oid"].split(",")
         environment.insert_in_database(context, "objects", **kwargs)
+
+
+@when("request objects with identifiers {oids} in {direction} order by {sort}")
+def request_objects_by_id(context, oids, direction, sort):
+    params = {"oid": oids.split(","), "order_by": sort, "order_mode": direction}
+    url = f"{environment.BASE_URL}/objects"
+
+    context.result = requests.get(url, params=params)
 
 
 @when("request objects with {parameter} between {minimum} and {maximum} in {direction} order by {sort}")
@@ -86,5 +96,4 @@ def retrieve_ordered_classes(context, objects):
 @then("retrieve empty items")
 def retrieve_empty_items(context):
     assert context.result.status_code == 200
-    print(context.result.json()["items"])
     assert len(context.result.json()["items"]) == 0

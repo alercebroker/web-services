@@ -98,6 +98,14 @@ class ListAstroObjectPayload(MongoPayload):
     sort_map = {"key": "order_by", "direction": "order_mode"}
     direction_map = {"ASC": 1, "DESC": -1}
 
+    @property
+    def filter(self):
+        query = super().filter
+        if "aid" in query and "oid" in query:
+            aid, oid = query.pop("aid"), query.pop("oid")
+            query["$or"] = [{"aid": aid}, {"oid": oid}]
+        return query
+
     def probability_filter(self, variable_as):
         pfilter = self.filter.get("probabilities")
         try:
