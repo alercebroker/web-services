@@ -11,7 +11,6 @@ from .models import (
 from .parsers import create_parsers
 from sqlalchemy import text, func
 from sqlalchemy.orm import aliased
-from astropy import units
 from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
 from api.container import AppContainer, SQLConnection
@@ -249,9 +248,7 @@ class ObjectList(Resource):
             ra, dec, radius = None, None, None
 
         if ra and dec and radius:
-            radius = radius * units.arcsec
-            radius = radius.to(units.deg)
-            radius = radius.value
+            radius /= 60.  # From arcsec to deg
         return {"ra": ra, "dec": dec, "radius": radius}
 
 
