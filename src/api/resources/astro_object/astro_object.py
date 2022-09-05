@@ -35,7 +35,6 @@ DEFAULT_RANKING = 1
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class ObjectList(Resource):
-
     @api.doc("list_object")
     @api.expect(
         filter_parser, conesearch_parser, pagination_parser, order_parser
@@ -243,7 +242,7 @@ class ObjectList(Resource):
             ra, dec, radius = None, None, None
 
         if ra and dec and radius:
-            radius /= 60.  # From arcsec to deg
+            radius /= 60.0  # From arcsec to deg
         return {"ra": ra, "dec": dec, "radius": radius}
 
 
