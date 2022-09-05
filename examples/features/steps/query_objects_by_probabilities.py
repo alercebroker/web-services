@@ -18,6 +18,19 @@ def insert_object_with_probabilities(context, aid):
     environment.insert_in_database(context, "objects", aid=aid, probabilities=probabilities)
 
 
+@when("request objects with {parameter} {value} and classifier {classifier} in {direction} order by {sort}")
+def request_parameter_and_classifier(context, parameter, value, classifier, direction, sort):
+    params = {}
+    if value != "all":
+        params[parameter] = value
+    if classifier != "all":
+        params["classifier"] = classifier
+    params.update({"order_by": sort, "order_mode": direction})
+    url = f"{environment.BASE_URL}/objects"
+
+    context.result = requests.get(url, params=params)
+
+
 @when("request objects with {parameter} {value} and classifier {classifier}")
 def request_parameter_and_classifier(context, parameter, value, classifier):
     params = {}
@@ -43,6 +56,16 @@ def retrieve_classes_for_objects(context, classes, objects):
         classes.pop(i)
     assert len(objects) == 0
     assert len(classes) == 0
+
+
+@then("retrieve objects {objects} in that order")
+def retrieve_ordered_classes(context, objects):
+    assert context.result.status_code == 200
+    objects = objects.split(",")
+    items = context.result.json()["items"]
+    assert len(items) == len(objects)
+    for expected, actual in zip(objects, items):
+        assert actual["aid"] == expected
 
 
 @then("retrieve empty items")
