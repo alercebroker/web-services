@@ -100,7 +100,7 @@ Feature: Ask for a lightcurve data
       | without permission | ATLAS  | none   |
 #      | without permission | both   | ZTF1   |
 
-  Scenario Outline: request non-existing objects
+  Scenario Outline: request lightcurves for non-existing objects
     Given there are detections for object ALERCE1 with following parameters
       | oid    | tid     |
       | ZTF1   | ZTF     |

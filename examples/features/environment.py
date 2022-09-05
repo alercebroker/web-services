@@ -128,6 +128,22 @@ def insert_in_database(context, model, **kwargs):
             diffmaglim=1.,
         )
         model_class = models.NonDetection
+    elif model == "objects":
+        defaults = dict(
+            aid="ALERCE",
+            oid=["OID"],
+            tid="TID",
+            firstmjd=1.,
+            lastmjd=1.,
+            ndet=1,
+            meanra=1.,
+            meandec=1.,
+            features=[],
+            magstats=[],
+            probabilities=[],
+            xmatch=[],
+        )
+        model_class = models.Object
     else:
         raise ValueError(f"Unrecognized model {model}")
     defaults.update({key: type(defaults[key])(value) for key, value in kwargs.items()})
