@@ -12,8 +12,8 @@ detection = Model(
         "fid": fields.Integer(
             description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
         ),
-        "isdiffpos": fields.Integer(
-            description="1 if difference magnitude difference is positive, 0 otherwise"
+        "isdiffpos": fields.Boolean(
+            description="Whether the magnitude difference is positive or not"
         ),
         "mag": fields.Float(description="Magnitude of detection"),
         "e_mag": fields.Float(description="Error associated to magnitude"),
@@ -25,6 +25,8 @@ detection = Model(
 non_detection = Model(
     "Non Detection",
     {
+        "aid": fields.String(description="ALeRCE object identifier"),
+        "oid": fields.String(description="Survey object identifier"),
         "tid": fields.String(description="Telescope identifier"),
         "mjd": fields.Float(description="Modified Julian date of observation"),
         "fid": fields.Integer(
