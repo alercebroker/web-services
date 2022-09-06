@@ -9,7 +9,6 @@ from .models import (
 from .parsers import create_parsers
 from sqlalchemy import text, func
 from sqlalchemy.orm import aliased
-from astropy import units
 from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
 from api.container import AppContainer, SQLConnection
@@ -19,7 +18,6 @@ api.models[object_list_item.name] = object_list_item
 api.models[object_list.name] = object_list
 api.models[object_item.name] = object_item
 api.models[limit_values_model.name] = limit_values_model
-
 
 (
     filter_parser,
@@ -244,9 +242,7 @@ class ObjectList(Resource):
             ra, dec, radius = None, None, None
 
         if ra and dec and radius:
-            radius = radius * units.arcsec
-            radius = radius.to(units.deg)
-            radius = radius.value
+            radius /= 60.0  # From arcsec to deg
         return {"ra": ra, "dec": dec, "radius": radius}
 
 

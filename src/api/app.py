@@ -1,9 +1,7 @@
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
 from flask_restx import Api
-from api.resources.astro_object.astro_object import (
-    api as astro_object,
-)
+from api.resources.astro_object.astro_object import api as astro_object
 from api.resources.light_curve.light_curve import api as light_curve
 from api.resources.magstats.magstats import api as magstats
 from api.resources.probabilities.probabilities import api as probabilities
