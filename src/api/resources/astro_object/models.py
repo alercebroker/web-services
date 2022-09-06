@@ -8,8 +8,10 @@ from api.resources.probabilities.models import probability
 xmatch = Model(
     "Cross match",
     {
-        "catid": fields.String(description="Catalogue ID"),
-        "oid_catalog": fields.String(description="Object ID in catalogue"),
+        "catid": fields.String(description="Catalogue identifier"),
+        "oid_catalog": fields.String(
+            description="Object identifier in catalogue"
+        ),
         "dist": fields.Float(description="Distance in degrees"),
     },
 )
@@ -19,16 +21,16 @@ object_item = Model(
     {
         "aid": fields.String(description="ALeRCE object identifier"),
         "ndet": fields.Integer(
-            description="total number of detections for the object"
+            description="Total number of detections for the object"
         ),
         "firstmjd": fields.Float(
-            description="First detection's modified julian date"
+            description="First detection's modified Julian date"
         ),
         "lastmjd": fields.Float(
-            description="Last detection's modified julian date"
+            description="Last detection's modified Julian date"
         ),
-        "meanra": fields.Float(description="Mean Right Ascention"),
-        "meandec": fields.Float(description="Mean Declination"),
+        "meanra": fields.Float(description="Mean right ascension"),
+        "meandec": fields.Float(description="Mean declination"),
         "classifier_name": fields.String(description="Classifier name"),
         "classifier_version": fields.String(description="Classifier version"),
         "class_name": fields.String(description="Classifier class"),
@@ -41,18 +43,20 @@ single_object = Model(
     "Single Object",
     {
         "aid": fields.String(description="ALeRCE object identifier"),
-        "oid": fields.List(fields.String, description="Object identifier"),
+        "oid": fields.List(
+            fields.String, description="Survey object identifiers"
+        ),
         "ndet": fields.Integer(
-            description="total number of detections for the object"
+            description="Total number of detections for the object"
         ),
         "firstmjd": fields.Float(
-            description="First detection's modified julian date"
+            description="First detection's modified Julian date"
         ),
         "lastmjd": fields.Float(
-            description="Last detection's modified julian date"
+            description="Last detection's modified Julian date"
         ),
-        "meanra": fields.Float(description="Mean Right Ascention"),
-        "meandec": fields.Float(description="Mean Declination"),
+        "meanra": fields.Float(description="Mean right ascension"),
+        "meandec": fields.Float(description="Mean declination"),
         "probabilities": fields.List(
             fields.Nested(probability),
             description="Classifier probabilities",
@@ -88,9 +92,13 @@ object_list = Model(
 limit_values = Model(
     "Limit Values",
     {
-        "min_ndet": fields.Integer(description="Min number of detections"),
-        "max_ndet": fields.Integer(description="Max number of detections"),
-        "min_firstmjd": fields.Float(description="Min firstmjd"),
-        "max_firstmjd": fields.Float(description="Max firstmjd"),
+        "min_ndet": fields.Integer(description="Minimum number of detections"),
+        "max_ndet": fields.Integer(description="Maximum number of detections"),
+        "min_firstmjd": fields.Float(
+            description="First detection's minimum modified Julian date"
+        ),
+        "max_firstmjd": fields.Float(
+            description="First detection's maximum modified Julian date"
+        ),
     },
 )

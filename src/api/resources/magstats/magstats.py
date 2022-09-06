@@ -15,7 +15,7 @@ api.models[models.magstats.name] = models.magstats
 
 
 @api.route("/<id>/magstats")
-@api.param("id", "The object's identifier")
+@api.param("id", "The object ALeRCE identifier")
 @api.response(200, "Success")
 @api.response(404, "Not found")
 class MagStats(Resource):
@@ -32,6 +32,7 @@ class MagStats(Resource):
             AppContainer.view_result_handler
         ],
     ):
+        """Gets list of magnitude statistics (one per filter)"""
         command = command_factory(
             payload=MagStatsPayload(id),
             handler=result_handler,
