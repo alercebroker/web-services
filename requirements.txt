@@ -2,11 +2,13 @@ Flask==2.1.0
 flask_cors==3.0.9
 flask_profiler==1.8.1
 flask_restx==0.5.1
-flask-limiter==1.4
+werkzeug==2.1.2 # to fix bug https://github.com/python-restx/flask-restx/issues/460
 astropy==4.0.1.post1
 prometheus-flask-exporter>=0.18.1
 returns==0.19.0
+werkzeug==2.1.2
 dependency-injector>=4.0,<5.0
 dependency-injector[yaml]
--e git+https://git@github.com/alercebroker/db-plugins@2.1.2#egg=db-plugins
+git+https://git@github.com/alercebroker/db-plugins@3.0.0#egg=db-plugins
 -e git+https://github.com/alercebroker/ralidator-flask.git@50825f9#egg=ralidator_flask
+numpy==1.22.0
