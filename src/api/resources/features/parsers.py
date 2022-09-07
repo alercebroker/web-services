@@ -4,7 +4,7 @@ filters = reqparse.RequestParser()
 filters.add_argument(
     "fid",
     type=int,
-    help="Feature fid number",
+    help="Filter ID",
     location="args",
 )
 filters.add_argument(

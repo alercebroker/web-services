@@ -3,39 +3,41 @@ from flask_restx import fields, Model
 magstats = Model(
     "Magnitude statistics",
     {
-        "fid": fields.Integer(description="Filter ID (1=g; 2=r, 3=i)"),
+        "fid": fields.Integer(
+            description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
+        ),
         "ndet": fields.Integer(
-            description="number of detections in the given band"
+            description="Number of detections in the given filter"
         ),
         "magmean": fields.Float(
-            description="the mean magnitude for the given fid"
+            description="Mean magnitude for the given filter"
         ),
         "magmedian": fields.Float(
-            description="the median magnitude for the given fid"
+            description="Median magnitude for the given filter"
         ),
         "magmax": fields.Float(
-            description="the max magnitude for the given fid"
+            description="Maximum magnitude for the given filter"
         ),
         "magmin": fields.Float(
-            description="the min magnitude for the given fid"
+            description="Minimum magnitude for the given filter"
         ),
         "magsigma": fields.Float(
-            description="magnitude standard deviation for the given fid"
+            description="Standard deviation in magnitude for the given filter"
         ),
         "maglast": fields.Float(
-            description="the last magnitude for the given fid"
+            description="Last magnitude for the given filter"
         ),
         "magfirst": fields.Float(
-            description="the first magnitude for the given fid"
+            description="First magnitude for the given filter"
         ),
         "firstmjd": fields.Float(
-            description="the time of the first detection in the given fid"
+            description="First detection's modified Julian date in the given filter"
         ),
         "lastmjd": fields.Float(
-            description="the time of the last detection in the given fid"
+            description="First detection's modified Julian date in the given filter"
         ),
         "ingestion-step": fields.String(
-            description="ingestion step pipeline version"
+            description="Ingestion step pipeline version"
         ),
     },
 )

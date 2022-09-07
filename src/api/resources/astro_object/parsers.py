@@ -19,7 +19,7 @@ filters.add_argument(
     type=str,
     dest="oid",
     location="args",
-    help="Object id",
+    help="Object identifier (can be ALeRCE and/or survey identifier)",
     action="append",
 )
 filters.add_argument(
@@ -27,7 +27,7 @@ filters.add_argument(
     type=int,
     dest="ndet",
     location="args",
-    help="Range of detections.",
+    help="One element is minimum number of detections. Second value is maximum",
     action="append",
 )
 filters.add_argument(
@@ -35,7 +35,7 @@ filters.add_argument(
     type=float,
     dest="firstmjd",
     location="args",
-    help="First detection date range in mjd.",
+    help="One element is the minimum MJD for first detection. Second values is maximum",
     action="append",
 )
 filters.add_argument(
@@ -43,7 +43,7 @@ filters.add_argument(
     type=float,
     dest="lastmjd",
     location="args",
-    help="Last detection date range in mjd.",
+    help="One element is the minimum MJD for last detection. Second values is maximum",
     action="append",
 )
 filters.add_argument(
@@ -51,14 +51,14 @@ filters.add_argument(
     type=float,
     dest="ra",
     location="args",
-    help="Ra in degrees for conesearch.",
+    help="Right ascension center (in degrees) for conesearch",
 )
 filters.add_argument(
     "dec",
     type=float,
     dest="dec",
     location="args",
-    help="Dec in degrees for conesearch.",
+    help="Declination center (in degrees) for conesearch.",
 )
 filters.add_argument(
     "radius",
@@ -66,14 +66,14 @@ filters.add_argument(
     type=float,
     dest="radius",
     location="args",
-    help="Radius in arcsec for conesearch. (Default: 30 arcsec)",
+    help="Circle radius in arcseconds for conesearch",
 )
 filters.add_argument(
     "classifier",
     type=str,
     dest="classifier",
     location="args",
-    help="classifier name",
+    help="Classifier name",
 )
 filters.add_argument(
     "classifier_version",
@@ -111,7 +111,7 @@ pagination.add_argument(
     type=int,
     dest="page",
     location="args",
-    help="Page or offset to retrieve.",
+    help="Result page to retrieve",
 )
 pagination.add_argument(
     "page_size",
@@ -119,7 +119,7 @@ pagination.add_argument(
     type=int,
     dest="page_size",
     location="args",
-    help="Number of objects to retrieve in each page.",
+    help="Number of objects to retrieve in each page",
 )
 pagination.add_argument(
     "count",
@@ -127,7 +127,7 @@ pagination.add_argument(
     default=False,
     dest="count",
     location="args",
-    help="Whether to count total objects or not.",
+    help="Whether to count total number of objects",
 )
 
 order = reqparse.RequestParser()
@@ -145,5 +145,5 @@ order.add_argument(
     dest="order_mode",
     location="args",
     choices=["ASC", "DESC"],
-    help="Order could be ascending or descending",
+    help="Ordering direction",
 )
