@@ -69,11 +69,37 @@ def request_parameter_and_classifier(context, parameter, value, classifier):
 
 
 @when("request objects within {radius} arcsec of {ra}/{dec}")
-def request_range_with_sort(context, radius, ra, dec):
+def request_conesearch(context, radius, ra, dec):
     params = {"radius": radius, "ra": ra, "dec": dec}
     url = f"{environment.BASE_URL}/objects"
 
     context.result = requests.get(url, params=params)
+
+
+@when("request object with AID {aid}")
+def request_single_object(context, aid):
+    url = f"{environment.BASE_URL}/objects/{aid}"
+
+    context.result = requests.get(url)
+
+
+@when("request limit values")
+def request_limits(context):
+    url = f"{environment.BASE_URL}/objects/limit_values"
+
+    context.result = requests.get(url)
+
+
+@then("ensure {field} is {value}")
+def retrieve_fields(context, field, value):
+    result = context.result.json()
+    assert field in result
+    if value == "present":  # Only used for nested subfields
+        assert isinstance(result[field], list)
+    elif field == "oid":
+        assert result[field] == value.split(",")
+    else:
+        assert result[field] == value
 
 
 @then("retrieve classes {classes} for objects {objects}, respectively")
@@ -101,8 +127,17 @@ def retrieve_ordered_classes(context, objects):
         assert actual["aid"] == expected
 
 
+@then("retrieve {field} with value {value}")
+def retrieve_ordered_classes(context, field, value):
+    assert context.result.status_code == 200
+    result = context.result.json()
+    value = int(value) if "ndet" in field else float(value)
+    assert result[field] == value
+
+
 @then("retrieve objects {objects}")
-def retrieve_ordered_classes(context, objects):
+def retrieve_unordered_classes(context, objects):
+    assert context.result.status_code == 200
     objects = objects.split(",")
     for obj in context.result.json()["items"]:
         assert obj["aid"] in objects
@@ -115,3 +150,8 @@ def retrieve_ordered_classes(context, objects):
 def retrieve_empty_items(context):
     assert context.result.status_code == 200
     assert len(context.result.json()["items"]) == 0
+
+
+@then("retrieve error code {code:d}")
+def retrieve_empty_items(context, code):
+    assert context.result.status_code == code

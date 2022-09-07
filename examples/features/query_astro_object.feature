@@ -1,4 +1,42 @@
-Feature: Ask for astro object data
+Feature: Ask for astron object(s)
+
+  Scenario: query for limits in ndet and firstmjd
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.1      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.2      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request limit values
+    Then retrieve min_ndet with value 1
+    And retrieve max_ndet with value 7
+    And retrieve min_firstmjd with value 1.1
+    And retrieve max_firstmjd with value 5.2
+
+  Scenario: get single object
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.1      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.2      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request object with AID ALERCE2
+    Then ensure aid is ALERCE2
+    And ensure oid is ZTF1,ATLAS2
+    And ensure xmatch is present
+    And ensure magstats is present
+    And ensure features is present
+    And ensure probabilities is present
+
+  Scenario: get non existent object
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.1      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.2      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request object with AID ALERCE99
+    Then retrieve error code 404
 
   Scenario Outline: query objects by identifier
     Given objects are in the database with following probabilities
