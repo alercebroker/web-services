@@ -3,13 +3,6 @@ from behave import when, then
 from examples.features import environment
 
 
-@when("request all probabilities for {aid}")
-def request_all_probabilities(context, aid):
-    url = f"{environment.BASE_URL}/objects/{aid}/probabilities"
-
-    context.result = requests.get(url)
-
-
 @when("request probabilities for {classifier} classifier for {aid}")
 def request_probabilities_for_classifier(context, classifier, aid):
     params = {"classifier": classifier}
