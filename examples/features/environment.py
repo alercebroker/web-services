@@ -144,6 +144,13 @@ def insert_in_database(context, model, **kwargs):
             xmatch=[],
         )
         model_class = models.Object
+    elif model == "taxonomy":
+        defaults = dict(
+            classifier_name="classifier",
+            classifier_version="0.0",
+            classes=[],
+        )
+        model_class = models.Taxonomy
     else:
         raise ValueError(f"Unrecognized model {model}")
     defaults.update({key: type(defaults[key])(value) for key, value in kwargs.items()})
