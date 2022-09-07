@@ -55,5 +55,5 @@ def check_output_candid(context, results, oids):
 
 
 @then("retrieve error code {error_code:d}")
-def check_output_candid(context, error_code):
+def check_error_code(context, error_code):
     assert context.result.status_code == error_code

@@ -1,4 +1,4 @@
-Feature: Ask for astron object(s)
+Feature: Ask for astro object(s)
 
   Scenario: query for limits in ndet and firstmjd
     Given objects are in the database with following probabilities

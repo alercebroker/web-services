@@ -150,8 +150,3 @@ def retrieve_unordered_classes(context, objects):
 def retrieve_empty_items(context):
     assert context.result.status_code == 200
     assert len(context.result.json()["items"]) == 0
-
-
-@then("retrieve error code {code:d}")
-def retrieve_empty_items(context, code):
-    assert context.result.status_code == code
