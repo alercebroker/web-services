@@ -68,6 +68,14 @@ def request_parameter_and_classifier(context, parameter, value, classifier):
     context.result = requests.get(url, params=params)
 
 
+@when("request objects within {radius} arcsec of {ra}/{dec}")
+def request_range_with_sort(context, radius, ra, dec):
+    params = {"radius": radius, "ra": ra, "dec": dec}
+    url = f"{environment.BASE_URL}/objects"
+
+    context.result = requests.get(url, params=params)
+
+
 @then("retrieve classes {classes} for objects {objects}, respectively")
 def retrieve_classes_for_objects(context, classes, objects):
     assert context.result.status_code == 200
@@ -91,6 +99,16 @@ def retrieve_ordered_classes(context, objects):
     assert len(items) == len(objects)
     for expected, actual in zip(objects, items):
         assert actual["aid"] == expected
+
+
+@then("retrieve objects {objects}")
+def retrieve_ordered_classes(context, objects):
+    objects = objects.split(",")
+    for obj in context.result.json()["items"]:
+        assert obj["aid"] in objects
+        i = objects.index(obj["aid"])
+        objects.pop(i)
+    assert len(objects) == 0
 
 
 @then("retrieve empty items")

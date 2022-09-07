@@ -17,6 +17,16 @@ Feature: Ask for astro object data
       | ALERCE1,ATLAS2    | ALERCE2,ALERCE1,ALERCE4 |
       | ALERCE1,ZTF1,ZTF2 | ALERCE2,ALERCE1,ALERCE3 |
 
+  Scenario: query objects by non present identifiers
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects with identifiers ALERCE99,ZTF99,ATLAS99 in ASC order by ndet
+    Then retrieve empty items
+
   Scenario Outline: query objects by number of detections
     Given objects are in the database with following probabilities
       | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
@@ -31,6 +41,16 @@ Feature: Ask for astro object data
       | 1   | 6   | DESC  | ndet     | ALERCE4,ALERCE1,ALERCE2 |
       | 1   | 6   | ASC   | ndet     | ALERCE2,ALERCE1,ALERCE4 |
       | 2   | 7   | DESC  | firstmjd | ALERCE3,ALERCE4,ALERCE1 |
+
+  Scenario: query objects outside range of number of detections
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects with ndet between 2 and 3 in ASC order by ndet
+    Then retrieve empty items
 
   Scenario Outline: query objects by first detection date
     Given objects are in the database with following probabilities
@@ -47,6 +67,16 @@ Feature: Ask for astro object data
       | 1   | 4   | ASC   | firstmjd | ALERCE1,ALERCE2,ALERCE4 |
       | 2   | 7   | DESC  | ndet     | ALERCE3,ALERCE4,ALERCE2 |
 
+  Scenario: query objects outside range of first detection date
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects with firstmjd between 3.5 and 4.5 in ASC order by ndet
+    Then retrieve empty items
+
   Scenario Outline: query objects by last detection date
     Given objects are in the database with following probabilities
       | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
@@ -61,6 +91,41 @@ Feature: Ask for astro object data
       | 5   | 10  | DESC  | lastmjd  | ALERCE3,ALERCE1         |
       | 5   | 10  | ASC   | lastmjd  | ALERCE1,ALERCE3         |
       | 1   | 10  | DESC  | ndet     | ALERCE3,ALERCE1,ALERCE2 |
+
+  Scenario: query objects outside range of last detection date
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects with lastmjd between 2.5 and 6.5 in ASC order by ndet
+    Then retrieve empty items
+
+  Scenario Outline: cone search object queries
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.0    | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects within <radius> arcsec of <ra>/<dec>
+    Then retrieve objects <objects>
+    Examples:
+      | radius | ra   | dec   | objects         |
+      | 1800.0 | 0.0  | 80.0  | ALERCE1,ALERCE2 |
+      | 1799.0 | 0.0  | 80.0  | ALERCE1         |
+      | 1800.0 | 45.0 | -80.5 | ALERCE3         |
+
+    Scenario: cone search query in area without objects
+    Given objects are in the database with following probabilities
+      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
+      | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
+      | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
+      | ALERCE4 | ATLAS2      | 5    | 3.0      | 12.0    | 180.0  | 0.0     |
+    When request objects within 1 arcsec of 0/0
+    Then retrieve empty items
 
   Scenario Outline: query objects by ranking
     Given object ALERCE1 is in the database with following probabilities
