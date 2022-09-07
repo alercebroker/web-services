@@ -57,7 +57,7 @@ class ListAstroObjectRepository(MongoRepository):
                 }
             }
         )
-        pipe.append({"$unset": "probabilities"})
+        pipe.append({"$project" : { "probabilities": 0 } })
         if payload.sort:
             pipe.append({"$sort": payload.sort})
 
