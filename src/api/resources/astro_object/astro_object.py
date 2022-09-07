@@ -242,7 +242,7 @@ class ObjectList(Resource):
             ra, dec, radius = None, None, None
 
         if ra and dec and radius:
-            radius /= 60.0  # From arcsec to deg
+            radius /= 3600.0  # From arcsec to deg
         return {"ra": ra, "dec": dec, "radius": radius}
 
 
