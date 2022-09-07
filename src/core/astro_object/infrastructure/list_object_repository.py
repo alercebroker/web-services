@@ -52,7 +52,7 @@ class ListAstroObjectRepository(MongoRepository):
         )
         pipe.append(
             {
-                "$set": {
+                "$addFields": {
                     field: f"$probabilities.{field}" for field in probabilities
                 }
             }

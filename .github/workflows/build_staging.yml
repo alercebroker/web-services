@@ -2,7 +2,7 @@ name: build_staging_image
 on:
   push:
     branches:
-      - multistream
+      - multistrea-elasticc
 
 jobs:
   get_tags:
