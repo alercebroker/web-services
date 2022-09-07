@@ -4,14 +4,14 @@ from examples.features import environment
 
 
 @when("request all probabilities for {aid}")
-def request_limits(context, aid):
+def request_all_probabilities(context, aid):
     url = f"{environment.BASE_URL}/objects/{aid}/probabilities"
 
     context.result = requests.get(url)
 
 
 @when("request probabilities for {classifier} classifier for {aid}")
-def request_limits(context, classifier, aid):
+def request_probabilities_for_classifier(context, classifier, aid):
     params = {"classifier": classifier}
     url = f"{environment.BASE_URL}/objects/{aid}/probabilities"
 
@@ -19,7 +19,7 @@ def request_limits(context, classifier, aid):
 
 
 @when("request probabilities for {classifier} classifier and version {version} for {aid}")
-def request_limits(context, classifier, version, aid):
+def request_probabilities_for_classifier_and_version(context, classifier, version, aid):
     params = {"classifier": classifier, "classifier_version": version}
     url = f"{environment.BASE_URL}/objects/{aid}/probabilities"
 
