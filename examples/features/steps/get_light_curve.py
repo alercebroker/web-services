@@ -48,7 +48,7 @@ def request_to_endpoint(context, endpoint, aid, survey, user):
 
 
 @then("retrieve detections with identifiers: {detections}; and non detections with identifiers: {non_detections}")
-def check_output_candid(context, detections, non_detections):
+def check_lightcurve_oids(context, detections, non_detections):
     assert context.result.status_code == 200
     output = context.result.json()
     if detections == "none" and non_detections == "none":  # Special case for empty return
@@ -71,7 +71,7 @@ def check_output_candid(context, detections, non_detections):
 
 
 @then("retrieve results with identifiers: {expected}")
-def check_output_candid(context, expected):
+def check_result_oids(context, expected):
     assert context.result.status_code == 200
     output = context.result.json()
     if expected == "none":  # Special case for empty return

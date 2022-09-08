@@ -1,6 +1,6 @@
-import requests
 from behave import when, given, then
 from examples.features import environment
+from examples.examples.api_request_example import classifier_examples
 
 
 @given("following classifiers are in database")
@@ -16,16 +16,12 @@ def insert_classifiers(context):
 
 @when("request all classifiers")
 def request_all_classifiers(context):
-    url = f"{environment.BASE_URL}/classifiers"
-
-    context.result = requests.get(url)
+    context.result = classifier_examples.get_all_classifiers()
 
 
 @when("request classes for classifier {classifier} and version {version}")
 def request_all_classifiers(context, classifier, version):
-    url = f"{environment.BASE_URL}/classifiers/{classifier}/{version}/classes"
-
-    context.result = requests.get(url)
+    context.result = classifier_examples.get_all_classes(classifier, version)
 
 
 @then("retrieve following classifiers")
@@ -56,4 +52,3 @@ def retrieve_classes(context, classes):
         assert result["name"] in classes
         classes.pop(classes.index(result["name"]))
     assert len(classes) == 0
-
