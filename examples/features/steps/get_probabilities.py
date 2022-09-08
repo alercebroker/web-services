@@ -1,22 +1,21 @@
-import requests
 from behave import when, then
 from examples.features import environment
+from examples.examples.api_request_example import probabilities_examples
+
+
+@when("request all probabilities for {aid}")
+def request_probabilities_for_classifier(context, aid):
+    context.result = probabilities_examples.get_all_probabilities(aid)
 
 
 @when("request probabilities for {classifier} classifier for {aid}")
 def request_probabilities_for_classifier(context, classifier, aid):
-    params = {"classifier": classifier}
-    url = f"{environment.BASE_URL}/objects/{aid}/probabilities"
-
-    context.result = requests.get(url, params=params)
+    context.result = probabilities_examples.get_all_probabilities_with_classifier(aid, classifier)
 
 
 @when("request probabilities for {classifier} classifier and version {version} for {aid}")
 def request_probabilities_for_classifier_and_version(context, classifier, version, aid):
-    params = {"classifier": classifier, "classifier_version": version}
-    url = f"{environment.BASE_URL}/objects/{aid}/probabilities"
-
-    context.result = requests.get(url, params=params)
+    context.result = probabilities_examples.get_all_probabilities_with_classifier_and_version(aid, classifier, version)
 
 
 @then("retrieve classes {classes} with probabilities {probabilities}")
