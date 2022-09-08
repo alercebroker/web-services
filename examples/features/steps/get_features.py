@@ -1,6 +1,6 @@
-import requests
 from behave import when, given, then
 from examples.features import environment
+from examples.examples.api_request_example import features_examples
 
 
 @given("object {aid} is in the database with following features")
@@ -17,66 +17,44 @@ def insert_object_with_features(context, aid):
     environment.insert_in_database(context, "objects", aid=aid, features=features)
 
 
-@when("request all {endpoint} for {aid}")
-def request_all_from_endpoint(context, endpoint, aid):
-    url = f"{environment.BASE_URL}/objects/{aid}/{endpoint}"
-
-    context.result = requests.get(url)
+@when("request all features for {aid}")
+def request_all_features(context, aid):
+    context.result = features_examples.get_all_features(aid)
 
 
 @when("request features with fid {fid:d} for {aid}")
 def request_all_features_with_fid(context, fid, aid):
-    params = {"fid": fid}
-    url = f"{environment.BASE_URL}/objects/{aid}/features"
-
-    context.result = requests.get(url, params=params)
+    context.result = features_examples.get_all_features_with_fid(aid, fid)
 
 
 @when("request features with version {version} for {aid}")
 def request_all_features_with_version(context, version, aid):
-    params = {"version": version}
-    url = f"{environment.BASE_URL}/objects/{aid}/features"
-
-    context.result = requests.get(url, params=params)
+    context.result = features_examples.get_all_features_with_version(aid, version)
 
 
 @when("request features with fid {fid:d} and version {version} for {aid}")
 def request_all_features_with_fid_and_version(context, fid, version, aid):
-    params = {"fid": fid, "version": version}
-    url = f"{environment.BASE_URL}/objects/{aid}/features"
-
-    context.result = requests.get(url, params=params)
+    context.result = features_examples.get_all_features_with_fid_and_version(aid, fid, version)
 
 
 @when("request feature {feature} with fid {fid:d} for {aid}")
 def request_feature_with_fid(context, feature, fid, aid):
-    params = {"fid": fid}
-    url = f"{environment.BASE_URL}/objects/{aid}/features/{feature}"
-
-    context.result = requests.get(url, params=params)
+    context.result = features_examples.get_feature_with_fid(aid, feature, fid)
 
 
 @when("request feature {feature} with version {version} for {aid}")
 def request_feature_with_version(context, feature, version, aid):
-    params = {"version": version}
-    url = f"{environment.BASE_URL}/objects/{aid}/features/{feature}"
-
-    context.result = requests.get(url, params=params)
+    context.result = features_examples.get_feature_with_version(aid, feature, version)
 
 
 @when("request feature {feature} with fid {fid:d} and version {version} for {aid}")
 def request_feature_with_fid_and_version(context, feature, fid, version, aid):
-    params = {"fid": fid, "version": version}
-    url = f"{environment.BASE_URL}/objects/{aid}/features/{feature}"
-
-    context.result = requests.get(url, params=params)
+    context.result = features_examples.get_feature_with_fid_and_version(aid, feature, fid, version)
 
 
 @when("request feature {feature} for {aid}")
 def request_feature(context, feature, aid):
-    url = f"{environment.BASE_URL}/objects/{aid}/features/{feature}"
-
-    context.result = requests.get(url)
+    context.result = features_examples.get_feature(aid, feature)
 
 
 @then("retrieve following features")
