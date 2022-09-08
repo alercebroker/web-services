@@ -1,6 +1,6 @@
-import requests
 from behave import when, given, then
 from examples.features import environment
+from examples.examples.api_request_example import magstats_examples
 
 
 @given("object {aid} is in the database with magstats for fid {fids}")
@@ -14,9 +14,7 @@ def insert_object_with_magstats(context, aid, fids):
 
 @when("request magstats for {aid}")
 def request_magstats(context, aid):
-    url = f"{environment.BASE_URL}/objects/{aid}/magstats"
-
-    context.result = requests.get(url)
+    context.result = magstats_examples.get_all_magstats(aid)
 
 
 @then("retrieve magstats with fid {fids}")
