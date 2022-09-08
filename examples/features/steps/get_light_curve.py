@@ -1,6 +1,35 @@
-import requests
 from behave import when, given, then
 from examples.features import environment
+from examples.examples.api_request_example import detections_examples, non_detections_examples, lightcurve_examples
+
+
+examples = {
+    "detections": {
+        "ZTF": detections_examples.get_all_detections_from_ztf,
+        "ATLAS": detections_examples.get_all_detections_from_atlas,
+        "all": detections_examples.get_all_detections_from_all_surveys,
+    },
+    "non detections": {
+        "ZTF": non_detections_examples.get_all_non_detections_from_ztf,
+        "ATLAS": non_detections_examples.get_all_non_detections_from_atlas,
+        "all": non_detections_examples.get_all_non_detections_from_all_surveys,
+    },
+    "lightcurve": {
+        "ZTF": lightcurve_examples.get_lightcurve_from_ztf,
+        "ATLAS": lightcurve_examples.get_lightcurve_from_atlas,
+        "all": lightcurve_examples.get_lightcurve_from_all_surveys,
+    },
+    "first detection": {
+        "ZTF": detections_examples.get_first_detection_from_ztf,
+        "ATLAS": detections_examples.get_first_detection_from_atlas,
+        "all": detections_examples.get_first_detection_from_all_surveys,
+    },
+    "first non detection": {
+        "ZTF": non_detections_examples.get_first_non_detection_from_ztf,
+        "ATLAS": non_detections_examples.get_first_non_detection_from_atlas,
+        "all": non_detections_examples.get_first_non_detection_from_all_surveys,
+    },
+}
 
 
 @given("there are {model} for object {aid} with following parameters")
@@ -11,47 +40,48 @@ def insert_all_detections(context, model, aid):
         environment.insert_in_database(context, model, **kwargs)
 
 
-@when("request first {endpoint} for object {aid} in {survey_id} survey {has} permission")
-def request_to_endpoint(context, endpoint, aid, survey_id, has):
-    req_string = f"{environment.BASE_URL}/objects/{aid}/{endpoint}s?order_by=mjd&order_mode=ASC&page_size=1"
-    if survey_id != "both":
-        req_string += f"&survey_id={survey_id.lower()}"
-
-    kwargs = {}
-    if has == "with":
-        kwargs["headers"] = environment.HEADER_ADMIN_TOKEN
-    context.result = requests.get(req_string, **kwargs)
+@when("request {endpoint} for object {aid} in {survey} survey as {user}")
+def request_to_endpoint(context, endpoint, aid, survey, user):
+    request = examples[endpoint][survey]
+    as_admin = user == "admin"
+    context.result = request(aid, as_admin=as_admin)
 
 
-@when("request {endpoint} for object {aid} in {survey_id} survey {has} permission")
-def request_to_endpoint(context, endpoint, aid, survey_id, has):
-    req_string = f"{environment.BASE_URL}/objects/{aid}/{endpoint}"
-    if survey_id != "both":
-        req_string += f"?survey_id={survey_id.lower()}"
-
-    kwargs = {}
-    if has == "with":
-        kwargs["headers"] = environment.HEADER_ADMIN_TOKEN
-    context.result = requests.get(req_string, **kwargs)
-
-
-@then("retrieve {results} with identifiers {oids}")
-def check_output_candid(context, results, oids):
+@then("retrieve detections with identifiers: {detections}; and non detections with identifiers: {non_detections}")
+def check_output_candid(context, detections, non_detections):
     assert context.result.status_code == 200
     output = context.result.json()
-    if results != "results" and oids == "none":
+    if detections == "none" and non_detections == "none":  # Special case for empty return
         assert output is None
         return
-    elif results != "results":
-        output = output[results]
-    if oids == "none":  # Special case for empty return
+    actual_detections = output["detections"]
+    actual_non_detections = output["non_detections"]
+
+    detections = set(detections.split(","))
+    for detection in actual_detections:
+        assert detection["oid"] in detections
+        detections.remove(detection["oid"])
+    assert len(detections) == 0
+
+    non_detections = set(non_detections.split(","))
+    for non_detection in actual_non_detections:
+        assert non_detection["oid"] in non_detections
+        non_detections.remove(non_detection["oid"])
+    assert len(non_detections) == 0
+
+
+@then("retrieve results with identifiers: {expected}")
+def check_output_candid(context, expected):
+    assert context.result.status_code == 200
+    output = context.result.json()
+    if expected == "none":  # Special case for empty return
         assert len(output) == 0
         return
-    oids = set(oids.split(","))
-    for detection in output:
-        assert detection["oid"] in oids
-        oids.remove(detection["oid"])
-    assert len(oids) == 0
+    expected = set(expected.split(","))
+    for result in output:
+        assert result["oid"] in expected
+        expected.remove(result["oid"])
+    assert len(expected) == 0
 
 
 @then("retrieve error code {error_code:d}")
