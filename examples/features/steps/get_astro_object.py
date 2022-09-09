@@ -1,6 +1,40 @@
-import requests
 from behave import when, given, then
 from examples.features import environment
+from examples.examples.api_request_example import objects_examples
+
+
+range_examples = {
+    "ndet": objects_examples.get_objects_in_range_of_ndet,
+    "firstmjd": objects_examples.get_objects_in_range_of_first_mjd,
+    "lastmjd": objects_examples.get_objects_in_range_of_last_mjd,
+}
+
+probabilities_examples = {
+    "classifier": objects_examples.get_objects_by_classifier,
+    "ranking": objects_examples.get_objects_by_ranking,
+    "probability": objects_examples.get_objects_by_probability,
+    "classifier_version": objects_examples.get_objects_by_classifier_version,
+    "class": objects_examples.get_objects_by_class,
+}
+
+sorting_examples = {
+    "probability": {
+        "ascending": objects_examples.get_objects_sorted_by_probability_ascending,
+        "descending": objects_examples.get_objects_sorted_by_probability_descending,
+    },
+    "ndet": {
+        "ascending": objects_examples.get_objects_sorted_by_number_of_detections_ascending,
+        "descending": objects_examples.get_objects_sorted_by_number_of_detections_descending,
+    },
+    "firstmjd": {
+        "ascending": objects_examples.get_objects_sorted_by_first_detection_date_ascending,
+        "descending": objects_examples.get_objects_sorted_by_first_detection_date_descending,
+    },
+    "lastmjd": {
+        "ascending": objects_examples.get_objects_sorted_by_last_detection_date_ascending,
+        "descending": objects_examples.get_objects_sorted_by_last_detection_date_descending,
+    }
+}
 
 
 @given("object {aid} is in the database with following probabilities")
@@ -18,7 +52,7 @@ def insert_object_with_probabilities(context, aid):
     environment.insert_in_database(context, "objects", aid=aid, probabilities=probabilities)
 
 
-@given("objects are in the database with following probabilities")
+@given("objects are in the database with following parameters")
 def insert_object(context):
     for row in context.table:
         kwargs = {heading: value for heading, value in zip(row.headings, row.cells)}
@@ -27,67 +61,39 @@ def insert_object(context):
         environment.insert_in_database(context, "objects", **kwargs)
 
 
-@when("request objects with identifiers {oids} in {direction} order by {sort}")
-def request_objects_by_id(context, oids, direction, sort):
-    params = {"oid": oids.split(","), "order_by": sort, "order_mode": direction}
-    url = f"{environment.BASE_URL}/objects"
-
-    context.result = requests.get(url, params=params)
+@when("request objects with identifiers {oids}")
+def request_objects_by_id(context, oids):
+    context.result = objects_examples.get_objects_by_identifiers(*oids.split(","))
 
 
-@when("request objects with {parameter} between {minimum} and {maximum} in {direction} order by {sort}")
-def request_range_with_sort(context, parameter, minimum, maximum, direction, sort):
-    params = {parameter: [minimum, maximum], "order_by": sort, "order_mode": direction}
-    url = f"{environment.BASE_URL}/objects"
-
-    context.result = requests.get(url, params=params)
+@when("request objects with {parameter} between {minimum} and {maximum}")
+def request_ranged_parameter(context, parameter, minimum, maximum):
+    context.result = range_examples[parameter](minimum, maximum)
 
 
-@when("request objects with {parameter} {value} and classifier {classifier} in {direction} order by {sort}")
-def request_parameter_and_classifier(context, parameter, value, classifier, direction, sort):
-    params = {}
-    if value != "all":
-        params[parameter] = value
-    if classifier != "all":
-        params["classifier"] = classifier
-    params.update({"order_by": sort, "order_mode": direction})
-    url = f"{environment.BASE_URL}/objects"
-
-    context.result = requests.get(url, params=params)
+@when("request objects with {parameter} {value}")
+def request_parameter_with_value(context, parameter, value):
+    context.result = probabilities_examples[parameter](value)
 
 
-@when("request objects with {parameter} {value} and classifier {classifier}")
-def request_parameter_and_classifier(context, parameter, value, classifier):
-    params = {}
-    if value != "all":
-        params[parameter] = value
-    if classifier != "all":
-        params["classifier"] = classifier
-    url = f"{environment.BASE_URL}/objects"
-
-    context.result = requests.get(url, params=params)
+@when("request objects sorted by {parameter} in {direction} order")
+def request_sorted_objects(context, parameter, direction):
+    context.result = sorting_examples[parameter][direction]()
 
 
 @when("request objects within {radius} arcsec of {ra}/{dec}")
 def request_conesearch(context, radius, ra, dec):
-    params = {"radius": radius, "ra": ra, "dec": dec}
-    url = f"{environment.BASE_URL}/objects"
-
-    context.result = requests.get(url, params=params)
+    context.result = objects_examples.get_objects_with_conesearch(ra, dec, radius)
 
 
 @when("request object with AID {aid}")
 def request_single_object(context, aid):
-    url = f"{environment.BASE_URL}/objects/{aid}"
-
-    context.result = requests.get(url)
+    context.result = objects_examples.get_single_object(aid)
 
 
 @when("request limit values")
 def request_limits(context):
-    url = f"{environment.BASE_URL}/objects/limit_values"
-
-    context.result = requests.get(url)
+    context.result = objects_examples.get_limits()
 
 
 @then("ensure {field} is {value}")
@@ -117,8 +123,20 @@ def retrieve_classes_for_objects(context, classes, objects):
     assert len(classes) == 0
 
 
-@then("retrieve objects {objects} in that order")
-def retrieve_ordered_classes(context, objects):
+@then("retrieve classes {classes} for objects {objects}, respectively, in that order")
+def retrieve_classes_for_objects(context, classes, objects):
+    assert context.result.status_code == 200
+    classes = classes.split(",")
+    objects = objects.split(",")
+    for i, obj in enumerate(context.result.json()["items"]):
+        assert obj["aid"] == objects[i]
+        assert obj["class_name"] == classes[i]
+    assert len(objects) == len(context.result.json()["items"])
+    assert len(classes) == len(context.result.json()["items"])
+
+
+@then("retrieve objects {objects}, in that order")
+def retrieve_ordered_objects(context, objects):
     assert context.result.status_code == 200
     objects = objects.split(",")
     items = context.result.json()["items"]
@@ -128,7 +146,7 @@ def retrieve_ordered_classes(context, objects):
 
 
 @then("retrieve {field} with value {value}")
-def retrieve_ordered_classes(context, field, value):
+def check_field_value(context, field, value):
     assert context.result.status_code == 200
     result = context.result.json()
     value = int(value) if "ndet" in field else float(value)

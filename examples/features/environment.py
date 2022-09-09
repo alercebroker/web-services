@@ -2,8 +2,6 @@ from db_plugins.db.mongo.connection import MongoDatabaseCreator
 from db_plugins.db.mongo import models
 import signal
 import time
-import jwt
-from datetime import datetime, timedelta, timezone
 
 MONGO_SETTINGS = {
     "HOST": "mongo",
@@ -12,8 +10,6 @@ MONGO_SETTINGS = {
     "PASSWORD": "mongo",
     "PORT": 27017,
 }
-
-BASE_URL = "http://alerts_api:5000/"
 
 
 def mongo_ready():
