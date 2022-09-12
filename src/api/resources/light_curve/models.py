@@ -1,5 +1,6 @@
 from flask_restx import fields, Model
 
+
 def get_ps_flux_err(raw):
     try:
         return raw["extra_fields"]["psFluxErr"]
@@ -7,6 +8,7 @@ def get_ps_flux_err(raw):
         return None
     except TypeError:
         return None
+
 
 detection = Model(
     "Detection",
@@ -42,10 +44,7 @@ non_detection = Model(
         "diffmaglim": fields.Float(
             description="Upper limit on magnitude difference with template"
         ),
-        "psFluxErr": fields.Float(
-            attribute=get_ps_flux_err,
-            description=""
-        )
+        "psFluxErr": fields.Float(attribute=get_ps_flux_err, description=""),
     },
 )
 
