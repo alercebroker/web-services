@@ -10,4 +10,4 @@ class ClassifierService:
         return self.repo_classifiers.get(payload)
 
     def get_classes(self, payload: ClassifiersPayload):
-        return self.repo_classifiers.get(payload)
+        return self.repo_classes.get(payload)

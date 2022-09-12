@@ -1,42 +1,127 @@
 Feature: Ask for a lightcurve data
 
-  Scenario: ask for detections for object from ztf survey data
-    Given the databases have ztf and altas alerts
-    When request detections endpoint for object AID2 in ZTF survey
-    Then the request should return detections for the object from ztf data
+  Scenario Outline: ask for lightcurves
+    Given there are detections for object ALERCE1 with following parameters
+      | oid    | tid     |
+      | ZTF1   | ZTF     |
+      | ZTF2   | ZTF     |
+      | ATLAS1 | ATLAS-1 |
+      | ATLAS2 | ATLAS-2 |
+    And there are non_detections for object ALERCE1 with following parameters
+      | oid    | tid     |
+      | ZTF3   | ZTF     |
+      | ATLAS3 | ATLAS-1 |
+    When request lightcurve for object ALERCE1 in <survey> survey as <user>
+    Then retrieve detections with identifiers: <detections>; and non detections with identifiers: <non_detections>
+    Examples:
+      | user  | survey | detections              | non_detections |
+      | admin | ZTF    | ZTF1,ZTF2               | ZTF3           |
+      | admin | ATLAS  | ATLAS1,ATLAS2           | ATLAS3         |
+      | admin | all    | ZTF1,ZTF2,ATLAS1,ATLAS2 | ZTF3,ATLAS3    |
+      | other | ZTF    | ZTF1,ZTF2               | ZTF3           |
+      | other | ATLAS  | none                    | none           |
+      | other | all    | ZTF1,ZTF2               | ZTF3           |
 
-  Scenario: ask for non_detections for object from ztf survey data
-    Given the databases have ztf and altas alerts
-    When request non_detections endpoint for object AID2 in ZTF survey
-    Then the request should return non detections for the object from ztf data
+  Scenario Outline: ask for object detections
+    Given there are detections for object ALERCE1 with following parameters
+      | oid    | tid     |
+      | ZTF1   | ZTF     |
+      | ZTF2   | ZTF     |
+      | ATLAS1 | ATLAS-1 |
+      | ATLAS2 | ATLAS-2 |
+    When request detections for object ALERCE1 in <survey> survey as <user>
+    Then retrieve results with identifiers: <oids>
+    Examples:
+      | user  | survey | oids                    |
+      | admin | ZTF    | ZTF1,ZTF2               |
+      | admin | ATLAS  | ATLAS1,ATLAS2           |
+      | admin | all    | ZTF1,ZTF2,ATLAS1,ATLAS2 |
+      | other | ZTF    | ZTF1,ZTF2               |
+      | other | ATLAS  | none                    |
+      | other | all    | ZTF1,ZTF2               |
 
-  Scenario: ask for lightcurve for object from ztf survey data
-    Given the databases have ztf and altas alerts
-    When request lightcurve endpoint for object AID2 in ZTF survey
-    Then the request should return detections and non detections for the object from ztf data
+  Scenario Outline: ask for object non-detections
+    Given there are non_detections for object ALERCE1 with following parameters
+      | oid    | tid     |
+      | ZTF1   | ZTF     |
+      | ZTF2   | ZTF     |
+      | ATLAS1 | ATLAS-1 |
+      | ATLAS2 | ATLAS-2 |
+    When request non detections for object ALERCE1 in <survey> survey as <user>
+    Then retrieve results with identifiers: <oids>
+    Examples:
+      | user  | survey | oids                    |
+      | admin | ZTF    | ZTF1,ZTF2               |
+      | admin | ATLAS  | ATLAS1,ATLAS2           |
+      | admin | all    | ZTF1,ZTF2,ATLAS1,ATLAS2 |
+      | other | ZTF    | ZTF1,ZTF2               |
+      | other | ATLAS  | none                    |
+      | other | all    | ZTF1,ZTF2               |
 
-  Scenario: ask for lightcurve for object from atlas survey data
-    Given the databases have ztf and altas alerts
-    When request lightcurve endpoint for object AID2 in ATLAS survey
-    Then the request should return detections and non detections for the object from ATLAS data
+  Scenario Outline: ask for first detection of object
+    Given there are detections for object ALERCE1 with following parameters
+      | oid    | tid     | mjd |
+      | ZTF2   | ZTF     | 2.5 |
+      | ZTF1   | ZTF     | 2.0 |
+      | ATLAS2 | ATLAS-1 | 1.5 |
+      | ATLAS1 | ATLAS-1 | 1.0 |
+    When request first detection for object ALERCE1 in <survey> survey as <user>
+    Then retrieve results with identifiers: <oids>
+    Examples:
+      | user  | survey | oids   |
+      | admin | ZTF    | ZTF1   |
+      | admin | ATLAS  | ATLAS1 |
+      | admin | all    | ATLAS1 |
+      | other | ZTF    | ZTF1   |
+      | other | ATLAS  | none   |
+#      | other | all    | ZTF1   |
 
-  Scenario: ask for detections for object from atlas survey data
-    Given the databases have ztf and altas alerts
-    When request detections endpoint for object AID2 in ATLAS survey
-    Then the request should return detections for the object from atlas data
+  Scenario Outline: ask for first non-detection of object
+    Given there are non_detections for object ALERCE1 with following parameters
+      | oid    | tid     | mjd |
+      | ZTF2   | ZTF     | 2.5 |
+      | ZTF1   | ZTF     | 2.0 |
+      | ATLAS2 | ATLAS-1 | 1.5 |
+      | ATLAS1 | ATLAS-1 | 1.0 |
+    When request first non detection for object ALERCE1 in <survey> survey as <user>
+    Then retrieve results with identifiers: <oids>
+    Examples:
+      | user  | survey | oids   |
+      | admin | ZTF    | ZTF1   |
+      | admin | ATLAS  | ATLAS1 |
+      | admin | all    | ATLAS1 |
+      | other | ZTF    | ZTF1   |
+      | other | ATLAS  | none   |
+#      | other | all    | ZTF1   |
 
-  Scenario: ask for lightcurve for non stored object
-    Given the databases have ztf and altas alerts
-    When request lightcurve endpoint for object ZTF999 in ZTF survey
-    Then the request should return 404 error
-
-  Scenario: ask for detections for non stored object
-    Given the databases have ztf and altas alerts
-    When request detections endpoint for object ZTF999 in ZTF survey
-    Then the request should return 404 error
-
-  Scenario: ask for non detections for non stored object
-    Given the databases have ztf and altas alerts
-    When request non_detections endpoint for object ZTF999 in ZTF survey
-    Then the request should return 404 error
-
+  Scenario Outline: request lightcurves for non-existing objects
+    Given there are detections for object ALERCE1 with following parameters
+      | oid    | tid     |
+      | ZTF1   | ZTF     |
+      | ATLAS1 | ATLAS-1 |
+    And there are non_detections for object ALERCE1 with following parameters
+      | oid    | tid     |
+      | ZTF2   | ZTF     |
+      | ATLAS2 | ATLAS-1 |
+    When request <endpoint> for object ALERCE2 in <survey> survey as <user>
+    Then retrieve error code 404
+    Examples:
+      | endpoint       | user  | survey |
+      | detections     | admin | ZTF    |
+      | detections     | admin | ATLAS  |
+      | detections     | admin | all    |
+      | detections     | other | ZTF    |
+      | detections     | other | ATLAS  |
+      | detections     | other | all    |
+      | non detections | admin | ZTF    |
+      | non detections | admin | ATLAS  |
+      | non detections | admin | all    |
+      | non detections | other | ZTF    |
+      | non detections | other | ATLAS  |
+      | non detections | other | all    |
+      | lightcurve     | admin | ZTF    |
+      | lightcurve     | admin | ATLAS  |
+      | lightcurve     | admin | all    |
+      | lightcurve     | other | ZTF    |
+      | lightcurve     | other | ATLAS  |
+      | lightcurve     | other | all    |

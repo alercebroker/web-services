@@ -10,11 +10,19 @@ class ListAstroObjectPayload(MongoPayload):
             classifier, version, class_name, ranking, probability
         ):
             output = {
-                "classifier_name": {"$eq": classifier} if classifier else None,
-                "classifier_version": {"$eq": version} if version else None,
-                "class_name": {"$eq": class_name} if class_name else None,
-                "probability": {"$gte": probability} if probability else None,
-                "ranking": {"$eq": ranking} if ranking else None,
+                "classifier_name": {"$eq": classifier}
+                if classifier is not None
+                else None,
+                "classifier_version": {"$eq": version}
+                if version is not None
+                else None,
+                "class_name": {"$eq": class_name}
+                if class_name is not None
+                else None,
+                "probability": {"$gte": probability}
+                if probability is not None
+                else None,
+                "ranking": {"$eq": ranking} if ranking is not None else None,
             }
             return {
                 key: value
@@ -89,6 +97,14 @@ class ListAstroObjectPayload(MongoPayload):
     paginate_map = {"page": "page", "per_page": "page_size", "count": "count"}
     sort_map = {"key": "order_by", "direction": "order_mode"}
     direction_map = {"ASC": 1, "DESC": -1}
+
+    @property
+    def filter(self):
+        query = super().filter
+        if "aid" in query and "oid" in query:
+            aid, oid = query.pop("aid"), query.pop("oid")
+            query["$or"] = [{"aid": aid}, {"oid": oid}]
+        return query
 
     def probability_filter(self, variable_as):
         pfilter = self.filter.get("probabilities")

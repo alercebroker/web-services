@@ -3,18 +3,19 @@ from db_plugins.db.mongo import models
 import signal
 import time
 
+MONGO_SETTINGS = {
+    "HOST": "mongo",
+    "DATABASE": "database",
+    "USERNAME": "mongo",
+    "PASSWORD": "mongo",
+    "PORT": 27017,
+}
+
 
 def mongo_ready():
     try:
         mongo_db = MongoDatabaseCreator().create_database()
-        settings = {
-            "HOST": "mongo",
-            "DATABASE": "database",
-            "USERNAME": "mongo",
-            "PASSWORD": "mongo",
-            "PORT": 27017,
-        }
-        mongo_db.connect(settings)
+        mongo_db.connect(MONGO_SETTINGS)
         mongo_db.client.close()
         return True
     except Exception:
@@ -56,6 +57,13 @@ def before_all(context):
     context.db_created = "YES"
 
 
+def before_scenario(context, scenario):
+    creator = MongoDatabaseCreator()
+    context.mongo_db = creator.create_database()
+    context.mongo_db.connect(MONGO_SETTINGS)
+    context.mongo_db.create_db()
+
+
 def after_scenario(context, scenario):
     tear_down_mongo(context.mongo_db)
 
@@ -64,137 +72,67 @@ def tear_down_mongo(db):
     db.drop_db()
 
 
-def insert_mongo_data(context):
-    creator = MongoDatabaseCreator()
-    context.mongo_db = creator.create_database()
-    settings = {
-        "HOST": "mongo",
-        "DATABASE": "database",
-        "USERNAME": "mongo",
-        "PASSWORD": "mongo",
-        "PORT": 27017,
-    }
-    context.mongo_db.connect(settings)
-    context.mongo_db.create_db()
-    mongo_object = models.Object(
-        aid="AID1",
-        oid=["ATLAS1"],
-        lastmjd="lastmjd",
-        firstmjd="firstmjd",
-        meanra=100.0,
-        meandec=50.0,
-        ndet="ndet",
-    )
-    mongo_object_2 = models.Object(
-        aid="AID2",
-        oid=["ATLAS2", "ZTF1"],
-        lastmjd="lastmjd",
-        firstmjd="firstmjd",
-        meanra=100.0,
-        meandec=50.0,
-        ndet="ndet",
-    )
-    mongo_detections = models.Detection(
-        tid="ATLAS01",
-        aid="AID1",
-        oid="ATLAS1",
-        candid="candid",
-        mjd=1,
-        fid=1,
-        ra=1,
-        dec=1,
-        rb=1,
-        mag=1,
-        e_mag=1,
-        rfid=1,
-        e_ra=1,
-        e_dec=1,
-        isdiffpos=1,
-        magpsf_corr=1,
-        sigmapsf_corr=1,
-        sigmapsf_corr_ext=1,
-        corrected=True,
-        dubious=True,
-        parent_candid=1234,
-        has_stamp=True,
-        step_id_corr="step_id_corr",
-        rbversion="rbversion",
-    )
-    mongo_detections_2 = models.Detection(
-        tid="ZTF02",
-        aid="AID2",
-        oid="ZTF1",
-        candid="candid",
-        mjd=1,
-        fid=1,
-        ra=1,
-        dec=1,
-        rb=1,
-        mag=1,
-        e_mag=1,
-        rfid=1,
-        e_ra=1,
-        e_dec=1,
-        isdiffpos=1,
-        magpsf_corr=1,
-        sigmapsf_corr=1,
-        sigmapsf_corr_ext=1,
-        corrected=True,
-        dubious=True,
-        parent_candid=float("nan"),
-        has_stamp=True,
-        step_id_corr="step_id_corr",
-        rbversion="rbversion",
-    )
-    mongo_detections_3 = models.Detection(
-        tid="ATLAS02",
-        aid="AID2",
-        oid="ATLAS2",
-        candid="candid",
-        mjd=1,
-        fid=1,
-        ra=1,
-        dec=1,
-        rb=1,
-        mag=1,
-        e_mag=1,
-        rfid=1,
-        e_ra=1,
-        e_dec=1,
-        isdiffpos=1,
-        magpsf_corr=1,
-        sigmapsf_corr=1,
-        sigmapsf_corr_ext=1,
-        corrected=True,
-        dubious=True,
-        parent_candid=float("nan"),
-        has_stamp=True,
-        step_id_corr="step_id_corr",
-        rbversion="rbversion",
-    )
-    mongo_non_detections = models.NonDetection(
-        aid="AID2",
-        oid="ZTF1",
-        tid="ZTF",
-        mjd=1,
-        diffmaglim=1,
-        fid=1,
-    )
-    context.mongo_db.query().get_or_create(
-        mongo_object, model=models.Object
-    )
-    context.mongo_db.query().get_or_create(
-        mongo_object_2, model=models.Object
-    )
-    context.mongo_db.query().get_or_create(
-        mongo_detections, model=models.Detection
-    )
-    context.mongo_db.query().get_or_create(
-        mongo_detections_2, model=models.Detection
-    )
-    context.mongo_db.query().get_or_create(
-        mongo_detections_3, model=models.Detection
-    )
-    context.mongo_db.query().get_or_create(
-        mongo_non_detections, model=models.NonDetection
-    )
+def insert_in_database(context, model, **kwargs):
+    if model == "detections":
+        defaults = dict(
+            aid="ALERCE",
+            oid="OID",
+            candid="CANDID",
+            tid="TID",
+            mjd=1.,
+            fid=1,
+            ra=80.,
+            dec=120.,
+            rb=1.,
+            mag=1.,
+            e_mag=1.,
+            rfid=1,
+            e_ra=1.,
+            e_dec=1.,
+            isdiffpos=1,
+            corrected=True,
+            parent_candid="",
+            has_stamp=False,
+            step_id_corr="",
+            rbversion="",
+        )
+        model_class = models.Detection
+    elif model == "non_detections":
+        defaults = dict(
+            aid="ALERCE",
+            oid="OID",
+            tid="TID",
+            mjd=1.,
+            fid=1,
+            diffmaglim=1.,
+        )
+        model_class = models.NonDetection
+    elif model == "objects":
+        defaults = dict(
+            aid="ALERCE",
+            oid=["OID"],
+            tid="TID",
+            firstmjd=1.,
+            lastmjd=1.,
+            ndet=1,
+            meanra=1.,
+            meandec=1.,
+            features=[],
+            magstats=[],
+            probabilities=[],
+            xmatch=[],
+        )
+        model_class = models.Object
+    elif model == "taxonomy":
+        defaults = dict(
+            classifier_name="classifier",
+            classifier_version="0.0",
+            classes=[],
+        )
+        model_class = models.Taxonomy
+    else:
+        raise ValueError(f"Unrecognized model {model}")
+    defaults.update({key: type(defaults[key])(value) for key, value in kwargs.items()})
+    element = model_class(**defaults)
+    context.mongo_db.query().get_or_create(element, model=model_class)
+

@@ -1,7 +1,9 @@
 import jwt
 from datetime import datetime, timedelta, timezone
 
-SECRET_KEY = "a_secret_key" # from text/config.yml
+SECRET_KEY = "a_secret_key"  # from text/config.yml
+BASE_URL = "http://alerts_api:5000/"
+
 
 def build_admin_token():
     token = {

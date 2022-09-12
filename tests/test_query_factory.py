@@ -43,13 +43,14 @@ def test_object_full_query():
     assert result.filter == expected_query
 
 
-def test_object_empty_quert():
+def test_object_empty_query():
     request_args = {}
     expected_query = {}
 
     result = ListAstroObjectPayload(request_args)
 
     assert result.filter == expected_query
+
 
 def test_object_query_missing_args():
     # no oid
@@ -77,6 +78,7 @@ def test_object_query_missing_args():
     result = ListAstroObjectPayload(request_args)
     assert result.filter == expected_query
 
+
 def test_missing_loc_data():
     request_args = create_object_args_dict(remove=['ra'])
     expected_query = create_object_query_dict(remove=['loc'])
@@ -96,6 +98,7 @@ def test_missing_loc_data():
     result = ListAstroObjectPayload(request_args)
     assert result.filter == expected_query
 
+
 def test_object_query_single_oid():
     request_args = create_object_args_dict()
     request_args['oid'] = "oid1"
@@ -105,3 +108,14 @@ def test_object_query_single_oid():
     result = ListAstroObjectPayload(request_args)
 
     assert result.filter == expected_query
+
+
+def test_object_query_with_oid_and_aid():
+    request_args = create_object_args_dict()
+    request_args['oid'] = ["oid1", "AL1"]
+
+    result = ListAstroObjectPayload(request_args)
+
+    assert "$or" in result.filter
+    assert {"oid": {"$in": ["oid1"]}} in result.filter["$or"]
+    assert {"aid": {"$in": ["AL1"]}} in result.filter["$or"]
