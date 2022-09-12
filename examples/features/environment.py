@@ -109,6 +109,7 @@ def insert_in_database(context, model, **kwargs):
         model_class = models.NonDetection
     elif model == "objects":
         defaults = dict(
+            _id="ALERCE",
             aid="ALERCE",
             oid=["OID"],
             tid="TID",

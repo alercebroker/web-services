@@ -1,5 +1,4 @@
 from behave import when, then
-from examples.features import environment
 from examples.examples.api_request_example import probabilities_examples
 
 

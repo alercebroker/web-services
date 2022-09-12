@@ -49,7 +49,7 @@ def insert_object_with_probabilities(context, aid):
             "ranking": int(row["ranking"]),
         }
         probabilities.append(probability)
-    environment.insert_in_database(context, "objects", aid=aid, probabilities=probabilities)
+    environment.insert_in_database(context, "objects", _id=aid, probabilities=probabilities)
 
 
 @given("objects are in the database with following parameters")

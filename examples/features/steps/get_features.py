@@ -14,7 +14,7 @@ def insert_object_with_features(context, aid):
             "version": row["version"],
         }
         features.append(feature)
-    environment.insert_in_database(context, "objects", aid=aid, features=features)
+    environment.insert_in_database(context, "objects", _id=aid, features=features)
 
 
 @when("request all features for {aid}")

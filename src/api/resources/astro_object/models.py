@@ -19,7 +19,7 @@ xmatch = Model(
 object_item = Model(
     "Object List Item",
     {
-        "aid": fields.String(description="ALeRCE object identifier"),
+        "aid": fields.String(attribute="_id", description="ALeRCE object identifier"),
         "ndet": fields.Integer(
             description="Total number of detections for the object"
         ),
@@ -42,7 +42,7 @@ object_item = Model(
 single_object = Model(
     "Single Object",
     {
-        "aid": fields.String(description="ALeRCE object identifier"),
+        "aid": fields.String(attribute="_id", description="ALeRCE object identifier"),
         "oid": fields.List(
             fields.String, description="Survey object identifiers"
         ),

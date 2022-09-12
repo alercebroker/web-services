@@ -270,7 +270,7 @@ class MongoPayload(abc.ABC):
 
 
 class SingleObjectPayload(MongoPayload, abc.ABC):
-    filter_rules = {"aid": MongoFilterRules(["aid"], None, str)}
+    filter_rules = {"_id": MongoFilterRules(["aid"], None, str)}
 
     @abc.abstractmethod
     def __init__(self, aid, **kwargs):

@@ -2,7 +2,7 @@ Feature: Ask for astro object(s)
 
   Scenario: query for limits in ndet and firstmjd
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.1      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.2      | 8.0     | 45.0   | -80.0   |
@@ -15,7 +15,7 @@ Feature: Ask for astro object(s)
 
   Scenario: get single object
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.1      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.2      | 8.0     | 45.0   | -80.0   |
@@ -30,7 +30,7 @@ Feature: Ask for astro object(s)
 
   Scenario: get non existent object
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.1      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.2      | 8.0     | 45.0   | -80.0   |
@@ -40,7 +40,7 @@ Feature: Ask for astro object(s)
 
   Scenario Outline: query objects by identifier
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -57,7 +57,7 @@ Feature: Ask for astro object(s)
 
   Scenario: query objects by non present identifiers
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -67,7 +67,7 @@ Feature: Ask for astro object(s)
 
   Scenario Outline: query objects by number of detections
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -82,7 +82,7 @@ Feature: Ask for astro object(s)
 
   Scenario: query objects outside range of number of detections
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -92,7 +92,7 @@ Feature: Ask for astro object(s)
 
   Scenario Outline: query objects by first detection date
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -107,7 +107,7 @@ Feature: Ask for astro object(s)
 
   Scenario: query objects outside range of first detection date
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -117,7 +117,7 @@ Feature: Ask for astro object(s)
 
   Scenario Outline: query objects by last detection date
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -132,7 +132,7 @@ Feature: Ask for astro object(s)
 
   Scenario: query objects outside range of last detection date
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -142,7 +142,7 @@ Feature: Ask for astro object(s)
 
   Scenario Outline: cone search object queries
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.0    | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -157,7 +157,7 @@ Feature: Ask for astro object(s)
 
     Scenario: cone search query in area without objects
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |
@@ -167,7 +167,7 @@ Feature: Ask for astro object(s)
 
   Scenario Outline: sort objects
     Given objects are in the database with following parameters
-      | aid     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
+      | _id     | oid         | ndet | firstmjd | lastmjd | meanra | meandec |
       | ALERCE1 | ZTF1,ATLAS1 | 4    | 1.0      | 7.0     | 0.0    | 80.0    |
       | ALERCE2 | ZTF1,ATLAS2 | 1    | 2.0      | 2.0     | 0.25   | 80.5    |
       | ALERCE3 | ZTF2        | 7    | 5.0      | 8.0     | 45.0   | -80.0   |

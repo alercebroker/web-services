@@ -43,28 +43,12 @@ class ListAstroObjectPayload(MongoPayload):
                 else None
             )
 
-        @staticmethod
-        def filter_aid(arg):
-            return [
-                aid
-                for aid in MongoPayload.Helpers.list_of_str(arg)
-                if aid.startswith("AL")
-            ] or None
-
-        @staticmethod
-        def filter_oid(arg):
-            return [
-                oid
-                for oid in MongoPayload.Helpers.list_of_str(arg)
-                if not oid.startswith("AL")
-            ] or None
-
     filter_rules = {
-        "aid": MongoFilterRules(
-            ["oid"], "$in", ListAstroObjectHelpers.filter_aid
+        "_id": MongoFilterRules(
+            ["oid"], "$in", ListAstroObjectHelpers.list_of_str
         ),
         "oid": MongoFilterRules(
-            ["oid"], "$in", ListAstroObjectHelpers.filter_oid
+            ["oid"], "$in", ListAstroObjectHelpers.list_of_str
         ),
         "firstmjd": MongoFilterRules(
             ["firstmjd"],
@@ -101,9 +85,9 @@ class ListAstroObjectPayload(MongoPayload):
     @property
     def filter(self):
         query = super().filter
-        if "aid" in query and "oid" in query:
-            aid, oid = query.pop("aid"), query.pop("oid")
-            query["$or"] = [{"aid": aid}, {"oid": oid}]
+        if "_id" in query and "oid" in query:
+            aid, oid = query.pop("_id"), query.pop("oid")
+            query["$or"] = [{"_id": aid}, {"oid": oid}]
         return query
 
     def probability_filter(self, variable_as):

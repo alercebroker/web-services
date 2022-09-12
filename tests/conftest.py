@@ -61,6 +61,7 @@ def populate_databases(app):
 
         # mongo data
         object = models.Object(
+            _id="AID_ATLAS1",
             aid="AID_ATLAS1",
             oid=["ATLAS1"],
             lastmjd=99.,
@@ -70,6 +71,7 @@ def populate_databases(app):
             ndet=10,
         )
         object_2 = models.Object(
+            _id="AID_ATLAS2",
             aid="AID_ATLAS2",
             oid=["ATLAS2", "ZTF2"],
             lastmjd=99.,
@@ -79,6 +81,7 @@ def populate_databases(app):
             ndet=10,
         )
         object_3 = models.Object(
+            _id="ALERCE1",
             aid="ALERCE1",
             oid=["ZTF1"],
             ndet=1,
