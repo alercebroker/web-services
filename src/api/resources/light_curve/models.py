@@ -16,9 +16,9 @@ detection = Model(
             description="Whether the magnitude difference is positive or not"
         ),
         "mag": fields.Float(description="Magnitude of detection"),
-        "e_mag": fields.Float(description="Error associated to magnitude"),
-        "ra": fields.Float(description="Right ascension"),
-        "dec": fields.Float(description="Declination"),
+        "e_mag": fields.Float(description="Magnitude uncertainty"),
+        "ra": fields.Float(description="Right ascension (J2000) [deg]"),
+        "dec": fields.Float(description="Declination (J2000) [deg]"),
     },
 )
 
@@ -33,7 +33,7 @@ non_detection = Model(
             description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
         ),
         "diffmaglim": fields.Float(
-            description="Upper limit on magnitude difference with template"
+            description="Limit on magnitude in difference stamp"
         ),
     },
 )

@@ -19,7 +19,12 @@ xmatch = Model(
 object_item = Model(
     "Object List Item",
     {
-        "aid": fields.String(attribute="_id", description="ALeRCE object identifier"),
+        "aid": fields.String(
+            attribute="_id", description="ALeRCE object identifier"
+        ),
+        "oid": fields.List(
+            fields.String, description="Survey object identifier(s)"
+        ),
         "ndet": fields.Integer(
             description="Total number of detections for the object"
         ),
@@ -29,8 +34,10 @@ object_item = Model(
         "lastmjd": fields.Float(
             description="Last detection's modified Julian date"
         ),
-        "meanra": fields.Float(description="Mean right ascension"),
-        "meandec": fields.Float(description="Mean declination"),
+        "meanra": fields.Float(
+            description="Mean right ascension (J2000) [deg]"
+        ),
+        "meandec": fields.Float(description="Mean declination (J2000) [deg]"),
         "classifier_name": fields.String(description="Classifier name"),
         "classifier_version": fields.String(description="Classifier version"),
         "class_name": fields.String(description="Classifier class"),
@@ -42,9 +49,11 @@ object_item = Model(
 single_object = Model(
     "Single Object",
     {
-        "aid": fields.String(attribute="_id", description="ALeRCE object identifier"),
+        "aid": fields.String(
+            attribute="_id", description="ALeRCE object identifier"
+        ),
         "oid": fields.List(
-            fields.String, description="Survey object identifiers"
+            fields.String, description="Survey object identifier(s)"
         ),
         "ndet": fields.Integer(
             description="Total number of detections for the object"
@@ -55,8 +64,10 @@ single_object = Model(
         "lastmjd": fields.Float(
             description="Last detection's modified Julian date"
         ),
-        "meanra": fields.Float(description="Mean right ascension"),
-        "meandec": fields.Float(description="Mean declination"),
+        "meanra": fields.Float(
+            description="Mean right ascension (J2000) [deg]"
+        ),
+        "meandec": fields.Float(description="Mean declination (J2000) [deg]"),
         "probabilities": fields.List(
             fields.Nested(probability),
             description="Classifier probabilities",
@@ -81,7 +92,7 @@ object_list = Model(
     {
         "total": fields.Integer(description="Total of objects in query"),
         "page": fields.Integer(description="Current page number"),
-        "next": fields.Integer(description="Next page"),
+        "next": fields.Integer(description="Next page number"),
         "has_next": fields.Boolean(description="Whether it has a next page"),
         "prev": fields.Integer(description="Previous page number"),
         "has_prev": fields.Boolean(description="Whether it has previous page"),
