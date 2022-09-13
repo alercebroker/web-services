@@ -25,6 +25,9 @@ object_item = Model(
         "oid": fields.List(
             fields.String, description="Survey object identifier(s)"
         ),
+        "tid": fields.List(
+            fields.String, description="Telescope identifier(s)"
+        ),
         "ndet": fields.Integer(
             description="Total number of detections for the object"
         ),
@@ -54,6 +57,9 @@ single_object = Model(
         ),
         "oid": fields.List(
             fields.String, description="Survey object identifier(s)"
+        ),
+        "tid": fields.List(
+            fields.String, description="Telescope identifier(s)"
         ),
         "ndet": fields.Integer(
             description="Total number of detections for the object"
