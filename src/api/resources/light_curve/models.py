@@ -17,7 +17,7 @@ detection = Model(
         "isdiffpos": fields.Boolean(
             description="Whether the magnitude difference is positive or not"
         ),
-        "mag": fields.Float(description="Magnitude of detection"),
+        "mag": fields.Float(description="Magnitude"),
         "e_mag": fields.Float(description="Magnitude uncertainty"),
         "ra": fields.Float(description="Right ascension (J2000) [deg]"),
         "dec": fields.Float(description="Declination (J2000) [deg]"),
@@ -37,7 +37,7 @@ non_detection = Model(
             description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
         ),
         "diffmaglim": fields.Float(
-            description="Limit on magnitude in difference stamp"
+            description="5-sigma limit on magnitude in difference stamp"
         ),
     },
 )
