@@ -8,7 +8,9 @@ detection = Model(
         "oid": fields.String(description="Survey object identifier"),
         "tid": fields.String(description="Telescope identifier"),
         "mjd": fields.Float(description="Modified Julian date of observation"),
-        "candid": fields.String(description="Candidate identifier"),
+        "candid": fields.String(
+            attribute="_id", description="Candidate identifier"
+        ),
         "fid": fields.Integer(
             description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
         ),
@@ -19,6 +21,8 @@ detection = Model(
         "e_mag": fields.Float(description="Magnitude uncertainty"),
         "ra": fields.Float(description="Right ascension (J2000) [deg]"),
         "dec": fields.Float(description="Declination (J2000) [deg]"),
+        "e_ra": fields.Float(description="Right ascension uncertainty [deg]"),
+        "e_dec": fields.Float(description="Declination uncertainty [deg]"),
     },
 )
 
