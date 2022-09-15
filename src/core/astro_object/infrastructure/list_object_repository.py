@@ -7,16 +7,6 @@ from ..domain import ListAstroObjectPayload
 
 class ListAstroObjectRepository(MongoRepository):
     def _query(self, payload: ListAstroObjectPayload):
-        variable_as = "item"  # Used as alias when filtering by probabilities
-        fields = (
-            "aid",
-            "ndet",
-            "firstmjd",
-            "lastmjd",
-            "meanra",
-            "meandec",
-            "probabilities",
-        )
         probabilities = (
             "classifier_name",
             "classifier_version",
@@ -25,19 +15,20 @@ class ListAstroObjectRepository(MongoRepository):
             "ranking",
         )
 
-        pipe = [
-            {"$match": payload.filter},
-            {"$project": {field: True for field in fields}},
-        ]
+        pipe = [{"$match": payload.filter}]
+
+        variable_as = "item"  # Used as alias when filtering by probabilities
         probability_filter = payload.probability_filter(variable_as)
         if probability_filter:
-            pipe[-1]["$project"].update(
+            pipe.append(
                 {
-                    "probabilities": {
-                        "$filter": {
-                            "input": "$probabilities",
-                            "as": variable_as,
-                            "cond": probability_filter,
+                    "$addFields": {
+                        "probabilities": {
+                            "$filter": {
+                                "input": "$probabilities",
+                                "as": variable_as,
+                                "cond": probability_filter,
+                            }
                         }
                     }
                 }
@@ -62,6 +53,7 @@ class ListAstroObjectRepository(MongoRepository):
             pipe.append({"$sort": payload.sort})
 
         paginate = True if payload.paginate else False
+
         return self.db.query().find_all(
             model=models.Object,
             filter_by=pipe,
