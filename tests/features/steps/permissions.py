@@ -35,7 +35,7 @@ def request_permissions(context, endpoint):
     }
     encripted_token = jwt.encode(token, context.secret_key, algorithm="HS256")
     headers = Headers()
-    headers.add("Authorization", "bearer " + encripted_token)
+    headers.add("Authorization", f"bearer {encripted_token}")
     context.response = context.client.get(endpoint, headers=headers)
 
 
@@ -52,7 +52,7 @@ def request_permissions_malformed(context, header):
     }
     encripted_token = jwt.encode(token, context.secret_key, algorithm="HS256")
     headers = Headers()
-    headers.add("Authorization", header + encripted_token)
+    headers.add("Authorization", f"{header} {encripted_token}")
     context.response = context.client.get(
         "/restricted_access", headers=headers
     )
