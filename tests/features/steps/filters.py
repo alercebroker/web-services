@@ -35,7 +35,7 @@ def request_filters(context, endpoint):
     }
     encripted_token = jwt.encode(token, context.secret_key, algorithm="HS256")
     headers = Headers()
-    headers.add("AUTH_TOKEN", encripted_token)
+    headers.add("Authorization", "bearer " + encripted_token)
     context.response = context.client.get(endpoint, headers=headers)
 
 
