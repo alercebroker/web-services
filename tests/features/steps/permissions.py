@@ -1,4 +1,4 @@
-from behave import given, when, then
+from behave import given, when
 import sys
 from pathlib import Path
 from werkzeug.datastructures import Headers
@@ -35,8 +35,27 @@ def request_permissions(context, endpoint):
     }
     encripted_token = jwt.encode(token, context.secret_key, algorithm="HS256")
     headers = Headers()
-    headers.add("AUTH_TOKEN", encripted_token)
+    headers.add("Authorization", f"bearer {encripted_token}")
     context.response = context.client.get(endpoint, headers=headers)
+
+
+@when('user makes a request with "{header}" header')
+def request_permissions_malformed(context, header):
+    user_permissions = ["admin"]
+    token = {
+        "access": "access",
+        "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
+        "jti": "test_jti",
+        "user_id": 1,
+        "permissions": user_permissions,
+        "filters": [],
+    }
+    encripted_token = jwt.encode(token, context.secret_key, algorithm="HS256")
+    headers = Headers()
+    headers.add("Authorization", f"{header} {encripted_token}")
+    context.response = context.client.get(
+        "/restricted_access", headers=headers
+    )
 
 
 @when('unauthenticated user makes a request to "{endpoint}"')

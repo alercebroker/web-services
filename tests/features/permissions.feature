@@ -23,3 +23,8 @@ Feature: Set permissions to endpoints and block access
       | permissions |
       | common      |
     Then the request returns with code "403"
+
+  Scenario: Make a malformed header request without bearer to flask application
+    Given a flask application with permissions is running
+    When user makes a request with "no bearer" header
+    Then the request returns with code "403"
