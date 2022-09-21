@@ -61,6 +61,9 @@ class ListAstroObjectPayload(MongoPayload):
         "ndet": MongoFilterRules(
             ["ndet"], ["$gte", "$lte"], ListAstroObjectHelpers.list_of_int
         ),
+        "tid": MongoFilterRules(
+            ["survey_id"], ["$regex", "$options"], ListAstroObjectHelpers.generate_tid_regex
+        ),
         "loc": MongoFilterRules(
             ["ra", "dec", "radius"],
             "$geoWithin",

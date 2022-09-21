@@ -1,5 +1,6 @@
 from flask_restx import reqparse
 from .models import object_item
+from ..light_curve.parsers import SURVEY_ID_CHOICES
 
 
 def str2bool(v):
@@ -21,6 +22,14 @@ filters.add_argument(
     location="args",
     help="Object identifier (can be ALeRCE and/or survey identifier)",
     action="append",
+)
+filters.add_argument(
+    "survey_id",
+    type=str,
+    dest="survey_id",
+    location="args",
+    help="Survey identifier",
+    choices=SURVEY_ID_CHOICES,
 )
 filters.add_argument(
     "ndet",

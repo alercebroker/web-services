@@ -151,6 +151,31 @@ class MongoPayload(abc.ABC):
             """
             return _ensure_list(arg, (int, float))
 
+        @staticmethod
+        def generate_tid_regex(string):
+            """Generates parameters for a telescope ID search by regular
+            expression.
+
+            The expected `query_keys` for this process should be
+            `[$regex, $options]` and, usually, the mongoDB key is `tid`.
+
+            The regular expression search under the above circumstances is
+            case-insensitive and uses the telescope/survey name as a prefix
+            that can be the only part of the telescope ID or can be followed
+            by anything.
+
+            Parameters
+            ----------
+            string : str
+                Base name for the telescope
+
+            Returns
+            -------
+            tuple[str, str]
+                Tuple with two strings, `<string>.*` and `i`
+            """
+            return f"{string}.*", "i"
+
     def __init__(self, filter_args=None, paginate_args=None, sort_args=None):
         """
         Parameters
