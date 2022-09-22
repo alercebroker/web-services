@@ -2,7 +2,7 @@ import requests
 from .token_builder import build_admin_token, BASE_URL
 
 
-HEADER_ADMIN_TOKEN = {"AUTH-TOKEN": build_admin_token()}
+HEADER_ADMIN_TOKEN = {"Authorization": f"bearer {build_admin_token()}"}
 
 
 def get_all_detections_from_all_surveys(aid, as_admin=True):
