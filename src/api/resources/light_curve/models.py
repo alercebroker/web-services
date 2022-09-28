@@ -12,8 +12,8 @@ detection = Model(
         "fid": fields.Integer(
             description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
         ),
-        "isdiffpos": fields.Boolean(
-            description="Whether the magnitude difference is positive or not"
+        "isdiffpos": fields.Integer(
+            description="Sign of the magnitude difference"
         ),
         "mag": fields.Float(description="Magnitude"),
         "e_mag": fields.Float(description="Magnitude uncertainty"),
