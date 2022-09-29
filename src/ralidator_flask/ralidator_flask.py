@@ -1,6 +1,7 @@
 from flask import _request_ctx_stack, request, abort
 from ralidator_core.ralidator_core import Ralidator
 from ralidator_core.settings_factory import RalidatorCoreSettingsFactory
+import re
 import json
 
 
@@ -23,7 +24,7 @@ class RalidatorFlask(object):
             auth_header = request.headers.get("Authorization")
             token = None
             if auth_header:
-                if auth_header.find("bearer") == -1:
+                if re.search("bearer", auth_header, re.IGNORECASE) is None:
                     abort(403, "Malformed Authorization header")
                 try:
                     token = auth_header.split()[1]
