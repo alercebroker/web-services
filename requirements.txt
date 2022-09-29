@@ -8,4 +8,4 @@ werkzeug==2.1.2
 dependency-injector>=4.0,<5.0
 dependency-injector[yaml]
 -e git+https://git@github.com/alercebroker/db-plugins@4e94b52#egg=db-plugins
--e git+https://github.com/alercebroker/ralidator-flask.git@529264e#egg=ralidator_flask
+-e git+https://github.com/alercebroker/ralidator-flask.git@82fa2c9#egg=ralidator_flask
