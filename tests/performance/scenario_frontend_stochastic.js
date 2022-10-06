@@ -6,11 +6,11 @@ const BASE_URL = 'https://dev.api.alerce.online/alerts/v1/';
 export const options = {
     stages: [
 	  { target: 20, duration: '1m' },  // Ramp-up
-	  { target: 20, duration: '8m' },
+	  { target: 20, duration: '10m' },
 	  { target: 0, duration: '1m' },
     ],
     thresholds: {
-      'http_req_duration': ['p(95) < 1500']
+      'http_req_duration': ['p(90) < 1500']
     }
 };
 
@@ -19,8 +19,7 @@ export default function () {
   const SLEEP = 0.5;
   const PER_PAGE = 5;
 
-  const SEARCH_STR = 'class=SNIa' + '&' +
-                 'ranking=1' + '&' +
+  const SEARCH_STR = 'ranking=1' + '&' +
                  'classifier=lc_classifier' + '&' +
                  'probability=0.7' + '&' +
                  'ndet=20' + '&' +
@@ -28,26 +27,26 @@ export default function () {
                  'order_mode=DESC' + '&' +
                  'page_size=' + PER_PAGE;
 
-  group('frontend workflow', (_) => {
-    const query_response = http.get(URL + '?' + SEARCH_STR);
+  group('stochasticWorkflow', (_) => {
+    const query_response = http.get(URL + '?' + SEARCH_STR + '&class=AGN');
     check(query_response, {
-      'is status 200': (r) => r.status === 200
+      'is query status 200': (r) => r.status === 200
     });
     sleep(SLEEP);
 
     for (let i = 0; i < PER_PAGE; i++){
       const oid = query_response.json()['items'][i]['oid'];
-      http.get(URL + '/' + oid + '/lightcurve');
-      check(query_response, {
-        'is status 200': (r) => r.status === 200
+      const lightcurve_response = http.get(URL + '/' + oid + '/lightcurve');
+      check(lightcurve_response, {
+        'is lightcurve status 200': (r) => r.status === 200
       });
-      http.get(URL + '/' + oid + '/magstats');
-      check(query_response, {
-        'is status 200': (r) => r.status === 200
+      const magstats_response = http.get(URL + '/' + oid + '/magstats');
+      check(magstats_response, {
+        'is magstats status 200': (r) => r.status === 200
       });
-      http.get(URL + '/' + oid + '/probabilities');
-      check(query_response, {
-        'is status 200': (r) => r.status === 200
+      const probabilities_response = http.get(URL + '/' + oid + '/probabilities');
+      check(probabilities_response, {
+        'is probabilities status 200': (r) => r.status === 200
       });
       sleep(SLEEP);
     }
