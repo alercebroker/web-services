@@ -16,6 +16,7 @@ EXPOSE 5000
 
 ENV APP_WORKERS="1"
 ENV ENVIRONMENT="production"
+ENV SERVER_SOFTWARE="gunicorn"
 ENV PROMETHEUS_MULTIPROC_DIR="/tmp"
 
 CMD ["/bin/bash","scripts/entrypoint.sh"]
