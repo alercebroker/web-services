@@ -5,8 +5,8 @@ const BASE_URL = 'https://dev.api.alerce.online/alerts/v1/';
 
 export const options = {
     stages: [
-	  { target: 20, duration: '1m' },  // Ramp-up
-	  { target: 20, duration: '10m' },
+	  { target: 50, duration: '1m' },  // Ramp-up
+	  { target: 50, duration: '10m' },
 	  { target: 0, duration: '1m' },
     ],
     thresholds: {
