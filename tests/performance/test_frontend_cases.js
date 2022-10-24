@@ -1,8 +1,8 @@
 import http from 'k6/http';
 import { check, fail, group, sleep } from 'k6';
 
-const BASE_URL = 'http://k8s-default-wsingres-e3857e829f-1074464700.us-east-1.elb.amazonaws.com/';
-//const BASE_URL = 'http://dev.api.alerce.online/alerts/v1/';
+//const BASE_URL = 'http://k8s-default-wsingres-e3857e829f-1074464700.us-east-1.elb.amazonaws.com/';
+const BASE_URL = 'http://dev.api.alerce.online/alerts/v1/';
 
 export const options = {
     scenarios: {
