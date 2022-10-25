@@ -20,7 +20,7 @@ export const options = {
       startVUs: 0,
       stages: [
         { duration: "1m", target: 100 },
-        { duration: "15m", target: 30 },
+        { duration: "1m", target: 30 },
         { duration: "5m", target: 0 },
       ],
       gracefulRampdown: "0s",
@@ -31,7 +31,7 @@ export const options = {
       startVUs: 0,
       stages: [
         { duration: "1m", target: 100 },
-        { duration: "15m", target: 30 },
+        { duration: "1m", target: 30 },
         { duration: "5m", target: 0 },
       ],
       gracefulRampdown: "0s",
@@ -42,7 +42,7 @@ export const options = {
       startVUs: 0,
       stages: [
         { duration: "1m", target: 100 },
-        { duration: "15m", target: 30 },
+        { duration: "1m", target: 30 },
         { duration: "5m", target: 0 },
       ],
       gracefulRampdown: "0s",
@@ -51,6 +51,7 @@ export const options = {
   },
   thresholds: {
     "group_duration{group:::retrieveObjectData}": ["p(90) < 2000"],
+    "group_duration{group:::queryObjects}": ["p(90) < 2000"],
   },
 };
 
