@@ -1,5 +1,7 @@
 ---
 apiVersion: v1
+metadata:
+  name: grafana-configmap
 data:
   datasource.yml: |
     apiVersion: 1

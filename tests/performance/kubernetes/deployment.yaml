@@ -43,10 +43,4 @@ spec:
             claimName: pvc-grafana
         - name: grafana-datasources
           configMap:
-            name: grafana-datasources
-        - name: grafana-dashboard-providers
-          configMap:
-            name: grafana-dashboard-providers
-        - name: grafana-dashboard-performance
-          configMap:
-            name: grafana-dashboard-performance
+            name: grafana-configmap
