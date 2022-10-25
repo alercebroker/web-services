@@ -44,3 +44,18 @@ spec:
         - name: grafana-datasources
           configMap:
             name: grafana-configmap
+            items:
+              - key: "datasource.yml"
+                path: "datasource.yml"
+        - name: grafana-dashboard-providers
+          configMap:
+            name: grafana-configmap
+            items:
+              - key: "dashboard.yml"
+                path: "dashboard.yml"
+        - name: grafana-dashboard-performance
+          configMap:
+            name: grafana-configmap
+            items:
+              - key: "performance-test-dashboard.json"
+                path: "performance-test-dashboard.json"
