@@ -26,8 +26,7 @@ export function queryObjectsWithClass(objectClass, pageSize, objectList) {
 }
 
 export function retrieveObjectData(objectType) {
-  const objectPool = objects[objectType];
-  const oid = getRandomElement(objectPool);
+  const oid = objects[objectType][0];
 
   group('retrieveObjectData', (_) => {
     const responses = http.batch([
