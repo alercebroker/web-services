@@ -115,7 +115,9 @@ export const options = {
     },
   },
   thresholds: {
+    checks: ['rate>0.95'],
     "group_duration{group:::retrieveObjectData}": ["p(90) < 2000"],
+    "group_duration{group:::retrieveDetectionsList}": ["p(90) < 30000"],
     "group_duration{group:::queryObjects}": ["p(90) < 2000"],
   },
 };
