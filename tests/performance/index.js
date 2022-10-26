@@ -1,5 +1,10 @@
 import exec from "k6/execution";
-import { frontendScenario } from "./scenarios/generic_scenario.js";
+import {
+  frontendScenario,
+  objectQueryScenario,
+  directQueryScenario,
+  detectionsQueryScenario
+} from "./scenarios/generic_scenario.js";
 
 const ObjectTypes = {
   LIGHT: "light",
@@ -15,38 +20,98 @@ const ClassTypes = {
 
 export const options = {
   scenarios: {
-    snia_objects_ramping: {
-      executor: "ramping-vus",
-      startVUs: 0,
-      stages: [
-        { duration: "1m", target: 100 },
-        { duration: "1m", target: 30 },
-        { duration: "5m", target: 0 },
-      ],
-      gracefulRampdown: "0s",
+    // Smoke test (first 5 minutes)
+    smoke_test: {
+      executor: "constant-vus",
+      exec: "fullScenario",
+      duration: "5m",
+      vus: 10,
+      gracefulStop: "0s",
+      env: { CLASS: ClassTypes.SNIa, OBJECT_TYPE: ObjectTypes.MEDIUM, PAGE_SIZE: "10" }
+    },
+    // Load test for different query types (starts after smoke)
+    transient_query: {
+      executor: "constant-vus",
+      exec: "objectQuery",
+      startTime: "5m",
+      vus: 10,
+      duration: "5m",
+      gracefulStop: "0s",
       env: { CLASS: ClassTypes.SNIa, PAGE_SIZE: "20" },
     },
-    cep_objects_ramping: {
-      executor: "ramping-vus",
-      startVUs: 0,
-      stages: [
-        { duration: "1m", target: 100 },
-        { duration: "1m", target: 30 },
-        { duration: "5m", target: 0 },
-      ],
-      gracefulRampdown: "0s",
+    variable_query: {
+      executor: "constant-vus",
+      exec: "objectQuery",
+      startTime: "5m",
+      vus: 10,
+      duration: "5m",
+      gracefulStop: "0s",
       env: { CLASS: ClassTypes.CEP, PAGE_SIZE: "20" },
     },
-    agn_objects_ramping: {
-      executor: "ramping-vus",
-      startVUs: 0,
-      stages: [
-        { duration: "1m", target: 100 },
-        { duration: "1m", target: 30 },
-        { duration: "5m", target: 0 },
-      ],
-      gracefulRampdown: "0s",
+    stochastic_query: {
+      executor: "constant-vus",
+      exec: "objectQuery",
+      startTime: "5m",
+      vus: 10,
+      duration: "5m",
+      gracefulStop: "0s",
       env: { CLASS: ClassTypes.AGN, PAGE_SIZE: "20" },
+    },
+    // Retrieve one object at a time (concurrent with above + offset + 5 minutes)
+    light_retrieve: {
+      executor: "constant-vus",
+      exec: "objectRetrieve",
+      startTime: "6m",
+      vus: 10,
+      duration: "9m",
+      gracefulStop: "0s",
+      env: { OBJECT_TYPE: ObjectTypes.LIGHT },
+    },
+    medium_retrieve: {
+      executor: "constant-vus",
+      exec: "objectRetrieve",
+      startTime: "6m",
+      vus: 10,
+      duration: "9m",
+      gracefulStop: "0s",
+      env: { OBJECT_TYPE: ObjectTypes.MEDIUM },
+    },
+    heavy_retrieve: {
+      executor: "constant-vus",
+      exec: "objectRetrieve",
+      startTime: "6m",
+      vus: 10,
+      duration: "9m",
+      gracefulStop: "0s",
+      env: { OBJECT_TYPE: ObjectTypes.HEAVY },
+    },
+    // Detection list retrieval (last 10 minutes, non-concurrent with any above)
+    light_detection_list: {
+      executor: "constant-vus",
+      exec: "objectDetectionsRetrieve",
+      startTime: "15m",
+      vus: 10,
+      duration: "10m",
+      gracefulStop: "0s",
+      env: { OBJECT_TYPE: ObjectTypes.LIGHT },
+    },
+    medium_detection_list: {
+      executor: "constant-vus",
+      exec: "objectDetectionsRetrieve",
+      startTime: "15m",
+      vus: 10,
+      duration: "10m",
+      gracefulStop: "0s",
+      env: { OBJECT_TYPE: ObjectTypes.MEDIUM },
+    },
+    heavy_detection_list: {
+      executor: "constant-vus",
+      exec: "objectDetectionsRetrieve",
+      startTime: "15m",
+      vus: 10,
+      duration: "10m",
+      gracefulStop: "0s",
+      env: { OBJECT_TYPE: ObjectTypes.HEAVY },
     },
   },
   thresholds: {
@@ -55,12 +120,22 @@ export const options = {
   },
 };
 
-export default () => {
+export function fullScenario (){
   const { CLASS, OBJECT_TYPE, PAGE_SIZE } = __ENV;
-  if (!OBJECT_TYPE || !Object.values(ObjectTypes).includes(OBJECT_TYPE)) {
-    exec.test.abort(
-      "[BAD ENV VARIABLES] Usage: k6 run -e OBJECT_TYPE={light | medium | heavy } script.js"
-    );
-  }
-  frontendScenario(OBJECT_TYPE, CLASS, +PAGE_SIZE);
+  frontendScenario(OBJECT_TYPE, CLASS, PAGE_SIZE);
+}
+
+export function objectQuery (){
+  const { CLASS, PAGE_SIZE } = __ENV;
+  objectQueryScenario(CLASS, PAGE_SIZE);
+};
+
+export function objectRetrieve (){
+  const { OBJECT_TYPE } = __ENV;
+  directQueryScenario(OBJECT_TYPE);
+};
+
+export function objectDetectionsRetrieve (){
+  const { OBJECT_TYPE } = __ENV;
+  detectionsQueryScenario(OBJECT_TYPE);
 };

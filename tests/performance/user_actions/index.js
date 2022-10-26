@@ -26,8 +26,7 @@ export function queryObjectsWithClass(objectClass, pageSize, objectList) {
 }
 
 export function retrieveObjectData(objectType) {
-  const objectPool = objects[objectType];
-  const oid = getRandomElement(objectPool);
+  const oid = objects[objectType][0];
 
   group('retrieveObjectData', (_) => {
     const responses = http.batch([
@@ -39,5 +38,22 @@ export function retrieveObjectData(objectType) {
     check(responses[0], {'lightcurve status is 200': (r) => r.status === 200});
     check(responses[1], {'magstats status is 200': (r) => r.status === 200});
     check(responses[2], {'probabilities status is 200': (r) => r.status === 200});
+
+    sleep(2);
+  });
+}
+
+export function retrieveDetectionsList(objectType) {
+  const objectPool = objects[objectType];
+
+  group('retrieveDetectionsList', (_) => {
+    for (var i=0; i < objectPool.length; i++){
+      const oid = objectPool[i]
+      const detectionsResponse = http.get(BASE_URL + '/' + oid + '/detections');
+
+      check(detectionsResponse, {
+        "detections retrieved successfully": (r) => r.status === 200,
+      });
+    }
   });
 }
