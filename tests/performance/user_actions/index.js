@@ -15,14 +15,8 @@ export function queryObjectsWithClass(objectClass, pageSize, objectList) {
     const isQuerySuccessful = check(objectsResponse, {
       "is query OK": (r) => r.status === 200,
     });
-
-    if (!isQuerySuccessful)
-      fail(
-        `[Objects ${objectClass} query] Failed with status ${objectsResponse.status}`
-      );
-
-    sleep(2);
   });
+  sleep(2);
 }
 
 export function retrieveObjectData(objectType) {
@@ -38,9 +32,8 @@ export function retrieveObjectData(objectType) {
     check(responses[0], {'lightcurve status is 200': (r) => r.status === 200});
     check(responses[1], {'magstats status is 200': (r) => r.status === 200});
     check(responses[2], {'probabilities status is 200': (r) => r.status === 200});
-
-    sleep(2);
   });
+  sleep(2);
 }
 
 export function retrieveDetectionsList(objectType) {
