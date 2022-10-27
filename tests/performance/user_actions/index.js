@@ -4,7 +4,8 @@ import { createUrl, getRandomElement } from "../common/index.js";
 
 import objects from "../common/objects.consts.js"
 
-const BASE_URL = "http://dev.api.alerce.online/alerts/v1/objects";
+//const BASE_URL = "http://dev.api.alerce.online/alerts/v1/objects";
+const BASE_URL = "http://k8s-default-wsingres-bb900d3478-1328657959.us-east-1.elb.amazonaws.com/objects"
 
 export function queryObjectsWithClass(objectClass, pageSize, objectList) {
   const url = createUrl(BASE_URL, objectClass, pageSize);
@@ -47,7 +48,7 @@ export function retrieveDetectionsList(objectType) {
   const objectPool = objects[objectType];
 
   group('retrieveDetectionsList', (_) => {
-    for (var i=0; i < objectPool.length; i++){
+    for (let i=0; i < objectPool.length; i++){
       const oid = objectPool[i]
       const detectionsResponse = http.get(BASE_URL + '/' + oid + '/detections');
 
