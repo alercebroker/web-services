@@ -1,8 +1,30 @@
 # Performance Tests
 
-*Add k6 installation and run instructions*
+This test suite uses [k6](https://k6.io/docs/ "k6 Documentation")
 
-*I think for the parameters it might be better to just link to the k6 docs*
+To install the package you must add the source to the package manager:
+
+### Ubuntu/Debian
+
+```
+sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+sudo apt-get update
+sudo apt-get install k6
+```
+
+### Fedora
+
+```
+sudo dnf install https://dl.k6.io/rpm/repo.rpm
+sudo dnf install k6
+```
+
+If any further additions or modifications are to be added, please refer to the official documentation:
+
+ - [Running k6](https://k6.io/docs/get-started/running-k6/ "Running k6")
+ - [k6 Options](https://k6.io/docs/using-k6/k6-options/how-to "How to use options")
+ - [k6 Javascript API](https://k6.io/docs/javascript-api/ "k6 JavaScript API")
 
 ## Test types
 
@@ -73,7 +95,9 @@ but now split by type of requests.
   * These will run alone at the beginning of the test.
 * Retrieve info about a single object (magstats, probabilities and the lightcurve). 
   * There are 3 scenarios for light, medium and heavy objects.
-  * *(explain what the limits on for each are)*
+    * **Light objects**: 0 to 10 detections
+    * **Medium objects**: 10 to 100 detections
+    * **Heavy objects**: more than 100 detections
   * These scenarios overlap with the queries, but keep on running for a while after they finished.
 
 Note that sleep times after each request (or bulk request in the case of individual objects) are still present as in previous workflow.
