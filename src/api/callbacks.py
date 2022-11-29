@@ -10,7 +10,8 @@ def before_request():
 def after_request(response, logger):
     if request.full_path == "/metrics?":  # pragma: no cover
         return response
-    elapsed = time() - g.pop("time")
+    current_time = time()
+    elapsed = current_time - g.pop("time", current_time)
     logger.debug(
         "%s %s %s %s %s time:%s seconds",
         request.remote_addr,
