@@ -111,7 +111,7 @@ def insert_in_database(context, model, **kwargs):
         defaults = dict(
             aid="ALERCE",
             oid=["OID"],
-            tid="TID",
+            tid=["TID"],
             firstmjd=1.,
             lastmjd=1.,
             ndet=1,
@@ -135,4 +135,3 @@ def insert_in_database(context, model, **kwargs):
     defaults.update({key: type(defaults[key])(value) for key, value in kwargs.items()})
     element = model_class(**defaults)
     context.mongo_db.query().get_or_create(element, model=model_class)
-

@@ -4,8 +4,10 @@ from conftest import models
 
 def test_order_by_desc(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -21,8 +23,10 @@ def test_order_by_desc(client, app):
 
 def test_order_by_asc(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -38,8 +42,10 @@ def test_order_by_asc(client, app):
 
 def test_order_by_class_attribute_desc(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -67,8 +73,10 @@ def test_order_by_class_attribute_desc(client, app):
 
 def test_order_by_class_attribute_asc(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -116,8 +124,10 @@ def test_objects_list_not_found(client):
 
 def test_date_query_first(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -133,8 +143,10 @@ def test_date_query_first(client, app):
 
 def test_conesearch_success(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=50.0,
@@ -150,8 +162,10 @@ def test_conesearch_success(client, app):
 
 def test_conesearch_failure(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=50.0,
@@ -166,8 +180,10 @@ def test_conesearch_failure(client, app):
 
 def test_date_query_first_2(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -183,8 +199,10 @@ def test_date_query_first_2(client, app):
 
 def test_date_query_last(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -200,8 +218,10 @@ def test_date_query_last(client, app):
 
 def test_date_query_last_2(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -217,8 +237,10 @@ def test_date_query_last_2(client, app):
 
 def test_ndet_query(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -234,8 +256,10 @@ def test_ndet_query(client, app):
 
 def test_ndet_query_2(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -284,8 +308,10 @@ def test_single_object_query(client):
 
 def test_limit_values(client, app):
     obj = models.Object(
+        _id="ALERCE2",
         aid="ALERCE2",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=-1.0,
         lastmjd=2.0,
         meanra=100.0,
@@ -294,8 +320,10 @@ def test_limit_values(client, app):
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
     obj = models.Object(
-        aid="ALERCE2",
+        _id="ALERCE3",
+        aid="ALERCE3",
         oid=["ZTF1"],
+        tid=["ZTF"],
         firstmjd=1000.0,
         lastmjd=2.0,
         meanra=100.0,

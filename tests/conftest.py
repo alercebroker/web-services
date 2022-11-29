@@ -61,8 +61,10 @@ def populate_databases(app):
 
         # mongo data
         object = models.Object(
+            _id="AID_ATLAS1",
             aid="AID_ATLAS1",
             oid=["ATLAS1"],
+            tid=["ATLAS"],
             lastmjd=99.,
             firstmjd=99.,
             meanra=100.0,
@@ -70,8 +72,10 @@ def populate_databases(app):
             ndet=10,
         )
         object_2 = models.Object(
+            _id="AID_ATLAS2",
             aid="AID_ATLAS2",
             oid=["ATLAS2", "ZTF2"],
+            tid=["ATLAS", "ZTF"],
             lastmjd=99.,
             firstmjd=99.,
             meanra=100.0,
@@ -79,8 +83,10 @@ def populate_databases(app):
             ndet=10,
         )
         object_3 = models.Object(
+            _id="ALERCE1",
             aid="ALERCE1",
             oid=["ZTF1"],
+            tid=["ZTF"],
             ndet=1,
             lastmjd=1.0,
             meanra=1.0,
@@ -98,7 +104,7 @@ def populate_databases(app):
             tid="ATLAS01",
             aid="AID_ATLAS1",
             oid="ATLAS1",
-            candid="candid",
+            candid="candid1",
             mjd=1,
             fid=1,
             ra=1,
@@ -124,7 +130,7 @@ def populate_databases(app):
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF2",
-            candid="candid",
+            candid="candid2",
             mjd=1,
             fid=1,
             ra=1,

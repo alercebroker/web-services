@@ -15,14 +15,14 @@ def create_object_args_dict(remove=None):
     }
     for key in remove:
         del base_args_dict[key]
-    
+
     return base_args_dict
 
 
 def create_object_query_dict(remove=None):
     remove = [] if remove is None else remove
     base_query_dict = {
-        'oid': {'$in': ["oid1", "oid2"]},
+        '$or': [{"_id": {"$in": ["oid1", "oid2"]}}, {"oid": {'$in': ["oid1", "oid2"]}}],
         'firstmjd': {'$gte': 100},
         'lastmjd': {'$gte': 200},
         'ndet': {'$gte': 1, '$lte': 100},
@@ -30,7 +30,7 @@ def create_object_query_dict(remove=None):
     }
     for key in remove:
         del base_query_dict[key]
-    
+
     return base_query_dict
 
 
@@ -55,7 +55,7 @@ def test_object_empty_query():
 def test_object_query_missing_args():
     # no oid
     request_args = create_object_args_dict(remove=['oid'])
-    expected_query = create_object_query_dict(remove=['oid'])
+    expected_query = create_object_query_dict(remove=['$or'])
 
     result = ListAstroObjectPayload(request_args)
     assert result.filter == expected_query
@@ -103,7 +103,8 @@ def test_object_query_single_oid():
     request_args = create_object_args_dict()
     request_args['oid'] = "oid1"
     expected_query = create_object_query_dict()
-    expected_query['oid']['$in'] = ["oid1"]
+    expected_query["$or"][0]['_id']['$in'] = ["oid1"]
+    expected_query["$or"][1]['oid']['$in'] = ["oid1"]
 
     result = ListAstroObjectPayload(request_args)
 
@@ -117,5 +118,5 @@ def test_object_query_with_oid_and_aid():
     result = ListAstroObjectPayload(request_args)
 
     assert "$or" in result.filter
-    assert {"oid": {"$in": ["oid1"]}} in result.filter["$or"]
-    assert {"aid": {"$in": ["AL1"]}} in result.filter["$or"]
+    assert {"oid": {"$in": ["oid1", "AL1"]}} in result.filter["$or"]
+    assert {"_id": {"$in": ["oid1", "AL1"]}} in result.filter["$or"]
