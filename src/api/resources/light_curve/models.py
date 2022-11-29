@@ -8,7 +8,9 @@ detection = Model(
         "oid": fields.String(description="Survey object identifier"),
         "tid": fields.String(description="Telescope identifier"),
         "mjd": fields.Float(description="Modified Julian date of observation"),
-        "candid": fields.String(description="Candidate identifier"),
+        "candid": fields.String(
+            attribute="_id", description="Candidate identifier"
+        ),
         "fid": fields.Integer(
             description="Filter ID (1=g; 2=r; 3=i; 5=c; 6=o)"
         ),
