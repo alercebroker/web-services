@@ -62,7 +62,7 @@ class MongoRepository(abc.ABC):
     def _wrap_results(self, result):
         pass
 
-    def _find_all(self, model: models.Base, payload: MongoPayload):
+    def _find_all(self, model: models.BaseModel, payload: MongoPayload):
         paginate = True if payload.paginate else False
         filter_by = [{"$match": payload.filter}]
         if payload.sort:
@@ -74,7 +74,7 @@ class MongoRepository(abc.ABC):
             **payload.paginate
         )
 
-    def _find_one(self, model: models.Base, payload: MongoPayload):
+    def _find_one(self, model: models.BaseModel, payload: MongoPayload):
         return self.db.query().find_one(model=model, filter_by=payload.filter)
 
 

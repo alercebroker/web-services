@@ -21,7 +21,7 @@ class Command:
         self.payload = payload
         self.handler = handler
 
-    def execute(self) -> Result:
+    def execute(self):
         action = getattr(self.service, self.action)
         result = action(self.payload)
         self._post_execute(result)
