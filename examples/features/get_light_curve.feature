@@ -2,11 +2,11 @@ Feature: Ask for a lightcurve data
 
   Scenario Outline: ask for lightcurves
     Given there are detections for object ALERCE1 with following parameters
-      | oid    | tid     |
-      | ZTF1   | ZTF     |
-      | ZTF2   | ZTF     |
-      | ATLAS1 | ATLAS-1 |
-      | ATLAS2 | ATLAS-2 |
+      | candid | oid    | tid     |
+      | c1     | ZTF1   | ZTF     |
+      | c2     | ZTF2   | ZTF     |
+      | c3     | ATLAS1 | ATLAS-1 |
+      | c4     | ATLAS2 | ATLAS-2 |
     And there are non_detections for object ALERCE1 with following parameters
       | oid    | tid     |
       | ZTF3   | ZTF     |
@@ -24,11 +24,11 @@ Feature: Ask for a lightcurve data
 
   Scenario Outline: ask for object detections
     Given there are detections for object ALERCE1 with following parameters
-      | oid    | tid     |
-      | ZTF1   | ZTF     |
-      | ZTF2   | ZTF     |
-      | ATLAS1 | ATLAS-1 |
-      | ATLAS2 | ATLAS-2 |
+      | candid | oid    | tid     |
+      | c1     | ZTF1   | ZTF     |
+      | c2     | ZTF2   | ZTF     |
+      | c3     | ATLAS1 | ATLAS-1 |
+      | c4     | ATLAS2 | ATLAS-2 |
     When request detections for object ALERCE1 in <survey> survey as <user>
     Then retrieve results with identifiers: <oids>
     Examples:
@@ -60,11 +60,11 @@ Feature: Ask for a lightcurve data
 
   Scenario Outline: ask for first detection of object
     Given there are detections for object ALERCE1 with following parameters
-      | oid    | tid     | mjd |
-      | ZTF2   | ZTF     | 2.5 |
-      | ZTF1   | ZTF     | 2.0 |
-      | ATLAS2 | ATLAS-1 | 1.5 |
-      | ATLAS1 | ATLAS-1 | 1.0 |
+      | candid | oid    | tid     | mjd |
+      | c1     | ZTF2   | ZTF     | 2.5 |
+      | c2     | ZTF1   | ZTF     | 2.0 |
+      | c3     | ATLAS2 | ATLAS-1 | 1.5 |
+      | c4     | ATLAS1 | ATLAS-2 | 1.0 |
     When request first detection for object ALERCE1 in <survey> survey as <user>
     Then retrieve results with identifiers: <oids>
     Examples:
@@ -96,9 +96,9 @@ Feature: Ask for a lightcurve data
 
   Scenario Outline: request lightcurves for non-existing objects
     Given there are detections for object ALERCE1 with following parameters
-      | oid    | tid     |
-      | ZTF1   | ZTF     |
-      | ATLAS1 | ATLAS-1 |
+      | candid | oid    | tid     |
+      | c1     | ZTF1   | ZTF     |
+      | c2     | ATLAS1 | ATLAS-1 |
     And there are non_detections for object ALERCE1 with following parameters
       | oid    | tid     |
       | ZTF2   | ZTF     |

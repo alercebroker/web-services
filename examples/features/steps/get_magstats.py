@@ -9,7 +9,7 @@ def insert_object_with_magstats(context, aid, fids):
     for fid in fids.split(","):
         magstat = {"fid": int(fid)}
         magstats.append(magstat)
-    environment.insert_in_database(context, "objects", _id=aid, magstats=magstats)
+    environment.insert_in_database(context, "objects", aid=aid, magstats=magstats)
 
 
 @when("request magstats for {aid}")
