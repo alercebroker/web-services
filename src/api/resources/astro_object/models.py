@@ -61,6 +61,12 @@ single_object = Model(
         "tid": fields.List(
             fields.String, description="Telescope identifier(s)"
         ),
+        "corrected": fields.Boolean(
+            description="Whether there is a matching source in the reference image"
+        ),
+        "stellar": fields.Boolean(
+            description="Whether there is a matching point-like source in the reference image"
+        ),
         "ndet": fields.Integer(
             description="Total number of detections for the object"
         ),
