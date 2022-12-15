@@ -1,4 +1,4 @@
 behave
 requests
 coverage
--e git+https://git@github.com/alercebroker/db-plugins@4.0.1#egg=db-plugins
+git+https://git@github.com/alercebroker/db-plugins@4.0.1#egg=db-plugins
