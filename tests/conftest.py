@@ -65,10 +65,14 @@ def populate_databases(app):
             aid="AID_ATLAS1",
             oid=["ATLAS1"],
             tid=["ATLAS"],
+            corrected=False,
+            stellar=False,
             lastmjd=99.,
             firstmjd=99.,
             meanra=100.0,
+            sigmara=0.1,
             meandec=50.0,
+            sigmadec=0.1,
             ndet=10,
         )
         object_2 = models.Object(
@@ -76,10 +80,14 @@ def populate_databases(app):
             aid="AID_ATLAS2",
             oid=["ATLAS2", "ZTF2"],
             tid=["ATLAS", "ZTF"],
+            corrected=False,
+            stellar=False,
             lastmjd=99.,
             firstmjd=99.,
             meanra=100.0,
+            sigmara=0.1,
             meandec=50.0,
+            sigmadec=0.1,
             ndet=10,
         )
         object_3 = models.Object(
@@ -87,10 +95,14 @@ def populate_databases(app):
             aid="ALERCE1",
             oid=["ZTF1"],
             tid=["ZTF"],
+            corrected=False,
+            stellar=False,
             ndet=1,
             lastmjd=1.0,
             meanra=1.0,
+            sigmara=0.1,
             meandec=1.0,
+            sigmadec=0.1,
             firstmjd=1.0,
             probabilities=[dict(
                 class_name="SN",
@@ -112,6 +124,8 @@ def populate_databases(app):
             rb=1,
             mag=1,
             e_mag=1,
+            mag_corr=2,
+            e_mag_corr=2,
             rfid=1,
             e_ra=1,
             e_dec=1,
@@ -125,6 +139,7 @@ def populate_databases(app):
             has_stamp=True,
             step_id_corr="step_id_corr",
             rbversion="rbversion",
+            parent_candidate=None
         )
         detections_2 = models.Detection(
             tid="ZTF02",
@@ -138,6 +153,8 @@ def populate_databases(app):
             rb=1,
             mag=1,
             e_mag=1,
+            mag_corr=2,
+            e_mag_corr=2,
             rfid=1,
             e_ra=1,
             e_dec=1,
@@ -151,8 +168,10 @@ def populate_databases(app):
             has_stamp=True,
             step_id_corr="step_id_corr",
             rbversion="rbversion",
+            parent_candidate=None
         )
         non_detections = models.NonDetection(
+            candid="candid3",
             aid="AID_ATLAS1",
             oid="ATLAS1",
             tid="ATLAS01",
@@ -161,6 +180,7 @@ def populate_databases(app):
             fid=1,
         )
         non_detections2 = models.NonDetection(
+            candid="candid4",
             aid="AID_ZTF2",
             oid="ZTF2",
             tid="ZTF02",
