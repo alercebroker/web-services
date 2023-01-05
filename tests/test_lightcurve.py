@@ -86,12 +86,11 @@ def test_sort_detections_by_date_descending(client, app):
             e_ra=1,
             e_dec=1,
             isdiffpos=1,
-            magpsf_corr=1,
-            sigmapsf_corr=1,
-            sigmapsf_corr_ext=1,
+            mag_corr=1,
+            e_mag_corr=1,
             corrected=True,
             dubious=True,
-            parent_candid=1234,
+            parent_candidate=1234,
             has_stamp=True,
             step_id_corr="step_id_corr",
             rbversion="rbversion",
@@ -121,12 +120,11 @@ def test_sort_detections_by_date_ascending(client, app):
             e_ra=1,
             e_dec=1,
             isdiffpos=1,
-            magpsf_corr=1,
-            sigmapsf_corr=1,
-            sigmapsf_corr_ext=1,
+            mag_corr=1,
+            e_mag_corr=1,
             corrected=True,
             dubious=True,
-            parent_candid=1234,
+            parent_candidate=1234,
             has_stamp=True,
             step_id_corr="step_id_corr",
             rbversion="rbversion",
@@ -156,12 +154,12 @@ def test_paginated_detections_result(client, app):
             e_ra=1,
             e_dec=1,
             isdiffpos=1,
-            magpsf_corr=1,
-            sigmapsf_corr=1,
+            mag_corr=1,
+            e_mag_corr=1,
             sigmapsf_corr_ext=1,
             corrected=True,
             dubious=True,
-            parent_candid=1234,
+            parent_candidate=1234,
             has_stamp=True,
             step_id_corr="step_id_corr",
             rbversion="rbversion",
@@ -175,6 +173,7 @@ def test_paginated_detections_result(client, app):
 
 def test_sort_non_detections_by_date_ascending(client, app):
     det = models.NonDetection(
+            candid="candid",
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF22",
@@ -192,6 +191,7 @@ def test_sort_non_detections_by_date_ascending(client, app):
 
 def test_sort_non_detections_by_date_descending(client, app):
     det = models.NonDetection(
+            candid="candid",
             tid="ZTF02",
             aid="AID_ZTF2",
             oid="ZTF22",
@@ -210,6 +210,7 @@ def test_sort_non_detections_by_date_descending(client, app):
 def test_paginated_non_detections_result(client, app):
     det = models.NonDetection(
             tid="ZTF02",
+            candid="candid",
             aid="AID_ZTF2",
             oid="ZTF22",
             mjd=0,

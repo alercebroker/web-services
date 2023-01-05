@@ -8,9 +8,9 @@ Feature: Ask for a lightcurve data
       | c3     | ATLAS1 | ATLAS-1 |
       | c4     | ATLAS2 | ATLAS-2 |
     And there are non_detections for object ALERCE1 with following parameters
-      | oid    | tid     |
-      | ZTF3   | ZTF     |
-      | ATLAS3 | ATLAS-1 |
+      | candid | oid    | tid     |
+      | c1     | ZTF3   | ZTF     |
+      | c2     | ATLAS3 | ATLAS-1 |
     When request lightcurve for object ALERCE1 in <survey> survey as <user>
     Then retrieve detections with identifiers: <detections>; and non detections with identifiers: <non_detections>
     Examples:
@@ -42,11 +42,11 @@ Feature: Ask for a lightcurve data
 
   Scenario Outline: ask for object non-detections
     Given there are non_detections for object ALERCE1 with following parameters
-      | oid    | tid     |
-      | ZTF1   | ZTF     |
-      | ZTF2   | ZTF     |
-      | ATLAS1 | ATLAS-1 |
-      | ATLAS2 | ATLAS-2 |
+      | candid | oid    | tid     |
+      | c1     | ZTF1   | ZTF     |
+      | c2     | ZTF2   | ZTF     |
+      | c3     | ATLAS1 | ATLAS-1 |
+      | c4     | ATLAS2 | ATLAS-2 |
     When request non detections for object ALERCE1 in <survey> survey as <user>
     Then retrieve results with identifiers: <oids>
     Examples:
@@ -78,11 +78,11 @@ Feature: Ask for a lightcurve data
 
   Scenario Outline: ask for first non-detection of object
     Given there are non_detections for object ALERCE1 with following parameters
-      | oid    | tid     | mjd |
-      | ZTF2   | ZTF     | 2.5 |
-      | ZTF1   | ZTF     | 2.0 |
-      | ATLAS2 | ATLAS-1 | 1.5 |
-      | ATLAS1 | ATLAS-1 | 1.0 |
+       | candid | oid    | tid     | mjd |
+       | c1     | ZTF2   | ZTF     | 2.5 |
+       | c2     | ZTF1   | ZTF     | 2.0 |
+       | c3     | ATLAS2 | ATLAS-1 | 1.5 |
+       | c4     | ATLAS1 | ATLAS-1 | 1.0 |
     When request first non detection for object ALERCE1 in <survey> survey as <user>
     Then retrieve results with identifiers: <oids>
     Examples:
@@ -100,9 +100,9 @@ Feature: Ask for a lightcurve data
       | c1     | ZTF1   | ZTF     |
       | c2     | ATLAS1 | ATLAS-1 |
     And there are non_detections for object ALERCE1 with following parameters
-      | oid    | tid     |
-      | ZTF2   | ZTF     |
-      | ATLAS2 | ATLAS-1 |
+      | candid | oid    | tid     |
+      | c1     | ZTF2   | ZTF     |
+      | c2     | ATLAS2 | ATLAS-1 |
     When request <endpoint> for object ALERCE2 in <survey> survey as <user>
     Then retrieve error code 404
     Examples:

@@ -8,10 +8,14 @@ def test_order_by_desc(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=0.1,
         meandec=50.0,
+        sigmadec=0.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -27,10 +31,14 @@ def test_order_by_asc(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=0.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -46,10 +54,14 @@ def test_order_by_class_attribute_desc(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2,
         probabilities=[dict(
             class_name="SN",
@@ -77,10 +89,14 @@ def test_order_by_class_attribute_asc(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=0.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2,
         probabilities=[dict(
             class_name="SN",
@@ -128,10 +144,14 @@ def test_date_query_first(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -147,10 +167,14 @@ def test_conesearch_success(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=50.0,
+        sigmara=.1,
         meandec=45.0,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -166,10 +190,14 @@ def test_conesearch_failure(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=50.0,
+        sigmara=.1,
         meandec=45.6,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -184,10 +212,14 @@ def test_date_query_first_2(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -203,10 +235,14 @@ def test_date_query_last(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -222,10 +258,14 @@ def test_date_query_last_2(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=False,
+        stellar=False,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -241,10 +281,14 @@ def test_ndet_query(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=True,
+        stellar=True,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -260,10 +304,14 @@ def test_ndet_query_2(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=True,
+        stellar=True,
         firstmjd=2.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=2
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -312,10 +360,14 @@ def test_limit_values(client, app):
         aid="ALERCE2",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=True,
+        stellar=False,
         firstmjd=-1.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=-1
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
@@ -324,10 +376,14 @@ def test_limit_values(client, app):
         aid="ALERCE3",
         oid=["ZTF1"],
         tid=["ZTF"],
+        corrected=True,
+        stellar=False,
         firstmjd=1000.0,
         lastmjd=2.0,
         meanra=100.0,
+        sigmara=.1,
         meandec=50.0,
+        sigmadec=.1,
         ndet=1000
     )
     app.container.mongo_db().query().get_or_create(obj, model=models.Object)
