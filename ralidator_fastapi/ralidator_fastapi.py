@@ -57,6 +57,7 @@ class RalidatorStarlette(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next) -> Response:
         ralidator = Ralidator(self.ralidator_settings, self.filters_map)
+        request.state.ralidator = ralidator
         self.apply_ralidator_auth(request, ralidator)
         response = await call_next(request)
         response = await self.apply_ralidator_filters(response, ralidator)
