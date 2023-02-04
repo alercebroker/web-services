@@ -12,12 +12,15 @@ import re
 
 
 class RalidatorStarlette(BaseHTTPMiddleware):
-    def __init__(self, app: ASGIApp, config: dict, filters_map: dict) -> None:
+    def __init__(
+        self, app: ASGIApp, config: dict, filters_map: dict, ignore_paths: list
+    ) -> None:
         super().__init__(app)
         self.ralidator_settings = RalidatorCoreSettingsFactory.from_dict(
             config
         )
         self.filters_map = filters_map
+        self.ignore_paths = ignore_paths
 
     async def response_to_json(self, response: StreamingResponse | Response):
         if isinstance(response, StreamingResponse):
@@ -56,6 +59,8 @@ class RalidatorStarlette(BaseHTTPMiddleware):
         ralidator.authenticate_token(token)
 
     async def dispatch(self, request: Request, call_next) -> Response:
+        if request.url.path in self.ignore_paths:
+            return await call_next(request)
         ralidator = Ralidator(self.ralidator_settings, self.filters_map)
         request.state.ralidator = ralidator
         self.apply_ralidator_auth(request, ralidator)

@@ -8,7 +8,10 @@ from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 
 app = FastAPI()
 app.add_middleware(
-    RalidatorStarlette, config={"SECRET_KEY": "test"}, filters_map={}
+    RalidatorStarlette,
+    config={"SECRET_KEY": "test"},
+    filters_map={},
+    ignore_paths=["/metrics"],
 )
 
 test_response = {"msg": "Hello World"}
@@ -17,6 +20,11 @@ test_response = {"msg": "Hello World"}
 @app.get("/")
 async def read_main():
     return test_response
+
+
+@app.get("/metrics")
+async def metrics():
+    return "metrics"
 
 
 client = TestClient(app)
@@ -40,3 +48,11 @@ def test_filters(mocker: MockerFixture):
     assert response.status_code == 200
     apply_filters.assert_called_with(test_response)
     assert response.json() == test_response
+
+
+def test_ignore_paths(mocker: MockerFixture):
+    apply_filters = mocker.patch.object(Ralidator, "apply_filters")
+    response = client.get("/metrics")
+    assert response.status_code == 200
+    assert response.json() == "metrics"
+    apply_filters.assert_not_called()
