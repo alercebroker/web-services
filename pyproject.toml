@@ -8,7 +8,7 @@ packages = [{include = "ralidator_fastapi"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-ralidator_core = { git = "git@github.com:alercebroker/ralidator-core.git", branch="main" }
+ralidator_core = { git = "https://github.com:alercebroker/ralidator-core.git", branch="main" }
 fastapi = "^0.89.1"
 
 
