@@ -20,7 +20,6 @@ def str2bool(v):
 
 
 def create_parsers(classifiers=None, classes=None):
-
     filter_parser = reqparse.RequestParser()
     filter_parser.add_argument(
         "oid",
