@@ -67,7 +67,6 @@ def test_get_detections(client):
     assert rv.status_code == 200
     assert rv.json[0]["tid"] == "ztf"
 
-
     rv = client.get("objects/ATLAS1/detections?survey_id=atlas")
     assert rv.status_code == 200
 
