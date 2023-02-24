@@ -6,7 +6,6 @@ from flask import current_app
 
 
 class DBControl(object):
-
     # Initialization and cleanup methods
     def __init__(
         self,
@@ -38,7 +37,6 @@ class DBControl(object):
         current_app.logger.debug(f"Connected to {connected_to}")
 
     def connect_psql(self):
-
         session_options = {
             "autocommit": False,
             "autoflush": False,

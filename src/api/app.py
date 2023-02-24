@@ -47,7 +47,6 @@ def create_app(config_path):
         return after_request(response, app.logger)
 
     with app.app_context():
-
         db_control = container.db_control()
         db_control.connect_databases()
 
