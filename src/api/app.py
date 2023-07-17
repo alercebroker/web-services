@@ -7,7 +7,6 @@ from api.resources.magstats.magstats import api as magstats
 from api.resources.probabilities.probabilities import api as probabilities
 from api.resources.features.features import api as features
 from api.resources.classifier.classifier import api as classifier
-from flask_cors import CORS
 from api.extensions import prometheus_metrics, ralidator
 from api.coverage_ext import Coverage
 import os
@@ -32,7 +31,6 @@ def create_app(config_path):
         app.logger.handlers = gunicorn_logger.handlers
         app.logger.setLevel(os.getenv("LOG_LEVEL", gunicorn_logger.level))
     # set up extensions
-    CORS(app)
     ralidator.init_app(app)
     prometheus_metrics.init_app(app)
     if os.getenv("EXAMPLES_TESTING"):  # pragma: no cover

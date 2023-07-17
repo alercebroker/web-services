@@ -1,22 +1,37 @@
-FROM python:3.8-slim
+FROM python:3.9-slim as python-base
+LABEL org.opencontainers.image.authors="ALeRCE"
+ENV PYTHONDONTWRITEBYTECODE=1 \
+  PYTHONUNBUFFERED=1 \
+  PYTHONFAULTHANDLER=1 \
+  PIP_NO_CACHE_DIR=off \
+  PIP_DISABLE_PIP_VERSION_CHECK=on \
+  PIP_DEFAULT_TIMEOUT=100 \
+  POETRY_VIRTUALENVS_IN_PROJECT=true \
+  POETRY_NO_INTERACTION=1
+
+
+FROM python-base as builder
 ARG GITHUB_TOKEN
-
-RUN apt update && apt install -y git
-RUN git config --global url."https://${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
-
-ADD requirements.txt /app/
+RUN pip install poetry
 WORKDIR /app
-RUN pip install --upgrade pip && pip install gunicorn==20.1.0
-RUN pip install gunicorn[gevent]
-RUN pip install psycogreen
-RUN pip install -r requirements.txt
+COPY ./poetry.lock ./pyproject.toml ./
+RUN poetry install --no-root --without=dev --without=test
 
-COPY . /app
+
+FROM python:3.9-slim as production
 EXPOSE 5000
-
+RUN pip install poetry
+COPY --from=builder /app /app
+WORKDIR /app
 ENV APP_WORKERS="1"
 ENV ENVIRONMENT="production"
 ENV SERVER_SOFTWARE="gunicorn"
 ENV PROMETHEUS_MULTIPROC_DIR="/tmp"
-
+RUN poetry install --only-root
+COPY ./README.md /app/README.md
+COPY ./description.md /app/description.md
+COPY ./gunicorn_config.py /app/gunicorn_config.py
+COPY ./config.yml /app/config.yml
+COPY ./scripts /app/scripts
+COPY ./src /app/src
 CMD ["/bin/bash","scripts/entrypoint.sh"]
