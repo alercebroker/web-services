@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install poetry
-      run: pipx install poetry==${{ inputs.poetry-version }}
+      run: pipx install poetry
     - name: Set up Python 3.9
       uses: actions/setup-python@v4
       with:
