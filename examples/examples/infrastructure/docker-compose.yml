@@ -9,6 +9,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - 5432:5432
+
   mongo:
     image: mongo
     environment:
@@ -19,15 +20,15 @@ services:
       - 27017:27017
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+
   alerts_api:
     build:
       context: ../../../
-      dockerfile: Dockerfile.testing
-      args:
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
+      dockerfile: Dockerfile
     ports:
-      - 5000:5000
+      - 5001:5001
     environment:
+      - PORT=5001
       - DB_HOST=postgres
       - DB_DATABASE=postgres
       - DB_USER=postgres
@@ -41,11 +42,9 @@ services:
       - MONGO_PORT=27017
       - CONNECT_MONGO=YES
       - CONNECT_PSQL=YES
-      - EXAMPLES_TESTING=TRUE
       - LOG_LEVEL=DEBUG
       - SECRET_KEY=a_secret_key
-    volumes:
-      - ../../../:/coverage-output
+
   tests:
     depends_on:
       - postgres
@@ -54,5 +53,5 @@ services:
     build:
       context: ../../../
       dockerfile: Dockerfile.bdd
-      args:
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    environment:
+      - PORT=5001
