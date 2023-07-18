@@ -1,4 +1,4 @@
-FROM python:3.9-slim as python-base
+FROM python:3.9 as python-base
 LABEL org.opencontainers.image.authors="ALeRCE"
 ENV PYTHONDONTWRITEBYTECODE=1 \
   PYTHONUNBUFFERED=1 \
@@ -8,10 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
   PIP_DEFAULT_TIMEOUT=100 \
   POETRY_VIRTUALENVS_IN_PROJECT=true \
   POETRY_NO_INTERACTION=1
-RUN pip install poetry
 
 
 FROM python-base as builder
+RUN pip install poetry
 WORKDIR /app
 COPY ./poetry.lock ./pyproject.toml ./
 RUN poetry install --no-root --without=dev --without=test

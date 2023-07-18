@@ -50,9 +50,3 @@ jobs:
         export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
         docker-compose up -d postgres mongo alerts_api
         docker-compose up --exit-code-from tests tests
-        docker-compose exec -T alerts_api killall5 gunicorn
-    - name: Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./coverage.xml
-        flags: behavior,examples
