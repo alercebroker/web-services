@@ -30,7 +30,6 @@ jobs:
         cache: 'poetry'
     - name: Install dependencies
       run: |
-        poetry config http-basic.git alerceadmin ${{ secrets.GH_TOKEN }}
         poetry install --without production
     - name: Test with pytest
       run: |
