@@ -8,18 +8,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
   PIP_DEFAULT_TIMEOUT=100 \
   POETRY_VIRTUALENVS_IN_PROJECT=true \
   POETRY_NO_INTERACTION=1
+RUN pip install poetry
 
 
 FROM python-base as builder
-ARG GITHUB_TOKEN
-RUN pip install poetry
 WORKDIR /app
 COPY ./poetry.lock ./pyproject.toml ./
 RUN poetry install --no-root --without=dev --without=test
 
 
 FROM python:3.9-slim as production
-EXPOSE 5000
 RUN pip install poetry
 COPY --from=builder /app /app
 WORKDIR /app
@@ -27,11 +25,11 @@ ENV APP_WORKERS="1"
 ENV ENVIRONMENT="production"
 ENV SERVER_SOFTWARE="gunicorn"
 ENV PROMETHEUS_MULTIPROC_DIR="/tmp"
-RUN poetry install --only-root
 COPY ./README.md /app/README.md
 COPY ./description.md /app/description.md
 COPY ./gunicorn_config.py /app/gunicorn_config.py
 COPY ./config.yml /app/config.yml
 COPY ./scripts /app/scripts
 COPY ./src /app/src
+RUN poetry install --only-root
 CMD ["/bin/bash","scripts/entrypoint.sh"]

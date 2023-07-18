@@ -16,19 +16,23 @@ prometheus-flask-exporter = "^0.22.4"
 returns = "^0.19.0"
 dependency-injector = {version = "^4.41.0", extras = ["yaml"]}
 db-plugins = { git = "https://git@github.com/alercebroker/db-plugins", tag = "3.0.0" }
-ralidator_flask = { git = "https://github.com/alercebroker/ralidator-flask", rev = "50825f9"}
+ralidator_flask = { git = "https://git@github.com/alercebroker/ralidator-flask", rev = "50825f9"}
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
 pytest-docker = "^1.0.1"
 pytest-cov = "^4.1.0"
+behave = "^1.2.6"
+requests = "^2.31.0"
+pyjwt = "2.3.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 
 
 [tool.poetry.group.production.dependencies]
-gunicorn = "^21.0.1"
+gunicorn = { version = "^21.0.1", extras = ["gevent"] }
+psycogreen = "^1.0.2"
 
 [build-system]
 requires = ["poetry-core"]

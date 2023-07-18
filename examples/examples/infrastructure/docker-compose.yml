@@ -23,11 +23,10 @@ services:
     build:
       context: ../../../
       dockerfile: Dockerfile.testing
-      args:
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
     ports:
-      - 5000:5000
+      - 5001:5001
     environment:
+      - PORT=5001
       - DB_HOST=postgres
       - DB_DATABASE=postgres
       - DB_USER=postgres
@@ -54,5 +53,5 @@ services:
     build:
       context: ../../../
       dockerfile: Dockerfile.bdd
-      args:
-        - GITHUB_TOKEN=${GITHUB_TOKEN}
+    environment:
+      - PORT=5001

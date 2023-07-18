@@ -20,6 +20,9 @@ If you want to create a new endpoint, create a package with your new routines in
 To run in develop, first you must set the following environment variables:
 
 ```
+#Configure API port
+PORT = 5000
+
 # Config to connect to the PSQL Database
 PSQL_HOST = 
 PSQL_DATABASE = 

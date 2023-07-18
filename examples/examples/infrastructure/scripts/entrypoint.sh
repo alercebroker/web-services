@@ -1,2 +1,2 @@
 echo "Starting behavior tests"
-python -m behave --stop examples/features
+poetry run behave --stop examples/features
