@@ -31,7 +31,7 @@ black = "^23.7.0"
 
 
 [tool.poetry.group.production.dependencies]
-gunicorn = { version = "^21.0.1", extras = ["gevent"] }
+gunicorn = { version = "^21.0.1" }
 psycogreen = "^1.0.2"
 
 [build-system]

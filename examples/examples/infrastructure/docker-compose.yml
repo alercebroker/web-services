@@ -44,6 +44,8 @@ services:
       - CONNECT_PSQL=YES
       - LOG_LEVEL=DEBUG
       - SECRET_KEY=a_secret_key
+      - APP_WORKERS=1
+      - THREADS=1
 
   tests:
     depends_on:
