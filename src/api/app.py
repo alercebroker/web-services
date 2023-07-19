@@ -1,3 +1,8 @@
+import pathlib
+import sys
+
+sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve()))
+
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
 from flask_restx import Api
