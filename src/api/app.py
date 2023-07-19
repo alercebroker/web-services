@@ -1,3 +1,8 @@
+import pathlib
+import sys
+
+sys.path.append(str(pathlib.Path(__file__).parent.parent.resolve()))
+
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask import Flask
 from flask_restx import Api
@@ -7,7 +12,9 @@ from api.resources.magstats.magstats import api as magstats
 from api.resources.probabilities.probabilities import api as probabilities
 from api.resources.features.features import api as features
 from api.resources.classifier.classifier import api as classifier
-from api.extensions import prometheus_metrics, ralidator
+from api.extensions import prometheus_metrics
+from api.extensions import ralidator
+from flask_cors import CORS
 import os
 import logging
 from api.callbacks import after_request, before_request
@@ -30,6 +37,7 @@ def create_app(config_path):
         app.logger.handlers = gunicorn_logger.handlers
         app.logger.setLevel(os.getenv("LOG_LEVEL", gunicorn_logger.level))
     # set up extensions
+    CORS(app)
     ralidator.init_app(app)
     prometheus_metrics.init_app(app)
 
