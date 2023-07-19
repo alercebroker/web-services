@@ -15,7 +15,7 @@ flask-restx = "^1.1.0"
 prometheus-flask-exporter = "^0.22.4"
 returns = "^0.19.0"
 dependency-injector = {version = "^4.41.0", extras = ["yaml"]}
-db-plugins = { git = "https://git@github.com/alercebroker/db-plugins", tag = "3.0.0" }
+db-plugins = { git = "https://git@github.com/alercebroker/db-plugins", tag = "3.1.0" }
 ralidator_flask = { git = "https://git@github.com/alercebroker/ralidator-flask", rev = "50825f9"}
 
 [tool.poetry.group.test.dependencies]
@@ -28,6 +28,7 @@ pyjwt = "2.3.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
+memray = "^1.8.1"
 
 
 [tool.poetry.group.production.dependencies]
