@@ -12,7 +12,8 @@ from api.resources.magstats.magstats import api as magstats
 from api.resources.probabilities.probabilities import api as probabilities
 from api.resources.features.features import api as features
 from api.resources.classifier.classifier import api as classifier
-from api.extensions import prometheus_metrics, ralidator
+from api.extensions import prometheus_metrics
+from api.extensions import ralidator
 import os
 import logging
 from api.callbacks import after_request, before_request
