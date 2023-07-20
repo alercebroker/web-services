@@ -294,7 +294,7 @@ def populate_databases(app):
         moongo_non_detections = mongo_models.NonDetection(
             candid="candid",
             aid="AID_ATLAS1",
-            oid=["ATLAS1"],
+            oid="ATLAS1",
             tid="ATLAS01",
             sid="ATLAS",
             mjd=1,
