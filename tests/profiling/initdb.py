@@ -21,7 +21,8 @@ def psql_ready():
         conn.connect(settings)
         conn.create_db()
         return True
-    except Exception:
+    except Exception as e:
+        print(e)
         return False
 
 
@@ -94,6 +95,17 @@ def insert_psql_data():
         deltajd=1.0,
         firstmjd=1.0,
     )
+    model2 = psql_models.Object(
+        oid="ZTF2",
+        ndet=1,
+        lastmjd=1.0,
+        meanra=1.0,
+        meandec=1.0,
+        sigmara=1.0,
+        sigmadec=1.0,
+        deltajd=1.0,
+        firstmjd=1.0,
+    )
     step = psql_models.Step(
         step_id="test_step",
         name="preprocess",
@@ -119,10 +131,29 @@ def insert_psql_data():
             step_id_corr=step.step_id,
         )
     )
+    model2.detections.append(
+        psql_models.Detection(
+            candid=456,
+            mjd=1,
+            fid=1,
+            pid=1,
+            isdiffpos=1,
+            ra=1,
+            dec=1,
+            rb=1,
+            magpsf=1,
+            sigmapsf=1,
+            corrected=True,
+            dubious=True,
+            has_stamp=True,
+            step_id_corr=step.step_id,
+        )
+    )
     model.non_detections.append(
         psql_models.NonDetection(mjd=1, fid=1, diffmaglim=1)
     )
     sql_db.session.add(model)
+    sql_db.session.add(model2)
     sql_db.session.commit()
     sql_db.session.close()
 
@@ -147,6 +178,12 @@ def insert_mongo_data():
         meanra=100.0,
         meandec=50.0,
         ndet="ndet",
+        tid=["ATLAS"],
+        sid=["ATLAS"],
+        corrected=False,
+        stellar=False,
+        sigmara=0.1,
+        sigmadec=0.1,
     )
     mongo_object_2 = mongo_models.Object(
         aid="AID2",
@@ -156,19 +193,29 @@ def insert_mongo_data():
         meanra=100.0,
         meandec=50.0,
         ndet="ndet",
+        tid=["ATLAS", "ZTF"],
+        sid=["ATLAS", "ZTF"],
+        corrected=False,
+        stellar=False,
+        sigmara=0.1,
+        sigmadec=0.1,
     )
     mongo_detections = mongo_models.Detection(
         tid="ATLAS01",
+        sid="ATLAS",
         aid="AID1",
         oid="ATLAS1",
-        candid="candid",
+        candid="candid1",
         mjd=1,
         fid=1,
         ra=1,
         dec=1,
         rb=1,
         mag=1,
+        mag_corr=1,
         e_mag=1,
+        e_mag_corr=1,
+        e_mag_corr_ext=1,
         rfid=1,
         e_ra=1,
         e_dec=1,
@@ -185,16 +232,20 @@ def insert_mongo_data():
     )
     mongo_detections_2 = mongo_models.Detection(
         tid="ATLAS02",
+        sid="ATLAS",
         aid="AID2",
         oid="ZTF1",
-        candid="candid",
+        candid="candid2",
         mjd=1,
         fid=1,
         ra=1,
         dec=1,
         rb=1,
         mag=1,
+        mag_corr=1,
         e_mag=1,
+        e_mag_corr=1,
+        e_mag_corr_ext=1,
         rfid=1,
         e_ra=1,
         e_dec=1,
@@ -210,6 +261,8 @@ def insert_mongo_data():
         rbversion="rbversion",
     )
     mongo_non_detections = mongo_models.NonDetection(
+        candid="candid1",
+        sid="ZTF",
         aid="AID1",
         oid="ZTF1",
         tid="ZTF",

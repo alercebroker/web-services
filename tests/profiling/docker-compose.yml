@@ -44,5 +44,7 @@ services:
       - CONNECT_PSQL=YES
       - LOG_LEVEL=DEBUG
       - SECRET_KEY=a_secret_key
+      - THREADS=8
+      - WORKERS=1
     volumes:
       - ./:/app/tests/profiling
