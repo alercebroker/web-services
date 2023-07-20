@@ -57,12 +57,21 @@ class NotNanFloat(fields.Raw):
         return None if isnan(value) else value
 
 
+def get_candid(raw_response):
+    try:
+        candid = raw_response["_id"]
+        return candid
+    except KeyError:
+        candid = raw_response["candid"]
+        return candid
+
+
 detection_model = Model(
     "Detection",
     {
         "tid": fields.String(attribute=get_tid),
         "mjd": NotNanFloat(attribute="mjd"),
-        "candid": fields.String,
+        "candid": fields.String(attribute=get_candid),
         "fid": fields.Integer,
         "pid": fields.Integer,
         "diffmaglim": NotNanFloat(attribute="diffmaglim"),
