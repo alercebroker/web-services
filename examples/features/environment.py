@@ -256,6 +256,7 @@ def insert_mongo_data(context):
         aid="AID1",
         oid="ZTF1",
         tid="ZTF",
+        sid="ZTF",
         mjd=1,
         diffmaglim=1,
         fid=1,
