@@ -1,4 +1,3 @@
-from email import headerregistry
 import pytest
 import jwt
 from datetime import datetime, timedelta, timezone

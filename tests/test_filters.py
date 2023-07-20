@@ -1,5 +1,4 @@
-from src.api.filters import (
-    get_filters_map,
+from api.filters import (
     filter_atlas_detection_non_detection,
     filter_atlas_lightcurve,
 )
