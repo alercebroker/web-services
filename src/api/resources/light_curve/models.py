@@ -1,5 +1,4 @@
-from attr import Attribute, attr
-from flask_restx import Resource, fields, Model
+from flask_restx import fields, Model
 from math import isnan
 
 
@@ -37,7 +36,7 @@ def get_rfid(raw_response):
     try:
         rfid = raw_response.rfid
     except AttributeError:
-        rfid = raw_response["rfid"]
+        rfid = raw_response["extra_fields"]["rfid"]
 
     if rfid and isnan(rfid):
         return None
@@ -47,7 +46,7 @@ def get_rfid(raw_response):
 
 def get_tid(raw_response):
     try:
-        tid = raw_response["tid"]
+        raw_response["tid"]
         return "atlas"
     except KeyError:
         return "ztf"

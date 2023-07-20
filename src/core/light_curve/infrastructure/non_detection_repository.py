@@ -1,6 +1,5 @@
 from db_plugins.db.sql.connection import SQLConnection
 from db_plugins.db.mongo.connection import MongoConnection
-from db_plugins.db.sql import models as psql_models
 from db_plugins.db.mongo import models as mongo_models
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
@@ -53,7 +52,7 @@ class MongoNonDetectionRepository(NonDetectionRepository, MongoRepository):
         astro_object = self._get_object(object_id, survey_id)
 
         if is_successful(astro_object):
-            aid = astro_object.unwrap()["aid"]
+            aid = astro_object.unwrap()["_id"]
             non_detections = self._get_non_detections(aid)
 
             if is_successful(non_detections):
