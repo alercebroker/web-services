@@ -45,7 +45,7 @@ def database_setup_ztf_atlas(context):
     insert_mongo_data(context)
 
 
-@when("request {endpoint} endpoint for ZTFobject {oid} in {survey_id} survey")
+@when("request {endpoint} endpoint for Object {oid} in {survey_id} survey")
 def request_to_endpoint(context, endpoint, oid, survey_id):
     for request in examples[endpoint][survey_id]:
         result = request(oid)
@@ -66,7 +66,7 @@ def check_lightcurve_response_for_survey(context, survey_id):
         assert context.result["non_detections"][0]["oid"] == "ZTF1"
     if survey_id == "ATLAS":
         assert len(context.result["detections"]) == 1
-        assert context.result["detections"][0]["candid"] == "candid"
+        assert context.result["detections"][0]["candid"] == "candid2"
         assert len(context.result["non_detections"]) == 0
 
 
