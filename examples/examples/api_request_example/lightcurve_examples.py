@@ -3,7 +3,8 @@ from .token_builder import build_admin_token
 import os
 
 PORT = os.getenv("PORT", "5000")
-BASE_URL = f"http://alerts_api:{PORT}/"
+HOST = os.getenv("HOST", "alerts_api")
+BASE_URL = f"http://{HOST}:{PORT}/"
 HEADER_ADMIN_TOKEN = {"AUTH-TOKEN": build_admin_token()}
 
 
