@@ -27,7 +27,7 @@ api.models[limit_values_model.name] = limit_values_model
 ) = create_parsers()
 
 DEFAULT_CLASSIFIER = "lc_classifier"
-DEFAULT_VERSION = "hierarchical_random_forest_1.0.0"
+DEFAULT_VERSION = "hierarchical_random_forest_1.1.0"
 DEFAULT_RANKING = 1
 
 
@@ -42,36 +42,31 @@ class ObjectList(Resource):
     @api.marshal_with(object_list)
     def get(self):
         """List all objects by given filters"""
-        page = self.create_result_page(
-            filter_parser, conesearch_parser, pagination_parser, order_parser
+        filters = self.parse_filters(
+            filter_parser,
+            conesearch_parser,
+            pagination_parser,
+            order_parser,
         )
-        serialized_items = self.serialize_items(page.items)
+        result = self._get_objects(filters)
+        serialized_items = self.serialize_items(result.items)
         return {
-            "total": page.total,
-            "page": page.page,
-            "next": page.next_num,
-            "has_next": page.has_next,
-            "prev": page.prev_num,
-            "has_prev": page.has_prev,
+            "total": result.total,
+            "next": result.next_num,
+            "has_next": result.has_next,
+            "prev": result.prev_num,
+            "has_prev": result.has_prev,
             "items": serialized_items,
         }
 
-    def serialize_items(self, data):
-        ret = []
-        for obj, prob in data:
-            obj = {**obj.__dict__}
-            prob = {**prob.__dict__} if prob else {}
-            ret.append({**obj, **prob})
-        return ret
-
-    def create_result_page(
+    def parse_filters(
         self, filter_parser, conesearch_parser, pagination_parser, order_parser
     ):
         filter_args = filter_parser.parse_args()
         conesearch_args = conesearch_parser.parse_args()
         pagination_args = pagination_parser.parse_args()
         order_args = order_parser.parse_args()
-        filters = self._parse_filters(filter_args)
+        filters = self._convert_filters_to_sqlalchemy_statement(filter_args)
         conesearch_args = self._convert_conesearch_args(conesearch_args)
         conesearch = self._create_conesearch_statement(conesearch_args)
         use_default = (
@@ -83,29 +78,32 @@ class ObjectList(Resource):
             or (filter_args.get("class") is not None)
             else True
         )
-        query = self._get_objects(
-            filters, conesearch, conesearch_args, default=use_default
-        )
-        order_statement = self._create_order_statement(
-            query, filter_args, order_args
-        )
-        query = query.order_by(order_statement)
-        return query.paginate(
-            pagination_args["page"],
-            pagination_args["page_size"],
-            pagination_args["count"],
-        )
+        return {
+            "filter_args": filter_args,
+            "conesearch_args": conesearch_args,
+            "pagination_args": pagination_args,
+            "order_args": order_args,
+            "filters": filters,
+            "conesearch_args": conesearch_args,
+            "conesearch": conesearch,
+            "use_default": use_default,
+        }
+
+    def serialize_items(self, data):
+        ret = []
+        for obj, prob in data:
+            obj = {**obj.__dict__}
+            prob = {**prob.__dict__} if prob else {}
+            ret.append({**obj, **prob})
+        return ret
 
     @inject
     def _get_objects(
         self,
-        filters,
-        conesearch,
-        conesearch_args,
-        default=True,
+        filters: dict,
         db: SQLConnection = Provide[AppContainer.psql_db],
     ):
-        if not default:
+        if not filters["use_default"]:
             join_table = Probability
         else:
             join_table = (
@@ -120,11 +118,19 @@ class ObjectList(Resource):
         q = (
             db.query(DBPObject, join_table)
             .outerjoin(join_table)
-            .filter(conesearch)
-            .filter(*filters)
-            .params(**conesearch_args)
+            .filter(filters["conesearch"])
+            .filter(*filters["filters"])
+            .params(**filters["conesearch_args"])
         )
-        return q
+        order_statement = self._create_order_statement(
+            q, filters["filter_args"], filters["order_args"]
+        )
+        q = q.order_by(order_statement)
+        return q.paginate(
+            filters["pagination_args"]["page"],
+            filters["pagination_args"]["page_size"],
+            filters["pagination_args"]["count"],
+        )
 
     def _create_order_statement(self, query, filter_args, order_args):
         statement = None
@@ -150,7 +156,7 @@ class ObjectList(Resource):
                 statement = text(oids_order)
         return statement
 
-    def _parse_filters(self, args):
+    def _convert_filters_to_sqlalchemy_statement(self, args):
         (
             classifier,
             classifier_version,
@@ -269,16 +275,20 @@ class LimitValues(Resource):
         db: SQLConnection = Provide[AppContainer.psql_db],
     ):
         """Gets min and max values for objects number of detections and detection dates"""
-        resp = db.query(
+        query = db.query(
             func.min(DBPObject.ndet).label("min_ndet"),
             func.max(DBPObject.ndet).label("max_ndet"),
             func.min(DBPObject.firstmjd).label("min_firstmjd"),
             func.max(DBPObject.firstmjd).label("max_firstmjd"),
-        ).first()
+        )
+        values = query.first()
+        return self.make_response(values)
+
+    def make_response(self, values):
         resp = {
-            "min_ndet": resp[0],
-            "max_ndet": resp[1],
-            "min_firstmjd": resp[2],
-            "max_firstmjd": resp[3],
+            "min_ndet": values[0],
+            "max_ndet": values[1],
+            "min_firstmjd": values[2],
+            "max_firstmjd": values[3],
         }
         return resp
