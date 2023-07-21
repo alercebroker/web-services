@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource
-from db_plugins.db.sql import models
+from db_plugins.db.sql.models import Object as DBPObject, Probability
 from .models import (
     object_list_item,
     object_list,
@@ -106,23 +106,19 @@ class ObjectList(Resource):
         db: SQLConnection = Provide[AppContainer.psql_db],
     ):
         if not default:
-            join_table = models.Probability
+            join_table = Probability
         else:
             join_table = (
-                db.query(models.Probability)
-                .filter(
-                    models.Probability.classifier_name == DEFAULT_CLASSIFIER
-                )
-                .filter(
-                    models.Probability.classifier_version == DEFAULT_VERSION
-                )
-                .filter(models.Probability.ranking == DEFAULT_RANKING)
+                db.query(Probability)
+                .filter(Probability.classifier_name == DEFAULT_CLASSIFIER)
+                .filter(Probability.classifier_version == DEFAULT_VERSION)
+                .filter(Probability.ranking == DEFAULT_RANKING)
                 .subquery("probability")
             )
-            join_table = aliased(models.Probability, join_table)
+            join_table = aliased(Probability, join_table)
 
         q = (
-            db.query(models.Object, join_table)
+            db.query(DBPObject, join_table)
             .outerjoin(join_table)
             .filter(conesearch)
             .filter(*filters)
@@ -167,48 +163,43 @@ class ObjectList(Resource):
             oids,
         ) = (True, True, True, True, True, True, True, True, True)
         if args["classifier"]:
-            classifier = (
-                models.Probability.classifier_name == args["classifier"]
-            )
+            classifier = Probability.classifier_name == args["classifier"]
         if args["class"]:
-            class_ = models.Probability.class_name == args["class"]
+            class_ = Probability.class_name == args["class"]
         if args["ndet"]:
-            ndet = models.Object.ndet >= args["ndet"][0]
+            ndet = DBPObject.ndet >= args["ndet"][0]
             if len(args["ndet"]) > 1:
-                ndet = ndet & (models.Object.ndet <= args["ndet"][1])
+                ndet = ndet & (DBPObject.ndet <= args["ndet"][1])
         if args["firstmjd"]:
-            firstmjd = models.Object.firstmjd >= args["firstmjd"][0]
+            firstmjd = DBPObject.firstmjd >= args["firstmjd"][0]
             if len(args["firstmjd"]) > 1:
                 firstmjd = firstmjd & (
-                    models.Object.firstmjd <= args["firstmjd"][1]
+                    DBPObject.firstmjd <= args["firstmjd"][1]
                 )
         if args["lastmjd"]:
-            lastmjd = models.Object.lastmjd >= args["lastmjd"][0]
+            lastmjd = DBPObject.lastmjd >= args["lastmjd"][0]
             if len(args["lastmjd"]) > 1:
-                lastmjd = lastmjd & (
-                    models.Object.lastmjd <= args["lastmjd"][1]
-                )
+                lastmjd = lastmjd & (DBPObject.lastmjd <= args["lastmjd"][1])
         if args["probability"]:
-            probability = models.Probability.probability >= args["probability"]
+            probability = Probability.probability >= args["probability"]
         if args["ranking"]:
-            ranking = models.Probability.ranking == args["ranking"]
+            ranking = Probability.ranking == args["ranking"]
         elif not args["ranking"] and (
             args["classifier"] or args["class"] or args["classifier_version"]
         ):
             # Default ranking 1
-            ranking = models.Probability.ranking == 1
+            ranking = Probability.ranking == 1
 
         if args["classifier_version"]:
             classifier_version = (
-                models.Probability.classifier_version
-                == args["classifier_version"]
+                Probability.classifier_version == args["classifier_version"]
             )
         if args["oid"]:
             if len(args["oid"]) == 1:
                 filtered_oid = args["oid"][0].replace("*", "%")
-                oids = models.Object.oid.like(filtered_oid)
+                oids = DBPObject.oid.like(filtered_oid)
             else:
-                oids = models.Object.oid.in_(args["oid"])
+                oids = DBPObject.oid.in_(args["oid"])
 
         return (
             classifier,
@@ -260,11 +251,7 @@ class Object(Resource):
         db: SQLConnection = Provide[AppContainer.psql_db],
     ):
         """Fetch an object given its identifier"""
-        result = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
-        )
+        result = db.query(DBPObject).filter(DBPObject.oid == id).one_or_none()
         if result:
             return result
         else:
@@ -283,10 +270,10 @@ class LimitValues(Resource):
     ):
         """Gets min and max values for objects number of detections and detection dates"""
         resp = db.query(
-            func.min(models.Object.ndet).label("min_ndet"),
-            func.max(models.Object.ndet).label("max_ndet"),
-            func.min(models.Object.firstmjd).label("min_firstmjd"),
-            func.max(models.Object.firstmjd).label("max_firstmjd"),
+            func.min(DBPObject.ndet).label("min_ndet"),
+            func.max(DBPObject.ndet).label("max_ndet"),
+            func.min(DBPObject.firstmjd).label("min_firstmjd"),
+            func.max(DBPObject.firstmjd).label("max_firstmjd"),
         ).first()
         resp = {
             "min_ndet": resp[0],

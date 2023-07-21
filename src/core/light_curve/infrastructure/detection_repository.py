@@ -53,7 +53,7 @@ class MongoDetectionRepository(DetectionRepository, MongoRepository):
         astro_object = self._get_object(object_id, survey_id)
 
         if is_successful(astro_object):
-            aid = astro_object.unwrap()["aid"]
+            aid = astro_object.unwrap()["_id"]
             detections = self._get_detections(aid)
 
             if is_successful(detections) and len(detections.unwrap()) > 0:
