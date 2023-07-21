@@ -36,6 +36,8 @@ def get_rfid(raw_response):
     try:
         rfid = raw_response.rfid
     except AttributeError:
+        rfid = raw_response["rfid"]
+    except KeyError:
         rfid = raw_response["extra_fields"]["rfid"]
 
     if rfid and isnan(rfid):
