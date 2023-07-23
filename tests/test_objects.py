@@ -1,12 +1,14 @@
-from api.resources.astro_object import astro_object as AstroObjectResource
 from conftest import models
+from src.core.astro_object.domain.astro_object_service import (
+    AstroObjectService,
+)
 
 
-def test_conesearch(client):
-    resource = AstroObjectResource.ObjectList()
+def test_conesearch_statement(client):
+    service = AstroObjectService(None, None)
     args = {"ra": 1, "dec": 1, "radius": 0.1}
-    params = resource._convert_conesearch_args(args)
-    statement = resource._create_conesearch_statement(params)
+    params = service._convert_conesearch_args(args)
+    statement = service._create_conesearch_statement(params)
     assert "q3c_radial_query(meanra, meandec,:ra, :dec, :radius)" in str(
         statement
     )
