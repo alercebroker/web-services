@@ -24,14 +24,17 @@ class AppContainer(containers.DeclarativeContainer):
     database_config = config.DATABASE
     psql_db = providers.ThreadSafeSingleton(SQLDatabase, database_config.SQL)
     mongo_db = providers.ThreadSafeSingleton(
-        MongoDatabase, database_config.MONGO)
+        MongoDatabase, database_config.MONGO
+    )
 
     # views dependencies
     view_result_handler = providers.Factory(ViewResultHandler)
 
     # packages
     lightcurve_package = providers.Container(
-        LightcurveContainer, session_factory=psql_db.provided.session, mongo_db=mongo_db.provided.mongo_db
+        LightcurveContainer,
+        session_factory=psql_db.provided.session,
+        mongo_db=mongo_db.provided.mongo_db,
     )
     astro_object_package = providers.Container(
         AstroObjectContainer, session_factory=psql_db.provided.session
