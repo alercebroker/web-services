@@ -1,11 +1,25 @@
 from flask_restx import reqparse
-from db_plugins.db.sql import models
 
-columns = []
-for c in models.Object.__table__.columns:
-    columns.append(str(c).split(".")[1])
-for c in models.Probability.__table__.columns:
-    columns.append(str(c).split(".")[1])
+columns = [
+    "oid",
+    "ndet",
+    "g_r_max",
+    "g_r_max_corr",
+    "g_r_mean",
+    "g_r_mean_corr",
+    "meanra",
+    "meandec",
+    "sigmara",
+    "sigmadec",
+    "deltajd",
+    "firstmjd",
+    "lastmjd",
+    "class_name",
+    "classifier_name",
+    "classifier_version",
+    "probability",
+    "ranking",
+]
 
 
 def str2bool(v):

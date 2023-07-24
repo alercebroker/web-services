@@ -3,7 +3,7 @@ from db_plugins.db.sql import models
 from .models import magstats_model
 from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
-from api.container import AppContainer, SQLConnection
+from api.container import AppContainer
 
 api = Namespace(
     "magnitude statistics",
@@ -20,12 +20,17 @@ class MagStats(Resource):
     @api.doc("magstats")
     @api.marshal_list_with(magstats_model)
     @inject
-    def get(self, id, db: SQLConnection = Provide[AppContainer.psql_db]):
-        obj = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
-        )
+    def get(
+        self,
+        id,
+        session_factory=Provide[AppContainer.psql_db.provided.session],
+    ):
+        with session_factory() as session:
+            obj = (
+                session.query(models.Object)
+                .filter(models.Object.oid == id)
+                .one_or_none()
+            )
         if obj:
             return obj.magstats
         else:

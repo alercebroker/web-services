@@ -50,9 +50,6 @@ def create_app(config_path):
         return after_request(response, app.logger)
 
     with app.app_context():
-        db_control = container.db_control()
-        db_control.connect_databases()
-
         description = open("description.md")
 
         ztf_api = Api(
@@ -68,11 +65,5 @@ def create_app(config_path):
         ztf_api.add_namespace(classifier, path="/classifiers")
         ztf_api.add_namespace(features, path="/objects")
         ztf_api.init_app(app)
-
-        def cleanup(e):
-            db_control.cleanup_databases(e)
-            return e
-
-        app.teardown_appcontext(cleanup)
 
     return app

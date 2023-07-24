@@ -1,4 +1,3 @@
-from db_plugins.db.sql.connection import SQLConnection
 from db_plugins.db.mongo.connection import MongoConnection
 from db_plugins.db.mongo import models as mongo_models
 from returns.result import Success, Failure
@@ -12,6 +11,8 @@ from core.light_curve.infrastructure.repository import (
     PSQLRepository,
     MongoRepository,
 )
+from contextlib import AbstractContextManager
+from typing import Callable
 
 
 class NonDetectionRepository:
@@ -20,17 +21,17 @@ class NonDetectionRepository:
 
 
 class PSQLNonDetectionRepository(NonDetectionRepository, PSQLRepository):
-    def __init__(self, db: SQLConnection):
-        self.db = db
+    def __init__(self, session_factory: Callable[..., AbstractContextManager]):
+        self.session_factory = session_factory
 
     def get(self, object_id, survey_id):
-        astro_obj = self._get_object_by_id(object_id, survey_id)
+        non_detections = self._get_non_detections_by_oid(object_id, survey_id)
 
-        if is_successful(astro_obj):
-            non_detections = astro_obj.unwrap().non_detections
+        if is_successful(non_detections):
+            non_detections = non_detections.unwrap()
             return Success(non_detections)
         else:
-            return astro_obj
+            return non_detections
 
 
 class MongoNonDetectionRepository(NonDetectionRepository, MongoRepository):

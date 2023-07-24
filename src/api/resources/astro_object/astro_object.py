@@ -1,5 +1,4 @@
 from flask_restx import Namespace, Resource
-from db_plugins.db.sql.models import Object as DBPObject
 from .models import (
     object_list_item,
     object_list,
@@ -7,14 +6,12 @@ from .models import (
     limit_values_model,
 )
 from .parsers import create_parsers
-from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
 from dependency_injector.providers import Factory
-from api.container import AppContainer, SQLConnection
+from api.container import AppContainer
 from core.astro_object.domain.astro_object_service import GetObjectListPayload
 from shared.interface.command import Command
 from shared.interface.command import ResultHandler
-from sqlalchemy import func
 
 api = Namespace("objects", description="Objects related operations")
 api.models[object_list_item.name] = object_list_item
@@ -93,52 +90,52 @@ class ObjectList(Resource):
         return ret
 
 
-@api.route("/<id>")
-@api.param("id", "The object's identifier")
-@api.response(200, "Success")
-@api.response(404, "Object not found")
-class Object(Resource):
-    @api.doc("get_object")
-    @api.marshal_with(object_item)
-    @inject
-    def get(
-        self,
-        id,
-        db: SQLConnection = Provide[AppContainer.psql_db],
-    ):
-        """Fetch an object given its identifier"""
-        result = db.query(DBPObject).filter(DBPObject.oid == id).one_or_none()
-        if result:
-            return result
-        else:
-            raise NotFound("Object not found")
+# @api.route("/<id>")
+# @api.param("id", "The object's identifier")
+# @api.response(200, "Success")
+# @api.response(404, "Object not found")
+# class Object(Resource):
+#     @api.doc("get_object")
+#     @api.marshal_with(object_item)
+#     @inject
+#     def get(
+#         self,
+#         id,
+#         db: SQLConnection = Provide[AppContainer.psql_db],
+#     ):
+#         """Fetch an object given its identifier"""
+#         result = db.query(DBPObject).filter(DBPObject.oid == id).one_or_none()
+#         if result:
+#             return result
+#         else:
+#             raise NotFound("Object not found")
 
 
-@api.route("/limit_values")
-@api.response(200, "Success")
-class LimitValues(Resource):
-    @api.doc("limit_values")
-    @api.marshal_with(limit_values_model)
-    @inject
-    def get(
-        self,
-        db: SQLConnection = Provide[AppContainer.psql_db],
-    ):
-        """Gets min and max values for objects number of detections and detection dates"""
-        query = db.query(
-            func.min(DBPObject.ndet).label("min_ndet"),
-            func.max(DBPObject.ndet).label("max_ndet"),
-            func.min(DBPObject.firstmjd).label("min_firstmjd"),
-            func.max(DBPObject.firstmjd).label("max_firstmjd"),
-        )
-        values = query.first()
-        return self.make_response(values)
+# @api.route("/limit_values")
+# @api.response(200, "Success")
+# class LimitValues(Resource):
+#     @api.doc("limit_values")
+#     @api.marshal_with(limit_values_model)
+#     @inject
+#     def get(
+#         self,
+#         db: SQLConnection = Provide[AppContainer.psql_db],
+#     ):
+#         """Gets min and max values for objects number of detections and detection dates"""
+#         query = db.query(
+#             func.min(DBPObject.ndet).label("min_ndet"),
+#             func.max(DBPObject.ndet).label("max_ndet"),
+#             func.min(DBPObject.firstmjd).label("min_firstmjd"),
+#             func.max(DBPObject.firstmjd).label("max_firstmjd"),
+#         )
+#         values = query.first()
+#         return self.make_response(values)
 
-    def make_response(self, values):
-        resp = {
-            "min_ndet": values[0],
-            "max_ndet": values[1],
-            "min_firstmjd": values[2],
-            "max_firstmjd": values[3],
-        }
-        return resp
+#     def make_response(self, values):
+#         resp = {
+#             "min_ndet": values[0],
+#             "max_ndet": values[1],
+#             "min_firstmjd": values[2],
+#             "max_firstmjd": values[3],
+#         }
+#         return resp

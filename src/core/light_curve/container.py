@@ -11,25 +11,25 @@ from core.light_curve.domain.lightcurve_service import LightcurveService
 from core.light_curve.use_case.get_detection import GetDetection
 from core.light_curve.use_case.get_non_detection import GetNonDetection
 from core.light_curve.use_case.get_lightcurve import GetLightcurve
-from db_plugins.db.sql.connection import SQLConnection
 from db_plugins.db.mongo.connection import MongoConnection
 
 
 class LightcurveContainer(containers.DeclarativeContainer):
-    # wiring_config = containers.WiringConfiguration(
-    #     modules=["api.resources.light_curve"]
-    # )
-    psql_db = providers.Dependency(instance_of=SQLConnection)
+    session_factory = providers.Dependency()
     mongo_db = providers.Dependency(instance_of=MongoConnection)
     detection_repository_factory = providers.FactoryAggregate(
         {
-            "ztf": providers.Factory(PSQLDetectionRepository, db=psql_db),
+            "ztf": providers.Factory(
+                PSQLDetectionRepository, session_factory=session_factory
+            ),
             "atlas": providers.Factory(MongoDetectionRepository, db=mongo_db),
         }
     )
     non_detection_repository_factory = providers.FactoryAggregate(
         {
-            "ztf": providers.Factory(PSQLNonDetectionRepository, db=psql_db),
+            "ztf": providers.Factory(
+                PSQLNonDetectionRepository, session_factory=session_factory
+            ),
             "atlas": providers.Factory(
                 MongoNonDetectionRepository, db=mongo_db
             ),

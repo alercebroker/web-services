@@ -4,7 +4,7 @@ from .parsers import fid_parser
 from db_plugins.db.sql import models
 from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
-from api.container import AppContainer, SQLConnection
+from api.container import AppContainer
 
 api = Namespace("features", description="Features related operations")
 api.models[feature_model.name] = feature_model
@@ -19,25 +19,32 @@ class Features(Resource):
     @api.expect(fid_parser)
     @api.marshal_list_with(feature_model)
     @inject
-    def get(self, id, db: SQLConnection = Provide[AppContainer.psql_db]):
+    def get(
+        self,
+        id,
+        session_factory=Provide[AppContainer.psql_db.provided.session],
+    ):
         """
         Gets list of all features.
         """
-        args = fid_parser.parse_args()
-        obj = (
-            db.query(models.Object)
-            .filter(models.Object.oid == id)
-            .one_or_none()
-        )
-        if obj:
-            q = db.query(models.Feature).filter(models.Feature.oid == obj.oid)
-            if args.fid is not None:
-                q = q.filter(models.Feature.fid == args.fid)
-            if args.version is not None:
-                q = q.filter(models.Feature.version == args.version)
-            return q.all()
-        else:
-            raise NotFound
+        with session_factory() as session:
+            args = fid_parser.parse_args()
+            obj = (
+                session.query(models.Object)
+                .filter(models.Object.oid == id)
+                .one_or_none()
+            )
+            if obj:
+                q = session.query(models.Feature).filter(
+                    models.Feature.oid == obj.oid
+                )
+                if args.fid is not None:
+                    q = q.filter(models.Feature.fid == args.fid)
+                if args.version is not None:
+                    q = q.filter(models.Feature.version == args.version)
+                return q.all()
+            else:
+                raise NotFound
 
 
 @api.route("/<id>/features/<name>")
@@ -49,26 +56,32 @@ class Feature(Resource):
     @api.expect(fid_parser)
     @api.marshal_with(feature_model)
     @inject
-    def get(self, id, name, db: SQLConnection = Provide[AppContainer.psql_db]):
+    def get(
+        self,
+        id,
+        name,
+        session_factory=Provide[AppContainer.psql_db.provided.session],
+    ):
         """
         Gets a single Feature
         """
         args = fid_parser.parse_args()
-        obj = (
-            db.query(models.Object, models.Object.oid)
-            .filter(models.Object.oid == id)
-            .one_or_none()
-        )
-        if obj:
-            q = (
-                db.query(models.Feature)
-                .filter(models.Feature.name == name)
-                .filter(models.Feature.oid == obj.oid)
+        with session_factory() as session:
+            obj = (
+                session.query(models.Object, models.Object.oid)
+                .filter(models.Object.oid == id)
+                .one_or_none()
             )
-            if args.fid is not None:
-                q = q.filter(models.Feature.fid == args.fid)
-            if args.version is not None:
-                q = q.filter(models.Feature.version == args.version)
-            return q.all()
-        else:
-            raise NotFound
+            if obj:
+                q = (
+                    session.query(models.Feature)
+                    .filter(models.Feature.name == name)
+                    .filter(models.Feature.oid == obj.oid)
+                )
+                if args.fid is not None:
+                    q = q.filter(models.Feature.fid == args.fid)
+                if args.version is not None:
+                    q = q.filter(models.Feature.version == args.version)
+                return q.all()
+            else:
+                raise NotFound

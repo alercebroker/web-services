@@ -1,4 +1,4 @@
-from flask_restx import Resource, fields, Model
+from flask_restx import fields, Model
 
 object_list_item = Model(
     "Object List Item",

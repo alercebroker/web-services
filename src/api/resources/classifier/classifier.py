@@ -3,7 +3,7 @@ from werkzeug.exceptions import NotFound
 from .models import classifier_model, class_model
 from flask_restx import Namespace, Resource
 from dependency_injector.wiring import inject, Provide
-from api.container import AppContainer, SQLConnection
+from api.container import AppContainer
 
 api = Namespace("classifier", description="Classifier routes")
 api.models[classifier_model.name] = classifier_model
@@ -17,12 +17,15 @@ class ClassifierList(Resource):
     @api.doc("classifier")
     @api.marshal_with(classifier_model)
     @inject
-    def get(self, db: SQLConnection = Provide[AppContainer.psql_db]):
+    def get(
+        self, session_factory=Provide[AppContainer.psql_db.provided.session]
+    ):
         """
         Gets all clasifiers
         """
-        classifiers = db.query(models.Taxonomy).all()
-        return classifiers
+        with session_factory() as session:
+            classifiers = session.query(models.Taxonomy).all()
+            return classifiers
 
 
 @api.route("/<classifier_name>/<classifier_version>/classes")
@@ -38,16 +41,19 @@ class Classifier(Resource):
         self,
         classifier_name,
         classifier_version,
-        db: SQLConnection = Provide[AppContainer.psql_db],
+        session_factory=Provide[AppContainer.psql_db.provided.session],
     ):
-        classifier = (
-            db.query(models.Taxonomy)
-            .filter(models.Taxonomy.classifier_name == classifier_name)
-            .filter(models.Taxonomy.classifier_version == classifier_version)
-            .one_or_none()
-        )
-        if classifier is not None:
-            classes = [{"name": c} for c in classifier.classes]
-            return classes
-        else:
-            raise NotFound
+        with session_factory() as session:
+            classifier = (
+                session.query(models.Taxonomy)
+                .filter(models.Taxonomy.classifier_name == classifier_name)
+                .filter(
+                    models.Taxonomy.classifier_version == classifier_version
+                )
+                .one_or_none()
+            )
+            if classifier is not None:
+                classes = [{"name": c} for c in classifier.classes]
+                return classes
+            else:
+                raise NotFound

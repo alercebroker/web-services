@@ -14,9 +14,8 @@ def test_conesearch_statement(client):
     )
 
 
-def test_order_by_desc(client, app):
+def test_order_by_desc(client, app, db):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     db.session.close()
@@ -26,9 +25,8 @@ def test_order_by_desc(client, app):
     assert r.json["items"][0]["oid"] == "ZTF2"
 
 
-def test_order_by_asc(client, app):
+def test_order_by_asc(client, app, db):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"order_by": "firstmjd", "order_mode": "ASC"}
@@ -37,9 +35,8 @@ def test_order_by_asc(client, app):
     assert r.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_order_by_class_attribute_desc(client, app):
+def test_order_by_class_attribute_desc(client, app, db):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
     obj.probabilities.append(
         models.Probability(
             class_name="SN",
@@ -62,9 +59,8 @@ def test_order_by_class_attribute_desc(client, app):
     assert r.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_order_by_class_attribute_asc(client, app):
+def test_order_by_class_attribute_asc(client, app, db):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
     obj.probabilities.append(
         models.Probability(
             class_name="VS",
@@ -101,9 +97,8 @@ def test_objects_list_not_found(client):
     assert rv.json["total"] == 0
 
 
-def test_date_query_first(client, app):
+def test_date_query_first(client, app, db):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"firstmjd": [0, 1]}
@@ -112,9 +107,8 @@ def test_date_query_first(client, app):
     assert len(rv.json["items"]) == 1
 
 
-def test_date_query_first_2(client, app):
+def test_date_query_first_2(client, app, db):
     obj = models.Object(oid="ZTF2", firstmjd=2.0)
-    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"firstmjd": [2, 3]}
@@ -123,9 +117,8 @@ def test_date_query_first_2(client, app):
     assert len(rv.json["items"]) == 1
 
 
-def test_date_query_last(client, app):
+def test_date_query_last(client, app, db):
     obj = models.Object(oid="ZTF2", lastmjd=2.0)
-    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"lastmjd": [0, 1]}
@@ -134,9 +127,8 @@ def test_date_query_last(client, app):
     assert len(rv.json["items"]) == 1
 
 
-def test_date_query_last_2(client, app):
+def test_date_query_last_2(client, app, db):
     obj = models.Object(oid="ZTF2", lastmjd=2.0)
-    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"lastmjd": [2, 3]}
@@ -145,9 +137,8 @@ def test_date_query_last_2(client, app):
     assert len(rv.json["items"]) == 1
 
 
-def test_ndet_query(client, app):
+def test_ndet_query(client, app, db):
     obj = models.Object(oid="ZTF2", ndet=2)
-    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"ndet": [0, 1]}
@@ -156,9 +147,8 @@ def test_ndet_query(client, app):
     assert rv.json["items"][0]["oid"] == "ZTF1"
 
 
-def test_ndet_query_2(client, app):
+def test_ndet_query_2(client, app, db):
     obj = models.Object(oid="ZTF2", ndet=2)
-    db = app.container.psql_db()
     db.session.add(obj)
     db.session.commit()
     args = {"ndet": [2, 3]}

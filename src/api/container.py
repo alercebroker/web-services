@@ -1,10 +1,9 @@
 from dependency_injector import containers, providers
-from db_plugins.db.sql.connection import SQLConnection
-from db_plugins.db.mongo.connection import MongoConnection
 from core.light_curve.container import LightcurveContainer
 from core.astro_object.container import AstroObjectContainer
-from shared.database.control import DBControl
 from api.result_handlers.view_result_handler import ViewResultHandler
+from shared.database.sql import Database as SQLDatabase
+from shared.database.mongo import Database as MongoDatabase
 
 
 class AppContainer(containers.DeclarativeContainer):
@@ -22,25 +21,18 @@ class AppContainer(containers.DeclarativeContainer):
     config = providers.Configuration()
 
     # gateways
-    psql_db = providers.ThreadSafeSingleton(SQLConnection)
-    mongo_db = providers.ThreadSafeSingleton(MongoConnection)
     database_config = config.DATABASE
-    db_control = providers.ThreadSafeSingleton(
-        DBControl,
-        app_config=database_config.APP_CONFIG,
-        psql_config=database_config.SQL,
-        mongo_config=database_config.MONGO,
-        psql_db=psql_db,
-        mongo_db=mongo_db,
-    )
+    psql_db = providers.ThreadSafeSingleton(SQLDatabase, database_config.SQL)
+    mongo_db = providers.ThreadSafeSingleton(
+        MongoDatabase, database_config.MONGO)
 
     # views dependencies
     view_result_handler = providers.Factory(ViewResultHandler)
 
     # packages
     lightcurve_package = providers.Container(
-        LightcurveContainer, psql_db=psql_db, mongo_db=mongo_db
+        LightcurveContainer, session_factory=psql_db.provided.session, mongo_db=mongo_db.provided.mongo_db
     )
     astro_object_package = providers.Container(
-        AstroObjectContainer, psql_db=psql_db
+        AstroObjectContainer, session_factory=psql_db.provided.session
     )
