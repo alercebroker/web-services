@@ -31,7 +31,7 @@ class MagStats(Resource):
                 .filter(models.Object.oid == id)
                 .one_or_none()
             )
-        if obj:
-            return obj.magstats
-        else:
-            raise NotFound
+            if obj:
+                return obj.magstats
+            else:
+                raise NotFound
