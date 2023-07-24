@@ -27,10 +27,10 @@ class Probabilities(Resource):
         id,
         session_factory=Provide[AppContainer.psql_db.provided.session],
     ):
+        args = prob_parser.parse_args()
         with session_factory() as session:
-            obj = session.query(models.Object).find_one(filter_by={"oid": id})
+            obj = session.query(models.Object).filter_by(oid=id).one_or_none()
             if obj:
-                args = prob_parser.parse_args()
                 probs = session.query(models.Probability).filter(
                     models.Probability.oid == obj.oid
                 )  # obj.probabilities
