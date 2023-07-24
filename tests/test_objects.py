@@ -1,5 +1,5 @@
 from conftest import models
-from src.core.astro_object.domain.astro_object_service import (
+from core.astro_object.domain.astro_object_service import (
     AstroObjectService,
 )
 
