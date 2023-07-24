@@ -1,5 +1,4 @@
 from flask_restx import Namespace, Resource
-from db_plugins.db.sql.models import Object as DBPObject
 from .models import (
     object_list_item,
     object_list,
@@ -7,14 +6,15 @@ from .models import (
     limit_values_model,
 )
 from .parsers import create_parsers
-from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
 from dependency_injector.providers import Factory
-from api.container import AppContainer, SQLConnection
+from api.container import AppContainer
 from core.astro_object.domain.astro_object_service import GetObjectListPayload
 from shared.interface.command import Command
 from shared.interface.command import ResultHandler
+from shared.database.sql import models
 from sqlalchemy import func
+from werkzeug.exceptions import NotFound
 
 api = Namespace("objects", description="Objects related operations")
 api.models[object_list_item.name] = object_list_item
@@ -104,14 +104,19 @@ class Object(Resource):
     def get(
         self,
         id,
-        db: SQLConnection = Provide[AppContainer.psql_db],
+        session_factory=Provide[AppContainer.psql_db.provided.session],
     ):
         """Fetch an object given its identifier"""
-        result = db.query(DBPObject).filter(DBPObject.oid == id).one_or_none()
-        if result:
-            return result
-        else:
-            raise NotFound("Object not found")
+        with session_factory() as session:
+            result = (
+                session.query(models.Object)
+                .filter(models.Object.oid == id)
+                .one_or_none()
+            )
+            if result:
+                return result
+            else:
+                raise NotFound("Object not found")
 
 
 @api.route("/limit_values")
@@ -122,17 +127,18 @@ class LimitValues(Resource):
     @inject
     def get(
         self,
-        db: SQLConnection = Provide[AppContainer.psql_db],
+        session_factory=Provide[AppContainer.psql_db.provided.session],
     ):
         """Gets min and max values for objects number of detections and detection dates"""
-        query = db.query(
-            func.min(DBPObject.ndet).label("min_ndet"),
-            func.max(DBPObject.ndet).label("max_ndet"),
-            func.min(DBPObject.firstmjd).label("min_firstmjd"),
-            func.max(DBPObject.firstmjd).label("max_firstmjd"),
-        )
-        values = query.first()
-        return self.make_response(values)
+        with session_factory() as session:
+            query = session.query(
+                func.min(models.Object.ndet).label("min_ndet"),
+                func.max(models.Object.ndet).label("max_ndet"),
+                func.min(models.Object.firstmjd).label("min_firstmjd"),
+                func.max(models.Object.firstmjd).label("max_firstmjd"),
+            )
+            values = query.first()
+            return self.make_response(values)
 
     def make_response(self, values):
         resp = {

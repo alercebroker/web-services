@@ -1,5 +1,4 @@
 from dependency_injector import containers, providers
-from db_plugins.db.sql.connection import SQLConnection
 from core.astro_object.infrastructure.object_list_repository import (
     ObjectListRepository,
 )
@@ -8,9 +7,9 @@ from core.astro_object.use_case.get_object_list import GetObjectList
 
 
 class AstroObjectContainer(containers.DeclarativeContainer):
-    psql_db = providers.Dependency(instance_of=SQLConnection)
+    session_factory = providers.Dependency()
     object_list_repository = providers.Factory(
-        ObjectListRepository, db=psql_db
+        ObjectListRepository, session_factory=session_factory
     )
     astro_object_service = providers.Factory(
         AstroObjectService,

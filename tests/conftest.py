@@ -5,6 +5,7 @@ import os
 import psycopg2
 import pymongo
 from db_plugins.db.sql import models
+from db_plugins.db.sql.connection import SQLConnection
 from db_plugins.db.mongo import models as mongo_models
 import datetime
 
@@ -90,8 +91,12 @@ def app(psql_service, mongo_service):
 @pytest.fixture
 def populate_databases(app):
     with app.app_context():
-        db = app.container.psql_db()
-        mongo_db = app.container.mongo_db()
+        db = SQLConnection()
+        psql_config = app.container.database_config.SQL()
+        SQLALCHEMY_DATABASE_URL = f"postgresql://{psql_config['USER']}:{psql_config['PASSWORD']}@{psql_config['HOST']}:{psql_config['PORT']}/{psql_config['DATABASE']}"
+        psql_config["SQLALCHEMY_DATABASE_URL"] = SQLALCHEMY_DATABASE_URL
+        db.connect(psql_config)
+        mongo_db = app.container.mongo_db().mongo_db
         db.create_db()
         mongo_db.create_db()
 
@@ -326,3 +331,13 @@ def client(populate_databases):
     app = populate_databases
     with app.test_client() as client:
         yield client
+
+
+@pytest.fixture
+def db(app):
+    db = SQLConnection()
+    psql_config = app.container.database_config.SQL()
+    SQLALCHEMY_DATABASE_URL = f"postgresql://{psql_config['USER']}:{psql_config['PASSWORD']}@{psql_config['HOST']}:{psql_config['PORT']}/{psql_config['DATABASE']}"
+    psql_config["SQLALCHEMY_DATABASE_URL"] = SQLALCHEMY_DATABASE_URL
+    db.connect(psql_config)
+    yield db

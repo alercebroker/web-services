@@ -1,6 +1,9 @@
 from dataclasses import dataclass
 from returns.result import Success
 from shared.utils.result_helpers import get_failure_from_list
+from core.light_curve.infrastructure.detection_repository import (
+    DetectionRepository,
+)
 
 
 @dataclass
@@ -19,7 +22,9 @@ class LightcurveService:
         )
 
     def get_detections(self, payload: LightcurveServicePayload) -> list:
-        repository = self.detection_repository_factory(payload.survey_id)
+        repository: DetectionRepository = self.detection_repository_factory(
+            payload.survey_id
+        )
         return repository.get(payload.oid, payload.survey_id)
 
     def get_non_detections(self, payload: LightcurveServicePayload) -> list:

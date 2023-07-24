@@ -4,7 +4,7 @@ from .models import probability_model
 from .parsers import prob_parser
 from werkzeug.exceptions import NotFound
 from dependency_injector.wiring import inject, Provide
-from api.container import AppContainer, SQLConnection
+from api.container import AppContainer
 from typing import List
 
 api = Namespace(
@@ -22,27 +22,33 @@ class Probabilities(Resource):
     @api.expect(prob_parser)
     @api.marshal_list_with(probability_model)
     @inject
-    def get(self, id, db: SQLConnection = Provide[AppContainer.psql_db]):
-        obj = db.query(models.Object).find_one(filter_by={"oid": id})
-        if obj:
-            args = prob_parser.parse_args()
-            probs = db.query(models.Probability).filter(
-                models.Probability.oid == obj.oid
-            )  # obj.probabilities
-            if args["classifier"]:
-                probs = probs.filter(
-                    models.Probability.classifier_name == args["classifier"]
-                )
-            if args["classifier_version"]:
-                probs = probs.filter(
-                    models.Probability.classifier_version
-                    == args["classifier_version"]
-                )
+    def get(
+        self,
+        id,
+        session_factory=Provide[AppContainer.psql_db.provided.session],
+    ):
+        args = prob_parser.parse_args()
+        with session_factory() as session:
+            obj = session.query(models.Object).filter_by(oid=id).one_or_none()
+            if obj:
+                probs = session.query(models.Probability).filter(
+                    models.Probability.oid == obj.oid
+                )  # obj.probabilities
+                if args["classifier"]:
+                    probs = probs.filter(
+                        models.Probability.classifier_name
+                        == args["classifier"]
+                    )
+                if args["classifier_version"]:
+                    probs = probs.filter(
+                        models.Probability.classifier_version
+                        == args["classifier_version"]
+                    )
 
-            taxonomy = db.query(models.Taxonomy).all()
-            return self.order_probs(probs.all(), taxonomy)
-        else:
-            raise NotFound
+                taxonomy = session.query(models.Taxonomy).all()
+                return self.order_probs(probs.all(), taxonomy)
+            else:
+                raise NotFound
 
     def order_probs(self, probs: List, taxonomy: List):
         def sorting_order(e):
