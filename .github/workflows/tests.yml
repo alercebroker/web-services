@@ -15,7 +15,7 @@ jobs:
       - uses: psf/black@stable
         with:
           options: "--check --verbose"
-          src: "src/"
+          src: "ztf_api/src/"
   test:
     runs-on: ubuntu-latest
 
@@ -30,14 +30,16 @@ jobs:
         cache: 'poetry'
     - name: Install dependencies
       run: |
+        cd ztf_api
         poetry install --without production
     - name: Test with pytest
       run: |
+        cd ztf_api
         poetry run pytest -x tests --cov src --cov-report xml
     - name: Codecov
       uses: codecov/codecov-action@v3
       with:
-        files: ./coverage.xml
+        files: ./ztf_api/coverage.xml
         flags: unittests
 
   test_examples:
@@ -46,6 +48,7 @@ jobs:
     - uses: actions/checkout@master
     - name: Test with behave and simulated environment
       run: |
+        cd ztf_api
         cd examples/examples/infrastructure
         export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
         docker-compose up -d postgres mongo alerts_api
