@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "fastapi-app"
+version = "0.1.0"
+description = ""
+authors = ["Pedro Gallardo <pedrogallardorobinson@gmail.com>"]
+readme = "README.md"
+packages = [{include = "fastapi_app"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "0.100.0"
+uvicorn = "0.24.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
