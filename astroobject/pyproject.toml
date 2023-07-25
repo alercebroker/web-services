@@ -1,16 +1,18 @@
 [tool.poetry]
-name = "fastapi-app"
+name = "astroobject"
 version = "0.1.0"
 description = ""
 authors = ["Pedro Gallardo <pedrogallardorobinson@gmail.com>"]
 readme = "README.md"
-packages = [{include = "fastapi_app"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-fastapi = "0.100.0"
-uvicorn = "0.23.1"
+sqlalchemy = "^2.0.19"
 
+
+[tool.poetry.group.dev.dependencies]
+fastapi = "^0.100.0"
+uvicorn = "^0.23.1"
 
 [build-system]
 requires = ["poetry-core"]
