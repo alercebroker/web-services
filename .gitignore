@@ -1,4 +1,3 @@
-
 .idea/
 __pycache__/
 tests/tests.out
@@ -10,3 +9,5 @@ htmlcov/
 .env
 .log/
 coverage.*
+.python-version
+tests/profiling/memray*
