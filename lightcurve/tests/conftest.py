@@ -20,7 +20,7 @@ def docker_compose_command():
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
     return os.path.join(
-        str(pytestconfig.rootdir), "lightcurve", "tests", "docker-compose.yml"
+        str(pytestconfig.rootdir), "tests", "docker-compose.yml"
     )
 
 

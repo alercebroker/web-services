@@ -17,6 +17,7 @@ psycopg2-binary = "^2.9.6"
 pytest = "^7.4.0"
 pytest-docker = "^2.0.0"
 httpx = "^0.24.1"
+pytest-cov = "^4.1.0"
 
 [tool.poetry.group.dev.dependencies]
 fastapi = "^0.100.0"
