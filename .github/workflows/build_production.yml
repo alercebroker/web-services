@@ -1,36 +1,25 @@
-name: build_production_image
+name: Build Staging
+
 on:
   release:
     types:
       - published
-      - edited
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  get_tags:
-    runs-on: ubuntu-latest
-    outputs:
-      tags: ${{ steps.prep.outputs.tags }}
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-      - name: Prepare
-        id: prep
-        run: |
-          DOCKER_IMAGE=ghcr.io/alercebroker/alerts_api
-          VERSION=latest
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/}
-          fi
-          TAGS="${DOCKER_IMAGE}:${VERSION}"
-          if [[ $VERSION =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
-            TAGS="$TAGS,${DOCKER_IMAGE}:latest"
-          fi
-          echo ::set-output name=tags::${TAGS}
-  push_image:
-    needs: get_tags
-    uses: ./.github/workflows/build.yml
+  update_versions:
+    uses: ./.github/workflows/update-versions.yaml
     with:
-      tags: ${{ needs.get_tags.outputs.tags }}
-    secrets:
-      PUBLISH_IMAGE_TOKEN: ${{ secrets.PUBLISH_IMAGE_TOKEN }}
-      INSTALL_PRIVATE_REPO: ${{ secrets.INSTALL_PRIVATE_REPO }}
+      build-type: production
+
+  lightcurve:
+    uses: ./.github/workflows/build.yml
+    needs: update_versions
+    with:
+      build-type: production
+      service-name: lightcurve
+      base-folder: lightcurve
+      build-context: lightcurve
