@@ -1,55 +1,15 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: Lint and Test
+name: Tests
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: psf/black@stable
-        with:
-          options: "--check --verbose"
-          src: "ztf_api/src/"
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Install poetry
-      run: pipx install poetry
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
-        cache: 'poetry'
-    - name: Install dependencies
-      run: |
-        cd ztf_api
-        poetry install --without production
-    - name: Test with pytest
-      run: |
-        cd ztf_api
-        poetry run pytest -x tests --cov src --cov-report xml
-    - name: Codecov
-      uses: codecov/codecov-action@v3
-      with:
-        files: ./ztf_api/coverage.xml
-        flags: unittests
-
-  test_examples:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - name: Test with behave and simulated environment
-      run: |
-        cd ztf_api
-        cd examples/examples/infrastructure
-        export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
-        docker-compose up -d postgres mongo alerts_api
-        docker-compose up --exit-code-from tests tests
+  lightcurve_tests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+        python-version: '3.11'
+        sources-folder: 'lightcurve'
+        test-folder: 'tests'
+        base-folder: 'lightcurve'

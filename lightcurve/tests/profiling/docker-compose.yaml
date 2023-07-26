@@ -1,0 +1,49 @@
+version: "3"
+services:
+  #postgres database for alerts
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+
+  mongo:
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=mongo
+      - MONGO_INITDB_ROOT_PASSWORD=mongo
+      - MONGO_INITDB_DATABASE=database
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+
+  lightcurve_api:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    ports:
+      - 5001:5001
+    command: bash tests/profiling/entrypoint.sh
+    environment:
+      - PORT=5001
+      - PSQL_HOST=postgres
+      - PSQL_DATABASE=postgres
+      - PSQL_USER=postgres
+      - PSQL_PASSWORD=postgres
+      - PSQL_PORT=5432
+      - MONGO_HOST=mongo
+      - MONGO_DATABASE=database
+      - MONGO_AUTH_SOURCE=database
+      - MONGO_USER=mongo
+      - MONGO_PASSWORD=mongo
+      - MONGO_PORT=27017
+      - CONNECT_MONGO=YES
+      - CONNECT_PSQL=YES
+      - LOG_LEVEL=DEBUG
+      - SECRET_KEY=a_secret_key
+    volumes:
+      - ./:/app/tests/profiling
