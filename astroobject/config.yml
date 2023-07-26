@@ -1,0 +1,32 @@
+---
+PROFILE_CONFIG:
+  enabled: false
+  storage:
+    engine: sqlite
+  basicAuth:
+    enabled: true
+    username: admin
+    password: admin
+  ignore:
+    - "^/static/.*"
+DATABASE:
+  SQL:
+    HOST: ${DB_HOST}
+    DATABASE: ${DB_DATABASE}
+    USER: ${DB_USER}
+    PASSWORD: ${DB_PASSWORD}
+    PORT: ${DB_PORT}
+  MONGO:
+    HOST: ${MONGO_HOST}
+    USERNAME: ${MONGO_USER}
+    PASSWORD: ${MONGO_PASSWORD}
+    PORT: ${MONGO_PORT}
+    DATABASE: ${MONGO_DATABASE}
+    AUTH_SOURCE: ${MONGO_AUTH_SOURCE}
+  APP_CONFIG:
+    CONNECT_PSQL: ${CONNECT_PSQL}
+    CONNECT_MONGO: ${CONNECT_MONGO}
+RALIDATOR_SETTINGS:
+  SECRET_KEY: ${SECRET_KEY}
+  ON_AUTH_ERROR_DEFAULT_USER: true
+RESTX_MASK_SWAGGER: false

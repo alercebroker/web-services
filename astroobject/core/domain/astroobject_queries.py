@@ -9,11 +9,10 @@ class GetAstroObjectsQuery(BaseModel):
     order_by: str
     order_mode: str
     filters: Dict
-    conesearch_args: Dict
     conesearch: Dict
-    default_classifier: Optional[str]
-    default_version: Optional[str]
-    default_ranking: Optional[int]
+    classifier: Optional[str]
+    version: Optional[str]
+    ranking: Optional[int]
 
 class GetAstroObjectQuery(BaseModel):
     oid: str
