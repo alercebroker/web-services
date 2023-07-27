@@ -6,7 +6,7 @@ class AstroObjectService:
         self.repository = astroobject_repository
 
     def get_objects(self, query: GetAstroObjectsQuery):
-        return self.get_objects(query)
+        return self.repository.get_objects(query)
     
     def get_object(self, query: GetAstroObjectQuery):
-        return self.get_object(query)
+        return self.repository.get_object(query)

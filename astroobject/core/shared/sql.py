@@ -4,11 +4,11 @@ from contextlib import contextmanager, AbstractContextManager
 from math import ceil
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
+from sqlalchemy.orm.query import RowReturningQuery
 from typing import Callable, Generic, List, TypeVar
 
 class Database:
     def __init__(self, db_config: dict) -> None:
-        # self.base = models.Base #why tho
         url = f"postgresql://{db_config['USER']}:{db_config['PASSWORD']}@{db_config['HOST']}:{db_config['PORT']}/{db_config['DATABASE']}"
         self._engine = create_engine(url)
         self._session_factory = scoped_session(
@@ -40,7 +40,7 @@ T = TypeVar("T")
 class Pagination(Generic[T]):
     """Paginate responses from the database."""
 
-    def __init__(self, query, page, per_page, total, items: List[T]):
+    def __init__(self, query: RowReturningQuery, page, per_page, total, items: List[T]):
         """Set attributes from args."""
         self.query = query
         self.page = page

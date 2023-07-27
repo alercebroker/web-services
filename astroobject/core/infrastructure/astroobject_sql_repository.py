@@ -1,12 +1,14 @@
 from contextlib import AbstractContextManager
 from typing import List, Callable
-from astroobject.core.domain.astroobject_model import AstroObject
-from astroobject.core.domain.astroobject_queries import GetAstroObjectsQuery
+from core.domain.astroobject_model import AstroObject
+from core.domain.astroobject_queries import GetAstroObjectQuery
+from core.domain.astroobject_model import AstroObject
+from core.domain.astroobject_queries import GetAstroObjectsQuery
 from sqlalchemy import text
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy.orm.query import RowReturningQuery
 from .orm import Object as AstroObjectORM, Probability
-from astroobject.core.shared.sql import Pagination
+from core.shared.sql import Pagination
 from ..domain.astroobject_repository import AstroObjectRepository
 
 
@@ -38,12 +40,15 @@ class AstroObjectSQLRespository(AstroObjectRepository):
                 parsed_query["order"] = self._order_query(
                     db_query, query.oids, query.order_by, query.order_mode
                 )
-                q = query.order_by(parsed_query["order"])
+                q = db_query.order_by(parsed_query["order"])
                 paginated_response = self._paginate(q, query)
                 return paginated_response
         except Exception as e:
             print(e)
             raise e
+
+    def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
+        raise Exception("Not implemented")
 
     def _paginate(self, query: RowReturningQuery, query_params: GetAstroObjectsQuery):
         page, page_size = (query_params.page, query_params.page_size)
@@ -57,7 +62,7 @@ class AstroObjectSQLRespository(AstroObjectRepository):
 
     def _parse_objects_query(self, query: GetAstroObjectsQuery):
         conesearch_args, conesearch = self._parse_conesearch(query.conesearch)
-        filters = self._parse_filters(query.filters)
+        filters = self._parse_filters(query.filters.model_dump(by_alias=True))
         filter_probability = all([query.classifier, query.version, query.ranking])
 
         return {

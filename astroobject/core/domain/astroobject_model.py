@@ -32,4 +32,4 @@ class AstroObject(BaseModel):
     step_id_corr: str
     diffpos: bool
     reference_change: bool
-    probabilities: List[Probability]
+    probabilities: List[Probability] = []
