@@ -1,7 +1,8 @@
 from fastapi import FastAPI
-from core.service import get_detections, get_non_detections
+from core.service import get_detections, get_non_detections, get_lightcurve
 from database.sql import PsqlDatabase
 from database.mongo import MongoDatabase
+from .result_handler import handle_success, handle_error
 import os
 
 app = FastAPI()
@@ -41,6 +42,8 @@ async def detections(oid: str, survey_id: str = "ztf"):
         survey_id=survey_id,
         session_factory=psql_database.session,
         mongo_db=mongo_database.database,
+        handle_error=handle_error,
+        handle_success=handle_success,
     )
 
 
@@ -51,4 +54,18 @@ async def non_detections(oid: str, survey_id: str = "ztf"):
         survey_id=survey_id,
         session_factory=psql_database.session,
         mongo_db=mongo_database.database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
+
+
+@app.get("/lightcurve/{oid}")
+async def lightcurve(oid: str, survey_id: str = "ztf"):
+    return get_lightcurve(
+        oid=oid,
+        survey_id=survey_id,
+        session_factory=psql_database.session,
+        mongo_db=mongo_database.database,
+        handle_error=handle_error,
+        handle_success=handle_success,
     )
