@@ -13,13 +13,11 @@ router = APIRouter()
 async def get_astro_objects(
     query: GetAstroObjectsQuery = Depends(),
     service: AstroObjectService = Depends(
-        Provide[ApiContainer.astroobject_service]
+        Provide[ApiContainer.astroobject.astroobject_service]
     ),
 ):
     result = service.get_objects(query)
-    print([item.model_dump() for item in result.items])
-    # return [item.model_dump() for item in result.items]
-    return {}
+    return [item.model_dump() for item in result.items]
 
 
 @router.get("/object")

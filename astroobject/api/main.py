@@ -7,6 +7,7 @@ from .routes import router as AstroObjectRouter
 
 def create_app():
     container = ApiContainer()
+    container.config.from_yaml("config.yml")
     app = FastAPI()
     app.container = container
 

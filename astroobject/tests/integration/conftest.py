@@ -56,7 +56,7 @@ def astro_repository():
     }
     database = Database(db_config)
     populate_database(database)
-    astro_repo = AstroObjectSQLRespository(database.session)
+    astro_repo = AstroObjectSQLRespository(database)
     yield astro_repo
     delete_database(database._engine)
 

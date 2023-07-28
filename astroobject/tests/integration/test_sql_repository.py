@@ -4,7 +4,7 @@ from core.domain.astroobject_repository import (
 )
 
 
-def test_astro_respository_objects_query(astro_repository: AstroObjectRepository):
+def test_astro_respository_objects_query(psql_service, astro_repository: AstroObjectRepository):
     query = GetAstroObjectsQuery(
         oid=["ZTF123"],
         page=1,

@@ -6,18 +6,18 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy.orm.query import RowReturningQuery
 from .orm import Object as AstroObjectORM, Probability as ProbabilityORM
-from core.shared.sql import Pagination
+from core.shared.sql import Database, Pagination
 from ..domain.astroobject_repository import AstroObjectRepository
 
 
 class AstroObjectSQLRespository(AstroObjectRepository):
-    def __init__(self, db_session: Callable[..., AbstractContextManager[Session]]):
-        self.db_session = db_session
+    def __init__(self, db_client: Database):
+        self.db_client = db_client
 
     def get_objects(self, query: GetAstroObjectsQuery) -> List[AstroObject]:
         parsed_query = self._parse_objects_query(query)
         try:
-            with self.db_session() as session:
+            with self.db_client.session() as session:
                 join_table = ProbabilityORM
                 if parsed_query["filter_probability"]:
                     join_table = (

@@ -8,7 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 sqlalchemy = "^2.0.19"
-dependency-injector = "^4.41.0"
+dependency-injector = {extras = ["yaml"], version = "^4.41.0"}
 fastapi = "^0.100.0"
 uvicorn = "^0.23.1"
 

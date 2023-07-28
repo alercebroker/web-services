@@ -4,9 +4,9 @@ from core.infrastructure.astroobject_sql_repository import AstroObjectSQLResposi
 
 
 class AstroObjectContainer(containers.DeclarativeContainer):
-    db_session = providers.Dependency()
+    db_client = providers.Dependency()
     astroobject_repository = providers.Factory(
-        AstroObjectSQLRespository, db_session=db_session
+        AstroObjectSQLRespository, db_client=db_client
     )
 
     # service

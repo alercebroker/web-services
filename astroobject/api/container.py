@@ -10,7 +10,7 @@ class ApiContainer(containers.DeclarativeContainer):
         ]
     )
 
-    config = providers.Configuration()
+    config = providers.Configuration("config.yml")
     psql_db = providers.ThreadSafeSingleton(Database, config.DATABASE.SQL)
 
-    astroobject_service = providers.Container(AstroObjectContainer, db_session=psql_db)
+    astroobject = providers.Container(AstroObjectContainer, db_client=psql_db)
