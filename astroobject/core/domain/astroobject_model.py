@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import List
+from pydantic import BaseModel, Extra
+from typing import List, Union
 
 class Probability(BaseModel):
     oid: str
@@ -11,25 +11,25 @@ class Probability(BaseModel):
 
 class AstroObject(BaseModel):
     oid: str
-    ndethist: int
-    ncovhist: int
-    mjdstarthist: float
-    mjdendhist: float
-    corrected: bool
-    stellar: bool
-    ndet: int
-    g_r_max: float
-    g_r_max_corr: float
-    g_r_mean: float
-    g_r_mean_corr: float
-    meanra: float
-    meandec: float
-    sigmara: float
-    sigmadec: float
-    deltajd: float
-    firstmjd: float
-    lastmjd: float
-    step_id_corr: str
-    diffpos: bool
-    reference_change: bool
+    ndethist: Union[int, None]
+    ncovhist: Union[int, None]
+    mjdstarthist: Union[float, None]
+    mjdendhist: Union[float, None]
+    corrected: Union[bool, None]
+    stellar: Union[bool, None]
+    ndet: Union[int, None]
+    g_r_max: Union[float, None]
+    g_r_max_corr: Union[float, None]
+    g_r_mean: Union[float, None]
+    g_r_mean_corr: Union[float, None]
+    meanra: Union[float, None]
+    meandec: Union[float, None]
+    sigmara: Union[float, None]
+    sigmadec: Union[float, None]
+    deltajd: Union[float, None]
+    firstmjd: Union[float, None]
+    lastmjd: Union[float, None]
+    step_id_corr: Union[str, None]
+    diffpos: Union[bool, None]
+    reference_change: Union[bool, None]
     probabilities: List[Probability] = []

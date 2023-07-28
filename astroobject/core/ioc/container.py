@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
-from application.astroobject_service import AstroObjectService
-from infrastructure.astroobject_sql_repository import AstroObjectSQLRespository
+from core.application.astroobject_service import AstroObjectService
+from core.infrastructure.astroobject_sql_repository import AstroObjectSQLRespository
 
 
 class AstroObjectContainer(containers.DeclarativeContainer):

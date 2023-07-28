@@ -1,5 +1,5 @@
-from ..domain.astroobject_queries import GetAstroObjectsQuery, GetAstroObjectQuery
-from ..domain.astroobject_repository import AstroObjectRepository
+from core.domain.astroobject_queries import GetAstroObjectsQuery, GetAstroObjectQuery
+from core.domain.astroobject_repository import AstroObjectRepository
 
 class AstroObjectService:
     def __init__(self, astroobject_repository: AstroObjectRepository):
