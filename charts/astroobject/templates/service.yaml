@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "astroobject.labels" . | nindent 4 }}
   annotations:
-    alb.ingress.kubernetes.io/healthcheck-path: /object
+    alb.ingress.kubernetes.io/healthcheck-path: /
 spec:
   type: {{ .Values.service.type }}
   ports:
