@@ -24,4 +24,4 @@ WORKDIR /app
 COPY ./README.md /app/README.md
 COPY ./src /app/src
 RUN poetry install --only-root
-CMD ["bash", "entripoint.sh"]
+CMD ["bash", "entrypoint.sh"]
