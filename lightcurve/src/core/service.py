@@ -5,10 +5,50 @@ from sqlalchemy.orm import Session
 from database.sql_models import Detection, NonDetection
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
-from .exceptions import (
-    DatabaseError,
-)
+from .exceptions import DatabaseError, SurveyIdError, AtlasNonDetectionError
 from pymongo.database import Database
+
+
+def default_handle_success(result):
+    return result
+
+
+def default_handle_error(error):
+    raise error
+
+
+def fail_from_list(failable_list: list):
+    for el in failable_list:
+        if not is_successful(el):
+            return el.failure()
+
+
+def get_lightcurve(
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., AbstractContextManager[Session]] = None,
+    mongo_db: Database = None,
+    handle_success: Callable[..., dict] = default_handle_success,
+    handle_error: Callable[Exception, None] = default_handle_error,
+) -> dict:
+    if survey_id == "ztf":
+        detections = _get_detections_sql(session_factory, oid)
+        non_detections = _get_non_detections_sql(session_factory, oid)
+    elif survey_id == "atlas":
+        detections = _get_detections_mongo(mongo_db, oid)
+        non_detections = Success([])
+    else:
+        handle_error(SurveyIdError(survey_id))
+    failure = fail_from_list([detections, non_detections])
+    if not failure:
+        return handle_success(
+            {
+                "detections": detections.unwrap(),
+                "non_detections": non_detections.unwrap(),
+            }
+        )
+    else:
+        handle_error(failure)
 
 
 def get_detections(
@@ -16,26 +56,21 @@ def get_detections(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-):
+    handle_success: Callable[..., dict] = default_handle_success,
+    handle_error: Callable[Exception, None] = default_handle_error,
+) -> list:
     if survey_id == "ztf":
         result = _get_detections_sql(session_factory, oid)
-        if is_successful(result):
-            return result.unwrap()
-        else:
-            exception = result.failure()
-            raise exception
 
     elif survey_id == "atlas":
         result = _get_detections_mongo(mongo_db, oid)
-        if is_successful(result):
-            return result.unwrap()
-        else:
-            raise result.failure()
-
     else:
-        raise Exception(
-            f"Can't retrieve detections survey id not recognized {survey_id}"
-        )
+        handle_error(SurveyIdError(survey_id))
+
+    if is_successful(result):
+        return handle_success(result.unwrap())
+    else:
+        handle_error(result.failure())
 
 
 def get_non_detections(
@@ -43,23 +78,19 @@ def get_non_detections(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
+    handle_success: Callable[..., dict] = default_handle_success,
+    handle_error: Callable[Exception, None] = default_handle_error,
 ):
     if survey_id == "ztf":
         result = _get_non_detections_sql(session_factory, oid)
         if is_successful(result):
-            return result.unwrap()
+            return handle_success(result.unwrap())
         else:
-            # TODO make better error handling here
-            exception = result.failure()
-            raise exception
+            return handle_error(result.failure())
     elif survey_id == "atlas":
-        raise Exception(
-            "Can't retrieve non detections: ATLAS does not provide non_detections"
-        )
+        handle_error(AtlasNonDetectionError())
     else:
-        raise Exception(
-            f"Can't retrieve non detections: survey id not recognized {survey_id}"
-        )
+        handle_error(SurveyIdError(survey_id))
 
 
 def _get_detections_sql(
