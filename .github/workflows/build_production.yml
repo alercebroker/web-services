@@ -23,3 +23,12 @@ jobs:
       service-name: lightcurve
       base-folder: lightcurve
       build-context: lightcurve
+
+  astroobject:
+    uses: ./.github/workflows/build.yml
+    needs: update_versions
+    with:
+      build-type: production
+      service-name: astroobject
+      base-folder: astroobject
+      build-context: astroobject
