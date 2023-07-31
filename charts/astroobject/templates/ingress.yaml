@@ -1,0 +1,26 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ws-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/tags: Environment=staging
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:031864545038:certificate/860afd79-aabd-447b-8fcc-1d2222d2fbeb
+    alb.ingress.kubernetes.io/load-balancer-attributes: idle_timeout.timeout_seconds=1800
+    alb.ingress.kubernetes.io/group.name: web-services-staging
+spec:
+  ingressClassName: alb
+  rules:
+    - host: "dev-api.alerce.online"
+      http:
+        paths:
+          - path: /alerts/v2
+            pathType: Prefix
+            backend:
+              service:
+                name: astroobject
+                port:
+                  number: {{ .Values.service.port }}
