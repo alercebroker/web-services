@@ -15,7 +15,7 @@ RUN pip install poetry
 WORKDIR /app
 COPY ./poetry.lock ./pyproject.toml ./
 COPY ./README.md /app/README.md
-RUN poetry install --no-root --without=test
+RUN poetry install --no-root --without=dev
 
 
 FROM python:3.11-slim as production
