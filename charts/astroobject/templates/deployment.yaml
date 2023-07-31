@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "astroobject.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "astroobject.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "astroobject.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "astroobject.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: metrics
+              containerPort: 8000
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "astroobject.fullname" . }}
+                  key: port
+            - name: PREFIX
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "astroobject.fullname" . }}
+                  key: prefix
+            - name: DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: database-auth
+                  key: db-host
+            - name: DB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: database-auth
+                  key: db-database
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: database-auth
+                  key: db-user
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-auth
+                  key: db-password
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: database-auth
+                  key: db-port
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

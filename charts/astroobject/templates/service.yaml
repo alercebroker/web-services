@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "astroobject.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "astroobject.labels" . | nindent 4 }}
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /object
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.configmap.port }}
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "astroobject.selectorLabels" . | nindent 4 }}
