@@ -12,4 +12,9 @@ def create_app():
     app.container = container
 
     app.include_router(AstroObjectRouter)
+
+    @app.get("/")
+    def health_check():
+        return "OK!"
+
     return app
