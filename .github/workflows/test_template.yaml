@@ -1,0 +1,62 @@
+name: Test with poetry
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: false
+        type: string
+        default: '3.10'
+      poetry-version:
+        required: false
+        type: string
+        default: '1.5.1'
+      sources-folder:
+        required: false
+        type: string
+        default: 'src'
+      test-folder:
+        required: false
+        type: string
+        default: 'tests'
+      codecov-flags:
+        required: false
+        type: string
+        default: 'unittest'
+      base-folder:
+        required: false
+        type: string
+        default: '.'
+      poetry-install:
+        required: false
+        type: string
+        default: "--all-extras"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      POETRY_HOME: /opt/poetry
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry==${{ inputs.poetry-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ inputs.python-version }}
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ${{ inputs.base-folder }}
+          poetry install ${{ inputs.poetry-install }}
+      - name: Tests with pytest
+        run: |
+          cd ${{ inputs.base-folder }}
+          poetry run pytest -x ${{ inputs.test-folder }} --cov ${{ inputs.sources-folder }} --cov-report xml
+      - name: Upload test coverage to Codecov
+        if: ${{ inputs.codecov-flags != '' }}
+        uses: codecov/codecov-action@v3
+        with:
+          files: ${{ inputs.base-folder }}/coverage.xml
+          flags: ${{ inputs.codecov-flags }}

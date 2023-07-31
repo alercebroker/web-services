@@ -13,6 +13,6 @@ jobs:
         with:
           gh_token: ${{ secrets.ADMIN_TOKEN }}
           organization: alercebroker
-          project_id: 14
+          project_id: 8
           resource_node_id: ${{ github.event.issue.node_id }}
-          status_value: New
+          status_value: Backlog
