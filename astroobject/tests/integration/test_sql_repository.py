@@ -14,5 +14,6 @@ def test_astro_respository_objects_query(psql_service, astro_repository: AstroOb
     )
 
     result = astro_repository.get_objects(query)
+    assert len(result.items) == 2
     for item in result.items:
-        print(item.model_dump())
+        assert item.probabilities[0].ranking == 1

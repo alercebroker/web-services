@@ -92,6 +92,22 @@ def add_probabilities(session: Session):
             "probability": 0.30,
             "ranking": 2
         },
+        {
+            "oid": "ZTF123",
+            "class_name": "E",
+            "classifier_name": "classifier_kek",
+            "classifier_version": "v1",
+            "probability": 0.69,
+            "ranking": 1
+        },
+        {
+            "oid": "ZTF123",
+            "class_name": "Other/Class",
+            "classifier_name": "classifier_kek",
+            "classifier_version": "v1",
+            "probability": 0.31,
+            "ranking": 2
+        },
     ]
     orm_probs = [Probability(**prob) for prob in probs]
     session.add_all(orm_probs)

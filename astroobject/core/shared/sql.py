@@ -94,3 +94,14 @@ class Pagination(Generic[T]):
         if not self.has_next:
             return None
         return self.page + 1
+
+    def to_dict(self):
+        return {
+            "total": self.total,
+            "page": self.page,
+            "next": self.next_num,
+            "has_next": self.has_next,
+            "prev": self.prev_num,
+            "has_prev": self.has_prev,
+            "items": self.items
+        }

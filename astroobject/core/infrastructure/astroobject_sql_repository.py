@@ -17,6 +17,7 @@ class AstroObjectSQLRespository(AstroObjectRepository):
     def get_objects(self, query: GetAstroObjectsQuery) -> List[AstroObject]:
         parsed_query = self._parse_objects_query(query)
         try:
+            session: Session
             with self.db_client.session() as session:
                 join_table = ProbabilityORM
                 if parsed_query["filter_probability"]:

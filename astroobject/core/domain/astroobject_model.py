@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel
 from typing import List, Union
 
 class Probability(BaseModel):

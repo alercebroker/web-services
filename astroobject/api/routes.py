@@ -5,6 +5,7 @@ from fastapi import Depends
 from core.application.astroobject_service import AstroObjectService
 from core.domain.astroobject_queries import GetAstroObjectsQuery
 from .container import ApiContainer
+from .dto.output import astrooobjects_response_factory
 
 router = APIRouter()
 
@@ -17,7 +18,9 @@ async def get_astro_objects(
     ),
 ):
     result = service.get_objects(query)
-    return [item.model_dump() for item in result.items]
+    result = result.to_dict()
+    result["items"] = [astrooobjects_response_factory(item) for item in result["items"]]
+    return result
 
 
 @router.get("/object")
