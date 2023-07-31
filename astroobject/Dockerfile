@@ -24,5 +24,6 @@ COPY --from=builder /app /app
 WORKDIR /app
 COPY ./core /app/core
 COPY ./api /app/api
+COPY ./entrypoint.sh /app/
 RUN poetry install --only-root
 CMD ["bash", "entrypoint.sh"]
