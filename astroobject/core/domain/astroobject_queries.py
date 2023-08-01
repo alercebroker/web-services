@@ -14,8 +14,8 @@ class GetAstroObjectsQuery(BaseModel):
     classifier_name: Optional[str] = None
     classifier_version: Optional[str] = None
     class_name: Optional[str] = None
-    firstmjd: Optional[float] = None
-    lastmjd: Optional[float] = None
+    firstmjd: List[float] = Field(Query([]))
+    lastmjd: List[float] = Field(Query([]))
     order_by: Optional[str] = None
     order_mode: Optional[str] = None
     ra: Optional[float] = None
