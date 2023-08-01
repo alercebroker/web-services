@@ -6,12 +6,11 @@ metadata:
   namespace: {{ .Values.namespace }}
 data:
   port: '{{ .Values.configmap.port }}'
-  prefix: {{ .Values.configmap.prefix }}
 ---
 apiVersion: v1
 metadata:
   name: astroobject-nginx-conf
-  namespace: web-services
+  namespace: {{ .Values.namespace }}
 data:
   default.conf: |
     server {

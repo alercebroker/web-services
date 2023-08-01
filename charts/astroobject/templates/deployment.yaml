@@ -41,11 +41,6 @@ spec:
                 configMapKeyRef:
                   name: {{ include "astroobject.fullname" . }}
                   key: port
-            - name: PREFIX
-              valueFrom:
-                configMapKeyRef:
-                  name: {{ include "astroobject.fullname" . }}
-                  key: prefix
             - name: DB_HOST
               valueFrom:
                 secretKeyRef:

@@ -44,7 +44,6 @@ affinity:
 
 configmap:
   port: ""
-  prefix: ""
 
 secrets:
   sql:
