@@ -9,7 +9,7 @@ from .dto.output import astrooobjects_response_factory
 
 router = APIRouter()
 
-@router.get("/objects")
+@router.get("/objects/")
 @inject
 async def get_astro_objects(
     query: GetAstroObjectsQuery = Depends(),
@@ -23,6 +23,6 @@ async def get_astro_objects(
     return result
 
 
-@router.get("/object")
+@router.get("/object/")
 def get_astro_object():
     return {}
