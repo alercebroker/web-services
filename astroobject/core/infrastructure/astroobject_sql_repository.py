@@ -139,9 +139,9 @@ class AstroObjectSQLRespository(AstroObjectRepository):
             oids,
         ) = (True, True, True, True, True, True, True, True, True)
         if filters["classifier_name"]:
-            classifier = ProbabilityORM.classifier_name == filters["classifier"]
+            classifier = ProbabilityORM.classifier_name == filters["classifier_name"]
         if filters["class_name"]:
-            class_ = ProbabilityORM.class_name == filters["class"]
+            class_ = ProbabilityORM.class_name == filters["class_name"]
         if filters["ndet"]:
             ndet = AstroObjectORM.ndet >= filters["ndet"][0]
             if len(filters["ndet"]) > 1:
