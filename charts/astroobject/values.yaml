@@ -45,6 +45,11 @@ affinity:
 configmap:
   port: ""
 
+ingress:
+  host: ""
+  k8sGroupName: ""
+  k8sTags: ""
+
 secrets:
   sql:
     host: ""
