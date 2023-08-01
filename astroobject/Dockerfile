@@ -22,6 +22,7 @@ FROM python:3.11-slim as production
 RUN pip install poetry
 COPY --from=builder /app /app
 WORKDIR /app
+COPY ./config.yml /app/
 COPY ./core /app/core
 COPY ./api /app/api
 COPY ./entrypoint.sh /app/
