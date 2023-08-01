@@ -50,7 +50,7 @@ class AstroObjectSQLRespository(AstroObjectRepository):
         raise Exception("Not implemented")
 
     def _paginate(self, query: RowReturningQuery, query_params: GetAstroObjectsQuery):
-        page, page_size = (query_params.page, query_params.perPage)
+        page, page_size = (query_params.page, query_params.page_size)
         page = 1 if page < 1 else page
         page_size = 10 if page_size < 1 else page_size
 

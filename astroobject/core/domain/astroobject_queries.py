@@ -7,7 +7,7 @@ class GetAstroObjectsQuery(BaseModel):
     ranking: Optional[int] = 1
     count: Optional[bool] = False
     page: Optional[int] = 1
-    perPage: Optional[int] = 10
+    page_size: Optional[int] = 10
     sortBy: Optional[str] = None
     ndet: Optional[int] = None
     probability: Optional[float] = None
