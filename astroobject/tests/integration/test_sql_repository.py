@@ -10,7 +10,9 @@ def test_astro_respository_objects_query(psql_service, astro_repository: AstroOb
         page=1,
         page_size=10,
         count=False,
-        ranking=1
+        ranking=1,
+        firstmjd=[],
+        lastmjd=[]
     )
 
     result = astro_repository.get_objects(query)
