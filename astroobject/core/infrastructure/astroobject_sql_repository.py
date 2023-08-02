@@ -1,9 +1,9 @@
-from contextlib import AbstractContextManager
-from typing import List, Callable
+from typing import List
 from core.domain.astroobject_model import AstroObject, Probability
 from core.domain.astroobject_queries import GetAstroObjectQuery, GetAstroObjectsQuery
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session, aliased
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.query import RowReturningQuery
 from .orm import Object as AstroObjectORM, Probability as ProbabilityORM
 from core.shared.sql import Database, Pagination
@@ -14,23 +14,26 @@ class AstroObjectSQLRespository(AstroObjectRepository):
     def __init__(self, db_client: Database):
         self.db_client = db_client
 
-    def get_objects(self, query: GetAstroObjectsQuery) -> List[AstroObject]:
+    async def get_objects(self, query: GetAstroObjectsQuery) -> List[AstroObject]:
         parsed_query = self._parse_objects_query(query)
         try:
-            session: Session
-            with self.db_client.session() as session:
+            session: AsyncSession
+            async with self.db_client.session() as session:
                 join_table = ProbabilityORM
                 if parsed_query["filter_probability"]:
                     join_table = (
-                        session.query(ProbabilityORM)
+                        select(ProbabilityORM)
                         .filter(ProbabilityORM.classifier_name == query.classifier_name)
-                        .filter(ProbabilityORM.classifier_version == query.classifier_version)
+                        .filter(
+                            ProbabilityORM.classifier_version
+                            == query.classifier_version
+                        )
                         .filter(ProbabilityORM.ranking == query.ranking)
                         .subquery("probability")
                     )
                     join_table = aliased(ProbabilityORM, join_table)
                 db_query = (
-                    session.query(AstroObjectORM, join_table)
+                    select(AstroObjectORM, join_table)
                     .outerjoin(join_table)
                     .filter(parsed_query["conesearch"])
                     .filter(*parsed_query["filters"])
@@ -40,7 +43,7 @@ class AstroObjectSQLRespository(AstroObjectRepository):
                     db_query, query.oid, query.order_by, query.order_mode
                 )
                 q = db_query.order_by(parsed_query["order"])
-                paginated_response = self._paginate(q, query)
+                paginated_response = await self._paginate(session, q, query)
                 return paginated_response
         except Exception as e:
             print(e)
@@ -49,12 +52,21 @@ class AstroObjectSQLRespository(AstroObjectRepository):
     def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
         raise Exception("Not implemented")
 
-    def _paginate(self, query: RowReturningQuery, query_params: GetAstroObjectsQuery):
+    async def _paginate(
+        self,
+        session: AsyncSession,
+        query: RowReturningQuery,
+        query_params: GetAstroObjectsQuery,
+    ):
         page, page_size = (query_params.page, query_params.page_size)
         page = 1 if page < 1 else page
         page_size = 10 if page_size < 1 else page_size
 
-        items = query.limit(page_size).offset((page - 1) * page_size).all()
+        items = await session.execute(
+            query.limit(page_size).offset((page - 1) * page_size)
+        )
+        items = list(items.tuples())
+        print(items)
         total = query.order_by(None).limit(50001).count if query_params.count else None
 
         def parse(db_result: tuple):
@@ -65,15 +77,15 @@ class AstroObjectSQLRespository(AstroObjectRepository):
             astro.probabilities.append(prob)
             return astro
 
-        return Pagination(
-            query, page, page_size, total, list(map(parse, items))
-        )
+        return Pagination(query, page, page_size, total, list(map(parse, items)))
 
     def _parse_objects_query(self, query: GetAstroObjectsQuery):
         query_dict = query.model_dump(by_alias=True)
         conesearch_args, conesearch = self._parse_conesearch(query_dict)
         filters = self._parse_filters(query_dict)
-        filter_probability = all([query.classifier_name, query.classifier_version, query.ranking])
+        filter_probability = all(
+            [query.classifier_name, query.classifier_version, query.ranking]
+        )
 
         return {
             "conesearch_args": conesearch_args,
@@ -82,7 +94,9 @@ class AstroObjectSQLRespository(AstroObjectRepository):
             "filter_probability": filter_probability,
         }
 
-    def _order_query(self, query: RowReturningQuery, oids: list, order_by: str, order_mode: str):
+    def _order_query(
+        self, query: RowReturningQuery, oids: list, order_by: str, order_mode: str
+    ):
         statement = None
         cols = query.column_descriptions
         if order_by:

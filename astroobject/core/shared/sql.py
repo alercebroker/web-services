@@ -1,41 +1,54 @@
+import asyncio
 from logging import getLogger
 
-from contextlib import contextmanager, AbstractContextManager
+from contextlib import asynccontextmanager, AbstractContextManager
 from math import ceil
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, scoped_session, sessionmaker
+
+# from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from sqlalchemy.orm.query import RowReturningQuery
+
+from sqlalchemy.ext.asyncio import (
+    AsyncSession,
+    async_sessionmaker,
+    async_scoped_session,
+    create_async_engine,
+    AsyncEngine
+)
+
 from typing import Callable, Generic, List, TypeVar
+
 
 class Database:
     def __init__(self, db_config: dict) -> None:
-        url = f"postgresql://{db_config['USER']}:{db_config['PASSWORD']}@{db_config['HOST']}:{db_config['PORT']}/{db_config['DATABASE']}"
-        self._engine = create_engine(url)
-        self._session_factory = scoped_session(
-            sessionmaker(
+        url = f"postgresql+asyncpg://{db_config['USER']}:{db_config['PASSWORD']}@{db_config['HOST']}:{db_config['PORT']}/{db_config['DATABASE']}"
+        self._engine: AsyncEngine = create_async_engine(url)
+        self._session_factory = async_scoped_session(
+            async_sessionmaker(
                 autocommit=False,
                 autoflush=False,
                 bind=self._engine,
             ),
+            asyncio.current_task,
         )
 
-    @contextmanager
-    def session(self) -> Callable[..., AbstractContextManager[Session]]:
-        session: Session = self._session_factory()
+    @asynccontextmanager
+    async def session(self) -> Callable[..., AbstractContextManager[AsyncSession]]:
+        session: AsyncSession = self._session_factory()
         try:
             yield session
         except Exception:
             logger = getLogger()
             logger.debug("Connecting databases")
-            logger.exception(
-                "Session rollback because of exception"
-            )
+            logger.exception("Session rollback because of exception")
             session.rollback()
             raise
         finally:
-            session.close()
+            await session.close()
+
 
 T = TypeVar("T")
+
 
 class Pagination(Generic[T]):
     """Paginate responses from the database."""
@@ -103,5 +116,5 @@ class Pagination(Generic[T]):
             "has_next": self.has_next,
             "prev": self.prev_num,
             "has_prev": self.has_prev,
-            "items": self.items
+            "items": self.items,
         }

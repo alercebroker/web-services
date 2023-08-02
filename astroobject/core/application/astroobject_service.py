@@ -5,8 +5,8 @@ class AstroObjectService:
     def __init__(self, astroobject_repository: AstroObjectRepository):
         self.repository = astroobject_repository
 
-    def get_objects(self, query: GetAstroObjectsQuery):
-        return self.repository.get_objects(query)
+    async def get_objects(self, query: GetAstroObjectsQuery):
+        return await self.repository.get_objects(query)
     
-    def get_object(self, query: GetAstroObjectQuery):
-        return self.repository.get_object(query)
+    async def get_object(self, query: GetAstroObjectQuery):
+        return await self.repository.get_object(query)

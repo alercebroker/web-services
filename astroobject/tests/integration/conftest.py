@@ -1,8 +1,11 @@
 import os
 import pytest
+import pytest_asyncio
 import psycopg2
 
-from core.shared.sql import Database, Session
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from core.shared.sql import Database
 from core.infrastructure.orm import Object, Probability
 from core.infrastructure.astroobject_sql_repository import AstroObjectSQLRespository
 from db.utils import create_database, delete_database
@@ -45,8 +48,8 @@ def psql_service(docker_ip, docker_services):
     return server
 
 
-@pytest.fixture
-def astro_repository():
+@pytest_asyncio.fixture
+async def astro_repository():
     db_config = {
         "USER": "postgres",
         "PASSWORD": "postgres",
@@ -55,26 +58,27 @@ def astro_repository():
         "DATABASE": "postgres",
     }
     database = Database(db_config)
-    populate_database(database)
+    await populate_database(database)
     astro_repo = AstroObjectSQLRespository(database)
     yield astro_repo
-    delete_database(database._engine)
+    await delete_database(database._engine)
 
 
-def populate_database(db: Database):
-    create_database(db._engine)
-    with db.session() as session:
-        add_objects(session)
-        add_probabilities(session)
+async def populate_database(db: Database):
+    async with db.session() as session:
+        await create_database(db._engine)
+        await add_objects(session)
+        await add_probabilities(session)
 
 
-def add_objects(session: Session):
+async def add_objects(session: AsyncSession):
     obj = Object(oid="ZTF123")
-    session.add(obj)
-    session.commit()
+    async with session.begin():
+        session.add(obj)
+        await session.commit()
 
 
-def add_probabilities(session: Session):
+async def add_probabilities(session: AsyncSession):
     probs = [
         {
             "oid": "ZTF123",
@@ -110,5 +114,6 @@ def add_probabilities(session: Session):
         },
     ]
     orm_probs = [Probability(**prob) for prob in probs]
-    session.add_all(orm_probs)
-    session.commit()
+    async with session.begin():
+        session.add_all(orm_probs)
+        await session.commit()

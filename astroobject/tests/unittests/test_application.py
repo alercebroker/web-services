@@ -1,3 +1,5 @@
+import pytest
+
 from core.domain.astroobject_model import AstroObject
 from core.domain.astroobject_queries import (
     GetAstroObjectQuery,
@@ -45,18 +47,18 @@ dict_object = {
 }
 
 class MockAstroObjectRepository(AstroObjectRepository):
-    def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
+    async def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
         return AstroObject(**dict_object)
 
-    def get_objects(self, query: GetAstroObjectsQuery) -> Pagination[AstroObject]:
+    async def get_objects(self, query: GetAstroObjectsQuery) -> Pagination[AstroObject]:
         items = [AstroObject(**dict_object)]
         return Pagination(None, 1, 10, 1, items)
 
 
 mock_service = AstroObjectService(astroobject_repository=MockAstroObjectRepository())
 
-
-def test_get_objects():
+@pytest.mark.asyncio
+async def test_get_objects():
     query_dict = {
         "oids": ["oid1", "ZTF123"],
         "page": 1,
@@ -67,9 +69,10 @@ def test_get_objects():
         "filters": {},
         "conesearch": {},
     }
-    result = mock_service.get_objects(GetAstroObjectsQuery(**query_dict))
+    result = await mock_service.get_objects(GetAstroObjectsQuery(**query_dict))
     assert len(result.items) == 1
 
-def test_get_single_object():
-    result = mock_service.get_object(GetAstroObjectQuery(oid="ZTF123"))
+@pytest.mark.asyncio
+async def test_get_single_object():
+    result = await mock_service.get_object(GetAstroObjectQuery(oid="ZTF123"))
     assert result.model_dump() == dict_object

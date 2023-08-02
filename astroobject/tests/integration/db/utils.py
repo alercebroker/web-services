@@ -1,9 +1,11 @@
-from sqlalchemy import Engine
+from sqlalchemy.ext.asyncio import AsyncEngine
 
 from core.infrastructure.orm import Base
 
-def create_database(engine: Engine):
-    Base.metadata.create_all(engine)
+async def create_database(engine: AsyncEngine):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
-def delete_database(engine: Engine):
-    Base.metadata.drop_all(engine)
+async def delete_database(engine: AsyncEngine):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
