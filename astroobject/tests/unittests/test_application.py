@@ -47,10 +47,10 @@ dict_object = {
 }
 
 class MockAstroObjectRepository(AstroObjectRepository):
-    def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
+    async def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
         return AstroObject(**dict_object)
 
-    def get_objects(self, query: GetAstroObjectsQuery) -> Pagination[AstroObject]:
+    async def get_objects(self, query: GetAstroObjectsQuery) -> Pagination[AstroObject]:
         items = [AstroObject(**dict_object)]
         return Pagination(None, 1, 10, 1, items)
 
