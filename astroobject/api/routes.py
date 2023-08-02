@@ -17,7 +17,7 @@ async def get_astro_objects(
         Provide[ApiContainer.astroobject.astroobject_service]
     ),
 ):
-    result = service.get_objects(query)
+    result = await service.get_objects(query)
     result = result.to_dict()
     result["items"] = [astrooobjects_response_factory(item) for item in result["items"]]
     return result
