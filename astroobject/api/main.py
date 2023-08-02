@@ -1,6 +1,7 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from .container import ApiContainer
 from .routes import router as AstroObjectRouter
@@ -11,6 +12,8 @@ def create_app():
     app = FastAPI()
     app.container = container
 
+    instrumentator = Instrumentator().instrument(app)
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -20,6 +23,10 @@ def create_app():
     )
 
     app.include_router(AstroObjectRouter)
+
+    @app.on_event("startup")
+    async def _startup():
+        instrumentator.expose(app)
 
     @app.get("/")
     def health_check():
