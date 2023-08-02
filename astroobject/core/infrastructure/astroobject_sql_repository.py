@@ -2,7 +2,7 @@ from typing import List
 from core.domain.astroobject_model import AstroObject, Probability
 from core.domain.astroobject_queries import GetAstroObjectQuery, GetAstroObjectsQuery
 from sqlalchemy import select, text
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.query import RowReturningQuery
 from .orm import Object as AstroObjectORM, Probability as ProbabilityORM
@@ -49,8 +49,20 @@ class AstroObjectSQLRespository(AstroObjectRepository):
             print(e)
             raise e
 
-    def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
-        raise Exception("Not implemented")
+    async def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
+        try:
+            session: AsyncSession
+            async with self.db_client.session() as session:
+                obj = (
+                    await session.execute(
+                        select(AstroObjectORM).filter(AstroObjectORM.oid == query.oid)
+                    )
+                ).one_or_none()
+
+                return AstroObject(**obj[0].__dict__) if obj else obj
+
+        except Exception as e:
+            raise e
 
     async def _paginate(
         self,
@@ -66,8 +78,9 @@ class AstroObjectSQLRespository(AstroObjectRepository):
             query.limit(page_size).offset((page - 1) * page_size)
         )
         items = list(items.tuples())
-        print(items)
-        total = query.order_by(None).limit(50001).count if query_params.count else None
+        
+        # unused due to performance issues
+        total = None
 
         def parse(db_result: tuple):
             # this assumes that items are a tuple where 0 is the object and 1
