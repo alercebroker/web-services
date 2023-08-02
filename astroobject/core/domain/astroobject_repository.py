@@ -6,9 +6,9 @@ from core.shared.sql import Pagination
 
 class AstroObjectRepository(ABC):
     @abstractmethod
-    def get_objects(self, query: GetAstroObjectsQuery) -> Pagination[AstroObject]:
+    async def get_objects(self, query: GetAstroObjectsQuery) -> Pagination[AstroObject]:
         pass
 
     @abstractmethod
-    def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
+    async def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
         pass
