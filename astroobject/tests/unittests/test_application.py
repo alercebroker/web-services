@@ -48,7 +48,9 @@ dict_object = {
 
 class MockAstroObjectRepository(AstroObjectRepository):
     async def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
-        return AstroObject(**dict_object)
+        if query.oid == "ZTF123":
+            return AstroObject(**dict_object)
+        return None
 
     async def get_objects(self, query: GetAstroObjectsQuery) -> Pagination[AstroObject]:
         items = [AstroObject(**dict_object)]
