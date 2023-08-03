@@ -25,4 +25,4 @@ COPY ./README.md /app/README.md
 COPY ./scripts /app/scripts
 COPY ./src /app/src
 RUN poetry install --only-root
-CMD ["bash", "scripts/entripoint.sh"]
+CMD ["bash", "scripts/entrypoint.sh"]
