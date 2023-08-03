@@ -7,15 +7,16 @@ readme = "README.md"
 packages = [{include = "ralidator_fastapi"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 ralidator_core = { git = "https://github.com/alercebroker/ralidator-core.git", branch="main" }
-fastapi = "^0.89.1"
+fastapi = "^0.100.0"
 
 
 [tool.poetry.group.dev.dependencies]
 pytest-mock = "^3.10.0"
 pytest = "^7.2.1"
 httpx = "^0.23.3"
+pytest-asyncio = "^0.21.1"
 
 [build-system]
 requires = ["poetry-core"]
