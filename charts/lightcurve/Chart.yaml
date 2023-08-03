@@ -1,0 +1,6 @@
+apiVersion: v2
+appVersion: 0.1.1a17
+description: Lightcurve API for ALeRCE Clients
+name: lightcurve
+type: application
+version: 0.1.0

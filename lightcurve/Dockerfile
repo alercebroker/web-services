@@ -22,6 +22,7 @@ RUN pip install poetry
 COPY --from=builder /app /app
 WORKDIR /app
 COPY ./README.md /app/README.md
+COPY ./scripts /app/scripts
 COPY ./src /app/src
 RUN poetry install --only-root
 CMD ["bash", "scripts/entripoint.sh"]
