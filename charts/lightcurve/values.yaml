@@ -4,10 +4,10 @@
 
 replicaCount: 1
 
-namespace: <CHARTNAME>
+namespace: lightcurve
 
 image:
-  repository: ghcr.io/alercebroker/<CHARTNAME>
+  repository: ghcr.io/alercebroker/lightcurve
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -43,18 +43,26 @@ affinity:
               values: []
 
 configmap:
-  consumerTopics: ""
-  publicServer: ""
-  internalServer: ""
-  scribeTopic: ""
-  metricsTopic: ""
-  producerTopic: ""
+  port: ""
+
+ingress:
+  host: ""
+  k8sGroupName: ""
+  k8sTags: ""
 
 secrets:
-  kafkaAuth:
-    enabled: false
-    username: ""
+  sql:
+    host: ""
+    database: ""
+    user: ""
     password: ""
+    port: ""
+  mongo:
+    host: ""
+    database: ""
+    user: ""
+    password: ""
+    port: ""    
 
 imageCredentials:
   registry: ""
