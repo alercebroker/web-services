@@ -105,3 +105,4 @@ class NonDetection(Base, Commons):
     __table_args__ = (
         Index("ix_non_detection_oid", "oid", postgresql_using="hash"),
     )
+

@@ -1,6 +1,6 @@
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 from ralidator_fastapi.decorators import (
@@ -59,11 +59,11 @@ mongo_database = MongoDatabase(config)
 async def root():
     return "this is the lightcurve module"
 
+@app.get("/detections/{oid}")
 @set_permissions_decorator(["admin", "basic_user"])
 @set_filters_decorator(["filter_atlas_detections"])
 @check_permissions_decorator
-@app.get("/detections/{oid}")
-async def detections(oid: str, survey_id: str = "ztf"):
+async def detections(oid: str, request: Request, survey_id: str = "ztf"):
     return get_detections(
         oid=oid,
         survey_id=survey_id,
@@ -73,11 +73,11 @@ async def detections(oid: str, survey_id: str = "ztf"):
         handle_success=handle_success,
     )
 
+@app.get("/non_detections/{oid}")
 @set_permissions_decorator(["admin", "basic_user"])
 @set_filters_decorator(["filter_atlas_non_detections"])
 @check_permissions_decorator
-@app.get("/non_detections/{oid}")
-async def non_detections(oid: str, survey_id: str = "ztf"):
+async def non_detections(oid: str, request: Request, survey_id: str = "ztf"):
     return get_non_detections(
         oid=oid,
         survey_id=survey_id,
@@ -87,11 +87,11 @@ async def non_detections(oid: str, survey_id: str = "ztf"):
         handle_success=handle_success,
     )
 
+@app.get("/lightcurve/{oid}")
 @set_permissions_decorator(["admin", "basic_user"])
 @set_filters_decorator(["filter_atlas_lightcurve"])
 @check_permissions_decorator
-@app.get("/lightcurve/{oid}")
-async def lightcurve(oid: str, survey_id: str = "ztf"):
+async def lightcurve(oid: str, request: Request, survey_id: str = "ztf"):
     return get_lightcurve(
         oid=oid,
         survey_id=survey_id,

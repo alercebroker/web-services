@@ -215,20 +215,24 @@ def add_mongo_detections(database: Database):
             "_id": "candid1",
             "aid": "aid1",
             "oid": "oid1",
+            "tid": "atlas",
         },
         {
             "_id": "candid2",
             "aid": "aid1",
+            "tid": "atlas",
             "oid": "oid1",
         },
         {
             "_id": "candid3",
             "aid": "aid1",
+            "tid": "atlas",
             "oid": "oid2",
         },
         {
             "_id": "candid4",
             "aid": "aid1",
+            "tid": "atlas",
             "oid": "oid2",
         },
     ]
