@@ -1,6 +1,6 @@
 import pytest
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 from starlette.requests import Request
 from ralidator_fastapi.decorators import (
@@ -11,6 +11,7 @@ from ralidator_fastapi.decorators import (
 from pytest_mock.plugin import MockerFixture
 
 from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
+
 
 @pytest.mark.asyncio
 async def test_set_filters_decorator(mocker: MockerFixture):
@@ -24,6 +25,7 @@ async def test_set_filters_decorator(mocker: MockerFixture):
     assert res == 1
     get_ralidator.assert_called()
     get_ralidator.return_value.set_app_filters.assert_called_with(["a", "b"])
+
 
 @pytest.mark.asyncio
 async def test_set_permissions_decorator(mocker: MockerFixture):
@@ -39,6 +41,7 @@ async def test_set_permissions_decorator(mocker: MockerFixture):
     get_ralidator.return_value.set_required_permissions.assert_called_with(
         ["a", "b"]
     )
+
 
 @pytest.mark.asyncio
 async def test_check_permissions_decorator_forbidden(mocker: MockerFixture):
@@ -85,26 +88,39 @@ async def test_check_permissions_decorator_expired(mocker: MockerFixture):
 @pytest.mark.asyncio
 async def test_get_ralidator(mocker: MockerFixture):
     test_response = {"msg": "Hello World"}
-    ralidator = mocker.patch("ralidator_fastapi.ralidator_fastapi.Ralidator")
-    ralidator.return_value.apply_filters.return_value = test_response
-    ralidator.return_value.check_if_allowed.return_value = True, 200
+
+    def hello_filter(data):
+        if data["msg"] == "Hello World":
+            data["msg"] = "Goodbye world..."
+
+        return data
+
     app = FastAPI()
     app.add_middleware(
-        RalidatorStarlette, config={"SECRET_KEY": "test"}, filters_map={}, ignore_paths=[]
+        RalidatorStarlette,
+        config={"SECRET_KEY": "test"},
+        filters_map={"test": hello_filter},
+        ignore_paths=[],
     )
 
     @app.get("/")
-    @set_permissions_decorator(["test"])
+    @set_permissions_decorator(["basic_user"])
     @set_filters_decorator(["test"])
     @check_permissions_decorator
     async def read_main(request: Request):
         return test_response
+    
+    @app.get("/error")
+    @set_permissions_decorator(["basic_user"])
+    @set_filters_decorator(["test"])
+    @check_permissions_decorator
+    async def error(request: Request):
+        raise HTTPException(401)
 
     client = TestClient(app)
     result = client.get("/")
     assert result.status_code == 200
-    ralidator.return_value.set_required_permissions.assert_called_with(
-        ["test"]
-    )
-    ralidator.return_value.set_app_filters.assert_called_with(["test"])
-    ralidator.return_value.check_if_allowed.assert_called()
+    assert result.json() == {"msg": "Goodbye world..."}
+
+    result2 = client.get("/error")
+    assert result2.status_code == 401

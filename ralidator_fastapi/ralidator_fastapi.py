@@ -62,5 +62,9 @@ class RalidatorStarlette(BaseHTTPMiddleware):
         request.state.ralidator = ralidator
         self.apply_ralidator_auth(request, ralidator)
         response = await call_next(request)
+        
+        if response.status_code >= 400: #Error codes
+            return response
+        
         response = await self.apply_ralidator_filters(response, ralidator)
         return response
