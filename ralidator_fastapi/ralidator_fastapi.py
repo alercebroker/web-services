@@ -40,11 +40,8 @@ class RalidatorStarlette(BaseHTTPMiddleware):
     ) -> Response:
         data = await self.response_to_json(response)
         data = ralidator.apply_filters(data)
-        if isinstance(data, list):
-            response = StreamingResponse(self.generate_data(data))
-            return response
-        else:
-            return JSONResponse(data)
+
+        return JSONResponse(data)
 
     def apply_ralidator_auth(self, request: Request, ralidator: Ralidator):
         auth_header = request.headers.get("Authorization")
