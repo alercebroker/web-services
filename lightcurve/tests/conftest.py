@@ -171,6 +171,7 @@ def test_client():
     os.environ["MONGO_USER"] = "mongo"
     os.environ["MONGO_PASSWORD"] = "mongo"
     os.environ["MONGO_DATABASE"] = "database"
+    os.environ["SECRET_KEY"] = "some_secret"
     from api.api import app
 
     yield TestClient(app)
