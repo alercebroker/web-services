@@ -1,11 +1,12 @@
 from contextlib import AbstractContextManager
 from typing import Callable
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 from database.sql_models import Detection, NonDetection
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
 from .exceptions import DatabaseError, SurveyIdError, AtlasNonDetectionError
+from .models import Detection as DetectionModel, NonDetection as NonDetectionModel
 from pymongo.database import Database
 
 
@@ -98,9 +99,9 @@ def _get_detections_sql(
 ):
     try:
         with session_factory() as session:
-            stmt = select(Detection).where(Detection.oid == oid)
+            stmt = session.query(Detection, text("'ztf'")).where(Detection.oid == oid)
             result = session.execute(stmt)
-            result = [res for res in result.scalars()]
+            result = [DetectionModel(**res[0].__dict__, tid=res[1]) for res in result.all()]
             return Success(result)
     except Exception as e:
         return Failure(DatabaseError(e))
@@ -119,9 +120,9 @@ def _get_non_detections_sql(
 ):
     try:
         with session_factory() as session:
-            stmt = select(NonDetection).where(NonDetection.oid == oid)
+            stmt = select(NonDetection, text("'ztf'")).where(NonDetection.oid == oid)
             result = session.execute(stmt)
-            result = [res for res in result.scalars()]
+            result = [NonDetectionModel(**res[0].__dict__, tid=res[1]) for res in result.all()]
             return Success(result)
     except Exception as e:
         return Failure(DatabaseError(e))
