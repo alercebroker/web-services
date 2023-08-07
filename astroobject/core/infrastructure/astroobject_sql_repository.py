@@ -5,9 +5,12 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import aliased
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.query import RowReturningQuery
-from .orm import Object as AstroObjectORM, Probability as ProbabilityORM
 from core.shared.sql import Database, Pagination
 from ..domain.astroobject_repository import AstroObjectRepository
+from db_plugins.db.sql.models import (
+    Object as AstroObjectORM,
+    Probability as ProbabilityORM,
+)
 
 
 class AstroObjectSQLRespository(AstroObjectRepository):
@@ -78,7 +81,7 @@ class AstroObjectSQLRespository(AstroObjectRepository):
             query.limit(page_size).offset((page - 1) * page_size)
         )
         items = list(items.tuples())
-        
+
         # unused due to performance issues
         total = None
 

@@ -3,7 +3,6 @@ from logging import getLogger
 
 from contextlib import asynccontextmanager, AbstractContextManager
 from math import ceil
-from sqlalchemy import create_engine
 
 # from sqlalchemy.orm import Session, scoped_session, sessionmaker
 from sqlalchemy.orm.query import RowReturningQuery
@@ -13,7 +12,7 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
     async_scoped_session,
     create_async_engine,
-    AsyncEngine
+    AsyncEngine,
 )
 
 from typing import Callable, Generic, List, TypeVar

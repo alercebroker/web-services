@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Union
 
+
 class Probability(BaseModel):
     oid: str
     class_name: str
@@ -8,6 +9,7 @@ class Probability(BaseModel):
     classifier_version: str
     probability: float
     ranking: int
+
 
 class AstroObject(BaseModel):
     oid: str

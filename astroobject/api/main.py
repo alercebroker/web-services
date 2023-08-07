@@ -1,10 +1,10 @@
-from dependency_injector.wiring import Provide, inject
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from .container import ApiContainer
 from .routes import router as AstroObjectRouter
+
 
 def create_app():
     container = ApiContainer()

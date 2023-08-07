@@ -1,14 +1,15 @@
 import os
 import pytest
-import pytest_asyncio
 import psycopg2
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from core.shared.sql import Database
-from core.infrastructure.orm import Object, Probability
+from sqlalchemy.orm import Session
 from core.infrastructure.astroobject_sql_repository import AstroObjectSQLRespository
-from db.utils import create_database, delete_database
+from core.shared.sql import Database
+from db_plugins.db.sql.models import Object, Probability
+
+import pathlib
+
+from db_plugins.db.sql._connection import PsqlDatabase
 
 
 @pytest.fixture(scope="session")
@@ -21,9 +22,19 @@ def docker_compose_command():
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
-    return os.path.join(
-        str(pytestconfig.rootdir), "tests/integration", "docker-compose.yaml"
-    )
+    try:
+        path = (
+            pathlib.Path(pytestconfig.rootdir) / "tests/integration/docker-compose.yaml"
+        )
+        assert path.exists()
+        return path
+    except AssertionError:
+        path = (
+            pathlib.Path(pytestconfig.rootdir)
+            / "astroobject/tests/integration/docker-compose.yaml"
+        )
+        assert path.exists()
+        return path
 
 
 def is_psql_responsive():
@@ -48,37 +59,38 @@ def psql_service(docker_ip, docker_services):
     return server
 
 
-@pytest_asyncio.fixture
-async def astro_repository():
+@pytest.fixture
+def astro_repository():
     db_config = {
         "USER": "postgres",
         "PASSWORD": "postgres",
         "HOST": "localhost",
         "PORT": "5432",
+        "DB_NAME": "postgres",
         "DATABASE": "postgres",
     }
-    database = Database(db_config)
-    await populate_database(database)
-    astro_repo = AstroObjectSQLRespository(database)
+    database = PsqlDatabase(db_config)
+    populate_database(database)
+    core_database = Database(db_config)
+    astro_repo = AstroObjectSQLRespository(core_database)
     yield astro_repo
-    await delete_database(database._engine)
+    database.drop_db()
 
 
-async def populate_database(db: Database):
-    async with db.session() as session:
-        await create_database(db._engine)
-        await add_objects(session)
-        await add_probabilities(session)
+def populate_database(db: PsqlDatabase):
+    db.create_db()
+    add_objects(db)
+    add_probabilities(db)
 
 
-async def add_objects(session: AsyncSession):
-    obj = Object(oid="ZTF123")
-    async with session.begin():
+def add_objects(db: PsqlDatabase):
+    with db.session() as session:
+        obj = Object(oid="ZTF123")
         session.add(obj)
-        await session.commit()
+        session.commit()
 
 
-async def add_probabilities(session: AsyncSession):
+def add_probabilities(db: PsqlDatabase):
     probs = [
         {
             "oid": "ZTF123",
@@ -86,7 +98,7 @@ async def add_probabilities(session: AsyncSession):
             "classifier_name": "classifier_lol",
             "classifier_version": "v1",
             "probability": 0.70,
-            "ranking": 1
+            "ranking": 1,
         },
         {
             "oid": "ZTF123",
@@ -94,7 +106,7 @@ async def add_probabilities(session: AsyncSession):
             "classifier_name": "classifier_lol",
             "classifier_version": "v1",
             "probability": 0.30,
-            "ranking": 2
+            "ranking": 2,
         },
         {
             "oid": "ZTF123",
@@ -102,7 +114,7 @@ async def add_probabilities(session: AsyncSession):
             "classifier_name": "classifier_kek",
             "classifier_version": "v1",
             "probability": 0.69,
-            "ranking": 1
+            "ranking": 1,
         },
         {
             "oid": "ZTF123",
@@ -110,10 +122,10 @@ async def add_probabilities(session: AsyncSession):
             "classifier_name": "classifier_kek",
             "classifier_version": "v1",
             "probability": 0.31,
-            "ranking": 2
+            "ranking": 2,
         },
     ]
-    orm_probs = [Probability(**prob) for prob in probs]
-    async with session.begin():
+    with db.session() as session:
+        orm_probs = [Probability(**prob) for prob in probs]
         session.add_all(orm_probs)
-        await session.commit()
+        session.commit()

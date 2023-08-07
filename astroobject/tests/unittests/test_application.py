@@ -46,6 +46,7 @@ dict_object = {
     ],
 }
 
+
 class MockAstroObjectRepository(AstroObjectRepository):
     async def get_object(self, query: GetAstroObjectQuery) -> AstroObject:
         if query.oid == "ZTF123":
@@ -58,6 +59,7 @@ class MockAstroObjectRepository(AstroObjectRepository):
 
 
 mock_service = AstroObjectService(astroobject_repository=MockAstroObjectRepository())
+
 
 @pytest.mark.asyncio
 async def test_get_objects():
@@ -73,6 +75,7 @@ async def test_get_objects():
     }
     result = await mock_service.get_objects(GetAstroObjectsQuery(**query_dict))
     assert len(result.items) == 1
+
 
 @pytest.mark.asyncio
 async def test_get_single_object():

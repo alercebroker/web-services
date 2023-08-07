@@ -3,6 +3,7 @@ from typing import Union
 
 from core.domain.astroobject_model import AstroObject
 
+
 class AstroObjectsResponse(BaseModel):
     oid: str
     ndethist: Union[int, None]
@@ -28,12 +29,15 @@ class AstroObjectsResponse(BaseModel):
     classifier_name: str = Field(..., alias="classifier")
     probability: float
 
+
 def astrooobjects_response_factory(astro: AstroObject):
     astro_dict = astro.model_dump(by_alias=True)
     rank_one = astro_dict["probabilities"][0]
-    astro_dict.update({
-        "class": rank_one["class_name"],
-        "classifier": rank_one["classifier_name"],
-        "probability": rank_one["probability"]
-    }) # add ranking 1 prob
+    astro_dict.update(
+        {
+            "class": rank_one["class_name"],
+            "classifier": rank_one["classifier_name"],
+            "probability": rank_one["probability"],
+        }
+    )  # add ranking 1 prob
     return AstroObjectsResponse(**astro_dict)

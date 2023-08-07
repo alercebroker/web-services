@@ -15,6 +15,7 @@ uvicorn = "^0.23.1"
 psycopg2-binary = "^2.9.6"
 asyncpg = "^0.28.0"
 prometheus-fastapi-instrumentator = "^6.1.0"
+db-plugins = { git = "https://github.com/alercebroker/pipeline.git", subdirectory = "libs/db-plugins", python = ">=3.11,<3.12"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
