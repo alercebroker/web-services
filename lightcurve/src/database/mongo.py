@@ -1,4 +1,4 @@
-from pymongo import ASCENDING, IndexModel, MongoClient
+from pymongo import MongoClient
 
 
 class MongoDatabase:
@@ -25,38 +25,6 @@ class MongoDatabase:
         self._config = config
         self.database_name = config.pop("database")
         self.client = MongoClient(**self._config)
-        self._collections = {
-            "detection": {
-                "indexes": [
-                    IndexModel([("aid", ASCENDING), ("oid", ASCENDING)]),
-                    IndexModel([("sid", ASCENDING)]),
-                ]
-            },
-            "non_detection": {
-                "indexes": [
-                    IndexModel(
-                        [
-                            ("aid", ASCENDING),
-                            ("fid", ASCENDING),
-                            ("mjd", ASCENDING),
-                        ],
-                        name="unique",
-                        unique=True,
-                    ),
-                    IndexModel([("sid", ASCENDING)], name="sid"),
-                ]
-            },
-        }
-
-    def create_database(self):
-        db = self.client[self.database_name]
-        for c in self._collections:
-            collection = db[c]
-            collection.create_indexes(self._collections[c]["indexes"])
-
-    def delete_database(self):
-        db = self.client[self.database_name]
-        self.client.drop_database(db)
 
     @property
     def database(self):

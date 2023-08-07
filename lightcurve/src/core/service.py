@@ -2,12 +2,15 @@ from contextlib import AbstractContextManager
 from typing import Callable
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
-from database.sql_models import Detection, NonDetection
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
 from .exceptions import DatabaseError, SurveyIdError, AtlasNonDetectionError
-from .models import Detection as DetectionModel, NonDetection as NonDetectionModel
+from .models import (
+    Detection as DetectionModel,
+    NonDetection as NonDetectionModel,
+)
 from pymongo.database import Database
+from db_plugins.db.sql.models import Detection, NonDetection
 
 
 def default_handle_success(result):
@@ -99,9 +102,14 @@ def _get_detections_sql(
 ):
     try:
         with session_factory() as session:
-            stmt = session.query(Detection, text("'ztf'")).where(Detection.oid == oid)
+            stmt = session.query(Detection, text("'ztf'")).where(
+                Detection.oid == oid
+            )
             result = session.execute(stmt)
-            result = [DetectionModel(**res[0].__dict__, tid=res[1]) for res in result.all()]
+            result = [
+                DetectionModel(**res[0].__dict__, tid=res[1])
+                for res in result.all()
+            ]
             return Success(result)
     except Exception as e:
         return Failure(DatabaseError(e))
@@ -120,9 +128,14 @@ def _get_non_detections_sql(
 ):
     try:
         with session_factory() as session:
-            stmt = select(NonDetection, text("'ztf'")).where(NonDetection.oid == oid)
+            stmt = select(NonDetection, text("'ztf'")).where(
+                NonDetection.oid == oid
+            )
             result = session.execute(stmt)
-            result = [NonDetectionModel(**res[0].__dict__, tid=res[1]) for res in result.all()]
+            result = [
+                NonDetectionModel(**res[0].__dict__, tid=res[1])
+                for res in result.all()
+            ]
             return Success(result)
     except Exception as e:
         return Failure(DatabaseError(e))

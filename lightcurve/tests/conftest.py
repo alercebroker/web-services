@@ -1,12 +1,13 @@
 import pytest
 import os
-from database.sql import PsqlDatabase
-from database.sql_models import Detection, Object, NonDetection
-from database.mongo import MongoDatabase
+import pathlib
 import psycopg2
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
 from pymongo.database import Database
+from db_plugins.db.sql._connection import PsqlDatabase
+from db_plugins.db.sql.models import Object, Detection, NonDetection
+from db_plugins.db.mongo._connection import MongoConnection
 
 
 @pytest.fixture(scope="session")
@@ -19,9 +20,17 @@ def docker_compose_command():
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
-    return os.path.join(
-        str(pytestconfig.rootdir), "tests", "docker-compose.yml"
-    )
+    try:
+        path = pathlib.Path(pytestconfig.rootdir) / "tests/docker-compose.yml"
+        assert path.exists()
+        return path
+    except AssertionError:
+        path = (
+            pathlib.Path(pytestconfig.rootdir)
+            / "lightcurve/tests/docker-compose.yml"
+        )
+        assert path.exists()
+        return path
 
 
 def is_responsive_psql(url):
@@ -84,15 +93,21 @@ def psql_database():
     host = "localhost"
     port = "5432"
     db = "postgres"
-    url = f"postgresql://{user}:{pwd}@{host}:{port}/{db}"
-    database = PsqlDatabase(url)
+    config = {
+        "USER": user,
+        "PASSWORD": pwd,
+        "HOST": host,
+        "PORT": port,
+        "DB_NAME": db,
+    }
+    database = PsqlDatabase(config)
     populate_psql(database)
     yield database
     teardown_psql(database)
 
 
 def populate_psql(database):
-    database.create_database()
+    database.create_db()
     with database.session() as session:
         add_psql_objects(session)
         add_psql_detections(session)
@@ -156,7 +171,7 @@ def add_psql_non_detections(session):
 
 
 def teardown_psql(database):
-    database.delete_database()
+    database.drop_db()
 
 
 @pytest.fixture
@@ -179,7 +194,7 @@ def test_client():
 
 @pytest.fixture
 def mongo_database():
-    db = MongoDatabase(
+    db = MongoConnection(
         {
             "host": "localhost",
             "serverSelectionTimeoutMS": 3000,  # 3 second timeout
@@ -194,11 +209,10 @@ def mongo_database():
     teardown_mongo(db)
 
 
-def populate_mongo(database: MongoDatabase):
-    database.create_database()
-    client = database.client
-    add_mongo_objects(client.database)
-    add_mongo_detections(client.database)
+def populate_mongo(database: MongoConnection):
+    database.create_db()
+    add_mongo_objects(database.database)
+    add_mongo_detections(database.database)
 
 
 def add_mongo_objects(database: Database):
@@ -240,5 +254,5 @@ def add_mongo_detections(database: Database):
         database.detection.insert_one(det)
 
 
-def teardown_mongo(database: MongoDatabase):
-    database.delete_database()
+def teardown_mongo(database: MongoConnection):
+    database.drop_db()
