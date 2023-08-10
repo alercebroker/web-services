@@ -3,7 +3,7 @@ line-length = 79
 
 [tool.poetry]
 name = "alerts-api"
-version = "1.3.1a23"
+version = "1.3.1a24"
 description = "AlertsAPI"
 authors = ["ALeRCE"]
 readme = "README.md"
