@@ -263,25 +263,20 @@ toml = ["tomli"]
 
 [[package]]
 name = "db-plugins"
-version = "5.1.1a3"
+version = "5.1.1"
 description = "ALeRCE database plugins."
 optional = false
-python-versions = ">=3.7, <3.12"
-files = []
-develop = false
+python-versions = ">=3.7,<3.12"
+files = [
+    {file = "db_plugins-5.1.1-py3-none-any.whl", hash = "sha256:539f65817b8fee10c5c38c5061b09626bc3e28568ebb21ee987670983fc96da1"},
+    {file = "db_plugins-5.1.1.tar.gz", hash = "sha256:e3968ddbabb86a7d25e7b9617727627dd629e775dde5de88415921d232b837a3"},
+]
 
 [package.dependencies]
 alembic = "1.8.1"
 click = "8.1.3"
 pymongo = "4.4.1"
 SQLAlchemy = "2.0.19"
-
-[package.source]
-type = "git"
-url = "https://github.com/alercebroker/pipeline.git"
-reference = "HEAD"
-resolved_reference = "69a6d6d78b8fc759b5510a6e25f624fc3bca2bd3"
-subdirectory = "libs/db-plugins"
 
 [[package]]
 name = "dependency-injector"
@@ -1256,4 +1251,4 @@ standard = ["colorama (>=0.4)", "httptools (>=0.5.0)", "python-dotenv (>=0.13)",
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "cee5b5ec52a63b2f0b0e32b6e2564eacc3c92dc7b6e26a50f0f4b45c83572395"
+content-hash = "c6dc824eacc0acdaa8dfd2f7ea4a131f889389efc623072108899bb7a26dff54"
