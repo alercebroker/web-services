@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "ralidator_flask"
+version = "1.0.0"
+description = ""
+authors = ["ALeRCE Broker <alercebroker@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+Flask = "^2.1.0"
+ralidator_core = { git = "https://github.com/alercebroker/ralidator-core.git", branch="main" }
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+coverage = "^6.3.2"
+behave = "^1.2.6"
+
+[tool.black]
+line-length = 79
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
