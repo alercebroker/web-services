@@ -18,7 +18,7 @@ jobs:
       build-type: staging
       service-name: lightcurve
       base-folder: lightcurve
-      build-context: lightcurve
+      build-context: .
 
   astroobject:
     uses: ./.github/workflows/build.yml
