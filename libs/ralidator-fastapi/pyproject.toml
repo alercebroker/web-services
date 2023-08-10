@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "ralidator-fastapi"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "ralidator_fastapi"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+ralidator_core = { git = "https://github.com/alercebroker/ralidator-core.git", branch="main" }
+fastapi = "^0.100.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest-mock = "^3.10.0"
+pytest = "^7.2.1"
+httpx = "^0.23.3"
+pytest-asyncio = "^0.21.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
