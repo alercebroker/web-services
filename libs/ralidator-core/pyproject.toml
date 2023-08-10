@@ -7,7 +7,7 @@ packages = [{include = "ralidator_core", from = "src"}, {include = "utils", from
 
 [tool.poetry.dependencies]
 python = "^3.11"
-PyJWT = "2.3.0"
+PyJWT = "2.4.0"
 returns = "0.21.0"
 requests = "^2.27.1"
 
