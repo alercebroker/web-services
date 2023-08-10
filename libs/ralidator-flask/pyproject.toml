@@ -6,7 +6,7 @@ authors = ["ALeRCE Broker <alercebroker@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-Flask = "^2.1.0"
+Flask = "^2.2.5"
 ralidator_core = { git = "https://github.com/alercebroker/ralidator-core.git", branch="main" }
 
 [tool.poetry.dev-dependencies]
