@@ -51,6 +51,7 @@ ingress:
   k8sTags: ""
 
 secrets:
+  secretKey: ""
   sql:
     host: ""
     database: ""
