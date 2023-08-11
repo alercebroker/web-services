@@ -23,8 +23,8 @@ services:
 
   lightcurve_api:
     build:
-      context: ../../
-      dockerfile: Dockerfile
+      context: ../../../
+      dockerfile: ./lightcurve/Dockerfile
     ports:
       - 5001:5001
     command: bash tests/profiling/entrypoint.sh
