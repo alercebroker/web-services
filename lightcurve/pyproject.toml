@@ -7,8 +7,9 @@ readme = "README.md"
 packages = [{include = "core", from = "src"}, {include = "api", from = "src"}, {include = "database", from = "src"}]
 
 [tool.poetry.dependencies]
+fastapi = "^0.100.0"
 python = "^3.11"
-SQLAlchemy = "^2.0.19"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.19"}
 pymongo = "^4.4.1"
 returns = "^0.21.0"
 psycopg2-binary = "^2.9.6"
@@ -21,8 +22,7 @@ pytest-docker = "^2.0.0"
 httpx = "^0.24.1"
 pytest-cov = "^4.1.0"
 
-[tool.poetry.group.dev.dependencies]
-fastapi = "^0.100.0"
+[tool.poetry.group.production.dependencies]
 uvicorn = {extras = ["standard"], version = "^0.23.1"}
 
 [tool.poetry.group.profiling.dependencies]

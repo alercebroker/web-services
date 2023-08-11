@@ -1,45 +1,36 @@
 from contextlib import contextmanager, AbstractContextManager
-from typing import Callable
 import logging
-
-from sqlalchemy import create_engine, orm
-from sqlalchemy.orm import Session
-
-from sqlalchemy.orm import DeclarativeBase
+import os
+from typing import Callable
+from sqlalchemy.orm import scoped_session, sessionmaker, Session
+from sqlalchemy.engine import Engine, create_engine
 
 
 logger = logging.getLogger(__name__)
 
 
-class Base(DeclarativeBase):
-    pass
+user = os.getenv("PSQL_USER")
+pwd = os.getenv("PSQL_PASSWORD")
+host = os.getenv("PSQL_HOST")
+port = os.getenv("PSQL_PORT")
+db = os.getenv("PSQL_DATABASE")
+db_url = f"postgresql://{user}:{pwd}@{host}:{port}/{db}"
+
+engine: Engine = create_engine(db_url, echo=False)
 
 
-class PsqlDatabase:
-    def __init__(self, db_url: str) -> None:
-        self._engine = create_engine(db_url, echo=False)
-        self._session_factory = orm.scoped_session(
-            orm.sessionmaker(
-                autocommit=False,
-                autoflush=False,
-                bind=self._engine,
-            ),
-        )
-
-    def create_database(self) -> None:
-        Base.metadata.create_all(self._engine)
-
-    def delete_database(self) -> None:
-        Base.metadata.drop_all(self._engine)
-
-    @contextmanager
-    def session(self) -> Callable[..., AbstractContextManager[Session]]:
-        session: Session = self._session_factory()
-        try:
-            yield session
-        except Exception:
-            logger.exception("Session rollback because of exception")
-            session.rollback()
-            raise
-        finally:
-            session.close()
+@contextmanager
+def session() -> Callable[..., AbstractContextManager[Session]]:
+    session_factory = scoped_session(
+        sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    )
+    session: Session = session_factory()
+    try:
+        yield session
+    except Exception:
+        logger.debug("Connecting databases")
+        logger.exception("Session rollback because of exception")
+        session.rollback()
+        raise
+    finally:
+        session.close()

@@ -1,31 +1,19 @@
+import os
 from pymongo import MongoClient
 
-
-class MongoDatabase:
-    def __init__(self, config=None):
-        """
-        Establishes connection to a database and initializes a session.
-
-        Parameters
-        ----------
-        config : dict
-            Database configuration. For example:
-
-            .. code-block:: python
-
-                config = {
-                    "host": "host",
-                    "username": "username",
-                    "password": "pwd",
-                    "port": "27017", # mongo typically runs on port 27017.
-                    "database": "database",
-                    "authSource": admin" # could be admin or the same as DATABASE
-                }
-        """
-        self._config = config
-        self.database_name = config.pop("database")
-        self.client = MongoClient(**self._config)
-
-    @property
-    def database(self):
-        return self.client[self.database_name]
+user = os.getenv("MONGO_USER")
+pwd = os.getenv("MONGO_PASSWORD")
+host = os.getenv("MONGO_HOST")
+port = os.getenv("MONGO_PORT")
+db = os.getenv("MONGO_DATABASE")
+config = {
+    "host": host,
+    "serverSelectionTimeoutMS": 3000,  # 3 second timeout
+    "username": user,
+    "password": pwd,
+    "port": int(port),
+    "database": db,
+}
+database_name = config.pop("database")
+client = MongoClient(**config)
+database = client[database_name]

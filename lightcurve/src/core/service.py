@@ -1,7 +1,6 @@
 from contextlib import AbstractContextManager
 from typing import Callable
 from sqlalchemy import select, text
-from sqlalchemy.orm import Session
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
 from .exceptions import DatabaseError, SurveyIdError, AtlasNonDetectionError
@@ -11,6 +10,7 @@ from .models import (
 )
 from pymongo.database import Database
 from db_plugins.db.sql.models import Detection, NonDetection
+from sqlalchemy.orm import Session
 
 
 def default_handle_success(result):
@@ -102,7 +102,7 @@ def _get_detections_sql(
 ):
     try:
         with session_factory() as session:
-            stmt = session.query(Detection, text("'ztf'")).where(
+            stmt = select(Detection, text("'ztf'")).filter(
                 Detection.oid == oid
             )
             result = session.execute(stmt)

@@ -2,12 +2,12 @@ import pytest
 import os
 import pathlib
 import psycopg2
-from fastapi.testclient import TestClient
 from pymongo import MongoClient
 from pymongo.database import Database
-from db_plugins.db.sql._connection import PsqlDatabase
+from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
 from db_plugins.db.sql.models import Object, Detection, NonDetection
 from db_plugins.db.mongo._connection import MongoConnection
+from fastapi.testclient import TestClient
 
 
 @pytest.fixture(scope="session")
@@ -87,7 +87,7 @@ def mongo_service(docker_ip, docker_services):
 
 
 @pytest.fixture
-def psql_database():
+def init_psql():
     user = "postgres"
     pwd = "postgres"
     host = "localhost"
@@ -100,10 +100,35 @@ def psql_database():
         "PORT": port,
         "DB_NAME": db,
     }
-    database = PsqlDatabase(config)
-    populate_psql(database)
-    yield database
-    teardown_psql(database)
+    dbp_database = DbpDatabase(config)
+    populate_psql(dbp_database)
+    yield dbp_database
+    teardown_psql(dbp_database)
+
+
+@pytest.fixture
+def psql_session():
+    os.environ["PSQL_PORT"] = "5432"
+    os.environ["PSQL_HOST"] = "localhost"
+    os.environ["PSQL_USER"] = "postgres"
+    os.environ["PSQL_PASSWORD"] = "postgres"
+    os.environ["PSQL_DATABASE"] = "postgres"
+    from database.sql import session
+
+    return session
+
+
+@pytest.fixture(scope="session")
+def mongo_database():
+    os.environ["MONGO_PORT"] = "27017"
+    os.environ["MONGO_HOST"] = "localhost"
+    os.environ["MONGO_USER"] = "mongo"
+    os.environ["MONGO_PASSWORD"] = "mongo"
+    os.environ["MONGO_DATABASE"] = "database"
+    os.environ["SECRET_KEY"] = "some_secret"
+    from database.mongo import database
+
+    return database
 
 
 def populate_psql(database):
@@ -175,25 +200,7 @@ def teardown_psql(database):
 
 
 @pytest.fixture
-def test_client():
-    os.environ["PSQL_PORT"] = "5432"
-    os.environ["PSQL_HOST"] = "localhost"
-    os.environ["PSQL_USER"] = "postgres"
-    os.environ["PSQL_PASSWORD"] = "postgres"
-    os.environ["PSQL_DATABASE"] = "postgres"
-    os.environ["MONGO_PORT"] = "27017"
-    os.environ["MONGO_HOST"] = "localhost"
-    os.environ["MONGO_USER"] = "mongo"
-    os.environ["MONGO_PASSWORD"] = "mongo"
-    os.environ["MONGO_DATABASE"] = "database"
-    os.environ["SECRET_KEY"] = "some_secret"
-    from api.api import app
-
-    yield TestClient(app)
-
-
-@pytest.fixture
-def mongo_database():
+def init_mongo():
     db = MongoConnection(
         {
             "host": "localhost",
@@ -256,3 +263,21 @@ def add_mongo_detections(database: Database):
 
 def teardown_mongo(database: MongoConnection):
     database.drop_db()
+
+
+@pytest.fixture(scope="session")
+def test_client():
+    os.environ["PSQL_PORT"] = "5432"
+    os.environ["PSQL_HOST"] = "localhost"
+    os.environ["PSQL_USER"] = "postgres"
+    os.environ["PSQL_PASSWORD"] = "postgres"
+    os.environ["PSQL_DATABASE"] = "postgres"
+    os.environ["MONGO_PORT"] = "27017"
+    os.environ["MONGO_HOST"] = "localhost"
+    os.environ["MONGO_USER"] = "mongo"
+    os.environ["MONGO_PASSWORD"] = "mongo"
+    os.environ["MONGO_DATABASE"] = "database"
+    os.environ["SECRET_KEY"] = "some_secret"
+    from api.api import app
+
+    return TestClient(app)
