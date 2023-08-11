@@ -16,3 +16,5 @@ tests/profiling/memray*
 #packaged charts
 *.tgz
 values.override*.yaml
+
+lightcurve/tests/profiling/memray*
