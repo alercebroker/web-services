@@ -4,8 +4,11 @@ from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 from fastapi import FastAPI
 from .filters import get_filters_map
 from .routes import router
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI()
+instrumentator = Instrumentator().instrument(app)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,3 +25,8 @@ app.add_middleware(
 )
 
 app.include_router(router)
+
+
+@app.on_event("startup")
+async def _startup():
+    instrumentator.expose(app)

@@ -22,6 +22,7 @@ RUN poetry install --no-root --without=test
 FROM python:3.11-slim as production
 RUN pip install poetry
 COPY --from=builder /app /app
+COPY --from=builder /libs /libs
 WORKDIR /app
 COPY ./lightcurve/README.md /app/README.md
 COPY ./lightcurve/scripts /app/scripts
