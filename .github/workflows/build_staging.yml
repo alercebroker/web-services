@@ -27,7 +27,7 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py staging
+          poetry run python main.py staging true
   update_versions:
     uses: ./.github/workflows/update-versions.yaml
     with:
