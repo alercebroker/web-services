@@ -17,13 +17,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(
-    RalidatorStarlette,
-    config={"SECRET_KEY": os.getenv("SECRET_KEY")},
-    filters_map=get_filters_map(),
-    ignore_paths=["/metrics"],
-)
-
 app.include_router(router)
 
 
