@@ -4,13 +4,13 @@ import os
 import pathlib
 
 
-def get_publish_secret(client):
+def _get_publish_secret(client):
     gtoken = os.environ["GHCR_TOKEN"]
     secret = client.set_secret("gtoken", gtoken)
     return secret
 
 
-def publish_container(
+def _publish_container(
     container: dagger.Container,
     package_name: str,
     tags: list,
@@ -25,6 +25,28 @@ def publish_container(
         print(f"published image at: {addr}")
 
 
+async def update_version(package_dir: str, version="prerelease"):
+    config = dagger.Config(log_output=sys.stdout)
+
+    async with dagger.Connection(config) as client:
+        path = pathlib.Path().cwd().parent.absolute()
+        # get build context directory
+        source = (
+            client.container()
+            .from_("python:3.10-slim")
+            .with_exec(["pip", "install", "poetry"])
+            .with_directory(
+                "/web-services",
+                client.host().directory(
+                    str(path), exclude=[".venv/", "**/.venv/"]
+                ),
+            )
+        )
+        runner = source.with_workdir(f"/web-services/{package_dir}").with_exec(
+            ["poetry", "version", version]
+        )
+
+
 async def build(package_dir: str, tags: list, publish=False):
     config = dagger.Config(log_output=sys.stdout)
 
@@ -35,15 +57,15 @@ async def build(package_dir: str, tags: list, publish=False):
             str(path), exclude=[".venv/", "**/.venv/"]
         )
         # build using Dockerfile
-        # publish the resulting container to a registry
         image_ref = await client.container().build(
             context=context_dir, dockerfile=f"{package_dir}/Dockerfile"
         )
         print(f"Built image with tag: {tags}")
 
         if publish:
-            secret = get_publish_secret(client)
-            publish_container(image_ref, package_dir, tags, secret)
+            # publish the resulting container to a registry
+            secret = _get_publish_secret(client)
+            _publish_container(image_ref, package_dir, tags, secret)
 
 
 async def get_tags(package_dir: str) -> list:
