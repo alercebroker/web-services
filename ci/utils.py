@@ -1,0 +1,97 @@
+import sys
+import dagger
+import os
+import pathlib
+
+
+def _get_publish_secret(client):
+    gtoken = os.environ["GHCR_TOKEN"]
+    secret = client.set_secret("gtoken", gtoken)
+    return secret
+
+
+def _publish_container(
+    container: dagger.Container,
+    package_name: str,
+    tags: list,
+    secret: dagger.Secret,
+):
+    for tag in tags:
+        addr = container.with_registry_auth(
+            f"ghcr.io/alercebroker/{package_name}:{tag}",
+            "alerceadmin",
+            secret,
+        ).publish(f"ghcr.io/alercebroker/{package_name}:{tag}")
+        print(f"published image at: {addr}")
+
+
+async def update_version(package_dir: str, version: str):
+    config = dagger.Config(log_output=sys.stdout)
+
+    async with dagger.Connection(config) as client:
+        path = pathlib.Path().cwd().parent.absolute()
+        # get build context directory
+        source = (
+            client.container()
+            .from_("python:3.10-slim")
+            .with_exec(["pip", "install", "poetry"])
+            .with_directory(
+                "/web-services",
+                client.host().directory(
+                    str(path), exclude=[".venv/", "**/.venv/"]
+                ),
+            )
+        )
+        runner = source.with_workdir(f"/web-services/{package_dir}").with_exec(
+            ["poetry", "version", version]
+        )
+        out = await runner.stdout()
+        print(out)
+
+
+async def build(package_dir: str, tags: list, publish=False):
+    config = dagger.Config(log_output=sys.stdout)
+
+    async with dagger.Connection(config) as client:
+        path = pathlib.Path().cwd().parent.absolute()
+        # get build context directory
+        context_dir = client.host().directory(
+            str(path), exclude=[".venv/", "**/.venv/"]
+        )
+        # build using Dockerfile
+        image_ref = await client.container().build(
+            context=context_dir, dockerfile=f"{package_dir}/Dockerfile"
+        )
+        print(f"Built image with tag: {tags}")
+
+        if publish:
+            # publish the resulting container to a registry
+            secret = _get_publish_secret(client)
+            _publish_container(image_ref, package_dir, tags, secret)
+
+
+async def get_tags(package_dir: str) -> list:
+    config = dagger.Config(log_output=sys.stdout)
+
+    async with dagger.Connection(config) as client:
+        path = pathlib.Path().cwd().parent.absolute()
+        # get build context directory
+        source = (
+            client.container()
+            .from_("python:3.10-slim")
+            .with_exec(["pip", "install", "poetry"])
+            .with_directory(
+                "/web-services",
+                client.host().directory(
+                    str(path), exclude=[".venv/", "**/.venv/"]
+                ),
+            )
+        )
+
+        runner = source.with_workdir(f"/web-services/{package_dir}").with_exec(
+            ["poetry", "version", "--short"]
+        )
+
+        out = await runner.stdout()
+
+    return ["rc", out.strip("\n")]
