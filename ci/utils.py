@@ -21,11 +21,11 @@ def _publish_container(
             f"ghcr.io/alercebroker/{package_name}:{tag}",
             "alerceadmin",
             secret,
-        )
+        ).publish(f"ghcr.io/alercebroker/{package_name}:{tag}")
         print(f"published image at: {addr}")
 
 
-async def update_version(package_dir: str, version="prerelease"):
+async def update_version(package_dir: str, version: str):
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
@@ -45,6 +45,8 @@ async def update_version(package_dir: str, version="prerelease"):
         runner = source.with_workdir(f"/web-services/{package_dir}").with_exec(
             ["poetry", "version", version]
         )
+        out = await runner.stdout()
+        print(out)
 
 
 async def build(package_dir: str, tags: list, publish=False):
