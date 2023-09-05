@@ -13,8 +13,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 FROM python-base as builder
 RUN pip install poetry
 WORKDIR /app
-COPY ./poetry.lock ./pyproject.toml ./
-COPY ./README.md /app/README.md
+COPY ./astroobject/poetry.lock ./astroobject/pyproject.toml /app
+COPY ./astroobject/README.md /app/README.md
 RUN poetry install --no-root --without=dev
 
 
@@ -22,9 +22,9 @@ FROM python:3.11-slim as production
 RUN pip install poetry
 COPY --from=builder /app /app
 WORKDIR /app
-COPY ./config.yml /app/
-COPY ./core /app/core
-COPY ./api /app/api
-COPY ./entrypoint.sh /app/
+COPY ./astroobject/config.yml /app/config.yml
+COPY ./astroobject/core /app/core
+COPY ./astroobject/api /app/api
+COPY ./astroobject/entrypoint.sh /app/entrypoint.sh
 RUN poetry install --only-root
 CMD ["bash", "entrypoint.sh"]

@@ -29,6 +29,7 @@ async def git_push(push=False):
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
+        path = pathlib.Path().cwd().parent.absolute()
         container = (
             client.container()
             .from_("alpine:latest")
@@ -45,6 +46,14 @@ async def git_push(push=False):
                     "alerceadmin@users.noreply.github.com",
                 ]
             )
+            .with_directory(
+                "/web-services",
+                client.host().directory(
+                    str(path), exclude=[".venv/", "**/.venv/"]
+                ),
+            )
+            .with_workdir("/web-services")
+            .with_exec(["git", "status"])
         )
         if push:
             await (
@@ -52,6 +61,8 @@ async def git_push(push=False):
                 .with_exec(["git", "commit", "-m", "chore: update version"])
                 .with_exec(["git", "push"])
             )
+        else:
+            await container
 
 
 async def update_version(package_dir: str, version: str):
