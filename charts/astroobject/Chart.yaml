@@ -3,4 +3,4 @@ appVersion: "0.1.1a15"
 description: Astro Object API for ALeRCE Clients
 name: astroobject
 type: application
-version: 0.1.16
+version: 0.1.18
