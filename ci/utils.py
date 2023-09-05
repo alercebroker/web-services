@@ -73,7 +73,7 @@ async def update_version(package_dir: str, version: str, dry_run: bool):
         # get build context directory
         source = (
             client.container()
-            .from_("python:3.10-slim")
+            .from_("python:3.11-slim")
             .with_exec(["apt", "update"])
             .with_exec(["apt", "install", "git", "-y"])
             .with_exec(["pip", "install", "poetry"])
@@ -126,8 +126,7 @@ async def get_tags(package_dir: str) -> list:
         # get build context directory
         source = (
             client.container()
-            .from_("python:3.10-slim")
-            .with_exec(["apt", "update"])
+            .from_("python:3.11-slim")
             .with_exec(["pip", "install", "poetry"])
             .with_directory(
                 "/web-services",
@@ -144,3 +143,28 @@ async def get_tags(package_dir: str) -> list:
         out = await runner.stdout()
 
     return ["rc", out.strip("\n")]
+
+
+async def update_chart(chart_name: str, dry_run: bool):
+    config = dagger.Config(log_output=sys.stdout)
+    async with dagger.Connection(config) as client:
+        path = pathlib.Path().cwd().parent.absolute()
+
+        script = ["poetry", "run", "python", "chart_script.py", chart_name]
+        if dry_run:
+            script.append("--dry-run")
+        await (
+            client.container()
+            .from_("python:3.11-slim")
+            .with_exec(["pip", "install", "poetry"])
+            .with_directory(
+                "/web-services",
+                client.host().directory(
+                    str(path), exclude=[".venv/", "**/.venv/"]
+                ),
+            )
+            .with_workdir("/web-services/ci")
+            .with_exec(script)
+            .directory("/web-services/charts")
+            .export(str(path / "charts"))
+        )
