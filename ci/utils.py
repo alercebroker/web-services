@@ -10,14 +10,14 @@ def _get_publish_secret(client):
     return secret
 
 
-def _publish_container(
+async def _publish_container(
     container: dagger.Container,
     package_name: str,
     tags: list,
     secret: dagger.Secret,
 ):
     for tag in tags:
-        addr = container.with_registry_auth(
+        addr = await container.with_registry_auth(
             f"ghcr.io/alercebroker/{package_name}:{tag}",
             "alerceadmin",
             secret,
@@ -110,7 +110,7 @@ async def build(package_dir: str, tags: list, publish=False):
         if publish:
             # publish the resulting container to a registry
             secret = _get_publish_secret(client)
-            _publish_container(image_ref, package_dir, tags, secret)
+            await _publish_container(image_ref, package_dir, tags, secret)
 
 
 async def get_tags(package_dir: str) -> list:
