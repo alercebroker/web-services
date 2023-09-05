@@ -27,26 +27,4 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py staging
-  update_versions:
-    uses: ./.github/workflows/update-versions.yaml
-    with:
-      build-type: staging
-
-  lightcurve:
-    uses: ./.github/workflows/build.yaml
-    needs: update_versions
-    with:
-      build-type: staging
-      service-name: lightcurve
-      base-folder: lightcurve
-      build-context: .
-
-  astroobject:
-    uses: ./.github/workflows/build.yaml
-    needs: update_versions
-    with:
-      build-type: staging
-      service-name: astroobject
-      base-folder: astroobject
-      build-context: astroobject
+          poetry run python main.py staging true

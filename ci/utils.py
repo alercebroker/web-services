@@ -34,6 +34,9 @@ async def update_version(package_dir: str, version: str):
         source = (
             client.container()
             .from_("python:3.10-slim")
+            .with_exec(["apt", "update"])
+            .with_exec(["apt", "install", "git", "-y"])
+            .with_exec(["git", "--version"])
             .with_exec(["pip", "install", "poetry"])
             .with_directory(
                 "/web-services",
@@ -42,8 +45,24 @@ async def update_version(package_dir: str, version: str):
                 ),
             )
         )
-        runner = source.with_workdir(f"/web-services/{package_dir}").with_exec(
-            ["poetry", "version", version]
+        runner = (
+            source.with_workdir(f"/web-services/{package_dir}")
+            .with_exec(["poetry", "version", version])
+            .with_exec(
+                ["git", "config", "--global", "user.name", '"@alerceadmin"']
+            )
+            .with_exec(
+                [
+                    "git",
+                    "config",
+                    "--global",
+                    "user.email",
+                    "alerceadmin@users.noreply.github.com",
+                ]
+            )
+            .with_exec(["git", "add", "."])
+            .with_exec(["git", "commit", "-m", "chore: update version"])
+            .with_exec(["git", "push"])
         )
         out = await runner.stdout()
         print(out)
