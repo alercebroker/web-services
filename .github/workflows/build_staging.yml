@@ -27,4 +27,4 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py staging true true
+          poetry run python main.py staging

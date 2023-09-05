@@ -25,7 +25,7 @@ async def _publish_container(
         print(f"published image at: {addr}")
 
 
-async def git_push(push=False):
+async def git_push(dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
@@ -55,7 +55,7 @@ async def git_push(push=False):
             .with_workdir("/web-services")
             .with_exec(["git", "status"])
         )
-        if push:
+        if not dry_run:
             await (
                 container.with_exec(["git", "add", "."])
                 .with_exec(["git", "commit", "-m", "chore: update version"])
@@ -65,7 +65,7 @@ async def git_push(push=False):
             await container
 
 
-async def update_version(package_dir: str, version: str):
+async def update_version(package_dir: str, version: str, dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
@@ -84,15 +84,19 @@ async def update_version(package_dir: str, version: str):
                 ),
             )
         )
+        update_version_command = ["poetry", "version", version]
+        if dry_run:
+            update_version_command.append("--dry-run")
+
         await (
             source.with_workdir(f"/web-services/{package_dir}")
-            .with_exec(["poetry", "version", version])
+            .with_exec(update_version_command)
             .directory(".")
             .export(str(path / package_dir))
         )
 
 
-async def build(package_dir: str, tags: list, publish=False):
+async def build(package_dir: str, tags: list, dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
@@ -107,7 +111,8 @@ async def build(package_dir: str, tags: list, publish=False):
         )
         print(f"Built image with tag: {tags}")
 
-        if publish:
+        if not dry_run:
+            print("Publishing image")
             # publish the resulting container to a registry
             secret = _get_publish_secret(client)
             await _publish_container(image_ref, package_dir, tags, secret)

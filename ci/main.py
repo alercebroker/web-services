@@ -4,12 +4,13 @@ from build_staging import build_staging
 
 def main():
     stage = sys.argv[1]
-    do_publish = sys.argv[2]
-    do_publish = do_publish.lower() == "true"
-    do_push = sys.argv[3]
-    do_push = do_push.lower() == "true"
+    dry_run = False
+    if len(sys.argv) > 2:
+        dry_run = sys.argv[2]
+        dry_run = dry_run == "--dry-run"
+        print("Running with --dry-run")
     if stage == "staging":
-        build_staging(do_publish=do_publish, do_push=do_push)
+        build_staging(dry_run)
     elif stage == "production":
         print("Production build not implemented yet")
     else:

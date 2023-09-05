@@ -1,19 +1,22 @@
 import anyio
 from utils import build, get_tags, update_version, git_push
+from multiprocessing import Process
 
 
-def _build_package(package_dir: str, do_publish: bool):
+def _build_package(package_dir: str, dry_run: bool):
     tags = anyio.run(get_tags, package_dir)
-    anyio.run(build, package_dir, tags, do_publish)
+    anyio.run(build, package_dir, tags, dry_run)
 
 
-def _update_version(packages: list, do_push: bool):
+def _update_version(packages: list, dry_run: bool):
     for package in packages:
-        anyio.run(update_version, package, "prerelease")
-    anyio.run(git_push, do_push)
+        anyio.run(update_version, package, "prerelease", dry_run)
+    anyio.run(git_push, dry_run)
 
 
-def build_staging(do_publish: bool, do_push: bool):
-    _update_version(["lightcurve", "astroobject"], do_push)
-    _build_package("lightcurve", do_publish)
-    _build_package("astroobject", do_publish)
+def build_staging(dry_run: bool):
+    packages = ["lightcurve", "astroobject"]
+    _update_version(packages, dry_run)
+    for package in packages:
+        p = Process(target=_build_package, args=[package, dry_run])
+        p.start()
