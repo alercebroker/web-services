@@ -8,27 +8,21 @@ def _build_package(package_dir: str, dry_run: bool):
     anyio.run(build, package_dir, tags, dry_run)
 
 
-def _update_version(packages: list, dry_run: bool):
+def _update_package_version(packages: list, dry_run: bool):
     for package in packages:
         anyio.run(update_version, package, "prerelease", dry_run)
-    anyio.run(git_push, dry_run)
 
 
-def _update_chart(package: str, dry_run: bool):
-    anyio.run(update_chart, package, dry_run)
-
-
-def update_chart_staging(dry_run: bool):
-    packages = ["lightcurve", "astroobject"]
-
+def _update_chart_version(packages: list, dry_run: bool):
     for package in packages:
-        p = Process(target=_update_chart, args=[package, dry_run])
-        p.start()
+        anyio.run(update_chart, package, dry_run)
 
 
 def build_staging(dry_run: bool):
     packages = ["lightcurve", "astroobject"]
-    _update_version(packages, dry_run)
+    _update_package_version(packages, dry_run)
+    _update_chart_version(packages, dry_run)
+    anyio.run(git_push, dry_run)
     for package in packages:
         p = Process(target=_build_package, args=[package, dry_run])
         p.start()

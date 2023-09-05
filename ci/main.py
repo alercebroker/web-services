@@ -1,5 +1,5 @@
 import sys
-from build_staging import build_staging, update_chart_staging
+from build_staging import build_staging
 
 
 def main():
@@ -11,7 +11,6 @@ def main():
         print("Running with --dry-run")
     if stage == "staging":
         build_staging(dry_run)
-        update_chart_staging(dry_run)
     elif stage == "production":
         print("Production build not implemented yet")
     else:
