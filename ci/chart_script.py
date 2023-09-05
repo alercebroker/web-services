@@ -64,5 +64,7 @@ def main(package: str, dry_run: bool):
 
 if __name__ == "__main__":
     package = sys.argv[1]
-    dry_run = sys.argv[2] == "--dry-run"
+    dry_run = False
+    if len(sys.argv) > 2:
+        dry_run = sys.argv[2] == "--dry-run"
     main(package, dry_run)
