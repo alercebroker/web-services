@@ -36,7 +36,6 @@ async def update_version(package_dir: str, version: str):
             .from_("python:3.10-slim")
             .with_exec(["apt", "update"])
             .with_exec(["apt", "install", "git", "-y"])
-            .with_exec(["git", "--version"])
             .with_exec(["pip", "install", "poetry"])
             .with_directory(
                 "/web-services",
@@ -98,6 +97,8 @@ async def get_tags(package_dir: str) -> list:
         source = (
             client.container()
             .from_("python:3.10-slim")
+            .with_exec(["apt", "update"])
+            .with_exec(["apt", "install", "git", "-y"])
             .with_exec(["pip", "install", "poetry"])
             .with_directory(
                 "/web-services",
