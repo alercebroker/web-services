@@ -29,6 +29,7 @@ jobs:
           cd ci
           poetry run python main.py staging
   release:
+    needs: build-dagger
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
