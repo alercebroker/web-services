@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Path
 from sqlalchemy.orm import Session
 from api.container import AppContainer
 from db_plugins.db.sql import models
-from .models import MagstatsModel
+from ..core.models import MagstatsModel
 from dependency_injector.wiring import inject, Provide
 
 app = FastAPI()
@@ -18,3 +18,5 @@ def get_magstats(
         return obj.magstats
     else:
         raise HTTPException(status_code=404, detail="Not found")
+    
+    # en el core se crea la instancia sesion y se le consulta, aca solo se llama al core.
