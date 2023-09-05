@@ -25,6 +25,35 @@ def _publish_container(
         print(f"published image at: {addr}")
 
 
+async def git_push(push=False):
+    config = dagger.Config(log_output=sys.stdout)
+
+    async with dagger.Connection(config) as client:
+        container = (
+            client.container()
+            .from_("alpine:latest")
+            .with_exec(["apk", "add", "--no-cache", "git"])
+            .with_exec(
+                ["git", "config", "--global", "user.name", '"@alerceadmin"']
+            )
+            .with_exec(
+                [
+                    "git",
+                    "config",
+                    "--global",
+                    "user.email",
+                    "alerceadmin@users.noreply.github.com",
+                ]
+            )
+        )
+        if push:
+            await (
+                container.with_exec(["git", "add", "."])
+                .with_exec(["git", "commit", "-m", "chore: update version"])
+                .with_exec(["git", "push"])
+            )
+
+
 async def update_version(package_dir: str, version: str):
     config = dagger.Config(log_output=sys.stdout)
 
@@ -44,27 +73,12 @@ async def update_version(package_dir: str, version: str):
                 ),
             )
         )
-        runner = (
+        await (
             source.with_workdir(f"/web-services/{package_dir}")
             .with_exec(["poetry", "version", version])
-            .with_exec(
-                ["git", "config", "--global", "user.name", '"@alerceadmin"']
-            )
-            .with_exec(
-                [
-                    "git",
-                    "config",
-                    "--global",
-                    "user.email",
-                    "alerceadmin@users.noreply.github.com",
-                ]
-            )
-            .with_exec(["git", "add", "."])
-            .with_exec(["git", "commit", "-m", "chore: update version"])
-            .with_exec(["git", "push"])
+            .directory(".")
+            .export(str(path / package_dir))
         )
-        out = await runner.stdout()
-        print(out)
 
 
 async def build(package_dir: str, tags: list, publish=False):
@@ -98,7 +112,6 @@ async def get_tags(package_dir: str) -> list:
             client.container()
             .from_("python:3.10-slim")
             .with_exec(["apt", "update"])
-            .with_exec(["apt", "install", "git", "-y"])
             .with_exec(["pip", "install", "poetry"])
             .with_directory(
                 "/web-services",
