@@ -6,25 +6,25 @@ on:
       - main
 
 jobs:
-  update_versions:
-    uses: ./.github/workflows/update-versions.yaml
-    with:
-      build-type: staging
-
-  lightcurve:
-    uses: ./.github/workflows/build.yaml
-    needs: update_versions
-    with:
-      build-type: staging
-      service-name: lightcurve
-      base-folder: lightcurve
-      build-context: .
-
-  astroobject:
-    uses: ./.github/workflows/build.yaml
-    needs: update_versions
-    with:
-      build-type: staging
-      service-name: astroobject
-      base-folder: astroobject
-      build-context: astroobject
+  build-dagger:
+    runs-on: ubuntu-latest
+    env:
+      GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ci
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python main.py staging true true

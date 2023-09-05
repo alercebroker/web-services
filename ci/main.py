@@ -4,10 +4,12 @@ from build_staging import build_staging
 
 def main():
     stage = sys.argv[1]
-    publish = sys.argv[2]
-    publish = publish.lower() == "true"
+    do_publish = sys.argv[2]
+    do_publish = do_publish.lower() == "true"
+    do_push = sys.argv[3]
+    do_push = do_push.lower() == "true"
     if stage == "staging":
-        build_staging(publish=publish)
+        build_staging(do_publish=do_publish, do_push=do_push)
     elif stage == "production":
         print("Production build not implemented yet")
     else:

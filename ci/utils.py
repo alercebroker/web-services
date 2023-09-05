@@ -10,19 +10,59 @@ def _get_publish_secret(client):
     return secret
 
 
-def _publish_container(
+async def _publish_container(
     container: dagger.Container,
     package_name: str,
     tags: list,
     secret: dagger.Secret,
 ):
     for tag in tags:
-        addr = container.with_registry_auth(
+        addr = await container.with_registry_auth(
             f"ghcr.io/alercebroker/{package_name}:{tag}",
             "alerceadmin",
             secret,
         ).publish(f"ghcr.io/alercebroker/{package_name}:{tag}")
         print(f"published image at: {addr}")
+
+
+async def git_push(push=False):
+    config = dagger.Config(log_output=sys.stdout)
+
+    async with dagger.Connection(config) as client:
+        path = pathlib.Path().cwd().parent.absolute()
+        container = (
+            client.container()
+            .from_("alpine:latest")
+            .with_exec(["apk", "add", "--no-cache", "git"])
+            .with_exec(
+                ["git", "config", "--global", "user.name", '"@alerceadmin"']
+            )
+            .with_exec(
+                [
+                    "git",
+                    "config",
+                    "--global",
+                    "user.email",
+                    "alerceadmin@users.noreply.github.com",
+                ]
+            )
+            .with_directory(
+                "/web-services",
+                client.host().directory(
+                    str(path), exclude=[".venv/", "**/.venv/"]
+                ),
+            )
+            .with_workdir("/web-services")
+            .with_exec(["git", "status"])
+        )
+        if push:
+            await (
+                container.with_exec(["git", "add", "."])
+                .with_exec(["git", "commit", "-m", "chore: update version"])
+                .with_exec(["git", "push"])
+            )
+        else:
+            await container
 
 
 async def update_version(package_dir: str, version: str):
@@ -44,27 +84,12 @@ async def update_version(package_dir: str, version: str):
                 ),
             )
         )
-        runner = (
+        await (
             source.with_workdir(f"/web-services/{package_dir}")
             .with_exec(["poetry", "version", version])
-            .with_exec(
-                ["git", "config", "--global", "user.name", '"@alerceadmin"']
-            )
-            .with_exec(
-                [
-                    "git",
-                    "config",
-                    "--global",
-                    "user.email",
-                    "alerceadmin@users.noreply.github.com",
-                ]
-            )
-            .with_exec(["git", "add", "."])
-            .with_exec(["git", "commit", "-m", "chore: update version"])
-            .with_exec(["git", "push"])
+            .directory(".")
+            .export(str(path / package_dir))
         )
-        out = await runner.stdout()
-        print(out)
 
 
 async def build(package_dir: str, tags: list, publish=False):
@@ -85,7 +110,7 @@ async def build(package_dir: str, tags: list, publish=False):
         if publish:
             # publish the resulting container to a registry
             secret = _get_publish_secret(client)
-            _publish_container(image_ref, package_dir, tags, secret)
+            await _publish_container(image_ref, package_dir, tags, secret)
 
 
 async def get_tags(package_dir: str) -> list:
@@ -98,7 +123,6 @@ async def get_tags(package_dir: str) -> list:
             client.container()
             .from_("python:3.10-slim")
             .with_exec(["apt", "update"])
-            .with_exec(["apt", "install", "git", "-y"])
             .with_exec(["pip", "install", "poetry"])
             .with_directory(
                 "/web-services",
