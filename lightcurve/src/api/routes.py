@@ -18,9 +18,9 @@ def root():
 
 
 @router.get("/detections/{oid}")
-#@set_permissions_decorator(["admin", "basic_user"])
-#@set_filters_decorator(["filter_atlas_detections"])
-#@check_permissions_decorator
+@set_permissions_decorator(["admin", "basic_user"])
+@set_filters_decorator(["filter_atlas_detections"])
+@check_permissions_decorator
 def detections(
     request: Request,
     oid: str,
@@ -37,9 +37,9 @@ def detections(
 
 
 @router.get("/non_detections/{oid}")
-#@set_permissions_decorator(["admin", "basic_user"])
-#@set_filters_decorator(["filter_atlas_non_detections"])
-#@check_permissions_decorator
+@set_permissions_decorator(["admin", "basic_user"])
+@set_filters_decorator(["filter_atlas_non_detections"])
+@check_permissions_decorator
 def non_detections(
     oid: str,
     request: Request,
@@ -56,9 +56,9 @@ def non_detections(
 
 
 @router.get("/lightcurve/{oid}")
-#@set_permissions_decorator(["admin", "basic_user"])
-#@set_filters_decorator(["filter_atlas_lightcurve"])
-#@check_permissions_decorator
+@set_permissions_decorator(["admin", "basic_user"])
+@set_filters_decorator(["filter_atlas_lightcurve"])
+@check_permissions_decorator
 def lightcurve(
     oid: str,
     request: Request,
