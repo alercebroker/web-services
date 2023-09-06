@@ -8,6 +8,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 dagger-io = "^0.8.4"
+boto3 = "^1.28.41"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
