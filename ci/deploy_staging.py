@@ -119,5 +119,5 @@ def deploy_package(package: str, dry_run: bool):
 
 def deploy_staging(dry_run: bool):
     packages = [("lightcurve", dry_run), ("astroobject", dry_run)]
-    with Pool(processes=len(packages)) as pool:
-        pool.starmap(deploy_package, packages)
+    for p in packages:
+        deploy_package(*p)
