@@ -77,7 +77,17 @@ async def helm_upgrade(package: str, dry_run: bool):
                 ]
             )
         )
-        dry_run_flag = "--dry-run" if dry_run else ""
+        helm_command = [
+            "helm",
+            "upgrade",
+            "-i",
+            "-f",
+            "values.yaml",
+            package,
+            f"web-services/{package}",
+        ]
+        if dry_run:
+            helm_command.append("--dry-run")
 
         await (
             k8s.with_exec(["kubectl", "config", "get-contexts"])
@@ -98,18 +108,7 @@ async def helm_upgrade(package: str, dry_run: bool):
                     f"{package}-service-helm-values",
                 )
             )
-            .with_exec(
-                [
-                    "helm",
-                    "upgrade",
-                    "-i",
-                    "-f",
-                    "values.yaml",
-                    package,
-                    f"web-services/{package}",
-                    dry_run_flag,
-                ]
-            )
+            .with_exec(helm_command)
         )
 
 
