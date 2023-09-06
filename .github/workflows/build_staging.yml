@@ -50,9 +50,17 @@ jobs:
   deploy:
     needs: release-chart
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: us-east-1
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python
