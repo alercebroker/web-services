@@ -103,11 +103,11 @@ async def helm_upgrade(package: str, dry_run: bool):
                     "helm",
                     "upgrade",
                     "-i",
-                    dry_run_flag,
                     "-f",
                     "values.yaml",
                     package,
                     f"web-services/{package}",
+                    dry_run_flag,
                 ]
             )
         )
