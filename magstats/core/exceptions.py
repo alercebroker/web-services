@@ -21,5 +21,3 @@ class SurveyIdError(BaseException):
 
     def __str__(self) -> str:
         return f"Can't retrieve magstats survey id not recognized {self.survey_id}"
-
-# consultar que excepciones mas considerar.

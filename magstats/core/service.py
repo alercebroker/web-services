@@ -3,12 +3,12 @@ from typing import Callable
 from .models import MagstatsModel
 from pymongo.database import Database
 from sqlalchemy.orm import Session
-from werkzeug.exceptions import NotFound # no se si se puede cambiar
 from .exceptions import DatabaseError, SurveyIdError
+from ..api.result_handler import handle_error, handle_success
 
 def get_magstats(
         oid: str,
-        survey_id: str, # no se bien de donde sale
+        survey_id: str, 
         session_factory: Callable[..., AbstractContextManager[Session]] = None,
         mongo_db: Database = None
         ):
@@ -17,10 +17,10 @@ def get_magstats(
     elif survey_id == "atlas":
         result = _get_magstats_mongo(mongo_db,oid)
     else: 
-        return SurveyIdError(survey_id)
+        return handle_error(SurveyIdError(survey_id))
 
-    return result
-        #error aun no implementado.
+    return handle_success(result)
+    
 
 def _get_magstats_sql(
     session_factory: Callable[..., AbstractContextManager[Session]], oid: str
@@ -33,17 +33,17 @@ def _get_magstats_sql(
                 .one_or_none()
             )
             if obj:
-                return obj.magstats
+                return handle_success(obj.magstats)
             else:
-                raise NotFound
+                raise # que tipo de error mostrar? en Flask era de tipo NotFound
     except Exception as e:
-        return DatabaseError(e) # consultar sobre el Failiture
+        return handle_error(DatabaseError(e))
     
 def _get_magstats_mongo(database: Database, oid: str):
     try:
         result = database["magstats"].find({"oid": oid})
-        return [res for res in result] # preguntar que retornar.
+        return [res for res in result] 
     except Exception as e:
-        return DatabaseError(e) # consultar sobre el Failiture
+        return handle_error(DatabaseError(e))
             
     
