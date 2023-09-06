@@ -3,7 +3,7 @@ import os
 import sys
 import anyio
 import pathlib
-from multiprocessing import Process
+from multiprocessing import Process, Pool
 
 
 def secret_variables(envs: dict[str, str], client: dagger.Client):
@@ -118,7 +118,6 @@ def deploy_package(package: str, dry_run: bool):
 
 
 def deploy_staging(dry_run: bool):
-    packages = ["lightcurve", "astroobject"]
-    for package in packages:
-        p = Process(target=deploy_package, args=[package, dry_run])
-        p.start()
+    packages = [("lightcurve", dry_run), ("astroobject", dry_run)]
+    with Pool(processes=len(packages)) as pool:
+        pool.starmap(deploy_package, packages)
