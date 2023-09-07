@@ -6,11 +6,10 @@ import pathlib
 from multiprocessing import Process, Pool
 
 
-def secret_variables(envs: dict[str, str], client: dagger.Client):
+def env_variables(envs: dict[str, str]):
     def env_variables_inner(ctr: dagger.Container):
         for key, value in envs.items():
-            secret = client.set_secret(key, value)
-            ctr = ctr.with_secret_variable(key, secret)
+            ctr = ctr.with_env_variable(key, value)
         return ctr
 
     return env_variables_inner
@@ -49,7 +48,7 @@ async def helm_upgrade(package: str, dry_run: bool):
             client.container()
             .from_("alpine/k8s:1.27.5")
             .with_(
-                secret_variables(
+                env_variables(
                     {
                         "AWS_ACCESS_KEY_ID": os.environ["AWS_ACCESS_KEY_ID"],
                         "AWS_SECRET_ACCESS_KEY": os.environ[
@@ -57,7 +56,6 @@ async def helm_upgrade(package: str, dry_run: bool):
                         ],
                         "AWS_SESSION_TOKEN": os.environ["AWS_SESSION_TOKEN"],
                     },
-                    client,
                 )
             )
             .with_env_variable(
@@ -110,7 +108,6 @@ async def helm_upgrade(package: str, dry_run: bool):
                     f"{package}-service-helm-values",
                 )
             )
-            .with_exec(["cat", "/root/.kube/config"])
             .with_exec(helm_command)
         )
 
