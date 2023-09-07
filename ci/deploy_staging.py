@@ -47,7 +47,7 @@ async def helm_upgrade(package: str, dry_run: bool):
     async with dagger.Connection(config) as client:
         k8s = (
             client.container()
-            .from_("alpine/k8s:1.24.16")
+            .from_("alpine/k8s:1.27.5")
             .with_(
                 secret_variables(
                     {
