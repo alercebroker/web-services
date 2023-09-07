@@ -108,6 +108,7 @@ async def helm_upgrade(package: str, dry_run: bool):
                     f"{package}-service-helm-values",
                 )
             )
+            .with_exec(["kubectl", "get", "svc"])
             .with_exec(helm_command)
         )
 
