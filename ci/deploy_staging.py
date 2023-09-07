@@ -110,7 +110,7 @@ async def helm_upgrade(package: str, dry_run: bool):
                     f"{package}-service-helm-values",
                 )
             )
-            .with_exec(["aws", "sts", "get-caller-identity"])
+            .with_exec(["cat", "/root/.kube/config"])
             .with_exec(helm_command)
         )
 
