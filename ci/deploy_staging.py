@@ -24,7 +24,7 @@ def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
                 client.host().directory(path, exclude=[".venv/", "**/.venv/"]),
             )
             .with_workdir("/web-services/ci")
-            .with_exec(["pip", "install", "poetry"])
+            .with_exec(["python", "-m", "pip", "install", "poetry"])
             .with_exec(["poetry", "install"])
             .with_exec(
                 [
