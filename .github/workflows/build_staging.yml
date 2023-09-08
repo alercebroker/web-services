@@ -83,25 +83,3 @@ jobs:
   #         cd ci
   #         poetry run python main.py deploy staging
 
-  deploy:
-    needs: release-chart
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Configure AWS credentials
-        id: creds
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          aws-region: us-east-1
-          output-credentials: true
-          unset-current-credentials: true
-      - name: run kubectl
-        uses: ianbelcher/eks-kubectl-action@master
-        with:
-          cluster_name: staging
-          args: get svc
