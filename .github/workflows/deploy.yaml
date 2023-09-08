@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy:
+    needs: release-chart
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -21,13 +22,18 @@ jobs:
           aws-region: us-east-1
           output-credentials: true
           unset-current-credentials: true
-      - name: Configure eks cluster
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
         run: |
-          aws eks update-kubeconfig \
-          --region us-east-1 \
-          --name staging \
-          --alias staging
-
-          aws eks list-clusters
-
-          kubectl get svc
+          cd ci
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python main.py deploy staging
