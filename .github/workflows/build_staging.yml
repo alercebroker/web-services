@@ -100,11 +100,8 @@ jobs:
           aws-region: us-east-1
           output-credentials: true
           unset-current-credentials: true
-      - name: Configure eks cluster
-        run: |
-          aws eks update-kubeconfig \
-          --region us-east-1 \
-          --name staging \
-          --alias staging
-
-          kubectl get svc
+      - name: run kubectl
+        uses: ianbelcher/eks-kubectl-action@master
+        with:
+          cluster_name: staging
+          args: get svc
