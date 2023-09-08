@@ -47,39 +47,35 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
-  # deploy:
-  #   needs: release-chart
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     id-token: write
-  #     contents: read
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
-  #     - name: Configure AWS credentials
-  #       id: creds
-  #       uses: aws-actions/configure-aws-credentials@v3
-  #       with:
-  #         role-to-assume: ${{ secrets.AWS_ROLE }}
-  #         aws-region: us-east-1
-  #         output-credentials: true
-  #         unset-current-credentials: true
-  #     - name: Install poetry
-  #       run: pipx install poetry
-  #     - name: Set up Python
-  #       uses: actions/setup-python@v4
-  #       with:
-  #         python-version: 3.11
-  #         cache: 'poetry'
-  #     - name: Install dependencies
-  #       run: |
-  #         cd ci
-  #         poetry install
-  #     - name: Run dagger pipeline
-  #       run: |
-  #         export AWS_ACCESS_KEY_ID=${{ steps.creds.outputs.aws-access-key-id }}
-  #         export AWS_SECRET_ACCESS_KEY=${{ steps.creds.outputs.aws-secret-access-key }}
-  #         export AWS_SESSION_TOKEN=${{ steps.creds.outputs.aws-session-token }}
-  #         cd ci
-  #         poetry run python main.py deploy staging
-
+  deploy:
+    needs: release-chart
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: us-east-1
+          output-credentials: true
+          unset-current-credentials: true
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ci
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python main.py deploy staging
