@@ -73,18 +73,6 @@ async def helm_upgrade(package: str, dry_run: bool):
                     """,
                 ]
             )
-            .with_exec(
-                [
-                    "aws",
-                    "eks",
-                    "get-token",
-                    "--cluster-name",
-                    "staging",
-                    "--region",
-                    "us-east-1",
-                ]
-            )
-            .with_exec(["cat", "/root/.kube/config"])
         )
         helm_command = [
             "helm",
@@ -100,7 +88,6 @@ async def helm_upgrade(package: str, dry_run: bool):
 
         await (
             k8s.with_exec(["kubectl", "config", "get-contexts"])
-            .with_exec(["kubectl", "config", "use-context", "staging"])
             .with_exec(
                 [
                     "helm",
