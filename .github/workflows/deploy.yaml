@@ -1,0 +1,33 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - ci-debug
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: us-east-1
+          output-credentials: true
+          unset-current-credentials: true
+      - name: Configure eks cluster
+        run: |
+          aws eks update-kubeconfig \
+          --region us-east-1 \
+          --name staging \
+          --alias staging
+
+          aws eks list-clusters
+
+          kubectl get svc
