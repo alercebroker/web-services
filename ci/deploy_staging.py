@@ -63,23 +63,32 @@ async def helm_upgrade(package: str, dry_run: bool):
             )
             .with_exec(
                 [
-                    "aws",
-                    "eks",
-                    "update-kubeconfig",
-                    "--region",
-                    "us-east-1",
-                    "--name",
-                    "staging",
-                    "--alias",
-                    "staging",
+                    "sh",
+                    "-c",
+                    """
+                    aws eks update-kubeconfig \
+                    --region us-east-1 \
+                    --name staging \
+                    --alias staging
+                    """,
                 ]
             )
+            .with_exec(
+                [
+                    "aws",
+                    "eks",
+                    "get-token",
+                    "--cluster-name",
+                    "staging",
+                    "--region",
+                    "us-east-1",
+                ]
+            )
+            .with_exec(["cat", "/root/.kube/config"])
         )
         helm_command = [
             "helm",
             "upgrade",
-            "--kubeconfig",
-            "/root/.kube/config",
             "-i",
             "-f",
             "values.yaml",
