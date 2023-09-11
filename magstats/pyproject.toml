@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Get Magstats of objects from ZTF and ATLAS surveys"
 authors = ["mmolina2018 <mmolina2018@inf.udec.cl>"]
 readme = "README.md"
-packages = [{include = "core"}, {include = "api""}, {include = "database"}]
+packages = [{include = "core"}, {include = "api"}, {include = "database"}] 
 
 [tool.poetry.dependencies]
 fastapi = "^0.100.0"
