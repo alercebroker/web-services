@@ -7,7 +7,7 @@ from pymongo.database import Database
 from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
 from db_plugins.db.mongo._connection import MongoConnection
 from fastapi.testclient import TestClient
-from db_plugins.db.sql.models import Object
+from db_plugins.db.sql.models import Object, MagStats
 
 @pytest.fixture(scope="session")
 def docker_compose_command():
@@ -136,8 +136,53 @@ def add_psql_objects(session):
 
 def add_psql_magstats(session):
     magstats = [
+        {
+            "fid": 123,
+            "oid": "oid1",
+            "stellar": False,
+            "corrected": False,
+            "ndet": 1,
+            "ndubious": 1,
+            "dmdt_first": 0.13,
+            "dm_first": 0.12,
+            "sigmadm_first": 1.4,
+            "dt_first": 2.0,
+            "magmean": 19.0,
+            "magmedian": 20,
+            "magmax": 1.4,
+            "magmin": 1.4,
+            "magsigma": 1.4,
+            "maglast": 1.4,
+            "magfirst": 1.4,
+            "firstmjd": 1.4,
+            "lastmjd": 1.4,
+            "step_id_corr": "test",
+        },
+        {
+            "fid": 456,
+            "oid": "oid2",
+            "stellar": False,
+            "corrected": False,
+            "ndet": 1,
+            "ndubious": 1,
+            "dmdt_first": 0.13,
+            "dm_first": 0.12,
+            "sigmadm_first": 1.4,
+            "dt_first": 2.0,
+            "magmean": 19.0,
+            "magmedian": 20,
+            "magmax": 1.4,
+            "magmin": 1.4,
+            "magsigma": 1.4,
+            "maglast": 1.4,
+            "magfirst": 1.4,
+            "firstmjd": 1.4,
+            "lastmjd": 1.4,
+            "step_id_corr": "test",
+        },
 
     ]
+    magstats = [MagStats(**mag) for mag in magstats]
     session.add_all(magstats)
     session.commit()
 
@@ -175,10 +220,34 @@ def add_mongo_objects(database: Database):
 
 def add_mongo_magstats(database: Database):
     magstats = [
+        {
+            "_id": "candid1",
+            "aid": "aid1",
+            "oid": "oid1",
+            "tid": "atlas",
+        },
+        {
+            "_id": "candid2",
+            "aid": "aid1",
+            "tid": "atlas",
+            "oid": "oid1",
+        },
+        {
+            "_id": "candid3",
+            "aid": "aid1",
+            "tid": "atlas",
+            "oid": "oid2",
+        },
+        {
+            "_id": "candid4",
+            "aid": "aid1",
+            "tid": "atlas",
+            "oid": "oid2",
+        },
 
     ]
-    for det in magstats:
-        database.magstats.insert_one(det)
+    for mag in magstats:
+        database.magstats.insert_one(mag)
         
 def teardown_mongo(database: MongoConnection):
     database.drop_db()
