@@ -21,3 +21,5 @@ lightcurve/tests/profiling/memray*
 lightcurve/tests/profiling/flamegraph*
 
 *.restclient
+
+values.*.override.yaml
