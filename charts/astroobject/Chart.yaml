@@ -1,6 +1,6 @@
 apiVersion: v2
-appVersion: 0.1.1a66
+appVersion: 0.1.1a67
 description: Astro Object API for ALeRCE Clients
 name: astroobject
 type: application
-version: 0.1.38
+version: 0.1.39
