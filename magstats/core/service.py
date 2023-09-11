@@ -4,7 +4,7 @@ from .models import MagstatsModel
 from pymongo.database import Database
 from sqlalchemy.orm import Session
 from .exceptions import DatabaseError, SurveyIdError
-from ..api.result_handler import handle_error, handle_success
+from api.result_handler import handle_error, handle_success
 
 def get_magstats(
         oid: str,

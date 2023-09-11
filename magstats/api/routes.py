@@ -23,8 +23,6 @@ def magstats(
         survey_id=survey_id,
         session_factory=session,
         mongo_db=database,
-        handle_error=handle_error,
-        handle_success=handle_success,
     )
 
 

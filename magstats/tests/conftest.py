@@ -130,7 +130,9 @@ def populate_psql(database):
 
 def add_psql_objects(session):
     object = Object(oid="oid1")
+    object2 = Object(oid="oid2")
     session.add(object)
+    session.add(object2)
     session.commit()
 
 
