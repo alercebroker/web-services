@@ -31,5 +31,9 @@ def create_app():
     @app.get("/")
     def health_check():
         return "OK!"
+    
+    @app.get("/openapi.json")
+    def custom_swagger_route():
+        return app.openapi()
 
     return app
