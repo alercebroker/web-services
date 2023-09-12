@@ -24,6 +24,17 @@ class DetectionsNotFound(BaseException):
         )
 
 
+class ObjectNotFound(BaseException):
+    def __init__(self, object_id) -> None:
+        super().__init__()
+        self.object_id = object_id
+
+    def __str__(self) -> str:
+        return (
+            f"Object {self.object_id} not found on the database"
+        )
+
+
 class NonDetectionsNotFound(BaseException):
     def __init__(self, object_id) -> None:
         super().__init__()
