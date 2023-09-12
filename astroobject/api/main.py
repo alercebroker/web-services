@@ -9,7 +9,9 @@ from .routes import router as AstroObjectRouter
 def create_app():
     container = ApiContainer()
     container.config.from_yaml("config.yml")
-    app = FastAPI()
+    app = FastAPI(
+        openapi_url="/v2/astroobject/openapi.json"
+    )
     app.container = container
 
     instrumentator = Instrumentator().instrument(app)
