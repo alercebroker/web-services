@@ -5,6 +5,8 @@ from pymongo.database import Database
 from sqlalchemy.orm import Session
 from .exceptions import DatabaseError, SurveyIdError
 from api.result_handler import handle_error, handle_success
+from db_plugins.db.sql import models
+from sqlalchemy import select, text
 
 def get_magstats(
         oid: str,
@@ -27,15 +29,16 @@ def _get_magstats_sql(
 ):
     try:
         with session_factory() as session:
-            obj = (
-                session.query(MagstatsModel.Object)
-                .filter(MagstatsModel.Object.oid == id)
-                .one_or_none()
+            stmt = select(models.MagStats, text("'ztf'")).filter(
+                models.MagStats.oid == oid
             )
-            if obj:
-                return handle_success(obj.magstats)
-            else:
-                raise # que tipo de error mostrar? en Flask era de tipo NotFound
+            result = session.execute(stmt)
+            result = [
+                MagstatsModel(**ob[0].__dict__, tid=ob[1])
+                for ob in result.all()
+            ]
+            return handle_success(result)
+
     except Exception as e:
         return handle_error(DatabaseError(e))
     
