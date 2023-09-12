@@ -7,7 +7,7 @@ from .routes import router
 from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI()
-instrumentator = Instrumentator().instrument(app)
+instrumentator = Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(
     RalidatorStarlette,
@@ -25,8 +25,3 @@ app.add_middleware(
 )
 
 app.include_router(router)
-
-
-@app.on_event("startup")
-async def _startup():
-    instrumentator.expose(app)

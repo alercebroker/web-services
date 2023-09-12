@@ -50,3 +50,10 @@ def test_lightcurve_from_ztf(psql_service, init_psql, test_client):
     json_res = res.json()
     assert len(json_res["detections"]) == 2
     assert len(json_res["non_detections"]) == 2
+
+
+def test_has_metrics(test_client):
+    res = test_client.get("/")
+    assert res.status_code == 200
+    res = test_client.get("/metrics")
+    assert res.status_code == 200
