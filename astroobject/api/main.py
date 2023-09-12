@@ -10,7 +10,7 @@ def create_app():
     container = ApiContainer()
     container.config.from_yaml("config.yml")
     app = FastAPI(
-        openapi_url="/v2/astroobject/openapi.json"
+        openapi_url="/openapi.json"
     )
     app.container = container
 
