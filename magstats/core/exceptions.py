@@ -14,10 +14,10 @@ class DatabaseError(WrapperException):
 
 
 
-class SurveyIdError(BaseException):
-    def __init__(self, survey_id) -> None:
+class OidError(BaseException):
+    def __init__(self, oid) -> None:
         super().__init__()
-        self.survey_id = survey_id
+        self.oid = oid
 
     def __str__(self) -> str:
-        return f"Can't retrieve magstats survey id not recognized {self.survey_id}"
+        return f"Can't retrieve magstats oid not recognized {self.oid}"

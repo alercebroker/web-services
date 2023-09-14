@@ -10,7 +10,6 @@ packages = [{include = "core"}, {include = "api"}, {include = "database"}]
 fastapi = "^0.100.0"
 python = "^3.11"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.19"}
-pymongo = "^4.4.1"
 returns = "^0.21.0"
 psycopg2-binary = "^2.9.6"
 db-plugins = { version = "5.1.1", python = ">=3.11,<3.12"}

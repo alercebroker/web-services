@@ -1,5 +1,5 @@
 from core.service import get_magstats
-from core.exceptions import SurveyIdError
+from core.exceptions import OidError
 import pytest
 
 
@@ -7,28 +7,19 @@ def test_get_ztf_magstats(psql_service, psql_session, init_psql):
     result = get_magstats(
         session_factory=psql_session,
         oid="oid1",
-        survey_id="ztf",
     )
     assert result[0].fid == 123 
 
-def test_get_magstats_from_unknown_survey(
+def test_get_magstats_from_unknown_oid(
     psql_service, psql_session, init_psql
 ):
-    with pytest.raises(
-        SurveyIdError, match="Can't retrieve magstats survey id not recognized unknown"
-    ):
+    with pytest.raises(OidError) as exc:
         get_magstats(
             session_factory=psql_session,
-            oid="oid1",
-            survey_id="unknown",
+            oid="unknown",
         )
+    assert exc.value.status_code == 400
+    assert exc.value.detail == "Can't retrieve magstats oid not recognized unknown"
 
 
-def test_get_atlas_magstats(mongo_service, mongo_database, init_mongo):
-    result = get_magstats(
-        oid="oid1",
-        survey_id="atlas",
-        mongo_db=mongo_database,
-    )
-    assert result[0]["tid"] == "atlas" 
 
