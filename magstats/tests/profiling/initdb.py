@@ -1,5 +1,5 @@
 from db_plugins.db.sql._connection import PsqlDatabase
-from db_plugins.db.sql.models import Object
+from db_plugins.db.sql.models import Object,MagStats
 
 def database():
     user = "postgres"

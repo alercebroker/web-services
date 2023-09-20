@@ -11,7 +11,6 @@ from sqlalchemy import select, text
 def get_magstats(
         oid: str,
         session_factory: Callable[..., AbstractContextManager[Session]] = None,
-        mongo_db: Database = None
         ):
     result = _get_magstats_sql(session_factory,oid)
 
