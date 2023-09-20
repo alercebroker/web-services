@@ -15,7 +15,7 @@ app.add_middleware(
     RalidatorStarlette,
     config={"SECRET_KEY": os.getenv("SECRET_KEY")},
     filters_map=get_filters_map(),
-    ignore_paths=["/metrics"],
+    ignore_paths=["/metrics", "/docs", "/openapi.json"],
 )
 
 app.add_middleware(
