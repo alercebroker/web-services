@@ -11,7 +11,7 @@ def test_magstats_from_ztf(psql_service, init_psql, test_client):
 
 
 def test_magstats_with_unknown_oid_param(test_client): # este tiene problemas y no se pq
-    res = test_client.get("/magstats/oid1")
+    res = test_client.get("/magstats/unknow")
     print("-------------a------------------")
     print(res.json())
     #assert False

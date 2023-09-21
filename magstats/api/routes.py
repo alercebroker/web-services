@@ -19,6 +19,8 @@ def magstats(
     return get_magstats(
         oid=oid,
         session_factory=session,
+        handle_success=handle_success,
+        handle_error=handle_error,
     )
 
 

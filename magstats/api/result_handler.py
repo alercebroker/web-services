@@ -12,6 +12,7 @@ def handle_error(err: Exception):
     if isinstance(err, DatabaseError):
         _handle_server_error(err)
     if isinstance(err, OidError):
+        print("hola pude definir bien el tipo de error")
         _handle_client_error(err)
 
 def _handle_server_error(err: Exception):
@@ -19,7 +20,5 @@ def _handle_server_error(err: Exception):
     raise HTTPException(status_code=500, detail=str(err))
 
 def _handle_client_error(err: Exception):
-    print("---------------------------------------------------------------------")
-    print("holaa pude entrar a handle_client_error")
-    print(err)
+    print(str(err))
     raise HTTPException(status_code=400, detail=str(err))
