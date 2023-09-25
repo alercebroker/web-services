@@ -6,6 +6,7 @@ from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
 from fastapi.testclient import TestClient
 from db_plugins.db.sql.models import Object, MagStats
 
+
 @pytest.fixture(scope="session")
 def docker_compose_command():
     compose_version = os.getenv("COMPOSE_VERSION", "v1")
@@ -27,7 +28,8 @@ def docker_compose_file(pytestconfig):
         )
         assert path.exists()
         return path
-    
+
+
 def is_responsive_psql(url):
     try:
         conn = psycopg2.connect(
@@ -37,7 +39,8 @@ def is_responsive_psql(url):
         return True
     except Exception:
         return False
-    
+
+
 @pytest.fixture(scope="session")
 def psql_service(docker_ip, docker_services):
     """Ensure that Kafka service is up and responsive."""
@@ -48,6 +51,7 @@ def psql_service(docker_ip, docker_services):
         timeout=30.0, pause=0.1, check=lambda: is_responsive_psql(server)
     )
     return server
+
 
 @pytest.fixture
 def init_psql():
@@ -68,6 +72,7 @@ def init_psql():
     yield dbp_database
     teardown_psql(dbp_database)
 
+
 @pytest.fixture
 def psql_session():
     os.environ["PSQL_PORT"] = "5432"
@@ -85,6 +90,7 @@ def populate_psql(database):
     with database.session() as session:
         add_psql_objects(session)
         add_psql_magstats(session)
+
 
 def add_psql_objects(session):
     object = Object(oid="oid1")
@@ -140,14 +146,15 @@ def add_psql_magstats(session):
             "lastmjd": 1.4,
             "step_id_corr": "test",
         },
-
     ]
     magstats = [MagStats(**mag) for mag in magstats]
     session.add_all(magstats)
     session.commit()
 
+
 def teardown_psql(database):
     database.drop_db()
+
 
 @pytest.fixture(scope="session")
 def test_client():

@@ -22,5 +22,3 @@ def magstats(
         handle_success=handle_success,
         handle_error=handle_error,
     )
-
-

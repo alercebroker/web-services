@@ -13,7 +13,6 @@ class DatabaseError(WrapperException):
         super().__init__(original_e, subcode)
 
 
-
 class OidError(BaseException):
     def __init__(self, oid) -> None:
         super().__init__()

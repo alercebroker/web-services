@@ -17,7 +17,7 @@ app.add_middleware(
 
 app.include_router(router)
 
+
 @app.on_event("startup")
 async def _startup():
     instrumentator.expose(app)
-

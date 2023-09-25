@@ -1,5 +1,6 @@
 from db_plugins.db.sql._connection import PsqlDatabase
-from db_plugins.db.sql.models import Object,MagStats
+from db_plugins.db.sql.models import Object, MagStats
+
 
 def database():
     user = "postgres"
@@ -73,7 +74,6 @@ def populate_databases(database):
                 "lastmjd": 1.4,
                 "step_id_corr": "test",
             }
- 
         ]
 
         session.add_all(magstats1)

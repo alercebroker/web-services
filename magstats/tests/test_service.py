@@ -5,7 +5,6 @@ import pytest
 import unittest
 
 
-
 def test_get_ztf_magstats(psql_service, psql_session, init_psql):
     result = get_magstats(
         session_factory=psql_session,
@@ -13,9 +12,8 @@ def test_get_ztf_magstats(psql_service, psql_session, init_psql):
     )
     assert result[0].fid == 123
 
-def test_get_magstats_from_unknown_oid(
-    psql_service, psql_session, init_psql
-):
+
+def test_get_magstats_from_unknown_oid(psql_service, psql_session, init_psql):
     with pytest.raises(HTTPException) as exc:
         get_magstats(
             session_factory=psql_session,
@@ -24,16 +22,17 @@ def test_get_magstats_from_unknown_oid(
         )
 
     assert exc.value.status_code == 400
-    assert exc.value.detail == "Can't retrieve magstats oid not recognized unknown"
+    assert (
+        exc.value.detail
+        == "Can't retrieve magstats oid not recognized unknown"
+    )
 
 
 class TestGetMagstatsSQL(unittest.TestCase):
-
     def test_db_exception(self):
-
         def mock_session_factory_with_exception():
             raise Exception("Test exception")
-        
+
         with pytest.raises(HTTPException) as exc:
             get_magstats(
                 session_factory=mock_session_factory_with_exception,
@@ -42,9 +41,3 @@ class TestGetMagstatsSQL(unittest.TestCase):
             )
 
         assert exc.value.status_code == 500
-
-
-
-
-
-

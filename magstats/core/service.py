@@ -17,24 +17,23 @@ def default_handle_error(error):
 
 
 def get_magstats(
-        oid: str,
-        session_factory: Callable[..., AbstractContextManager[Session]] = None,
-        handle_success: Callable[..., dict] = default_handle_success,
-        handle_error: Callable[Exception, None] = default_handle_error,        
-        ):
-    result = _get_magstats_sql(session_factory,oid,handle_error)
+    oid: str,
+    session_factory: Callable[..., AbstractContextManager[Session]] = None,
+    handle_success: Callable[..., dict] = default_handle_success,
+    handle_error: Callable[Exception, None] = default_handle_error,
+):
+    result = _get_magstats_sql(session_factory, oid, handle_error)
     if len(result) == 0:
         handle_error(OidError(oid))
     else:
         print(result)
         return handle_success(result)
 
-    
 
 def _get_magstats_sql(
     session_factory: Callable[..., AbstractContextManager[Session]],
     oid: str,
-    handle_error: Callable[Exception, None] = default_handle_error, 
+    handle_error: Callable[Exception, None] = default_handle_error,
 ):
     try:
         with session_factory() as session:
@@ -50,6 +49,3 @@ def _get_magstats_sql(
 
     except Exception as e:
         return handle_error(DatabaseError(e))
-    
-            
-    
