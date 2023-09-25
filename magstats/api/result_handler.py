@@ -12,7 +12,6 @@ def handle_error(err: Exception):
     if isinstance(err, DatabaseError):
         _handle_server_error(err)
     if isinstance(err, OidError):
-        print("hola pude definir bien el tipo de error")
         _handle_client_error(err)
 
 def _handle_server_error(err: Exception):

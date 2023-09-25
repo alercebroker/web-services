@@ -24,11 +24,9 @@ def get_magstats(
         ):
     result = _get_magstats_sql(session_factory,oid,handle_error)
     if len(result) == 0:
-        print("ohno error")
         handle_error(OidError(oid))
     else:
         print(result)
-        print("entre al if jejej ")
         return handle_success(result)
 
     
