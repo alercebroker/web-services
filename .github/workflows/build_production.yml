@@ -33,7 +33,7 @@ jobs:
       base-folder: astroobject
       build-context: astroobject
 
-  lightcurve:
+  magstats:
     uses: ./.github/workflows/build.yml
     needs: update_versions
     with:
