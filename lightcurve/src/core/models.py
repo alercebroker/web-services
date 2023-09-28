@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, Union
 
+
 class Detection(BaseModel):
     candid: Union[str, int]
     tid: str
@@ -24,6 +25,7 @@ class Detection(BaseModel):
     parent_candid: Optional[int] = None
     has_stamp: bool
     extra_fields: Optional[dict] = {}
+
 
 class NonDetection(BaseModel):
     aid: Optional[str] = None

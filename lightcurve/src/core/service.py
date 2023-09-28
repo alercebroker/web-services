@@ -107,10 +107,13 @@ def _get_detections_sql(
 ) -> list[DetectionModel]:
     try:
         with session_factory() as session:
-            stmt = select(Detection, text("'ztf'")).filter(Detection.oid == oid)
+            stmt = select(Detection, text("'ztf'")).filter(
+                Detection.oid == oid
+            )
             result = session.execute(stmt)
             result = [
-                _ztf_detection_to_multistream(res[0].__dict__, tid=res[1]) for res in result.all()
+                _ztf_detection_to_multistream(res[0].__dict__, tid=res[1])
+                for res in result.all()
             ]
             return Success(result)
     except Exception as e:
@@ -138,14 +141,18 @@ def _get_non_detections_sql(
 ) -> list[NonDetectionModel]:
     try:
         with session_factory() as session:
-            stmt = select(NonDetection, text("'ztf'")).where(NonDetection.oid == oid)
+            stmt = select(NonDetection, text("'ztf'")).where(
+                NonDetection.oid == oid
+            )
             result = session.execute(stmt)
             result = [
-                _ztf_non_detection_to_multistream(res[0].__dict__, tid=res[1]) for res in result.all()
+                _ztf_non_detection_to_multistream(res[0].__dict__, tid=res[1])
+                for res in result.all()
             ]
             return Success(result)
     except Exception as e:
         return Failure(DatabaseError(e))
+
 
 def _ztf_detection_to_multistream(
     detection: dict,
@@ -158,26 +165,26 @@ def _ztf_detection_to_multistream(
     :param tid: Telescope id for this detection.
     :return: A Detection with the converted data."""
     fields = {
-            "oid",
-            "sid",
-            "aid",
-            "tid",
-            "mjd",
-            "fid",
-            "ra",
-            "e_ra",
-            "dec",
-            "e_dec",
-            "magpsf",
-            "sigmapsf",
-            "magpsf_corr",
-            "sigmapsf_corr",
-            "sigmapsf_corr_ext",
-            "isdiffpos",
-            "corrected",
-            "dubious",
-            "parent_candid",
-            "has_stamp",
+        "oid",
+        "sid",
+        "aid",
+        "tid",
+        "mjd",
+        "fid",
+        "ra",
+        "e_ra",
+        "dec",
+        "e_dec",
+        "magpsf",
+        "sigmapsf",
+        "magpsf_corr",
+        "sigmapsf_corr",
+        "sigmapsf_corr_ext",
+        "isdiffpos",
+        "corrected",
+        "dubious",
+        "parent_candid",
+        "has_stamp",
     }
 
     extra_fields = {}
@@ -195,7 +202,7 @@ def _ztf_detection_to_multistream(
         e_mag_corr_ext=detection.get("sigmapsf_corr_ext", None),
         extra_fields=extra_fields,
     )
-    
+
 
 def _ztf_non_detection_to_multistream(
     non_detections: dict,
@@ -208,8 +215,8 @@ def _ztf_non_detection_to_multistream(
     :return: A NonDetection with the converted data."""
     return NonDetectionModel(
         tid=tid,
-        oid=non_detections['oid'],
-        mjd=non_detections['mjd'],
-        fid=non_detections['fid'],
-        diffmaglims=non_detections.get('diffmaglim', None)
+        oid=non_detections["oid"],
+        mjd=non_detections["mjd"],
+        fid=non_detections["fid"],
+        diffmaglims=non_detections.get("diffmaglim", None),
     )
