@@ -13,6 +13,7 @@ config = {
     "password": pwd,
     "port": int(port),
     "database": db,
+    "authSource": db,
 }
 database_name = config.pop("database")
 client = MongoClient(**config)

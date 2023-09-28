@@ -46,6 +46,7 @@ configmap:
   port: ""
 
 ingress:
+  certificateArn: ""
   host: ""
   k8sGroupName: ""
   k8sTags: ""

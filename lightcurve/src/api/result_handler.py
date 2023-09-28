@@ -3,6 +3,7 @@ from core.exceptions import (
     DatabaseError,
     SurveyIdError,
     AtlasNonDetectionError,
+    ObjectNotFound
 )
 import logging
 
@@ -11,8 +12,8 @@ def handle_success(result):
     return result
 
 
-def _handle_client_error(err: Exception):
-    raise HTTPException(status_code=400, detail=str(err))
+def _handle_client_error(err: Exception, code=400):
+    raise HTTPException(status_code=code, detail=str(err))
 
 
 def _handle_server_error(err: Exception):
@@ -27,3 +28,5 @@ def handle_error(err: Exception):
         _handle_client_error(err)
     if isinstance(err, AtlasNonDetectionError):
         _handle_client_error(err)
+    if isinstance(err, ObjectNotFound):
+        _handle_client_error(err, code=404)

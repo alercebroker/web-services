@@ -6,8 +6,17 @@ from .filters import get_filters_map
 from .routes import router
 from prometheus_fastapi_instrumentator import Instrumentator
 
-app = FastAPI()
-instrumentator = Instrumentator().instrument(app)
+app = FastAPI(
+    openapi_url="/v2/lightcurve/openapi.json"
+)
+instrumentator = Instrumentator().instrument(app).expose(app)
+
+app.add_middleware(
+    RalidatorStarlette,
+    config={"SECRET_KEY": os.getenv("SECRET_KEY")},
+    filters_map=get_filters_map(),
+    ignore_paths=["/metrics", "/docs", "/openapi.json"],
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,16 +26,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.add_middleware(
-    RalidatorStarlette,
-    config={"SECRET_KEY": os.getenv("SECRET_KEY")},
-    filters_map=get_filters_map(),
-    ignore_paths=["/metrics"],
-)
-
 app.include_router(router)
 
-
-@app.on_event("startup")
-async def _startup():
-    instrumentator.expose(app)
+@app.get("/openapi.json")
+def custom_swagger_route():
+    return app.openapi()

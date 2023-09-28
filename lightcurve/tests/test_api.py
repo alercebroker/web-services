@@ -43,6 +43,9 @@ def test_lightcurve_from_atlas(mongo_service, init_mongo, test_client):
     # intended behavior
     assert json_res is None
 
+def test_lightcurve_from_atlas_without_results(mongo_service, init_mongo, test_client):
+    res = test_client.get("/lightcurve/oid100", params={"survey_id": "atlas"})
+    assert res.status_code == 404
 
 def test_lightcurve_from_ztf(psql_service, init_psql, test_client):
     res = test_client.get("/lightcurve/oid1", params={"survey_id": "ztf"})
@@ -50,3 +53,10 @@ def test_lightcurve_from_ztf(psql_service, init_psql, test_client):
     json_res = res.json()
     assert len(json_res["detections"]) == 2
     assert len(json_res["non_detections"]) == 2
+
+
+def test_has_metrics(test_client):
+    res = test_client.get("/")
+    assert res.status_code == 200
+    res = test_client.get("/metrics")
+    assert res.status_code == 200

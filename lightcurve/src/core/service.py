@@ -3,7 +3,12 @@ from typing import Callable
 from sqlalchemy import select, text
 from returns.result import Success, Failure
 from returns.pipeline import is_successful
-from .exceptions import DatabaseError, SurveyIdError, AtlasNonDetectionError
+from .exceptions import (
+    DatabaseError,
+    SurveyIdError,
+    AtlasNonDetectionError,
+    ObjectNotFound,
+)
 from .models import (
     Detection as DetectionModel,
     NonDetection as NonDetectionModel,
@@ -102,13 +107,10 @@ def _get_detections_sql(
 ):
     try:
         with session_factory() as session:
-            stmt = select(Detection, text("'ztf'")).filter(
-                Detection.oid == oid
-            )
+            stmt = select(Detection, text("'ztf'")).filter(Detection.oid == oid)
             result = session.execute(stmt)
             result = [
-                DetectionModel(**res[0].__dict__, tid=res[1])
-                for res in result.all()
+                DetectionModel(**res[0].__dict__, tid=res[1]) for res in result.all()
             ]
             return Success(result)
     except Exception as e:
@@ -117,8 +119,13 @@ def _get_detections_sql(
 
 def _get_detections_mongo(database: Database, oid: str):
     try:
-        result = database["detection"].find({"oid": oid})
+        obj = database["object"].find_one({"oid": oid}, {"_id": 1})
+        if obj is None:
+            raise ValueError()
+        result = database["detection"].find({"aid": obj["_id"]})
         return Success([res for res in result])
+    except ValueError as e:
+        return Failure(ObjectNotFound(oid))
     except Exception as e:
         return Failure(DatabaseError(e))
 
@@ -128,13 +135,10 @@ def _get_non_detections_sql(
 ):
     try:
         with session_factory() as session:
-            stmt = select(NonDetection, text("'ztf'")).where(
-                NonDetection.oid == oid
-            )
+            stmt = select(NonDetection, text("'ztf'")).where(NonDetection.oid == oid)
             result = session.execute(stmt)
             result = [
-                NonDetectionModel(**res[0].__dict__, tid=res[1])
-                for res in result.all()
+                NonDetectionModel(**res[0].__dict__, tid=res[1]) for res in result.all()
             ]
             return Success(result)
     except Exception as e:
