@@ -1,5 +1,9 @@
 from core.service import get_detections, get_non_detections, get_lightcurve
 from core.exceptions import SurveyIdError, AtlasNonDetectionError
+from core.models import (
+    Detection as DetectionModel,
+    NonDetection as NonDetectionModel,
+)
 import pytest
 
 
@@ -10,6 +14,7 @@ def test_get_ztf_detections(psql_service, psql_session, init_psql):
         survey_id="ztf",
     )
     assert len(result) == 2
+    assert type(result[0]) is DetectionModel
 
 
 def test_get_detections_from_unknown_survey(
@@ -30,6 +35,7 @@ def test_get_ztf_non_detections(psql_service, psql_session, init_psql):
         session_factory=psql_session, oid="oid1", survey_id="ztf"
     )
     assert len(result) == 2
+    assert type(result[0]) is NonDetectionModel
 
 
 def test_get_non_detections_from_unknown_survey(
@@ -52,6 +58,7 @@ def test_get_atlas_detections(mongo_service, mongo_database, init_mongo):
         mongo_db=mongo_database,
     )
     assert len(result) == 2
+    assert type(result[0]) is DetectionModel
 
 
 def test_get_atlas_non_detections(mongo_service, mongo_database, init_mongo):
