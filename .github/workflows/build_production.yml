@@ -32,3 +32,12 @@ jobs:
       service-name: astroobject
       base-folder: astroobject
       build-context: astroobject
+
+  lightcurve:
+    uses: ./.github/workflows/build.yml
+    needs: update_versions
+    with:
+      build-type: production
+      service-name: magstats
+      base-folder: magstats
+      build-context: magstats

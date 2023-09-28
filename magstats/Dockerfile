@@ -22,9 +22,9 @@ RUN pip install poetry
 COPY --from=builder /app /app
 WORKDIR /app
 COPY ./magstats/README.md /app/README.md
-COPY ./entrypoint.sh /app/
-COPY ./core /app/core
-COPY ./api /app/api
-COPY ./database /app/database
+COPY ./magstats/entrypoint.sh /app/
+COPY ./magstats/core /app/core
+COPY ./magstats/api /app/api
+COPY ./magstats/database /app/database
 RUN poetry install --only-root
 CMD ["bash", "scripts/entrypoint.sh"]
