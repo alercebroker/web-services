@@ -151,6 +151,12 @@ def _ztf_detection_to_multistream(
     detection: dict,
     tid: str,
 ) -> DetectionModel:
+    """Converts a dictionary representing a detection in the ZTF schema
+    to the Multistream schema defined in models.py. Separates every field
+    that's without a correspondence in the schema into extra_fields.
+    :param detection: Dictionary representing a detection.
+    :param tid: Telescope id for this detection.
+    :return: A Detection with the converted data."""
     fields = {
             "oid",
             "sid",
@@ -195,6 +201,11 @@ def _ztf_non_detection_to_multistream(
     non_detections: dict,
     tid: str,
 ) -> NonDetectionModel:
+    """Converts a dictionary representing a non detection in the ZTF schema
+    to the Multistream schema defined in models.py.
+    :param non_detection: Dictionary representing a non_detection.
+    :param tid: Telescope id for this detection.
+    :return: A NonDetection with the converted data."""
     return NonDetectionModel(
         tid=tid,
         oid=non_detections['oid'],
