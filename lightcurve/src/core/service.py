@@ -1,21 +1,21 @@
 from contextlib import AbstractContextManager
 from typing import Callable
-from sqlalchemy import select, text
-from returns.result import Success, Failure
-from returns.pipeline import is_successful
-from .exceptions import (
-    DatabaseError,
-    SurveyIdError,
-    AtlasNonDetectionError,
-    ObjectNotFound,
-)
-from .models import (
-    Detection as DetectionModel,
-    NonDetection as NonDetectionModel,
-)
-from pymongo.database import Database
+
 from db_plugins.db.sql.models import Detection, NonDetection
+from pymongo.database import Database
+from returns.pipeline import is_successful
+from returns.result import Failure, Success
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
+
+from .exceptions import (
+    AtlasNonDetectionError,
+    DatabaseError,
+    ObjectNotFound,
+    SurveyIdError,
+)
+from .models import Detection as DetectionModel
+from .models import NonDetection as NonDetectionModel
 
 
 def default_handle_success(result):
@@ -155,7 +155,7 @@ def _get_non_detections_sql(
 
 
 def _ztf_detection_to_multistream(
-    detection: dict,
+    detection: dict[str, any],
     tid: str,
 ) -> DetectionModel:
     """Converts a dictionary representing a detection in the ZTF schema
@@ -165,6 +165,7 @@ def _ztf_detection_to_multistream(
     :param tid: Telescope id for this detection.
     :return: A Detection with the converted data."""
     fields = {
+        "candid",
         "oid",
         "sid",
         "aid",
@@ -189,7 +190,7 @@ def _ztf_detection_to_multistream(
 
     extra_fields = {}
     for field, value in detection.items():
-        if field not in fields:
+        if field not in fields and not field.startswith("_"):
             extra_fields[field] = value
 
     return DetectionModel(
@@ -205,7 +206,7 @@ def _ztf_detection_to_multistream(
 
 
 def _ztf_non_detection_to_multistream(
-    non_detections: dict,
+    non_detections: dict[str, any],
     tid: str,
 ) -> NonDetectionModel:
     """Converts a dictionary representing a non detection in the ZTF schema

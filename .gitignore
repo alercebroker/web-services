@@ -12,6 +12,7 @@ coverage.*
 .python-version
 tests/profiling/memray*
 .projectile
+.venv
 
 #packaged charts
 *.tgz

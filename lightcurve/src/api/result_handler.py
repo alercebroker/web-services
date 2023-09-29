@@ -1,11 +1,13 @@
-from fastapi import HTTPException
-from core.exceptions import (
-    DatabaseError,
-    SurveyIdError,
-    AtlasNonDetectionError,
-    ObjectNotFound
-)
 import logging
+
+from fastapi import HTTPException
+
+from core.exceptions import (
+    AtlasNonDetectionError,
+    DatabaseError,
+    ObjectNotFound,
+    SurveyIdError,
+)
 
 
 def handle_success(result):
