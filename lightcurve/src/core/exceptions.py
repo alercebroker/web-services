@@ -30,9 +30,7 @@ class ObjectNotFound(BaseException):
         self.object_id = object_id
 
     def __str__(self) -> str:
-        return (
-            f"Object {self.object_id} not found on the database"
-        )
+        return f"Object {self.object_id} not found on the database"
 
 
 class NonDetectionsNotFound(BaseException):

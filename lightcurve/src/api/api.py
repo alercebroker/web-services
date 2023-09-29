@@ -6,9 +6,7 @@ from .filters import get_filters_map
 from .routes import router
 from prometheus_fastapi_instrumentator import Instrumentator
 
-app = FastAPI(
-    openapi_url="/v2/lightcurve/openapi.json"
-)
+app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
 instrumentator = Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(
@@ -27,6 +25,7 @@ app.add_middleware(
 )
 
 app.include_router(router)
+
 
 @app.get("/openapi.json")
 def custom_swagger_route():
