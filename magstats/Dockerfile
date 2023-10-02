@@ -13,18 +13,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 FROM python-base as builder
 RUN pip install poetry
 WORKDIR /app
-COPY ./magstats/poetry.lock ./magstats/pyproject.toml /app
-RUN poetry install --no-root --without=test
+COPY ./poetry.lock ./pyproject.toml /app
+RUN poetry install --no-root --without=dev
 
 
 FROM python:3.11-slim as production
 RUN pip install poetry
 COPY --from=builder /app /app
 WORKDIR /app
-COPY ./magstats/README.md /app/README.md
-COPY ./magstats/entrypoint.sh /app/
-COPY ./magstats/core /app/core
-COPY ./magstats/api /app/api
-COPY ./magstats/database /app/database
+COPY ./README.md /app/README.md
+COPY ./entrypoint.sh /app/
+COPY ./core /app/core
+COPY ./api /app/api
+COPY ./database /app/database
 RUN poetry install --only-root
-CMD ["bash", "scripts/entrypoint.sh"]
+CMD ["bash", "entrypoint.sh"]
