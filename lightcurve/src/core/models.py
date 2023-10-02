@@ -4,41 +4,34 @@ from typing import Optional, Union
 
 class Detection(BaseModel):
     candid: Union[str, int]
-    oid: str
     tid: str
+    sid: Optional[str] = None
+    aid: Optional[str] = None
+    oid: str
     mjd: float
     fid: int
-    pid: float
-    diffmaglim: Optional[float] = None
-    isdiffpos: int
-    nid: Optional[int] = None
     ra: float
+    e_ra: Optional[float] = None
     dec: float
-    magpsf: float
-    sigmapsf: float
-    magap: Optional[float] = None
-    sigmagap: Optional[float] = None
-    distnr: Optional[float] = None
-    rb: Optional[float] = None
-    rbversion: Optional[str] = None
-    drb: Optional[float] = None
-    drbversion: Optional[str] = None
-    magapbig: Optional[float] = None
-    sigmagapbig: Optional[float] = None
-    rfid: Optional[int] = None
-    magpsf_corr: Optional[float] = None
-    sigmapsf_corr: Optional[float] = None
-    sigmapsf_corr_ext: Optional[float] = None
+    e_dec: Optional[float] = None
+    mag: float
+    e_mag: float
+    mag_corr: Optional[float] = None
+    e_mag_corr: Optional[float] = None
+    e_mag_corr_ext: Optional[float] = None
+    isdiffpos: bool
     corrected: bool
     dubious: bool
     parent_candid: Optional[int] = None
     has_stamp: bool
-    step_id_corr: str
+    extra_fields: Optional[dict] = {}
 
 
 class NonDetection(BaseModel):
-    oid: str
-    fid: int
+    aid: Optional[str] = None
     tid: str
+    sid: Optional[str] = None
+    oid: str
     mjd: float
+    fid: int
     diffmaglim: Optional[float] = None
