@@ -4,18 +4,23 @@ version = "0.1.1a86"
 description = "Get lightcurve of objects from ZTF and ATLAS surveys"
 authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
-packages = [{include = "core", from = "src"}, {include = "api", from = "src"}, {include = "database", from = "src"}]
+packages = [
+    { include = "core", from = "src" },
+    { include = "api", from = "src" },
+    { include = "database", from = "src" },
+]
 
 [tool.poetry.dependencies]
 fastapi = "^0.100.0"
 python = "^3.11"
-sqlalchemy = {extras = ["asyncio"], version = "^2.0.19"}
+sqlalchemy = { extras = ["asyncio"], version = "^2.0.19" }
 pymongo = "^4.4.1"
 returns = "^0.21.0"
 psycopg2-binary = "^2.9.6"
-ralidator-fastapi = {path = "../libs/ralidator-fastapi", develop = true}
-db-plugins = { version = "5.1.1", python = ">=3.11,<3.12"}
+ralidator-fastapi = { path = "../libs/ralidator-fastapi", develop = true }
+db-plugins = { version = "5.1.1", python = ">=3.11,<3.12" }
 prometheus-fastapi-instrumentator = "^6.1.0"
+jinja2 = "^3.1.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -24,10 +29,14 @@ httpx = "^0.24.1"
 pytest-cov = "^4.1.0"
 
 [tool.poetry.group.production.dependencies]
-uvicorn = {extras = ["standard"], version = "^0.23.1"}
+uvicorn = { extras = ["standard"], version = "^0.23.1" }
 
 [tool.poetry.group.profiling.dependencies]
 memray = "^1.8.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.9.1"
 
 [build-system]
 requires = ["poetry-core"]
@@ -35,3 +44,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 79
+
+[tool.poetry.scripts]
+dev = "scripts.run_dev:run"

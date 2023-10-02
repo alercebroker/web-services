@@ -1,0 +1,107 @@
+<script type="text/javascript">
+    // Conditionally loads css file to prevent duplicate downloading / parsing
+    function isCssLoaded(url) {
+        for (let css of document.styleSheets) {
+            if (css.href === url) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function isJsLoaded(src) {
+        for (let script of document.scripts) {
+            if (script.src === src) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function conditionalCss(href) {
+        if (!isCssLoaded(href)) {
+            var link = document.createElement("link");
+            link.href = href;
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            document.head.appendChild(link);
+        }
+    }
+
+    function conditionalJs(src, callback) {
+        if (!isJsLoaded(src)) {
+            var script = document.createElement("script");
+            script.src = src;
+            script.type = "text/javascript";
+            script.onload = callback;
+            document.head.append(script);
+        }
+        callback();
+    }
+
+    var data = {{ data | tojson }};
+
+    conditionalCss("/static/main.css");
+    conditionalJs("/static/echarts.js", () => {
+        var myChart = echarts.init(document.getElementById('main'));
+
+        let g = data.filter(function (item) {
+            return item["fid"] == 1
+        })
+        let r = data.filter(function (item) {
+            return item["fid"] == 2
+        })
+
+        var option = {
+            tooltip: {},
+            legend: {
+                data: ['g', 'r']
+            },
+            xAxis: {
+                type: 'value',
+                min: function (value) {
+                    return value.min - 5;
+                },
+                max: function (value) {
+                    return value.max + 5;
+                }
+            },
+            yAxis: {
+                type: 'value',
+                min: function (value) {
+                    return value.min - 0.5;
+                },
+                max: function (value) {
+                    return value.max + 0.5;
+                },
+                inverse: true
+            },
+            series: [
+                {
+                    name: 'g',
+                    type: 'scatter',
+                    data: g.map(function (item) {
+                        return [item["mjd"], item["mag"]]
+                    }),
+                    color: 'green'
+                },
+                {
+                    name: 'r',
+                    type: 'scatter',
+                    data: r.map(function (item) {
+                        return [item["mjd"], item["mag"]]
+                    }),
+                    color: 'red'
+                }
+            ]
+        };
+
+        // Display the chart using the configuration items and data just specified.
+        myChart.setOption(option);
+        window.addEventListener("resize", myChart.resize);
+    });
+</script>
+<div>
+    <!-- Prepare a DOM with a defined width and height for ECharts -->
+    <div id="main" style="height:100%;min-height:380px;"></div>
+</div>

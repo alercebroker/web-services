@@ -1,0 +1,19 @@
+<script type="text/javascript">
+    // Conditionally loads css file to prevent duplicate downloading / parsing
+    function isCssLoaded(url) {
+        return [...document.styleSheets].some(css => css.href === url);
+    }
+
+    var cssUrl = "/static/main.css"
+    if (!isCssLoaded(cssUrl)) {
+        var link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.type = "text/css";
+        link.href = cssUrl;
+        document.head.appendChild(link);
+
+    }
+</script>
+<div class="flex items-center w-screen h-screen bg-red-200 align-center">
+    {{text}}
+</div>

@@ -1,13 +1,15 @@
-from fastapi import Request, APIRouter
+from fastapi import APIRouter, Request
 from ralidator_fastapi.decorators import (
-    set_filters_decorator,
     check_permissions_decorator,
+    set_filters_decorator,
     set_permissions_decorator,
 )
-from core.service import get_detections, get_non_detections, get_lightcurve
-from .result_handler import handle_success, handle_error
-from database.sql import session
+
+from core.service import get_detections, get_lightcurve, get_non_detections
 from database.mongo import database
+from database.sql import session
+
+from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
 
