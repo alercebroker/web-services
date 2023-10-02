@@ -1,10 +1,10 @@
 from contextlib import AbstractContextManager
-from typing import Callable
+from typing import Any, Callable, Optional
 
 from db_plugins.db.sql.models import Detection, NonDetection
 from pymongo.database import Database
 from returns.pipeline import is_successful
-from returns.result import Failure, Success
+from returns.result import Failure, Result, Success
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
@@ -37,9 +37,9 @@ def get_lightcurve(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-    handle_success: Callable[..., dict] = default_handle_success,
-    handle_error: Callable[Exception, None] = default_handle_error,
-) -> dict:
+    handle_success: Callable[[Any], Any] = default_handle_success,
+    handle_error: Callable[[Exception], None] = default_handle_error,
+) -> Optional[dict]:
     if survey_id == "ztf":
         detections = _get_detections_sql(session_factory, oid)
         non_detections = _get_non_detections_sql(session_factory, oid)
@@ -65,12 +65,11 @@ def get_detections(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-    handle_success: Callable[..., dict] = default_handle_success,
-    handle_error: Callable[Exception, None] = default_handle_error,
-) -> list:
+    handle_success: Callable[[Any], Any] = default_handle_success,
+    handle_error: Callable[[Exception], None] = default_handle_error,
+) -> Optional[list[Detection]]:
     if survey_id == "ztf":
         result = _get_detections_sql(session_factory, oid)
-
     elif survey_id == "atlas":
         result = _get_detections_mongo(mongo_db, oid)
     else:
@@ -87,9 +86,9 @@ def get_non_detections(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-    handle_success: Callable[..., dict] = default_handle_success,
-    handle_error: Callable[Exception, None] = default_handle_error,
-):
+    handle_success: Callable[[Any], Any] = default_handle_success,
+    handle_error: Callable[[Exception], None] = default_handle_error,
+) -> Optional[list[NonDetection]]:
     if survey_id == "ztf":
         result = _get_non_detections_sql(session_factory, oid)
         if is_successful(result):
@@ -104,7 +103,7 @@ def get_non_detections(
 
 def _get_detections_sql(
     session_factory: Callable[..., AbstractContextManager[Session]], oid: str
-) -> list[DetectionModel]:
+) -> Result[list[DetectionModel], Exception]:
     try:
         with session_factory() as session:
             stmt = select(Detection, text("'ztf'")).filter(
@@ -122,7 +121,7 @@ def _get_detections_sql(
 
 def _get_detections_mongo(
     database: Database, oid: str
-) -> list[DetectionModel]:
+) -> Result[list[DetectionModel], Exception]:
     try:
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
@@ -138,7 +137,7 @@ def _get_detections_mongo(
 
 def _get_non_detections_sql(
     session_factory: Callable[..., AbstractContextManager[Session]], oid: str
-) -> list[NonDetectionModel]:
+) -> Result[list[NonDetectionModel], Exception]:
     try:
         with session_factory() as session:
             stmt = select(NonDetection, text("'ztf'")).where(
