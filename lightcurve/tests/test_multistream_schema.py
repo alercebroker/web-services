@@ -67,6 +67,7 @@ def test_psql_non_detections_to_multistream():
         "oid": "oid1",
         "mjd": 59000,
         "fid": 1,
+        "diffmaglim": 123.456,
     }
     expected_multistream_non_detection = {
         "aid": None,
@@ -75,7 +76,7 @@ def test_psql_non_detections_to_multistream():
         "oid": "oid1",
         "mjd": 59000,
         "fid": 1,
-        "diffmaglim": None,
+        "diffmaglim": 123.456,
     }
     multistream_non_detection = _ztf_non_detection_to_multistream(
         psql_non_detection, tid="0"
