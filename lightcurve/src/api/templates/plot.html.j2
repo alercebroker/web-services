@@ -1,17 +1,8 @@
-<script type="text/javascript">
+<script>
     // Conditionally loads css file to prevent duplicate downloading / parsing
     function isCssLoaded(url) {
         for (let css of document.styleSheets) {
             if (css.href === url) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function isJsLoaded(src) {
-        for (let script of document.scripts) {
-            if (script.src === src) {
                 return true;
             }
         }
@@ -28,78 +19,20 @@
         }
     }
 
-    function conditionalJs(src, callback) {
-        if (!isJsLoaded(src)) {
-            var script = document.createElement("script");
-            script.src = src;
-            script.type = "text/javascript";
-            script.onload = callback;
-            document.head.append(script);
-        }
-        callback();
-    }
+    conditionalCss("{{ API_URL }}/static/main.css");
+</script>
+<script type="module">
+    import { DifferenceLightCurveOptions } from "{{ API_URL }}/static/lc-difference.js";
+    import * as echart from "{{ API_URL }}/static/echarts.js";
 
-    var data = {{ data | tojson }};
+    var detections = {{ detections | tojson }};
+    var non_detections = {{ non_detections | tojson }};
 
-    conditionalCss("/static/main.css");
-    conditionalJs("/static/echarts.js", () => {
-        var myChart = echarts.init(document.getElementById('main'));
-
-        let g = data.filter(function (item) {
-            return item["fid"] == 1
-        })
-        let r = data.filter(function (item) {
-            return item["fid"] == 2
-        })
-
-        var option = {
-            tooltip: {},
-            legend: {
-                data: ['g', 'r']
-            },
-            xAxis: {
-                type: 'value',
-                min: function (value) {
-                    return value.min - 5;
-                },
-                max: function (value) {
-                    return value.max + 5;
-                }
-            },
-            yAxis: {
-                type: 'value',
-                min: function (value) {
-                    return value.min - 0.5;
-                },
-                max: function (value) {
-                    return value.max + 0.5;
-                },
-                inverse: true
-            },
-            series: [
-                {
-                    name: 'g',
-                    type: 'scatter',
-                    data: g.map(function (item) {
-                        return [item["mjd"], item["mag"]]
-                    }),
-                    color: 'green'
-                },
-                {
-                    name: 'r',
-                    type: 'scatter',
-                    data: r.map(function (item) {
-                        return [item["mjd"], item["mag"]]
-                    }),
-                    color: 'red'
-                }
-            ]
-        };
-
-        // Display the chart using the configuration items and data just specified.
-        myChart.setOption(option);
-        window.addEventListener("resize", myChart.resize);
-    });
+    var lc = new DifferenceLightCurveOptions(detections, non_detections, "#000");
+    var plot = echarts.init(document.getElementById("main"));
+    plot.setOption(lc.options);
+    plot.on("click", (event) => lc.lcDifferenceOnClick(event));
+    window.addEventListener("resize", plot.resize);
 </script>
 <div>
     <!-- Prepare a DOM with a defined width and height for ECharts -->

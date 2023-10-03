@@ -1,56 +1,58 @@
+import os
+
+from data.load import get_dummy_data
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from jinja2 import Environment, PackageLoader, select_autoescape
 
-from core.models import Detection
+from core.service import get_detections, get_non_detections
+from database.mongo import database
+from database.sql import session
+
+from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
-env = Environment(
+jinja_env = Environment(
     loader=PackageLoader("api"),
     autoescape=select_autoescape(),
 )
 
+jinja_env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
+
 
 @router.get("/")
 def test() -> HTMLResponse:
-    template = env.get_template("test.html.j2")
+    template = jinja_env.get_template("test.html.j2")
     return HTMLResponse(template.render(text="Hello, World!"))
 
 
 @router.get("/plot/difference")
-def diff_plot() -> HTMLResponse:
-    detections = [
-        Detection(
-            **{
-                "candid": 123,
-                "oid": "oid1",
-                "sid": None,
-                "aid": None,
-                "tid": "0",
-                "mjd": 59000.0,
-                "fid": 1,
-                "ra": 10.0,
-                "e_ra": None,
-                "dec": 20,
-                "e_dec": None,
-                "mag": 15,
-                "e_mag": 0.5,
-                "mag_corr": None,
-                "e_mag_corr": None,
-                "e_mag_corr_ext": None,
-                "parent_candid": None,
-                "corrected": False,
-                "dubious": False,
-                "has_stamp": False,
-                "isdiffpos": True,
-                "extra_fields": {
-                    "pid": 1,
-                    "step_id_corr": "test",
-                },
-            }
-        ).__dict__
-    ]
+def diff_plot(oid: str, survey_id: str = "ztf") -> HTMLResponse:
+    # detections = get_detections(
+    #     oid=oid,
+    #     survey_id=survey_id,
+    #     session_factory=session,
+    #     mongo_db=database,
+    #     handle_error=handle_error,
+    #     handle_success=handle_success,
+    # )
+
+    # non_detections = get_non_detections(
+    #     oid=oid,
+    #     survey_id=survey_id,
+    #     session_factory=session,
+    #     mongo_db=database,
+    #     handle_error=handle_error,
+    #     handle_success=handle_success,
+    # )
+
+    detections, non_detections = get_dummy_data()
+
+    detections = list(map(lambda det: det.__dict__, detections))
+    non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
 
     return HTMLResponse(
-        env.get_template("plot.html.j2").render(data=detections)
+        jinja_env.get_template("plot.html.j2").render(
+            detections=detections, non_detections=non_detections
+        )
     )

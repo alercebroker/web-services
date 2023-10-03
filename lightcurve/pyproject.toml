@@ -8,6 +8,7 @@ packages = [
     { include = "core", from = "src" },
     { include = "api", from = "src" },
     { include = "database", from = "src" },
+    { include = "data", from = "tests" },
 ]
 
 [tool.poetry.dependencies]

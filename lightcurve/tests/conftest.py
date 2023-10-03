@@ -1,13 +1,14 @@
-import pytest
 import os
 import pathlib
+
 import psycopg2
+import pytest
+from db_plugins.db.mongo._connection import MongoConnection
+from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
+from db_plugins.db.sql.models import Detection, NonDetection, Object
+from fastapi.testclient import TestClient
 from pymongo import MongoClient
 from pymongo.database import Database
-from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
-from db_plugins.db.sql.models import Object, Detection, NonDetection
-from db_plugins.db.mongo._connection import MongoConnection
-from fastapi.testclient import TestClient
 
 
 @pytest.fixture(scope="session")
@@ -311,6 +312,7 @@ def teardown_mongo(database: MongoConnection):
 
 @pytest.fixture(scope="session")
 def test_client():
+    os.environ["ENV"] = "test"
     os.environ["PSQL_PORT"] = "5432"
     os.environ["PSQL_HOST"] = "localhost"
     os.environ["PSQL_USER"] = "postgres"
