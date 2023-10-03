@@ -154,7 +154,7 @@ def _get_non_detections_sql(
 
 
 def _ztf_detection_to_multistream(
-    detection: dict[str, any],
+    detection: dict[str, Any],
     tid: str,
 ) -> DetectionModel:
     """Converts a dictionary representing a detection in the ZTF schema
@@ -205,7 +205,7 @@ def _ztf_detection_to_multistream(
 
 
 def _ztf_non_detection_to_multistream(
-    non_detections: dict[str, any],
+    non_detections: dict[str, Any],
     tid: str,
 ) -> NonDetectionModel:
     """Converts a dictionary representing a non detection in the ZTF schema
@@ -215,8 +215,8 @@ def _ztf_non_detection_to_multistream(
     :return: A NonDetection with the converted data."""
     return NonDetectionModel(
         tid=tid,
-        oid=non_detections["oid"],
         mjd=non_detections["mjd"],
         fid=non_detections["fid"],
-        diffmaglims=non_detections.get("diffmaglim", None),
+        oid=non_detections.get("oid", None),
+        diffmaglim=non_detections.get("diffmaglim", None),
     )
