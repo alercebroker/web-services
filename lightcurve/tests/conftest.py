@@ -220,20 +220,14 @@ def populate_mongo(database: MongoConnection):
     database.create_db()
     add_mongo_objects(database.database)
     add_mongo_detections(database.database)
-    add_mongo_non_detections(database.database)
 
 
 def add_mongo_objects(database: Database):
     object1 = {
         "_id": "aid1",
-        "oid": ["oid2", "oid3"],
-    }
-    object2 = {
-        "_id": "aid3",
-        "oid": ["oid1"],
+        "oid": ["oid1", "oid2"],
     }
     database["object"].insert_one(object1)
-    database["object"].insert_one(object2)
 
 
 def add_mongo_detections(database: Database):
@@ -241,7 +235,7 @@ def add_mongo_detections(database: Database):
         {
             "_id": "candid1",
             "aid": "aid1",
-            "oid": "oid2",
+            "oid": "oid1",
             "tid": "atlas",
             "mjd": 59000,
             "fid": 1,
@@ -257,8 +251,8 @@ def add_mongo_detections(database: Database):
         {
             "_id": "candid2",
             "aid": "aid1",
-            "oid": "oid2",
             "tid": "atlas",
+            "oid": "oid1",
             "mjd": 59001,
             "fid": 2,
             "ra": 11,
@@ -274,7 +268,7 @@ def add_mongo_detections(database: Database):
             "_id": "candid3",
             "aid": "aid2",
             "tid": "atlas",
-            "oid": "oid3",
+            "oid": "oid2",
             "mjd": 59005,
             "fid": 3,
             "ra": 12.0,
@@ -292,7 +286,7 @@ def add_mongo_detections(database: Database):
             "_id": "candid4",
             "aid": "aid2",
             "tid": "atlas",
-            "oid": "oid3",
+            "oid": "oid2",
             "mjd": 59006,
             "fid": 3,
             "ra": 11.0,
@@ -306,83 +300,9 @@ def add_mongo_detections(database: Database):
             "dubious": False,
             "has_stamp": False,
         },
-        {
-            "_id": "candid5",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59006,
-            "fid": 3,
-            "ra": 11.0,
-            "e_ra": 0.2,
-            "dec": 23.0,
-            "e_dec": 0.3,
-            "mag": 12.0,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid6",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59010,
-            "fid": 1,
-            "ra": 10.0,
-            "e_ra": 0.1,
-            "dec": 20.0,
-            "e_dec": 0.1,
-            "mag": 15.0,
-            "e_mag": 0.1,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        }, # Unique ZTF detection
-        {
-            "_id": "123",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        }, # Duplicated ZTF detection
     ]
     for det in detections:
         database.detection.insert_one(det)
-
-def add_mongo_non_detections(database: Database):
-    non_detections = [
-        {
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "diffmaglim": 0.5
-        }, #duplicate
-        {
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59015,
-            "fid": 1,
-            "diffmaglim": 0.6
-        }, # unique ztf non detection
-    ]
-    for non_det in non_detections:
-        database.non_detection.insert_one(non_det)
 
 
 def teardown_mongo(database: MongoConnection):

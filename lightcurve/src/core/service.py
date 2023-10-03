@@ -31,6 +31,7 @@ def fail_from_list(failable_list: list):
         if not is_successful(el):
             return el.failure()
 
+
 def get_lightcurve(
     oid: str,
     survey_id: str,
@@ -40,10 +41,10 @@ def get_lightcurve(
     handle_error: Callable[Exception, None] = default_handle_error,
 ) -> dict:
     if survey_id == "ztf":
-        detections = _get_detections_sql(session_factory, oid, tid=survey_id)
-        non_detections = _get_non_detections_sql(session_factory, oid, tid=survey_id)
+        detections = _get_detections_sql(session_factory, oid)
+        non_detections = _get_non_detections_sql(session_factory, oid)
     elif survey_id == "atlas":
-        detections = _get_detections_mongo(mongo_db, oid, tid="atlas")
+        detections = _get_detections_mongo(mongo_db, oid)
         non_detections = Success([])
     else:
         handle_error(SurveyIdError(survey_id))
@@ -67,22 +68,18 @@ def get_detections(
     handle_success: Callable[..., dict] = default_handle_success,
     handle_error: Callable[Exception, None] = default_handle_error,
 ) -> list:
-    if survey_id in ["ztf", "atlas"]:
-        sql_detections_result = _get_detections_sql(session_factory, oid, tid=survey_id)
-        if not is_successful(sql_detections_result):
-            handle_error(sql_detections_result.failure())
-        sql_detections = sql_detections_result.unwrap()
+    if survey_id == "ztf":
+        result = _get_detections_sql(session_factory, oid)
 
-        mongo_detections_result = _get_detections_mongo(mongo_db, oid, tid=survey_id)
-        if not is_successful(mongo_detections_result):
-            handle_error(mongo_detections_result.failure())
-        mongo_detections = mongo_detections_result.unwrap()
-
-        detections = sql_detections + mongo_detections
-        return handle_success(detections)
+    elif survey_id == "atlas":
+        result = _get_detections_mongo(mongo_db, oid)
     else:
         handle_error(SurveyIdError(survey_id))
 
+    if is_successful(result):
+        return handle_success(result.unwrap())
+    else:
+        handle_error(result.failure())
 
 
 def get_non_detections(
@@ -94,19 +91,11 @@ def get_non_detections(
     handle_error: Callable[Exception, None] = default_handle_error,
 ):
     if survey_id == "ztf":
-        sql_non_detections_result = _get_non_detections_sql(session_factory, oid, tid=survey_id)
-        if not is_successful(sql_non_detections_result):
-            handle_error(sql_non_detections_result.failure())
-        sql_non_detections = sql_non_detections_result.unwrap()
-
-        mongo_non_detections_result = _get_non_detections_mongo(mongo_db, oid, tid=survey_id)
-        if not is_successful(mongo_non_detections_result):
-            handle_error(mongo_non_detections_result.failure())
-        mongo_non_detections = mongo_non_detections_result.unwrap()
-
-        non_detections = sql_non_detections + mongo_non_detections
-        return handle_success(non_detections)
-
+        result = _get_non_detections_sql(session_factory, oid)
+        if is_successful(result):
+            return handle_success(result.unwrap())
+        else:
+            return handle_error(result.failure())
     elif survey_id == "atlas":
         handle_error(AtlasNonDetectionError())
     else:
@@ -114,11 +103,8 @@ def get_non_detections(
 
 
 def _get_detections_sql(
-    session_factory: Callable[..., AbstractContextManager[Session]], oid: str,
-    tid: str
-) -> Success[list[DetectionModel]] | Failure:
-    if tid == "atlas":
-        return Success([])
+    session_factory: Callable[..., AbstractContextManager[Session]], oid: str
+) -> list[DetectionModel]:
     try:
         with session_factory() as session:
             stmt = select(Detection, text("'ztf'")).filter(
@@ -135,13 +121,13 @@ def _get_detections_sql(
 
 
 def _get_detections_mongo(
-    database: Database, oid: str, tid: str
-) -> Success[list[DetectionModel]] | Failure:
+    database: Database, oid: str
+) -> list[DetectionModel]:
     try:
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
             raise ValueError()
-        result = database["detection"].find({"aid": obj["_id"], "tid": tid})
+        result = database["detection"].find({"aid": obj["_id"]})
         result = [DetectionModel(**res, candid=res["_id"]) for res in result]
         return Success(result)
     except ValueError as e:
@@ -151,11 +137,8 @@ def _get_detections_mongo(
 
 
 def _get_non_detections_sql(
-    session_factory: Callable[..., AbstractContextManager[Session]], oid: str,
-    tid: str
-) -> Success[list[NonDetectionModel]] | Failure:
-    if tid == "atlas":
-        return Success([])
+    session_factory: Callable[..., AbstractContextManager[Session]], oid: str
+) -> list[NonDetectionModel]:
     try:
         with session_factory() as session:
             stmt = select(NonDetection, text("'ztf'")).where(
@@ -170,22 +153,6 @@ def _get_non_detections_sql(
     except Exception as e:
         return Failure(DatabaseError(e))
 
-def _get_non_detections_mongo(
-    database: Database, oid: str, tid: str
-) -> Success[list[NonDetectionModel]] | Failure:
-    if tid == "atlas":
-        return Success([])
-    try:
-        obj = database["object"].find_one({"oid": oid}, {"_id": 1})
-        if obj is None:
-            raise ValueError()
-        result = database["non_detection"].find({"aid": obj["_id"], "tid": tid})
-        result = [NonDetectionModel(**res) for res in result]
-        return Success(result)
-    except ValueError as e:
-        return Failure(ObjectNotFound(oid))
-    except Exception as e:
-        return Failure(DatabaseError(e))
 
 def _ztf_detection_to_multistream(
     detection: dict[str, any],
