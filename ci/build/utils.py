@@ -150,7 +150,13 @@ async def update_chart(chart_name: str, dry_run: bool):
     async with dagger.Connection(config) as client:
         path = pathlib.Path().cwd().parent.absolute()
 
-        script = ["poetry", "run", "python", "chart_script.py", chart_name]
+        script = [
+            "poetry",
+            "run",
+            "python",
+            "build/chart_script.py",
+            chart_name,
+        ]
         if dry_run:
             script.append("--dry-run")
         await (
