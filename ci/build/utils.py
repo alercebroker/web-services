@@ -2,6 +2,7 @@ import sys
 import dagger
 import os
 import pathlib
+from build.calver import get_calver as _get_calver
 
 
 def _get_publish_secret(client):
@@ -84,7 +85,13 @@ async def update_version(package_dir: str, version: str, dry_run: bool):
                 ),
             )
         )
-        update_version_command = ["poetry", "version", version]
+        current_version = await (
+            source.with_workdir(f"/web-services/{package_dir}")
+            .with_exec(["poetry", "version", "--short"])
+            .stdout()
+        )
+        new_version = _get_calver(current_version, version)
+        update_version_command = ["poetry", "version", new_version]
         if dry_run:
             update_version_command.append("--dry-run")
 
