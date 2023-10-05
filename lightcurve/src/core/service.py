@@ -1,5 +1,5 @@
 from contextlib import AbstractContextManager
-from typing import Callable
+from typing import Callable, Any
 
 from db_plugins.db.sql.models import Detection, NonDetection
 from pymongo.database import Database
@@ -37,9 +37,9 @@ def get_lightcurve(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-    handle_success: Callable[..., dict] = default_handle_success,
-    handle_error: Callable[Exception, None] = default_handle_error,
-) -> dict:
+    handle_success: Callable[[Any], Any] = default_handle_success,
+    handle_error: Callable[[Exception], None] = default_handle_error,
+) -> dict[str, list[DetectionModel] | list[NonDetectionModel]]:
     """Retrieves both unique detections and non detections for a given object in
     a given survey.
 
@@ -52,12 +52,12 @@ def get_lightcurve(
     :param mongo_db: Mongo database for mongo requests.
     :type mongo_db: Database
     :param handle_success: Callback for handling a success.
-    :type handle_success: Callable[..., dict]
+    :type handle_success: Callable[[Any], list]
     :param handle_error: Callback for handling failure.
-    :type handle_error: Callable[Exception, None]
+    :type handle_error: Callable[[Exception], None]
     :return: The result of calling handle_success with a dictionary
     containing all detections and non_detections with removed duplicates.
-    :rtype: dict
+    :rtype: dict[str, list[DetectionModel] | list[NonDetectionModel]]
     """
     if survey_id in ["ztf", "atlas"]:
         detections = _get_all_unique_detections(
@@ -85,9 +85,9 @@ def get_detections(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-    handle_success: Callable[..., dict] = default_handle_success,
-    handle_error: Callable[Exception, None] = default_handle_error,
-) -> dict:
+    handle_success: Callable[[Any], list] = default_handle_success,
+    handle_error: Callable[[Exception], None] = default_handle_error,
+) -> list[DetectionModel]:
     """Retrieves all unique detections from the databases for a given
     object in a given survey.
 
@@ -100,12 +100,12 @@ def get_detections(
     :param mongo_db: Mongo database for mongo requests.
     :type mongo_db: Database
     :param handle_success: Callback for handling a success.
-    :type handle_success: Callable[..., dict]
+    :type handle_success: Callable[[Any], list]
     :param handle_error: Callback for handling failure.
     :type handle_error: Callable[Exception, None]
     :return: The result of calling handle_success with a list containing
     all unique Detection objects in the databases.
-    :rtype: dict
+    :rtype: list[DetectionModel]
     """
     if survey_id in ["ztf", "atlas"]:
         detections_result = _get_all_unique_detections(
@@ -143,9 +143,9 @@ def get_non_detections(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-    handle_success: Callable[..., dict] = default_handle_success,
-    handle_error: Callable[Exception, None] = default_handle_error,
-) -> list:
+    handle_success: Callable[[Any], list] = default_handle_success,
+    handle_error: Callable[[Exception], None] = default_handle_error,
+) -> list[NonDetectionModel]:
     """Retrieves all unique non-detections from the databases for a given
     object in a given survey.
 
@@ -158,12 +158,12 @@ def get_non_detections(
     :param mongo_db: Mongo database for mongo requests.
     :type mongo_db: Database
     :param handle_success: Callback for handling a success.
-    :type handle_success: Callable[..., dict]
+    :type handle_success: Callable[[Any], list]
     :param handle_error: Callback for handling failure.
-    :type handle_error: Callable[Exception, None]
+    :type handle_error: Callable[[Exception], None]
     :return: The result of calling handle_success with a list containing
     all unique NonDetection objects in the databases.
-    :rtype: dict
+    :rtype: list[NonDetectionModel]
     """
     if survey_id == "ztf":
         non_detections_result = _get_all_unique_non_detections(
