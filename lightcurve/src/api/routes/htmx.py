@@ -1,6 +1,5 @@
 import os
 
-from data.load import get_dummy_data
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from jinja2 import Environment, PackageLoader, select_autoescape
@@ -20,33 +19,25 @@ jinja_env = Environment(
 jinja_env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 
-@router.get("/")
-def test() -> HTMLResponse:
-    template = jinja_env.get_template("test.html.j2")
-    return HTMLResponse(template.render(text="Hello, World!"))
-
-
 @router.get("/plot/difference")
-def diff_plot(oid: str, survey_id: str = "ztf") -> HTMLResponse:
-    # detections = get_detections(
-    #     oid=oid,
-    #     survey_id=survey_id,
-    #     session_factory=session,
-    #     mongo_db=database,
-    #     handle_error=handle_error,
-    #     handle_success=handle_success,
-    # )
+def diff_plot(oid: str) -> HTMLResponse:
+    detections = get_detections(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
 
-    # non_detections = get_non_detections(
-    #     oid=oid,
-    #     survey_id=survey_id,
-    #     session_factory=session,
-    #     mongo_db=database,
-    #     handle_error=handle_error,
-    #     handle_success=handle_success,
-    # )
-
-    detections, non_detections = get_dummy_data()
+    non_detections = get_non_detections(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
 
     detections = list(map(lambda det: det.__dict__, detections))
     non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
