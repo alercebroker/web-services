@@ -88,7 +88,7 @@ def _get_all_unique_detections(
         sql_detections = _get_detections_sql(session_factory, oid, tid=survey_id)
         mongo_detections = _get_detections_mongo(mongo_db, oid, tid=survey_id)
 
-        detections = sql_detections + mongo_detections
+        detections = list(set(sql_detections + mongo_detections))
         return Success(detections)
     except Exception as e:
         return Failure(e)
@@ -125,7 +125,7 @@ def _get_all_unique_non_detections(
         sql_non_detections = _get_non_detections_sql(session_factory, oid, tid=survey_id)
         mongo_non_detections = _get_non_detections_mongo(mongo_db, oid, tid=survey_id)
 
-        non_detections = sql_non_detections + mongo_non_detections
+        non_detections = list(set(sql_non_detections + mongo_non_detections))
         return Success(non_detections)
     except Exception as e:
         return Failure(e)
@@ -265,9 +265,11 @@ def _ztf_non_detection_to_multistream(
     :param tid: Telescope id for this detection.
     :return: A NonDetection with the converted data."""
     return NonDetectionModel(
+        aid=non_detections.get("aid", None),
         tid=tid,
+        sid=non_detections.get("sid", None),
         oid=non_detections["oid"],
         mjd=non_detections["mjd"],
         fid=non_detections["fid"],
-        diffmaglims=non_detections.get("diffmaglim", None),
+        diffmaglim=non_detections.get("diffmaglim", None),
     )
