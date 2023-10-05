@@ -28,8 +28,9 @@ class Detection(BaseModel):
 
     def __hash__(self):
         return hash(str(self.candid))
+
     def __eq__(self, other):
-        return str(self.candid)==str(other.candid)
+        return str(self.candid) == str(other.candid)
 
 
 class NonDetection(BaseModel):
@@ -43,6 +44,10 @@ class NonDetection(BaseModel):
 
     def __hash__(self):
         return hash((self.oid, self.fid, self.mjd))
+
     def __eq__(self, other):
-        return (self.oid, self.fid, self.mjd) ==\
-                (other.oid, other.fid, other.mjd)
+        return (self.oid, self.fid, self.mjd) == (
+            other.oid,
+            other.fid,
+            other.mjd,
+        )
