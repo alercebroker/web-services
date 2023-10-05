@@ -40,6 +40,25 @@ def get_lightcurve(
     handle_success: Callable[..., dict] = default_handle_success,
     handle_error: Callable[Exception, None] = default_handle_error,
 ) -> dict:
+    """Retrieves both unique detections and non detections for a given object in
+    a given survey.
+
+    :param oid: oid for the object.
+    :type oid: str
+    :param survey_id: id for the survey, can be "ztf" or "atlas"
+    :type survey_id: str
+    :param session_factory: Session factory for SQL requests.
+    :type session_factory: Callable[..., AbstractContextManager[Session]]
+    :param mongo_db: Mongo database for mongo requests.
+    :type mongo_db: Database
+    :param handle_success: Callback for handling a success.
+    :type handle_success: Callable[..., dict]
+    :param handle_error: Callback for handling failure.
+    :type handle_error: Callable[Exception, None]
+    :return: The result of calling handle_success with a dictionary
+    containing all detections and non_detections with removed duplicates.
+    :rtype: dict
+    """
     if survey_id in ["ztf", "atlas"]:
         detections = _get_all_unique_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
@@ -68,7 +87,26 @@ def get_detections(
     mongo_db: Database = None,
     handle_success: Callable[..., dict] = default_handle_success,
     handle_error: Callable[Exception, None] = default_handle_error,
-) -> list:
+) -> dict:
+    """Retrieves all unique detections from the databases for a given
+    object in a given survey.
+
+    :param oid: oid for the object.
+    :type oid: str
+    :param survey_id: id for the survey, can be "ztf" or "atlas"
+    :type survey_id: str
+    :param session_factory: Session factory for SQL requests.
+    :type session_factory: Callable[..., AbstractContextManager[Session]]
+    :param mongo_db: Mongo database for mongo requests.
+    :type mongo_db: Database
+    :param handle_success: Callback for handling a success.
+    :type handle_success: Callable[..., dict]
+    :param handle_error: Callback for handling failure.
+    :type handle_error: Callable[Exception, None]
+    :return: The result of calling handle_success with a list containing
+    all unique Detection objects in the databases.
+    :rtype: dict
+    """
     if survey_id in ["ztf", "atlas"]:
         detections_result = _get_all_unique_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
@@ -108,6 +146,25 @@ def get_non_detections(
     handle_success: Callable[..., dict] = default_handle_success,
     handle_error: Callable[Exception, None] = default_handle_error,
 ) -> list:
+    """Retrieves all unique non-detections from the databases for a given
+    object in a given survey.
+
+    :param oid: oid for the object.
+    :type oid: str
+    :param survey_id: id for the survey, can be "ztf" or "atlas"
+    :type survey_id: str
+    :param session_factory: Session factory for SQL requests.
+    :type session_factory: Callable[..., AbstractContextManager[Session]]
+    :param mongo_db: Mongo database for mongo requests.
+    :type mongo_db: Database
+    :param handle_success: Callback for handling a success.
+    :type handle_success: Callable[..., dict]
+    :param handle_error: Callback for handling failure.
+    :type handle_error: Callable[Exception, None]
+    :return: The result of calling handle_success with a list containing
+    all unique NonDetection objects in the databases.
+    :rtype: dict
+    """
     if survey_id == "ztf":
         non_detections_result = _get_all_unique_non_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
