@@ -98,8 +98,8 @@ def test_get_ztf_lightcurve(
         mongo_db=mongo_database,
     )
     assert isinstance(result, dict)
-    assert len(result["detections"]) == 2
-    assert len(result["non_detections"]) == 2
+    assert len(result["detections"]) == 3
+    assert len(result["non_detections"]) == 3
 
 
 def test_get_atlas_lightcurve(mongo_service, mongo_database, init_mongo):
