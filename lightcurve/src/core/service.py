@@ -87,11 +87,11 @@ def _get_all_unique_detections(
     try:
         sql_detections = _get_detections_sql(session_factory, oid, tid=survey_id)
         mongo_detections = _get_detections_mongo(mongo_db, oid, tid=survey_id)
-
-        detections = list(set(sql_detections + mongo_detections))
-        return Success(detections)
-    except Exception as e:
+    except (DatabaseError, ObjectNotFound) as e:
         return Failure(e)
+
+    detections = list(set(sql_detections + mongo_detections))
+    return Success(detections)
 
 def get_non_detections(
     oid: str,
@@ -127,7 +127,7 @@ def _get_all_unique_non_detections(
 
         non_detections = list(set(sql_non_detections + mongo_non_detections))
         return Success(non_detections)
-    except Exception as e:
+    except (DatabaseError, ObjectNotFound) as e:
         return Failure(e)
 
 

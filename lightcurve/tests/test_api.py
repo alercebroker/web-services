@@ -4,20 +4,27 @@ def test_root(test_client):
 
 
 def test_detections_without_survey_id_param(
-    psql_service, init_psql, test_client
+    psql_service, init_psql, test_client,
+    mongo_service, init_mongo,
 ):
     res = test_client.get("/detections/oid1")
     assert res.status_code == 200
     assert len(res.json()) == 3
 
 
-def test_detections_from_ztf(psql_service, init_psql, test_client):
+def test_detections_from_ztf(
+        psql_service, init_psql, test_client,
+        mongo_service, init_mongo,
+    ):
     res = test_client.get("/detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
     assert len(res.json()) == 3
 
 
-def test_non_detections_from_ztf(psql_service, init_psql, test_client):
+def test_non_detections_from_ztf(
+        psql_service, init_psql, test_client,
+        mongo_service, init_mongo,
+    ):
     res = test_client.get("/non_detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
     assert len(res.json()) == 3
@@ -51,7 +58,10 @@ def test_lightcurve_from_atlas_without_results(
     assert res.status_code == 404
 
 
-def test_lightcurve_from_ztf(psql_service, init_psql, test_client):
+def test_lightcurve_from_ztf(
+        psql_service, init_psql, test_client,
+        mongo_service, init_mongo,
+    ):
     res = test_client.get("/lightcurve/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
     json_res = res.json()
