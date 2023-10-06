@@ -4,7 +4,7 @@ from typing import Callable, Any
 from db_plugins.db.sql.models import Detection, NonDetection
 from pymongo.database import Database
 from returns.pipeline import is_successful
-from returns.result import Failure, Success
+from returns.result import Failure, Success, Result
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
@@ -125,7 +125,7 @@ def _get_all_unique_detections(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-) -> Success[list[DetectionModel]] | Failure:
+) -> Result[list[DetectionModel], BaseException]:
     try:
         sql_detections = _get_detections_sql(
             session_factory, oid, tid=survey_id
@@ -185,7 +185,7 @@ def _get_all_unique_non_detections(
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
-) -> Success[list[NonDetectionModel]] | Failure:
+) -> Result[list[NonDetectionModel], BaseException]:
     try:
         sql_non_detections = _get_non_detections_sql(
             session_factory, oid, tid=survey_id
