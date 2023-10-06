@@ -50,7 +50,7 @@ def diff_plot(oid: str) -> HTMLResponse:
 
 
 @router.get("/plot/apparent")
-def diff_plot(oid: str) -> HTMLResponse:
+def apparent_plot(oid: str) -> HTMLResponse:
     detections = get_detections(
         oid=oid,
         survey_id="ztf",
