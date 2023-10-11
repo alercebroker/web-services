@@ -1,10 +1,10 @@
 from contextlib import AbstractContextManager
-from typing import Callable, Any
+from typing import Any, Callable
 
 from db_plugins.db.sql.models import Detection, NonDetection
 from pymongo.database import Database
 from returns.pipeline import is_successful
-from returns.result import Failure, Success, Result
+from returns.result import Failure, Result, Success
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
@@ -344,7 +344,7 @@ def _ztf_non_detection_to_multistream(
         aid=non_detections.get("aid", None),
         tid=tid,
         sid=non_detections.get("sid", None),
-        oid=non_detections["oid"],
+        oid=non_detections.get("oid", None),
         mjd=non_detections["mjd"],
         fid=non_detections["fid"],
         diffmaglim=non_detections.get("diffmaglim", None),
