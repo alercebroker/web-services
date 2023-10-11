@@ -74,6 +74,7 @@ def apparent_plot(oid: str) -> HTMLResponse:
 
     return HTMLResponse(
         jinja_env.get_template("apparent.html.j2").render(
+
             detections=detections, non_detections=non_detections
         )
     )

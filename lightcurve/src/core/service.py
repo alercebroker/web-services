@@ -1,10 +1,10 @@
 from contextlib import AbstractContextManager
-from typing import Callable, Any
+from typing import Any, Callable
 
 from db_plugins.db.sql.models import Detection, NonDetection
 from pymongo.database import Database
 from returns.pipeline import is_successful
-from returns.result import Failure, Success, Result
+from returns.result import Failure, Result, Success
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
