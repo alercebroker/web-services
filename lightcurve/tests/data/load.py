@@ -1,14 +1,14 @@
 import json
 from typing import Any, Dict
 
-from core.models import Detection, NonDetection
+from core.models import Detection, Feature, NonDetection
 from core.service import (
     _ztf_detection_to_multistream,
     _ztf_non_detection_to_multistream,
 )
 
 
-def get_dummy_data() -> (list[Detection], list[NonDetection]):
+def get_dummy_lc() -> (list[Detection], list[NonDetection]):
     data = {}
     with open("tests/data/aaelulu.json") as file:
         data: Dict[str, Dict[str, Any]] = json.load(file)
@@ -22,3 +22,11 @@ def get_dummy_data() -> (list[Detection], list[NonDetection]):
     ]
 
     return detections, non_detections
+
+
+def get_dummy_features() -> list[Feature]:
+    data = {}
+    with open("tests/data/aaelulu.json") as file:
+        data: Dict[str, Dict[str, Any]] = json.load(file)
+    features = [Feature(**feat) for feat in data["features"]]
+    return features

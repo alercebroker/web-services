@@ -52,3 +52,10 @@ class NonDetection(BaseModel):
             other.fid,
             other.mjd,
         )
+
+
+class Feature(BaseModel):
+    name: str
+    value: Optional[float] = None
+    fid: int
+    version: str
