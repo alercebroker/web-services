@@ -1,16 +1,18 @@
+import pytest
+
+from core.exceptions import AtlasNonDetectionError, SurveyIdError
+from core.models import Detection as DetectionModel
+from core.models import NonDetection as NonDetectionModel
 from core.service import (
-    get_detections, get_non_detections, get_lightcurve,
     _get_detections_mongo,
     _get_detections_sql,
     _get_non_detections_mongo,
-    _get_non_detections_sql
+    _get_non_detections_sql,
+    get_detections,
+    get_lightcurve,
+    get_non_detections,
+    get_period,
 )
-from core.exceptions import SurveyIdError, AtlasNonDetectionError
-from core.models import (
-    Detection as DetectionModel,
-    NonDetection as NonDetectionModel,
-)
-import pytest
 
 required_detection_fields = {
     "candid",
@@ -38,9 +40,14 @@ required_non_detection_fields = {
     "diffmaglim",
 }
 
+
 def test_get_ztf_detections(
-    psql_service, psql_session, init_psql,
-    mongo_service, mongo_database, init_mongo
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
 ):
     result = get_detections(
         session_factory=psql_session,
@@ -51,30 +58,39 @@ def test_get_ztf_detections(
     assert type(result[0]) is DetectionModel
     assert len(result) == 3
 
+
 def test_get_detections_from_unknown_survey(
-    psql_service, psql_session, init_psql,
-    mongo_service, mongo_database, init_mongo
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
 ):
     with pytest.raises(
         SurveyIdError, match="survey id not recognized unknown"
     ):
         get_detections(
             session_factory=psql_session,
-        mongo_db=mongo_database,
+            mongo_db=mongo_database,
             oid="oid1",
             survey_id="unknown",
         )
 
 
 def test_get_ztf_non_detections(
-    psql_service, psql_session, init_psql,
-    mongo_service, mongo_database, init_mongo
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
 ):
     result = get_non_detections(
         session_factory=psql_session,
         mongo_db=mongo_database,
         oid="oid1",
-        survey_id="ztf"
+        survey_id="ztf",
     )
     assert type(result[0]) is NonDetectionModel
     assert required_non_detection_fields.issubset(set(dict(result[0]).keys()))
@@ -82,8 +98,12 @@ def test_get_ztf_non_detections(
 
 
 def test_get_non_detections_from_unknown_survey(
-    psql_service, psql_session, init_psql,
-    mongo_service, mongo_database, init_mongo
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
 ):
     with pytest.raises(
         SurveyIdError, match="survey id not recognized unknown"
@@ -119,8 +139,12 @@ def test_get_atlas_non_detections(mongo_service, mongo_database, init_mongo):
 
 
 def test_get_ztf_lightcurve(
-    psql_service, psql_session, init_psql,
-    mongo_service, mongo_database, init_mongo
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
 ):
     result = get_lightcurve(
         oid="oid1",
@@ -160,9 +184,8 @@ def test_get_lightcurve_from_unknown_survey(
             mongo_db=mongo_database,
         )
 
-def test_get_mongo_detections(
-    mongo_service, mongo_database, init_mongo
-):
+
+def test_get_mongo_detections(mongo_service, mongo_database, init_mongo):
     result = _get_detections_mongo(
         database=mongo_database,
         oid="oid1",
@@ -170,9 +193,8 @@ def test_get_mongo_detections(
     )
     assert required_detection_fields.issubset(set(dict(result[0]).keys()))
 
-def test_get_mongo_non_detections(
-    mongo_service, mongo_database, init_mongo
-):
+
+def test_get_mongo_non_detections(mongo_service, mongo_database, init_mongo):
     result = _get_non_detections_mongo(
         database=mongo_database,
         oid="oid1",
@@ -180,8 +202,11 @@ def test_get_mongo_non_detections(
     )
     assert required_non_detection_fields.issubset(set(dict(result[0]).keys()))
 
+
 def test_get_sql_detections(
-    psql_service, psql_session, init_psql,
+    psql_service,
+    psql_session,
+    init_psql,
 ):
     result = _get_detections_sql(
         session_factory=psql_session,
@@ -190,8 +215,11 @@ def test_get_sql_detections(
     )
     assert required_detection_fields.issubset(set(dict(result[0]).keys()))
 
+
 def test_get_sql_non_detections(
-    psql_service, psql_session, init_psql,
+    psql_service,
+    psql_session,
+    init_psql,
 ):
     result = _get_non_detections_sql(
         session_factory=psql_session,
@@ -199,3 +227,21 @@ def test_get_sql_non_detections(
         tid="ztf",
     )
     assert required_non_detection_fields.issubset(set(dict(result[0]).keys()))
+
+
+def test_get_period(
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
+):
+    result = get_period(
+        oid="oid1",
+        survey_id="ztf",
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+    )
+
+    assert abs(result.value - 296.87498481917) < 0.00001

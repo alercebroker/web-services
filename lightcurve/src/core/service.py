@@ -173,7 +173,7 @@ def get_non_detections(
     """
     if survey_id == "ztf":
         non_detections_result = _get_all_unique_non_detections(
-            oid, session_factory=session_factory, mongo_db=mongo_db
+            oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
     elif survey_id == "atlas":
         handle_error(AtlasNonDetectionError())
@@ -341,12 +341,9 @@ def _get_period_sql(
                 select(Feature)
                 .where(Feature.oid == oid)
                 .where(Feature.name == "Multiband_period")
-                .join(
-                    FeatureVersion, Feature.version == FeatureVersion.version
-                )
             )
             result = session.execute(stmt)
-            result = [FeatureModel(res[0].__dict__) for res in result.all()]
+            result = [FeatureModel(**res[0].__dict__) for res in result.all()]
             return Success(result[0])
     except Exception as e:
         return Failure(DatabaseError(e))
