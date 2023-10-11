@@ -1,6 +1,6 @@
 import sys
-from build_staging import build_staging
-from deploy_staging import deploy_staging
+from build.build_staging import build_staging
+from deploy.deploy_staging import deploy_staging
 
 
 def build(stage, dry_run):
