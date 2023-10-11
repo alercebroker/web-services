@@ -1,6 +1,5 @@
 import os
 
-from data.load import get_dummy_features, get_dummy_lc
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from jinja2 import Environment, PackageLoader, select_autoescape
@@ -82,38 +81,31 @@ def apparent_plot(oid: str) -> HTMLResponse:
 
 @router.get("/plot/folded")
 def folded_plot(oid: str) -> HTMLResponse:
-    # detections = get_detections(
-    #     oid=oid,
-    #     survey_id="ztf",
-    #     session_factory=session,
-    #     mongo_db=database,
-    #     handle_error=handle_error,
-    #     handle_success=handle_success,
-    # )
+    detections = get_detections(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
 
-    # non_detections = get_non_detections(
-    #     oid=oid,
-    #     survey_id="ztf",
-    #     session_factory=session,
-    #     mongo_db=database,
-    #     handle_error=handle_error,
-    #     handle_success=handle_success,
-    # )
+    non_detections = get_non_detections(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
 
-    # period = get_period(
-    #     oid=oid,
-    #     survey_id="ztf",
-    #     session_factory=session,
-    #     mongo_db=database,
-    #     handle_error=handle_error,
-    #     handle_success=handle_success,
-    # )
-
-    detections, non_detections = get_dummy_lc()
-    period = next(
-        filter(
-            lambda feat: feat.name == "Multiband_period", get_dummy_features()
-        )
+    period = get_period(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
     )
 
     detections = list(map(lambda det: det.__dict__, detections))
