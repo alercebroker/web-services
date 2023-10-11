@@ -7,7 +7,7 @@ export class LightCurveOptions {
       2: { name: 'r', color: '#D42F4B' },
       // 3: { name: 'i', color: '#2E2EFE' },
     }
-    this.detections = detections.filter((x) => x.fid === 1 || x.fid === 2)
+    this.detections = detections.filter((x) => x.fid.toString() === '1' || x.fid.toString() === '2')
     this.nonDetections = nonDetections.filter((x) => x.diffmaglim <= 23)
     this.fontColor = fontColor
     this.options = {
