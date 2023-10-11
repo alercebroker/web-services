@@ -1,0 +1,40 @@
+<script>
+    // Conditionally loads css file to prevent duplicate downloading / parsing
+    function isCssLoaded(url) {
+        for (let css of document.styleSheets) {
+            if (css.href === url) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function conditionalCss(href) {
+        if (!isCssLoaded(href)) {
+            var link = document.createElement("link");
+            link.href = href;
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            document.head.appendChild(link);
+        }
+    }
+
+    conditionalCss("{{ API_URL }}/static/main.css");
+</script>
+<script type="module">
+    import { DifferenceLightCurveOptions } from "{{ API_URL }}/static/lc-difference.js";
+    import * as echart from "{{ API_URL }}/static/echarts.js";
+
+    var detections = {{ detections | tojson }};
+    var non_detections = {{ non_detections | tojson }};
+
+    var lc = new DifferenceLightCurveOptions(detections, non_detections, "#000");
+    var plot = echarts.init(document.getElementById("main"));
+    plot.setOption(lc.options);
+    plot.on("click", (event) => lc.lcDifferenceOnClick(event));
+    window.addEventListener("resize", plot.resize);
+</script>
+<div>
+    <!-- Prepare a DOM with a defined width and height for ECharts -->
+    <div id="main" style="height:100%;min-height:380px;"></div>
+</div>

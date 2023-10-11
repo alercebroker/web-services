@@ -1,20 +1,25 @@
 import os
-from fastapi.middleware.cors import CORSMiddleware
-from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
+
 from fastapi import FastAPI
-from .filters import get_filters_map
-from .routes import router
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
+from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
+
+from .filters import get_filters_map
+from .routes import htmx, rest
 
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
 instrumentator = Instrumentator().instrument(app).expose(app)
 
-app.add_middleware(
-    RalidatorStarlette,
-    config={"SECRET_KEY": os.getenv("SECRET_KEY")},
-    filters_map=get_filters_map(),
-    ignore_paths=["/metrics", "/docs", "/openapi.json"],
-)
+
+if os.getenv("ENV") != "dev":
+    app.add_middleware(
+        RalidatorStarlette,
+        config={"SECRET_KEY": os.getenv("SECRET_KEY")},
+        filters_map=get_filters_map(),
+        ignore_paths=["/metrics", "/docs", "/openapi.json"],
+    )
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,7 +29,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router)
+app.include_router(rest.router)
+app.include_router(prefix="/htmx", router=htmx.router)
+
+app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
 
 
 @app.get("/openapi.json")

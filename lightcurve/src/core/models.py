@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from typing import Optional, Union
+
+from pydantic import BaseModel
 
 
 class Detection(BaseModel):
@@ -7,7 +8,7 @@ class Detection(BaseModel):
     tid: str
     sid: Optional[str] = None
     aid: Optional[str] = None
-    oid: str
+    oid: Optional[str] = None
     mjd: float
     fid: int
     ra: float
@@ -19,11 +20,11 @@ class Detection(BaseModel):
     mag_corr: Optional[float] = None
     e_mag_corr: Optional[float] = None
     e_mag_corr_ext: Optional[float] = None
-    isdiffpos: bool
+    isdiffpos: Union[bool, int]
     corrected: bool
     dubious: bool
     parent_candid: Optional[int] = None
-    has_stamp: bool
+    has_stamp: Optional[bool] = None
     extra_fields: Optional[dict] = {}
 
     def __hash__(self):
@@ -37,7 +38,7 @@ class NonDetection(BaseModel):
     aid: Optional[str] = None
     tid: str
     sid: Optional[str] = None
-    oid: str
+    oid: Optional[str] = None
     mjd: float
     fid: int
     diffmaglim: Optional[float] = None
