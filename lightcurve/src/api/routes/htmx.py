@@ -117,3 +117,33 @@ def folded_plot(oid: str) -> HTMLResponse:
             detections=detections, non_detections=non_detections, period=period
         )
     )
+
+
+@router.get("/button/download")
+def download_button(oid: str) -> HTMLResponse:
+    detections = get_detections(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
+
+    non_detections = get_non_detections(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
+
+    detections = list(map(lambda det: det.__dict__, detections))
+    non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
+
+    return HTMLResponse(
+        jinja_env.get_template("download_lc.html.j2").render(
+            oid=oid, detections=detections, non_detections=non_detections
+        )
+    )
