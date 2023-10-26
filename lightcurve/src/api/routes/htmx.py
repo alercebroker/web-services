@@ -20,36 +20,36 @@ jinja_env = Environment(
 jinja_env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 
-@router.get("/plot/difference")
-def diff_plot(oid: str) -> HTMLResponse:
-    # detections = get_detections(
-    #     oid=oid,
-    #     survey_id="ztf",
-    #     session_factory=session,
-    #     mongo_db=database,
-    #     handle_error=handle_error,
-    #     handle_success=handle_success,
-    # )
+# @router.get("/plot/difference")
+# def diff_plot(oid: str) -> HTMLResponse:
+#     detections = get_detections(
+#         oid=oid,
+#         survey_id="ztf",
+#         session_factory=session,
+#         mongo_db=database,
+#         handle_error=handle_error,
+#         handle_success=handle_success,
+#     )
 
-    # non_detections = get_non_detections(
-    #     oid=oid,
-    #     survey_id="ztf",
-    #     session_factory=session,
-    #     mongo_db=database,
-    #     handle_error=handle_error,
-    #     handle_success=handle_success,
-    # )
+#     non_detections = get_non_detections(
+#         oid=oid,
+#         survey_id="ztf",
+#         session_factory=session,
+#         mongo_db=database,
+#         handle_error=handle_error,
+#         handle_success=handle_success,
+#     )
 
-    detections, non_detections = get_dummy_lc()
+#     detections, non_detections = get_dummy_lc()
 
-    detections = list(map(lambda det: det.__dict__, detections))
-    non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
+#     detections = list(map(lambda det: det.__dict__, detections))
+#     non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
 
-    return HTMLResponse(
-        jinja_env.get_template("difference.html.j2").render(
-            detections=detections, non_detections=non_detections
-        )
-    )
+#     return HTMLResponse(
+#         jinja_env.get_template("difference.html.j2").render(
+#             detections=detections, non_detections=non_detections
+#         )
+#     )
 
 
 # @router.get("/plot/apparent")

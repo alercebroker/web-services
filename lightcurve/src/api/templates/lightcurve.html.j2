@@ -29,13 +29,16 @@
     import "{{ API_URL }}/static/jszip.js";
     import * as echart from "{{ API_URL }}/static/echarts.js";
 
-    var oid = {{ oid }}
-    var detections = {{ detections | tojson }};
-    var non_detections = {{ non_detections | tojson }};
-    var period = {{ period }};
+    const oid = {{ oid }}
+    const detections = {{ detections | tojson }};
+    const non_detections = {{ non_detections | tojson }};
+    const period = {{ period }};
 
-    var lc_main_elem = document.getElementById("lc-main");
-    var lc_table_elem = document.getElementById("lc-table");
+    const lc_main_elem = document.getElementById("lc-main");
+    const lc_table_elem = document.getElementById("lc-table");
+
+    var plot_text_color = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "#fff" : "#000";
+    var current_plot = "difference";
 
     function plotOnClick(detection) {
         console.log(detection);
@@ -89,50 +92,65 @@
         lc_table_elem.hidden = !lc_table_elem.hidden;
     }
 
+    /* Initialize plot */
     var plot = echarts.init(lc_main_elem);
     plot.on("click", plotOnClick);
     window.addEventListener("resize", plot.resize);
 
+    /* Update plot on plot type change */
     window.setPlot = (type) => {
+        current_plot = type;
         var lc;
-        if (type === "difference") {
-            lc = new DifferenceLightCurveOptions(detections, non_detections, "#000");
-        } else if (type === "apparent") {
-            lc = new ApparentLightCurveOptions(detections, non_detections, "#000");
-        } else if (type === "folded") {
-            lc = new FoldedLightCurveOptions(detections, non_detections, "#000", period);
+        if (current_plot === "difference") {
+            lc = new DifferenceLightCurveOptions(detections, non_detections, plot_text_color);
+        } else if (current_plot === "apparent") {
+            lc = new ApparentLightCurveOptions(detections, non_detections, plot_text_color);
+        } else if (current_plot === "folded") {
+            lc = new FoldedLightCurveOptions(detections, non_detections, plot_text_color, period);
         }
         plot.setOption(lc.options, true);
     };
 
+    /* Update plot text color on switch between dark/light mode */
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+        const newColorScheme = event.matches ? "dark" : "light";
+        if (newColorScheme === "dark") {
+            plot_text_color = "#fff";
+        } else {
+            plot_text_color = "#000";
+        }
+        window.setPlot(current_plot);
+    });
+
+    /* Set up Download and Data release buttons */
     document.getElementById("lc-download").onclick = () => download(oid, detections, non_detections);
     document.getElementById("lc-dr").onclick = toggleDataRelease;
 
-
-    window.setPlot("difference");
+    window.setPlot(current_plot);
 </script>
-<div class="bg-white rounded p-4 shadow-lg flex flex-col h-full">
+<div class="bg-white dark:bg-[#1e1e1e] dark:text-white rounded p-4 shadow-lg dark:shadow-none flex flex-col h-full">
     <!-- Prepare a DOM with a defined width and height for ECharts -->
     <div id="lc-main" class="flex-1" style="min-height: 0;"></div>
     <div id="lc-table" class="overflow-y-auto flex-1" hidden>
-        <table class="min-w-full border border-gray-300 divide-y divide-gray-200">
+        <table
+            class="min-w-full border border-gray-300 dark:border-gray-600 divide-y divide-gray-200 dark:divide-gray-600 dark:text-white">
             <thead>
-                <tr class="bg-gray-100">
+                <tr class="bg-gray-100 dark:bg-gray-800">
                     <th class="w-12 text-center">
-                        <input type="checkbox" class="form-checkbox h-6 w-6 text-blue-600" />
+                        <input type="checkbox" class="form-checkbox h-6 w-6" />
                     </th>
-                    <th class="text-right">ObjectId</th>
-                    <th class="text-right">filterid</th>
-                    <th class="text-right">nepochs</th>
-                    <th class="text-right">filterid</th>
-                    <th class="text-right">rcid</th>
+                    <th class="text-center">ObjectId</th>
+                    <th class="text-center">filterid</th>
+                    <th class="text-center">nepochs</th>
+                    <th class="text-center">filterid</th>
+                    <th class="text-center">rcid</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
                 <!-- Sample rows -->
-                <tr class="hover:bg-gray-200">
+                <tr class="hover:bg-gray-200 dark:hover:bg-gray-700">
                     <td class="text-center">
-                        <input type="checkbox" class="form-checkbox h-6 w-6 text-blue-600" />
+                        <input type="checkbox" class="form-checkbox h-6 w-6" />
                     </td>
                     <td class="text-right">ABC123</td>
                     <td class="text-right">123</td>
@@ -140,9 +158,9 @@
                     <td class="text-right">789</td>
                     <td class="text-right">101</td>
                 </tr>
-                <tr class="hover:bg-gray-200">
+                <tr class="hover:bg-gray-200 dark:hover:bg-gray-700">
                     <td class="text-center">
-                        <input type="checkbox" class="form-checkbox h-6 w-6 text-blue-600" />
+                        <input type="checkbox" class="form-checkbox h-6 w-6" />
                     </td>
                     <td class="text-right">DEF456</td>
                     <td class="text-right">234</td>
@@ -153,7 +171,6 @@
                 <!-- Add more rows as needed -->
             </tbody>
         </table>
-
     </div>
     <div class="grid grid-cols-2 gap-4">
         <!-- Left Column (Radio Buttons) -->
@@ -166,7 +183,7 @@
                     <div class="tooltip">
                         <i class="fa fa-question-circle me-2"></i>
                         <div class="tooltip-text">
-                            The difference Magnitude light curve, is the absolute difference between a science and
+                            The difference Magnitude light curve is the absolute difference between science and
                             reference magnitudes.
                         </div>
                     </div>
@@ -177,8 +194,7 @@
                     <div class="tooltip">
                         <i class="fa fa-question-circle me-2"></i>
                         <div class="tooltip-text">
-                            Apparent magnitude light curve results from adding/subtracting the fluxes from the
-                            reference
+                            Apparent magnitude light curve results from adding/subtracting the fluxes from the reference
                             and difference in the same unit system and then converting to magnitudes.
                         </div>
                     </div>
@@ -189,8 +205,7 @@
                     <div class="tooltip">
                         <i class="fa fa-question-circle me-2"></i>
                         <div class="tooltip-text">
-                            The Period folded light curve, where time is transformed to time modulo the period
-                            (Phase).
+                            The Period folded light curve, where time is transformed to time modulo the period (Phase).
                         </div>
                     </div>
                 </label>
@@ -199,12 +214,13 @@
 
         <!-- Right Column (Buttons) -->
         <div class="flex flex-col justify-end items-end">
-            <button id="lc-dr" class="bg-blue-500 text-white mt-2 px-2 py-1 rounded hover:bg-blue-600">
+            <button id="lc-dr" class="bg-blue-500 dark:bg-blue-700 text-white mt-2 px-2 py-1 rounded hover:bg-blue-600">
                 <i class="fa fa-eye me-2"></i>
                 Display DR
             </button>
             <a id="lc-download-ref" style="display: none;"></a>
-            <button id="lc-download" class="bg-green-500 text-white mt-2 px-2 py-1 rounded hover:bg-green-600">
+            <button id="lc-download"
+                class="bg-green-500 dark:bg-green-700 text-white mt-2 px-2 py-1 rounded hover:bg-green-600">
                 <i class="fa fa-download me-2"></i>
                 Download
             </button>
