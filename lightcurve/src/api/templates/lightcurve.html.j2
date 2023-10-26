@@ -34,6 +34,9 @@
     var non_detections = {{ non_detections | tojson }};
     var period = {{ period }};
 
+    var lc_main_elem = document.getElementById("lc-main");
+    var lc_table_elem = document.getElementById("lc-table");
+
     function plotOnClick(detection) {
         console.log(detection);
         const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
@@ -81,8 +84,12 @@
         });
     }
 
+    function toggleDataRelease() {
+        lc_main_elem.hidden = !lc_main_elem.hidden;
+        lc_table_elem.hidden = !lc_table_elem.hidden;
+    }
 
-    var plot = echarts.init(document.getElementById("main"));
+    var plot = echarts.init(lc_main_elem);
     plot.on("click", plotOnClick);
     window.addEventListener("resize", plot.resize);
 
@@ -99,11 +106,55 @@
     };
 
     document.getElementById("lc-download").onclick = () => download(oid, detections, non_detections);
+    document.getElementById("lc-dr").onclick = toggleDataRelease;
+
+
     window.setPlot("difference");
 </script>
-<div class="bg-white rounded p-4 shadow-lg">
+<div class="bg-white rounded p-4 shadow-lg flex flex-col h-full">
     <!-- Prepare a DOM with a defined width and height for ECharts -->
-    <div id="main" style="height:100%;min-height:380px;"></div>
+    <div id="lc-main" class="flex-1" style="min-height: 0;"></div>
+    <div id="lc-table" class="overflow-y-auto flex-1" hidden>
+        <table class="min-w-full border border-gray-300 divide-y divide-gray-200">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="w-12 text-center">
+                        <input type="checkbox" class="form-checkbox h-6 w-6 text-blue-600" />
+                    </th>
+                    <th class="text-right">ObjectId</th>
+                    <th class="text-right">filterid</th>
+                    <th class="text-right">nepochs</th>
+                    <th class="text-right">filterid</th>
+                    <th class="text-right">rcid</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Sample rows -->
+                <tr class="hover:bg-gray-200">
+                    <td class="text-center">
+                        <input type="checkbox" class="form-checkbox h-6 w-6 text-blue-600" />
+                    </td>
+                    <td class="text-right">ABC123</td>
+                    <td class="text-right">123</td>
+                    <td class="text-right">456</td>
+                    <td class="text-right">789</td>
+                    <td class="text-right">101</td>
+                </tr>
+                <tr class="hover:bg-gray-200">
+                    <td class="text-center">
+                        <input type="checkbox" class="form-checkbox h-6 w-6 text-blue-600" />
+                    </td>
+                    <td class="text-right">DEF456</td>
+                    <td class="text-right">234</td>
+                    <td class="text-right">789</td>
+                    <td class="text-right">567</td>
+                    <td class="text-right">202</td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+
+    </div>
     <div class="grid grid-cols-2 gap-4">
         <!-- Left Column (Radio Buttons) -->
         <div>
@@ -126,7 +177,8 @@
                     <div class="tooltip">
                         <i class="fa fa-question-circle me-2"></i>
                         <div class="tooltip-text">
-                            Apparent magnitude light curve results from adding/subtracting the fluxes from the reference
+                            Apparent magnitude light curve results from adding/subtracting the fluxes from the
+                            reference
                             and difference in the same unit system and then converting to magnitudes.
                         </div>
                     </div>
@@ -137,7 +189,8 @@
                     <div class="tooltip">
                         <i class="fa fa-question-circle me-2"></i>
                         <div class="tooltip-text">
-                            The Period folded light curve, where time is transformed to time modulo the period (Phase).
+                            The Period folded light curve, where time is transformed to time modulo the period
+                            (Phase).
                         </div>
                     </div>
                 </label>
@@ -146,7 +199,7 @@
 
         <!-- Right Column (Buttons) -->
         <div class="flex flex-col justify-end items-end">
-            <button class="bg-blue-500 text-white mt-2 px-2 py-1 rounded hover:bg-blue-600">
+            <button id="lc-dr" class="bg-blue-500 text-white mt-2 px-2 py-1 rounded hover:bg-blue-600">
                 <i class="fa fa-eye me-2"></i>
                 Display DR
             </button>
