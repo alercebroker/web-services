@@ -101,7 +101,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     const bands = Array.from(new Set(this.detections.map((item) => item.fid)))
     let legend = bands.map((band) => this.bandMap[band].name)
     legend = legend.concat(
-      bands.map((band) => this.bandMap[band].name + ' detections')
+      bands.map((band) => this.bandMap[band].name)
     )
     this.options.legend.data = legend
     this.options.title.subtext = 'Period: ' + this.period.toFixed(3) + ' days'

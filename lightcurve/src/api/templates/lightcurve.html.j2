@@ -1,0 +1,160 @@
+<script>
+    // Conditionally loads css file to prevent duplicate downloading / parsing
+    function isCssLoaded(url) {
+        for (let css of document.styleSheets) {
+            if (css.href === url) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function conditionalCss(href) {
+        if (!isCssLoaded(href)) {
+            var link = document.createElement("link");
+            link.href = href;
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            document.head.appendChild(link);
+        }
+    }
+
+    conditionalCss("{{ API_URL }}/static/main.css");
+    conditionalCss("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+</script>
+<script type="module">
+    import { DifferenceLightCurveOptions } from "{{ API_URL }}/static/lc-difference.js";
+    import { FoldedLightCurveOptions } from "{{ API_URL }}/static/lc-folded.js";
+    import { ApparentLightCurveOptions } from "{{ API_URL }}/static/lc-apparent.js";
+    import "{{ API_URL }}/static/jszip.js";
+    import * as echart from "{{ API_URL }}/static/echarts.js";
+
+    var oid = {{ oid }}
+    var detections = {{ detections | tojson }};
+    var non_detections = {{ non_detections | tojson }};
+    var period = {{ period }};
+
+    function plotOnClick(detection) {
+        console.log(detection);
+        const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
+        return {
+            mjd: detection.value[0],
+            date,
+            index: this.detections.findIndex((x) => x.mjd === detection.value[0]),
+        }
+    }
+
+    function dateToString(date) {
+        date = date.toISOString();
+        date = date.replace(/[-:]/g, (c) => '');
+        // date = date.replace('T', '_');
+        date = date.split('T')[0];
+        return date;
+    }
+
+    function jsonToCsv(arrayOfJson) {
+        const replacer = (key, value) => (value === null ? '' : value);
+        const header = Object.keys(arrayOfJson[0]);
+        let csv = arrayOfJson.map((row) =>
+            header
+                .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+                .join(',')
+        );
+        csv.unshift(header.join(','));
+        csv = csv.join('\r\n');
+        return csv;
+    }
+
+    /* based in https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable */
+    function download(oid, detections, nonDetections) {
+        const today = dateToString(new Date())
+        const filename = `${oid}_${today}.zip`;
+        const zip = new JSZip();
+        zip.file('detections.csv', jsonToCsv(detections));
+        zip.file('non_detections.csv', jsonToCsv(nonDetections));
+        zip.generateAsync({ type: 'blob' }).then((content) => {
+            const url = URL.createObjectURL(content);
+            const a = document.getElementById("lc-download-ref");
+            a.href = url;
+            a.download = filename;
+            a.click();
+        });
+    }
+
+
+    var plot = echarts.init(document.getElementById("main"));
+    plot.on("click", plotOnClick);
+    window.addEventListener("resize", plot.resize);
+
+    window.setPlot = (type) => {
+        var lc;
+        if (type === "difference") {
+            lc = new DifferenceLightCurveOptions(detections, non_detections, "#000");
+        } else if (type === "apparent") {
+            lc = new ApparentLightCurveOptions(detections, non_detections, "#000");
+        } else if (type === "folded") {
+            lc = new FoldedLightCurveOptions(detections, non_detections, "#000", period);
+        }
+        plot.setOption(lc.options, true);
+    };
+
+    document.getElementById("lc-download").onclick = () => download(oid, detections, non_detections);
+    window.setPlot("difference");
+</script>
+<div class="bg-white rounded p-4 shadow-lg">
+    <!-- Prepare a DOM with a defined width and height for ECharts -->
+    <div id="main" style="height:100%;min-height:380px;"></div>
+    <div class="grid grid-cols-2 gap-4">
+        <!-- Left Column (Radio Buttons) -->
+        <div>
+            <div class="space-y-2">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="data" value="difference" onclick="setPlot(value)" class="form-radio"
+                        checked>
+                    <span>Difference Magnitude</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle me-2"></i>
+                        <div class="tooltip-text">
+                            The difference Magnitude light curve, is the absolute difference between a science and
+                            reference magnitudes.
+                        </div>
+                    </div>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="data" value="apparent" onclick="setPlot(value)" class="form-radio">
+                    <span>Apparent Magnitude</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle me-2"></i>
+                        <div class="tooltip-text">
+                            Apparent magnitude light curve results from adding/subtracting the fluxes from the reference
+                            and difference in the same unit system and then converting to magnitudes.
+                        </div>
+                    </div>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="form-radio">
+                    <span>Folded</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle me-2"></i>
+                        <div class="tooltip-text">
+                            The Period folded light curve, where time is transformed to time modulo the period (Phase).
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Right Column (Buttons) -->
+        <div class="flex flex-col justify-end items-end">
+            <button class="bg-blue-500 text-white mt-2 px-2 py-1 rounded hover:bg-blue-600">
+                <i class="fa fa-eye me-2"></i>
+                Display DR
+            </button>
+            <a id="lc-download-ref" style="display: none;"></a>
+            <button id="lc-download" class="bg-green-500 text-white mt-2 px-2 py-1 rounded hover:bg-green-600">
+                <i class="fa fa-download me-2"></i>
+                Download
+            </button>
+        </div>
+    </div>
+</div>
