@@ -33,6 +33,7 @@
     const detections = {{ detections | tojson }};
     const non_detections = {{ non_detections | tojson }};
     const period = {{ period }};
+    const dr = {{ dr | tojson}};
 
     const lc_main_elem = document.getElementById("lc-main");
     const lc_table_elem = document.getElementById("lc-table");
@@ -92,6 +93,12 @@
         lc_table_elem.hidden = !lc_table_elem.hidden;
     }
 
+    window.handleDRChange = (event, id) => {
+        const checked = event.target.checked;
+        console.log(checked, id);
+        console.log(dr)
+    }
+
     /* Initialize plot */
     var plot = echarts.init(lc_main_elem);
     plot.on("click", plotOnClick);
@@ -133,42 +140,33 @@
     <div id="lc-main" class="flex-1" style="min-height: 0;"></div>
     <div id="lc-table" class="overflow-y-auto flex-1" hidden>
         <table
-            class="min-w-full border border-gray-300 dark:border-gray-600 divide-y divide-gray-200 dark:divide-gray-600 dark:text-white">
+            class="min-w-full border border-gray-300 dark:border-[#404040] divide-y divide-gray-200 dark:divide-[#404040] dark:text-white">
             <thead>
-                <tr class="bg-gray-100 dark:bg-gray-800">
+                <tr class="bg-gray-100 dark:bg-[#252525]">
                     <th class="w-12 text-center">
-                        <input type="checkbox" class="form-checkbox h-6 w-6" />
+                        {# <input type="checkbox" class="form-checkbox h-6 w-6" /> #}
                     </th>
                     <th class="text-center">ObjectId</th>
                     <th class="text-center">filterid</th>
                     <th class="text-center">nepochs</th>
-                    <th class="text-center">filterid</th>
+                    <th class="text-center">fieldid</th>
                     <th class="text-center">rcid</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
-                <!-- Sample rows -->
-                <tr class="hover:bg-gray-200 dark:hover:bg-gray-700">
+            <tbody class="divide-y divide-gray-200 dark:divide-[#404040]">
+                {% for data in dr %}
+                <tr class="hover:bg-gray-200 dark:hover:bg-[#353535]">
                     <td class="text-center">
-                        <input type="checkbox" class="form-checkbox h-6 w-6" />
+                        <input type="checkbox" class="form-checkbox h-6 w-6"
+                            onchange="handleDRChange(event, {{data._id}})" />
                     </td>
-                    <td class="text-right">ABC123</td>
-                    <td class="text-right">123</td>
-                    <td class="text-right">456</td>
-                    <td class="text-right">789</td>
-                    <td class="text-right">101</td>
+                    <td class="text-right">{{data._id}}</td>
+                    <td class="text-right">{{data.filterid}}</td>
+                    <td class="text-right">{{data.nepochs}}</td>
+                    <td class="text-right">{{data.fieldid}}</td>
+                    <td class="text-right">{{data.rcid}}</td>
                 </tr>
-                <tr class="hover:bg-gray-200 dark:hover:bg-gray-700">
-                    <td class="text-center">
-                        <input type="checkbox" class="form-checkbox h-6 w-6" />
-                    </td>
-                    <td class="text-right">DEF456</td>
-                    <td class="text-right">234</td>
-                    <td class="text-right">789</td>
-                    <td class="text-right">567</td>
-                    <td class="text-right">202</td>
-                </tr>
-                <!-- Add more rows as needed -->
+                {% endfor %}
             </tbody>
         </table>
     </div>

@@ -1,5 +1,6 @@
 import os
 
+import httpx
 from data.load import get_dummy_features, get_dummy_lc
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
@@ -154,13 +155,49 @@ jinja_env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 @router.get("/lightcurve")
 def lightcurve(oid: str) -> HTMLResponse:
+    # detections = get_detections(
+    #     oid=oid,
+    #     survey_id="ztf",
+    #     session_factory=session,
+    #     mongo_db=database,
+    #     handle_error=handle_error,
+    #     handle_success=handle_success,
+    # )
+
+    # non_detections = get_non_detections(
+    #     oid=oid,
+    #     survey_id="ztf",
+    #     session_factory=session,
+    #     mongo_db=database,
+    #     handle_error=handle_error,
+    #     handle_success=handle_success,
+    # )
+
+    # period = get_period(
+    #     oid=oid,
+    #     survey_id="ztf",
+    #     session_factory=session,
+    #     mongo_db=database,
+    #     handle_error=handle_error,
+    #     handle_success=handle_success,
+    # )
+
     detections, non_detections = get_dummy_lc()
     features = get_dummy_features()
     period = list(
         filter(lambda feat: feat.name == "Multiband_period", features)
     )[0]
 
-    print(period)
+    dr_params = {
+        "ra": detections[0].ra,
+        "dec": detections[0].dec,
+        "radius": "1.5",
+    }
+    dr = httpx.get(
+        "https://api.alerce.online/ztf/dr/v1/light_curve/",
+        params=dr_params,
+        follow_redirects=True,
+    )
 
     detections = list(map(lambda det: det.__dict__, detections))
     non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
@@ -172,5 +209,6 @@ def lightcurve(oid: str) -> HTMLResponse:
             detections=detections,
             non_detections=non_detections,
             period=period,
+            dr=dr.json(),
         )
     )
