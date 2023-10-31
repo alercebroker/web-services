@@ -6,6 +6,7 @@ from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+from core.models import Detection
 from core.service import get_detections, get_non_detections, get_period
 from database.mongo import database
 from database.sql import session
@@ -193,11 +194,38 @@ def lightcurve(oid: str) -> HTMLResponse:
         "dec": detections[0].dec,
         "radius": "1.5",
     }
-    dr = httpx.get(
+    dr_response = httpx.get(
         "https://api.alerce.online/ztf/dr/v1/light_curve/",
         params=dr_params,
         follow_redirects=True,
     )
+
+    dr = [
+        {
+            k: dr_data[k]
+            for k in ("_id", "filterid", "nepochs", "fieldid", "rcid")
+        }
+        for dr_data in dr_response.json()
+    ]
+
+    for datarelease in dr:
+        datarelease["checked"] = False
+
+    dr_detections = {
+        dr_data["_id"]: [
+            {
+                "mjd": dr_data["hmjd"][i],
+                "mag_corr": dr_data["mag"][i],
+                "e_mag_corr_ext": dr_data["magerr"][i],
+                "fid": dr_data["filterid"] + 100,
+                "field": dr_data["fieldid"],
+                "objectid": dr_data["_id"],
+                "corrected": True,
+            }
+            for i in range(dr_data["nepochs"])
+        ]
+        for dr_data in dr_response.json()
+    }
 
     detections = list(map(lambda det: det.__dict__, detections))
     non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
@@ -209,6 +237,7 @@ def lightcurve(oid: str) -> HTMLResponse:
             detections=detections,
             non_detections=non_detections,
             period=period,
-            dr=dr.json(),
+            dr=dr,
+            dr_detections=dr_detections,
         )
     )

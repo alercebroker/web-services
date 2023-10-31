@@ -28,12 +28,14 @@
     import { ApparentLightCurveOptions } from "{{ API_URL }}/static/lc-apparent.js";
     import "{{ API_URL }}/static/jszip.js";
     import * as echart from "{{ API_URL }}/static/echarts.js";
+    import { jdToDate } from "{{ API_URL }}/static/astro-dates.js";
 
     const oid = {{ oid }}
     const detections = {{ detections | tojson }};
     const non_detections = {{ non_detections | tojson }};
     const period = {{ period }};
-    const dr = {{ dr | tojson}};
+    const dr = {{ dr | tojson }};
+    const dr_detections = {{ dr_detections | tojson }};
 
     const lc_main_elem = document.getElementById("lc-main");
     const lc_table_elem = document.getElementById("lc-table");
@@ -88,21 +90,37 @@
         });
     }
 
-    function toggleDataRelease() {
-        lc_main_elem.hidden = !lc_main_elem.hidden;
-        lc_table_elem.hidden = !lc_table_elem.hidden;
+    function getDetectionsWithDR() {
+        const all_detections = [detections];
+        dr.forEach((elem) => {
+            if (elem.checked) {
+                all_detections.push(dr_detections[elem._id]);
+            }
+        });
+        return [].concat.apply([], all_detections);
     }
 
     window.handleDRChange = (event, id) => {
         const checked = event.target.checked;
-        console.log(checked, id);
-        console.log(dr)
+        var dr_entry = dr.find((elem) => elem._id === id);
+        dr_entry.checked = checked;
     }
 
     /* Initialize plot */
     var plot = echarts.init(lc_main_elem);
     plot.on("click", plotOnClick);
     window.addEventListener("resize", plot.resize);
+
+    function toggleDataRelease() {
+        lc_main_elem.hidden = !lc_main_elem.hidden;
+        lc_table_elem.hidden = !lc_table_elem.hidden;
+
+        // Update the plot when showing it again
+        if (lc_main_elem.hidden === false) {
+            window.setPlot(current_plot);
+            plot.resize();
+        }
+    }
 
     /* Update plot on plot type change */
     window.setPlot = (type) => {
@@ -111,9 +129,9 @@
         if (current_plot === "difference") {
             lc = new DifferenceLightCurveOptions(detections, non_detections, plot_text_color);
         } else if (current_plot === "apparent") {
-            lc = new ApparentLightCurveOptions(detections, non_detections, plot_text_color);
+            lc = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color);
         } else if (current_plot === "folded") {
-            lc = new FoldedLightCurveOptions(detections, non_detections, plot_text_color, period);
+            lc = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color, period);
         }
         plot.setOption(lc.options, true);
     };

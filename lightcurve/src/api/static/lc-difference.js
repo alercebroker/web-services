@@ -13,9 +13,13 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
 
   getSeries() {
     const bands = new Set(this.detections.map((item) => item.fid))
+    const ndBands = new Set(this.nonDetections.map((item) => item.fid))
+    this.nonDetections
+      .map((item) => item.fid)
+      .forEach((element) => bands.add(element))
     this.addDetections(this.detections, bands)
     this.addErrorBars(this.detections, bands)
-    this.addNonDetections(this.nonDetections, bands)
+    this.addNonDetections(this.nonDetections, ndBands)
   }
 
   addDetections(detections, bands) {
@@ -72,9 +76,6 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
         return x.fid === band
       })
       .map(function (x) {
-        if (x.e_mag_corr > 1) {
-          return [null, null, null]
-        }
         return [x.mjd, x.mag - x.e_mag, x.mag + x.e_mag]
       })
   }
@@ -100,7 +101,8 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   }
 
   getLegend() {
-    const bands = Array.from(new Set(this.detections.map((item) => item.fid)))
+    let bands = Array.from(new Set(this.detections.map((item) => item.fid)))
+    bands = bands.sort((x, y) => x - y)
     let legend = bands.map((band) => this.bandMap[band].name)
     legend = legend.concat(
       bands.map((band) => this.bandMap[band].name + ' non-detections')
