@@ -1,6 +1,7 @@
 from contextlib import AbstractContextManager
 from typing import Any, Callable
 
+import httpx
 from db_plugins.db.sql.models import (
     Detection,
     Feature,
@@ -19,6 +20,7 @@ from .exceptions import (
     ObjectNotFound,
     SurveyIdError,
 )
+from .models import DataReleaseDetection as DataReleaseDetectionModel
 from .models import Detection as DetectionModel
 from .models import Feature as FeatureModel
 from .models import NonDetection as NonDetectionModel
@@ -325,6 +327,53 @@ def _get_non_detections_mongo(
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e)
+
+
+async def get_data_release(
+    ra: float, dec: float, radius: float = 1.5
+) -> tuple[dict[str, Any], dict[str, list[DataReleaseDetectionModel]]]:
+    dr_params = {
+        "ra": ra,
+        "dec": dec,
+        "radius": radius,
+    }
+
+    datareleases = []
+    detections = {}
+    async with httpx.AsyncClient(follow_redirects=True) as client:
+        resp = await client.get(
+            "https://api.alerce.online/ztf/dr/v1/light_curve/",
+            params=dr_params,
+        )
+
+        datareleases = [
+            {
+                k: dr_data[k]
+                for k in ("_id", "filterid", "nepochs", "fieldid", "rcid")
+            }
+            for dr_data in resp.json()
+        ]
+
+        for datarelease in datareleases:
+            datarelease["checked"] = False
+
+        detections = {
+            dr_data["_id"]: [
+                DataReleaseDetectionModel(
+                    mjd=dr_data["hmjd"][i],
+                    mag_corr=dr_data["mag"][i],
+                    e_mag_corr_ext=dr_data["magerr"][i],
+                    fid=dr_data["filterid"] + 100,
+                    field=dr_data["fieldid"],
+                    objectid=dr_data["_id"],
+                    corrected=True,
+                )
+                for i in range(dr_data["nepochs"])
+            ]
+            for dr_data in resp.json()
+        }
+
+    return datareleases, detections
 
 
 def _get_period_mongo():

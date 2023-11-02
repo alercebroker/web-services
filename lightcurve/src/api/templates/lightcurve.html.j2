@@ -30,7 +30,7 @@
     import * as echart from "{{ API_URL }}/static/echarts.js";
     import { jdToDate } from "{{ API_URL }}/static/astro-dates.js";
 
-    const oid = {{ oid }}
+    const oid = '{{ oid }}';
     const detections = {{ detections | tojson }};
     const non_detections = {{ non_detections | tojson }};
     const period = {{ period }};
@@ -42,14 +42,14 @@
 
     var plot_text_color = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "#fff" : "#000";
     var current_plot = "difference";
+    var plot_options;
 
     function plotOnClick(detection) {
-        console.log(detection);
         const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
         return {
             mjd: detection.value[0],
             date,
-            index: this.detections.findIndex((x) => x.mjd === detection.value[0]),
+            index: plot_options.detections.findIndex((x) => x.mjd === detection.value[0]),
         }
     }
 
@@ -125,15 +125,14 @@
     /* Update plot on plot type change */
     window.setPlot = (type) => {
         current_plot = type;
-        var lc;
         if (current_plot === "difference") {
-            lc = new DifferenceLightCurveOptions(detections, non_detections, plot_text_color);
+            plot_options = new DifferenceLightCurveOptions(detections, non_detections, plot_text_color);
         } else if (current_plot === "apparent") {
-            lc = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color);
+            plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color);
         } else if (current_plot === "folded") {
-            lc = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color, period);
+            plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color, period);
         }
-        plot.setOption(lc.options, true);
+        plot.setOption(plot_options.options, true);
     };
 
     /* Update plot text color on switch between dark/light mode */
