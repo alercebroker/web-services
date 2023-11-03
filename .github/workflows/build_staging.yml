@@ -12,7 +12,7 @@ jobs:
       GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python
@@ -27,13 +27,13 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py build staging
+          poetry run python main.py build lightcurve,astroobject staging
   release-chart:
     needs: build-dagger
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: main
@@ -47,6 +47,28 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
+  test-dagger:
+    runs-on: ubuntu-latest
+    env:
+      GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ci
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python main.py test lightcurve,astroobject staging
   deploy:
     needs: release-chart
     runs-on: ubuntu-latest
@@ -55,7 +77,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Configure AWS credentials
         id: creds
         uses: aws-actions/configure-aws-credentials@v3
@@ -78,4 +100,4 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py deploy staging
+          poetry run python main.py deploy lightcurve,astroobject staging
