@@ -1,5 +1,6 @@
 import re
 import sys
+from calver import get_calver as _get_calver
 
 
 def update_app_version(package: str, new_version: str, dry_run: bool):
@@ -27,14 +28,18 @@ def update_chart_version(
         if not match:
             raise ValueError("Could not find valid version in Chart.yaml")
         version = version or match.group("version")
-        major, minor, patch = version.split(".")
+        new_version = _get_calver(version, "chart_update")
+        major, minor, patch = new_version.split(".")
         chart = re.sub(
             r"version: (\d+).(\d+).(\d+.*)",
-            f"version: { major }.{ minor }.{ int(patch) + 1 }",
+            f"version: { major }.{ minor }.{ patch }",
             original,
         )
         if not dry_run:
             f.write(chart)
+        else:
+            print("Dry run, not writing to file")
+            print(f"Would update {package} to version:", new_version)
 
 
 def get_package_version(package: str):
