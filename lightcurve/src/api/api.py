@@ -38,3 +38,7 @@ app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
 @app.get("/openapi.json")
 def custom_swagger_route():
     return app.openapi()
+
+@app.get("/healthcheck")
+def healthcheck():
+    return "OK"
