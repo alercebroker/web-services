@@ -3,7 +3,11 @@ import os
 import sys
 import anyio
 import pathlib
-from multiprocessing import Process, Pool
+import logging
+
+# Configure the logging settings
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def env_variables(envs: dict[str, str]):
@@ -30,7 +34,7 @@ def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
                     "poetry",
                     "run",
                     "python",
-                    "ssm.py",
+                    "./deploy/ssm.py",
                     ssm_parameter_name,
                 ]
             )
@@ -40,9 +44,8 @@ def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
     return get_values_inner
 
 
-async def helm_upgrade(package: str, dry_run: bool):
+async def helm_upgrade(package: str, stage: str, dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
-
     async with dagger.Connection(config) as client:
         k8s = (
             client.container()
@@ -55,11 +58,10 @@ async def helm_upgrade(package: str, dry_run: bool):
                             "AWS_SECRET_ACCESS_KEY"
                         ],
                         "AWS_SESSION_TOKEN": os.environ["AWS_SESSION_TOKEN"],
+                        "AWS_DEFAULT_REGION": os.environ["AWS_DEFAULT_REGION"],
+                        "STAGE": stage,
                     },
                 )
-            )
-            .with_env_variable(
-                "AWS_DEFAULT_REGION", os.environ["AWS_DEFAULT_REGION"]
             )
             .with_exec(
                 [
@@ -68,8 +70,8 @@ async def helm_upgrade(package: str, dry_run: bool):
                     """
                     aws eks update-kubeconfig \
                     --region us-east-1 \
-                    --name staging \
-                    --alias staging
+                    --name ${STAGE} \
+                    --alias ${STAGE}
                     """,
                 ]
             )
@@ -108,12 +110,18 @@ async def helm_upgrade(package: str, dry_run: bool):
         )
 
 
-def deploy_package(package: str, dry_run: bool):
-    print(f"Deploying {package}")
-    anyio.run(helm_upgrade, package, dry_run)
+async def deploy_package(packages: list, stage: str, dry_run: bool):
+    async with anyio.create_task_group() as tg:
+        for package in packages:
+            logger.info(f"Deploying {package} to stage {stage}")
+            tg.start_soon(helm_upgrade, package, stage, dry_run)
 
 
-def deploy_staging(dry_run: bool):
-    packages = [("lightcurve", dry_run), ("astroobject", dry_run)]
-    for p in packages:
-        deploy_package(*p)
+async def deploy_stage(packages: list, stage: str, dry_run: bool):
+    await deploy_package(packages, stage, dry_run)
+
+
+if __name__ == "__main__":
+    packages = ["lightcurve", "astroobject"]
+    stage = "staging"
+    anyio.run(deploy_stage, packages, stage, dry_run=True)
