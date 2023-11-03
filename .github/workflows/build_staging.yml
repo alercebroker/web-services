@@ -28,6 +28,7 @@ jobs:
         run: |
           cd ci
           poetry run python main.py build astroobject staging
+
   release-chart:
     needs: build-dagger
     runs-on: ubuntu-latest
@@ -47,28 +48,7 @@ jobs:
         uses: helm/chart-releaser-action@v1.5.0
         env:
           CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
-  test-dagger:
-    runs-on: ubuntu-latest
-    env:
-      GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.11
-          cache: 'poetry'
-      - name: Install dependencies
-        run: |
-          cd ci
-          poetry install
-      - name: Run dagger pipeline
-        run: |
-          cd ci
-          poetry run python main.py test astroobject staging
+
   deploy:
     needs: release-chart
     runs-on: ubuntu-latest
@@ -101,3 +81,52 @@ jobs:
         run: |
           cd ci
           poetry run python main.py deploy astroobject staging
+
+  test-dagger:
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ci
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python main.py test astroobject staging
+  
+  rollback:
+    needs: test-dagger
+    if: failure()
+    runs-on: ubuntu-latest
+    env:
+      GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ci
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python main.py rollback astroobject staging

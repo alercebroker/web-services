@@ -19,3 +19,4 @@ async def healthcheck_test_step(url: str):
             # Execute the healthcheck test inside the container
             .with_exec(["python", "tests.py", "healthcheck", f"{url}"])
         )
+        await container

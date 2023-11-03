@@ -121,6 +121,83 @@ async def deploy_stage(packages: list, stage: str, dry_run: bool):
     await deploy_package(packages, stage, dry_run)
 
 
+async def rollback_package(packages: list, stage: str, dry_run: bool):
+    async with anyio.create_task_group() as tg:
+        for package in packages:
+            logger.info(f"Rollback {package} from stage {stage}")
+            tg.start_soon(helm_rollback, package, stage, dry_run)
+
+
+async def rollback_stage(packages: list, stage: str, dry_run: bool):
+    await rollback_package(packages, stage, dry_run)
+    await deploy_package(packages, stage, dry_run)
+
+
+async def helm_rollback(package: str, stage: str, dry_run: bool):
+    config = dagger.Config(log_output=sys.stdout)
+    async with dagger.Connection(config) as client:
+        k8s = (
+            client.container()
+            .from_("alpine/k8s:1.27.5")
+            .with_(
+                env_variables(
+                    {
+                        "AWS_ACCESS_KEY_ID": os.environ["AWS_ACCESS_KEY_ID"],
+                        "AWS_SECRET_ACCESS_KEY": os.environ[
+                            "AWS_SECRET_ACCESS_KEY"
+                        ],
+                        "AWS_SESSION_TOKEN": os.environ["AWS_SESSION_TOKEN"],
+                        "AWS_DEFAULT_REGION": os.environ["AWS_DEFAULT_REGION"],
+                        "STAGE": stage,
+                    },
+                )
+            )
+            .with_exec(
+                [
+                    "sh",
+                    "-c",
+                    """
+                    aws eks update-kubeconfig \
+                    --region us-east-1 \
+                    --name ${STAGE} \
+                    --alias ${STAGE}
+                    """,
+                ]
+            )
+        )
+        helm_command = [
+            "helm",
+            "rollback",
+            package,
+            "0",
+        ]
+        if dry_run:
+            helm_command.append("--dry-run")
+
+        await (
+            k8s.with_exec(["kubectl", "config", "get-contexts"])
+            .with_exec(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "web-services",
+                    "https://alercebroker.github.io/web-services",
+                ]
+            )
+            .with_(
+                get_values(
+                    client,
+                    str(pathlib.Path().cwd().parent.absolute()),
+                    f"{package}-service-helm-values",
+                )
+            )
+            .with_exec(helm_command)
+        )
+
+async def deploy_stage(packages: list, stage: str, dry_run: bool):
+    await deploy_package(packages, stage, dry_run)
+
 if __name__ == "__main__":
     packages = ["lightcurve", "astroobject"]
     stage = "staging"
