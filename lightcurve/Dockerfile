@@ -27,5 +27,5 @@ WORKDIR /app
 COPY ./lightcurve/README.md /app/README.md
 COPY ./lightcurve/scripts /app/scripts
 COPY ./lightcurve/src /app/src
-RUN poetry install --only-root
+RUN poetry install
 CMD ["bash", "scripts/entrypoint.sh"]
