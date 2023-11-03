@@ -11,7 +11,7 @@
 
     function conditionalCss(href) {
         if (!isCssLoaded(href)) {
-            var link = document.createElement("link");
+            let link = document.createElement("link");
             link.href = href;
             link.type = "text/css";
             link.rel = "stylesheet";
@@ -40,9 +40,9 @@
     const lc_main_elem = document.getElementById("lc-main");
     const lc_table_elem = document.getElementById("lc-table");
 
-    var plot_text_color = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "#fff" : "#000";
-    var current_plot = "difference";
-    var plot_options;
+    let plot_text_color = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "#fff" : "#000";
+    let current_plot = "difference";
+    let plot_options;
 
     function plotOnClick(detection) {
         const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
@@ -102,12 +102,12 @@
 
     window.handleDRChange = (event, id) => {
         const checked = event.target.checked;
-        var dr_entry = dr.find((elem) => elem._id === id);
+        let dr_entry = dr.find((elem) => elem._id === id);
         dr_entry.checked = checked;
     }
 
     /* Initialize plot */
-    var plot = echarts.init(lc_main_elem);
+    let plot = echarts.init(lc_main_elem);
     plot.on("click", plotOnClick);
     window.addEventListener("resize", plot.resize);
 
@@ -136,23 +136,27 @@
     };
 
     /* Update plot text color on switch between dark/light mode */
-    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
-        const newColorScheme = event.matches ? "dark" : "light";
-        if (newColorScheme === "dark") {
+    let body = document.body;
+    function setColorScheme() {
+        const color_scheme = body.classList.contains("dark") ? "dark" : "light";
+        if (color_scheme === "dark") {
             plot_text_color = "#fff";
         } else {
             plot_text_color = "#000";
         }
         window.setPlot(current_plot);
-    });
+    }
+    let color_scheme_observer = new MutationObserver(setColorScheme);
+    color_scheme_observer.observe(body, { attributes: true, attributeFilter: ["class"] });
 
     /* Set up Download and Data release buttons */
-    document.getElementById("lc-download").onclick = () => download(oid, detections, non_detections);
-    document.getElementById("lc-dr").onclick = toggleDataRelease;
+    document.getElementById("lc-download").addEventListener("click", () => download(oid, detections, non_detections));
+    document.getElementById("lc-dr").addEventListener("click", toggleDataRelease);
 
-    window.setPlot(current_plot);
+    window.addEventListener("load", setColorScheme);
 </script>
-<div class="bg-white dark:bg-[#1e1e1e] dark:text-white rounded p-4 shadow-lg dark:shadow-none flex flex-col h-full">
+<div id="lightcurve"
+    class="bg-white dark:bg-[#1e1e1e] dark:text-white rounded p-4 shadow-lg dark:shadow-none flex flex-col h-full">
     <!-- Prepare a DOM with a defined width and height for ECharts -->
     <div id="lc-main" class="flex-1" style="min-height: 0;"></div>
     <div id="lc-table" class="overflow-y-auto flex-1" hidden>
