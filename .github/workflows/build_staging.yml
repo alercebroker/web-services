@@ -27,7 +27,7 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py build lightcurve,astroobject staging
+          poetry run python main.py build astroobject staging
   release-chart:
     needs: build-dagger
     runs-on: ubuntu-latest
@@ -68,7 +68,7 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py test lightcurve,astroobject staging
+          poetry run python main.py test astroobject staging
   deploy:
     needs: release-chart
     runs-on: ubuntu-latest
@@ -100,4 +100,4 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py deploy lightcurve,astroobject staging
+          poetry run python main.py deploy astroobject staging
