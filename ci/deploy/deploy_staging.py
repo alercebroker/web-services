@@ -30,7 +30,7 @@ def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
                     "poetry",
                     "run",
                     "python",
-                    "/ci/ssm.py",
+                    "ci/ssm.py",
                     ssm_parameter_name,
                 ]
             )
