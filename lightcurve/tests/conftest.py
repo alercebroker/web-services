@@ -5,7 +5,13 @@ import psycopg2
 import pytest
 from db_plugins.db.mongo._connection import MongoConnection
 from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
-from db_plugins.db.sql.models import Detection, NonDetection, Object
+from db_plugins.db.sql.models import (
+    Detection,
+    Feature,
+    FeatureVersion,
+    NonDetection,
+    Object,
+)
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
 from pymongo.database import Database
@@ -138,11 +144,13 @@ def populate_psql(database):
         add_psql_objects(session)
         add_psql_detections(session)
         add_psql_non_detections(session)
+        add_psql_feature_versions(session)
+        add_psql_features(session)
 
 
 def add_psql_objects(session):
-    object = Object(oid="oid1")
-    session.add(object)
+    objects = [Object(oid="oid1"), Object(oid="oid2")]
+    session.add_all(objects)
     session.commit()
 
 
@@ -193,6 +201,48 @@ def add_psql_non_detections(session):
     ]
     non_detections = [NonDetection(**non) for non in non_detections]
     session.add_all(non_detections)
+    session.commit()
+
+
+def add_psql_feature_versions(session):
+    feature_versions = [FeatureVersion(version="lc_classifier_1.2.1-P")]
+    session.add_all(feature_versions)
+    session.commit()
+
+
+def add_psql_features(session):
+    features = [
+        {
+            "oid": "oid1",
+            "name": "SPM_chi",
+            "value": None,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P",
+        },
+        {
+            "oid": "oid1",
+            "name": "Multiband_period",
+            "value": 296.87498481917,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P",
+        },
+        {
+            "oid": "oid1",
+            "name": "PPE",
+            "value": 0.042344874357211904,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P",
+        },
+        {
+            "oid": "oid2",
+            "name": "SPM_chi",
+            "value": 41569.40533659299,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P",
+        },
+    ]
+    features = [Feature(**feat) for feat in features]
+    session.add_all(features)
     session.commit()
 
 
@@ -342,7 +392,7 @@ def add_mongo_detections(database: Database):
             "corrected": False,
             "dubious": False,
             "has_stamp": False,
-        }, # Unique ZTF detection
+        },  # Unique ZTF detection
         {
             "_id": "123",
             "tid": "ztf",
@@ -358,10 +408,11 @@ def add_mongo_detections(database: Database):
             "corrected": False,
             "dubious": False,
             "has_stamp": False,
-        }, # Duplicated ZTF detection
+        },  # Duplicated ZTF detection
     ]
     for det in detections:
         database.detection.insert_one(det)
+
 
 def add_mongo_non_detections(database: Database):
     non_detections = [
@@ -371,16 +422,16 @@ def add_mongo_non_detections(database: Database):
             "oid": "oid1",
             "mjd": 59000,
             "fid": 1,
-            "diffmaglim": 0.5
-        }, #duplicate
+            "diffmaglim": 0.5,
+        },  # duplicate
         {
             "tid": "ztf",
             "aid": "aid3",
             "oid": "oid1",
             "mjd": 59015,
             "fid": 1,
-            "diffmaglim": 0.6
-        }, # unique ztf non detection
+            "diffmaglim": 0.6,
+        },  # unique ztf non detection
     ]
     for non_det in non_detections:
         database.non_detection.insert_one(non_det)

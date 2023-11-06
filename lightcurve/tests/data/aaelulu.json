@@ -2117,5 +2117,1075 @@
             "fid": 2,
             "diffmaglim": 20.6648
         }
+    ],
+    "features": [
+        {
+            "name": "gal_b",
+            "value": 76.90006649578771,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "gal_l",
+            "value": 271.13394401869147,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "g-r_max",
+            "value": 0.4406339999999993,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "g-r_mean",
+            "value": 0.7344006979310365,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "g-r_max_corr",
+            "value": null,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "g-r_mean_corr",
+            "value": null,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "rb",
+            "value": 0.8457143,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_ratio",
+            "value": 32.21072769165039,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_low",
+            "value": 33.21243667602539,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_high",
+            "value": 1.0310986042022705,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_non_zero",
+            "value": 29,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_PN_flag",
+            "value": 0,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_ratio",
+            "value": 35.32886505126953,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_low",
+            "value": 30.3208065032959,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_high",
+            "value": 0.8582445979118347,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_non_zero",
+            "value": 22,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MHPS_PN_flag",
+            "value": 0,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "iqr",
+            "value": 1.0818200000000004,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "iqr",
+            "value": 1.1791149999999995,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Amplitude",
+            "value": 1.9977867500000013,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "AndersonDarling",
+            "value": 0.9825344871449025,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Autocor_length",
+            "value": 5,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Beyond1Std",
+            "value": 0.3793103448275862,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Con",
+            "value": 0,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Eta_e",
+            "value": 0.014404609703778605,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Gskew",
+            "value": -1.0165420000000012,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MaxSlope",
+            "value": 0.18241010231820085,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Mean",
+            "value": 16.960974137931036,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Meanvariance",
+            "value": 0.06158840110219123,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MedianAbsDev",
+            "value": 0.4713969999999996,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MedianBRP",
+            "value": 0.4827586206896552,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "PairSlopeTrend",
+            "value": 0.5333333333333333,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "PercentAmplitude",
+            "value": 0.1569320989939728,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Q31",
+            "value": 1.0818200000000004,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Rcs",
+            "value": 0.3562878931994401,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Skew",
+            "value": -0.5853836972558388,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SmallKurtosis",
+            "value": 0.8220849626433853,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Std",
+            "value": 1.0445992782907887,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "StetsonK",
+            "value": 0.8324809568017242,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Pvar",
+            "value": 1,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "ExcessVar",
+            "value": 0.003784128774938876,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SF_ML_amplitude",
+            "value": 8.962432271175713,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SF_ML_gamma",
+            "value": 0.8053797899139418,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "IAR_phi",
+            "value": 0.9916314710229588,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "LinearTrend",
+            "value": 0.03275407434701109,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Amplitude",
+            "value": 2.15412025,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "AndersonDarling",
+            "value": 0.7595907494138,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Autocor_length",
+            "value": 3,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Beyond1Std",
+            "value": 0.24,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Con",
+            "value": 0,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Eta_e",
+            "value": 0.060870678110007,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Gskew",
+            "value": -0.41271000000000413,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MaxSlope",
+            "value": 0.6375134765511566,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Mean",
+            "value": 16.22657344,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Meanvariance",
+            "value": 0.06824905536176178,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MedianAbsDev",
+            "value": 0.502046,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "MedianBRP",
+            "value": 0.48,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "PairSlopeTrend",
+            "value": 0.6666666666666666,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "PercentAmplitude",
+            "value": 0.15452331383193668,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Q31",
+            "value": 1.1791149999999995,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Rcs",
+            "value": 0.38305561761921175,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Skew",
+            "value": -0.2251771120932927,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SmallKurtosis",
+            "value": 0.4244373591047812,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Std",
+            "value": 1.1074483090382532,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "StetsonK",
+            "value": 0.8459043216438189,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Pvar",
+            "value": 1,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "ExcessVar",
+            "value": 0.004651112217444948,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SF_ML_amplitude",
+            "value": 8.632997907028356,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SF_ML_gamma",
+            "value": 0.7249131667312989,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "IAR_phi",
+            "value": 0.9644971332955188,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "LinearTrend",
+            "value": 0.0347302399512129,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "delta_mag_fid",
+            "value": 4.307274000000001,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "delta_mjd_fid",
+            "value": 107.70476850029081,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "first_mag",
+            "value": 14.916227,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "mean_mag",
+            "value": 16.960974137931036,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "min_mag",
+            "value": 14.300256,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_det",
+            "value": 29,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_neg",
+            "value": 0,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_pos",
+            "value": 29,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "positive_fraction",
+            "value": 1,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_non_det_before_fid",
+            "value": 6,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "max_diffmaglim_before_fid",
+            "value": 20.5516,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "median_diffmaglim_before_fid",
+            "value": 19.533949999999997,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "last_diffmaglim_before_fid",
+            "value": 20.5516,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "last_mjd_before_fid",
+            "value": 58849.50318290014,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "dmag_non_det_fid",
+            "value": 5.233693999999998,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "dmag_first_det_fid",
+            "value": 5.635373000000001,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_non_det_after_fid",
+            "value": 1,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "max_diffmaglim_after_fid",
+            "value": 20.0322,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "median_diffmaglim_after_fid",
+            "value": 20.0322,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "delta_mag_fid",
+            "value": 4.65339,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "delta_mjd_fid",
+            "value": 109.74439810030162,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "first_mag",
+            "value": 17.279879,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "mean_mag",
+            "value": 16.22657344,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "min_mag",
+            "value": 13.859622,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_det",
+            "value": 25,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_neg",
+            "value": 0,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_pos",
+            "value": 25,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "positive_fraction",
+            "value": 1,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_non_det_before_fid",
+            "value": 5,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "max_diffmaglim_before_fid",
+            "value": 20.5218,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "median_diffmaglim_before_fid",
+            "value": 19.5815,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "last_diffmaglim_before_fid",
+            "value": 20.5218,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "last_mjd_before_fid",
+            "value": 58852.546400499996,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "dmag_non_det_fid",
+            "value": 5.7218779999999985,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "dmag_first_det_fid",
+            "value": 3.241920999999998,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "n_non_det_after_fid",
+            "value": 5,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "max_diffmaglim_after_fid",
+            "value": 20.6648,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "median_diffmaglim_after_fid",
+            "value": 20.2934,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_A",
+            "value": 14.34354070213826,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_t0",
+            "value": -19.265086441828608,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_gamma",
+            "value": 84.06450720775675,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_beta",
+            "value": 0.6322641480240841,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_tau_rise",
+            "value": 18.535097040872486,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_tau_fall",
+            "value": 52.67049673043087,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_chi",
+            "value": 37515.677933622705,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_A",
+            "value": 22.150823062371053,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_t0",
+            "value": -18.021217110354662,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_gamma",
+            "value": 78.62097012034447,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_beta",
+            "value": 0.6502541066830339,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_tau_rise",
+            "value": 23.731043647857923,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_tau_fall",
+            "value": 55.34503267092045,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "SPM_chi",
+            "value": 41569.40533659299,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Multiband_period",
+            "value": 296.87498481917,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "PPE",
+            "value": 0.042344874357211904,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Period_band",
+            "value": 999.999952502551,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "delta_period",
+            "value": 703.124967683381,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Period_band",
+            "value": 199.99998584389786,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "delta_period",
+            "value": 96.87499897527212,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Power_rate_1/4",
+            "value": 0.23754526674747467,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Power_rate_1/3",
+            "value": 0.2530757486820221,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Power_rate_1/2",
+            "value": 0.6902199983596802,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Power_rate_2",
+            "value": 0.9875851273536682,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Power_rate_3",
+            "value": 0.9767274260520935,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Power_rate_4",
+            "value": 0.9767274260520935,
+            "fid": 12,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Psi_CS",
+            "value": 0.3562878931994401,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Psi_eta",
+            "value": 0.07532433150591006,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Psi_CS",
+            "value": 0.38305561761921175,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Psi_eta",
+            "value": 0.3022320855340801,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_1",
+            "value": 70601.18388585951,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_2",
+            "value": 50365.208595080556,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_3",
+            "value": 28169.89931254215,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_4",
+            "value": 11962.717756416632,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_5",
+            "value": 3638.498188473664,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_6",
+            "value": 707.2952910584685,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_7",
+            "value": 65.93358791291861,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_2",
+            "value": 3.141834592515559,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_3",
+            "value": 0,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_4",
+            "value": 3.142899922954312,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_5",
+            "value": 6.283089408211056,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_6",
+            "value": 3.1348697879049148,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_7",
+            "value": 6.259558453535934,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mse",
+            "value": 0.0010712081464411777,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_1",
+            "value": 2196004.644813619,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_2",
+            "value": 1551288.6153920996,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_3",
+            "value": 853813.7656452875,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_4",
+            "value": 354697.13211800344,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_5",
+            "value": 104953.07034567339,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_6",
+            "value": 19746.281715699624,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mag_7",
+            "value": 1775.878514199655,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_2",
+            "value": 6.280365853347063,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_3",
+            "value": 6.271800525642609,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_4",
+            "value": 6.254434716292355,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_5",
+            "value": 6.225169263033093,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_6",
+            "value": 6.1810373378632075,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_phase_7",
+            "value": 6.119384471882878,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "Harmonics_mse",
+            "value": 0,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "GP_DRW_sigma",
+            "value": 2.900349976177711,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "GP_DRW_tau",
+            "value": 319.1475059172923,
+            "fid": 1,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "GP_DRW_sigma",
+            "value": 2.3146505280031247,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "GP_DRW_tau",
+            "value": 52.653617796701774,
+            "fid": 2,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "sgscore1",
+            "value": 0.227482,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "W1-W2",
+            "value": null,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "W2-W3",
+            "value": null,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "g-W2",
+            "value": null,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "g-W3",
+            "value": null,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "r-W2",
+            "value": null,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        },
+        {
+            "name": "r-W3",
+            "value": null,
+            "fid": 0,
+            "version": "lc_classifier_1.2.1-P"
+        }
     ]
 }
