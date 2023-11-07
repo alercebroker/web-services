@@ -1,7 +1,7 @@
 from test.tests_stage_steps import healthcheck_test_step
 
-staging_url = "http://api.staging.alerce.online/v2"
-prod_url = "http://api.alerce.online/v2"
+staging_url = "https://api.staging.alerce.online/v2"
+prod_url = "https://api.alerce.online/v2"
 
 _tests_selection = {
     "lightcurve": [
