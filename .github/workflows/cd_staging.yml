@@ -62,8 +62,10 @@ jobs:
         id: creds
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
+          role-to-assume: ${{ secrets.AWS_ROLE_STAGING }}
           aws-region: us-east-1
+          output-credentials: true
+          unset-current-credentials: true
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python
