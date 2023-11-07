@@ -1,6 +1,8 @@
 import os
 import pathlib
 import sys
+from anyio import TASK_STATUS_IGNORED
+from anyio.abc import TaskStatus
 import dagger
 
 dagger_config = dagger.Config(log_output=sys.stdout)
@@ -19,7 +21,12 @@ def get_configure_aws_command(cluster_name, cluster_alias):
     ]
 
 
-def prepare_k8s_container(client, cluster_name, cluster_alias):
+def prepare_k8s_container(
+        client: dagger.Client,
+        cluster_name: str,
+        cluster_alias: str,
+        package: str
+) -> dagger.Container:
     k8s_container = (
         client.container()
         .from_("alpine/k8s:1.27.5")
@@ -46,18 +53,15 @@ def prepare_k8s_container(client, cluster_name, cluster_alias):
                 "https://alercebroker.github.io/web-services",
             ]
         )
-    )
-    return k8s_container
-
-
-def k8s_get_values(client: dagger.Client, k8s: dagger.Container, package: str):
-    k8s.with_(
-        get_values(
-            client,
-            str(pathlib.Path().cwd().parent.absolute()),
-            f"{package}-service-helm-values",
+        .with_(
+            get_values(
+                client,
+                str(pathlib.Path().cwd().parent.absolute()),
+                f"{package}-service-helm-values",
+            )
         )
     )
+    return k8s_container
 
 
 def env_variables(envs: dict[str, str]):
@@ -97,6 +101,8 @@ def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
 async def helm_package(
     k8s: dagger.Container,
     package: str,
+    *,
+    task_status: TaskStatus[None] = TASK_STATUS_IGNORED,
 ):
     helm_package_command = [
         "helm",
@@ -105,12 +111,15 @@ async def helm_package(
     ]
 
     await k8s.with_exec(helm_package_command)
+    task_status.started() # Release task lock
 
 
 async def helm_upgrade(
     k8s: dagger.Container,
     package: str,
     dry_run: bool,
+    *,
+    task_status: TaskStatus[None] = TASK_STATUS_IGNORED,
 ):
     helm_upgrade_command = [
         "helm",
@@ -125,12 +134,14 @@ async def helm_upgrade(
         helm_upgrade_command.append("--dry-run")
 
     await k8s.with_exec(helm_upgrade_command)
+    task_status.started() # Release task lock
 
 
 async def helm_rollback(
     k8s: dagger.Container,
     package: str,
     dry_run: bool,
+    task_status: TaskStatus[None] = TASK_STATUS_IGNORED,
 ):
     helm_rollback_command = [
         "helm",
@@ -142,3 +153,4 @@ async def helm_rollback(
         helm_rollback_command.append("--dry-run")
 
     await k8s.with_exec(helm_rollback_command)
+    task_status.started() # Release task lock
