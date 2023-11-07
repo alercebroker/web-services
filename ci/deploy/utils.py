@@ -22,10 +22,7 @@ def get_configure_aws_command(cluster_name, cluster_alias):
 
 
 def prepare_k8s_container(
-        client: dagger.Client,
-        cluster_name: str,
-        cluster_alias: str,
-        package: str
+    client: dagger.Client, cluster_name: str, cluster_alias: str, package: str
 ) -> dagger.Container:
     k8s_container = (
         client.container()
@@ -111,7 +108,7 @@ async def helm_package(
     ]
 
     await k8s.with_exec(helm_package_command)
-    task_status.started() # Release task lock
+    task_status.started()  # Release task lock
 
 
 async def helm_upgrade(
@@ -134,7 +131,7 @@ async def helm_upgrade(
         helm_upgrade_command.append("--dry-run")
 
     await k8s.with_exec(helm_upgrade_command)
-    task_status.started() # Release task lock
+    task_status.started()  # Release task lock
 
 
 async def helm_rollback(
@@ -153,4 +150,4 @@ async def helm_rollback(
         helm_rollback_command.append("--dry-run")
 
     await k8s.with_exec(helm_rollback_command)
-    task_status.started() # Release task lock
+    task_status.started()  # Release task lock

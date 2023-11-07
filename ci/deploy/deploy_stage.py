@@ -13,11 +13,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def _build_and_deploy_package(packages: list, stage: str, dry_run: bool):
+async def _deploy_package(packages: list, stage: str, dry_run: bool):
     async with anyio.create_task_group() as tg:
         for package in packages:
             async with dagger.Connection(dagger_config) as client:
-                logger.info(f"Build and deploy {package} in {stage}")
+                logger.info(f"Deploy {package} in {stage}")
                 k8s = prepare_k8s_container(client, stage, stage, package)
                 await tg.start(helm_upgrade, k8s, package, dry_run)
 
@@ -35,7 +35,7 @@ async def _rollback_and_deploy_package(
 
 
 async def deploy_stage(packages: list, stage: str, dry_run: bool):
-    await _build_and_deploy_package(packages, stage, dry_run)
+    await _deploy_package(packages, stage, dry_run)
 
 
 async def rollback_stage(packages: list, stage: str, dry_run: bool):
