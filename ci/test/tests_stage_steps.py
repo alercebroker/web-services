@@ -8,7 +8,7 @@ async def healthcheck_test_step(url: str):
     async with dagger.Connection(config) as client:
         path = str(pathlib.Path().cwd().parent.absolute())
         container = (
-            client.container()\
+            client.container()
             .from_("python:3.11-slim")
             .with_directory(
                 "/web-services",
