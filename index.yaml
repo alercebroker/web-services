@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   astroobject:
   - apiVersion: v2
+    appVersion: 23.11.1-rc17
+    created: "2023-11-07T20:29:46.780801455Z"
+    description: Astro Object API for ALeRCE Clients
+    digest: bda54fad79a9e7499a2d256e16d85c61f183d835190a07fc978f1929fe28f20e
+    name: astroobject
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/astroobject-23.11.66/astroobject-23.11.66.tgz
+    version: 23.11.66
+  - apiVersion: v2
     appVersion: 23.11.1-rc6
     created: "2023-11-06T13:35:01.564049771Z"
     description: Astro Object API for ALeRCE Clients
@@ -422,6 +432,16 @@ entries:
     - https://github.com/alercebroker/web-services/releases/download/astroobject-0.1.18/astroobject-0.1.18.tgz
     version: 0.1.18
   lightcurve:
+  - apiVersion: v2
+    appVersion: 23.11.1-rc9
+    created: "2023-11-07T20:29:46.876727362Z"
+    description: Lightcurve API for ALeRCE Clients
+    digest: 6109955e2127a05d922c7d8d3033e265ed3181c4eb187db1a64850599177c149
+    name: lightcurve
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/lightcurve-23.11.47/lightcurve-23.11.47.tgz
+    version: 23.11.47
   - apiVersion: v2
     appVersion: 23.11.1-rc6
     created: "2023-11-06T13:35:01.672777912Z"
@@ -872,4 +892,4 @@ entries:
     urls:
     - https://github.com/alercebroker/web-services/releases/download/lightcurve-0.2.1/lightcurve-0.2.1.tgz
     version: 0.2.1
-generated: "2023-11-06T13:35:01.674227432Z"
+generated: "2023-11-07T20:29:46.878023454Z"
