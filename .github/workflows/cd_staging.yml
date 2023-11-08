@@ -3,7 +3,7 @@ name: Build Staging
 on:
   push:
     branches:
-      - 181-agregar-rollback-y-test-staging
+      - main
 
 jobs:
   build-dagger:
@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: 181-agregar-rollback-y-test-staging
+          ref: main
 
       - name: Configure Git
         run: |
