@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "astroobject"
-version = "23.11.1-rc18"
+version = "23.11.1-rc19"
 description = ""
 authors = ["Pedro Gallardo <pedrogallardorobinson@gmail.com>"]
 readme = "README.md"
