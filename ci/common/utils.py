@@ -4,7 +4,7 @@ import dagger
 import pathlib
 
 
-async def current_chart_version(package: str, version: str = ""):
+def current_chart_version(package: str, version: str = ""):
     with open(f"../charts/{package}/Chart.yaml", "r+") as f:
         original = f.read()
         f.seek(0)

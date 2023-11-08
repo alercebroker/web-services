@@ -1,8 +1,6 @@
 import os
 import pathlib
 import sys
-from anyio import TASK_STATUS_IGNORED
-from anyio.abc import TaskStatus
 import dagger
 from common.utils import set_environment, current_chart_version
 
@@ -87,31 +85,26 @@ def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
     return get_values_inner
 
 
-async def helm_package(
+def helm_package(
     k8s: dagger.Container,
     package: str,
-    *,
-    task_status: TaskStatus[None] = TASK_STATUS_IGNORED,
 ):
     helm_package_command = [
         "helm",
         "package",
         f"/web-services/charts/{package}/",
     ]
+    k8s = (k8s.with_exec(helm_package_command))
+    return k8s
 
-    await k8s.with_exec(helm_package_command)
-    task_status.started()  # Release task lock
 
-
-async def helm_upgrade(
+def helm_upgrade(
     k8s: dagger.Container,
     package: str,
     dry_run: bool,
     from_repo: bool = False,
-    *,
-    task_status: TaskStatus[None] = TASK_STATUS_IGNORED,
 ):
-    version = await current_chart_version(package)
+    version = current_chart_version(package)
     helm_upgrade_command = [
         "helm",
         "upgrade",
@@ -127,15 +120,14 @@ async def helm_upgrade(
     if dry_run:
         helm_upgrade_command.append("--dry-run")
 
-    await k8s.with_exec(helm_upgrade_command)
-    task_status.started()  # Release task lock
+    k8s = (k8s.with_exec(helm_upgrade_command))
+    return k8s
 
 
-async def helm_rollback(
+def helm_rollback(
     k8s: dagger.Container,
     package: str,
     dry_run: bool,
-    task_status: TaskStatus[None] = TASK_STATUS_IGNORED,
 ):
     helm_rollback_command = [
         "helm",
@@ -146,5 +138,5 @@ async def helm_rollback(
     if dry_run:
         helm_rollback_command.append("--dry-run")
 
-    await k8s.with_exec(helm_rollback_command)
-    task_status.started()  # Release task lock
+    k8s = (k8s.with_exec(helm_rollback_command))
+    return k8s
