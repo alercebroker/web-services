@@ -3,6 +3,7 @@ import anyio
 import logging
 from deploy.utils import (
     dagger_config,
+    helm_package,
     helm_upgrade,
     helm_rollback,
     prepare_k8s_container,
@@ -19,6 +20,7 @@ async def _deploy_package(packages: list, stage: str, dry_run: bool):
             async with dagger.Connection(dagger_config) as client:
                 logger.info(f"Deploy {package} in {stage}")
                 k8s = prepare_k8s_container(client, stage, stage, package)
+                await tg.start(helm_package, k8s, package)
                 await tg.start(helm_upgrade, k8s, package, dry_run)
 
 
