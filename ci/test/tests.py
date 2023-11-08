@@ -5,7 +5,7 @@ def healthcheck_test(url: str):
     with httpx.Client() as client:
         response = client.get(url)
         assert response.status_code == 200
-        assert response.text == "OK"
+        assert response.json() == "OK"
 
 
 tests_dict = {

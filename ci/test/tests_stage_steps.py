@@ -16,7 +16,6 @@ async def healthcheck_test_step(url: str):
             )
             .with_workdir("/web-services/ci/test")
             .with_exec(["pip", "install", "httpx"])
-            # Execute the healthcheck test inside the container
             .with_exec(["python", "tests.py", "healthcheck", f"{url}"])
         )
         await container
