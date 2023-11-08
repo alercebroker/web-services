@@ -4,6 +4,7 @@ import sys
 from anyio import TASK_STATUS_IGNORED
 from anyio.abc import TaskStatus
 import dagger
+from common.utils import set_environment, current_chart_version
 
 dagger_config = dagger.Config(log_output=sys.stdout)
 
@@ -28,7 +29,7 @@ def prepare_k8s_container(
         client.container()
         .from_("alpine/k8s:1.27.5")
         .with_(
-            env_variables(
+            set_environment(
                 {
                     "AWS_ACCESS_KEY_ID": os.environ["AWS_ACCESS_KEY_ID"],
                     "AWS_SECRET_ACCESS_KEY": os.environ[
@@ -59,15 +60,6 @@ def prepare_k8s_container(
         )
     )
     return k8s_container
-
-
-def env_variables(envs: dict[str, str]):
-    def env_variables_inner(ctr: dagger.Container):
-        for key, value in envs.items():
-            ctr = ctr.with_env_variable(key, value)
-        return ctr
-
-    return env_variables_inner
 
 
 def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
@@ -115,9 +107,11 @@ async def helm_upgrade(
     k8s: dagger.Container,
     package: str,
     dry_run: bool,
+    from_repo: bool = False,
     *,
     task_status: TaskStatus[None] = TASK_STATUS_IGNORED,
 ):
+    version = await current_chart_version(package)
     helm_upgrade_command = [
         "helm",
         "upgrade",
@@ -125,8 +119,11 @@ async def helm_upgrade(
         "-f",
         "values.yaml",
         package,
-        f"web-services/{package}",
     ]
+    if from_repo:
+        helm_upgrade_command.append(f"web-services/{package}")
+    else:
+        helm_upgrade_command.append(f"./{package}-{version}.tgz")
     if dry_run:
         helm_upgrade_command.append("--dry-run")
 

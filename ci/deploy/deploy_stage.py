@@ -27,13 +27,14 @@ async def _deploy_package(packages: list, stage: str, dry_run: bool):
 async def _rollback_and_deploy_package(
     packages: list, stage: str, dry_run: bool
 ):
+    from_repo = True
     async with anyio.create_task_group() as tg:
         for package in packages:
             async with dagger.Connection(dagger_config) as client:
                 logger.info(f"Rollback and deploy {package} in {stage}")
                 k8s = prepare_k8s_container(client, stage, stage, package)
                 await tg.start(helm_rollback, k8s, package, dry_run)
-                await tg.start(helm_upgrade, k8s, package, dry_run)
+                await tg.start(helm_upgrade, k8s, package, dry_run, from_repo)
 
 
 async def deploy_stage(packages: list, stage: str, dry_run: bool):

@@ -1,11 +1,12 @@
 import anyio
-from build.utils import build, get_tags, update_version, git_push, update_chart
+from common.utils import get_poetry_version
+from build.utils import build, update_version, git_push, update_chart
 
 
 async def _build_package(packages: list, dry_run: bool):
     async with anyio.create_task_group() as tg:
         for package in packages:
-            tags = await get_tags(package)
+            tags = await get_poetry_version(package)
             tg.start_soon(build, package, tags, dry_run)
 
 
