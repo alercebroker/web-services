@@ -123,7 +123,7 @@ async def helm_upgrade(
     if from_repo:
         helm_upgrade_command.append(f"web-services/{package}")
     else:
-        helm_upgrade_command.append(f"./{package}-{version}.tgz")
+        helm_upgrade_command.append(f"/web-services/ci/{package}-{version}.tgz")
     if dry_run:
         helm_upgrade_command.append("--dry-run")
 
