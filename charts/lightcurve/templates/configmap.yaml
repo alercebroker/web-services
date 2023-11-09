@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 data:
   port: '{{ .Values.configmap.port }}'
+  api-url: '{{ .Values.configmap.apiUrl }}'
 ---
 apiVersion: v1
 metadata:
