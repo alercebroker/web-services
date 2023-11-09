@@ -37,6 +37,11 @@ spec:
                 configMapKeyRef:
                   name: {{ include "lightcurve.fullname" . }}
                   key: port
+            - name: STATIC_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "lightcurve.fullname" . }}
+                  key: api-url
             - name: PSQL_HOST
               valueFrom:
                 secretKeyRef:
