@@ -125,33 +125,6 @@ async def build(package_dir: str, tags: list, dry_run: bool):
             await _publish_container(image_ref, package_dir, tags, secret)
 
 
-async def get_tags(package_dir: str) -> list:
-    config = dagger.Config(log_output=sys.stdout)
-
-    async with dagger.Connection(config) as client:
-        path = pathlib.Path().cwd().parent.absolute()
-        # get build context directory
-        source = (
-            client.container()
-            .from_("python:3.11-slim")
-            .with_exec(["pip", "install", "poetry"])
-            .with_directory(
-                "/web-services",
-                client.host().directory(
-                    str(path), exclude=[".venv/", "**/.venv/"]
-                ),
-            )
-        )
-
-        runner = source.with_workdir(f"/web-services/{package_dir}").with_exec(
-            ["poetry", "version", "--short"]
-        )
-
-        out = await runner.stdout()
-
-    return ["rc", out.strip("\n")]
-
-
 async def update_chart(chart_name: str, dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
     async with dagger.Connection(config) as client:
