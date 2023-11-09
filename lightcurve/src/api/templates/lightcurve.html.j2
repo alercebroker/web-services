@@ -45,11 +45,13 @@
     let plot_options;
 
     function plotOnClick(detection) {
+        let index = plot_options.detections.findIndex((x) => x.mjd === detection.value[0])
+        document.body.dispatchEvent(new CustomEvent('onDetectionClick', { detail: index}))
         const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
         return {
             mjd: detection.value[0],
             date,
-            index: plot_options.detections.findIndex((x) => x.mjd === detection.value[0]),
+            index: index,
         }
     }
 
@@ -148,6 +150,9 @@
     }
     let color_scheme_observer = new MutationObserver(setColorScheme);
     color_scheme_observer.observe(body, { attributes: true, attributeFilter: ["class"] });
+    
+    /* First run color setup */
+    setColorScheme()
 
     /* Set up Download and Data release buttons */
     document.getElementById("lc-download").addEventListener("click", () => download(oid, detections, non_detections));
