@@ -1,7 +1,13 @@
 from contextlib import AbstractContextManager
 from typing import Any, Callable
 
-from db_plugins.db.sql.models import Detection, NonDetection
+import httpx
+from db_plugins.db.sql.models import (
+    Detection,
+    Feature,
+    FeatureVersion,
+    NonDetection,
+)
 from pymongo.database import Database
 from returns.pipeline import is_successful
 from returns.result import Failure, Result, Success
@@ -14,7 +20,9 @@ from .exceptions import (
     ObjectNotFound,
     SurveyIdError,
 )
+from .models import DataReleaseDetection as DataReleaseDetectionModel
 from .models import Detection as DetectionModel
+from .models import Feature as FeatureModel
 from .models import NonDetection as NonDetectionModel
 
 
@@ -180,6 +188,47 @@ def get_non_detections(
         handle_error(non_detections_result.failure())
 
 
+def get_period(
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., AbstractContextManager[Session]] = None,
+    mongo_db: Database = None,
+    handle_success: Callable[[Any], list] = default_handle_success,
+    handle_error: Callable[[Exception], None] = default_handle_error,
+) -> FeatureModel:
+    """Retrieves the period feature from a given object. Currently only works for
+    ZTF on the SQL DB.
+
+    If multiple verions of the feature are presents, returns the first one.
+
+    :param oid: oid for the object.
+    :type oid: str
+    :param survey_id: id for the survey, can be "ztf" or "atlas"
+    :type survey_id: str
+    :param session_factory: Session factory for SQL requests.
+    :type session_factory: Callable[..., AbstractContextManager[Session]]
+    :param mongo_db: Mongo database for mongo requests.
+    :type mongo_db: Database
+    :param handle_success: Callback for handling a success.
+    :type handle_success: Callable[[Any], list]
+    :param handle_error: Callback for handling failure.
+    :type handle_error: Callable[[Exception], None]
+    :return: The result of calling handle_success with a Feature corresponding the the period.
+    :rtype: FetureModel
+    """
+    if survey_id == "ztf":
+        period_results = _get_period_sql(oid, session_factory)
+    elif survey_id == "atlas":
+        handle_error(NotImplementedError)
+    else:
+        handle_error(SurveyIdError(survey_id))
+
+    if is_successful(period_results):
+        return handle_success(period_results.unwrap())
+    else:
+        handle_error(period_results.failure())
+
+
 def _get_all_unique_non_detections(
     oid: str,
     survey_id: str,
@@ -280,6 +329,75 @@ def _get_non_detections_mongo(
         raise DatabaseError(e)
 
 
+async def get_data_release(
+    ra: float, dec: float, radius: float = 1.5
+) -> tuple[dict[str, Any], dict[str, list[DataReleaseDetectionModel]]]:
+    dr_params = {
+        "ra": ra,
+        "dec": dec,
+        "radius": radius,
+    }
+
+    datareleases = []
+    detections = {}
+    async with httpx.AsyncClient(follow_redirects=True) as client:
+        resp = await client.get(
+            "https://api.alerce.online/ztf/dr/v1/light_curve/",
+            params=dr_params,
+        )
+
+        datareleases = [
+            {
+                k: dr_data[k]
+                for k in ("_id", "filterid", "nepochs", "fieldid", "rcid")
+            }
+            for dr_data in resp.json()
+        ]
+
+        for datarelease in datareleases:
+            datarelease["checked"] = False
+
+        detections = {
+            dr_data["_id"]: [
+                DataReleaseDetectionModel(
+                    mjd=dr_data["hmjd"][i],
+                    mag_corr=dr_data["mag"][i],
+                    e_mag_corr_ext=dr_data["magerr"][i],
+                    fid=dr_data["filterid"] + 100,
+                    field=dr_data["fieldid"],
+                    objectid=dr_data["_id"],
+                    corrected=True,
+                )
+                for i in range(dr_data["nepochs"])
+            ]
+            for dr_data in resp.json()
+        }
+
+    return datareleases, detections
+
+
+def _get_period_mongo():
+    pass
+
+
+def _get_period_sql(
+    oid: str,
+    session_factory: Callable[..., AbstractContextManager[Session]],
+) -> Result[FeatureModel, BaseException]:
+    try:
+        with session_factory() as session:
+            stmt = (
+                select(Feature)
+                .where(Feature.oid == oid)
+                .where(Feature.name == "Multiband_period")
+            )
+            result = session.execute(stmt)
+            result = [FeatureModel(**res[0].__dict__) for res in result.all()]
+            return Success(result[0])
+    except Exception as e:
+        return Failure(DatabaseError(e))
+
+
 def _ztf_detection_to_multistream(
     detection: dict[str, Any],
     tid: str,
@@ -343,9 +461,9 @@ def _ztf_non_detection_to_multistream(
     return NonDetectionModel(
         aid=non_detections.get("aid", None),
         tid=tid,
-        sid=non_detections.get("sid", None),
-        oid=non_detections.get("oid", None),
         mjd=non_detections["mjd"],
         fid=non_detections["fid"],
+        oid=non_detections.get("oid", None),
+        sid=non_detections.get("sid", None),
         diffmaglim=non_detections.get("diffmaglim", None),
     )

@@ -1,0 +1,247 @@
+<script>
+    // Conditionally loads css file to prevent duplicate downloading / parsing
+    function isCssLoaded(url) {
+        for (let css of document.styleSheets) {
+            if (css.href === url) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function conditionalCss(href) {
+        if (!isCssLoaded(href)) {
+            let link = document.createElement("link");
+            link.href = href;
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            document.head.appendChild(link);
+        }
+    }
+
+    conditionalCss("{{ API_URL }}/static/main.css");
+    conditionalCss("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+</script>
+<script type="module">
+    import { DifferenceLightCurveOptions } from "{{ API_URL }}/static/lc-difference.js";
+    import { FoldedLightCurveOptions } from "{{ API_URL }}/static/lc-folded.js";
+    import { ApparentLightCurveOptions } from "{{ API_URL }}/static/lc-apparent.js";
+    import "{{ API_URL }}/static/jszip.js";
+    import * as echart from "{{ API_URL }}/static/echarts.js";
+    import { jdToDate } from "{{ API_URL }}/static/astro-dates.js";
+
+    const oid = '{{ oid }}';
+    const detections = {{ detections | tojson }};
+    const non_detections = {{ non_detections | tojson }};
+    const period = {{ period }};
+    const dr = {{ dr | tojson }};
+    const dr_detections = {{ dr_detections | tojson }};
+
+    const lc_main_elem = document.getElementById("lc-main");
+    const lc_table_elem = document.getElementById("lc-table");
+
+    let plot_text_color = "#000";
+    let current_plot = "difference";
+    let plot_options;
+
+    function plotOnClick(detection) {
+        const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
+        return {
+            mjd: detection.value[0],
+            date,
+            index: plot_options.detections.findIndex((x) => x.mjd === detection.value[0]),
+        }
+    }
+
+    function dateToString(date) {
+        date = date.toISOString();
+        date = date.replace(/[-:]/g, (c) => '');
+        // date = date.replace('T', '_');
+        date = date.split('T')[0];
+        return date;
+    }
+
+    function jsonToCsv(arrayOfJson) {
+        const replacer = (key, value) => (value === null ? '' : value);
+        const header = Object.keys(arrayOfJson[0]);
+        let csv = arrayOfJson.map((row) =>
+            header
+                .map((fieldName) => JSON.stringify(row[fieldName], replacer))
+                .join(',')
+        );
+        csv.unshift(header.join(','));
+        csv = csv.join('\r\n');
+        return csv;
+    }
+
+    /* based in https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable */
+    function download(oid, detections, nonDetections) {
+        const today = dateToString(new Date())
+        const filename = `${oid}_${today}.zip`;
+        const zip = new JSZip();
+        zip.file('detections.csv', jsonToCsv(detections));
+        zip.file('non_detections.csv', jsonToCsv(nonDetections));
+        zip.generateAsync({ type: 'blob' }).then((content) => {
+            const url = URL.createObjectURL(content);
+            const a = document.getElementById("lc-download-ref");
+            a.href = url;
+            a.download = filename;
+            a.click();
+        });
+    }
+
+    function getDetectionsWithDR() {
+        const all_detections = [detections];
+        dr.forEach((elem) => {
+            if (elem.checked) {
+                all_detections.push(dr_detections[elem._id]);
+            }
+        });
+        return [].concat.apply([], all_detections);
+    }
+
+    window.handleDRChange = (event, id) => {
+        const checked = event.target.checked;
+        let dr_entry = dr.find((elem) => elem._id === id);
+        dr_entry.checked = checked;
+    }
+
+    /* Initialize plot */
+    let plot = echarts.init(lc_main_elem);
+    plot.on("click", plotOnClick);
+    window.addEventListener("resize", plot.resize);
+
+    function toggleDataRelease() {
+        lc_main_elem.hidden = !lc_main_elem.hidden;
+        lc_table_elem.hidden = !lc_table_elem.hidden;
+
+        // Update the plot when showing it again
+        if (lc_main_elem.hidden === false) {
+            window.setPlot(current_plot);
+            plot.resize();
+        }
+    }
+
+    /* Update plot on plot type change */
+    window.setPlot = (type) => {
+        current_plot = type;
+        if (current_plot === "difference") {
+            plot_options = new DifferenceLightCurveOptions(detections, non_detections, plot_text_color);
+        } else if (current_plot === "apparent") {
+            plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color);
+        } else if (current_plot === "folded") {
+            plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color, period);
+        }
+        plot.setOption(plot_options.options, true);
+    };
+
+    /* Update plot text color on switch between dark/light mode */
+    let body = document.body;
+    function setColorScheme() {
+        const color_scheme = body.classList.contains("dark") ? "dark" : "light";
+        if (color_scheme === "dark") {
+            plot_text_color = "#fff";
+        } else {
+            plot_text_color = "#000";
+        }
+        window.setPlot(current_plot);
+    }
+    let color_scheme_observer = new MutationObserver(setColorScheme);
+    color_scheme_observer.observe(body, { attributes: true, attributeFilter: ["class"] });
+
+    /* Set up Download and Data release buttons */
+    document.getElementById("lc-download").addEventListener("click", () => download(oid, detections, non_detections));
+    document.getElementById("lc-dr").addEventListener("click", toggleDataRelease);
+
+    window.addEventListener("load", setColorScheme);
+</script>
+<div id="lightcurve" class="bg-white dark:bg-[#1e1e1e] dark:text-white rounded p-4 flex flex-col h-full">
+    <!-- Prepare a DOM with a defined width and height for ECharts -->
+    <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
+    <div id="lc-table" class="overflow-y-auto flex-1" hidden>
+        <table
+            class="min-w-full border border-gray-300 dark:border-[#404040] divide-y divide-gray-200 dark:divide-[#404040] dark:text-white">
+            <thead>
+                <tr class="bg-gray-100 dark:bg-[#252525]">
+                    <th class="w-12 text-center">
+                        {# <input type="checkbox" class="form-checkbox h-6 w-6" /> #}
+                    </th>
+                    <th class="text-center">ObjectId</th>
+                    <th class="text-center">filterid</th>
+                    <th class="text-center">nepochs</th>
+                    <th class="text-center">fieldid</th>
+                    <th class="text-center">rcid</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-[#404040]">
+                {% for data in dr %}
+                <tr class="hover:bg-gray-200 dark:hover:bg-[#353535]">
+                    <td class="text-center">
+                        <input type="checkbox" class="form-checkbox h-6 w-6"
+                            onchange="handleDRChange(event, {{data._id}})" />
+                    </td>
+                    <td class="text-right">{{data._id}}</td>
+                    <td class="text-right">{{data.filterid}}</td>
+                    <td class="text-right">{{data.nepochs}}</td>
+                    <td class="text-right">{{data.fieldid}}</td>
+                    <td class="text-right">{{data.rcid}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+        <!-- Left Column (Radio Buttons) -->
+        <div>
+            <div class="space-y-2">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="data" value="difference" onclick="setPlot(value)" class="form-radio"
+                        checked>
+                    <span>Difference Magnitude</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle me-2"></i>
+                        <div class="tooltip-text">
+                            The difference Magnitude light curve is the absolute difference between science and
+                            reference magnitudes.
+                        </div>
+                    </div>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="data" value="apparent" onclick="setPlot(value)" class="form-radio">
+                    <span>Apparent Magnitude</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle me-2"></i>
+                        <div class="tooltip-text">
+                            Apparent magnitude light curve results from adding/subtracting the fluxes from the reference
+                            and difference in the same unit system and then converting to magnitudes.
+                        </div>
+                    </div>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="form-radio">
+                    <span>Folded</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle me-2"></i>
+                        <div class="tooltip-text">
+                            The Period folded light curve, where time is transformed to time modulo the period (Phase).
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Right Column (Buttons) -->
+        <div class="flex flex-col justify-end items-end">
+            <button id="lc-dr" class="bg-blue-500 dark:bg-blue-700 text-white mt-2 px-2 py-1 rounded hover:bg-blue-600">
+                <i class="fa fa-eye me-2"></i>
+                Display DR
+            </button>
+            <a id="lc-download-ref" style="display: none;"></a>
+            <button id="lc-download"
+                class="bg-green-500 dark:bg-green-700 text-white mt-2 px-2 py-1 rounded hover:bg-green-600">
+                <i class="fa fa-download me-2"></i>
+                Download
+            </button>
+        </div>
+    </div>
+</div>
