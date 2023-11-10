@@ -94,7 +94,7 @@ def helm_package(
         "package",
         f"/web-services/charts/{package}/",
     ]
-    k8s = (k8s.with_exec(helm_package_command))
+    k8s = k8s.with_exec(helm_package_command)
     return k8s
 
 
@@ -116,11 +116,13 @@ def helm_upgrade(
     if from_repo:
         helm_upgrade_command.append(f"web-services/{package}")
     else:
-        helm_upgrade_command.append(f"/web-services/ci/{package}-{version}.tgz")
+        helm_upgrade_command.append(
+            f"/web-services/ci/{package}-{version}.tgz"
+        )
     if dry_run:
         helm_upgrade_command.append("--dry-run")
 
-    k8s = (k8s.with_exec(helm_upgrade_command))
+    k8s = k8s.with_exec(helm_upgrade_command)
     return k8s
 
 
@@ -138,5 +140,5 @@ def helm_rollback(
     if dry_run:
         helm_rollback_command.append("--dry-run")
 
-    k8s = (k8s.with_exec(helm_rollback_command))
+    k8s = k8s.with_exec(helm_rollback_command)
     return k8s

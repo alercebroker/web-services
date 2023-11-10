@@ -69,6 +69,6 @@ if __name__ == "__main__":
 
     for package, chart_version in chart_versions.items():
         print(f"Chart version {package}: {chart_version}")
-    
+
     for package, poetry_version in poetry_versions.items():
         print(f"Poetry version {package}: {poetry_version}")
