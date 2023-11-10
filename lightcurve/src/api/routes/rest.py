@@ -16,7 +16,7 @@ router = APIRouter()
 
 @router.get("/")
 def root():
-    return "This is the lightcurve module"
+    return "this is the lightcurve module"
 
 
 @router.get("/healthcheck")
