@@ -1,18 +1,28 @@
 name: Build Staging
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
+    inputs:
+      package:
+        required: true
+        type: string
+    secrets:
+        ADMIN_TOKEN:
+          required: true
+        AWS_ROLE_STAGING:
+          required: true
 
 jobs:
-  build-dagger:
+  build:
     runs-on: ubuntu-latest
     env:
       GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python
@@ -27,30 +37,10 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py build astroobject,lightcurve staging
-
-  release-chart:
-    needs: build-dagger
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: main
-
-      - name: Configure Git
-        run: |
-          git config user.name "alerceadmin"
-          git config user.email "alerceadmin@users.noreply.github.com"
-
-      - name: Run chart-releaser
-        uses: helm/chart-releaser-action@v1.6.0
-        env:
-          CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
+          poetry run python main.py build ${{ inputs.packages }} staging
 
   deploy:
-    needs: release-chart
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -58,6 +48,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
       - name: Configure AWS credentials
         id: creds
         uses: aws-actions/configure-aws-credentials@v4
@@ -80,9 +73,9 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py deploy astroobject,lightcurve staging
+          poetry run python main.py deploy ${{ inputs.packages }} staging
 
-  test-dagger:
+  test-end-to-end:
     needs: deploy
     runs-on: ubuntu-latest
     env:
@@ -90,6 +83,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
       - name: Install poetry
         run: pipx install poetry
       - name: Set up Python
@@ -104,17 +100,20 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py test astroobject,lightcurve staging
+          poetry run python main.py test ${{ inputs.packages }} staging
   
   rollback:
-    needs: test-dagger
-    if: failure()
+    needs: test-end-to-end
+    if: ${{ jobs.test-end-to-end.conclusion == 'failure' }}
     runs-on: ubuntu-latest
     env:
       GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -136,4 +135,22 @@ jobs:
       - name: Run dagger pipeline
         run: |
           cd ci
-          poetry run python main.py rollback astroobject,lightcurve staging
+          poetry run python main.py rollback ${{ inputs.packages }} staging
+
+  release-chart:
+    needs: test-end-to-end
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: Configure Git
+        run: |
+          git config user.name "alerceadmin"
+          git config user.email "alerceadmin@users.noreply.github.com"
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
