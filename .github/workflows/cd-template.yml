@@ -104,7 +104,7 @@ jobs:
   
   rollback:
     needs: test-end-to-end
-    if: ${{ jobs.test-end-to-end.conclusion == 'failure' }}
+    if: ${{ jobs.test-end-to-end.result == 'failure' }}
     runs-on: ubuntu-latest
     env:
       GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
