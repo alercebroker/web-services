@@ -7,9 +7,6 @@ on:
     paths:
       - 'lightcurve/**'
       - '!lightcurve/README.md'
-  push:
-    branches:
-      - cd/refactor-actions-workflow
 
 jobs:
   cd_lightcurve:
