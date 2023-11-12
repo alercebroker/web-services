@@ -28,3 +28,10 @@ jobs:
         test-folder: 'tests/integration'
         base-folder: 'astroobject'
         codecov-flags: ""
+  magstats_tests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+        python-version: '3.11'
+        sources-folder: 'magstats'
+        test-folder: 'tests'
+        base-folder: 'magstats'

@@ -1,0 +1,31 @@
+version: "3"
+services:
+  #postgres database for alerts
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+
+  magstats_api:
+    build:
+      context: ../../../
+      dockerfile: ./magstats/Dockerfile
+    ports:
+      - 5001:5001
+    command: bash tests/profiling/entrypoint.sh
+    environment:
+      - PORT=5001
+      - PSQL_HOST=postgres
+      - PSQL_DATABASE=postgres
+      - PSQL_USER=postgres
+      - PSQL_PASSWORD=postgres
+      - PSQL_PORT=5432
+      - CONNECT_PSQL=YES
+      - LOG_LEVEL=DEBUG
+      - SECRET_KEY=a_secret_key
+    volumes:
+      - ./:/app/tests/profiling
