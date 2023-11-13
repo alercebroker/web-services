@@ -39,7 +39,7 @@ jobs:
           cd ci
           poetry run python main.py build ${{ inputs.packages }} staging
 
-  deploy:
+  deploy-staging:
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -154,3 +154,39 @@ jobs:
         uses: helm/chart-releaser-action@v1.6.0
         env:
           CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
+
+  deploy-production:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: Configure AWS credentials
+        id: creds
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_PRODUCTION }}
+          aws-region: us-east-1
+          output-credentials: true
+          unset-current-credentials: true
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ci
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python main.py deploy ${{ inputs.packages }} production
