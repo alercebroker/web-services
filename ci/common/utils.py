@@ -42,7 +42,8 @@ async def get_poetry_version(package_dir: str) -> list:
 
         out = await runner.stdout()
 
-    return ["rc", out.strip("\n")]
+    # return ["rc", out.strip("\n")]
+    return ["", out.strip("\n")]
 
 
 def set_environment(envs: dict[str, str]):
