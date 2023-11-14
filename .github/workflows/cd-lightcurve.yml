@@ -1,7 +1,7 @@
 name: CD Lightcurve
 
 on:
-  pull_request:
+  push:
     branches:
       - main
     paths:
