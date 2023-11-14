@@ -76,7 +76,7 @@ jobs:
           poetry run python main.py deploy ${{ inputs.packages }} staging
 
   test-end-to-end:
-    needs: deploy
+    needs: deploy-staging
     runs-on: ubuntu-latest
     env:
       GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
