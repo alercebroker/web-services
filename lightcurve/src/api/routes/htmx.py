@@ -1,9 +1,5 @@
 import os
 
-from fastapi import APIRouter
-from fastapi.responses import HTMLResponse
-from jinja2 import Environment, PackageLoader, select_autoescape
-
 from core.service import (
     get_data_release,
     get_detections,
@@ -12,6 +8,9 @@ from core.service import (
 )
 from database.mongo import database
 from database.sql import session
+from fastapi import APIRouter
+from fastapi.responses import HTMLResponse
+from jinja2 import Environment, PackageLoader, select_autoescape
 
 from ..result_handler import handle_error, handle_success
 
@@ -34,7 +33,6 @@ async def lightcurve(oid: str) -> HTMLResponse:
         handle_error=handle_error,
         handle_success=handle_success,
     )
-
     non_detections = get_non_detections(
         oid=oid,
         survey_id="ztf",
@@ -43,7 +41,6 @@ async def lightcurve(oid: str) -> HTMLResponse:
         handle_error=handle_error,
         handle_success=handle_success,
     )
-
     period = get_period(
         oid=oid,
         survey_id="ztf",
