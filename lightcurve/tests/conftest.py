@@ -132,6 +132,7 @@ def mongo_database():
     os.environ["MONGO_USER"] = "mongo"
     os.environ["MONGO_PASSWORD"] = "mongo"
     os.environ["MONGO_DATABASE"] = "database"
+    os.environ["MONGO_AUTH_SOURCE"] = "admin"
     os.environ["SECRET_KEY"] = "some_secret"
     from database.mongo import database
 
