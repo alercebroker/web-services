@@ -77,6 +77,11 @@ spec:
                 secretKeyRef:
                   name: database-auth
                   key: mongo-database
+            - name: MONGO_AUTH_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: database-auth
+                  key: mongo-auth-source
             - name: MONGO_USER
               valueFrom:
                 secretKeyRef:
