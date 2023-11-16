@@ -22,6 +22,8 @@ if os.getenv("ENV") != "dev":
             "/docs",
             "/metrics",
             "/openapi.json",
+        ],
+        ignore_prefixes=[
             "/static",
             "/htmx",
         ],
