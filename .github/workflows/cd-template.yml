@@ -1,5 +1,7 @@
 name: Build Staging
 
+concurrency: deployment
+
 on:
   workflow_call:
     inputs:
@@ -156,7 +158,7 @@ jobs:
           CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
 
   deploy-production:
-    needs: build
+    needs: release-chart
     runs-on: ubuntu-latest
     permissions:
       id-token: write
