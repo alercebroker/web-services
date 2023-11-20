@@ -63,7 +63,7 @@ secrets:
   mongo:
     host: ""
     database: ""
-    auth-source: ""
+    authSource: ""
     user: ""
     password: ""
     port: ""    
