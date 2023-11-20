@@ -37,7 +37,7 @@ spec:
                 configMapKeyRef:
                   name: {{ include "lightcurve.fullname" . }}
                   key: port
-            - name: STATIC_PATH
+            - name: API_URL
               valueFrom:
                 configMapKeyRef:
                   name: {{ include "lightcurve.fullname" . }}
