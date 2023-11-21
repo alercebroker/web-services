@@ -44,6 +44,7 @@ affinity:
 
 configmap:
   port: ""
+  apiUrl: ""
 
 ingress:
   certificateArn: ""
@@ -62,6 +63,7 @@ secrets:
   mongo:
     host: ""
     database: ""
+    authSource: ""
     user: ""
     password: ""
     port: ""    

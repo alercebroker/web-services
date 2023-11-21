@@ -19,6 +19,11 @@ def root():
     return "this is the lightcurve module"
 
 
+@router.get("/healthcheck")
+def healthcheck():
+    return "OK"
+
+
 @router.get("/detections/{oid}")
 @set_permissions_decorator(["admin", "basic_user"])
 @set_filters_decorator(["filter_atlas_detections"])

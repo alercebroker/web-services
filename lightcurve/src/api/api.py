@@ -18,7 +18,15 @@ if os.getenv("ENV") != "dev":
         RalidatorStarlette,
         config={"SECRET_KEY": os.getenv("SECRET_KEY")},
         filters_map=get_filters_map(),
-        ignore_paths=["/metrics", "/docs", "/openapi.json"],
+        ignore_paths=[
+            "/docs",
+            "/metrics",
+            "/openapi.json",
+        ],
+        ignore_prefixes=[
+            "/static",
+            "/htmx",
+        ],
     )
 
 app.add_middleware(

@@ -37,6 +37,11 @@ spec:
                 configMapKeyRef:
                   name: {{ include "lightcurve.fullname" . }}
                   key: port
+            - name: API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "lightcurve.fullname" . }}
+                  key: api-url
             - name: PSQL_HOST
               valueFrom:
                 secretKeyRef:
@@ -72,6 +77,11 @@ spec:
                 secretKeyRef:
                   name: database-auth
                   key: mongo-database
+            - name: MONGO_AUTH_SOURCE
+              valueFrom:
+                secretKeyRef:
+                  name: database-auth
+                  key: mongo-auth-source
             - name: MONGO_USER
               valueFrom:
                 secretKeyRef:

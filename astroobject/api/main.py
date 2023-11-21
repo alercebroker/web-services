@@ -31,8 +31,12 @@ def create_app():
         instrumentator.expose(app)
 
     @app.get("/")
-    def health_check():
-        return "OK!"
+    def root_endpoint():
+        return "this is the astroobject module"
+
+    @app.get("/healthcheck")
+    def healthcheck():
+        return "OK"
     
     @app.get("/openapi.json")
     def custom_swagger_route():

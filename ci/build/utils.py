@@ -2,6 +2,7 @@ import sys
 import dagger
 import os
 import pathlib
+from build.calver import get_calver as _get_calver
 
 
 def _get_publish_secret(client):
@@ -84,7 +85,13 @@ async def update_version(package_dir: str, version: str, dry_run: bool):
                 ),
             )
         )
-        update_version_command = ["poetry", "version", version]
+        current_version = await (
+            source.with_workdir(f"/web-services/{package_dir}")
+            .with_exec(["poetry", "version", "--short"])
+            .stdout()
+        )
+        new_version = _get_calver(current_version, version)
+        update_version_command = ["poetry", "version", new_version]
         if dry_run:
             update_version_command.append("--dry-run")
 
@@ -118,39 +125,18 @@ async def build(package_dir: str, tags: list, dry_run: bool):
             await _publish_container(image_ref, package_dir, tags, secret)
 
 
-async def get_tags(package_dir: str) -> list:
-    config = dagger.Config(log_output=sys.stdout)
-
-    async with dagger.Connection(config) as client:
-        path = pathlib.Path().cwd().parent.absolute()
-        # get build context directory
-        source = (
-            client.container()
-            .from_("python:3.11-slim")
-            .with_exec(["pip", "install", "poetry"])
-            .with_directory(
-                "/web-services",
-                client.host().directory(
-                    str(path), exclude=[".venv/", "**/.venv/"]
-                ),
-            )
-        )
-
-        runner = source.with_workdir(f"/web-services/{package_dir}").with_exec(
-            ["poetry", "version", "--short"]
-        )
-
-        out = await runner.stdout()
-
-    return ["rc", out.strip("\n")]
-
-
 async def update_chart(chart_name: str, dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
     async with dagger.Connection(config) as client:
         path = pathlib.Path().cwd().parent.absolute()
 
-        script = ["poetry", "run", "python", "chart_script.py", chart_name]
+        script = [
+            "poetry",
+            "run",
+            "python",
+            "build/chart_script.py",
+            chart_name,
+        ]
         if dry_run:
             script.append("--dry-run")
         await (

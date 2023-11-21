@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lightcurve"
-version = "0.1.1a86"
+version = "23.11.1-rc29"
 description = "Get lightcurve of objects from ZTF and ATLAS surveys"
 authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
@@ -8,7 +8,6 @@ packages = [
     { include = "core", from = "src" },
     { include = "api", from = "src" },
     { include = "database", from = "src" },
-    { include = "data", from = "tests" },
 ]
 
 [tool.poetry.dependencies]

@@ -66,4 +66,9 @@ def create_app(config_path):
         ztf_api.add_namespace(features, path="/objects")
         ztf_api.init_app(app)
 
+    # Add /healtcheck endpoint
+    @app.route("/healthcheck")
+    def healthcheck():
+        return "OK", 200
+
     return app

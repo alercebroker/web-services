@@ -28,3 +28,8 @@ app.include_router(probability.router)
 @app.get("/")
 def hello_world():
     return {"message": "Hello, ZA WARUDO!"}
+
+
+@app.get("/healthcheck")
+def healthcheck():
+    return "OK"
