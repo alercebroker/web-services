@@ -17,3 +17,4 @@ jobs:
     secrets:
       ADMIN_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
       AWS_ROLE_STAGING: '${{ secrets.AWS_ROLE_STAGING }}'
+      AWS_ROLE_PRODUCTION: '${{ secrets.AWS_ROLE_PRODUCTION }}'
