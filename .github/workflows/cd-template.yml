@@ -13,6 +13,8 @@ on:
           required: true
         AWS_ROLE_STAGING:
           required: true
+        AWS_ROLE_PRODUCTION:
+          required: true
 
 jobs:
   build:
