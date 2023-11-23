@@ -19,7 +19,7 @@ class RalidatorStarlette(BaseHTTPMiddleware):
         config: dict,
         filters_map: dict,
         ignore_paths: list,
-        ignore_prefixes: list,
+        ignore_prefixes: list = [],
     ) -> None:
         super().__init__(app)
         self.ralidator_settings = RalidatorCoreSettingsFactory.from_dict(
