@@ -46,7 +46,7 @@
 
     function plotOnClick(detection) {
         let index = plot_options.detections.findIndex((x) => x.mjd === detection.value[0])
-        document.body.dispatchEvent(new CustomEvent('onDetectionClick', { detail: index}))
+        document.body.dispatchEvent(new CustomEvent('onDetectionClick', { detail: index }))
         const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
         return {
             mjd: detection.value[0],
@@ -138,10 +138,10 @@
     };
 
     /* Update plot text color on switch between dark/light mode */
-    let body = document.body;
+    let container = document.getElementById("lightcurve-htmx-container");
     function setColorScheme() {
-        const color_scheme = body.classList.contains("dark") ? "dark" : "light";
-        if (color_scheme === "dark") {
+        const color_scheme = container.classList.contains("tw-dark") ? "tw-dark" : "tw-light";
+        if (color_scheme === "tw-dark") {
             plot_text_color = "#fff";
         } else {
             plot_text_color = "#000";
@@ -149,8 +149,8 @@
         window.setPlot(current_plot);
     }
     let color_scheme_observer = new MutationObserver(setColorScheme);
-    color_scheme_observer.observe(body, { attributes: true, attributeFilter: ["class"] });
-    
+    color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
+
     /* First run color setup */
     setColorScheme()
 
@@ -160,95 +160,99 @@
 
     window.addEventListener("load", setColorScheme);
 </script>
-<div id="lightcurve-htmx-container" style="height:100%;">
-    <div id="lightcurve" class="bg-white dark:bg-[#1e1e1e] dark:text-white rounded p-4 flex flex-col h-full">
+<div id="lightcurve-htmx-container" class="tw-preflight">
+    <div id="lightcurve"
+        class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-rounded tw-p-4 tw-flex tw-flex-col tw-h-full">
         <!-- Prepare a DOM with a defined width and height for ECharts -->
         <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
-        <div id="lc-table" class="overflow-y-auto flex-1" hidden>
+        <div id="lc-table" class="tw-overflow-y-auto tw-flex-1" hidden>
             <table
-                class="min-w-full border border-gray-300 dark:border-[#404040] divide-y divide-gray-200 dark:divide-[#404040] dark:text-white">
+                class="tw-min-w-full tw-border tw-border-gray-300 dark:tw-border-[#404040] tw-divide-y tw-divide-gray-200 dark:tw-divide-[#404040] dark:tw-text-white">
                 <thead>
-                    <tr class="bg-gray-100 dark:bg-[#252525]">
-                        <th class="w-12 text-center">
+                    <tr class="tw-bg-gray-100 dark:tw-bg-[#252525]">
+                        <th class="tw-w-12 tw-text-center">
                             {# <input type="checkbox" class="form-checkbox h-6 w-6" /> #}
                         </th>
-                        <th class="text-center">ObjectId</th>
-                        <th class="text-center">filterid</th>
-                        <th class="text-center">nepochs</th>
-                        <th class="text-center">fieldid</th>
-                        <th class="text-center">rcid</th>
+                        <th class="tw-text-center">ObjectId</th>
+                        <th class="tw-text-center">filterid</th>
+                        <th class="tw-text-center">nepochs</th>
+                        <th class="tw-text-center">fieldid</th>
+                        <th class="tw-text-center">rcid</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-[#404040]">
+                <tbody class="tw-divide-y tw-divide-gray-200 dark:tw-divide-[#404040]">
                     {% for data in dr %}
-                    <tr class="hover:bg-gray-200 dark:hover:bg-[#353535]">
-                        <td class="text-center">
-                            <input type="checkbox" class="form-checkbox h-6 w-6"
+                    <tr class="hover:tw-bg-gray-200 dark:hover:tw-bg-[#353535]">
+                        <td class="tw-text-center">
+                            <input type="checkbox" class="tw-form-checkbox tw-h-6 tw-w-6"
                                 onchange="handleDRChange(event, {{data._id}})" />
                         </td>
-                        <td class="text-right">{{data._id}}</td>
-                        <td class="text-right">{{data.filterid}}</td>
-                        <td class="text-right">{{data.nepochs}}</td>
-                        <td class="text-right">{{data.fieldid}}</td>
-                        <td class="text-right">{{data.rcid}}</td>
+                        <td class="tw-text-right">{{data._id}}</td>
+                        <td class="tw-text-right">{{data.filterid}}</td>
+                        <td class="tw-text-right">{{data.nepochs}}</td>
+                        <td class="tw-text-right">{{data.fieldid}}</td>
+                        <td class="tw-text-right">{{data.rcid}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="tw-grid tw-grid-cols-2 tw-gap-4">
             <!-- Left Column (Radio Buttons) -->
             <div>
-                <div class="space-y-2">
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="data" value="difference" onclick="setPlot(value)" class="form-radio"
-                            checked>
+                <div class="tw-space-y-2">
+                    <label class="tw-flex tw-items-center tw-space-x-2">
+                        <input type="radio" name="data" value="difference" onclick="setPlot(value)"
+                            class="tw=form-radio" checked>
                         <span>Difference Magnitude</span>
                         <div class="tooltip">
-                            <i class="fa fa-question-circle me-2"></i>
+                            <i class="fa fa-question-circle tw-me-2"></i>
                             <div class="tooltip-text">
                                 The difference Magnitude light curve is the absolute difference between science and
                                 reference magnitudes.
                             </div>
                         </div>
                     </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="data" value="apparent" onclick="setPlot(value)" class="form-radio">
+                    <label class="tw-flex tw-items-center tw-space-x-2">
+                        <input type="radio" name="data" value="apparent" onclick="setPlot(value)" class="tw-form-radio">
                         <span>Apparent Magnitude</span>
                         <div class="tooltip">
-                            <i class="fa fa-question-circle me-2"></i>
+                            <i class="fa fa-question-circle tw-me-2"></i>
                             <div class="tooltip-text">
-                                Apparent magnitude light curve results from adding/subtracting the fluxes from the reference
+                                Apparent magnitude light curve results from adding/subtracting the fluxes from the
+                                reference
                                 and difference in the same unit system and then converting to magnitudes.
                             </div>
                         </div>
                     </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="form-radio">
+                    <label class="tw-flex tw-items-center tw-space-x-2">
+                        <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="tw-form-radio">
                         <span>Folded</span>
                         <div class="tooltip">
-                            <i class="fa fa-question-circle me-2"></i>
+                            <i class="fa fa-question-circle tw-me-2"></i>
                             <div class="tooltip-text">
-                                The Period folded light curve, where time is transformed to time modulo the period (Phase).
+                                The Period folded light curve, where time is transformed to time modulo the period
+                                (Phase).
                             </div>
                         </div>
                     </label>
                 </div>
             </div>
-    
+
             <!-- Right Column (Buttons) -->
-            <div class="flex flex-col justify-end items-end">
-                <button id="lc-dr" class="bg-blue-500 dark:bg-blue-700 text-white mt-2 px-2 py-1 rounded hover:bg-blue-600">
-                    <i class="fa fa-eye me-2"></i>
+            <div class="tw-flex tw-flex-col tw-justify-end tw-items-end">
+                <button id="lc-dr"
+                    class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600">
+                    <i class="fa fa-eye tw-me-2"></i>
                     Display DR
                 </button>
                 <a id="lc-download-ref" style="display: none;"></a>
                 <button id="lc-download"
-                    class="bg-green-500 dark:bg-green-700 text-white mt-2 px-2 py-1 rounded hover:bg-green-600">
-                    <i class="fa fa-download me-2"></i>
+                    class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+                    <i class="fa fa-download tw-me-2"></i>
                     Download
                 </button>
             </div>
         </div>
-    </div>
+    </div>`
 </div>
