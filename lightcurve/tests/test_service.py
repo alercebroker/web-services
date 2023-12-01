@@ -6,6 +6,8 @@ from core.models import NonDetection as NonDetectionModel
 from core.service import (
     _get_detections_mongo,
     _get_detections_sql,
+    _get_forced_photometry_mongo,
+    _get_forced_photometry_sql,
     _get_non_detections_mongo,
     _get_non_detections_sql,
     get_detections,
@@ -38,6 +40,22 @@ required_non_detection_fields = {
     "mjd",
     "fid",
     "diffmaglim",
+}
+
+required_forced_photometry_fields = {
+    "candid",
+    "tid",
+    "oid",
+    "mjd",
+    "fid",
+    "ra",
+    "dec",
+    "mag",
+    "e_mag",
+    "isdiffpos",
+    "corrected",
+    "dubious",
+    "has_stamp",
 }
 
 
@@ -227,6 +245,36 @@ def test_get_sql_non_detections(
         tid="ztf",
     )
     assert required_non_detection_fields.issubset(set(dict(result[0]).keys()))
+
+
+def test_get_mongo_forced_photometry(
+    mongo_service,
+    mongo_database,
+    init_mongo,
+):
+    result = _get_forced_photometry_mongo(
+        mongo_database,
+        oid="oid1",
+        tid="ztf",
+    )
+    assert required_forced_photometry_fields.issubset(
+        set(dict(result[0]).keys())
+    )
+
+
+def test_get_sql_forced_photometry(
+    psql_service,
+    psql_session,
+    init_psql,
+):
+    result = _get_forced_photometry_sql(
+        psql_session,
+        oid="oid1",
+        tid="ztf",
+    )
+    assert required_forced_photometry_fields.issubset(
+        set(dict(result[0]).keys())
+    )
 
 
 def test_get_period(
