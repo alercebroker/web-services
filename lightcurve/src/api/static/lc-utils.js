@@ -10,6 +10,9 @@ export class LightCurveOptions {
       103: { name: 'i DR5', color: '#FF7F00' },
       4: { name: 'c', color: '#00FFFF' },
       5: { name: 'o', color: '#FFA500' },
+      201: { name: 'g forced photometry', color: '#ADA3A3' },
+      202: { name: 'r forced photometry', color: '#377EB8' },
+      203: { name: 'i forced photometry', color: '#FF7F00' },
     }
     this.detections = detections.filter(
       (x) => x.fid in this.bandMap
