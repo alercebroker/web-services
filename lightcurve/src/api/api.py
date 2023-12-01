@@ -12,22 +12,20 @@ from .routes import htmx, rest
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
 instrumentator = Instrumentator().instrument(app).expose(app)
 
-
-if os.getenv("ENV") != "dev":
-    app.add_middleware(
-        RalidatorStarlette,
-        config={"SECRET_KEY": os.getenv("SECRET_KEY")},
-        filters_map=get_filters_map(),
-        ignore_paths=[
-            "/docs",
-            "/metrics",
-            "/openapi.json",
-        ],
-        ignore_prefixes=[
-            "/static",
-            "/htmx",
-        ],
-    )
+app.add_middleware(
+    RalidatorStarlette,
+    config={"SECRET_KEY": os.getenv("SECRET_KEY")},
+    filters_map=get_filters_map(),
+    ignore_paths=[
+        "/docs",
+        "/metrics",
+        "/openapi.json",
+    ],
+    ignore_prefixes=[
+        "/static",
+        "/htmx",
+    ],
+)
 
 app.add_middleware(
     CORSMiddleware,
