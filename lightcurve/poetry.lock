@@ -325,7 +325,7 @@ SQLAlchemy = "2.0.19"
 type = "git"
 url = "https://github.com/alercebroker/pipeline.git"
 reference = "HEAD"
-resolved_reference = "42511a0b327c59703eceba2f5aa84065d88852fe"
+resolved_reference = "ea9ed71403715c3b63bae07e4b9d5bec105660b5"
 subdirectory = "libs/db-plugins"
 
 [[package]]

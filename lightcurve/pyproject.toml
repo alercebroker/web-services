@@ -18,7 +18,7 @@ pymongo = "^4.4.1"
 returns = "^0.21.0"
 psycopg2-binary = "^2.9.6"
 ralidator-fastapi = { path = "../libs/ralidator-fastapi", develop = true }
-db-plugins = { git = "git@github.com:alercebroker/pipeline.git", subdirectory = "libs/db-plugins" }
+db-plugins = { git = "https://github.com/alercebroker/pipeline.git", subdirectory = "libs/db-plugins" }
 prometheus-fastapi-instrumentator = "^6.1.0"
 jinja2 = "^3.1.2"
 httpx = "^0.24.1"
