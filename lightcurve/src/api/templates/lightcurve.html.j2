@@ -93,6 +93,8 @@
         });
     }
 
+    /* Helper function that gets forced photometry along with
+    detections if the box is checked. */
     function getDetections() {
         const all_detections = [detections]
         const fp_checkbox = document.getElementById("fp-checkbox");
@@ -135,6 +137,8 @@
             plot.resize();
         }
     }
+
+    /* Updates the plot when the checkbox value is clicked */
     window.setForcedPhotometry = () => {
         window.setPlot(current_plot);
     }

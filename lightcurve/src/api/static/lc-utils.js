@@ -183,7 +183,10 @@ export class LightCurveOptions {
         jdToDate(params[0].value[0]).toUTCString().slice(0, -3) + 'UT'
       )
       return table + '</table>'
-    } else if (serie === 'r' || serie === 'g') {
+    } else if (
+        serie === 'r' || serie === 'g' ||
+        serie === 'r forced photometry' || serie === 'g forced photometry'
+        ) {
       const isdiffpos = params[0].value[4] === 1 ? '(+)' : '(-)'
       const mag = params[0].value[1].toFixed(3)
       const err = params[0].value[3].toFixed(3)
