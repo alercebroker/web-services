@@ -1,10 +1,12 @@
 import os
 
+from data.load import get_dummy_features, get_dummy_lc
 from core.service import (
     get_data_release,
     get_detections,
     get_non_detections,
     get_period,
+    get_forced_photometry,
 )
 from database.mongo import database
 from database.sql import session
@@ -49,6 +51,14 @@ async def lightcurve(oid: str) -> HTMLResponse:
         handle_error=handle_error,
         handle_success=handle_success,
     )
+    forced_photometry = get_forced_photometry(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
 
     dr, dr_detections = await get_data_release(
         detections[0].ra, detections[0].dec
@@ -67,6 +77,7 @@ async def lightcurve(oid: str) -> HTMLResponse:
             oid=oid,
             detections=detections,
             non_detections=non_detections,
+            forced_photometry=forced_photometry,
             period=period,
             dr=dr,
             dr_detections=dr_detections,
