@@ -1,5 +1,4 @@
 import pytest
-
 from core.exceptions import AtlasNonDetectionError, SurveyIdError
 from core.models import Detection as DetectionModel
 from core.models import NonDetection as NonDetectionModel
