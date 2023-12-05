@@ -4,8 +4,11 @@ def test_root(test_client):
 
 
 def test_detections_without_survey_id_param(
-    psql_service, init_psql, test_client,
-    mongo_service, init_mongo,
+    psql_service,
+    init_psql,
+    test_client,
+    mongo_service,
+    init_mongo,
 ):
     res = test_client.get("/detections/oid1")
     assert res.status_code == 200
@@ -13,18 +16,24 @@ def test_detections_without_survey_id_param(
 
 
 def test_detections_from_ztf(
-        psql_service, init_psql, test_client,
-        mongo_service, init_mongo,
-    ):
+    psql_service,
+    init_psql,
+    test_client,
+    mongo_service,
+    init_mongo,
+):
     res = test_client.get("/detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
     assert len(res.json()) == 3
 
 
 def test_non_detections_from_ztf(
-        psql_service, init_psql, test_client,
-        mongo_service, init_mongo,
-    ):
+    psql_service,
+    init_psql,
+    test_client,
+    mongo_service,
+    init_mongo,
+):
     res = test_client.get("/non_detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
     assert len(res.json()) == 3
@@ -42,7 +51,7 @@ def test_detections_with_unknown_survey_id_param(test_client):
 
 
 def test_lightcurve_from_atlas(mongo_service, init_mongo, test_client):
-    res = test_client.get("/lightcurve/oid1", params={"survey_id": "atlas"})
+    res = test_client.get("/lightcurve/oid2", params={"survey_id": "atlas"})
     assert res.status_code == 200
     json_res = res.json()
     # TODO: When a lightcurve contains only atlas detections and the user is
@@ -59,9 +68,12 @@ def test_lightcurve_from_atlas_without_results(
 
 
 def test_lightcurve_from_ztf(
-        psql_service, init_psql, test_client,
-        mongo_service, init_mongo,
-    ):
+    psql_service,
+    init_psql,
+    test_client,
+    mongo_service,
+    init_mongo,
+):
     res = test_client.get("/lightcurve/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
     json_res = res.json()
@@ -74,3 +86,31 @@ def test_has_metrics(test_client):
     assert res.status_code == 200
     res = test_client.get("/metrics")
     assert res.status_code == 200
+
+
+def test_lightcurve_multistream_only_in_mongo(
+    psql_service,
+    init_psql,
+    test_client,
+    mongo_service,
+    init_mongo,
+):
+    res = test_client.get("/lightcurve/oid10")
+    assert res.status_code == 200
+    json_res = res.json()
+    assert len(json_res["detections"]) == 1
+    assert len(json_res["non_detections"]) == 1
+
+
+def test_lightcurve_multistream_only_in_psql(
+    psql_service,
+    init_psql,
+    test_client,
+    mongo_service,
+    init_mongo,
+):
+    res = test_client.get("/lightcurve/oid20")
+    assert res.status_code == 200
+    json_res = res.json()
+    assert len(json_res["detections"]) == 1
+    assert len(json_res["non_detections"]) == 1
