@@ -81,12 +81,6 @@ def get_lightcurve(
         handle_error(failure)
     if len(detections.unwrap()) == 0 and len(non_detections.unwrap()) == 0:
         handle_error(ObjectNotFound(oid))
-    print(
-        detections.unwrap(),
-        len(detections.unwrap()),
-        non_detections.unwrap(),
-        len(non_detections.unwrap()),
-    )
     return handle_success(
         {
             "detections": detections.unwrap(),
