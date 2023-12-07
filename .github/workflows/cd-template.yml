@@ -1,4 +1,4 @@
-name: Build Staging
+name: CD Template
 
 concurrency: deployment
 
@@ -6,8 +6,9 @@ on:
   workflow_call:
     inputs:
       packages:
-        required: true
+        description: 'Comma separated list of packages to deploy'
         type: string
+        required: true
     secrets:
         ADMIN_TOKEN:
           required: true
@@ -15,6 +16,12 @@ on:
           required: true
         AWS_ROLE_PRODUCTION:
           required: true
+  workflow_dispatch:
+    inputs:
+      packages:
+        description: 'Comma separated list of packages to deploy'
+        type: string
+        required: true
 
 jobs:
   build:
