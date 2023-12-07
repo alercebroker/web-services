@@ -175,6 +175,17 @@ def add_psql_objects(session):
             lastmjd=0,
             step_id_corr=0,
         ),
+        Object(
+            oid="oid20",
+            ndethist=0,
+            ncovhist=0,
+            meanra=0,
+            meandec=0,
+            deltajd=0,
+            firstmjd=0,
+            lastmjd=0,
+            step_id_corr=0,
+        ),
     ]
     session.add_all(objects)
     session.commit()
@@ -214,6 +225,22 @@ def add_psql_detections(session):
             "has_stamp": False,
             "step_id_corr": "test",
         },
+        {
+            "candid": 789,
+            "oid": "oid20",
+            "mjd": 59001,
+            "fid": 2,
+            "pid": 1,
+            "isdiffpos": 1,
+            "ra": 11,
+            "dec": 21,
+            "magpsf": 14,
+            "sigmapsf": 0.4,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+            "step_id_corr": "test",
+        },
     ]
     detections = [Detection(**det) for det in detections]
     session.add_all(detections)
@@ -224,6 +251,7 @@ def add_psql_non_detections(session):
     non_detections = [
         {"oid": "oid1", "mjd": 59000, "fid": 1, "diffmaglim": 0.5},
         {"oid": "oid1", "mjd": 59001, "fid": 2, "diffmaglim": 0.4},
+        {"oid": "oid20", "mjd": 59002, "fid": 2, "diffmaglim": 0.4},
     ]
     non_detections = [NonDetection(**non) for non in non_detections]
     session.add_all(non_detections)
@@ -344,7 +372,7 @@ def add_mongo_objects(database: Database):
     }
     object2 = {
         "_id": "aid3",
-        "oid": ["oid1"],
+        "oid": ["oid1", "oid10"],
     }
     database["object"].insert_one(object1)
     database["object"].insert_one(object2)
@@ -472,6 +500,22 @@ def add_mongo_detections(database: Database):
             "dubious": False,
             "has_stamp": False,
         },  # Duplicated ZTF detection
+        {
+            "_id": "candid9",
+            "tid": "ztf",
+            "aid": "aid3",
+            "oid": "oid10",
+            "mjd": 59000,
+            "fid": 1,
+            "ra": 10,
+            "dec": 20,
+            "mag": 15,
+            "e_mag": 0.5,
+            "isdiffpos": 1,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },
     ]
     for det in detections:
         database.detection.insert_one(det)
@@ -495,6 +539,14 @@ def add_mongo_non_detections(database: Database):
             "fid": 1,
             "diffmaglim": 0.6,
         },  # unique ztf non detection
+        {
+            "tid": "ztf",
+            "aid": "aid3",
+            "oid": "oid10",
+            "mjd": 58000,
+            "fid": 1,
+            "diffmaglim": 0.6,
+        },
     ]
     for non_det in non_detections:
         database.non_detection.insert_one(non_det)

@@ -78,15 +78,16 @@ def get_lightcurve(
     else:
         handle_error(SurveyIdError(survey_id))
     failure = fail_from_list([detections, non_detections])
-    if not failure:
-        return handle_success(
-            {
-                "detections": detections.unwrap(),
-                "non_detections": non_detections.unwrap(),
-            }
-        )
-    else:
+    if failure:
         handle_error(failure)
+    if len(detections.unwrap()) == 0 and len(non_detections.unwrap()) == 0:
+        handle_error(ObjectNotFound(oid))
+    return handle_success(
+        {
+            "detections": detections.unwrap(),
+            "non_detections": non_detections.unwrap(),
+        }
+    )
 
 
 def get_detections(
@@ -139,11 +140,20 @@ def _get_all_unique_detections(
         sql_detections = _get_detections_sql(
             session_factory, oid, tid=survey_id
         )
+    except ObjectNotFound:
+        sql_detections = []
+    except DatabaseError as e:
+        return Failure(e)
+
+    try:
         mongo_detections = _get_detections_mongo(mongo_db, oid, tid=survey_id)
-    except (DatabaseError, ObjectNotFound) as e:
+    except ObjectNotFound:
+        mongo_detections = []
+    except DatabaseError as e:
         return Failure(e)
 
     detections = list(set(sql_detections + mongo_detections))
+
     return Success(detections)
 
 
@@ -301,14 +311,23 @@ def _get_all_unique_non_detections(
         sql_non_detections = _get_non_detections_sql(
             session_factory, oid, tid=survey_id
         )
+    except ObjectNotFound:
+        sql_non_detections = []
+    except DatabaseError as e:
+        return Failure(e)
+
+    try:
         mongo_non_detections = _get_non_detections_mongo(
             mongo_db, oid, tid=survey_id
         )
-
-        non_detections = list(set(sql_non_detections + mongo_non_detections))
-        return Success(non_detections)
-    except (DatabaseError, ObjectNotFound) as e:
+    except ObjectNotFound:
+        mongo_non_detections = []
+    except DatabaseError as e:
         return Failure(e)
+
+    non_detections = list(set(sql_non_detections + mongo_non_detections))
+
+    return Success(non_detections)
 
 
 def _get_detections_sql(
@@ -340,7 +359,9 @@ def _get_detections_mongo(
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
             raise ValueError()
-        result = database["detection"].find({"aid": obj["_id"], "tid": tid})
+        result = database["detection"].find(
+            {"aid": obj["_id"], "oid": oid, "tid": tid}
+        )
         result = [DetectionModel(**res, candid=res["_id"]) for res in result]
         return result
     except ValueError as e:
@@ -374,14 +395,12 @@ def _get_non_detections_sql(
 def _get_non_detections_mongo(
     database: Database, oid: str, tid: str
 ) -> list[NonDetectionModel]:
-    if tid == "atlas":
-        return []
     try:
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
             raise ValueError()
         result = database["non_detection"].find(
-            {"aid": obj["_id"], "tid": tid}
+            {"aid": obj["_id"], "oid": oid, "tid": tid}
         )
         result = [NonDetectionModel(**res) for res in result]
         return result
