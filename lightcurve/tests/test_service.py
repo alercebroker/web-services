@@ -243,4 +243,22 @@ def test_get_period(
         mongo_db=mongo_database,
     )
 
-    assert abs(result.value - 296.87498481917) < 0.00001
+    assert abs(result - 296.87498481917) < 0.00001
+
+
+def test_get_period_empty(
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
+):
+    result = get_period(
+        oid="oid2",
+        survey_id="ztf",
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+    )
+
+    assert result == None
