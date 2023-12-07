@@ -29,11 +29,11 @@ services:
       - 5001:5001
     environment:
       - PORT=5001
-      - DB_HOST=postgres
-      - DB_DATABASE=postgres
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_PORT=5432
+      - PSQL_HOST=postgres
+      - PSQL_DATABASE=postgres
+      - PSQL_USER=postgres
+      - PSQL_PASSWORD=postgres
+      - PSQL_PORT=5432
       - MONGO_HOST=mongo
       - MONGO_DATABASE=database
       - MONGO_AUTH_SOURCE=database
