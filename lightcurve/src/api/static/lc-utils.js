@@ -10,6 +10,9 @@ export class LightCurveOptions {
       103: { name: 'i DR5', color: '#FF7F00' },
       4: { name: 'c', color: '#00FFFF' },
       5: { name: 'o', color: '#FFA500' },
+      201: { name: 'g forced photometry', color: '#ADA3A3' },
+      202: { name: 'r forced photometry', color: '#377EB8' },
+      203: { name: 'i forced photometry', color: '#FF7F00' },
     }
     this.detections = detections.filter(
       (x) => x.fid in this.bandMap
@@ -180,7 +183,10 @@ export class LightCurveOptions {
         jdToDate(params[0].value[0]).toUTCString().slice(0, -3) + 'UT'
       )
       return table + '</table>'
-    } else if (serie === 'r' || serie === 'g') {
+    } else if (
+        serie === 'r' || serie === 'g' ||
+        serie === 'r forced photometry' || serie === 'g forced photometry'
+        ) {
       const isdiffpos = params[0].value[4] === 1 ? '(+)' : '(-)'
       const mag = params[0].value[1].toFixed(3)
       const err = params[0].value[3].toFixed(3)
