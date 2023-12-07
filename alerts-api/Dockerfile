@@ -14,7 +14,7 @@ FROM python-base as builder
 ARG WITH_ENV
 RUN pip install poetry
 WORKDIR /app
-COPY ./poetry.lock ./pyproject.toml ./
+COPY ./alerts-api/poetry.lock ./alerts-api/pyproject.toml ./
 RUN poetry install --no-root --without=dev --without=test
 
 
@@ -26,11 +26,11 @@ ENV APP_WORKERS="1"
 ENV ENVIRONMENT="production"
 ENV SERVER_SOFTWARE="gunicorn"
 ENV PROMETHEUS_MULTIPROC_DIR="/tmp"
-COPY ./README.md /app/README.md
-COPY ./description.md /app/description.md
-COPY ./gunicorn_config.py /app/gunicorn_config.py
-COPY ./config.yml /app/config.yml
-COPY ./scripts /app/scripts
-COPY ./src /app/src
+COPY ./alerts-api/README.md /app/README.md
+COPY ./alerts-api/description.md /app/description.md
+COPY ./alerts-api/gunicorn_config.py /app/gunicorn_config.py
+COPY ./alerts-api/config.yml /app/config.yml
+COPY ./alerts-api/scripts /app/scripts
+COPY ./alerts-api/src /app/src
 RUN poetry install --only-root
 CMD ["/bin/bash","scripts/entrypoint.sh"]

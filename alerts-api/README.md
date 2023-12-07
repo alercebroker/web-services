@@ -1,4 +1,4 @@
-![](https://github.com/alercebroker/ztf-api-new/workflows/Tests/badge.svg) 
+![](https://github.com/alercebroker/ztf_api-new/workflows/Tests/badge.svg) 
 [![codecov](https://codecov.io/gh/alercebroker/ztf_api/branch/master/graph/badge.svg?token=UHM0AV87S5)](https://codecov.io/gh/alercebroker/ztf_api)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![pyVersion38](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/download/releases/3.8/)
@@ -11,7 +11,7 @@
 
 ## For developers
 
-Clone this repo using `git clone https://github.com/alercebroker/ztf-api.git` and install requirements with `pip install -r requirements.txt`.
+Clone this repo using `git clone https://github.com/alercebroker/ztf_api.git` and install requirements with `pip install -r requirements.txt`.
 
 For modify an existing endpoint, go to `api/resources` and enter the folder of the endpoint that you want to modify. Only write code to specific task of this endpoint.
 
