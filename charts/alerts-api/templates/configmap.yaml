@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "alerts-api.fullname" . }}
+  namespace: {{ .Values.namespace }}
+data:
+  port: '{{ .Values.configmap.port }}'
+  api-url: '{{ .Values.configmap.apiUrl }}'
+  app-workers: '{{ .Values.configmap.appWorkers }}'
+  threads: '{{ .Values.configmap.threads }}'
+  log-level: '{{ .Values.configmap.logLevel }}'
+---
+apiVersion: v1
+metadata:
+  name: alerts-api-nginx-conf
+  namespace: {{ .Values.namespace }}
+data:
+  default.conf: |
+    server {
+      listen 80;
+
+      location /v2/alerts/ {
+        proxy_pass http://localhost:5000/;
+        proxy_redirect off;
+        proxy_set_header X-Forwarded-Prefix /v2/alerts/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+      }
+
+      location /v2/alerts {
+        proxy_pass http://localhost:5000/;
+        proxy_redirect off;
+        proxy_set_header X-Forwarded-Prefix /v2/alerts;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+      }
+
+      location / {
+        proxy_pass http://localhost:5000/;
+      }
+    }
+kind: ConfigMap

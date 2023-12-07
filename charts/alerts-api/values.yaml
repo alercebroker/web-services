@@ -1,0 +1,78 @@
+# Default values for step_starter.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+namespace: alerts-api
+
+image:
+  repository: ghcr.io/alercebroker/alerts-api
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets:
+  - name: "image-pull-access"
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+service:
+  port: ""
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+          - matchExpressions:
+            - key: eks.amazonaws.com/nodegroup
+              operator: In
+              ## Override this value with the NodeGroup tag accordingly
+              values: []
+
+configmap:
+  port: ""
+  apiUrl: ""
+  appWorkers: ""
+  threads: ""
+  logLevel: ""
+
+ingress:
+  certificateArn: ""
+  host: ""
+  k8sGroupName: ""
+  k8sTags: ""
+
+secrets:
+  secretKey: ""
+  sql:
+    host: ""
+    database: ""
+    user: ""
+    password: ""
+    port: ""
+  mongo:
+    host: ""
+    database: ""
+    authSource: ""
+    user: ""
+    password: ""
+    port: ""
+  secretKey: ""
+
+imageCredentials:
+  registry: ""
+  username: ""
+  password: ""
+  email: ""
