@@ -412,7 +412,10 @@ def _get_period_sql(
             )
             result = session.execute(stmt)
             result = [FeatureModel(**res[0].__dict__) for res in result.all()]
-            return Success(result[0])
+            if len(result) == 0:
+                return Success(None)
+            else:
+                return Success(result[0].value)
     except Exception as e:
         return Failure(DatabaseError(e))
 

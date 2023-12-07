@@ -33,7 +33,7 @@
     const oid = '{{ oid }}';
     const detections = {{ detections | tojson }};
     const non_detections = {{ non_detections | tojson }};
-    const period = {{ period }};
+    const period = {{ period | tojson }};
     const dr = {{ dr | tojson }};
     const dr_detections = {{ dr_detections | tojson }};
 
@@ -151,6 +151,10 @@
     let color_scheme_observer = new MutationObserver(setColorScheme);
     color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
 
+    if (period === null) {
+        document.getElementById("lc-folded-radio").disabled = true;
+    }
+
     /* First run color setup */
     setColorScheme()
 
@@ -226,7 +230,8 @@
                         </div>
                     </label>
                     <label class="tw-flex tw-items-center tw-space-x-2">
-                        <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="tw-form-radio">
+                        <input id="lc-folded-radio" type="radio" name="data" value="folded" onclick="setPlot(value)"
+                            class="tw-form-radio">
                         <span>Folded</span>
                         <div class="tooltip">
                             <i class="fa fa-question-circle tw-me-2"></i>
