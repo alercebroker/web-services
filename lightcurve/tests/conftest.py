@@ -152,7 +152,30 @@ def populate_psql(database):
 
 
 def add_psql_objects(session):
-    objects = [Object(oid="oid1"), Object(oid="oid2")]
+    objects = [
+        Object(
+            oid="oid1",
+            ndethist=0,
+            ncovhist=0,
+            meanra=0,
+            meandec=0,
+            deltajd=0,
+            firstmjd=0,
+            lastmjd=0,
+            step_id_corr=0,
+        ),
+        Object(
+            oid="oid2",
+            ndethist=0,
+            ncovhist=0,
+            meanra=0,
+            meandec=0,
+            deltajd=0,
+            firstmjd=0,
+            lastmjd=0,
+            step_id_corr=0,
+        ),
+    ]
     session.add_all(objects)
     session.commit()
 
