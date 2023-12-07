@@ -16,10 +16,10 @@ spec:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: /v2/alerts
+          - path: /v1/alerts
             pathType: Prefix
             backend:
               service:
-                name: alerts
+                name: alerts-api
                 port:
                   number: {{ .Values.service.port }}
