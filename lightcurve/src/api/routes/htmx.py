@@ -38,9 +38,9 @@ async def lightcurve(
 
     # permissions logic
     request_ralidator.set_required_permissions(
-        "admin", "basic_user"
+        ["admin", "basic_user"]
     )
-    auth_header = request.headers.get("Authorization")
+    auth_header = request.headers.get("Authorization", None)
     token = None
 
     if auth_header:
