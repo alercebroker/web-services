@@ -6,17 +6,13 @@ from core.service import (
     get_detections,
     get_non_detections,
     get_period,
+    get_forced_photometry,
 )
 from database.mongo import database
 from database.sql import session
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from jinja2 import Environment, PackageLoader, select_autoescape
-from ralidator_fastapi.decorators import (
-    check_permissions_decorator,
-    set_filters_decorator,
-    set_permissions_decorator,
-)
 from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
@@ -29,17 +25,12 @@ jinja_env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 
 @router.get("/lightcurve")
-async def lightcurve(
-    request: Request,
-    oid: str
-) -> HTMLResponse:
+async def lightcurve(request: Request, oid: str) -> HTMLResponse:
     # el objeto ralidator viene en request.state
     request_ralidator = request.state.ralidator
 
     # permissions logic
-    request_ralidator.set_required_permissions(
-        ["admin", "basic_user"]
-    )
+    request_ralidator.set_required_permissions(["admin", "basic_user"])
     auth_header = request.headers.get("Authorization", None)
     token = None
 
@@ -50,8 +41,8 @@ async def lightcurve(
             token = auth_header.split()[1]
         except Exception:
             raise ValueError("Malformed Authorization header")
-    
-    request_ralidator.authenticate_token(token)    
+
+    request_ralidator.authenticate_token(token)
     allowed, code = request_ralidator.check_if_allowed()
 
     if not allowed:
@@ -86,6 +77,14 @@ async def lightcurve(
         handle_error=handle_error,
         handle_success=handle_success,
     )
+    forced_photometry = get_forced_photometry(
+        oid=oid,
+        survey_id="ztf",
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
 
     dr, dr_detections = await get_data_release(
         detections[0].ra, detections[0].dec
@@ -102,12 +101,10 @@ async def lightcurve(
     # crear objeto de lightcurve
     unfiltered_lightcurve = {
         "detections": detections,
-        "non_detections": non_detections
+        "non_detections": non_detections,
     }
     # editar el ralidator para ejecutar filtro de lightcurveset_user_filters con "filter lightcurve altas"
-    request_ralidator.set_app_filters(
-        ["filter_atlas_lightcurve"]
-    )
+    request_ralidator.set_app_filters(["filter_atlas_lightcurve"])
     # ejecutar apply_filters
     filtered_lightcurve = request_ralidator.apply_filters(
         unfiltered_lightcurve
@@ -119,6 +116,7 @@ async def lightcurve(
             oid=oid,
             detections=filtered_lightcurve["detections"],
             non_detections=filtered_lightcurve["non_detections"],
+            forced_photometry=forced_photometry,
             period=period,
             dr=dr,
             dr_detections=dr_detections,
