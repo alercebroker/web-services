@@ -28,7 +28,7 @@ def test_psql_detections_to_multistream():
     }
 
     expected_multistream_detection = {
-        "candid": 123,
+        "candid": "123",
         "oid": "oid1",
         "sid": None,
         "aid": None,

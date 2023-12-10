@@ -30,7 +30,7 @@ def test_detections_without_survey_id_param(
 ):
     res = test_client.get("/detections/oid1")
     assert res.status_code == 200
-    assert len(res.json()) == 3
+    assert len(res.json()) == 4
 
 
 def test_detections_from_ztf(
@@ -42,7 +42,8 @@ def test_detections_from_ztf(
 ):
     res = test_client.get("/detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
-    assert len(res.json()) == 3
+    print(res.json())
+    assert len(res.json()) == 4
 
 
 def test_non_detections_from_ztf(
@@ -54,7 +55,7 @@ def test_non_detections_from_ztf(
 ):
     res = test_client.get("/non_detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
-    assert len(res.json()) == 3
+    assert len(res.json()) == 4
 
 
 def test_detections_from_atlas(mongo_service, init_mongo, test_client):
@@ -95,8 +96,8 @@ def test_lightcurve_from_ztf(
     res = test_client.get("/lightcurve/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
     json_res = res.json()
-    assert len(json_res["detections"]) == 3
-    assert len(json_res["non_detections"]) == 3
+    assert len(json_res["detections"]) == 4
+    assert len(json_res["non_detections"]) == 4
 
 
 def test_has_metrics(test_client):
@@ -116,8 +117,8 @@ def test_lightcurve_multistream_only_in_mongo(
     res = test_client.get("/lightcurve/oid10")
     assert res.status_code == 200
     json_res = res.json()
-    assert len(json_res["detections"]) == 1
-    assert len(json_res["non_detections"]) == 1
+    assert len(json_res["detections"]) == 3
+    assert len(json_res["non_detections"]) == 3
 
 
 def test_lightcurve_multistream_only_in_psql(

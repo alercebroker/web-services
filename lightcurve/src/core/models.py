@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class Detection(BaseModel):
-    candid: Union[str, int]
+    candid: Union[str]
     tid: str
     sid: Optional[str] = None
     aid: Optional[str] = None

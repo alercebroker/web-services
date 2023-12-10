@@ -73,7 +73,7 @@ def test_get_ztf_detections(
         survey_id="ztf",
     )
     assert type(result[0]) is DetectionModel
-    assert len(result) == 3
+    assert len(result) == 4
 
 
 def test_get_detections_from_unknown_survey(
@@ -111,7 +111,7 @@ def test_get_ztf_non_detections(
     )
     assert type(result[0]) is NonDetectionModel
     assert required_non_detection_fields.issubset(set(dict(result[0]).keys()))
-    assert len(result) == 3
+    assert len(result) == 4
 
 
 def test_get_non_detections_from_unknown_survey(
@@ -170,8 +170,8 @@ def test_get_ztf_lightcurve(
         mongo_db=mongo_database,
     )
     assert isinstance(result, dict)
-    assert len(result["detections"]) == 3
-    assert len(result["non_detections"]) == 3
+    assert len(result["detections"]) == 4
+    assert len(result["non_detections"]) == 4
 
 
 def test_get_atlas_lightcurve(mongo_service, mongo_database, init_mongo):

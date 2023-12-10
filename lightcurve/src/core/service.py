@@ -152,7 +152,10 @@ def _get_all_unique_detections(
     except DatabaseError as e:
         return Failure(e)
 
-    detections = list(set(sql_detections + mongo_detections))
+    unique_detections = {
+        det.candid: det for det in sql_detections + mongo_detections
+    }
+    detections = list(unique_detections.values())
 
     return Success(detections)
 
@@ -295,9 +298,10 @@ def _get_unique_forced_photometry(
     except (DatabaseError, ObjectNotFound) as e:
         return Failure(e)
 
-    forced_photometry = list(
-        set(sql_forced_photometry + mongo_forced_photometry)
-    )
+    unique_forced_photometry = {
+        fp.candid: fp for fp in sql_forced_photometry + mongo_forced_photometry
+    }
+    forced_photometry = list(unique_forced_photometry.values())
     return Success(forced_photometry)
 
 
@@ -325,7 +329,11 @@ def _get_all_unique_non_detections(
     except DatabaseError as e:
         return Failure(e)
 
-    non_detections = list(set(sql_non_detections + mongo_non_detections))
+    unique_non_detections = {
+        (nondet.aid, nondet.mjd, nondet.fid): nondet
+        for nondet in sql_non_detections + mongo_non_detections
+    }
+    non_detections = list(unique_non_detections.values())
 
     return Success(non_detections)
 
@@ -359,12 +367,14 @@ def _get_detections_mongo(
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
             raise ValueError()
-        result = database["detection"].find(
-            {"aid": obj["_id"], "oid": oid, "tid": tid}
-        )
+        query = {"aid": obj["_id"], "tid": tid}
+        if tid.upper() == "ATLAS":
+            # TODO change with `sid` when migration from old mongo is ready
+            query["tid"] = {"$regex": "ATLAS*"}
+        result = database["detection"].find(query)
         result = [DetectionModel(**res, candid=res["_id"]) for res in result]
         return result
-    except ValueError as e:
+    except ValueError:
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e)
@@ -396,6 +406,8 @@ def _get_non_detections_mongo(
     database: Database, oid: str, tid: str
 ) -> list[NonDetectionModel]:
     try:
+        if tid.lower() == "atlas":
+            raise AtlasNonDetectionError()
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
             raise ValueError()
@@ -404,8 +416,10 @@ def _get_non_detections_mongo(
         )
         result = [NonDetectionModel(**res) for res in result]
         return result
-    except ValueError as e:
+    except ValueError:
         raise ObjectNotFound(oid)
+    except AtlasNonDetectionError:
+        return []
     except Exception as e:
         raise DatabaseError(e)
 
@@ -564,6 +578,7 @@ def _ztf_detection_to_multistream(
         if field not in fields and not field.startswith("_"):
             extra_fields[field] = value
 
+    detection["candid"] = str(detection["candid"])
     return DetectionModel(
         **detection,
         tid=tid,

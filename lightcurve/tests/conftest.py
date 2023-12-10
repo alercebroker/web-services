@@ -70,10 +70,9 @@ def is_responsive_mongo(url):
         client = MongoClient(
             host=host,  # <-- IP and port go here
             serverSelectionTimeoutMS=3000,  # 3 second timeout
-            username="mongo",
-            password="mongo",
+            username="",
+            password="",
             port=int(port),
-            authSource="database",
         )
         client.database.somecol.insert_one({"hola": "chao"})
         client.close()
@@ -89,7 +88,7 @@ def mongo_service(docker_ip, docker_services):
     port = docker_services.port_for("mongo", 27017)
     server = "{}:{}".format(docker_ip, port)
     docker_services.wait_until_responsive(
-        timeout=30.0, pause=0.1, check=lambda: is_responsive_mongo(server)
+        timeout=30, pause=1, check=lambda: is_responsive_mongo(server)
     )
     return server
 
@@ -345,9 +344,8 @@ def init_mongo():
     db = MongoConnection(
         {
             "host": "localhost",
-            "serverSelectionTimeoutMS": 3000,  # 3 second timeout
-            "username": "mongo",
-            "password": "mongo",
+            "username": "",
+            "password": "",
             "port": 27017,
             "database": "database",
         }
@@ -384,7 +382,7 @@ def add_mongo_detections(database: Database):
             "_id": "candid1",
             "aid": "aid1",
             "oid": "oid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "mjd": 59000,
             "fid": 1,
             "ra": 10,
@@ -400,7 +398,7 @@ def add_mongo_detections(database: Database):
             "_id": "candid2",
             "aid": "aid1",
             "oid": "oid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "mjd": 59001,
             "fid": 2,
             "ra": 11,
@@ -415,7 +413,7 @@ def add_mongo_detections(database: Database):
         {
             "_id": "candid3",
             "aid": "aid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "oid": "oid3",
             "mjd": 59005,
             "fid": 3,
@@ -433,7 +431,7 @@ def add_mongo_detections(database: Database):
         {
             "_id": "candid4",
             "aid": "aid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "oid": "oid3",
             "mjd": 59006,
             "fid": 3,
@@ -451,7 +449,7 @@ def add_mongo_detections(database: Database):
         {
             "_id": "candid5",
             "aid": "aid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "oid": "oid3",
             "mjd": 59006,
             "fid": 3,
@@ -558,7 +556,7 @@ def add_mongo_forced_photometry(database: Database):
             "_id": "candid10",
             "aid": "aid1",
             "oid": "oid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "mjd": 59000,
             "fid": "r",
             "ra": 10,
@@ -574,7 +572,7 @@ def add_mongo_forced_photometry(database: Database):
             "_id": "candid20",
             "aid": "aid1",
             "oid": "oid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "mjd": 59001,
             "fid": "g",
             "ra": 11,
@@ -589,7 +587,7 @@ def add_mongo_forced_photometry(database: Database):
         {
             "_id": "candid30",
             "aid": "aid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "oid": "oid3",
             "mjd": 59005,
             "fid": "gr",
@@ -607,7 +605,7 @@ def add_mongo_forced_photometry(database: Database):
         {
             "_id": "candid40",
             "aid": "aid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "oid": "oid3",
             "mjd": 59006,
             "fid": "r",
@@ -625,7 +623,7 @@ def add_mongo_forced_photometry(database: Database):
         {
             "_id": "candid50",
             "aid": "aid2",
-            "tid": "atlas",
+            "tid": "ATLAS-02a",
             "oid": "oid3",
             "mjd": 59006,
             "fid": "g",
@@ -693,10 +691,9 @@ def test_client():
     os.environ["PSQL_DATABASE"] = "postgres"
     os.environ["MONGO_PORT"] = "27017"
     os.environ["MONGO_HOST"] = "localhost"
-    os.environ["MONGO_USER"] = "mongo"
-    os.environ["MONGO_PASSWORD"] = "mongo"
+    os.environ["MONGO_USER"] = ""
+    os.environ["MONGO_PASSWORD"] = ""
     os.environ["MONGO_DATABASE"] = "database"
-    os.environ["MONGO_AUTH_SOURCE"] = "admin"
     os.environ["SECRET_KEY"] = "some_secret"
     from api.api import app
 
