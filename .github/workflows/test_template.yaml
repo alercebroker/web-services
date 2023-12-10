@@ -30,7 +30,10 @@ on:
         required: false
         type: string
         default: "--all-extras"
-
+    secrets:
+      GH_TOKEN:
+        required: false
+        description: 'A github PAT that enables installation of package from private repo'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -39,6 +42,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+        with:
+          token: ${{secrets.GH_TOKEN}}
+          submodules: 'recursive'
       - name: Install poetry
         run: pipx install poetry==${{ inputs.poetry-version }}
       - name: Set up Python
@@ -49,6 +55,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd ${{ inputs.base-folder }}
+          git config --global url."https://${{secrets.GH_TOKEN}}@github.com/".insteadOf "https://github.com/"
           poetry install ${{ inputs.poetry-install }}
       - name: Tests with pytest
         run: |

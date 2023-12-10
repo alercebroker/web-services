@@ -13,6 +13,8 @@ jobs:
         sources-folder: 'lightcurve'
         test-folder: 'tests'
         base-folder: 'lightcurve'
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
   astroobject_unittests:
     uses: ./.github/workflows/test_template.yaml
     with:
@@ -20,6 +22,8 @@ jobs:
         sources-folder: 'astroobject'
         test-folder: 'tests/unittests'
         base-folder: 'astroobject'
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
   astroobject_integration_tests:
     uses: ./.github/workflows/test_template.yaml
     with:
@@ -28,3 +32,5 @@ jobs:
         test-folder: 'tests/integration'
         base-folder: 'astroobject'
         codecov-flags: ""
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
