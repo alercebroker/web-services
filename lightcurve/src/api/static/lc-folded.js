@@ -107,7 +107,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
       bands.map((band) => this.bandMap[band].name + ' detections')
     )
     this.options.legend.data = legend
-    this.options.title.subtext = 'Period: ' + this.period + ' days'
+    this.options.title.subtext = 'Period: ' + this.period.toFixed(6) + ' days'
   }
 
   getBoundaries() {
