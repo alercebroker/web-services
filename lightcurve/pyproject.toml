@@ -37,6 +37,7 @@ memray = "^1.8.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.9.1"
+sshtunnel = "^0.4.0"
 
 [build-system]
 requires = ["poetry-core"]
@@ -47,3 +48,4 @@ line-length = 79
 
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
+tunnel = "scripts.sshproxy:run_tunnel"

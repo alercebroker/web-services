@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<title>README.html</title>
+<meta http-equiv="Content-Type" content="application/xhtml+xml;charset=utf-8"/>
+<link rel="stylesheet" type="text/css" media="all" href="https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"  />
+<link rel="stylesheet" type="text/css" media="all" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.min.css"  /><meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'><style> body { box-sizing: border-box; max-width: 740px; width: 100%; margin: 40px auto; padding: 0 10px; } </style><script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'></script><script src='https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/highlight.min.js'></script><script>document.addEventListener('DOMContentLoaded', () => { document.body.classList.add('markdown-body'); document.querySelectorAll('pre[lang] > code').forEach((code) => { code.classList.add(code.parentElement.lang); }); document.querySelectorAll('pre > code').forEach((code) => { hljs.highlightBlock(code); }); });</script>
+</head>
+
+<body>
+
+<h1 id="alerce-lightcurve-api">ALeRCE Lightcurve API</h1>
+<h2 id="for-developers">For developers</h2>
+<p>Set up environment variables. Look at <a
+href=".env.example">example</a> Run with
+<code>poetry run uvicorn api.api:app</code> or
+<code>poetry run dev</code></p>
+<h2 id="connecting-to-remote-databases-without-public-ips">Connecting to
+remote databases without public IPs</h2>
+<p>If you want to test against a remote database that doesn’t have
+public IP enabled, you can connect using an SSH tunnel via a proxy
+server. Check the EC2 console for the IP of the proxy server or ask on
+slack.</p>
+<p>There is a special</p>
+<h2 id="htmx-endpoint">HTMX endpoint</h2>
+<p>The htmx returned by this API’s htmx endpoint emits the following
+events:</p>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 24%" />
+<col style="width: 32%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Event</th>
+<th style="text-align: center;">Trigger</th>
+<th style="text-align: center;">Detail content</th>
+<th style="text-align: center;">Level</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">onDetectionClick</td>
+<td style="text-align: center;">Clicked detection</td>
+<td style="text-align: center;">Clicked detection index</td>
+<td style="text-align: center;">document.body</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>
