@@ -15,28 +15,23 @@ def get_filters_map():
 
 
 def filter_atlas_detection_non_detection(lc_object):
-    if lc_object["tid"] == "atlas":
+    if lc_object["tid"].lower().startswith("atlas"):
         return False
     return True
 
 
 def filter_atlas_lightcurve(lc_object):
-    non_filtered_detections = []
-    non_filtered_non_detections = []
+    detections = []
+    non_detections = []
 
     for detection in lc_object["detections"]:
         if filter_atlas_detection_non_detection(detection):
-            non_filtered_detections.append(detection)
+            detections.append(detection)
     for non_detecton in lc_object["non_detections"]:
         if filter_atlas_detection_non_detection(non_detecton):
-            non_filtered_non_detections.append(non_detecton)
+            non_detections.append(non_detecton)
 
-    if (
-        len(non_filtered_detections) > 0
-        or len(non_filtered_non_detections) > 0
-    ):
-        lc_object["detections"] = non_filtered_detections
-        lc_object["non_detections"] = non_filtered_non_detections
-        return True
-    else:
-        return False
+    lc_object["detections"] = detections
+    print("filter", lc_object["detections"])
+    lc_object["non_detections"] = non_detections
+    return True
