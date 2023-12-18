@@ -143,15 +143,23 @@
         window.setPlot(current_plot);
     }
 
+    window.toggleFlux = () => {
+        window.setPlot(current_plot);
+    }
+
     /* Update plot on plot type change */
     window.setPlot = (type) => {
+        const flux_checkbox = document.getElementById("flux-checkbox");
+        const use_flux = document.getElementById("flux-checkbox").checked;
+        console.log(use_flux);
+
         current_plot = type;
         if (current_plot === "difference") {
-            plot_options = new DifferenceLightCurveOptions(getDetections(), non_detections, plot_text_color);
+            plot_options = new DifferenceLightCurveOptions(getDetections(), non_detections, use_flux, plot_text_color);
         } else if (current_plot === "apparent") {
-            plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color);
+            plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, use_flux, plot_text_color);
         } else if (current_plot === "folded") {
-            plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color, period);
+            plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, use_flux, plot_text_color, period);
         }
         plot.setOption(plot_options.options, true);
     };
@@ -266,6 +274,19 @@
                         onclick="setForcedPhotometry()"
                     >
                     <span>Enable forced photometry</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle tw-me-2"></i>
+                        <div class="tooltip-text">
+                        </div>
+                    </div>
+                </label>
+                <label class="tw-flex tw-items-center tw-space-x-2">
+                    <input
+                        id="flux-checkbox"
+                        type="checkbox"
+                        onclick="toggleFlux()"
+                    >
+                    <span>Use flux</span>
                     <div class="tooltip">
                         <i class="fa fa-question-circle tw-me-2"></i>
                         <div class="tooltip-text">

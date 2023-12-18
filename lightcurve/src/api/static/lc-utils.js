@@ -1,7 +1,7 @@
 import { jdToDate } from './astro-dates.js'
 
 export class LightCurveOptions {
-  constructor(detections = [], nonDetections = [], fontColor = 'fff') {
+  constructor(detections = [], nonDetections = [], use_flux = false, fontColor = 'fff') {
     this.bandMap = {
       1: { name: 'g', color: '#56E03A' },
       2: { name: 'r', color: '#D42F4B' },
@@ -14,6 +14,7 @@ export class LightCurveOptions {
       202: { name: 'r forced photometry', color: '#377EB8' },
       203: { name: 'i forced photometry', color: '#FF7F00' },
     }
+    this.use_flux = use_flux
     this.detections = detections.filter(
       (x) => x.fid in this.bandMap
     )
@@ -99,9 +100,10 @@ export class LightCurveOptions {
         },
       },
       yAxis: {
-        name: 'Magnitude',
-        nameLocation: 'start',
+        name: this.use_flux ? 'Flux' : 'Magnitude',
+        nameLocation: this.use_flux ? 'end' : 'start',
         type: 'value',
+        position: 'left',
         scale: true,
         splitLine: {
           show: false,

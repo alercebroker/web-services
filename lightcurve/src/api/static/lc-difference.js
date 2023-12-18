@@ -1,5 +1,6 @@
 import { jdToDate } from './astro-dates.js'
 import { LightCurveOptions } from './lc-utils.js'
+import { magtot2flux_uJy, fluxerr } from './flux.js'
 
 
 export class DifferenceLightCurveOptions extends LightCurveOptions {
@@ -35,7 +36,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
           y: 1,
         },
       }
-      serie.data = this.formatDetections(detections, band)
+      serie.data = this.formatDetections(detections, band, this.use_flux)
       this.options.series.push(serie)
     })
   }
@@ -49,7 +50,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(detections, band)
+        serie.data = this.formatError(detections, band, this.use_flux)
       this.options.series.push(serie)
     })
   }
@@ -65,38 +66,52 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
         symbol:
           'path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z',
       }
-      serie.data = this.formatNonDetections(nonDetections, band)
+      serie.data = this.formatNonDetections(nonDetections, band, this.use_flux)
       this.options.series.push(serie)
     })
   }
 
-  formatError(detections, band) {
+  formatError(detections, band, use_flux) {
     return detections
       .filter(function (x) {
         return x.fid === band
       })
       .map(function (x) {
-        return [x.mjd, x.mag - x.e_mag, x.mag + x.e_mag]
+        const flux = magtot2flux_uJy(x.mag)
+        return [
+            x.mjd,
+            use_flux ? flux - fluxerr(x.e_mag, flux) : x.mag - x.e_mag,
+            use_flux ? flux + fluxerr(x.e_mag, flux) : x.mag + x.e_mag,
+        ]
       })
   }
 
-  formatDetections(detections, band) {
+  formatDetections(detections, band, use_flux) {
     return detections
       .filter(function (x) {
         return x.fid === band
       })
       .map(function (x) {
-        return [x.mjd, x.mag, x.candid, x.e_mag, x.isdiffpos]
+        return [
+            x.mjd,
+            use_flux ? magtot2flux_uJy(x.mag) : x.mag,
+            x.candid,
+            x.e_mag,
+            x.isdiffpos
+        ]
       })
   }
 
-  formatNonDetections(nonDetections, band) {
+  formatNonDetections(nonDetections, band, use_flux) {
     return nonDetections
       .filter(function (x) {
         return x.fid === band && x.diffmaglim > 10
       })
       .map(function (x) {
-        return [x.mjd, x.diffmaglim]
+        return [
+            x.mjd,
+            use_flux ? magtot2flux_uJy(x.diffmaglim) : x.diffmaglim,
+        ]
       })
   }
 
