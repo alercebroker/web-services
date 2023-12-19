@@ -65,6 +65,7 @@ def test_get_ztf_detections(
     mongo_service,
     mongo_database,
     init_mongo,
+    insert_ztf_1_oid_per_aid,
 ):
     result = get_detections(
         session_factory=psql_session,
@@ -73,7 +74,20 @@ def test_get_ztf_detections(
         survey_id="ztf",
     )
     assert type(result[0]) is DetectionModel
-    assert len(result) == 3
+    assert len(result) == 1
+    result = get_detections(
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+        oid="oid1",
+        survey_id="atlas",
+    )
+    assert len(result) == 0
+    result = get_detections(
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+        oid="oid1",
+    )
+    assert len(result) == 1
 
 
 def test_get_detections_from_unknown_survey(
@@ -102,6 +116,7 @@ def test_get_ztf_non_detections(
     mongo_service,
     mongo_database,
     init_mongo,
+    insert_ztf_1_oid_per_aid,
 ):
     result = get_non_detections(
         session_factory=psql_session,
@@ -111,7 +126,23 @@ def test_get_ztf_non_detections(
     )
     assert type(result[0]) is NonDetectionModel
     assert required_non_detection_fields.issubset(set(dict(result[0]).keys()))
-    assert len(result) == 3
+    assert len(result) == 1
+    with pytest.raises(
+        AtlasNonDetectionError,
+        match="Can't retrieve non detections: ATLAS does not provide non_detections",
+    ):
+        get_non_detections(
+            session_factory=psql_session,
+            mongo_db=mongo_database,
+            oid="oid1",
+            survey_id="atlas",
+        )
+    result = get_non_detections(
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+        oid="oid1",
+    )
+    assert len(result) == 1
 
 
 def test_get_non_detections_from_unknown_survey(
@@ -133,14 +164,36 @@ def test_get_non_detections_from_unknown_survey(
         )
 
 
-def test_get_atlas_detections(mongo_service, mongo_database, init_mongo):
+def test_get_atlas_detections(
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
+    insert_atlas_1_oid_per_aid,
+):
     result = get_detections(
-        oid="oid2",
+        oid="oid1",
         survey_id="atlas",
+        session_factory=psql_session,
         mongo_db=mongo_database,
     )
-    assert len(result) == 2
+    assert len(result) == 1
     assert type(result[0]) is DetectionModel
+    result = get_detections(
+        oid="oid1",
+        survey_id="ztf",
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+    )
+    assert len(result) == 0
+    result = get_detections(
+        oid="oid1",
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+    )
+    assert len(result) == 1
 
 
 def test_get_atlas_non_detections(mongo_service, mongo_database, init_mongo):
@@ -162,6 +215,7 @@ def test_get_ztf_lightcurve(
     mongo_service,
     mongo_database,
     init_mongo,
+    insert_ztf_1_oid_per_aid,
 ):
     result = get_lightcurve(
         oid="oid1",
@@ -170,16 +224,59 @@ def test_get_ztf_lightcurve(
         mongo_db=mongo_database,
     )
     assert isinstance(result, dict)
-    assert len(result["detections"]) == 3
-    assert len(result["non_detections"]) == 3
-
-
-def test_get_atlas_lightcurve(mongo_service, mongo_database, init_mongo):
+    assert len(result["detections"]) == 1
+    assert len(result["non_detections"]) == 1
     result = get_lightcurve(
-        oid="oid2", survey_id="atlas", mongo_db=mongo_database
+        oid="oid1",
+        survey_id="atlas",
+        session_factory=psql_session,
+        mongo_db=mongo_database,
     )
     assert isinstance(result, dict)
-    assert len(result["detections"]) == 2
+    assert len(result["detections"]) == 0
+    assert len(result["non_detections"]) == 0
+    result = get_lightcurve(
+        oid="oid1",
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+    )
+    assert isinstance(result, dict)
+    assert len(result["detections"]) == 1
+    assert len(result["non_detections"]) == 1
+
+
+def test_get_atlas_lightcurve(
+    mongo_service,
+    mongo_database,
+    init_mongo,
+    psql_service,
+    psql_session,
+    init_psql,
+    insert_atlas_1_oid_per_aid,
+):
+    result = get_lightcurve(
+        oid="oid1",
+        survey_id="atlas",
+        mongo_db=mongo_database,
+        session_factory=psql_session,
+    )
+    assert isinstance(result, dict)
+    assert len(result["detections"]) == 1
+    assert len(result["non_detections"]) == 0
+    result = get_lightcurve(
+        oid="oid1",
+        survey_id="ztf",
+        mongo_db=mongo_database,
+        session_factory=psql_session,
+    )
+    assert isinstance(result, dict)
+    assert len(result["detections"]) == 0
+    assert len(result["non_detections"]) == 0
+    result = get_lightcurve(
+        oid="oid1", mongo_db=mongo_database, session_factory=psql_session
+    )
+    assert isinstance(result, dict)
+    assert len(result["detections"]) == 1
     assert len(result["non_detections"]) == 0
 
 
@@ -202,7 +299,14 @@ def test_get_lightcurve_from_unknown_survey(
         )
 
 
-def test_get_mongo_detections(mongo_service, mongo_database, init_mongo):
+def test_get_mongo_detections(
+    mongo_service,
+    mongo_database,
+    init_mongo,
+    psql_service,
+    init_psql,
+    insert_ztf_1_oid_per_aid,
+):
     result = _get_detections_mongo(
         database=mongo_database,
         oid="oid1",
@@ -211,7 +315,14 @@ def test_get_mongo_detections(mongo_service, mongo_database, init_mongo):
     assert required_detection_fields.issubset(set(dict(result[0]).keys()))
 
 
-def test_get_mongo_non_detections(mongo_service, mongo_database, init_mongo):
+def test_get_mongo_non_detections(
+    mongo_service,
+    mongo_database,
+    init_mongo,
+    psql_service,
+    init_psql,
+    insert_ztf_1_oid_per_aid,
+):
     result = _get_non_detections_mongo(
         database=mongo_database,
         oid="oid1",
@@ -224,6 +335,9 @@ def test_get_sql_detections(
     psql_service,
     psql_session,
     init_psql,
+    mongo_service,
+    init_mongo,
+    insert_ztf_1_oid_per_aid,
 ):
     result = _get_detections_sql(
         session_factory=psql_session,
@@ -237,6 +351,9 @@ def test_get_sql_non_detections(
     psql_service,
     psql_session,
     init_psql,
+    mongo_service,
+    init_mongo,
+    insert_ztf_1_oid_per_aid,
 ):
     result = _get_non_detections_sql(
         session_factory=psql_session,
@@ -250,6 +367,9 @@ def test_get_mongo_forced_photometry(
     mongo_service,
     mongo_database,
     init_mongo,
+    psql_service,
+    init_psql,
+    insert_ztf_1_oid_per_aid,
 ):
     result = _get_forced_photometry_mongo(
         mongo_database,
@@ -265,6 +385,9 @@ def test_get_sql_forced_photometry(
     psql_service,
     psql_session,
     init_psql,
+    mongo_service,
+    init_mongo,
+    insert_ztf_1_oid_per_aid,
 ):
     result = _get_forced_photometry_sql(
         psql_session,
@@ -283,6 +406,7 @@ def test_get_period(
     mongo_service,
     mongo_database,
     init_mongo,
+    insert_ztf_1_oid_per_aid,
 ):
     result = get_period(
         oid="oid1",

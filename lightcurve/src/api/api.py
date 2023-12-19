@@ -1,5 +1,3 @@
-import os
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -8,23 +6,17 @@ from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 
 from .filters import get_filters_map
 from .routes import htmx, rest
+from ..config import app_config
 
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
 instrumentator = Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(
     RalidatorStarlette,
-    config={"SECRET_KEY": os.getenv("SECRET_KEY")},
+    config=config["ralidator"],
     filters_map=get_filters_map(),
-    ignore_paths=[
-        "/docs",
-        "/metrics",
-        "/openapi.json",
-    ],
-    ignore_prefixes=[
-        "/static",
-        "/htmx",
-    ],
+    ignore_paths=config["ralidator"]["ignore_paths"],
+    ignore_prefixes=config["ralidator"]["ignore_prefixes"],
 )
 
 app.add_middleware(
@@ -39,6 +31,7 @@ app.include_router(rest.router)
 app.include_router(prefix="/htmx", router=htmx.router)
 
 app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
+
 
 @app.get("/openapi.json")
 def custom_swagger_route():

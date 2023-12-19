@@ -1,7 +1,9 @@
 def create_object_data_mongo(oid, aid):
-    obj = create_detection_data_psql(oid)
-    obj["aid"] = aid
-    return obj
+    return {
+        "_id": aid,
+        "oid": oid,
+    }
+
 
 def create_object_data_psql(oid):
     return {
@@ -15,6 +17,7 @@ def create_object_data_psql(oid):
         "lastmjd": 0,
         "step_id_corr": 0,
     }
+
 
 def create_detection_data_mongo(oid, candid, aid, tid):
     return {
@@ -34,6 +37,7 @@ def create_detection_data_mongo(oid, candid, aid, tid):
         "has_stamp": False,
     }
 
+
 def create_detection_data_psql(oid, candid):
     return {
         "candid": candid,
@@ -52,6 +56,7 @@ def create_detection_data_psql(oid, candid):
         "step_id_corr": "test",
     }
 
+
 def create_forced_photometry_data_psql(oid):
     return {
         "oid": oid,
@@ -68,31 +73,29 @@ def create_forced_photometry_data_psql(oid):
         "has_stamp": False,
     }
 
+
 def create_forced_photometry_data_mongo(oid, candid, aid, tid):
     return {
-            "_id": candid,
-            "aid": aid,
-            "oid": oid,
-            "tid": tid,
-            "mjd": 59000,
-            "fid": "r",
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        }
+        "_id": candid,
+        "aid": aid,
+        "oid": oid,
+        "tid": tid,
+        "mjd": 59000,
+        "fid": "r",
+        "ra": 10,
+        "dec": 20,
+        "mag": 15,
+        "e_mag": 0.5,
+        "isdiffpos": 1,
+        "corrected": False,
+        "dubious": False,
+        "has_stamp": False,
+    }
+
 
 def create_non_detection_data_psql(oid):
-    return {
-        "oid": oid,
-        "fid": 1,
-        "mjd": 59000,
-        "diffmaglim": 100
-    }
+    return {"oid": oid, "fid": 1, "mjd": 59000, "diffmaglim": 100}
+
 
 def create_non_detection_data_mongo(oid, aid, tid):
     return {
