@@ -33,6 +33,7 @@
     const oid = '{{ oid }}';
     const detections = {{ detections | tojson }};
     const non_detections = {{ non_detections | tojson }};
+    const forced_photometry = {{ forced_photometry | tojson }};
     const period = {{ period | tojson }};
     const dr = {{ dr | tojson }};
     const dr_detections = {{ dr_detections | tojson }};
@@ -92,8 +93,21 @@
         });
     }
 
+    /* Helper function that gets forced photometry along with
+    detections if the box is checked. */
+    function getDetections() {
+        const all_detections = [detections]
+        const fp_checkbox = document.getElementById("fp-checkbox");
+        if (fp_checkbox.checked){
+            forced_photometry.forEach((elem) => {
+                all_detections.push(elem);
+            });
+        };
+        return [].concat.apply([], all_detections);
+    }
+
     function getDetectionsWithDR() {
-        const all_detections = [detections];
+        const all_detections = getDetections();
         dr.forEach((elem) => {
             if (elem.checked) {
                 all_detections.push(dr_detections[elem._id]);
@@ -124,11 +138,16 @@
         }
     }
 
+    /* Updates the plot when the checkbox value is clicked */
+    window.setForcedPhotometry = () => {
+        window.setPlot(current_plot);
+    }
+
     /* Update plot on plot type change */
     window.setPlot = (type) => {
         current_plot = type;
         if (current_plot === "difference") {
-            plot_options = new DifferenceLightCurveOptions(detections, non_detections, plot_text_color);
+            plot_options = new DifferenceLightCurveOptions(getDetections(), non_detections, plot_text_color);
         } else if (current_plot === "apparent") {
             plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, plot_text_color);
         } else if (current_plot === "folded") {
@@ -201,7 +220,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="tw-grid tw-grid-cols-2 tw-gap-4">
+        <div class="tw-grid tw-grid-cols-4 tw-gap-4">
             <!-- Left Column (Radio Buttons) -->
             <div>
                 <div class="tw-space-y-2">
@@ -242,6 +261,25 @@
                         </div>
                     </label>
                 </div>
+            </div>
+            <!-- Second Column (Toggles) -->
+            <div>
+                <label class="tw-flex tw-items-center tw-space-x-2">
+                    <input
+                        id="fp-checkbox"
+                        type="checkbox"
+                        onclick="setForcedPhotometry()"
+                    >
+                    <span>Enable forced photometry</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle tw-me-2"></i>
+                        <div class="tooltip-text">
+                        </div>
+                    </div>
+                </label>
+            </div>
+            <!-- Spacer columns -->
+            <div>
             </div>
 
             <!-- Right Column (Buttons) -->

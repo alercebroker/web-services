@@ -9,6 +9,7 @@ from db_plugins.db.sql.models import (
     Detection,
     Feature,
     FeatureVersion,
+    ForcedPhotometry,
     NonDetection,
     Object,
 )
@@ -147,10 +148,45 @@ def populate_psql(database):
         add_psql_non_detections(session)
         add_psql_feature_versions(session)
         add_psql_features(session)
+        add_psql_forced_photometry(session)
 
 
 def add_psql_objects(session):
-    objects = [Object(oid="oid1"), Object(oid="oid2"), Object(oid="oid20")]
+    objects = [
+        Object(
+            oid="oid1",
+            ndethist=0,
+            ncovhist=0,
+            meanra=0,
+            meandec=0,
+            deltajd=0,
+            firstmjd=0,
+            lastmjd=0,
+            step_id_corr=0,
+        ),
+        Object(
+            oid="oid2",
+            ndethist=0,
+            ncovhist=0,
+            meanra=0,
+            meandec=0,
+            deltajd=0,
+            firstmjd=0,
+            lastmjd=0,
+            step_id_corr=0,
+        ),
+        Object(
+            oid="oid20",
+            ndethist=0,
+            ncovhist=0,
+            meanra=0,
+            meandec=0,
+            deltajd=0,
+            firstmjd=0,
+            lastmjd=0,
+            step_id_corr=0,
+        ),
+    ]
     session.add_all(objects)
     session.commit()
 
@@ -264,6 +300,42 @@ def add_psql_features(session):
     session.commit()
 
 
+def add_psql_forced_photometry(session):
+    forced_photometry = [
+        {
+            "oid": "oid1",
+            "mjd": 59000,
+            "fid": 1,
+            "pid": 1,
+            "isdiffpos": 1,
+            "ra": 10,
+            "dec": 20,
+            "mag": 15,
+            "e_mag": 0.5,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },
+        {
+            "oid": "oid1",
+            "mjd": 59001,
+            "fid": 2,
+            "pid": 3,
+            "isdiffpos": 1,
+            "ra": 11,
+            "dec": 21,
+            "mag": 14,
+            "e_mag": 0.4,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },
+    ]
+    forced_photometry = [ForcedPhotometry(**fp) for fp in forced_photometry]
+    session.add_all(forced_photometry)
+    session.commit()
+
+
 def teardown_psql(database):
     database.drop_db()
 
@@ -290,6 +362,7 @@ def populate_mongo(database: MongoConnection):
     add_mongo_objects(database.database)
     add_mongo_detections(database.database)
     add_mongo_non_detections(database.database)
+    add_mongo_forced_photometry(database.database)
 
 
 def add_mongo_objects(database: Database):
@@ -477,6 +550,133 @@ def add_mongo_non_detections(database: Database):
     ]
     for non_det in non_detections:
         database.non_detection.insert_one(non_det)
+
+
+def add_mongo_forced_photometry(database: Database):
+    forced_photometry = [
+        {
+            "_id": "candid10",
+            "aid": "aid1",
+            "oid": "oid2",
+            "tid": "atlas",
+            "mjd": 59000,
+            "fid": "r",
+            "ra": 10,
+            "dec": 20,
+            "mag": 15,
+            "e_mag": 0.5,
+            "isdiffpos": 1,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },
+        {
+            "_id": "candid20",
+            "aid": "aid1",
+            "oid": "oid2",
+            "tid": "atlas",
+            "mjd": 59001,
+            "fid": "g",
+            "ra": 11,
+            "dec": 21,
+            "mag": 14,
+            "e_mag": 0.4,
+            "isdiffpos": 1,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },
+        {
+            "_id": "candid30",
+            "aid": "aid2",
+            "tid": "atlas",
+            "oid": "oid3",
+            "mjd": 59005,
+            "fid": "gr",
+            "ra": 12.0,
+            "e_ra": 0.1,
+            "dec": 22.0,
+            "e_dec": 0.2,
+            "mag": 13.0,
+            "e_mag": 0.3,
+            "isdiffpos": 1,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },
+        {
+            "_id": "candid40",
+            "aid": "aid2",
+            "tid": "atlas",
+            "oid": "oid3",
+            "mjd": 59006,
+            "fid": "r",
+            "ra": 11.0,
+            "e_ra": 0.2,
+            "dec": 23.0,
+            "e_dec": 0.3,
+            "mag": 12.0,
+            "e_mag": 0.4,
+            "isdiffpos": 1,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },
+        {
+            "_id": "candid50",
+            "aid": "aid2",
+            "tid": "atlas",
+            "oid": "oid3",
+            "mjd": 59006,
+            "fid": "g",
+            "ra": 11.0,
+            "e_ra": 0.2,
+            "dec": 23.0,
+            "e_dec": 0.3,
+            "mag": 12.0,
+            "e_mag": 0.4,
+            "isdiffpos": 1,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },
+        {
+            "_id": "candid60",
+            "tid": "ztf",
+            "aid": "aid3",
+            "oid": "oid1",
+            "mjd": 59010,
+            "fid": "g",
+            "ra": 10.0,
+            "e_ra": 0.1,
+            "dec": 20.0,
+            "e_dec": 0.1,
+            "mag": 15.0,
+            "e_mag": 0.1,
+            "isdiffpos": 1,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },  # Unique ZTF detection
+        {
+            "_id": "candid70",
+            "tid": "ztf",
+            "aid": "aid3",
+            "oid": "oid1",
+            "mjd": 59000,
+            "fid": "g",
+            "ra": 10,
+            "dec": 20,
+            "mag": 15,
+            "e_mag": 0.5,
+            "isdiffpos": 1,
+            "corrected": False,
+            "dubious": False,
+            "has_stamp": False,
+        },  # Duplicated ZTF detection
+    ]
+    for fp in forced_photometry:
+        database.ForcedPhotometry.insert_one(fp)
 
 
 def teardown_mongo(database: MongoConnection):

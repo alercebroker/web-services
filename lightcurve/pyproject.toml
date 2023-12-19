@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lightcurve"
-version = "23.12.1-rc38"
+version = "23.12.1-rc40"
 description = "Get lightcurve of objects from ZTF and ATLAS surveys"
 authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
@@ -12,16 +12,16 @@ packages = [
 
 [tool.poetry.dependencies]
 fastapi = "^0.100.0"
-python = "^3.11"
+python = ">=3.11,<3.12"
 sqlalchemy = { extras = ["asyncio"], version = "^2.0.19" }
 pymongo = "^4.4.1"
 returns = "^0.21.0"
 psycopg2-binary = "^2.9.6"
 ralidator-fastapi = { path = "../libs/ralidator-fastapi", develop = true }
-db-plugins = { version = "5.1.1", python = ">=3.11,<3.12" }
 prometheus-fastapi-instrumentator = "^6.1.0"
 jinja2 = "^3.1.2"
 httpx = "^0.24.1"
+db-plugins = "^6.1.1a45"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"

@@ -5,7 +5,7 @@ import httpx
 from db_plugins.db.sql.models import (
     Detection,
     Feature,
-    FeatureVersion,
+    ForcedPhotometry,
     NonDetection,
 )
 from pymongo.database import Database
@@ -23,6 +23,7 @@ from .exceptions import (
 from .models import DataReleaseDetection as DataReleaseDetectionModel
 from .models import Detection as DetectionModel
 from .models import Feature as FeatureModel
+from .models import ForcedPhotometry as ForcedPhotometryModel
 from .models import NonDetection as NonDetectionModel
 
 
@@ -239,6 +240,67 @@ def get_period(
         handle_error(period_results.failure())
 
 
+def get_forced_photometry(
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., AbstractContextManager[Session]] = None,
+    mongo_db: Database = None,
+    handle_success: Callable[[Any], Any] = default_handle_success,
+    handle_error: Callable[[Exception], None] = default_handle_error,
+) -> list[ForcedPhotometryModel]:
+    """Retrieves the forced photometry from an object
+
+    :param oid: oid for the object.
+    :type oid: str
+    :param survey_id: id for the survey, can be "ztf" or "atlas"
+    :type survey_id: str
+    :param session_factory: Session factory for SQL requests.
+    :type session_factory: Callable[..., AbstractContextManager[Session]]
+    :param mongo_db: Mongo database for mongo requests.
+    :type mongo_db: Database
+    :param handle_success: Callback for handling a success.
+    :type handle_success: Callable[[Any], list]
+    :param handle_error: Callback for handling failure.
+    :type handle_error: Callable[[Exception], None]
+    :return: The result of calling handle_success with a dictionary
+    containing all detections and non_detections with removed duplicates.
+    :rtype: list[ForcedPhotometryModel]
+    """
+    if survey_id in ["ztf", "atlas"]:
+        forced_photometry = _get_unique_forced_photometry(
+            oid, survey_id, session_factory, mongo_db
+        )
+    else:
+        handle_error(SurveyIdError(survey_id))
+
+    if is_successful(forced_photometry):
+        return handle_success(forced_photometry.unwrap())
+    else:
+        handle_error(forced_photometry.failure())
+
+
+def _get_unique_forced_photometry(
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., AbstractContextManager[Session]] = None,
+    mongo_db: Database = None,
+) -> Result[list[ForcedPhotometryModel], BaseException]:
+    try:
+        sql_forced_photometry = _get_forced_photometry_sql(
+            session_factory, oid, tid=survey_id
+        )
+        mongo_forced_photometry = _get_forced_photometry_mongo(
+            mongo_db, oid, tid=survey_id
+        )
+    except (DatabaseError, ObjectNotFound) as e:
+        return Failure(e)
+
+    forced_photometry = list(
+        set(sql_forced_photometry + mongo_forced_photometry)
+    )
+    return Success(forced_photometry)
+
+
 def _get_all_unique_non_detections(
     oid: str,
     survey_id: str,
@@ -420,6 +482,52 @@ def _get_period_sql(
         return Failure(DatabaseError(e))
 
 
+def _get_forced_photometry_mongo(
+    mongo_db: Database,
+    oid: str,
+    tid: str,
+) -> list[ForcedPhotometryModel]:
+    try:
+        obj = mongo_db["object"].find_one({"oid": oid}, {"_id": 1})
+        if obj is None:
+            raise ValueError()
+        result = mongo_db["ForcedPhotometry"].find(
+            {"aid": obj["_id"], "tid": tid}
+        )
+        result = [
+            ForcedPhotometryModel(**res, candid=res["_id"]) for res in result
+        ]
+        return result
+    except ValueError as e:
+        raise ObjectNotFound(oid)
+    except Exception as e:
+        raise DatabaseError(e)
+
+
+def _get_forced_photometry_sql(
+    session_factory: Callable[..., AbstractContextManager[Session]],
+    oid: str,
+    tid: str,
+) -> list[ForcedPhotometryModel]:
+    if tid == "atlas":
+        return []
+    try:
+        with session_factory() as session:
+            stmt = select(ForcedPhotometry, text("'ztf'")).where(
+                ForcedPhotometry.oid == oid
+            )
+            result = session.execute(stmt)
+            result = [
+                _ztf_forced_photometry_to_multistream(
+                    res[0].__dict__, tid=res[1]
+                )
+                for res in result.all()
+            ]
+            return result
+    except Exception as e:
+        raise DatabaseError(e)
+
+
 def _ztf_detection_to_multistream(
     detection: dict[str, Any],
     tid: str,
@@ -488,4 +596,55 @@ def _ztf_non_detection_to_multistream(
         oid=non_detections.get("oid", None),
         sid=non_detections.get("sid", None),
         diffmaglim=non_detections.get("diffmaglim", None),
+    )
+
+
+def _ztf_forced_photometry_to_multistream(
+    forced_photometry: dict[str, Any],
+    tid: str,
+) -> ForcedPhotometryModel:
+    """Converts a dictionary representing a forced photometry in the ZTF schema
+    to the Multistream schema defined in models.py. Separates every field
+    that's without a correspondence in the schema into extra_fields.
+    :param detection: Dictionary representing a detection.
+    :param tid: Telescope id for this detection.
+    :return: A Detection with the converted data."""
+    fields = {
+        "candid",
+        "oid",
+        "sid",
+        "aid",
+        "tid",
+        "mjd",
+        "fid",
+        "ra",
+        "e_ra",
+        "dec",
+        "e_dec",
+        "magpsf",
+        "sigmapsf",
+        "magpsf_corr",
+        "sigmapsf_corr",
+        "sigmapsf_corr_ext",
+        "isdiffpos",
+        "corrected",
+        "dubious",
+        "parent_candid",
+        "has_stamp",
+    }
+
+    extra_fields = {}
+    for field, value in forced_photometry.items():
+        if field not in fields and not field.startswith("_"):
+            extra_fields[field] = value
+
+    fid_map = {1: "g", 2: "r", 0: None, 12: "gr"}
+
+    forced_photometry["fid"] = fid_map[forced_photometry["fid"]]
+
+    return ForcedPhotometryModel(
+        **forced_photometry,
+        tid=tid,
+        candid=forced_photometry["oid"] + str(forced_photometry["pid"]),
+        extra_fields=extra_fields,
     )
