@@ -7,8 +7,6 @@ from db_plugins.db.mongo._connection import MongoConnection
 from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
 from db_plugins.db.sql.models import (
     Detection,
-    Feature,
-    FeatureVersion,
     ForcedPhotometry,
     NonDetection,
     Object,
@@ -16,6 +14,7 @@ from db_plugins.db.sql.models import (
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
 from pymongo.database import Database
+from utils import *
 
 
 @pytest.fixture(scope="session")
@@ -109,7 +108,6 @@ def init_psql():
         "DB_NAME": db,
     }
     dbp_database = DbpDatabase(config)
-    populate_psql(dbp_database)
     yield dbp_database
     teardown_psql(dbp_database)
 
@@ -140,200 +138,176 @@ def mongo_database():
     return database
 
 
-def populate_psql(database):
-    database.create_db()
-    with database.session() as session:
-        add_psql_objects(session)
-        add_psql_detections(session)
-        add_psql_non_detections(session)
-        add_psql_feature_versions(session)
-        add_psql_features(session)
-        add_psql_forced_photometry(session)
+# caso1: solo ZTF 1 oid por aid
+# caso2: solo ZTF >1 oid por aid
+# caso3: solo ATLAS 1 oid por aid
+# caso4: solo ATLAS >1 oid por aid
+# caso5: ZTF y ATLAS en un mismo aid
 
+# PSQL - oid1
+# PSQL - oid2
+# Mongo - AID1 -> oid1, oid2, atlas1, atlas2
 
-def add_psql_objects(session):
+# query(oid1, survey_id=ztf) -> oid1, oid2
+# query(oid1, survey_id=atlas) -> atlas1, atlas2
+# query(oid1) -> oid1, oid2, atlas1, atlas2
+
+@pytest.fixture
+def insert_ztf_1_oid_per_aid(session, mongodb):
+    """
+    Only one object per aid, 1 in psql 1 in mongo.
+    One detection per object.
+    One non detection per object.
+    One forcer photometry per object.
+    """
+    
     objects = [
-        Object(
-            oid="oid1",
-            ndethist=0,
-            ncovhist=0,
-            meanra=0,
-            meandec=0,
-            deltajd=0,
-            firstmjd=0,
-            lastmjd=0,
-            step_id_corr=0,
-        ),
-        Object(
-            oid="oid2",
-            ndethist=0,
-            ncovhist=0,
-            meanra=0,
-            meandec=0,
-            deltajd=0,
-            firstmjd=0,
-            lastmjd=0,
-            step_id_corr=0,
-        ),
-        Object(
-            oid="oid20",
-            ndethist=0,
-            ncovhist=0,
-            meanra=0,
-            meandec=0,
-            deltajd=0,
-            firstmjd=0,
-            lastmjd=0,
-            step_id_corr=0,
-        ),
+        Object(**create_object_data_psql("oid1")),
+    ]
+    detections = [
+        Detection(**create_detection_data_psql("oid1", 123))
+    ]
+    non_detections = [
+        Detection(**create_non_detection_data_psql("oid1"))
+    ]
+    forced_photometries = [ForcedPhotometry(**create_forced_photometry_data_psql("oid1"))]
+    session.add_all(objects)
+    session.add_all(detections)
+    session.add_all(non_detections)
+    session.add_all(forced_photometries)
+    session.commit()
+    mongodb.object.insert_one(create_object_data_mongo(["oid1"], "aid1"))
+    mongodb.detection.insert_one(create_detection_data_mongo("oid1", 123, "aid1", "ztf"))
+    mongodb.non_detection.insert_one(create_non_detection_data_mongo("oid1", "aid1", "atlas"))
+    mongodb.forced_photometry.insert_one(create_forced_photometry_data_mongo("oid1", 123, "aid1", "ztf"))
+
+@pytest.fixture
+def insert_ztf_many_oid_per_aid(session, mongodb):
+    """
+    Many objects per aid, many id in psql, 1 aid in mongo.
+    One detection per object
+    """
+
+    objects = [
+        Object(**create_object_data_psql("oid1")),
+        Object(**create_object_data_psql("oid2")),
+        Object(**create_object_data_psql("oid3")),
+    ]
+    detections = [
+        Detection(**create_detection_data_psql("oid1", 123)),
+        Detection(**create_detection_data_psql("oid2", 456)),
+        Detection(**create_detection_data_psql("oid3", 789)),
+    ]
+    non_detections = [
+        NonDetection(**create_non_detection_data_mongo("oid1", "aid1")),
+        NonDetection(**create_non_detection_data_mongo("oid2", "aid1")),
+        NonDetection(**create_non_detection_data_mongo("oid3", "aid1"))
+    ]
+    forced = [
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid1")),
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid2")),
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid3")),
     ]
     session.add_all(objects)
-    session.commit()
-
-
-def add_psql_detections(session):
-    detections = [
-        {
-            "candid": 123,
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "pid": 1,
-            "isdiffpos": 1,
-            "ra": 10,
-            "dec": 20,
-            "magpsf": 15,
-            "sigmapsf": 0.5,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-            "step_id_corr": "test",
-        },
-        {
-            "candid": 456,
-            "oid": "oid1",
-            "mjd": 59001,
-            "fid": 2,
-            "pid": 1,
-            "isdiffpos": 1,
-            "ra": 11,
-            "dec": 21,
-            "magpsf": 14,
-            "sigmapsf": 0.4,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-            "step_id_corr": "test",
-        },
-        {
-            "candid": 789,
-            "oid": "oid20",
-            "mjd": 59001,
-            "fid": 2,
-            "pid": 1,
-            "isdiffpos": 1,
-            "ra": 11,
-            "dec": 21,
-            "magpsf": 14,
-            "sigmapsf": 0.4,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-            "step_id_corr": "test",
-        },
-    ]
-    detections = [Detection(**det) for det in detections]
     session.add_all(detections)
-    session.commit()
-
-
-def add_psql_non_detections(session):
-    non_detections = [
-        {"oid": "oid1", "mjd": 59000, "fid": 1, "diffmaglim": 0.5},
-        {"oid": "oid1", "mjd": 59001, "fid": 2, "diffmaglim": 0.4},
-        {"oid": "oid20", "mjd": 59002, "fid": 2, "diffmaglim": 0.4},
-    ]
-    non_detections = [NonDetection(**non) for non in non_detections]
     session.add_all(non_detections)
+    session.add_all(forced)
     session.commit()
+    
+    mongodb.object.insert_one(create_object_data_mongo(["oid1","oid2", "oid3"], "aid1"))
+    mongodb.detection.insert_one(create_detection_data_mongo("oid1", 123, "aid1", "ztf"))
+    mongodb.detection.insert_one(create_detection_data_mongo("oid2", 456, "aid1", "ztf"))
+    mongodb.detection.insert_one(create_detection_data_mongo("oid3", 789, "aid1", "ztf"))
+    mongodb.detection.insert_one(create_non_detection_data_mongo("oid1", "aid1", "ztf"))
+    mongodb.detection.insert_one(create_non_detection_data_mongo("oid2", "aid1", "ztf"))
+    mongodb.detection.insert_one(create_non_detection_data_mongo("oid3", "aid1", "ztf"))
+    mongodb.detection.insert_one(create_forced_photometry_data_mongo("oid1", 123, "aid1", "ztf"))
+    mongodb.detection.insert_one(create_forced_photometry_data_mongo("oid2", 456, "aid1", "ztf"))
+    mongodb.detection.insert_one(create_forced_photometry_data_mongo("oid3", 789, "aid1", "ztf"))
 
+@pytest.fixture
+def insert_atlas_1_oid_per_aid(mongodb):
+    """
+    Only one object per aid, none in psql 1 in mongo.
+    One detection per object.
+    """
+    
+    mongodb.object.insert_one(create_object_data_mongo(["oid1"], "aid1"))
+    mongodb.detection.insert_one(create_detection_data_mongo("oid1", 123, "aid1", "ATLASa01"))
+    mongodb.forced_photometr.insert_one(create_forced_photometry_data_mongo("oid1", 123, "aid1", "ATLASa01"))
 
-def add_psql_feature_versions(session):
-    feature_versions = [FeatureVersion(version="lc_classifier_1.2.1-P")]
-    session.add_all(feature_versions)
-    session.commit()
+@pytest.fixture
+def insert_atlas_many_oid_per_aid(mongodb):
+    """Insert into mongodb data from ATLAS only
 
+    Multiple oids are associated with a single aid
+    """
+    object = create_object_data_mongo(["oid1", "oid2"], "aid1")
+    detections = [create_detection_data_mongo("oid1", 123, "aid1", "ATLAS"), create_detection_data_mongo("oid2", 456, "aid1", "atlas")]
+    forced = [create_forced_photometry_data_mongo("oid1", 123, "aid1", "atlas"), create_forced_photometry_data_mongo("oid2", 456, "aid1", "atlas")]
+    mongodb.object.insert_one(object)
+    mongodb.detection.insert_many(detections)
+    mongodb.detection.insert_many(forced)
 
-def add_psql_features(session):
-    features = [
-        {
-            "oid": "oid1",
-            "name": "SPM_chi",
-            "value": None,
-            "fid": 1,
-            "version": "lc_classifier_1.2.1-P",
-        },
-        {
-            "oid": "oid1",
-            "name": "Multiband_period",
-            "value": 296.87498481917,
-            "fid": 2,
-            "version": "lc_classifier_1.2.1-P",
-        },
-        {
-            "oid": "oid1",
-            "name": "PPE",
-            "value": 0.042344874357211904,
-            "fid": 1,
-            "version": "lc_classifier_1.2.1-P",
-        },
-        {
-            "oid": "oid2",
-            "name": "SPM_chi",
-            "value": 41569.40533659299,
-            "fid": 2,
-            "version": "lc_classifier_1.2.1-P",
-        },
+@pytest.fixture
+def insert_many_aid_ztf_and_atlas_detections(session, mongodb):
+    """
+    Isert 2 aids to mongo, each with 1 object from ztf and 1 from atlas.
+    Will have 2 objects in psql each with 1 ztf detection
+    Will have 2 objects in mongo, each witn 1 ztf detection and 1 atlas detection
+    """
+
+    objects_psql = [
+        Object(**create_object_data_psql("oid1")),
+        Object(**create_object_data_psql("oid2")),
     ]
-    features = [Feature(**feat) for feat in features]
-    session.add_all(features)
-    session.commit()
 
-
-def add_psql_forced_photometry(session):
-    forced_photometry = [
-        {
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "pid": 1,
-            "isdiffpos": 1,
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "oid": "oid1",
-            "mjd": 59001,
-            "fid": 2,
-            "pid": 3,
-            "isdiffpos": 1,
-            "ra": 11,
-            "dec": 21,
-            "mag": 14,
-            "e_mag": 0.4,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
+    detections_psql = [
+        Detection(**create_detection_data_psql("oid1", 123)),
+        Detection(**create_detection_data_psql("oid2", 456)),
     ]
-    forced_photometry = [ForcedPhotometry(**fp) for fp in forced_photometry]
-    session.add_all(forced_photometry)
+    non_detections_psql = [
+        NonDetection(**create_non_detection_data_psql("oid1")),
+        NonDetection(**create_non_detection_data_psql("oid2")),
+    ]
+    forced_psql = [
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid1")),
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid2")),
+    ]
+
+    objects_mongo = [
+        create_object_data_mongo(["oid1, oid3"], "aid1"),
+        create_object_data_mongo(["oid2, oid4"], "aid2"),
+    ]
+    detections_mongo = [
+        create_detection_data_mongo("oid1", 123, "aid1", "ztf"),
+        create_detection_data_mongo("oid3", 789, "aid1", "atlas"),
+        create_detection_data_mongo("oid2", 456, "aid2", "ztf"),
+        create_detection_data_mongo("oid4", 987, "aid2", "atlas"),
+    ]
+    non_detections_mongo = [
+        create_non_detection_data_mongo("oid1", "aid1", "ztf"),
+        create_non_detection_data_mongo("oid3", "aid1", "atlas"),
+        create_non_detection_data_mongo("oid2", "aid2", "ztf"),
+        create_non_detection_data_mongo("oid4", "aid2", "atlas"),
+    ]
+    forced_mongo = [
+        create_forced_photometry_data_mongo("oid1", 123, "aid1", "ztf"),
+        create_forced_photometry_data_mongo("oid3", 789, "aid1", "atlas"),
+        create_forced_photometry_data_mongo("oid2", 456, "aid2", "ztf"),
+        create_forced_photometry_data_mongo("oid4", 987, "aid2", "atlas"),
+    ]
+
+    session.add_all(objects_psql)
+    session.add_all(detections_psql)
+    session.add_all(non_detections_psql)
+    session.add_all(forced_psql)
     session.commit()
+    
+    mongodb.object.insert_many(objects_mongo)
+    mongodb.detection.insert_many(detections_mongo)
+    mongodb.non_detection.insert_many(non_detections_mongo)
+    mongodb.forced_photometr.insert_many(forced_mongo)
 
 
 def teardown_psql(database):
@@ -352,332 +326,8 @@ def init_mongo():
             "database": "database",
         }
     )
-    populate_mongo(db)
     yield db.client.database
     teardown_mongo(db)
-
-
-def populate_mongo(database: MongoConnection):
-    database.create_db()
-    add_mongo_objects(database.database)
-    add_mongo_detections(database.database)
-    add_mongo_non_detections(database.database)
-    add_mongo_forced_photometry(database.database)
-
-
-def add_mongo_objects(database: Database):
-    object1 = {
-        "_id": "aid1",
-        "oid": ["oid2", "oid3"],
-    }
-    object2 = {
-        "_id": "aid3",
-        "oid": ["oid1", "oid10"],
-    }
-    database["object"].insert_one(object1)
-    database["object"].insert_one(object2)
-
-
-def add_mongo_detections(database: Database):
-    detections = [
-        {
-            "_id": "candid1",
-            "aid": "aid1",
-            "oid": "oid2",
-            "tid": "atlas",
-            "mjd": 59000,
-            "fid": 1,
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid2",
-            "aid": "aid1",
-            "oid": "oid2",
-            "tid": "atlas",
-            "mjd": 59001,
-            "fid": 2,
-            "ra": 11,
-            "dec": 21,
-            "mag": 14,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid3",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59005,
-            "fid": 3,
-            "ra": 12.0,
-            "e_ra": 0.1,
-            "dec": 22.0,
-            "e_dec": 0.2,
-            "mag": 13.0,
-            "e_mag": 0.3,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid4",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59006,
-            "fid": 3,
-            "ra": 11.0,
-            "e_ra": 0.2,
-            "dec": 23.0,
-            "e_dec": 0.3,
-            "mag": 12.0,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid5",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59006,
-            "fid": 3,
-            "ra": 11.0,
-            "e_ra": 0.2,
-            "dec": 23.0,
-            "e_dec": 0.3,
-            "mag": 12.0,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid6",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59010,
-            "fid": 1,
-            "ra": 10.0,
-            "e_ra": 0.1,
-            "dec": 20.0,
-            "e_dec": 0.1,
-            "mag": 15.0,
-            "e_mag": 0.1,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },  # Unique ZTF detection
-        {
-            "_id": "123",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },  # Duplicated ZTF detection
-        {
-            "_id": "candid9",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid10",
-            "mjd": 59000,
-            "fid": 1,
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-    ]
-    for det in detections:
-        database.detection.insert_one(det)
-
-
-def add_mongo_non_detections(database: Database):
-    non_detections = [
-        {
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "diffmaglim": 0.5,
-        },  # duplicate
-        {
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59015,
-            "fid": 1,
-            "diffmaglim": 0.6,
-        },  # unique ztf non detection
-        {
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid10",
-            "mjd": 58000,
-            "fid": 1,
-            "diffmaglim": 0.6,
-        },
-    ]
-    for non_det in non_detections:
-        database.non_detection.insert_one(non_det)
-
-
-def add_mongo_forced_photometry(database: Database):
-    forced_photometry = [
-        {
-            "_id": "candid10",
-            "aid": "aid1",
-            "oid": "oid2",
-            "tid": "atlas",
-            "mjd": 59000,
-            "fid": "r",
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid20",
-            "aid": "aid1",
-            "oid": "oid2",
-            "tid": "atlas",
-            "mjd": 59001,
-            "fid": "g",
-            "ra": 11,
-            "dec": 21,
-            "mag": 14,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid30",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59005,
-            "fid": "gr",
-            "ra": 12.0,
-            "e_ra": 0.1,
-            "dec": 22.0,
-            "e_dec": 0.2,
-            "mag": 13.0,
-            "e_mag": 0.3,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid40",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59006,
-            "fid": "r",
-            "ra": 11.0,
-            "e_ra": 0.2,
-            "dec": 23.0,
-            "e_dec": 0.3,
-            "mag": 12.0,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid50",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59006,
-            "fid": "g",
-            "ra": 11.0,
-            "e_ra": 0.2,
-            "dec": 23.0,
-            "e_dec": 0.3,
-            "mag": 12.0,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid60",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59010,
-            "fid": "g",
-            "ra": 10.0,
-            "e_ra": 0.1,
-            "dec": 20.0,
-            "e_dec": 0.1,
-            "mag": 15.0,
-            "e_mag": 0.1,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },  # Unique ZTF detection
-        {
-            "_id": "candid70",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": "g",
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },  # Duplicated ZTF detection
-    ]
-    for fp in forced_photometry:
-        database.ForcedPhotometry.insert_one(fp)
-
 
 def teardown_mongo(database: MongoConnection):
     database.drop_db()

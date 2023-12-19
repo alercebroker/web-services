@@ -40,10 +40,14 @@ def test_detections_from_ztf(
     mongo_service,
     init_mongo,
 ):
+    insert_ztf_object(2, 5)
     res = test_client.get("/detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
     assert len(res.json()) == 3
-
+    insert_atlas_objects(1,1)
+    res = test_client.get("/detections/oid1", params={"survey_id": "ztf"})
+    assert res.status_code == 200
+    assert len(res.json()) == 3
 
 def test_non_detections_from_ztf(
     psql_service,
