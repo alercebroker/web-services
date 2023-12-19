@@ -15,7 +15,6 @@ from db_plugins.db.sql.models import (
 )
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
-from pymongo.database import Database
 from utils import (
     create_detection_data_mongo,
     create_detection_data_psql,
@@ -232,9 +231,9 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
         Detection(**create_detection_data_psql("oid3", 789)),
     ]
     non_detections = [
-        NonDetection(**create_non_detection_data_mongo("oid1", "aid1")),
-        NonDetection(**create_non_detection_data_mongo("oid2", "aid1")),
-        NonDetection(**create_non_detection_data_mongo("oid3", "aid1")),
+        NonDetection(**create_non_detection_data_psql("oid1")),
+        NonDetection(**create_non_detection_data_psql("oid2")),
+        NonDetection(**create_non_detection_data_psql("oid3")),
     ]
     forced = [
         ForcedPhotometry(**create_forced_photometry_data_psql("oid1")),
@@ -243,6 +242,7 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
     ]
     with psql_session() as session:
         session.add_all(objects)
+        session.commit()
         session.add_all(detections)
         session.add_all(non_detections)
         session.add_all(forced)
@@ -260,22 +260,22 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
     mongo_database.detection.insert_one(
         create_detection_data_mongo("oid3", 789, "aid1", "ztf")
     )
-    mongo_database.detection.insert_one(
+    mongo_database.non_detection.insert_one(
         create_non_detection_data_mongo("oid1", "aid1", "ztf")
     )
-    mongo_database.detection.insert_one(
+    mongo_database.non_detection.insert_one(
         create_non_detection_data_mongo("oid2", "aid1", "ztf")
     )
-    mongo_database.detection.insert_one(
+    mongo_database.non_detection.insert_one(
         create_non_detection_data_mongo("oid3", "aid1", "ztf")
     )
-    mongo_database.detection.insert_one(
+    mongo_database.forced_photometry.insert_one(
         create_forced_photometry_data_mongo("oid1", 123, "aid1", "ztf")
     )
-    mongo_database.detection.insert_one(
+    mongo_database.forced_photometry.insert_one(
         create_forced_photometry_data_mongo("oid2", 456, "aid1", "ztf")
     )
-    mongo_database.detection.insert_one(
+    mongo_database.forced_photometry.insert_one(
         create_forced_photometry_data_mongo("oid3", 789, "aid1", "ztf")
     )
 

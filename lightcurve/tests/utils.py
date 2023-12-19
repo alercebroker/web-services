@@ -76,7 +76,7 @@ def create_forced_photometry_data_psql(oid):
 
 def create_forced_photometry_data_mongo(oid, candid, aid, tid):
     return {
-        "_id": candid,
+        "_id": f"{oid}_{candid}",
         "aid": aid,
         "oid": oid,
         "tid": tid,

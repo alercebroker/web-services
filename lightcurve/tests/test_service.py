@@ -347,6 +347,23 @@ def test_get_sql_detections(
     assert required_detection_fields.issubset(set(dict(result[0]).keys()))
 
 
+def test_get_sql_detections_multiple_oids(
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    init_mongo,
+    insert_ztf_many_oid_per_aid,
+):
+    result = _get_detections_sql(
+        session_factory=psql_session,
+        oid="oid1",
+        tid="ztf",
+    )
+    assert len(result) == 1
+    assert required_detection_fields.issubset(set(dict(result[0]).keys()))
+
+
 def test_get_sql_non_detections(
     psql_service,
     psql_session,
