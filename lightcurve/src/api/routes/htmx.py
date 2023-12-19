@@ -6,7 +6,6 @@ from core.service import (
     get_non_detections,
     get_period,
 )
-from data.load import get_dummy_lc
 from database.mongo import database
 from database.sql import session
 from fastapi import APIRouter
