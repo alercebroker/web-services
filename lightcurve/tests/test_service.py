@@ -90,6 +90,38 @@ def test_get_ztf_detections(
     assert len(result) == 1
 
 
+def test_get_ztf_detections_multiple_oids_per_aid(
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
+    insert_ztf_many_oid_per_aid,
+):
+    result = get_detections(
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+        oid="oid1",
+        survey_id="ztf",
+    )
+    assert type(result[0]) is DetectionModel
+    assert len(result) == 3
+    result = get_detections(
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+        oid="oid1",
+        survey_id="atlas",
+    )
+    assert len(result) == 0
+    result = get_detections(
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+        oid="oid1",
+    )
+    assert len(result) == 3
+
+
 def test_get_detections_from_unknown_survey(
     psql_service,
     psql_session,
@@ -312,6 +344,23 @@ def test_get_mongo_detections(
         oid="oid1",
         tid="ztf",
     )
+    assert required_detection_fields.issubset(set(dict(result[0]).keys()))
+
+
+def test_get_mongo_detections_multiple_oids(
+    mongo_service,
+    mongo_database,
+    init_mongo,
+    psql_service,
+    init_psql,
+    insert_ztf_many_oid_per_aid,
+):
+    result = _get_detections_mongo(
+        database=mongo_database,
+        oid="oid1",
+        tid="ztf",
+    )
+    assert len(result) == 3
     assert required_detection_fields.issubset(set(dict(result[0]).keys()))
 
 
