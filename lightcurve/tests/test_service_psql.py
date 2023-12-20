@@ -4,7 +4,7 @@ from core.service import (
     _get_non_detections_sql,
 )
 
-from utils import (
+from test_utils import (
     required_detection_fields,
     required_forced_photometry_fields,
     required_non_detection_fields,

@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta, timezone
+import jwt
+
 required_detection_fields = {
     "candid",
     "tid",
@@ -150,3 +153,16 @@ def create_non_detection_data_mongo(oid, aid, tid):
         "fid": 1,
         "diffmaglim": 0.5,
     }
+
+
+def create_token(permisions, filters, secret_key):
+    token = {
+        "access": "access",
+        "exp": datetime.now(tz=timezone.utc) + timedelta(hours=1),
+        "jti": "test_jti",
+        "user_id": 1,
+        "permissions": permisions,
+        "filters": filters,
+    }
+    encripted_token = jwt.encode(token, secret_key, algorithm="HS256")
+    return encripted_token

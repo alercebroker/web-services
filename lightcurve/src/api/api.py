@@ -6,10 +6,11 @@ from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 
 from .filters import get_filters_map
 from .routes import htmx, rest
-from ..config import app_config
+from config import app_config
 
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
 instrumentator = Instrumentator().instrument(app).expose(app)
+config = app_config()
 
 app.add_middleware(
     RalidatorStarlette,

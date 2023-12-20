@@ -2,7 +2,7 @@ import pytest
 from core.exceptions import AtlasNonDetectionError, SurveyIdError
 from core.models import NonDetection as NonDetectionModel
 from core.service import get_non_detections
-from utils import required_non_detection_fields
+from test_utils import required_non_detection_fields
 
 
 def test_get_ztf_non_detections(
@@ -29,6 +29,32 @@ def test_get_ztf_non_detections(
         oid="oid1",
     )
     assert len(result) == 1
+
+
+def test_get_ztf_non_detections_with_many_oid_per_aid(
+    psql_service,
+    psql_session,
+    init_psql,
+    mongo_service,
+    mongo_database,
+    init_mongo,
+    insert_ztf_many_oid_per_aid,
+):
+    result = get_non_detections(
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+        oid="oid1",
+        survey_id="ztf",
+    )
+    assert type(result[0]) is NonDetectionModel
+    assert required_non_detection_fields.issubset(set(dict(result[0]).keys()))
+    assert len(result) == 3
+    result = get_non_detections(
+        session_factory=psql_session,
+        mongo_db=mongo_database,
+        oid="oid1",
+    )
+    assert len(result) == 3
 
 
 def test_get_atlas_non_detections(

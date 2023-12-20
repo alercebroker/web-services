@@ -15,16 +15,7 @@ from db_plugins.db.sql.models import (
 )
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
-from utils import (
-    create_detection_data_mongo,
-    create_detection_data_psql,
-    create_forced_photometry_data_mongo,
-    create_forced_photometry_data_psql,
-    create_non_detection_data_mongo,
-    create_non_detection_data_psql,
-    create_object_data_mongo,
-    create_object_data_psql,
-)
+import test_utils
 
 
 @pytest.fixture(scope="session")
@@ -158,12 +149,18 @@ def insert_ztf_1_oid_per_aid(psql_session, mongo_database):
     """
 
     objects = [
-        Object(**create_object_data_psql("oid1")),
+        Object(**test_utils.create_object_data_psql("oid1")),
     ]
-    detections = [Detection(**create_detection_data_psql("oid1", 123))]
-    non_detections = [NonDetection(**create_non_detection_data_psql("oid1"))]
+    detections = [
+        Detection(**test_utils.create_detection_data_psql("oid1", 123))
+    ]
+    non_detections = [
+        NonDetection(**test_utils.create_non_detection_data_psql("oid1"))
+    ]
     forced_photometries = [
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid1", 123))
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid1", 123)
+        )
     ]
     features = [
         {
@@ -201,16 +198,18 @@ def insert_ztf_1_oid_per_aid(psql_session, mongo_database):
         session.add_all(features)
         session.commit()
     mongo_database.object.insert_one(
-        create_object_data_mongo(["oid1"], "aid1")
+        test_utils.create_object_data_mongo(["oid1"], "aid1")
     )
     mongo_database.detection.insert_one(
-        create_detection_data_mongo("oid1", 123, "aid1", "ztf")
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ztf")
     )
     mongo_database.non_detection.insert_one(
-        create_non_detection_data_mongo("oid1", "aid1", "ztf")
+        test_utils.create_non_detection_data_mongo("oid1", "aid1", "ztf")
     )
     mongo_database.forced_photometry.insert_one(
-        create_forced_photometry_data_mongo("oid1", 123, "aid1", "ztf")
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "ztf"
+        )
     )
 
 
@@ -221,24 +220,30 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
     One detection per object
     """
     objects = [
-        Object(**create_object_data_psql("oid1")),
-        Object(**create_object_data_psql("oid2")),
-        Object(**create_object_data_psql("oid3")),
+        Object(**test_utils.create_object_data_psql("oid1")),
+        Object(**test_utils.create_object_data_psql("oid2")),
+        Object(**test_utils.create_object_data_psql("oid3")),
     ]
     detections = [
-        Detection(**create_detection_data_psql("oid1", 123)),
-        Detection(**create_detection_data_psql("oid2", 456)),
-        Detection(**create_detection_data_psql("oid3", 789)),
+        Detection(**test_utils.create_detection_data_psql("oid1", 123)),
+        Detection(**test_utils.create_detection_data_psql("oid2", 456)),
+        Detection(**test_utils.create_detection_data_psql("oid3", 789)),
     ]
     non_detections = [
-        NonDetection(**create_non_detection_data_psql("oid1")),
-        NonDetection(**create_non_detection_data_psql("oid2")),
-        NonDetection(**create_non_detection_data_psql("oid3")),
+        NonDetection(**test_utils.create_non_detection_data_psql("oid1")),
+        NonDetection(**test_utils.create_non_detection_data_psql("oid2")),
+        NonDetection(**test_utils.create_non_detection_data_psql("oid3")),
     ]
     forced = [
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid1", 123)),
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid2", 456)),
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid3", 789)),
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid1", 123)
+        ),
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid2", 456)
+        ),
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid3", 789)
+        ),
     ]
     with psql_session() as session:
         session.add_all(objects)
@@ -249,34 +254,40 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
         session.commit()
 
     mongo_database.object.insert_one(
-        create_object_data_mongo(["oid1", "oid2", "oid3"], "aid1")
+        test_utils.create_object_data_mongo(["oid1", "oid2", "oid3"], "aid1")
     )
     mongo_database.detection.insert_one(
-        create_detection_data_mongo("oid1", 123, "aid1", "ztf")
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ztf")
     )
     mongo_database.detection.insert_one(
-        create_detection_data_mongo("oid2", 456, "aid1", "ztf")
+        test_utils.create_detection_data_mongo("oid2", 456, "aid1", "ztf")
     )
     mongo_database.detection.insert_one(
-        create_detection_data_mongo("oid3", 789, "aid1", "ztf")
+        test_utils.create_detection_data_mongo("oid3", 789, "aid1", "ztf")
     )
     mongo_database.non_detection.insert_one(
-        create_non_detection_data_mongo("oid1", "aid1", "ztf")
+        test_utils.create_non_detection_data_mongo("oid1", "aid1", "ztf")
     )
     mongo_database.non_detection.insert_one(
-        create_non_detection_data_mongo("oid2", "aid1", "ztf")
+        test_utils.create_non_detection_data_mongo("oid2", "aid1", "ztf")
     )
     mongo_database.non_detection.insert_one(
-        create_non_detection_data_mongo("oid3", "aid1", "ztf")
+        test_utils.create_non_detection_data_mongo("oid3", "aid1", "ztf")
     )
     mongo_database.forced_photometry.insert_one(
-        create_forced_photometry_data_mongo("oid1", 123, "aid1", "ztf")
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "ztf"
+        )
     )
     mongo_database.forced_photometry.insert_one(
-        create_forced_photometry_data_mongo("oid2", 456, "aid1", "ztf")
+        test_utils.create_forced_photometry_data_mongo(
+            "oid2", 456, "aid1", "ztf"
+        )
     )
     mongo_database.forced_photometry.insert_one(
-        create_forced_photometry_data_mongo("oid3", 789, "aid1", "ztf")
+        test_utils.create_forced_photometry_data_mongo(
+            "oid3", 789, "aid1", "ztf"
+        )
     )
 
 
@@ -288,13 +299,15 @@ def insert_atlas_1_oid_per_aid(mongo_database):
     """
 
     mongo_database.object.insert_one(
-        create_object_data_mongo(["oid1"], "aid1")
+        test_utils.create_object_data_mongo(["oid1"], "aid1")
     )
     mongo_database.detection.insert_one(
-        create_detection_data_mongo("oid1", 123, "aid1", "ATLASa01")
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ATLASa01")
     )
     mongo_database.forced_photometry.insert_one(
-        create_forced_photometry_data_mongo("oid1", 123, "aid1", "ATLASa01")
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "ATLASa01"
+        )
     )
 
 
@@ -304,14 +317,18 @@ def insert_atlas_many_oid_per_aid(mongo_database):
 
     Multiple oids are associated with a single aid
     """
-    object = create_object_data_mongo(["oid1", "oid2"], "aid1")
+    object = test_utils.create_object_data_mongo(["oid1", "oid2"], "aid1")
     detections = [
-        create_detection_data_mongo("oid1", 123, "aid1", "ATLAS"),
-        create_detection_data_mongo("oid2", 456, "aid1", "atlas"),
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ATLAS"),
+        test_utils.create_detection_data_mongo("oid2", 456, "aid1", "atlas"),
     ]
     forced = [
-        create_forced_photometry_data_mongo("oid1", 123, "aid1", "atlas"),
-        create_forced_photometry_data_mongo("oid2", 456, "aid1", "atlas"),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "atlas"
+        ),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid2", 456, "aid1", "atlas"
+        ),
     ]
     mongo_database.object.insert_one(object)
     mongo_database.detection.insert_many(detections)
@@ -327,42 +344,54 @@ def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
     """
 
     objects_psql = [
-        Object(**create_object_data_psql("oid1")),
-        Object(**create_object_data_psql("oid2")),
+        Object(**test_utils.create_object_data_psql("oid1")),
+        Object(**test_utils.create_object_data_psql("oid2")),
     ]
 
     detections_psql = [
-        Detection(**create_detection_data_psql("oid1", 123)),
-        Detection(**create_detection_data_psql("oid2", 456)),
+        Detection(**test_utils.create_detection_data_psql("oid1", 123)),
+        Detection(**test_utils.create_detection_data_psql("oid2", 456)),
     ]
     non_detections_psql = [
-        NonDetection(**create_non_detection_data_psql("oid1")),
-        NonDetection(**create_non_detection_data_psql("oid2")),
+        NonDetection(**test_utils.create_non_detection_data_psql("oid1")),
+        NonDetection(**test_utils.create_non_detection_data_psql("oid2")),
     ]
     forced_psql = [
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid1", 123)),
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid2", 456)),
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid1", 123)
+        ),
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid2", 456)
+        ),
     ]
 
     objects_mongo = [
-        create_object_data_mongo(["oid1", "oid3"], "aid1"),
-        create_object_data_mongo(["oid2", "oid4"], "aid2"),
+        test_utils.create_object_data_mongo(["oid1", "oid3"], "aid1"),
+        test_utils.create_object_data_mongo(["oid2", "oid4"], "aid2"),
     ]
     detections_mongo = [
-        create_detection_data_mongo("oid1", 123, "aid1", "ztf"),
-        create_detection_data_mongo("oid3", 789, "aid1", "atlas"),
-        create_detection_data_mongo("oid2", 456, "aid2", "ztf"),
-        create_detection_data_mongo("oid4", 987, "aid2", "atlas"),
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ztf"),
+        test_utils.create_detection_data_mongo("oid3", 789, "aid1", "atlas"),
+        test_utils.create_detection_data_mongo("oid2", 456, "aid2", "ztf"),
+        test_utils.create_detection_data_mongo("oid4", 987, "aid2", "atlas"),
     ]
     non_detections_mongo = [
-        create_non_detection_data_mongo("oid1", "aid1", "ztf"),
-        create_non_detection_data_mongo("oid3", "aid1", "ztf"),
+        test_utils.create_non_detection_data_mongo("oid1", "aid1", "ztf"),
+        test_utils.create_non_detection_data_mongo("oid3", "aid1", "ztf"),
     ]
     forced_mongo = [
-        create_forced_photometry_data_mongo("oid1", 123, "aid1", "ztf"),
-        create_forced_photometry_data_mongo("oid3", 789, "aid1", "atlas"),
-        create_forced_photometry_data_mongo("oid2", 456, "aid2", "ztf"),
-        create_forced_photometry_data_mongo("oid4", 987, "aid2", "atlas"),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "ztf"
+        ),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid3", 789, "aid1", "atlas"
+        ),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid2", 456, "aid2", "ztf"
+        ),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid4", 987, "aid2", "atlas"
+        ),
     ]
 
     with psql_session() as session:
@@ -413,11 +442,11 @@ def test_client():
     os.environ["PSQL_DATABASE"] = "postgres"
     os.environ["MONGO_PORT"] = "27017"
     os.environ["MONGO_HOST"] = "localhost"
-    os.environ["MONGO_USER"] = "mongo"
-    os.environ["MONGO_PASSWORD"] = "mongo"
+    os.environ["MONGO_USER"] = ""
+    os.environ["MONGO_PASSWORD"] = ""
     os.environ["MONGO_DATABASE"] = "database"
-    os.environ["MONGO_AUTH_SOURCE"] = "admin"
     os.environ["SECRET_KEY"] = "some_secret"
+    os.environ["MONGO_AUTH_SOURCE"] = ""
     from api.api import app
 
     return TestClient(app)
