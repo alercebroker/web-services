@@ -70,7 +70,7 @@ def get_lightcurve(
     :rtype: dict[str, list[DetectionModel] | list[NonDetectionModel]]
     """
     config = app_config()
-    if survey_id in config["tid_prefix"].keys():
+    if survey_id in config["tid"]:
         detections = _get_all_unique_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
@@ -118,7 +118,7 @@ def get_detections(
     :rtype: list[DetectionModel]
     """
     config = app_config()
-    if survey_id in config["tid_prefix"].keys():
+    if survey_id in config["tid"]:
         detections_result = _get_all_unique_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
@@ -153,9 +153,9 @@ def _get_all_unique_detections(
     except DatabaseError as e:
         return Failure(e)
 
-    detections = list(set(sql_detections + mongo_detections))
+    detections = {d.candid: d for d in sql_detections + mongo_detections}
 
-    return Success(detections)
+    return Success(list(detections.values()))
 
 
 def get_non_detections(
@@ -185,9 +185,8 @@ def get_non_detections(
     all unique NonDetection objects in the databases.
     :rtype: list[NonDetectionModel]
     """
-    config = app_config()
     if survey_id in ["ztf", "all"]:
-        survey_id = config["tid_prefix"]["ztf"]
+        survey_id = "ztf"
         non_detections_result = _get_all_unique_non_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
@@ -270,8 +269,7 @@ def get_forced_photometry(
     :rtype: list[ForcedPhotometryModel]
     """
     config = app_config()
-    if survey_id in config["tid_prefix"].keys():
-        survey_id = config["tid_prefix"][survey_id]
+    if survey_id in config["tid"]:
         forced_photometry = _get_unique_forced_photometry(
             oid, survey_id, session_factory, mongo_db
         )
@@ -330,9 +328,12 @@ def _get_all_unique_non_detections(
     except DatabaseError as e:
         return Failure(e)
 
-    non_detections = list(set(sql_non_detections + mongo_non_detections))
+    non_detections = {
+        (n.oid, n.fid, n.oid): n
+        for n in sql_non_detections + mongo_non_detections
+    }
 
-    return Success(non_detections)
+    return Success(list(non_detections.values()))
 
 
 def _get_detections_sql(
@@ -360,8 +361,6 @@ def _get_detections_sql(
 def _get_detections_mongo(
     database: Database, oid: str, tid: str
 ) -> list[DetectionModel]:
-    config = app_config()
-    tid = config["tid_prefix"][tid]
     try:
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
@@ -369,7 +368,10 @@ def _get_detections_mongo(
         if tid == "all":
             mongo_filter = {"aid": obj["_id"]}
         else:
-            mongo_filter = {"aid": obj["_id"], "tid": {"$regex": f"{tid}*"}}
+            mongo_filter = {
+                "aid": obj["_id"],
+                "tid": {"$regex": f"{tid}*", "$options": "i"},
+            }
         result = database["detection"].find(mongo_filter)
         result = [DetectionModel(**res, candid=res["_id"]) for res in result]
         return result
@@ -404,8 +406,6 @@ def _get_non_detections_sql(
 def _get_non_detections_mongo(
     database: Database, oid: str, tid: str
 ) -> list[NonDetectionModel]:
-    config = app_config()
-    tid = config["tid_prefix"][tid]
     try:
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
@@ -413,7 +413,10 @@ def _get_non_detections_mongo(
         if tid == "all":
             mongo_filter = {"aid": obj["_id"]}
         else:
-            mongo_filter = {"aid": obj["_id"], "tid": {"$regex": f"{tid}*"}}
+            mongo_filter = {
+                "aid": obj["_id"],
+                "tid": {"$regex": f"{tid}*", "$options": "i"},
+            }
         result = database["non_detection"].find(mongo_filter)
         result = [NonDetectionModel(**res) for res in result]
         return result
@@ -499,8 +502,6 @@ def _get_forced_photometry_mongo(
     oid: str,
     tid: str,
 ) -> list[ForcedPhotometryModel]:
-    config = app_config()
-    tid = config["tid_prefix"][tid]
     try:
         obj = mongo_db["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
@@ -508,7 +509,10 @@ def _get_forced_photometry_mongo(
         if tid == "all":
             mongo_filter = {"aid": obj["_id"]}
         else:
-            mongo_filter = {"aid": obj["_id"], "tid": {"$regex": f"{tid}*"}}
+            mongo_filter = {
+                "aid": obj["_id"],
+                "tid": {"$regex": f"{tid}*", "$options": "i"},
+            }
         result = mongo_db["forced_photometry"].find(mongo_filter)
         result = [
             ForcedPhotometryModel(**res, candid=res["_id"]) for res in result
