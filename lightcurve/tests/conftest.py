@@ -315,7 +315,7 @@ def insert_atlas_many_oid_per_aid(mongo_database):
     ]
     mongo_database.object.insert_one(object)
     mongo_database.detection.insert_many(detections)
-    mongo_database.detection.insert_many(forced)
+    mongo_database.forced_photometry.insert_many(forced)
 
 
 @pytest.fixture
@@ -345,8 +345,8 @@ def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
     ]
 
     objects_mongo = [
-        create_object_data_mongo(["oid1, oid3"], "aid1"),
-        create_object_data_mongo(["oid2, oid4"], "aid2"),
+        create_object_data_mongo(["oid1", "oid3"], "aid1"),
+        create_object_data_mongo(["oid2", "oid4"], "aid2"),
     ]
     detections_mongo = [
         create_detection_data_mongo("oid1", 123, "aid1", "ztf"),
@@ -356,9 +356,7 @@ def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
     ]
     non_detections_mongo = [
         create_non_detection_data_mongo("oid1", "aid1", "ztf"),
-        create_non_detection_data_mongo("oid3", "aid1", "atlas"),
-        create_non_detection_data_mongo("oid2", "aid2", "ztf"),
-        create_non_detection_data_mongo("oid4", "aid2", "atlas"),
+        create_non_detection_data_mongo("oid3", "aid1", "ztf"),
     ]
     forced_mongo = [
         create_forced_photometry_data_mongo("oid1", 123, "aid1", "ztf"),
@@ -369,6 +367,7 @@ def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
 
     with psql_session() as session:
         session.add_all(objects_psql)
+        session.commit()
         session.add_all(detections_psql)
         session.add_all(non_detections_psql)
         session.add_all(forced_psql)
@@ -377,7 +376,7 @@ def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
     mongo_database.object.insert_many(objects_mongo)
     mongo_database.detection.insert_many(detections_mongo)
     mongo_database.non_detection.insert_many(non_detections_mongo)
-    mongo_database.forced_photometr.insert_many(forced_mongo)
+    mongo_database.forced_photometry.insert_many(forced_mongo)
 
 
 def teardown_psql(database):
