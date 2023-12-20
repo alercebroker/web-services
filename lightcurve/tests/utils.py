@@ -1,3 +1,46 @@
+required_detection_fields = {
+    "candid",
+    "tid",
+    "oid",
+    "mjd",
+    "fid",
+    "ra",
+    "dec",
+    "mag",
+    "e_mag",
+    "isdiffpos",
+    "corrected",
+    "dubious",
+    "has_stamp",
+}
+
+required_forced_photometry_fields = {
+    "tid",
+    "oid",
+    "pid",
+    "mjd",
+    "fid",
+    "ra",
+    "dec",
+    "mag",
+    "e_mag",
+    "isdiffpos",
+    "corrected",
+    "dubious",
+    "has_stamp",
+}
+
+required_non_detection_fields = {
+    "aid",
+    "tid",
+    "sid",
+    "oid",
+    "mjd",
+    "fid",
+    "diffmaglim",
+}
+
+
 def create_object_data_mongo(oid, aid):
     return {
         "_id": aid,
@@ -57,12 +100,12 @@ def create_detection_data_psql(oid, candid):
     }
 
 
-def create_forced_photometry_data_psql(oid):
+def create_forced_photometry_data_psql(oid, pid):
     return {
         "oid": oid,
         "mjd": 59000,
         "fid": 1,
-        "pid": 1,
+        "pid": pid,
         "isdiffpos": 1,
         "ra": 10,
         "dec": 20,
@@ -74,11 +117,12 @@ def create_forced_photometry_data_psql(oid):
     }
 
 
-def create_forced_photometry_data_mongo(oid, candid, aid, tid):
+def create_forced_photometry_data_mongo(oid, pid, aid, tid):
     return {
-        "_id": f"{oid}_{candid}",
+        "_id": f"{oid}_{pid}",
         "aid": aid,
         "oid": oid,
+        "pid": pid,
         "tid": tid,
         "mjd": 59000,
         "fid": "r",

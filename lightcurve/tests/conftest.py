@@ -163,7 +163,7 @@ def insert_ztf_1_oid_per_aid(psql_session, mongo_database):
     detections = [Detection(**create_detection_data_psql("oid1", 123))]
     non_detections = [NonDetection(**create_non_detection_data_psql("oid1"))]
     forced_photometries = [
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid1"))
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid1", 123))
     ]
     features = [
         {
@@ -236,9 +236,9 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
         NonDetection(**create_non_detection_data_psql("oid3")),
     ]
     forced = [
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid1")),
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid2")),
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid3")),
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid1", 123)),
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid2", 456)),
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid3", 789)),
     ]
     with psql_session() as session:
         session.add_all(objects)
@@ -340,8 +340,8 @@ def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
         NonDetection(**create_non_detection_data_psql("oid2")),
     ]
     forced_psql = [
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid1")),
-        ForcedPhotometry(**create_forced_photometry_data_psql("oid2")),
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid1", 123)),
+        ForcedPhotometry(**create_forced_photometry_data_psql("oid2", 456)),
     ]
 
     objects_mongo = [
