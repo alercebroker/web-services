@@ -77,15 +77,19 @@ def get_lightcurve(
         non_detections = _get_all_unique_non_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
+        forced_photometry = _get_unique_forced_photometry(
+            oid, survey_id, session_factory, mongo_db
+        )
     else:
         handle_error(SurveyIdError(survey_id))
-    failure = fail_from_list([detections, non_detections])
+    failure = fail_from_list([detections, non_detections, forced_photometry])
     if failure:
         handle_error(failure)
     return handle_success(
         {
             "detections": detections.unwrap(),
             "non_detections": non_detections.unwrap(),
+            "forced_photometry": forced_photometry.unwrap(),
         }
     )
 
@@ -244,7 +248,7 @@ def get_period(
 
 def get_forced_photometry(
     oid: str,
-    survey_id: str,
+    survey_id: str = "all",
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
@@ -298,9 +302,11 @@ def _get_unique_forced_photometry(
     except (DatabaseError, ObjectNotFound) as e:
         return Failure(e)
 
-    forced_photometry = list(
-        set(sql_forced_photometry + mongo_forced_photometry)
-    )
+    forced_photometry = {
+        (fp.oid, fp.pid): fp
+        for fp in sql_forced_photometry + mongo_forced_photometry
+    }
+    forced_photometry = list(forced_photometry.values())
     return Success(forced_photometry)
 
 
@@ -514,14 +520,12 @@ def _get_forced_photometry_mongo(
                 "tid": {"$regex": f"{tid}*", "$options": "i"},
             }
         result = mongo_db["forced_photometry"].find(mongo_filter)
-        result = [
-            ForcedPhotometryModel(**res, candid=res["_id"]) for res in result
-        ]
-        return result
     except ValueError:
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e)
+    result = [ForcedPhotometryModel(**res) for res in result]
+    return result
 
 
 def _get_forced_photometry_sql(
