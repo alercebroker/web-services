@@ -86,13 +86,14 @@ async def lightcurve(request: Request, oid: str) -> HTMLResponse:
         handle_success=handle_success,
     )
 
+    detections, non_detections = get_dummy_lc()
+
     dr, dr_detections = await get_data_release(
         detections[0].ra, detections[0].dec
     )
 
     detections = list(map(lambda det: det.__dict__, detections))
     non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
-    period = period.value
     dr_detections = {
         k: list(map(lambda det: det.__dict__, detections))
         for k, detections in dr_detections.items()
