@@ -1,5 +1,6 @@
 import { jdToDate } from './astro-dates.js'
 import { LightCurveOptions } from './lc-utils.js'
+import { magtot2flux_uJy } from './flux.js'
 
 export class ApparentLightCurveOptions extends LightCurveOptions {
   constructor(detections, nonDetections, fontColor) {
@@ -33,8 +34,9 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
           y: 1,
         },
         zlevel: band < 100 ? 10 : 0,
+        yAxisIndex: 0,
       }
-      serie.data = this.formatDetections(detections, band)
+      serie.data = this.formatDetections(detections, band, this.use_flux)
       this.options.series.push(serie)
     })
   }
@@ -67,7 +69,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
       })
   }
 
-  formatDetections(detections, band) {
+  formatDetections(detections, band, use_flux) {
     return detections
       .filter(function (x) {
         return x.fid === band && x.corrected
@@ -75,7 +77,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
       .map(function (x) {
         return [
           x.mjd,
-          x.mag_corr,
+          use_flux ? magtot2flux_uJy(x.mag_corr) : x.mag_corr,
           x.candid !== undefined ? x.candid : x.objectid,
           x.e_mag_corr_ext,
           x.isdiffpos !== undefined ? x.isdiffpos : x.field,
