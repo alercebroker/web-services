@@ -68,6 +68,7 @@ def create_object_data_psql(oid):
 def create_detection_data_mongo(oid, candid, aid, tid):
     return {
         "_id": candid,
+        "candid": candid,  # this is from the legacy schema
         "aid": aid,
         "oid": oid,
         "tid": tid,

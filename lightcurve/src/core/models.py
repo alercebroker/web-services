@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class Detection(BaseModel):
-    candid: Union[str, int]
+    candid: str
     tid: str
     sid: Optional[str] = None
     aid: Optional[str] = None
@@ -28,10 +28,10 @@ class Detection(BaseModel):
     extra_fields: Optional[dict] = {}
 
     def __hash__(self):
-        return hash(str(self.candid))
+        return hash(self.candid)
 
     def __eq__(self, other):
-        return str(self.candid) == str(other.candid)
+        return self.candid == other.candid
 
 
 class NonDetection(BaseModel):

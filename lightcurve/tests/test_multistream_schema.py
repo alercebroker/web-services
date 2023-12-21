@@ -1,8 +1,6 @@
 from core.models import Detection as DetectionModel
 from core.models import NonDetection as NonDetectionModel
 from core.service import (
-    _get_detections_sql,
-    _get_non_detections_sql,
     _ztf_detection_to_multistream,
     _ztf_non_detection_to_multistream,
 )
@@ -28,7 +26,7 @@ def test_psql_detections_to_multistream():
     }
 
     expected_multistream_detection = {
-        "candid": 123,
+        "candid": "123",
         "oid": "oid1",
         "sid": None,
         "aid": None,

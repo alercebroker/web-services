@@ -364,6 +364,14 @@ def _get_detections_sql(
         raise DatabaseError(e)
 
 
+def _parse_mongo_detection(res: dict[str, Any]) -> DetectionModel:
+    candid = res.pop("candid", None)
+    if not candid:
+        candid = res["_id"]
+    detection = DetectionModel(**res, candid=str(candid))
+    return detection
+
+
 def _get_detections_mongo(
     database: Database, oid: str, tid: str
 ) -> list[DetectionModel]:
@@ -379,7 +387,7 @@ def _get_detections_mongo(
                 "tid": {"$regex": f"{tid}*", "$options": "i"},
             }
         result = database["detection"].find(mongo_filter)
-        result = [DetectionModel(**res, candid=res["_id"]) for res in result]
+        result = [_parse_mongo_detection(res) for res in result]
         return result
     except ValueError:
         raise ObjectNotFound(oid)
@@ -590,9 +598,11 @@ def _ztf_detection_to_multistream(
     for field, value in detection.items():
         if field not in fields and not field.startswith("_"):
             extra_fields[field] = value
+    candid = detection.pop("candid")
 
     return DetectionModel(
         **detection,
+        candid=str(candid),
         tid=tid,
         mag=detection["magpsf"],
         e_mag=detection["sigmapsf"],
