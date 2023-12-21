@@ -27,7 +27,7 @@
     import { FoldedLightCurveOptions } from "{{ API_URL }}/static/lc-folded.js";
     import { ApparentLightCurveOptions } from "{{ API_URL }}/static/lc-apparent.js";
     import "{{ API_URL }}/static/jszip.js";
-    import * as echart from "{{ API_URL }}/static/echarts.js";
+    import * as echart from "{{ API_URL }}/static/echarts.min.js";
     import { jdToDate } from "{{ API_URL }}/static/astro-dates.js";
 
     const oid = '{{ oid }}';
@@ -98,7 +98,7 @@
     function getDetections() {
         const all_detections = [detections]
         const fp_checkbox = document.getElementById("fp-checkbox");
-        if (fp_checkbox.checked){
+        if (fp_checkbox.checked) {
             forced_photometry.forEach((elem) => {
                 all_detections.push(elem);
             });
@@ -260,11 +260,7 @@
             <!-- Second Column (Toggles) -->
             <div>
                 <label class="tw-flex tw-items-center tw-space-x-2">
-                    <input
-                        id="fp-checkbox"
-                        type="checkbox"
-                        onclick="setForcedPhotometry()"
-                    >
+                    <input id="fp-checkbox" type="checkbox" onclick="setForcedPhotometry()">
                     <span>Enable forced photometry</span>
                     <div class="tooltip">
                         <i class="fa fa-question-circle tw-me-2"></i>
