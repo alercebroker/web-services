@@ -65,7 +65,7 @@ class RalidatorStarlette(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next) -> Response:
         ralidator = Ralidator(self.ralidator_settings, self.filters_map)
         request.state.ralidator = ralidator
-        
+
         if request.url.path in self.ignore_paths:
             return await call_next(request)
 

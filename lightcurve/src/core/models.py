@@ -55,11 +55,11 @@ class NonDetection(BaseModel):
 
 
 class ForcedPhotometry(BaseModel):
-    candid: Union[str, int]
     tid: str
     sid: Optional[str] = None
     aid: Optional[str] = None
-    oid: Optional[str] = None
+    pid: int
+    oid: str
     mjd: float
     fid: str
     ra: float
@@ -79,10 +79,10 @@ class ForcedPhotometry(BaseModel):
     extra_fields: Optional[dict] = {}
 
     def __hash__(self):
-        return hash(str(self.candid))
+        return hash(str(f"{self.oid}_{self.pid}"))
 
     def __eq__(self, other):
-        return str(self.candid) == str(other.candid)
+        return self.oid == other.oid and self.pid == other.pid
 
 
 class Feature(BaseModel):

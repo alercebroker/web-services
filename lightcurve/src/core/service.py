@@ -25,6 +25,7 @@ from .models import Detection as DetectionModel
 from .models import Feature as FeatureModel
 from .models import ForcedPhotometry as ForcedPhotometryModel
 from .models import NonDetection as NonDetectionModel
+from config import app_config
 
 
 def default_handle_success(result):
@@ -43,7 +44,7 @@ def fail_from_list(failable_list: list):
 
 def get_lightcurve(
     oid: str,
-    survey_id: str,
+    survey_id: str = "all",
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
@@ -68,31 +69,34 @@ def get_lightcurve(
     containing all detections and non_detections with removed duplicates.
     :rtype: dict[str, list[DetectionModel] | list[NonDetectionModel]]
     """
-    if survey_id in ["ztf", "atlas"]:
+    config = app_config()
+    if survey_id in config["tid"]:
         detections = _get_all_unique_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
         non_detections = _get_all_unique_non_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
+        forced_photometry = _get_unique_forced_photometry(
+            oid, survey_id, session_factory, mongo_db
+        )
     else:
         handle_error(SurveyIdError(survey_id))
-    failure = fail_from_list([detections, non_detections])
+    failure = fail_from_list([detections, non_detections, forced_photometry])
     if failure:
         handle_error(failure)
-    if len(detections.unwrap()) == 0 and len(non_detections.unwrap()) == 0:
-        handle_error(ObjectNotFound(oid))
     return handle_success(
         {
             "detections": detections.unwrap(),
             "non_detections": non_detections.unwrap(),
+            "forced_photometry": forced_photometry.unwrap(),
         }
     )
 
 
 def get_detections(
     oid: str,
-    survey_id: str,
+    survey_id: str = "all",
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
     handle_success: Callable[[Any], list] = default_handle_success,
@@ -117,7 +121,8 @@ def get_detections(
     all unique Detection objects in the databases.
     :rtype: list[DetectionModel]
     """
-    if survey_id in ["ztf", "atlas"]:
+    config = app_config()
+    if survey_id in config["tid"]:
         detections_result = _get_all_unique_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
@@ -152,14 +157,14 @@ def _get_all_unique_detections(
     except DatabaseError as e:
         return Failure(e)
 
-    detections = list(set(sql_detections + mongo_detections))
+    detections = {d.candid: d for d in sql_detections + mongo_detections}
 
-    return Success(detections)
+    return Success(list(detections.values()))
 
 
 def get_non_detections(
     oid: str,
-    survey_id: str,
+    survey_id: str = "all",
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
     handle_success: Callable[[Any], list] = default_handle_success,
@@ -184,7 +189,8 @@ def get_non_detections(
     all unique NonDetection objects in the databases.
     :rtype: list[NonDetectionModel]
     """
-    if survey_id == "ztf":
+    if survey_id in ["ztf", "all"]:
+        survey_id = "ztf"
         non_detections_result = _get_all_unique_non_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
@@ -242,7 +248,7 @@ def get_period(
 
 def get_forced_photometry(
     oid: str,
-    survey_id: str,
+    survey_id: str = "all",
     session_factory: Callable[..., AbstractContextManager[Session]] = None,
     mongo_db: Database = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
@@ -266,7 +272,8 @@ def get_forced_photometry(
     containing all detections and non_detections with removed duplicates.
     :rtype: list[ForcedPhotometryModel]
     """
-    if survey_id in ["ztf", "atlas"]:
+    config = app_config()
+    if survey_id in config["tid"]:
         forced_photometry = _get_unique_forced_photometry(
             oid, survey_id, session_factory, mongo_db
         )
@@ -295,9 +302,11 @@ def _get_unique_forced_photometry(
     except (DatabaseError, ObjectNotFound) as e:
         return Failure(e)
 
-    forced_photometry = list(
-        set(sql_forced_photometry + mongo_forced_photometry)
-    )
+    forced_photometry = {
+        (fp.oid, fp.pid): fp
+        for fp in sql_forced_photometry + mongo_forced_photometry
+    }
+    forced_photometry = list(forced_photometry.values())
     return Success(forced_photometry)
 
 
@@ -325,9 +334,12 @@ def _get_all_unique_non_detections(
     except DatabaseError as e:
         return Failure(e)
 
-    non_detections = list(set(sql_non_detections + mongo_non_detections))
+    non_detections = {
+        (n.oid, n.fid, n.oid): n
+        for n in sql_non_detections + mongo_non_detections
+    }
 
-    return Success(non_detections)
+    return Success(list(non_detections.values()))
 
 
 def _get_detections_sql(
@@ -359,12 +371,17 @@ def _get_detections_mongo(
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
             raise ValueError()
-        result = database["detection"].find(
-            {"aid": obj["_id"], "oid": oid, "tid": tid}
-        )
+        if tid == "all":
+            mongo_filter = {"aid": obj["_id"]}
+        else:
+            mongo_filter = {
+                "aid": obj["_id"],
+                "tid": {"$regex": f"{tid}*", "$options": "i"},
+            }
+        result = database["detection"].find(mongo_filter)
         result = [DetectionModel(**res, candid=res["_id"]) for res in result]
         return result
-    except ValueError as e:
+    except ValueError:
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e)
@@ -399,12 +416,17 @@ def _get_non_detections_mongo(
         obj = database["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
             raise ValueError()
-        result = database["non_detection"].find(
-            {"aid": obj["_id"], "oid": oid, "tid": tid}
-        )
+        if tid == "all":
+            mongo_filter = {"aid": obj["_id"]}
+        else:
+            mongo_filter = {
+                "aid": obj["_id"],
+                "tid": {"$regex": f"{tid}*", "$options": "i"},
+            }
+        result = database["non_detection"].find(mongo_filter)
         result = [NonDetectionModel(**res) for res in result]
         return result
-    except ValueError as e:
+    except ValueError:
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e)
@@ -474,9 +496,11 @@ def _get_period_sql(
             )
             result = session.execute(stmt)
             result = [FeatureModel(**res[0].__dict__) for res in result.all()]
-            return Success(result[0])
     except Exception as e:
         return Failure(DatabaseError(e))
+    if len(result) == 0:
+        return Failure(DatabaseError("Could not find period for oid: " + oid))
+    return Success(result[0])
 
 
 def _get_forced_photometry_mongo(
@@ -488,17 +512,20 @@ def _get_forced_photometry_mongo(
         obj = mongo_db["object"].find_one({"oid": oid}, {"_id": 1})
         if obj is None:
             raise ValueError()
-        result = mongo_db["ForcedPhotometry"].find(
-            {"aid": obj["_id"], "tid": tid}
-        )
-        result = [
-            ForcedPhotometryModel(**res, candid=res["_id"]) for res in result
-        ]
-        return result
-    except ValueError as e:
+        if tid == "all":
+            mongo_filter = {"aid": obj["_id"]}
+        else:
+            mongo_filter = {
+                "aid": obj["_id"],
+                "tid": {"$regex": f"{tid}*", "$options": "i"},
+            }
+        result = mongo_db["forced_photometry"].find(mongo_filter)
+    except ValueError:
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e)
+    result = [ForcedPhotometryModel(**res) for res in result]
+    return result
 
 
 def _get_forced_photometry_sql(

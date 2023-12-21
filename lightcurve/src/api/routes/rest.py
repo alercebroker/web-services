@@ -36,7 +36,7 @@ def healthcheck():
 def detections(
     request: Request,
     oid: str,
-    survey_id: str = "ztf",
+    survey_id: str = "all",
 ):
     return get_detections(
         oid=oid,
@@ -55,7 +55,7 @@ def detections(
 def non_detections(
     oid: str,
     request: Request,
-    survey_id: str = "ztf",
+    survey_id: str = "all",
 ):
     return get_non_detections(
         oid=oid,
@@ -74,7 +74,7 @@ def non_detections(
 def lightcurve(
     oid: str,
     request: Request,
-    survey_id: str = "ztf",
+    survey_id: str = "all",
 ):
     return get_lightcurve(
         oid=oid,
@@ -88,8 +88,9 @@ def lightcurve(
 
 @router.get("/forced-photometry/{oid}")
 @set_permissions_decorator(["admin", "basic_user"])
+@set_filters_decorator(["filter_atlas_forced_photometry"])
 @check_permissions_decorator
-def forced_photometry(oid: str, request: Request, survey_id: str = "ztf"):
+def forced_photometry(oid: str, request: Request, survey_id: str = "all"):
     return get_forced_photometry(
         oid=oid,
         survey_id=survey_id,
