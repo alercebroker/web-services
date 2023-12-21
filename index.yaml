@@ -493,6 +493,16 @@ entries:
     version: 0.1.18
   lightcurve:
   - apiVersion: v2
+    appVersion: 23.12.1-rc41
+    created: "2023-12-21T14:16:39.891192275Z"
+    description: Lightcurve API for ALeRCE Clients
+    digest: 27c7a9963d29cd1c6f8801f4aff6c061687fcda60c39ba7c4872a5bafb22f0ae
+    name: lightcurve
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/lightcurve-23.12.74/lightcurve-23.12.74.tgz
+    version: 23.12.74
+  - apiVersion: v2
     appVersion: 23.12.1-rc40
     created: "2023-12-10T14:07:50.267043466Z"
     description: Lightcurve API for ALeRCE Clients
@@ -1172,4 +1182,4 @@ entries:
     urls:
     - https://github.com/alercebroker/web-services/releases/download/lightcurve-0.2.1/lightcurve-0.2.1.tgz
     version: 0.2.1
-generated: "2023-12-10T14:07:50.267451887Z"
+generated: "2023-12-21T14:16:39.89146427Z"
