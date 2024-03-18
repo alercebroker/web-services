@@ -30,3 +30,13 @@ def get_dummy_features() -> list[Feature]:
         data: Dict[str, Dict[str, Any]] = json.load(file)
     features = [Feature(**feat) for feat in data["features"]]
     return features
+
+
+def get_forced_mongo() -> dict[str, Any]:
+    with open("tests/data/forced_mongo.json") as file:
+        return json.load(file)
+
+
+def get_forced_sql() -> dict[str, Any]:
+    with open("tests/data/forced_photometry_202311301515.json") as file:
+        return json.load(file)["forced_photometry"]

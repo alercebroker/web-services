@@ -63,14 +63,16 @@ class Ralidator(object):
                     self.auth_error_code = 401
                     self.valid_auth = False
                 else:
-                    if self.settings.settings.get("ON_AUTH_ERROR_DEFAULT_USER"):
+                    if self.settings.settings.get(
+                        "ON_AUTH_ERROR_DEFAULT_USER"
+                    ):
                         self._set_default_permissions_and_filters()
                     else:
                         self.valid_auth = False
                         self.auth_error_code = 403
         else:
             self._set_default_permissions_and_filters()
-        
+
     def _set_default_permissions_and_filters(self):
         self.valid_auth = True
         self.set_user_permissions(

@@ -5,7 +5,12 @@ from ralidator_fastapi.decorators import (
     set_permissions_decorator,
 )
 
-from core.service import get_detections, get_lightcurve, get_non_detections
+from core.service import (
+    get_detections,
+    get_forced_photometry,
+    get_lightcurve,
+    get_non_detections,
+)
 from database.mongo import database
 from database.sql import session
 
@@ -31,7 +36,7 @@ def healthcheck():
 def detections(
     request: Request,
     oid: str,
-    survey_id: str = "ztf",
+    survey_id: str = "all",
 ):
     return get_detections(
         oid=oid,
@@ -50,7 +55,7 @@ def detections(
 def non_detections(
     oid: str,
     request: Request,
-    survey_id: str = "ztf",
+    survey_id: str = "all",
 ):
     return get_non_detections(
         oid=oid,
@@ -69,9 +74,24 @@ def non_detections(
 def lightcurve(
     oid: str,
     request: Request,
-    survey_id: str = "ztf",
+    survey_id: str = "all",
 ):
     return get_lightcurve(
+        oid=oid,
+        survey_id=survey_id,
+        session_factory=session,
+        mongo_db=database,
+        handle_error=handle_error,
+        handle_success=handle_success,
+    )
+
+
+@router.get("/forced-photometry/{oid}")
+@set_permissions_decorator(["admin", "basic_user"])
+@set_filters_decorator(["filter_atlas_forced_photometry"])
+@check_permissions_decorator
+def forced_photometry(oid: str, request: Request, survey_id: str = "all"):
+    return get_forced_photometry(
         oid=oid,
         survey_id=survey_id,
         session_factory=session,

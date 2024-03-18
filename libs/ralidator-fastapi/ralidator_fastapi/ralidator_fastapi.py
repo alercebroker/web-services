@@ -63,6 +63,9 @@ class RalidatorStarlette(BaseHTTPMiddleware):
         ralidator.authenticate_token(token)
 
     async def dispatch(self, request: Request, call_next) -> Response:
+        ralidator = Ralidator(self.ralidator_settings, self.filters_map)
+        request.state.ralidator = ralidator
+
         if request.url.path in self.ignore_paths:
             return await call_next(request)
 
@@ -70,8 +73,6 @@ class RalidatorStarlette(BaseHTTPMiddleware):
             if request.url.path.startswith(prefix):
                 return await call_next(request)
 
-        ralidator = Ralidator(self.ralidator_settings, self.filters_map)
-        request.state.ralidator = ralidator
         self.apply_ralidator_auth(request, ralidator)
         response = await call_next(request)
 

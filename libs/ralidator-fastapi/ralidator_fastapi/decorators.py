@@ -1,5 +1,6 @@
 from functools import wraps
 from .get_ralidator import get_ralidator
+from fastapi import HTTPException
 
 
 def set_filters_decorator(filter_list):
@@ -36,10 +37,9 @@ def check_permissions_decorator(arg_function):
         if allowed:
             return arg_function(*args, **kwargs)
         else:
-            # TODO: fix error handling here
             if code == 401:
-                return "Expired Token", code
+                raise HTTPException(status_code=code, detail="Token expired")
             else:
-                return "Forbidden", code
+                raise HTTPException(status_code=code, detail="Forbidden")
 
     return decorator_function

@@ -7,14 +7,15 @@ from db_plugins.db.mongo._connection import MongoConnection
 from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
 from db_plugins.db.sql.models import (
     Detection,
-    Feature,
-    FeatureVersion,
+    ForcedPhotometry,
     NonDetection,
     Object,
+    Feature,
+    FeatureVersion,
 )
 from fastapi.testclient import TestClient
 from pymongo import MongoClient
-from pymongo.database import Database
+import test_utils
 
 
 @pytest.fixture(scope="session")
@@ -69,10 +70,9 @@ def is_responsive_mongo(url):
         client = MongoClient(
             host=host,  # <-- IP and port go here
             serverSelectionTimeoutMS=3000,  # 3 second timeout
-            username="mongo",
-            password="mongo",
+            username="",
+            password="",
             port=int(port),
-            authSource="database",
         )
         client.database.somecol.insert_one({"hola": "chao"})
         client.close()
@@ -108,7 +108,7 @@ def init_psql():
         "DB_NAME": db,
     }
     dbp_database = DbpDatabase(config)
-    populate_psql(dbp_database)
+    dbp_database.create_db()
     yield dbp_database
     teardown_psql(dbp_database)
 
@@ -129,106 +129,39 @@ def psql_session():
 def mongo_database():
     os.environ["MONGO_PORT"] = "27017"
     os.environ["MONGO_HOST"] = "localhost"
-    os.environ["MONGO_USER"] = "mongo"
-    os.environ["MONGO_PASSWORD"] = "mongo"
+    os.environ["MONGO_USER"] = ""
+    os.environ["MONGO_PASSWORD"] = ""
     os.environ["MONGO_DATABASE"] = "database"
-    os.environ["MONGO_AUTH_SOURCE"] = "admin"
+    os.environ["MONGO_AUTH_SOURCE"] = ""
     os.environ["SECRET_KEY"] = "some_secret"
     from database.mongo import database
 
     return database
 
 
-def populate_psql(database):
-    database.create_db()
-    with database.session() as session:
-        add_psql_objects(session)
-        add_psql_detections(session)
-        add_psql_non_detections(session)
-        add_psql_feature_versions(session)
-        add_psql_features(session)
+@pytest.fixture
+def insert_ztf_1_oid_per_aid(psql_session, mongo_database):
+    """
+    Only one object per aid, 1 in psql 1 in mongo.
+    One detection per object.
+    One non detection per object.
+    One forcer photometry per object.
+    """
 
-
-def add_psql_objects(session):
-    objects = [Object(oid="oid1"), Object(oid="oid2"), Object(oid="oid20")]
-    session.add_all(objects)
-    session.commit()
-
-
-def add_psql_detections(session):
+    objects = [
+        Object(**test_utils.create_object_data_psql("oid1")),
+    ]
     detections = [
-        {
-            "candid": 123,
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "pid": 1,
-            "isdiffpos": 1,
-            "ra": 10,
-            "dec": 20,
-            "magpsf": 15,
-            "sigmapsf": 0.5,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-            "step_id_corr": "test",
-        },
-        {
-            "candid": 456,
-            "oid": "oid1",
-            "mjd": 59001,
-            "fid": 2,
-            "pid": 1,
-            "isdiffpos": 1,
-            "ra": 11,
-            "dec": 21,
-            "magpsf": 14,
-            "sigmapsf": 0.4,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-            "step_id_corr": "test",
-        },
-        {
-            "candid": 789,
-            "oid": "oid20",
-            "mjd": 59001,
-            "fid": 2,
-            "pid": 1,
-            "isdiffpos": 1,
-            "ra": 11,
-            "dec": 21,
-            "magpsf": 14,
-            "sigmapsf": 0.4,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-            "step_id_corr": "test",
-        },
+        Detection(**test_utils.create_detection_data_psql("oid1", 123))
     ]
-    detections = [Detection(**det) for det in detections]
-    session.add_all(detections)
-    session.commit()
-
-
-def add_psql_non_detections(session):
     non_detections = [
-        {"oid": "oid1", "mjd": 59000, "fid": 1, "diffmaglim": 0.5},
-        {"oid": "oid1", "mjd": 59001, "fid": 2, "diffmaglim": 0.4},
-        {"oid": "oid20", "mjd": 59002, "fid": 2, "diffmaglim": 0.4},
+        NonDetection(**test_utils.create_non_detection_data_psql("oid1"))
     ]
-    non_detections = [NonDetection(**non) for non in non_detections]
-    session.add_all(non_detections)
-    session.commit()
-
-
-def add_psql_feature_versions(session):
-    feature_versions = [FeatureVersion(version="lc_classifier_1.2.1-P")]
-    session.add_all(feature_versions)
-    session.commit()
-
-
-def add_psql_features(session):
+    forced_photometries = [
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid1", 123)
+        )
+    ]
     features = [
         {
             "oid": "oid1",
@@ -251,17 +184,228 @@ def add_psql_features(session):
             "fid": 1,
             "version": "lc_classifier_1.2.1-P",
         },
-        {
-            "oid": "oid2",
-            "name": "SPM_chi",
-            "value": 41569.40533659299,
-            "fid": 2,
-            "version": "lc_classifier_1.2.1-P",
-        },
     ]
     features = [Feature(**feat) for feat in features]
-    session.add_all(features)
-    session.commit()
+    feature_versions = [FeatureVersion(version="lc_classifier_1.2.1-P")]
+    with psql_session() as session:
+        session.add_all(objects)
+        session.commit()
+        session.add_all(detections)
+        session.add_all(non_detections)
+        session.add_all(forced_photometries)
+        session.add_all(feature_versions)
+        session.commit()
+        session.add_all(features)
+        session.commit()
+    mongo_database.object.insert_one(
+        test_utils.create_object_data_mongo(["oid1"], "aid1")
+    )
+    mongo_database.detection.insert_one(
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ztf")
+    )
+    mongo_database.non_detection.insert_one(
+        test_utils.create_non_detection_data_mongo("oid1", "aid1", "ztf")
+    )
+    mongo_database.forced_photometry.insert_one(
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "ztf"
+        )
+    )
+
+
+@pytest.fixture
+def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
+    """
+    Many objects per aid, many id in psql, 1 aid in mongo.
+    One detection per object
+    """
+    objects = [
+        Object(**test_utils.create_object_data_psql("oid1")),
+        Object(**test_utils.create_object_data_psql("oid2")),
+        Object(**test_utils.create_object_data_psql("oid3")),
+    ]
+    detections = [
+        Detection(**test_utils.create_detection_data_psql("oid1", 123)),
+        Detection(**test_utils.create_detection_data_psql("oid2", 456)),
+        Detection(**test_utils.create_detection_data_psql("oid3", 789)),
+    ]
+    non_detections = [
+        NonDetection(**test_utils.create_non_detection_data_psql("oid1")),
+        NonDetection(**test_utils.create_non_detection_data_psql("oid2")),
+        NonDetection(**test_utils.create_non_detection_data_psql("oid3")),
+    ]
+    forced = [
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid1", 123)
+        ),
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid2", 456)
+        ),
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid3", 789)
+        ),
+    ]
+    with psql_session() as session:
+        session.add_all(objects)
+        session.commit()
+        session.add_all(detections)
+        session.add_all(non_detections)
+        session.add_all(forced)
+        session.commit()
+
+    mongo_database.object.insert_one(
+        test_utils.create_object_data_mongo(["oid1", "oid2", "oid3"], "aid1")
+    )
+    mongo_database.detection.insert_one(
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ztf")
+    )
+    mongo_database.detection.insert_one(
+        test_utils.create_detection_data_mongo("oid2", 456, "aid1", "ztf")
+    )
+    mongo_database.detection.insert_one(
+        test_utils.create_detection_data_mongo("oid3", 789, "aid1", "ztf")
+    )
+    mongo_database.non_detection.insert_one(
+        test_utils.create_non_detection_data_mongo("oid1", "aid1", "ztf")
+    )
+    mongo_database.non_detection.insert_one(
+        test_utils.create_non_detection_data_mongo("oid2", "aid1", "ztf")
+    )
+    mongo_database.non_detection.insert_one(
+        test_utils.create_non_detection_data_mongo("oid3", "aid1", "ztf")
+    )
+    mongo_database.forced_photometry.insert_one(
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "ztf"
+        )
+    )
+    mongo_database.forced_photometry.insert_one(
+        test_utils.create_forced_photometry_data_mongo(
+            "oid2", 456, "aid1", "ztf"
+        )
+    )
+    mongo_database.forced_photometry.insert_one(
+        test_utils.create_forced_photometry_data_mongo(
+            "oid3", 789, "aid1", "ztf"
+        )
+    )
+
+
+@pytest.fixture
+def insert_atlas_1_oid_per_aid(mongo_database):
+    """
+    Only one object per aid, none in psql 1 in mongo.
+    One detection per object.
+    """
+
+    mongo_database.object.insert_one(
+        test_utils.create_object_data_mongo(["oid1"], "aid1")
+    )
+    mongo_database.detection.insert_one(
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ATLASa01")
+    )
+    mongo_database.forced_photometry.insert_one(
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "ATLASa01"
+        )
+    )
+
+
+@pytest.fixture
+def insert_atlas_many_oid_per_aid(mongo_database):
+    """Insert into mongodb data from ATLAS only
+
+    Multiple oids are associated with a single aid
+    """
+    object = test_utils.create_object_data_mongo(["oid1", "oid2"], "aid1")
+    detections = [
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ATLAS"),
+        test_utils.create_detection_data_mongo("oid2", 456, "aid1", "atlas"),
+    ]
+    forced = [
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "atlas"
+        ),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid2", 456, "aid1", "atlas"
+        ),
+    ]
+    mongo_database.object.insert_one(object)
+    mongo_database.detection.insert_many(detections)
+    mongo_database.forced_photometry.insert_many(forced)
+
+
+@pytest.fixture
+def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
+    """
+    Isert 2 aids to mongo, each with 1 object from ztf and 1 from atlas.
+    Will have 2 objects in psql each with 1 ztf detection
+    Will have 2 objects in mongo, each witn 1 ztf detection and 1 atlas detection
+    """
+
+    objects_psql = [
+        Object(**test_utils.create_object_data_psql("oid1")),
+        Object(**test_utils.create_object_data_psql("oid2")),
+    ]
+
+    detections_psql = [
+        Detection(**test_utils.create_detection_data_psql("oid1", 123)),
+        Detection(**test_utils.create_detection_data_psql("oid2", 456)),
+    ]
+    non_detections_psql = [
+        NonDetection(**test_utils.create_non_detection_data_psql("oid1")),
+        NonDetection(**test_utils.create_non_detection_data_psql("oid2")),
+    ]
+    forced_psql = [
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid1", 123)
+        ),
+        ForcedPhotometry(
+            **test_utils.create_forced_photometry_data_psql("oid2", 456)
+        ),
+    ]
+
+    objects_mongo = [
+        test_utils.create_object_data_mongo(["oid1", "oid3"], "aid1"),
+        test_utils.create_object_data_mongo(["oid2", "oid4"], "aid2"),
+    ]
+    detections_mongo = [
+        test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ztf"),
+        test_utils.create_detection_data_mongo("oid3", 789, "aid1", "atlas"),
+        test_utils.create_detection_data_mongo("oid2", 456, "aid2", "ztf"),
+        test_utils.create_detection_data_mongo("oid4", 987, "aid2", "atlas"),
+    ]
+    non_detections_mongo = [
+        test_utils.create_non_detection_data_mongo("oid1", "aid1", "ztf"),
+        test_utils.create_non_detection_data_mongo("oid3", "aid1", "ztf"),
+    ]
+    forced_mongo = [
+        test_utils.create_forced_photometry_data_mongo(
+            "oid1", 123, "aid1", "ztf"
+        ),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid3", 789, "aid1", "atlas"
+        ),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid2", 456, "aid2", "ztf"
+        ),
+        test_utils.create_forced_photometry_data_mongo(
+            "oid4", 987, "aid2", "atlas"
+        ),
+    ]
+
+    with psql_session() as session:
+        session.add_all(objects_psql)
+        session.commit()
+        session.add_all(detections_psql)
+        session.add_all(non_detections_psql)
+        session.add_all(forced_psql)
+        session.commit()
+
+    mongo_database.object.insert_many(objects_mongo)
+    mongo_database.detection.insert_many(detections_mongo)
+    mongo_database.non_detection.insert_many(non_detections_mongo)
+    mongo_database.forced_photometry.insert_many(forced_mongo)
 
 
 def teardown_psql(database):
@@ -274,209 +418,14 @@ def init_mongo():
         {
             "host": "localhost",
             "serverSelectionTimeoutMS": 3000,  # 3 second timeout
-            "username": "mongo",
-            "password": "mongo",
+            "username": "",
+            "password": "",
             "port": 27017,
             "database": "database",
         }
     )
-    populate_mongo(db)
     yield db.client.database
     teardown_mongo(db)
-
-
-def populate_mongo(database: MongoConnection):
-    database.create_db()
-    add_mongo_objects(database.database)
-    add_mongo_detections(database.database)
-    add_mongo_non_detections(database.database)
-
-
-def add_mongo_objects(database: Database):
-    object1 = {
-        "_id": "aid1",
-        "oid": ["oid2", "oid3"],
-    }
-    object2 = {
-        "_id": "aid3",
-        "oid": ["oid1", "oid10"],
-    }
-    database["object"].insert_one(object1)
-    database["object"].insert_one(object2)
-
-
-def add_mongo_detections(database: Database):
-    detections = [
-        {
-            "_id": "candid1",
-            "aid": "aid1",
-            "oid": "oid2",
-            "tid": "atlas",
-            "mjd": 59000,
-            "fid": 1,
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid2",
-            "aid": "aid1",
-            "oid": "oid2",
-            "tid": "atlas",
-            "mjd": 59001,
-            "fid": 2,
-            "ra": 11,
-            "dec": 21,
-            "mag": 14,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid3",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59005,
-            "fid": 3,
-            "ra": 12.0,
-            "e_ra": 0.1,
-            "dec": 22.0,
-            "e_dec": 0.2,
-            "mag": 13.0,
-            "e_mag": 0.3,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid4",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59006,
-            "fid": 3,
-            "ra": 11.0,
-            "e_ra": 0.2,
-            "dec": 23.0,
-            "e_dec": 0.3,
-            "mag": 12.0,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid5",
-            "aid": "aid2",
-            "tid": "atlas",
-            "oid": "oid3",
-            "mjd": 59006,
-            "fid": 3,
-            "ra": 11.0,
-            "e_ra": 0.2,
-            "dec": 23.0,
-            "e_dec": 0.3,
-            "mag": 12.0,
-            "e_mag": 0.4,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-        {
-            "_id": "candid6",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59010,
-            "fid": 1,
-            "ra": 10.0,
-            "e_ra": 0.1,
-            "dec": 20.0,
-            "e_dec": 0.1,
-            "mag": 15.0,
-            "e_mag": 0.1,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },  # Unique ZTF detection
-        {
-            "_id": "123",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },  # Duplicated ZTF detection
-        {
-            "_id": "candid9",
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid10",
-            "mjd": 59000,
-            "fid": 1,
-            "ra": 10,
-            "dec": 20,
-            "mag": 15,
-            "e_mag": 0.5,
-            "isdiffpos": 1,
-            "corrected": False,
-            "dubious": False,
-            "has_stamp": False,
-        },
-    ]
-    for det in detections:
-        database.detection.insert_one(det)
-
-
-def add_mongo_non_detections(database: Database):
-    non_detections = [
-        {
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59000,
-            "fid": 1,
-            "diffmaglim": 0.5,
-        },  # duplicate
-        {
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid1",
-            "mjd": 59015,
-            "fid": 1,
-            "diffmaglim": 0.6,
-        },  # unique ztf non detection
-        {
-            "tid": "ztf",
-            "aid": "aid3",
-            "oid": "oid10",
-            "mjd": 58000,
-            "fid": 1,
-            "diffmaglim": 0.6,
-        },
-    ]
-    for non_det in non_detections:
-        database.non_detection.insert_one(non_det)
 
 
 def teardown_mongo(database: MongoConnection):
@@ -493,11 +442,11 @@ def test_client():
     os.environ["PSQL_DATABASE"] = "postgres"
     os.environ["MONGO_PORT"] = "27017"
     os.environ["MONGO_HOST"] = "localhost"
-    os.environ["MONGO_USER"] = "mongo"
-    os.environ["MONGO_PASSWORD"] = "mongo"
+    os.environ["MONGO_USER"] = ""
+    os.environ["MONGO_PASSWORD"] = ""
     os.environ["MONGO_DATABASE"] = "database"
-    os.environ["MONGO_AUTH_SOURCE"] = "admin"
     os.environ["SECRET_KEY"] = "some_secret"
+    os.environ["MONGO_AUTH_SOURCE"] = ""
     from api.api import app
 
     return TestClient(app)
