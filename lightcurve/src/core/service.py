@@ -298,8 +298,10 @@ def _get_unique_forced_photometry(
         mongo_forced_photometry = _get_forced_photometry_mongo(
             mongo_db, oid, tid=survey_id
         )
-    except (DatabaseError, ObjectNotFound) as e:
+    except DatabaseError as e:
         return Failure(e)
+    except ObjectNotFound:
+        return Success([])
 
     forced_photometry = {
         (fp.oid, fp.pid): fp
@@ -334,7 +336,7 @@ def _get_all_unique_non_detections(
         return Failure(e)
 
     non_detections = {
-        (n.oid, n.fid, n.oid): n
+        (n.oid, n.fid, n.mjd): n
         for n in sql_non_detections + mongo_non_detections
     }
 
@@ -562,7 +564,7 @@ def _get_period_sql(
     except Exception as e:
         return Failure(DatabaseError(e, database="PSQL"))
     if len(result) == 0:
-        return Failure(DatabaseError("Could not find period for oid: " + oid, database="PSQL"))
+        return Success(FeatureModel(name="Multiband_period", value=0, fid=0, version="0"))
     return Success(result[0])
 
 
