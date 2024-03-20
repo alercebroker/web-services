@@ -84,7 +84,7 @@ def get_lightcurve(
             oid, survey_id, session_factory, mongo_db
         )
     else:
-        handle_error(SurveyIdError(survey_id))
+        handle_error(SurveyIdError(survey_id, "lightcurve"))
     failure = fail_from_list([detections, non_detections, forced_photometry])
     if failure:
         handle_error(failure)
@@ -130,7 +130,7 @@ def get_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
     else:
-        handle_error(SurveyIdError(survey_id))
+        handle_error(SurveyIdError(survey_id, "detections"))
     if is_successful(detections_result):
         return handle_success(detections_result.unwrap())
     else:
@@ -196,7 +196,7 @@ def get_non_detections(
     elif survey_id == "atlas":
         handle_error(AtlasNonDetectionError())
     else:
-        handle_error(SurveyIdError(survey_id))
+        handle_error(SurveyIdError(survey_id, "non detections"))
 
     if is_successful(non_detections_result):
         return handle_success(non_detections_result.unwrap())
@@ -237,7 +237,7 @@ def get_period(
     elif survey_id == "atlas":
         handle_error(NotImplementedError)
     else:
-        handle_error(SurveyIdError(survey_id))
+        handle_error(SurveyIdError(survey_id, "period"))
 
     if is_successful(period_results):
         return handle_success(period_results.unwrap())
@@ -277,7 +277,7 @@ def get_forced_photometry(
             oid, survey_id, session_factory, mongo_db
         )
     else:
-        handle_error(SurveyIdError(survey_id))
+        handle_error(SurveyIdError(survey_id, "forced photometry"))
 
     if is_successful(forced_photometry):
         return handle_success(forced_photometry.unwrap())

@@ -58,12 +58,13 @@ class NonDetectionsNotFound(BaseException):
 
 
 class SurveyIdError(BaseException):
-    def __init__(self, survey_id) -> None:
+    def __init__(self, survey_id, entity: str) -> None:
         super().__init__()
         self.survey_id = survey_id
+        self.entity = entity
 
     def __str__(self) -> str:
-        return f"Can't retrieve detections survey id not recognized {self.survey_id}"
+        return f"Can't retrieve {self.entity} survey id not recognized {self.survey_id}"
 
 
 class AtlasNonDetectionError(BaseException):

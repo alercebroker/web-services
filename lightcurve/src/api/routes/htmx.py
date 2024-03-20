@@ -25,7 +25,9 @@ jinja_env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 
 @router.get("/lightcurve")
-async def lightcurve(request: Request, oid: str) -> HTMLResponse:
+async def lightcurve(
+    request: Request, oid: str, survey_id: str = "all"
+) -> HTMLResponse:
     # el objeto ralidator viene en request.state
     request_ralidator = request.state.ralidator
 
@@ -55,7 +57,7 @@ async def lightcurve(request: Request, oid: str) -> HTMLResponse:
     # data logic
     detections = get_detections(
         oid=oid,
-        survey_id="ztf",
+        survey_id=survey_id,
         session_factory=session,
         mongo_db=database,
         handle_error=handle_error,
@@ -63,7 +65,7 @@ async def lightcurve(request: Request, oid: str) -> HTMLResponse:
     )
     non_detections = get_non_detections(
         oid=oid,
-        survey_id="ztf",
+        survey_id=survey_id,
         session_factory=session,
         mongo_db=database,
         handle_error=handle_error,
@@ -102,6 +104,7 @@ async def lightcurve(request: Request, oid: str) -> HTMLResponse:
     unfiltered_lightcurve = {
         "detections": detections,
         "non_detections": non_detections,
+        "forced_photometry": forced_photometry,
     }
     # editar el ralidator para ejecutar filtro de lightcurveset_user_filters con "filter lightcurve altas"
     request_ralidator.set_app_filters(["filter_atlas_lightcurve"])
