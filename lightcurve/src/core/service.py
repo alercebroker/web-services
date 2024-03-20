@@ -9,6 +9,7 @@ from db_plugins.db.sql.models import (
     NonDetection,
 )
 from pymongo.database import Database
+from pymongo.cursor import Cursor
 from returns.pipeline import is_successful
 from returns.result import Failure, Result, Success
 from sqlalchemy import select, text
@@ -19,6 +20,7 @@ from .exceptions import (
     DatabaseError,
     ObjectNotFound,
     SurveyIdError,
+    ParseError
 )
 from .models import DataReleaseDetection as DataReleaseDetectionModel
 from .models import Detection as DetectionModel
@@ -26,6 +28,7 @@ from .models import Feature as FeatureModel
 from .models import ForcedPhotometry as ForcedPhotometryModel
 from .models import NonDetection as NonDetectionModel
 from config import app_config
+import math
 
 
 def default_handle_success(result):
@@ -128,7 +131,6 @@ def get_detections(
         )
     else:
         handle_error(SurveyIdError(survey_id))
-
     if is_successful(detections_result):
         return handle_success(detections_result.unwrap())
     else:
@@ -149,16 +151,13 @@ def _get_all_unique_detections(
         sql_detections = []
     except DatabaseError as e:
         return Failure(e)
-
     try:
         mongo_detections = _get_detections_mongo(mongo_db, oid, tid=survey_id)
     except ObjectNotFound:
         mongo_detections = []
     except DatabaseError as e:
         return Failure(e)
-
     detections = {d.candid: d for d in sql_detections + mongo_detections}
-
     return Success(list(detections.values()))
 
 
@@ -341,6 +340,25 @@ def _get_all_unique_non_detections(
 
     return Success(list(non_detections.values()))
 
+def _query_detections_sql(session_factory: Callable[..., AbstractContextManager[Session]], oid: str) -> list:
+    try:
+        with session_factory() as session:
+            stmt = select(Detection, text("'ztf'")).filter(
+                Detection.oid == oid
+            )
+            return session.execute(stmt).all()
+    except Exception as e:
+        raise DatabaseError(e, database="PSQL")
+
+def _parse_sql_detection(result: list) -> list[DetectionModel]:
+    try: 
+        return [
+            _ztf_detection_to_multistream(res[0].__dict__, tid=res[1])
+            for res in result
+        ]
+    except Exception as e:
+        raise ParseError(e, "sql detection")
+
 
 def _get_detections_sql(
     session_factory: Callable[..., AbstractContextManager[Session]],
@@ -349,50 +367,85 @@ def _get_detections_sql(
 ) -> list[DetectionModel]:
     if tid == "atlas":
         return []
-    try:
-        with session_factory() as session:
-            stmt = select(Detection, text("'ztf'")).filter(
-                Detection.oid == oid
-            )
-            result = session.execute(stmt)
-            result = [
-                _ztf_detection_to_multistream(res[0].__dict__, tid=res[1])
-                for res in result.all()
-            ]
-            return result
-    except Exception as e:
-        raise DatabaseError(e)
+    result = _query_detections_sql(session_factory, oid)
+    result = _parse_sql_detection(result)
+    return result
 
+def _clean_extra_fields(extra_fields: dict[str, Any]) -> dict[str, Any]:
+    if "magpsf_corr" in extra_fields and math.isnan(extra_fields.get("magpsf_corr", None)):
+        extra_fields["magpsf_corr"] = None
+    if "sigmapsf_corr" in extra_fields and math.isnan(extra_fields.get("sigmapsf_corr", None)):
+        extra_fields["sigmapsf_corr"] = None
+    if "sigmapsf_corr_ext" in extra_fields and math.isnan(extra_fields.get("sigmapsf_corr_ext", None)):
+        extra_fields["sigmapsf_corr_ext"] = None
+        
+
+def _get_candid(result: dict[str, Any]) -> str:
+    """Get the candid from a result dict. If the candid is not present, use the _id field.
+
+    This handles the old and new schema for the candid field in the mongo database.
+
+    :param result: A result dict from the mongo database.
+    :type result: dict[str, Any]
+    :return: The candid for the result.
+    :rtype: str
+    """
+    candid = result.pop("candid", None)
+    if not candid:
+        candid = result["_id"]
+    return str(candid)
+
+def _clean_parent_candid(result: dict[str, Any]) -> None:
+    """Sets the parent_candid to None if it's NaN.
+
+    Note that this modifies the result in place.
+
+    :param result: A result dict from the mongo database.
+    :type result: dict[str, Any]
+    """
+    if math.isnan(result["parent_candid"]):
+        result["parent_candid"] = None
+    else:
+        result["parent_candid"] = int(result["parent_candid"])
 
 def _parse_mongo_detection(res: dict[str, Any]) -> DetectionModel:
-    candid = res.pop("candid", None)
-    if not candid:
-        candid = res["_id"]
-    detection = DetectionModel(**res, candid=str(candid))
-    return detection
+    try:
+        candid = _get_candid(res)
+        _clean_parent_candid(res)
+        _clean_extra_fields(res["extra_fields"])
+        return DetectionModel(**res, candid=candid)
+    except Exception as e:
+        raise ParseError(e, "mongo detection")
 
+def _query_mongo_object(database: Database, oid: str) -> dict[str, Any]:
+    obj = database["object"].find_one({"oid": oid})
+    if obj is None:
+        raise ObjectNotFound(oid)
+    return obj
+
+def _query_detections_by_aid(database: Database, aid: str, tid: str = "all") -> Cursor:
+    if tid == "all":
+        mongo_filter = {"aid": aid}
+    elif tid == "atlas" or tid == "ztf":
+        mongo_filter = {
+            "aid": aid,
+            "tid": {"$regex": f"{tid}*", "$options": "i"},
+        }
+    try:
+        return database["detection"].find(mongo_filter)
+    except Exception as e:
+        raise DatabaseError(e, database="MONGO")
+
+def _get_aid_from_object(obj: dict[str, Any]) -> str:
+    return obj["_id"]
 
 def _get_detections_mongo(
     database: Database, oid: str, tid: str
 ) -> list[DetectionModel]:
-    try:
-        obj = database["object"].find_one({"oid": oid}, {"_id": 1})
-        if obj is None:
-            raise ValueError()
-        if tid == "all":
-            mongo_filter = {"aid": obj["_id"]}
-        else:
-            mongo_filter = {
-                "aid": obj["_id"],
-                "tid": {"$regex": f"{tid}*", "$options": "i"},
-            }
-        result = database["detection"].find(mongo_filter)
-        result = [_parse_mongo_detection(res) for res in result]
-        return result
-    except ValueError:
-        raise ObjectNotFound(oid)
-    except Exception as e:
-        raise DatabaseError(e)
+    obj = _query_mongo_object(database, oid)
+    result = _query_detections_by_aid(database, _get_aid_from_object(obj), tid)
+    result = [_parse_mongo_detection(res) for res in result]
+    return result
 
 
 def _get_non_detections_sql(
@@ -414,7 +467,7 @@ def _get_non_detections_sql(
             ]
             return result
     except Exception as e:
-        raise DatabaseError(e)
+        raise DatabaseError(e, database="PSQL")
 
 
 def _get_non_detections_mongo(
@@ -437,7 +490,7 @@ def _get_non_detections_mongo(
     except ValueError:
         raise ObjectNotFound(oid)
     except Exception as e:
-        raise DatabaseError(e)
+        raise DatabaseError(e, database="MONGO")
 
 
 async def get_data_release(
@@ -505,9 +558,9 @@ def _get_period_sql(
             result = session.execute(stmt)
             result = [FeatureModel(**res[0].__dict__) for res in result.all()]
     except Exception as e:
-        return Failure(DatabaseError(e))
+        return Failure(DatabaseError(e, database="PSQL"))
     if len(result) == 0:
-        return Failure(DatabaseError("Could not find period for oid: " + oid))
+        return Failure(DatabaseError("Could not find period for oid: " + oid, database="PSQL"))
     return Success(result[0])
 
 
@@ -531,7 +584,7 @@ def _get_forced_photometry_mongo(
     except ValueError:
         raise ObjectNotFound(oid)
     except Exception as e:
-        raise DatabaseError(e)
+        raise DatabaseError(e, database="MONGO")
     result = [ForcedPhotometryModel(**res) for res in result]
     return result
 
@@ -557,7 +610,7 @@ def _get_forced_photometry_sql(
             ]
             return result
     except Exception as e:
-        raise DatabaseError(e)
+        raise DatabaseError(e, database="PSQL")
 
 
 def _ztf_detection_to_multistream(
@@ -599,16 +652,16 @@ def _ztf_detection_to_multistream(
         if field not in fields and not field.startswith("_"):
             extra_fields[field] = value
     candid = detection.pop("candid")
-
     return DetectionModel(
         **detection,
         candid=str(candid),
         tid=tid,
-        mag=detection["magpsf"],
-        e_mag=detection["sigmapsf"],
-        mag_corr=detection.get("magpsf_corr", None),
-        e_mag_corr=detection.get("sigmapsf_corr", None),
-        e_mag_corr_ext=detection.get("sigmapsf_corr_ext", None),
+        sid=tid,
+        mag=detection.pop("magpsf"),
+        e_mag=detection.pop("sigmapsf"),
+        mag_corr=detection.pop("magpsf_corr", None),
+        e_mag_corr=detection.pop("sigmapsf_corr", None),
+        e_mag_corr_ext=detection.pop("sigmapsf_corr_ext", None),
         extra_fields=extra_fields,
     )
 
