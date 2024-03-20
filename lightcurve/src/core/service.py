@@ -403,6 +403,8 @@ def _clean_parent_candid(result: dict[str, Any]) -> None:
     :param result: A result dict from the mongo database.
     :type result: dict[str, Any]
     """
+    if result["parent_candid"] is None:
+        return
     if math.isnan(result["parent_candid"]):
         result["parent_candid"] = None
     else:
