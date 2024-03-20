@@ -414,7 +414,7 @@ def _parse_mongo_detection(res: dict[str, Any]) -> DetectionModel:
     try:
         candid = _get_candid(res)
         _clean_parent_candid(res)
-        _clean_extra_fields(res["extra_fields"])
+        _clean_extra_fields(res.get("extra_fields", {}))
         return DetectionModel(**res, candid=candid)
     except Exception as e:
         raise ParseError(e, "mongo detection")
