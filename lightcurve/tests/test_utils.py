@@ -82,6 +82,7 @@ def create_detection_data_mongo(oid, candid, aid, tid):
         "corrected": False,
         "dubious": False,
         "has_stamp": False,
+        "parent_candid": None
     }
 
 
@@ -101,6 +102,7 @@ def create_detection_data_psql(oid, candid):
         "dubious": False,
         "has_stamp": False,
         "step_id_corr": "test",
+        "parent_candid": None
     }
 
 
