@@ -1,5 +1,5 @@
 from sshtunnel import open_tunnel
-from .run_dev import run
+from run_dev import run
 import os
 
 
@@ -15,5 +15,8 @@ def run_tunnel():
         ssh_pkey=ssh_pkey,
         remote_bind_address=(mongo_ip, 27017),
         local_bind_address=("0.0.0.0", 27017),
-    ) as tunnel:
+    ):
         run()
+
+if __name__ == "__main__":
+    run_tunnel()
