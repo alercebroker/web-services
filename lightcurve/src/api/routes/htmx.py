@@ -1,4 +1,5 @@
 import re
+import os
 
 from core.service import (
     get_data_release,
@@ -16,6 +17,7 @@ from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/api/templates", autoescape=True, auto_reload=True)
+templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 @router.get("/lightcurve", response_class=HTMLResponse)
 async def lightcurve(

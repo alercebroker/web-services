@@ -19,16 +19,16 @@
         }
     }
 
-    conditionalCss("{{ url_for('static', path='main.css') }}");
+    conditionalCss("{{API_URL}}/static/main.css");
     conditionalCss("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 </script>
 <script type="module">
-    import { DifferenceLightCurveOptions } from "{{ url_for('static', path='lc-difference.js') }}";
-    import { FoldedLightCurveOptions } from "{{ url_for('static', path='lc-folded.js') }}";
-    import { ApparentLightCurveOptions } from "{{ url_for('static', path='lc-apparent.js') }}";
-    import "{{ url_for('static', path='jszip.js') }}"
-    import * as echart from "{{ url_for('static', path='echarts.min.js') }}";
-    import { jdToDate } from "{{ url_for('static', path='astro-dates.js') }}";
+    import { DifferenceLightCurveOptions } from "{{API_URL}}/static/lc-difference.js";
+    import { FoldedLightCurveOptions } from "{{API_URL}}/static/lc-folded.js";
+    import { ApparentLightCurveOptions } from "{{API_URL}}/static/lc-apparent.js";
+    import "{{API_URL}}/static/jszip.js"
+    import * as echart from "{{API_URL}}/static/echarts.min.js";
+    import { jdToDate } from "{{API_URL}}/static/astro-dates.js";
 
     const oid = '{{ oid }}';
     const detections = {{ detections | tojson }};
