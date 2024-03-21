@@ -723,16 +723,10 @@ def _ztf_forced_photometry_to_multistream(
         "parent_candid",
         "has_stamp",
     }
-
     extra_fields = {}
     for field, value in forced_photometry.items():
         if field not in fields and not field.startswith("_"):
             extra_fields[field] = value
-
-    fid_map = {1: "g", 2: "r", 0: None, 12: "gr"}
-
-    forced_photometry["fid"] = fid_map[forced_photometry["fid"]]
-
     return ForcedPhotometryModel(
         **forced_photometry,
         tid=tid,

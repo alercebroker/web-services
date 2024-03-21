@@ -61,7 +61,7 @@ class ForcedPhotometry(BaseModel):
     pid: int
     oid: str
     mjd: float
-    fid: str
+    fid: int
     ra: float
     e_ra: Optional[float] = None
     dec: float

@@ -2,10 +2,13 @@ import { jdToDate } from './astro-dates.js'
 import { LightCurveOptions } from './lc-utils.js'
 
 export class ApparentLightCurveOptions extends LightCurveOptions {
-  constructor(detections, nonDetections, fontColor) {
-    super(detections, nonDetections, fontColor)
+  constructor(detections, nonDetections, forcedPhotometry, fontColor) {
+    super(detections, nonDetections, forcedPhotometry, fontColor)
     this.detections = this.detections.filter(
-      (x) => x.mag_corr <= 23 && x.e_mag_corr_ext < 1
+      (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
+    )
+    this.forcedPhotometry = this.forcedPhotometry.filter(
+      (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
     )
     this.getSeries()
     this.getLegend()
@@ -14,9 +17,13 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
 
   getSeries() {
     this.detections = this.detections.filter((item) => item.fid != 4 && item.fid != 5)
+    this.forcedPhotometry = this.forcedPhotometry.filter((item) => item.fid != 4 && item.fid != 5)
     const bands = new Set(this.detections.map((item) => item.fid))
+    const fpBands = new Set(this.forcedPhotometry.map((item) => item.fid))
     this.addDetections(this.detections, bands)
     this.addErrorBars(this.detections, bands)
+    this.addForcedPhotometry(this.forcedPhotometry, fpBands)
+    this.addErrorBarsForcedPhotometry(this.forcedPhotometry, fpBands)
   }
 
   addDetections(detections, bands) {
@@ -39,6 +46,26 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
     })
   }
 
+  addForcedPhotometry(detections, bands) {
+    bands.forEach((band) => {
+      const serie = {
+        name: this.bandMap[band].name + ' forced photometry',
+        type: 'scatter',
+        scale: true,
+        color: this.bandMap[band].color,
+        symbolSize: 6,
+        symbol: 'square',
+        encode: {
+          x: 0,
+          y: 1,
+        },
+        zlevel: band < 100 ? 10 : 0,
+      }
+      serie.data = this.formatForcedPhotometry(detections, band)
+      this.options.series.push(serie)
+    })
+  }
+
   addErrorBars(detections, bands) {
     bands.forEach((band) => {
       const serie = {
@@ -49,6 +76,20 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
         renderItem: this.renderError,
       }
       serie.data = this.formatError(detections, band)
+      this.options.series.push(serie)
+    })
+  }
+
+  addErrorBarsForcedPhotometry(forcedPhotometry, bands) {
+    bands.forEach((band) => {
+      const serie = {
+        name: this.bandMap[band].name + ' forced photometry',
+        type: 'custom',
+        scale: true,
+        color: this.bandMap[band].color,
+        renderItem: this.renderError,
+      }
+      serie.data = this.formatError(forcedPhotometry, band)
       this.options.series.push(serie)
     })
   }
@@ -83,10 +124,26 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
       })
   }
 
+  formatForcedPhotometry(forcedPhotometry, band) {
+    return forcedPhotometry
+      .filter(function (x) {
+        if ('distnr' in x['extra_fields']) {
+          return x['extra_fields']['distnr'] >= 0 && x.fid === band
+        }
+        return x.fid === band
+      })
+      .map(function (x) {
+        return [x.mjd, x.mag_corr, 'no-candid', x.e_mag_corr_ext, x.isdiffpos]
+      })
+  }
+
   getLegend() {
     let bands = Array.from(new Set(this.detections.map((item) => item.fid)))
     bands = bands.sort((x, y) => x - y)
-    const legend = bands.map((band) => this.bandMap[band].name)
+    let legend = bands.map((band) => this.bandMap[band].name)
+    legend = legend.concat(
+      bands.map((band) => this.bandMap[band].name + ' forced photometry')
+    )
     this.options.legend.data = legend
   }
 

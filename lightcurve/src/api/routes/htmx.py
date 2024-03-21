@@ -1,4 +1,3 @@
-import os
 import re
 
 from core.service import (
@@ -11,20 +10,14 @@ from core.service import (
 from database.mongo import database
 from database.sql import session
 from fastapi import APIRouter, Request
+from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from jinja2 import Environment, PackageLoader, select_autoescape
 from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
-jinja_env = Environment(
-    loader=PackageLoader("api"),
-    autoescape=select_autoescape(),
-)
+templates = Jinja2Templates(directory="src/api/templates", autoescape=True, auto_reload=True)
 
-jinja_env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
-
-
-@router.get("/lightcurve")
+@router.get("/lightcurve", response_class=HTMLResponse)
 async def lightcurve(
     request: Request, oid: str, survey_id: str = "all"
 ) -> HTMLResponse:
@@ -87,13 +80,12 @@ async def lightcurve(
         handle_error=handle_error,
         handle_success=handle_success,
     )
-
     dr, dr_detections = await get_data_release(
         detections[0].ra, detections[0].dec
     )
-
     detections = list(map(lambda det: det.__dict__, detections))
     non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
+    forced_photometry = list(map(lambda fp: fp.__dict__, forced_photometry))
     period = period.value
     dr_detections = {
         k: list(map(lambda det: det.__dict__, detections))
@@ -114,14 +106,16 @@ async def lightcurve(
     )
 
     # sacar detections y non detections del lightcurve filtrado
-    return HTMLResponse(
-        jinja_env.get_template("lightcurve.html.j2").render(
-            oid=oid,
-            detections=filtered_lightcurve["detections"],
-            non_detections=filtered_lightcurve["non_detections"],
-            forced_photometry=forced_photometry,
-            period=period,
-            dr=dr,
-            dr_detections=dr_detections,
-        )
+    return templates.TemplateResponse(
+        name="lightcurve.html.j2",
+        context={
+            "request": request,
+            "oid": oid,
+            "detections": filtered_lightcurve["detections"],
+            "non_detections": filtered_lightcurve["non_detections"],
+            "forced_photometry": forced_photometry,
+            "period": period,
+            "dr": dr,
+            "dr_detections": dr_detections,
+        },
     )

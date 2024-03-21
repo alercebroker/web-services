@@ -3,9 +3,10 @@ import { LightCurveOptions } from './lc-utils.js'
 
 
 export class DifferenceLightCurveOptions extends LightCurveOptions {
-  constructor(detections, nonDetections, fontColor) {
-    super(detections, nonDetections, fontColor)
-    this.detections = this.detections.filter((x) => x.mag <= 23)
+  constructor(detections, nonDetections, forcedPhotometry, fontColor) {
+    super(detections, nonDetections, forcedPhotometry, fontColor)
+    this.detections = this.detections.filter((x) => x.mag <= 24)
+    this.forcedPhotometry = this.forcedPhotometry.filter((x) => x.mag <= 24)
     this.getSeries()
     this.getLegend()
     this.getBoundaries()
@@ -14,12 +15,12 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   getSeries() {
     const bands = new Set(this.detections.map((item) => item.fid))
     const ndBands = new Set(this.nonDetections.map((item) => item.fid))
-    this.nonDetections
-      .map((item) => item.fid)
-      .forEach((element) => bands.add(element))
+    const fpBands = new Set(this.forcedPhotometry.map((item) => item.fid))
     this.addDetections(this.detections, bands)
     this.addErrorBars(this.detections, bands)
     this.addNonDetections(this.nonDetections, ndBands)
+    this.addForcedPhotometry(this.forcedPhotometry, fpBands)
+    this.addErrorBarsForcedPhotometry(this.forcedPhotometry, fpBands)
   }
 
   addDetections(detections, bands) {
@@ -54,6 +55,20 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
     })
   }
 
+  addErrorBarsForcedPhotometry(forcedPhotometry, bands) {
+    bands.forEach((band) => {
+      const serie = {
+        name: this.bandMap[band].name + ' forced photometry',
+        type: 'custom',
+        scale: true,
+        color: this.bandMap[band].color,
+        renderItem: this.renderError,
+      }
+      serie.data = this.formatError(forcedPhotometry, band)
+      this.options.series.push(serie)
+    })
+  }
+
   addNonDetections(nonDetections, bands) {
     bands.forEach((band) => {
       const serie = {
@@ -66,6 +81,25 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
           'path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z',
       }
       serie.data = this.formatNonDetections(nonDetections, band)
+      this.options.series.push(serie)
+    })
+  }
+
+  addForcedPhotometry(forcedPhotometry, bands) {
+    bands.forEach((band) => {
+      const serie = {
+        name: this.bandMap[band].name + ' forced photometry',
+        type: 'scatter',
+        scale: true,
+        color: this.bandMap[band].color,
+        symbolSize: 6,
+        symbol: 'path://M0,0 L0,10 L10,10 L10,0 Z',
+        encode: {
+          x: 0,
+          y: 1,
+        },
+      }
+      serie.data = this.formatForcedPhotometry(forcedPhotometry, band)
       this.options.series.push(serie)
     })
   }
@@ -90,6 +124,19 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
       })
   }
 
+  formatForcedPhotometry(forcedPhotometry, band) {
+    return forcedPhotometry
+      .filter(function (x) {
+        if ("distnr" in x["extra_fields"]) {
+          return x["extra_fields"]["distnr"] >= 0 && x.fid === band
+        }
+        return x.fid === band
+      })
+      .map(function (x) {
+        return [x.mjd, x.mag, "no-candid", x.e_mag, x.isdiffpos]
+      })
+  }
+
   formatNonDetections(nonDetections, band) {
     return nonDetections
       .filter(function (x) {
@@ -106,6 +153,9 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
     let legend = bands.map((band) => this.bandMap[band].name)
     legend = legend.concat(
       bands.map((band) => this.bandMap[band].name + ' non-detections')
+    )
+    legend = legend.concat(
+      bands.map((band) => this.bandMap[band].name + ' forced photometry')
     )
     this.options.legend.data = legend
   }

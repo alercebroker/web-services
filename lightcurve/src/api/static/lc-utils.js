@@ -1,7 +1,7 @@
 import { jdToDate } from './astro-dates.js'
 
 export class LightCurveOptions {
-  constructor(detections = [], nonDetections = [], fontColor = 'fff') {
+  constructor(detections = [], nonDetections = [], forcedPhotometry = [], fontColor = 'fff') {
     this.bandMap = {
       1: { name: 'g', color: '#56E03A' },
       2: { name: 'r', color: '#D42F4B' },
@@ -10,14 +10,12 @@ export class LightCurveOptions {
       103: { name: 'i DR5', color: '#FF7F00' },
       4: { name: 'c', color: '#00FFFF' },
       5: { name: 'o', color: '#FFA500' },
-      201: { name: 'g forced photometry', color: '#ADA3A3' },
-      202: { name: 'r forced photometry', color: '#377EB8' },
-      203: { name: 'i forced photometry', color: '#FF7F00' },
     }
     this.detections = detections.filter(
       (x) => x.fid in this.bandMap
     )
     this.nonDetections = nonDetections.filter((x) => x.diffmaglim <= 23 && x.fid in this.bandMap)
+    this.forcedPhotometry = forcedPhotometry.filter((x) => x.fid in this.bandMap)
     this.fontColor = fontColor
     this.options = {
       grid: {
@@ -79,7 +77,7 @@ export class LightCurveOptions {
         },
       },
       legend: {
-        data: [], // ["g", "r", "g non-detections", "r non-detections"],
+        data: [], // ["g", "r", "g non-detections", "r non-detections", "g forced photometry", "r forced photometry"],
         bottom: 0,
         textStyle: {
           fontWeight: 'lighter',
@@ -183,10 +181,7 @@ export class LightCurveOptions {
         jdToDate(params[0].value[0]).toUTCString().slice(0, -3) + 'UT'
       )
       return table + '</table>'
-    } else if (
-        serie === 'r' || serie === 'g' ||
-        serie === 'r forced photometry' || serie === 'g forced photometry'
-        ) {
+    } else if (serie === 'r' || serie === 'g') {
       const isdiffpos = params[0].value[4] === 1 ? '(+)' : '(-)'
       const mag = params[0].value[1].toFixed(3)
       const err = params[0].value[3].toFixed(3)
@@ -211,6 +206,26 @@ export class LightCurveOptions {
     } else if (serie === 'r DR5' || serie === 'g DR5' || serie === 'i DR5') {
       table += dataReleaseTooltip(params[0])
       return table
+    } else if (serie === 'r forced photometry' || serie === 'g forced photometry') {
+      const isdiffpos = params[0].value[4] === 1 ? '(+)' : '(-)'
+      const mag = params[0].value[1].toFixed(3)
+      const err = params[0].value[3].toFixed(3)
+      table += rowTable(
+        colorSpan(params[0].color),
+        params[0].seriesName + ': ',
+        `${isdiffpos} ${mag} ± ${err}`
+      )
+      table += rowTable(
+        calendarIcon(params[0].color),
+        'MJD: ',
+        params[0].value[0]
+      )
+      table += rowTable(
+        calendarIcon(params[0].color),
+        'Date: ',
+        jdToDate(params[0].value[0]).toUTCString().slice(0, -3) + 'UT'
+      )
+      return table + '</table>'
     }
   }
 

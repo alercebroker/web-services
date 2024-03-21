@@ -1,10 +1,13 @@
 import { LightCurveOptions } from './lc-utils.js'
 
 export class FoldedLightCurveOptions extends LightCurveOptions {
-  constructor(detections, nonDetections, fontColor, period) {
-    super(detections, nonDetections, fontColor)
+  constructor(detections, nonDetections, fontColor, forcedPhotometry, period) {
+    super(detections, nonDetections, forcedPhotometry, fontColor)
     this.detections = this.detections.filter(
-      (x) => x.mag_corr <= 23 && x.e_mag_corr_ext < 1
+      (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
+    )
+    this.forcedPhotometry = this.forcedPhotometry.filter(
+      (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
     )
     this.period = period
     this.getSeries()
@@ -14,8 +17,11 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
 
   getSeries(data) {
     const bands = Array.from(new Set(this.detections.map((item) => item.fid)))
+    const fpBands = Array.from(new Set(this.forcedPhotometry.map((item) => item.fid)))
     this.addDetections(this.detections, bands, this.period)
     this.addErrorBars(this.detections, bands, this.period)
+    this.addForcedPhotometry(this.forcedPhotometry, fpBands, this.period)
+    ths.addErrorBarsForcedPhotometry(this.forcedPhotometry, fpBands, this.period)
   }
 
   addDetections(detections, bands, period) {
@@ -38,6 +44,26 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     })
   }
 
+  addForcedPhotometry(detections, bands, period) {
+    bands.forEach((band) => {
+      const serie = {
+        name: this.bandMap[band].name + ' forced photometry',
+        type: 'scatter',
+        scale: true,
+        color: this.bandMap[band].color,
+        symbolSize: 6,
+        symbol: 'square',
+        encode: {
+          x: 0,
+          y: 1,
+        },
+        zlevel: 10,
+      }
+      serie.data = this.formatForcedPhotometry(detections, band, period)
+      this.options.series.push(serie)
+    })
+  }
+
   addErrorBars(detections, bands, period) {
     bands.forEach((band) => {
       const serie = {
@@ -52,7 +78,40 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     })
   }
 
+  addErrorBarsForcedPhotometry(detections, bands, period) {
+    bands.forEach((band) => {
+      const serie = {
+        name: this.bandMap[band].name + ' forced photometry',
+        type: 'custom',
+        scale: true,
+        color: this.bandMap[band].color,
+        renderItem: this.renderError,
+      }
+      serie.data = this.formatError(detections, band, period)
+      this.options.series.push(serie)
+    })
+  }
+
   formatDetections(detections, band, period) {
+    const folded1 = detections
+      .filter((x) => x.fid === band && x.corrected)
+      .map((x) => {
+        const phase = (x.mjd % period) / period
+        return [
+          phase,
+          x.mag_corr,
+          x.candid,
+          x.e_mag_corr_ext,
+          x.isdiffpos,
+        ]
+      })
+    const folded2 = folded1.map((x) => {
+      return [x[0] + 1, x[1], x[2], x[3], x[4]]
+    })
+    return folded1.concat(folded2)
+  }
+
+  formatForcedPhotometry(detections, band, period) {
     const folded1 = detections
       .filter((x) => x.fid === band && x.corrected)
       .map((x) => {
@@ -105,6 +164,9 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     let legend = bands.map((band) => this.bandMap[band].name)
     legend = legend.concat(
       bands.map((band) => this.bandMap[band].name + ' detections')
+    )
+    legend = legend.concat(
+      bands.map((band) => this.bandMap[band].name + ' forced photometry')
     )
     this.options.legend.data = legend
     this.options.title.subtext = 'Period: ' + this.period.toFixed(6) + ' days'
