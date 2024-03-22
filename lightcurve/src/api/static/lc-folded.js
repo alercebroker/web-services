@@ -1,7 +1,7 @@
 import { LightCurveOptions } from './lc-utils.js'
 
 export class FoldedLightCurveOptions extends LightCurveOptions {
-  constructor(detections, nonDetections, fontColor, forcedPhotometry, period) {
+  constructor(detections, nonDetections, forcedPhotometry, fontColor, period) {
     super(detections, nonDetections, forcedPhotometry, fontColor)
     this.detections = this.detections.filter(
       (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
@@ -21,7 +21,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     this.addDetections(this.detections, bands, this.period)
     this.addErrorBars(this.detections, bands, this.period)
     this.addForcedPhotometry(this.forcedPhotometry, fpBands, this.period)
-    ths.addErrorBarsForcedPhotometry(this.forcedPhotometry, fpBands, this.period)
+    this.addErrorBarsForcedPhotometry(this.forcedPhotometry, fpBands, this.period)
   }
 
   addDetections(detections, bands, period) {
@@ -67,7 +67,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
   addErrorBars(detections, bands, period) {
     bands.forEach((band) => {
       const serie = {
-        name: this.bandMap[band].name,
+        name: this.bandMap[band].name + ' error',
         type: 'custom',
         scale: true,
         color: this.bandMap[band].color,
@@ -81,7 +81,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
   addErrorBarsForcedPhotometry(detections, bands, period) {
     bands.forEach((band) => {
       const serie = {
-        name: this.bandMap[band].name + ' forced photometry',
+        name: this.bandMap[band].name + ' forced photometry error',
         type: 'custom',
         scale: true,
         color: this.bandMap[band].color,

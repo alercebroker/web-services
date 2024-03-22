@@ -125,11 +125,6 @@
         }
     }
 
-    /* Updates the plot when the checkbox value is clicked */
-    window.setForcedPhotometry = () => {
-        window.setPlot(current_plot);
-    }
-
     /* Update plot on plot type change */
     window.setPlot = (type) => {
         current_plot = type;
@@ -137,7 +132,7 @@
             plot_options = new DifferenceLightCurveOptions(detections, non_detections, forced_photometry, plot_text_color);
         } else if (current_plot === "apparent") {
             plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color);
-        } else if (current_plot === "folded" && period) {
+        } else if (current_plot === "folded" && period > 0) {
             plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color, period);
         }
         plot.setOption(plot_options.options, true);

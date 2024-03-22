@@ -69,7 +69,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   addErrorBars(detections, bands) {
     bands.forEach((band) => {
       const serie = {
-        name: this.bandMap[band].name,
+        name: this.bandMap[band].name + ' error',
         type: 'custom',
         scale: true,
         color: this.bandMap[band].color,
@@ -83,7 +83,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   addErrorBarsForcedPhotometry(forcedPhotometry, bands) {
     bands.forEach((band) => {
       const serie = {
-        name: this.bandMap[band].name + ' forced photometry',
+        name: this.bandMap[band].name + ' forced photometry error',
         type: 'custom',
         scale: true,
         color: this.bandMap[band].color,
@@ -97,7 +97,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   formatError(detections, band) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.corrected
+        return x.fid === band && x.corrected && x.mag_corr !== null
       })
       .map(function (x) {
         return [
@@ -111,7 +111,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   formatDetections(detections, band) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.corrected
+        return x.fid === band && x.corrected && x.mag_corr > 0
       })
       .map(function (x) {
         return [
