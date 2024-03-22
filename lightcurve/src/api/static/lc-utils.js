@@ -21,6 +21,7 @@ export class LightCurveOptions {
       grid: {
         left: '7%',
         right: '5%',
+        bottom: '20%'
       },
       title: {
         text: 'Light Curve',
