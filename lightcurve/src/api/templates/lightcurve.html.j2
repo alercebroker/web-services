@@ -93,14 +93,14 @@
         });
     }
 
-
     function getDetectionsWithDR() {
+        const all_detections = [detections];
         dr.forEach((elem) => {
             if (elem.checked) {
                 all_detections.push(dr_detections[elem._id]);
             }
         });
-        return [].concat.apply([], detections);
+        return [].concat.apply([], all_detections);
     }
 
     window.handleDRChange = (event, id) => {
@@ -198,54 +198,50 @@
                 </tbody>
             </table>
         </div>
-        <div class="tw-grid tw-grid-cols-4 tw-gap-4">
-            <!-- Left Column (Radio Buttons) -->
+        <div class="tw-grid tw-grid-cols-4 tw-gap-2">
             <div>
-                <div class="tw-space-y-2">
-                    <label class="tw-flex tw-items-center tw-space-x-2">
-                        <input type="radio" name="data" value="difference" onclick="setPlot(value)"
-                            class="tw=form-radio" checked>
-                        <span>Difference Magnitude</span>
-                        <div class="tooltip">
-                            <i class="fa fa-question-circle tw-me-2"></i>
-                            <div class="tooltip-text">
-                                The difference Magnitude light curve is the absolute difference between science and
-                                reference magnitudes.
-                            </div>
+                <label class="tw-flex tw-items-center tw-space-x-2">
+                    <input type="radio" name="data" value="difference" onclick="setPlot(value)"
+                        class="tw=form-radio" checked>
+                    <span>Difference Magnitude</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle tw-me-2"></i>
+                        <div class="tooltip-text">
+                            The difference Magnitude light curve is the absolute difference between science and
+                            reference magnitudes.
                         </div>
-                    </label>
-                    <label class="tw-flex tw-items-center tw-space-x-2">
-                        <input type="radio" name="data" value="apparent" onclick="setPlot(value)" class="tw-form-radio">
-                        <span>Apparent Magnitude</span>
-                        <div class="tooltip">
-                            <i class="fa fa-question-circle tw-me-2"></i>
-                            <div class="tooltip-text">
-                                Apparent magnitude light curve results from adding/subtracting the fluxes from the
-                                reference
-                                and difference in the same unit system and then converting to magnitudes.
-                            </div>
-                        </div>
-                    </label>
-                    <label class="tw-flex tw-items-center tw-space-x-2">
-                        <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="tw-form-radio"
-                               {% if period is none or period <= 0 %} disabled {% endif %}>
-                        <span style="{% if period is none or period <= 0 %} color: #999; {% endif %}">Folded</span>
-                        <div class="tooltip">
-                            <i class="fa fa-question-circle tw-me-2"></i>
-                            <div class="tooltip-text">
-                                The Period folded light curve, where time is transformed to time modulo the period
-                                (Phase).
-                            </div>
-                        </div>
-                    </label>
-                </div>
+                    </div>
+                </label>
             </div>
-            <!-- Spacer columns -->
             <div>
+                <label class="tw-flex tw-items-center tw-space-x-2">
+                    <input type="radio" name="data" value="apparent" onclick="setPlot(value)" class="tw-form-radio">
+                    <span>Apparent Magnitude</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle tw-me-2"></i>
+                        <div class="tooltip-text">
+                            Apparent magnitude light curve results from adding/subtracting the fluxes from the
+                            reference
+                            and difference in the same unit system and then converting to magnitudes.
+                        </div>
+                    </div>
+                </label>
             </div>
-
-            <!-- Right Column (Buttons) -->
-            <div class="tw-flex tw-flex-col tw-justify-end tw-items-end">
+            <div>
+                <label class="tw-flex tw-items-center tw-space-x-2">
+                    <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="tw-form-radio"
+                           {% if period is none or period <= 0 %} disabled {% endif %}>
+                    <span style="{% if period is none or period <= 0 %} color: #999; {% endif %}">Folded</span>
+                    <div class="tooltip">
+                        <i class="fa fa-question-circle tw-me-2"></i>
+                        <div class="tooltip-text">
+                            The Period folded light curve, where time is transformed to time modulo the period
+                            (Phase).
+                        </div>
+                    </div>
+                </label>
+            </div>
+            <div>
                 <button id="lc-dr"
                     class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600">
                     <i class="fa fa-eye tw-me-2"></i>
