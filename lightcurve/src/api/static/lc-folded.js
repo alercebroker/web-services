@@ -67,7 +67,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
   addErrorBars(detections, bands, period) {
     bands.forEach((band) => {
       const serie = {
-        name: this.bandMap[band].name + ' error',
+        name: this.bandMap[band].name,
         type: 'custom',
         scale: true,
         color: this.bandMap[band].color,
@@ -81,7 +81,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
   addErrorBarsForcedPhotometry(detections, bands, period) {
     bands.forEach((band) => {
       const serie = {
-        name: this.bandMap[band].name + ' forced photometry error',
+        name: this.bandMap[band].name + ' forced photometry',
         type: 'custom',
         scale: true,
         color: this.bandMap[band].color,

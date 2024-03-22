@@ -44,7 +44,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   addErrorBars(detections, bands) {
     bands.forEach((band) => {
       const serie = {
-        name: this.bandMap[band].name + ' error',
+        name: this.bandMap[band].name,
         type: 'custom',
         scale: true,
         color: this.bandMap[band].color,
@@ -58,7 +58,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   addErrorBarsForcedPhotometry(forcedPhotometry, bands) {
     bands.forEach((band) => {
       const serie = {
-        name: this.bandMap[band].name + ' forced photometry error',
+        name: this.bandMap[band].name + ' forced photometry',
         type: 'custom',
         scale: true,
         color: this.bandMap[band].color,
