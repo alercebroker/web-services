@@ -1,5 +1,6 @@
 .tw-preflight :is(.tw-me-2) {
-  margin-inline-end: 0.5rem;
+  -webkit-margin-end: 0.5rem;
+          margin-inline-end: 0.5rem;
 }
 
 .tw-preflight :is(.tw-mt-2) {
@@ -42,40 +43,22 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.tw-preflight :is(.tw-grid-cols-3) {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
 .tw-preflight :is(.tw-flex-col) {
   flex-direction: column;
-}
-
-.tw-preflight :is(.tw-items-end) {
-  align-items: flex-end;
 }
 
 .tw-preflight :is(.tw-items-center) {
   align-items: center;
 }
 
-.tw-preflight :is(.tw-justify-end) {
-  justify-content: flex-end;
-}
-
-.tw-preflight :is(.tw-gap-4) {
-  gap: 1rem;
+.tw-preflight :is(.tw-gap-2) {
+  gap: 0.5rem;
 }
 
 .tw-preflight :is(.tw-space-x-2 > :not([hidden]) ~ :not([hidden])) {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.5rem * var(--tw-space-x-reverse));
   margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
-.tw-preflight :is(.tw-space-y-2 > :not([hidden]) ~ :not([hidden])) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 
 .tw-preflight :is(.tw-divide-y > :not([hidden]) ~ :not([hidden])) {
