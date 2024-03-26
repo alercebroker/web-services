@@ -18,9 +18,13 @@ export class PeriodogramOptions {
           color: this.fontColor,
         },
       },
+      legend: {
+        type: "plain",
+        show: true
+      },
       tooltip: {
         show: true,
-        trigger: 'axis',
+        trigger: 'item',
         axisPointer: {
           type: 'cross',
           label: {
@@ -82,7 +86,7 @@ export class PeriodogramOptions {
       series: [
         {
           name: "Periods",
-          type: "scatter", 
+          type: "scatter",
           symbolSize: 5,
           animation: false,
           large: true,
@@ -91,10 +95,25 @@ export class PeriodogramOptions {
             { name: "score", type: "float", displayName: "Score" }
           ],
           datasetIndex: 0,
+          tooltip: {
+            show: true,
+            trigger: 'item',
+            axisPointer: {
+              type: 'cross',
+              label: {
+                backgroundColor: '#505765',
+              },
+            },
+            formatter: (params) => {
+              return `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}`;
+            }
+          },
         },
         {
           name: "Best periods",
           type: "scatter", 
+          symbol: "triangle",
+          color: "red",
           symbolSize: 10,
           animation: false,
           large: true,
@@ -103,7 +122,19 @@ export class PeriodogramOptions {
             { name: "score", type: "float", displayName: "Score" }
           ],
           datasetIndex: 1,
-          zIndex: 1,
+          tooltip: {
+            show: true,
+            trigger: 'item',
+            axisPointer: {
+              type: 'cross',
+              label: {
+                backgroundColor: '#505765',
+              },
+            },
+            formatter: (params) => {
+              return `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}`;
+            }
+          },
         }
       ],
       dataset: [
