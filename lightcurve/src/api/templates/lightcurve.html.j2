@@ -26,6 +26,7 @@
     import { DifferenceLightCurveOptions } from "{{API_URL}}/static/lc-difference.js";
     import { FoldedLightCurveOptions } from "{{API_URL}}/static/lc-folded.js";
     import { ApparentLightCurveOptions } from "{{API_URL}}/static/lc-apparent.js";
+    import { PeriodogramOptions } from "{{API_URL}}/static/lc-periodogram.js";
     import "{{API_URL}}/static/jszip.js"
     import * as echart from "{{API_URL}}/static/echarts.min.js";
     import { jdToDate } from "{{API_URL}}/static/astro-dates.js";
@@ -40,17 +41,12 @@
 
     let period = {{ period }};
 
-    const mjd = detections.map((detection) => detection["mag"]);
-    const brightness = detections.map((detection) => detection["mag"]);
-    const e_brightness = detections.map((detection) => detection["e_mag"]);
-    const fid = detections.map((detection) => detection["fid"]);
-
     const lc_main_elem = document.getElementById("lc-main");
     const lc_table_elem = document.getElementById("lc-table");
     const lc_folded_period_elem = document.getElementById("lc-folded-period");
 
-    const lc_periodogramm_button_elem = document.getElementById("lc-periodogram-button")
-
+    const lc_periodogram_main_elem = document.getElementById("lc-periodogram-main");
+    const lc_periodogram_button_elem = document.getElementById("lc-periodogram-button")
     const lc_folded_period_slider_elem = document.getElementById("lc-folded-period-slider");
     const lc_folded_period_value_elem = document.getElementById("lc-folded-period-value");
 
@@ -127,6 +123,46 @@
     plot.on("click", plotOnClick);
     window.addEventListener("resize", plot.resize);
 
+    // Initialize periodogram 
+    function build_priodogram() {
+        let periodogram_plot = echarts.init(lc_periodogram_main_elem);
+        window.addEventListener("resize", periodogram_plot.resize);
+
+        const fid_map = {
+            1: "g",
+            2: "r",
+        }
+
+        console.log(Object.keys(detections[0]));
+
+        const mjd = detections.map((detection) => detection["mjd"]);
+        const brightness = detections.map((detection) => detection["mag_corr"]);
+        const e_brightness = detections.map((detection) => detection["e_mag_corr"]);
+        const fid = detections.map((detection) => fid_map[detection["fid"]]);
+
+        const periodogram_plot_options = new PeriodogramOptions(detections);
+
+
+        fetch("http://192.168.1.21:8000/compute_periodogram/", {
+            method: "POST",
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                mjd,
+                brightness,
+                e_brightness,
+                fid
+            })
+        }).then((res) => {
+            return res.json()
+        }).then((periodogram) => {
+            console.log(periodogram);
+            periodogram_plot_options.addSeries(periodogram);
+            periodogram_plot.setOption(periodogram_plot_options.options, true);
+        })
+    }
+
+    build_priodogram();
+
     function toggleDataRelease() {
         lc_main_elem.hidden = !lc_main_elem.hidden;
         lc_table_elem.hidden = !lc_table_elem.hidden;
@@ -150,7 +186,7 @@
         }
 
         lc_folded_period_elem.hidden = !(current_plot === "folded" && period > 0);
-        lc_periodogramm_button_elem.hidden = !(current_plot === "folded" && period > 0);
+        lc_periodogram_button_elem.hidden = !(current_plot === "folded" && period > 0);
 
         plot.setOption(plot_options.options, true);
     };
@@ -302,4 +338,5 @@
         <input id="lc-folded-period-value" type="number" name="period_value"
             class="w-full border border-gray-300 rounded-md p-2 mt-2" />
     </div>
+    <div id="lc-periodogram-main" style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
 </div>
