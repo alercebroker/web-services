@@ -2,9 +2,12 @@ from typing import List
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
+
 from pydantic import BaseModel
 
 from compute_periodogram import PeriodogramComputer
+from harmonics import compute_chi_squared
 
 
 class LightcurveModel(BaseModel):
@@ -12,6 +15,10 @@ class LightcurveModel(BaseModel):
     brightness: List[float]
     e_brightness: List[float]
     fid: List[str]
+
+
+class LightcurveWithPeriod(LightcurveModel):
+    period: float
 
 
 app = FastAPI()
@@ -24,7 +31,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
 @app.get("/")
 async def root():
@@ -35,3 +42,9 @@ async def root():
 async def compute_periodogram(lightcurve: LightcurveModel):
     periodogram = periodogram_computer.compute(lightcurve)
     return periodogram
+
+
+@app.post("/chi_squared/")
+async def chi_squared(lightcurve_with_period: LightcurveWithPeriod):
+    return {'reduced_chi_squared': compute_chi_squared(lightcurve_with_period)}
+
