@@ -20,11 +20,13 @@ detections_json = {
     'e_brightness': detections['e_brightness'].values.tolist(),
     'fid': detections['fid'].map({1: "g", 2: "r"}).values.tolist()
 }
-print(detections_json)
 
 r = requests.post('http://localhost:8000/compute_periodogram/', json=detections_json)
 print(r.status_code)
 print(r.json().keys())
 periodogram = r.json()
 plt.scatter(periodogram['period'], periodogram['score'])
+plt.semilogx()
+plt.xlabel('Period [days]')
+plt.title(f'Best period {periodogram["best_periods"][0]:.3f}')
 plt.show()

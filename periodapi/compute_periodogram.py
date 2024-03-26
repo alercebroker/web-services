@@ -36,5 +36,7 @@ class PeriodogramComputer:
 
         return {
             'period': period.tolist(),
-            'score': score.tolist()
+            'score': score.tolist(),
+            'best_periods': (1.0/best_freq).tolist(),
+            'best_periods_index': self.periodogram_computer.best_local_optima.tolist()
         }
