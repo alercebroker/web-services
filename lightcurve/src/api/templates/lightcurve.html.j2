@@ -125,12 +125,56 @@
     plot.on("click", plotOnClick);
     window.addEventListener("resize", plot.resize);
 
+    function toggleDataRelease() {
+        lc_main_elem.hidden = !lc_main_elem.hidden;
+        lc_table_elem.hidden = !lc_table_elem.hidden;
+
+        // Update the plot when showing it again
+        if (lc_main_elem.hidden === false) {
+            window.setPlot(current_plot);
+            plot.resize();
+        }
+    }
+
+    /* Update plot on plot type change */
+    window.setPlot = (type) => {
+        current_plot = type;
+        if (current_plot === "difference") {
+            plot_options = new DifferenceLightCurveOptions(detections, non_detections, forced_photometry, plot_text_color);
+        } else if (current_plot === "apparent") {
+            plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color);
+        } else if (current_plot === "folded" && period > 0) {
+            plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color, period);
+        }
+
+        lc_folded_period_elem.hidden = !(current_plot === "folded" && period > 0);
+        lc_periodogram_button_elem.hidden = !(current_plot === "folded" && period > 0);
+        lc_periodogram_main_elem.hidden = !(current_plot === "folded" && period > 0 && is_periodogram_built);
+
+        plot.setOption(plot_options.options, true);
+    };
+
     // Initialize periodogram 
+    function update_period(value) {
+        value = parseFloat(value)
+
+        period = value;
+        lc_folded_period_slider_elem.value = value;
+        lc_folded_period_value_elem.value = value;
+
+        window.setPlot(current_plot);
+    }
+
+    update_period(period);
+
     let is_periodogram_built = false;
     function build_priodogram() {
         lc_periodogram_main_elem.hidden = false;
         let periodogram_plot = echarts.init(lc_periodogram_main_elem);
         window.addEventListener("resize", periodogram_plot.resize);
+        periodogram_plot.on("click", (params) => {
+            update_period(params.data[0]);
+        });
 
         const fid_map = {
             1: "g",
@@ -162,36 +206,6 @@
         })
     }
 
-    function toggleDataRelease() {
-        lc_main_elem.hidden = !lc_main_elem.hidden;
-        lc_table_elem.hidden = !lc_table_elem.hidden;
-
-        // Update the plot when showing it again
-        if (lc_main_elem.hidden === false) {
-            window.setPlot(current_plot);
-            plot.resize();
-        }
-    }
-
-    /* Update plot on plot type change */
-    window.setPlot = (type) => {
-        current_plot = type;
-        if (current_plot === "difference") {
-            plot_options = new DifferenceLightCurveOptions(detections, non_detections, forced_photometry, plot_text_color);
-        } else if (current_plot === "apparent") {
-            plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color);
-        } else if (current_plot === "folded" && period > 0) {
-            plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color, period);
-        }
-
-        lc_folded_period_elem.hidden = !(current_plot === "folded" && period > 0);
-        lc_periodogram_button_elem.hidden = !(current_plot === "folded" && period > 0);
-        lc_periodogram_main_elem.hidden = !(current_plot === "folded" && period > 0 && is_periodogram_built);
-
-        plot.setOption(plot_options.options, true);
-    };
-
-
     /* Update plot text color on switch between dark/light mode */
     let container = document.getElementById("lightcurve-htmx-container");
     function setColorScheme() {
@@ -216,20 +230,6 @@
     });
     document.getElementById("lc-download").addEventListener("click", () => download(oid, detections, non_detections));
     document.getElementById("lc-dr").addEventListener("click", toggleDataRelease);
-
-
-    function update_period(value) {
-        value = parseFloat(value)
-
-        period = value;
-        lc_folded_period_slider_elem.value = value;
-        lc_folded_period_value_elem.value = value;
-        lc_folded_period_value_elem.step = compute_step(value)
-
-        window.setPlot(current_plot);
-    }
-
-    update_period(period);
 
     lc_folded_period_slider_elem.addEventListener("change", () => update_period(lc_folded_period_slider_elem.value))
     lc_folded_period_value_elem.addEventListener("change", () => update_period(lc_folded_period_value_elem.value))
@@ -321,7 +321,8 @@
             <div>
                 <div>
                     <button id="lc-periodogram-button" hidden
-                        class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600" style="display: block">
+                        class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600"
+                        style="display: block">
                         <i class="fa fa-eye tw-me-2"></i>
                         Display Periodogram
                     </button>
@@ -341,20 +342,21 @@
         </div>
     </div>
 
-    <div class="container tw-flex tw-justify-center tw-h-1/2" id="container-graphics"> 
+    <div class="container tw-flex tw-justify-center tw-h-1/2" id="container-graphics">
 
         <div id="lc-periodogram-main" hidden style="width: 80%; height: 100%; min-width: 0; min-height: 0;"></div>
     </div>
 
     <div class="container">
         <div class="tw-grid tw-grid-cols-4 tw-gap-4">
-            <div id="lc-folded-period" hidden class="tw-col-span-2 transition-transform ease-in-out duration-500 transform">
-                <input id="lc-folded-period-slider" type="range" name="period_slider" min="0.050000" max="500" step="0.000001"
-                    class="tw-w-4/6  tw-bg-black-500" />
+            <div id="lc-folded-period" hidden
+                class="tw-col-span-2 transition-transform ease-in-out duration-500 transform">
+                <input id="lc-folded-period-slider" type="range" name="period_slider" min="0.050000" max="500"
+                    step="0.000001" class="tw-w-4/6  tw-bg-black-500" />
 
-                <input id="lc-folded-period-value" type="number" name="period_value" min="0.050000" max="500" step="0.000001"
-                    class=" tw-w-1/6 border border-gray-300 rounded-md p-2 mt-2" />
-            </div>        
+                <input id="lc-folded-period-value" type="number" name="period_value" min="0.050000" max="500"
+                    step="0.000001" class=" tw-w-1/6 border border-gray-300 rounded-md p-2 mt-2" />
+            </div>
         </div>
     </div>
 
