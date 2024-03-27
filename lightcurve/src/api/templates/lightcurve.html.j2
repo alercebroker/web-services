@@ -156,18 +156,6 @@
         plot.setOption(plot_options.options, true);
     };
 
-    function compute_step(period) {
-        const f_range = 1 / 0.05 - 1 / 500;
-        const mjds = detections.map((detection) => detection.mjd)
-        const time_span = Math.max(...mjds) - Math.min(...mjds);
-
-        let grid_size = Math.ceil(f_range * time_span / 0.2);
-        grid_size = Math.max(grid_size, 1000);
-        const freq_step = f_range / (grid_size - 1);
-
-        return 1 / ((1 / period) - freq_step) - period;
-    }
-
     function linear_to_log(value, base_min = 0, base_max = 100, target_min = 0.05, target_max = 500) {
         const lin_min = Math.log(target_min);
         const lin_max = Math.log(target_max);
@@ -201,9 +189,6 @@
         period = new_value;
         lc_folded_period_slider_elem.value = log_to_linear(new_value);
         lc_folded_period_value_elem.value = new_value;
-
-        lc_folded_period_value_elem.step = compute_step(new_value);
-        console.log(compute_step(new_value));
 
         window.setPlot(current_plot);
 
