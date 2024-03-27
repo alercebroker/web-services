@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "xmatch-service.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "xmatch-service.labels" . | nindent 4 }}
+  annotations:
+    alb.ingress.kubernetes.io/healthcheck-path: /
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 80
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "xmatch-service.selectorLabels" . | nindent 4 }}
