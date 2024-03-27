@@ -29,7 +29,7 @@ def get_ipix_from_coordinates(ra: float, dec: float, radius: float) -> List[int]
     Returns:
         List[int]: List of HEALPix pixel indices.
     """
-    vec = ang2vec(ra, dec, lonlat=False)
+    vec = ang2vec(ra, dec, lonlat=True)
     radius = radius / 3600
     ipix = query_disc(2**14, vec, radius, inclusive=True)
     return ipix
