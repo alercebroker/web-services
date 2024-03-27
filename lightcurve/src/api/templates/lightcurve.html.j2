@@ -168,12 +168,38 @@
         return 1 / ((1 / period) - freq_step) - period;
     }
 
+    function linear_to_log(value, base_min = 0, base_max = 100, target_min = 0.05, target_max = 500) {
+        const lin_min = Math.log(target_min);
+        const lin_max = Math.log(target_max);
+
+        value = (value - base_min) / (base_max - base_min);
+
+        value = value * (lin_max - lin_min) + lin_min;
+
+        console.log(`linear_to_log ${Math.exp(value)}`)
+
+        return Math.exp(value);
+    }
+
+    function log_to_linear(value, base_min = 0.05, base_max = 500, target_min = 0, target_max = 100) {
+        const lin_min = Math.log(base_min);
+        const lin_max = Math.log(base_max);
+
+        value = Math.log(value);
+        value = (value - lin_min) / (lin_max - lin_min);
+        value = value * (target_max - target_min) + target_min;
+
+        console.log(`log_to_linear ${value}`)
+
+        return value;
+    }
+
     // Initialize periodogram 
     function update_period(new_value) {
         new_value = parseFloat(new_value)
 
         period = new_value;
-        lc_folded_period_slider_elem.value = new_value;
+        lc_folded_period_slider_elem.value = log_to_linear(new_value);
         lc_folded_period_value_elem.value = new_value;
 
         lc_folded_period_value_elem.step = compute_step(new_value);
@@ -258,7 +284,7 @@
     document.getElementById("lc-download").addEventListener("click", () => download(oid, detections, non_detections));
     document.getElementById("lc-dr").addEventListener("click", toggleDataRelease);
 
-    lc_folded_period_slider_elem.addEventListener("change", () => update_period(lc_folded_period_slider_elem.value))
+    lc_folded_period_slider_elem.addEventListener("change", () => update_period(linear_to_log(lc_folded_period_slider_elem.value)))
     lc_folded_period_value_elem.addEventListener("change", () => update_period(lc_folded_period_value_elem.value))
 
     window.addEventListener("load", setColorScheme);
@@ -371,23 +397,20 @@
 
     <div class="container tw-flex tw-flex-col tw-content-center tw-h-1/2 tw-px-20" id="container-graphics">
         <div id="lc-periodogram-main" style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
-        <div class="container tw-mx-7">
-            <input id="lc-folded-period-slider" type="range" name="period_slider" min="0.050000" max="500"
-                step="0.000001" class="tw-w-full tw-bg-black-500" />
-            <div class="tw-grid tw-flex">
-                <div id="lc-folded-period" hidden class="transition-transform ease-in-out duration-500 transform">
-                    <input id="lc-folded-period-value" type="number" name="period_value" min="0.050000" max="500"
-                        step="0.000001" class="tw-border tw-border-gray-300 tw-rounded-md tw-p-2 tw-mt-2 tw-w-1/12" />
-                    <button id="lc-folded-half"
-                        class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
-                        /2
-                    </button>
-                    <button id="lc-folded-double"
-                        class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
-                        x2
-                    </button>
-
-                </div>
+        <div id="lc-folded-period" hidden class="container tw-mx-7">
+            <input id="lc-folded-period-slider" type="range" name="period_slider" min="0" max="100" step="0.000001"
+                class="tw-w-full tw-bg-black-500" />
+            <div class="transition-transform ease-in-out duration-500 transform">
+                <input id="lc-folded-period-value" type="number" name="period_value" min="0.050000" max="500"
+                    step="0.000001" class="tw-border tw-border-gray-300 tw-rounded-md tw-p-2 tw-mt-2" />
+                <button id="lc-folded-half"
+                    class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+                    /2
+                </button>
+                <button id="lc-folded-double"
+                    class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+                    x2
+                </button>
             </div>
         </div>
     </div>
