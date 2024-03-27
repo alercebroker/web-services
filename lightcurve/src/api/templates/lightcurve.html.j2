@@ -41,6 +41,8 @@
 
     let period = {{ period }};
 
+    console.log(Object.keys(detections[0]));
+
     const lc_main_elem = document.getElementById("lc-main");
     const lc_table_elem = document.getElementById("lc-table");
     const lc_folded_period_elem = document.getElementById("lc-folded-period");
@@ -154,15 +156,46 @@
         plot.setOption(plot_options.options, true);
     };
 
-    // Initialize periodogram 
-    function update_period(value) {
-        value = parseFloat(value)
+    function compute_step(period) {
+        const f_range = 1 / 0.05 - 1 / 500;
+        const mjds = detections.map((detection) => detection.mjd)
+        const time_span = Math.max(...mjds) - Math.min(...mjds);
 
-        period = value;
-        lc_folded_period_slider_elem.value = value;
-        lc_folded_period_value_elem.value = value;
+        let grid_size = Math.ceil(f_range * time_span / 0.2);
+        grid_size = Math.max(grid_size, 1000);
+        const freq_step = f_range / (grid_size - 1);
+
+        return 1 / ((1 / period) - freq_step) - period;
+    }
+
+    // Initialize periodogram 
+    function update_period(new_value) {
+        new_value = parseFloat(new_value)
+
+        period = new_value;
+        lc_folded_period_slider_elem.value = Math.min(new_value, 500);
+        lc_folded_period_value_elem.value = new_value;
+
+        lc_folded_period_value_elem.step = compute_step(new_value);
+        console.log(compute_step(new_value));
 
         window.setPlot(current_plot);
+
+        const fid_map = { 1: "g", 2: "r" };
+        const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
+        fetch("http://192.168.1.21:8000/chi_squared/", {
+            method: "POST",
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                mjd: detections_clean.map((detection) => detection["mjd"]),
+                brightness: detections_clean.map((detection) => detection["mag_corr"]),
+                e_brightness: detections_clean.map((detection) => detection["e_mag_corr_ext"]),
+                fid: detections_clean.map((detection) => fid_map[detection["fid"]]),
+                period
+            })
+        }).then((res) => {
+            return res.json()
+        }).then(console.log)
     }
 
     update_period(period);
@@ -176,27 +209,17 @@
             update_period(params.data[0]);
         });
 
-        const fid_map = {
-            1: "g",
-            2: "r",
-        }
-
-        const mjd = detections.map((detection) => detection["mjd"]);
-        const brightness = detections.map((detection) => detection["mag_corr"]);
-        const e_brightness = detections.map((detection) => detection["e_mag_corr"]);
-        const fid = detections.map((detection) => fid_map[detection["fid"]]);
-
-        const periodogram_plot_options = new PeriodogramOptions(detections);
-
-
+        const fid_map = { 1: "g", 2: "r" };
+        const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
+        const periodogram_plot_options = new PeriodogramOptions();
         fetch("http://192.168.1.21:8000/compute_periodogram/", {
             method: "POST",
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
-                mjd,
-                brightness,
-                e_brightness,
-                fid
+                mjd: detections_clean.map((detection) => detection["mjd"]),
+                brightness: detections_clean.map((detection) => detection["mag_corr"]),
+                e_brightness: detections_clean.map((detection) => detection["e_mag_corr_ext"]),
+                fid: detections_clean.map((detection) => fid_map[detection["fid"]]),
             })
         }).then((res) => {
             return res.json()
@@ -219,6 +242,10 @@
     }
     let color_scheme_observer = new MutationObserver(setColorScheme);
     color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
+
+    document.getElementById("lc-folded-double").addEventListener("click", () => update_period(period * 2));
+    document.getElementById("lc-folded-half").addEventListener("click", () => update_period(period / 2));
+
 
     /* First run color setup */
     setColorScheme()
@@ -356,6 +383,14 @@
 
                 <input id="lc-folded-period-value" type="number" name="period_value" min="0.050000" max="500"
                     step="0.000001" class=" tw-w-1/6 border border-gray-300 rounded-md p-2 mt-2" />
+                <button id="lc-folded-half"
+                    class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+                    /2
+                </button>
+                <button id="lc-folded-double"
+                    class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+                    x2
+                </button>
             </div>
         </div>
     </div>

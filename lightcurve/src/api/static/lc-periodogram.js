@@ -1,6 +1,5 @@
 export class PeriodogramOptions {
-  constructor(detections = [], fontColor = 'fff') {
-    this.detections = detections;
+  constructor(fontColor = 'fff') {
     this.fontColor = fontColor;
 
     this.options = {
