@@ -33,7 +33,7 @@ def test_conesearch(init_database, test_client):
     with pool.connection() as conn:
         with conn.cursor() as cur:
             query = "insert into mastercat (oid, ipix, ra, dec, cat) values (%s, %s, %s, %s, %s)"
-            ipix = int(ang2pix(2**14, 1.0, 1.0))
+            ipix = int(ang2pix(2**14, 1.0, 1.0, lonlat=True))
             cur.execute(query, ("1", ipix, 1.0, 1.0, "wise"))
             cur.execute(query, ("2", ipix, 1.0, 1.0, "vlass"))
             cur.execute(query, ("3", ipix, 1.0, 1.0, "lsdr10"))
