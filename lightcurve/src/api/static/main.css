@@ -1,9 +1,11 @@
-.tw-preflight :is(.tw-col-span-2) {
-  grid-column: span 2 / span 2;
+.tw-preflight :is(.tw-mx-7) {
+  margin-left: 1.75rem;
+  margin-right: 1.75rem;
 }
 
 .tw-preflight :is(.tw-me-2) {
-  margin-inline-end: 0.5rem;
+  -webkit-margin-end: 0.5rem;
+          margin-inline-end: 0.5rem;
 }
 
 .tw-preflight :is(.tw-mt-2) {
@@ -30,20 +32,20 @@
   height: 100%;
 }
 
-.tw-preflight :is(.tw-w-1\/6) {
-  width: 16.666667%;
+.tw-preflight :is(.tw-w-1\/12) {
+  width: 8.333333%;
 }
 
 .tw-preflight :is(.tw-w-12) {
   width: 3rem;
 }
 
-.tw-preflight :is(.tw-w-4\/6) {
-  width: 66.666667%;
-}
-
 .tw-preflight :is(.tw-w-6) {
   width: 1.5rem;
+}
+
+.tw-preflight :is(.tw-w-full) {
+  width: 100%;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -62,20 +64,16 @@
   flex-direction: column;
 }
 
+.tw-preflight :is(.tw-content-center) {
+  align-content: center;
+}
+
 .tw-preflight :is(.tw-items-center) {
   align-items: center;
 }
 
-.tw-preflight :is(.tw-justify-center) {
-  justify-content: center;
-}
-
 .tw-preflight :is(.tw-gap-2) {
   gap: 0.5rem;
-}
-
-.tw-preflight :is(.tw-gap-4) {
-  gap: 1rem;
 }
 
 .tw-preflight :is(.tw-space-x-2 > :not([hidden]) ~ :not([hidden])) {
@@ -101,6 +99,10 @@
 
 .tw-preflight :is(.tw-rounded) {
   border-radius: 0.25rem;
+}
+
+.tw-preflight :is(.tw-rounded-md) {
+  border-radius: 0.375rem;
 }
 
 .tw-preflight :is(.tw-border) {
@@ -132,6 +134,10 @@
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-p-2) {
+  padding: 0.5rem;
+}
+
 .tw-preflight :is(.tw-p-4) {
   padding: 1rem;
 }
@@ -139,6 +145,11 @@
 .tw-preflight :is(.tw-px-2) {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+
+.tw-preflight :is(.tw-px-20) {
+  padding-left: 5rem;
+  padding-right: 5rem;
 }
 
 .tw-preflight :is(.tw-py-1) {
