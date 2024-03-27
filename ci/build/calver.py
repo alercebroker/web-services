@@ -31,7 +31,7 @@ def get_calver(current_version: str, version_from_command: str):
         micro = micro_and_modifier
         modifier = ""
     else:
-        raise ValueError("Could not parse micro and modifier")
+        raise ValueError(f"Could not parse micro and modifier {micro_and_modifier}")
     if version_from_command == "prerelease":
         try:
             modifier = f"-rc{int(modifier[2:]) + 1}"
