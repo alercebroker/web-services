@@ -1,13 +1,12 @@
 export class PeriodogramOptions {
-  constructor(detections = [], fontColor = 'fff') {
-    this.detections = detections;
+  constructor(fontColor = 'fff') {
     this.fontColor = fontColor;
 
     this.options = {
       grid: {
-        left: '7%',
-        right: '5%',
-        bottom: '20%',
+        left: '0%',
+        right: '2%',
+        bottom: '10%',
         containLabel: true,
       },
       title: {
@@ -62,6 +61,7 @@ export class PeriodogramOptions {
         name: "Period",
         type: "value",
         type: "log",
+        nameLocation: 'center',
         scale: true,
         splitLine: {
           show: false,
