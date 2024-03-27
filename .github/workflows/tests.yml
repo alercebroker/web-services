@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/test_template.yaml
     with:
         python-version: '3.11'
-        sources-folder: 'lightcurve'
+        sources-folder: 'src'
         test-folder: 'tests'
         base-folder: 'lightcurve'
     secrets:
@@ -38,7 +38,7 @@ jobs:
     uses: ./.github/workflows/test_template.yaml
     with:
         python-version: '3.11'
-        sources-folder: 'xmatch-service'
+        sources-folder: 'src'
         test-folder: 'tests'
         base-folder: 'xmatch-service'
     secrets:
