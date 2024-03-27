@@ -41,8 +41,6 @@
 
     let period = {{ period }};
 
-    console.log(Object.keys(detections[0]));
-
     const lc_main_elem = document.getElementById("lc-main");
     const lc_table_elem = document.getElementById("lc-table");
     const lc_folded_period_elem = document.getElementById("lc-folded-period");
@@ -164,8 +162,6 @@
 
         value = value * (lin_max - lin_min) + lin_min;
 
-        console.log(`linear_to_log ${Math.exp(value)}`)
-
         return Math.exp(value);
     }
 
@@ -176,8 +172,6 @@
         value = Math.log(value);
         value = (value - lin_min) / (lin_max - lin_min);
         value = value * (target_max - target_min) + target_min;
-
-        console.log(`log_to_linear ${value}`)
 
         return value;
     }
@@ -194,7 +188,7 @@
 
         const fid_map = { 1: "g", 2: "r" };
         const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
-        fetch("http://192.168.1.21:8000/chi_squared/", {
+        fetch("http://ec2-54-162-233-91.compute-1.amazonaws.com/chi_squared/", {
             method: "POST",
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
@@ -223,7 +217,7 @@
         const fid_map = { 1: "g", 2: "r" };
         const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
         const periodogram_plot_options = new PeriodogramOptions();
-        fetch("http://192.168.1.21:8000/compute_periodogram/", {
+        fetch("ec2-54-162-233-91.compute-1.amazonaws.com/compute_periodogram/", {
             method: "POST",
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
