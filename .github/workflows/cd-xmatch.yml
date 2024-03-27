@@ -10,7 +10,7 @@ on:
       - 'charts/xmatch-service/**'
 
 jobs:
-  cd_lightcurve:
+  cd_xmatch:
     uses: ./.github/workflows/cd-template.yml
     with:
       packages: 'xmatch-service' # comma separated list of packages
