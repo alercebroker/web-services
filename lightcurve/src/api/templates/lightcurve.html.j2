@@ -149,7 +149,6 @@
 
         lc_folded_period_elem.hidden = !(current_plot === "folded" && period > 0);
         lc_periodogram_button_elem.hidden = !(current_plot === "folded" && period > 0);
-        lc_periodogram_main_elem.hidden = !(current_plot === "folded" && period > 0 && is_periodogram_built);
 
         plot.setOption(plot_options.options, true);
     };
@@ -207,7 +206,6 @@
 
     let is_periodogram_built = false;
     function build_priodogram() {
-        lc_periodogram_main_elem.hidden = false;
         let periodogram_plot = echarts.init(lc_periodogram_main_elem);
         window.addEventListener("resize", periodogram_plot.resize);
         periodogram_plot.on("click", (params) => {
@@ -217,7 +215,7 @@
         const fid_map = { 1: "g", 2: "r" };
         const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
         const periodogram_plot_options = new PeriodogramOptions();
-        fetch("ec2-54-162-233-91.compute-1.amazonaws.com/compute_periodogram/", {
+        fetch("http://ec2-54-162-233-91.compute-1.amazonaws.com/compute_periodogram/", {
             method: "POST",
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
@@ -229,6 +227,9 @@
         }).then((res) => {
             return res.json()
         }).then((periodogram) => {
+            document.getElementById("lc-periodogram-main-spinner").hidden = true;
+            lc_periodogram_main_elem.hidden = false;
+            periodogram_plot.resize();
             periodogram_plot_options.addSeries(periodogram);
             periodogram_plot.setOption(periodogram_plot_options.options, true);
         })
@@ -257,7 +258,10 @@
 
     /* Set up Download and Data release buttons */
     document.getElementById("lc-periodogram-button").addEventListener("click", () => {
-        if (!is_periodogram_built) build_priodogram();
+        if (!is_periodogram_built) {
+            build_priodogram();
+            document.getElementById("lc-periodogram-main-spinner").hidden = false;
+        }
         is_periodogram_built = true;
     });
     document.getElementById("lc-download").addEventListener("click", () => download(oid, detections, non_detections));
@@ -374,9 +378,15 @@
         </div>
     </div>
 
-    <div class="container tw-flex tw-flex-col tw-content-center tw-h-1/2 tw-px-20" id="container-graphics">
-        <div id="lc-periodogram-main" style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
-        <div id="lc-folded-period" hidden class="container tw-mx-7">
+    <div id="lc-folded-period" hidden class="container tw-flex tw-flex-col tw-content-center tw-h-1/2 tw-px-20">
+        <div id="lc-periodogram-main-spinner" hidden
+            class="tw-absolute tw-right-1/2 tw-bottom-1/2 tw-transform tw-translate-x-1/2 tw-translate-y-1/2">
+            <div
+                class="tw-border-t-transparent tw-border-solid tw-animate-spin tw-rounded-full tw-border-blue-400 tw-border-8 tw-h-64 tw-w-64">
+            </div>
+        </div>
+        <div id="lc-periodogram-main" hidden style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
+        <div class="container tw-mx-7">
             <input id="lc-folded-period-slider" type="range" name="period_slider" min="0" max="100" step="0.000001"
                 class="tw-w-full tw-bg-black-500" />
             <div class="transition-transform ease-in-out duration-500 transform">
