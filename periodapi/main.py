@@ -11,14 +11,14 @@ from harmonics import compute_chi_squared
 
 
 class LightcurveModel(BaseModel):
-    mjd: List[float]
-    brightness: List[float]
-    e_brightness: List[float]
+    mjd: List[float | int]
+    brightness: List[float | int]
+    e_brightness: List[float | int]
     fid: List[str]
 
 
 class LightcurveWithPeriod(LightcurveModel):
-    period: float
+    period: float | int
 
 
 app = FastAPI()

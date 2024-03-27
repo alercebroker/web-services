@@ -33,12 +33,12 @@ detections_with_period = {
 
 # compute_chi_squared(detections_with_period)
 
-r = requests.post('http://localhost:8000/compute_periodogram/', json=detections_json)
+r = requests.post('http://ec2-54-162-233-91.compute-1.amazonaws.com/compute_periodogram/', json=detections_json)
 print(r.status_code)
 print(r.json().keys())
 
 
-r2 = requests.post('http://localhost:8000/chi_squared/', json=detections_with_period)
+r2 = requests.post('http://ec2-54-162-233-91.compute-1.amazonaws.com/chi_squared/', json=detections_with_period)
 print(r2.json())
 
 periodogram = r.json()
