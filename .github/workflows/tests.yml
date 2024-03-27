@@ -34,3 +34,12 @@ jobs:
         codecov-flags: ""
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+  xmatch_tests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+        python-version: '3.11'
+        sources-folder: 'xmatch-service'
+        test-folder: 'tests'
+        base-folder: 'xmatch-service'
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
