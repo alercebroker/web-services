@@ -4,7 +4,7 @@ import os
 from typing import List, Literal
 from core.service import get_oids_from_coordinates, Mastercat
 
-app = FastAPI()
+app = FastAPI(openapi_url="/v2/xmatch-service/openapi.json")
 user = os.getenv("DB_USER")
 pwd = os.getenv("DB_PASSWORD")
 host = os.getenv("DB_HOST")
@@ -22,3 +22,7 @@ def conesearch(ra: float, dec: float, radius: float, cat: Literal["all", "wise",
         raise HTTPException(status_code=422, detail="Radius should be greater than 0")
     return get_oids_from_coordinates(ra, dec, radius, pool, cat)
 
+
+@app.get("/openapi.json")
+def custom_swagger_route():
+    return app.openapi()
