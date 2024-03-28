@@ -146,7 +146,7 @@
         } else if (current_plot === "folded" && period > 0) {
             plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color, period);
         }
-
+            
         lc_folded_period_elem.hidden = !(current_plot === "folded" && period > 0);
         lc_periodogram_button_elem.hidden = !(current_plot === "folded" && period > 0);
 
@@ -187,7 +187,7 @@
 
         const fid_map = { 1: "g", 2: "r" };
         const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
-        fetch("http://ec2-54-162-233-91.compute-1.amazonaws.com/chi_squared/", {
+        fetch("{{API_URL}}/period/chi_squared/", {
             method: "POST",
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({
@@ -215,7 +215,7 @@
         const fid_map = { 1: "g", 2: "r" };
         const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
         const periodogram_plot_options = new PeriodogramOptions();
-        fetch("http://ec2-54-162-233-91.compute-1.amazonaws.com/compute_periodogram/", {
+        fetch("{{API_URL}}/period/compute_periodogram/", {
             method: "POST",
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({

@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 
 from pydantic import BaseModel, Field
 
@@ -100,3 +100,14 @@ class DataReleaseDetection(BaseModel):
     field: int
     objectid: float
     corrected: Optional[bool] = True
+
+
+class LightcurveModel(BaseModel):
+    mjd: List[float | int]
+    brightness: List[float | int]
+    e_brightness: List[float | int]
+    fid: List[str]
+
+
+class LightcurveWithPeriod(LightcurveModel):
+    period: float | int
