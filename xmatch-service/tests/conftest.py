@@ -35,12 +35,12 @@ def create_tables(pool):
             cur.execute(
                 """
                 CREATE TABLE mastercat (
-                    oid text,
+                    id text,
                     ipix bigint,
                     ra double precision,
                     dec double precision,
                     cat text,
-                    PRIMARY KEY (oid, cat)
+                    PRIMARY KEY (id, cat)
                 )
                 """
             )

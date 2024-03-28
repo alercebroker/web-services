@@ -32,31 +32,69 @@ def test_conesearch(init_database, test_client):
     assert pool is not None
     with pool.connection() as conn:
         with conn.cursor() as cur:
-            query = "insert into mastercat (oid, ipix, ra, dec, cat) values (%s, %s, %s, %s, %s)"
-            ipix = int(ang2pix(2**14, 1.0, 1.0, lonlat=True))
-            cur.execute(query, ("1", ipix, 1.0, 1.0, "wise"))
-            cur.execute(query, ("2", ipix, 1.0, 1.0, "vlass"))
-            cur.execute(query, ("3", ipix, 1.0, 1.0, "lsdr10"))
-    response = client.get("/conesearch?ra=1.0&dec=1.0&radius=1&cat=all")
+            query = "insert into mastercat (id, ipix, ra, dec, cat) values (%s, %s, %s, %s, %s)"
+            ipix = int(ang2pix(2**14, 118.0, -50.0, lonlat=True, nest=True))
+            cur.execute(query, ("1", ipix, 118, -50, "wise"))
+            cur.execute(query, ("2", ipix, 118, -50, "vlass"))
+            cur.execute(query, ("3", ipix, 118, -50, "lsdr10"))
+    response = client.get("/conesearch?ra=118.0001&dec=-50.0001&radius=1&cat=all")
     assert response.status_code == 200
-    assert response.json() == ["1", "2", "3"]
-    response = client.get("/conesearch?ra=1.0&dec=1.0&radius=1&cat=wise")
+    assert response.json() == [
+            {
+                "id": "1",
+                "ra": 118.0,
+                "dec": -50.0,
+                "cat": "wise"
+            },
+            {
+                "id": "2",
+                "ra": 118.0,
+                "dec": -50.0,
+                "cat": "vlass"
+            },
+            {
+                "id": "3",
+                "ra": 118.0,
+                "dec": -50.0,
+                "cat": "lsdr10"
+            }
+    ]
+    response = client.get("/conesearch?ra=118&dec=-50&radius=1&cat=wise")
     assert response.status_code == 200
-    assert response.json() == ["1"]
-    response = client.get("/conesearch?ra=1.0&dec=1.0&radius=1&cat=vlass")
+    assert response.json() == [{"id": "1", "ra": 118.0, "dec": -50.0, "cat": "wise"}]
+    response = client.get("/conesearch?ra=118&dec=-50&radius=1&cat=vlass")
     assert response.status_code == 200
-    assert response.json() == ["2"]
-    response = client.get("/conesearch?ra=1.0&dec=1.0&radius=1&cat=lsdr10")
+    assert response.json() == [{"id": "2", "ra": 118.0, "dec": -50.0, "cat": "vlass"}]
+    response = client.get("/conesearch?ra=118&dec=-50&radius=1&cat=lsdr10")
     assert response.status_code == 200
-    assert response.json() == ["3"]
-    response = client.get("/conesearch?ra=1.0&dec=1.0&radius=1&cat=unknown")
+    assert response.json() == [{"id": "3", "ra": 118.0, "dec": -50.0, "cat": "lsdr10"}]
+    response = client.get("/conesearch?ra=118&dec=-50&radius=1&cat=unknown")
     assert response.status_code == 422
     assert response.json()["detail"][0]["type"] == "literal_error"
     assert response.json()["detail"][0]["loc"] == ["query", "cat"]
     assert response.json()["detail"][0]["msg"] == "Input should be 'all', 'wise', 'vlass' or 'lsdr10'"
-    response = client.get("/conesearch?ra=1.0&dec=1.0&radius=1")
+    response = client.get("/conesearch?ra=118&dec=-50&radius=1")
     assert response.status_code == 200
-    assert response.json() == ["1", "2", "3"]
-    response = client.get("/conesearch?ra=1.0&dec=1.0&radius=0")
+    assert response.json() == [
+            {
+                "id": "1",
+                "ra": 118.0,
+                "dec": -50.0,
+                "cat": "wise"
+            },
+            {
+                "id": "2",
+                "ra": 118.0,
+                "dec": -50.0,
+                "cat": "vlass"
+            },
+            {
+                "id": "3",
+                "ra": 118.0,
+                "dec": -50.0,
+                "cat": "lsdr10"
+            }
+    ]
+    response = client.get("/conesearch?ra=118&dec=-50&radius=0")
     assert response.status_code == 422
-    
+
