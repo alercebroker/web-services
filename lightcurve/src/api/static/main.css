@@ -16,8 +16,7 @@
 }
 
 .tw-preflight :is(.tw-me-2) {
-  -webkit-margin-end: 0.5rem;
-          margin-inline-end: 0.5rem;
+  margin-inline-end: 0.5rem;
 }
 
 .tw-preflight :is(.tw-mt-2) {
@@ -310,6 +309,16 @@
   font-variation-settings: normal;
   /* 6 */
   margin: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 /*
