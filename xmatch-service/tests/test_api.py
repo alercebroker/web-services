@@ -37,7 +37,7 @@ def test_conesearch(init_database, test_client):
             cur.execute(query, ("1", ipix, 118, -50, "wise"))
             cur.execute(query, ("2", ipix, 118, -50, "vlass"))
             cur.execute(query, ("3", ipix, 118, -50, "lsdr10"))
-    response = client.get("/conesearch?ra=118.0001&dec=-50.0001&radius=1&cat=all")
+    response = client.get("/conesearch?ra=118.0001&dec=-50.0001&radius=1&cat=all&nneighbor=3")
     assert response.status_code == 200
     assert response.json() == [
             {
@@ -73,7 +73,7 @@ def test_conesearch(init_database, test_client):
     assert response.json()["detail"][0]["type"] == "literal_error"
     assert response.json()["detail"][0]["loc"] == ["query", "cat"]
     assert response.json()["detail"][0]["msg"] == "Input should be 'all', 'wise', 'vlass' or 'lsdr10'"
-    response = client.get("/conesearch?ra=118&dec=-50&radius=1")
+    response = client.get("/conesearch?ra=118&dec=-50&radius=1&nneighbor=3")
     assert response.status_code == 200
     assert response.json() == [
             {

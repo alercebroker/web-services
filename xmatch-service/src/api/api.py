@@ -17,10 +17,18 @@ def read_root():
     return {"Hello": "World"}
 
 @app.get("/conesearch")
-def conesearch(ra: float, dec: float, radius: float, cat: Literal["all", "wise", "vlass", "lsdr10"]="all") -> List[Mastercat]:
+def conesearch(
+    ra: float,
+    dec: float,
+    radius: float,
+    cat: Literal["all", "wise", "vlass", "lsdr10"]="all",
+    nneighbor: int=1,
+) -> List[Mastercat]:
     if radius <= 0:
         raise HTTPException(status_code=422, detail="Radius should be greater than 0")
-    return get_oids_from_coordinates(ra, dec, radius, pool, cat)
+    if nneighbor <= 0:
+        raise HTTPException(status_code=422, detail="Number of neighbors should be greater than 0")
+    return get_oids_from_coordinates(ra, dec, radius, pool, cat, nneighbor)
 
 
 @app.get("/openapi.json")

@@ -1,5 +1,5 @@
 from database.database import create_connection
-from core.service import get_oids_from_coordinates
+from core.service import get_oids_from_coordinates, Mastercat, get_distance_from_point
 from healpy.pixelfunc import ang2pix
 
 def test_get_oids_from_coordinates(init_database):
@@ -35,7 +35,18 @@ def test_get_oids_from_coordinates_from_catalog(init_database):
     assert [r.to_dict()["id"] for r in result] == ["1"]
     result = get_oids_from_coordinates(1.0, 1.0, 1, pool, "vlass")
     assert [r.to_dict()["id"] for r in result] == ["2"]
-    result = get_oids_from_coordinates(1.0, 1.0, 1, pool, "all")
+    result = get_oids_from_coordinates(1.0, 1.0, 1, pool, "all", 2)
     assert [r.to_dict()["id"] for r in result] == ["1","2"]
-    result = get_oids_from_coordinates(1.0, 1.0, 1, pool)
+    result = get_oids_from_coordinates(1.0, 1.0, 1, pool, nneighbor=2)
     assert [r.to_dict()["id"] for r in result] == ["1","2"]
+
+def test_get_distance_from_point():
+    points = [
+        Mastercat(id="1", ra=1.0, dec=1.0, cat="test"),
+        Mastercat(id="2", ra=1.1, dec=1.1, cat="test"),
+        Mastercat(id="3", ra=3.0, dec=3.0, cat="test"),
+    ]
+    result = get_distance_from_point(points, 1.0, 1.0, 1, 1)
+    assert [r.to_dict()["id"] for r in result] == ["1"]
+    result = get_distance_from_point(points, 1.0, 1.0, 1, 2)
+    assert [r.to_dict()["id"] for r in result] == ["1", "2"]

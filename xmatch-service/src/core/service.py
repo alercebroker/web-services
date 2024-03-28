@@ -4,6 +4,7 @@ from .query_database import find_objects_by_ipix, Mastercat
 from healpy.pixelfunc import ang2vec
 from healpy import query_disc
 from database.database import ConnectionPool
+from scipy.spatial import KDTree
 
 def get_ipix_from_coordinates(ra: float, dec: float, radius: float) -> List[int]:
     """Return a list of HEALPix pixel indices at the given coordinates.
@@ -23,7 +24,14 @@ def get_ipix_from_coordinates(ra: float, dec: float, radius: float) -> List[int]
 
 
 
-def get_oids_from_coordinates(ra: float, dec: float, radius: float, pool: ConnectionPool, cat: str = "all") -> List[Mastercat]:
+def get_oids_from_coordinates(
+    ra: float,
+    dec: float,
+    radius: float,
+    pool: ConnectionPool,
+    cat: str = "all",
+    nneighbor: int = 1,
+) -> List[Mastercat]:
     """Return a list of object ids at the given coordinates.
     
     Args:
@@ -36,5 +44,30 @@ def get_oids_from_coordinates(ra: float, dec: float, radius: float, pool: Connec
     """
     ipix = get_ipix_from_coordinates(ra, dec, radius)
     ipix = ipix.tolist()
-    return find_objects_by_ipix(ipix, pool, cat)
+    objects = find_objects_by_ipix(ipix, pool, cat)
+    return get_distance_from_point(objects, ra, dec, radius, nneighbor)
+
+def get_distance_from_point(
+    all_points: List[Mastercat],
+    ra: float,
+    dec: float,
+    radius: float,
+    nneighbor: int,
+) -> List[Mastercat]:
+    """Return a list of object ids at the given coordinates.
+    
+    Args:
+        all_points (List[Mastercat]): List of Mastercat objects.
+        ra (float): Right ascension.
+        dec (float): Declination.
+        radius (float): Radius in arcseconds.
+        nneighbor (int): Number of neighbors to return.
+
+    Returns:
+        List[Mastercat]: List of id, ra, dec and catalog.
+    """
+    points = [(point.ra, point.dec) for point in all_points]
+    kdtree = KDTree(points) # TODO: use skycoord for better distance calculation
+    indices = kdtree.query_ball_point([ra, dec], radius)
+    return [all_points[i] for i in indices[:nneighbor]]
 
