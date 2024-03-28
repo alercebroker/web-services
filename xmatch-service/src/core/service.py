@@ -5,6 +5,7 @@ from healpy.pixelfunc import ang2vec
 from healpy import query_disc
 from database.database import ConnectionPool
 from scipy.spatial import KDTree
+from numpy import deg2rad
 
 def get_ipix_from_coordinates(ra: float, dec: float, radius: float) -> List[int]:
     """Return a list of HEALPix pixel indices at the given coordinates.
@@ -18,7 +19,7 @@ def get_ipix_from_coordinates(ra: float, dec: float, radius: float) -> List[int]
         List[int]: List of HEALPix pixel indices.
     """
     vec = ang2vec(ra, dec, lonlat=True)
-    radius = radius / 3600
+    radius = deg2rad(radius/3600.0)
     ipix = query_disc(2**14, vec, radius, inclusive=True, nest=True)
     return ipix
 
