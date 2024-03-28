@@ -26,6 +26,7 @@
     import { DifferenceLightCurveOptions } from "{{API_URL}}/static/lc-difference.js";
     import { FoldedLightCurveOptions } from "{{API_URL}}/static/lc-folded.js";
     import { ApparentLightCurveOptions } from "{{API_URL}}/static/lc-apparent.js";
+    import { PeriodogramOptions } from "{{API_URL}}/static/lc-periodogram.js";
     import "{{API_URL}}/static/jszip.js"
     import * as echart from "{{API_URL}}/static/echarts.min.js";
     import { jdToDate } from "{{API_URL}}/static/astro-dates.js";
@@ -34,16 +35,26 @@
     const detections = {{ detections | tojson }};
     const non_detections = {{ non_detections | tojson }};
     const forced_photometry = {{ forced_photometry | tojson }};
-    const period = {{ period }};
     const dr = {{ dr | tojson }};
     const dr_detections = {{ dr_detections | tojson }};
+    const default_period = {{ period }}
+
+    let period = {{ period }};
 
     const lc_main_elem = document.getElementById("lc-main");
     const lc_table_elem = document.getElementById("lc-table");
+    const lc_folded_period_elem = document.getElementById("lc-folded-period");
+
+    const lc_periodogram_main_elem = document.getElementById("lc-periodogram-main");
+    const lc_periodogram_button_elem = document.getElementById("lc-periodogram-button")
+    const lc_folded_period_slider_elem = document.getElementById("lc-folded-period-slider");
+    const lc_folded_period_value_elem = document.getElementById("lc-folded-period-value");
 
     let plot_text_color = "#000";
     let current_plot = "difference";
     let plot_options;
+
+
 
     function plotOnClick(detection) {
         let index = plot_options.detections.findIndex((x) => x.mjd === detection.value[0])
@@ -135,8 +146,94 @@
         } else if (current_plot === "folded" && period > 0) {
             plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color, period);
         }
+            
+        lc_folded_period_elem.hidden = !(current_plot === "folded" && period > 0);
+        lc_periodogram_button_elem.hidden = !(current_plot === "folded" && period > 0);
+
         plot.setOption(plot_options.options, true);
     };
+
+    function linear_to_log(value, base_min = 0, base_max = 100, target_min = 0.05, target_max = 500) {
+        const lin_min = Math.log(target_min);
+        const lin_max = Math.log(target_max);
+
+        value = (value - base_min) / (base_max - base_min);
+
+        value = value * (lin_max - lin_min) + lin_min;
+
+        return Math.exp(value);
+    }
+
+    function log_to_linear(value, base_min = 0.05, base_max = 500, target_min = 0, target_max = 100) {
+        const lin_min = Math.log(base_min);
+        const lin_max = Math.log(base_max);
+
+        value = Math.log(value);
+        value = (value - lin_min) / (lin_max - lin_min);
+        value = value * (target_max - target_min) + target_min;
+
+        return value;
+    }
+
+    // Initialize periodogram 
+    function update_period(new_value) {
+        new_value = parseFloat(new_value)
+
+        period = new_value;
+        lc_folded_period_slider_elem.value = log_to_linear(new_value);
+        lc_folded_period_value_elem.value = new_value;
+
+        window.setPlot(current_plot);
+
+        const fid_map = { 1: "g", 2: "r" };
+        const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
+        fetch("{{API_URL}}/period/chi_squared/", {
+            method: "POST",
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                mjd: detections_clean.map((detection) => detection["mjd"]),
+                brightness: detections_clean.map((detection) => detection["mag_corr"]),
+                e_brightness: detections_clean.map((detection) => detection["e_mag_corr_ext"]),
+                fid: detections_clean.map((detection) => fid_map[detection["fid"]]),
+                period
+            })
+        }).then((res) => {
+            return res.json()
+        }).then(console.log)
+    }
+
+    update_period(period);
+
+    let is_periodogram_built = false;
+    function build_priodogram() {
+        let periodogram_plot = echarts.init(lc_periodogram_main_elem);
+        window.addEventListener("resize", periodogram_plot.resize);
+        periodogram_plot.on("click", (params) => {
+            update_period(params.data[0]);
+        });
+
+        const fid_map = { 1: "g", 2: "r" };
+        const detections_clean = detections.filter((detection) => detection["mjd"] !== null && detection["mag_corr"] !== null && detection["e_mag_corr_ext"] !== null);
+        const periodogram_plot_options = new PeriodogramOptions();
+        fetch("{{API_URL}}/period/compute_periodogram/", {
+            method: "POST",
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({
+                mjd: detections_clean.map((detection) => detection["mjd"]),
+                brightness: detections_clean.map((detection) => detection["mag_corr"]),
+                e_brightness: detections_clean.map((detection) => detection["e_mag_corr_ext"]),
+                fid: detections_clean.map((detection) => fid_map[detection["fid"]]),
+            })
+        }).then((res) => {
+            return res.json()
+        }).then((periodogram) => {
+            document.getElementById("lc-periodogram-main-spinner").hidden = true;
+            lc_periodogram_main_elem.hidden = false;
+            periodogram_plot.resize();
+            periodogram_plot_options.addSeries(periodogram);
+            periodogram_plot.setOption(periodogram_plot_options.options, true);
+        })
+    }
 
     /* Update plot text color on switch between dark/light mode */
     let container = document.getElementById("lightcurve-htmx-container");
@@ -152,15 +249,31 @@
     let color_scheme_observer = new MutationObserver(setColorScheme);
     color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
 
+    document.getElementById("lc-folded-double").addEventListener("click", () => update_period(period * 2));
+    document.getElementById("lc-folded-half").addEventListener("click", () => update_period(period / 2));
+
+
     /* First run color setup */
     setColorScheme()
 
     /* Set up Download and Data release buttons */
+    document.getElementById("lc-periodogram-button").addEventListener("click", () => {
+        if (!is_periodogram_built) {
+            build_priodogram();
+            document.getElementById("lc-periodogram-main-spinner").hidden = false;
+        }
+        is_periodogram_built = true;
+    });
     document.getElementById("lc-download").addEventListener("click", () => download(oid, detections, non_detections));
     document.getElementById("lc-dr").addEventListener("click", toggleDataRelease);
 
+    lc_folded_period_slider_elem.addEventListener("change", () => update_period(linear_to_log(lc_folded_period_slider_elem.value)))
+    lc_folded_period_value_elem.addEventListener("change", () => update_period(lc_folded_period_value_elem.value))
+
     window.addEventListener("load", setColorScheme);
+
 </script>
+
 <div id="lightcurve-htmx-container" class="tw-preflight" style="height: 100%;">
     <div id="lightcurve"
         class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-rounded tw-p-4 tw-flex tw-flex-col tw-h-full">
@@ -201,8 +314,8 @@
         <div class="tw-grid tw-grid-cols-4 tw-gap-2">
             <div>
                 <label class="tw-flex tw-items-center tw-space-x-2">
-                    <input type="radio" name="data" value="difference" onclick="setPlot(value)"
-                        class="tw=form-radio" checked>
+                    <input type="radio" name="data" value="difference" onclick="setPlot(value)" class="tw=form-radio"
+                        checked>
                     <span>Difference Magnitude</span>
                     <div class="tooltip">
                         <i class="fa fa-question-circle tw-me-2"></i>
@@ -229,8 +342,8 @@
             </div>
             <div>
                 <label class="tw-flex tw-items-center tw-space-x-2">
-                    <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="tw-form-radio"
-                           {% if period is none or period <= 0 %} disabled {% endif %}>
+                    <input type="radio" name="data" value="folded" onclick="setPlot(value)" class="tw-form-radio" {% if
+                        period is none or period <=0 %} disabled {% endif %}>
                     <span style="{% if period is none or period <= 0 %} color: #999; {% endif %}">Folded</span>
                     <div class="tooltip">
                         <i class="fa fa-question-circle tw-me-2"></i>
@@ -242,11 +355,19 @@
                 </label>
             </div>
             <div>
-                <button id="lc-dr"
-                    class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600">
-                    <i class="fa fa-eye tw-me-2"></i>
-                    Display DR
-                </button>
+                <div>
+                    <button id="lc-periodogram-button" hidden
+                        class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600"
+                        style="display: block">
+                        <i class="fa fa-eye tw-me-2"></i>
+                        Display Periodogram
+                    </button>
+                    <button id="lc-dr"
+                        class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600">
+                        <i class="fa fa-eye tw-me-2"></i>
+                        Display DR
+                    </button>
+                </div>
                 <a id="lc-download-ref" style="display: none;"></a>
                 <button id="lc-download"
                     class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
@@ -256,4 +377,32 @@
             </div>
         </div>
     </div>
+
+    <div id="lc-folded-period" hidden class="container tw-flex tw-flex-col tw-content-center tw-h-1/2 tw-px-20">
+        <div id="lc-periodogram-main-spinner" hidden
+            class="tw-absolute tw-right-1/2 tw-bottom-1/2 tw-transform tw-translate-x-1/2 tw-translate-y-1/2">
+            <div
+                class="tw-border-t-transparent tw-border-solid tw-animate-spin tw-rounded-full tw-border-blue-400 tw-border-8 tw-h-64 tw-w-64">
+            </div>
+        </div>
+        <div id="lc-periodogram-main" hidden style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
+        <div class="container tw-mx-7">
+            <input id="lc-folded-period-slider" type="range" name="period_slider" min="0" max="100" step="0.000001"
+                class="tw-w-full tw-bg-black-500" />
+            <div class="transition-transform ease-in-out duration-500 transform">
+                <input id="lc-folded-period-value" type="number" name="period_value" min="0.050000" max="500"
+                    step="0.000001" class="tw-border tw-border-gray-300 tw-rounded-md tw-p-2 tw-mt-2" />
+                <button id="lc-folded-half"
+                    class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+                    /2
+                </button>
+                <button id="lc-folded-double"
+                    class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+                    x2
+                </button>
+            </div>
+        </div>
+    </div>
+
+
 </div>

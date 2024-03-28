@@ -1,3 +1,20 @@
+.tw-preflight :is(.tw-absolute) {
+  position: absolute;
+}
+
+.tw-preflight :is(.tw-bottom-1\/2) {
+  bottom: 50%;
+}
+
+.tw-preflight :is(.tw-right-1\/2) {
+  right: 50%;
+}
+
+.tw-preflight :is(.tw-mx-7) {
+  margin-left: 1.75rem;
+  margin-right: 1.75rem;
+}
+
 .tw-preflight :is(.tw-me-2) {
   margin-inline-end: 0.5rem;
 }
@@ -14,8 +31,16 @@
   display: grid;
 }
 
+.tw-preflight :is(.tw-h-1\/2) {
+  height: 50%;
+}
+
 .tw-preflight :is(.tw-h-6) {
   height: 1.5rem;
+}
+
+.tw-preflight :is(.tw-h-64) {
+  height: 16rem;
 }
 
 .tw-preflight :is(.tw-h-full) {
@@ -30,6 +55,14 @@
   width: 1.5rem;
 }
 
+.tw-preflight :is(.tw-w-64) {
+  width: 16rem;
+}
+
+.tw-preflight :is(.tw-w-full) {
+  width: 100%;
+}
+
 .tw-preflight :is(.tw-min-w-full) {
   min-width: 100%;
 }
@@ -38,44 +71,54 @@
   flex: 1 1 0%;
 }
 
-.tw-preflight :is(.tw-grid-cols-4) {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+.tw-preflight :is(.tw-translate-x-1\/2) {
+  --tw-translate-x: 50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
-.tw-preflight :is(.tw-grid-cols-3) {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+.tw-preflight :is(.tw-translate-y-1\/2) {
+  --tw-translate-y: 50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.tw-preflight :is(.tw-transform) {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+@keyframes tw-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tw-preflight :is(.tw-animate-spin) {
+  animation: tw-spin 1s linear infinite;
+}
+
+.tw-preflight :is(.tw-grid-cols-4) {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .tw-preflight :is(.tw-flex-col) {
   flex-direction: column;
 }
 
-.tw-preflight :is(.tw-items-end) {
-  align-items: flex-end;
+.tw-preflight :is(.tw-content-center) {
+  align-content: center;
 }
 
 .tw-preflight :is(.tw-items-center) {
   align-items: center;
 }
 
-.tw-preflight :is(.tw-justify-end) {
-  justify-content: flex-end;
-}
-
-.tw-preflight :is(.tw-gap-4) {
-  gap: 1rem;
+.tw-preflight :is(.tw-gap-2) {
+  gap: 0.5rem;
 }
 
 .tw-preflight :is(.tw-space-x-2 > :not([hidden]) ~ :not([hidden])) {
   --tw-space-x-reverse: 0;
   margin-right: calc(0.5rem * var(--tw-space-x-reverse));
   margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
-}
-
-.tw-preflight :is(.tw-space-y-2 > :not([hidden]) ~ :not([hidden])) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 
 .tw-preflight :is(.tw-divide-y > :not([hidden]) ~ :not([hidden])) {
@@ -97,13 +140,38 @@
   border-radius: 0.25rem;
 }
 
+.tw-preflight :is(.tw-rounded-full) {
+  border-radius: 9999px;
+}
+
+.tw-preflight :is(.tw-rounded-md) {
+  border-radius: 0.375rem;
+}
+
 .tw-preflight :is(.tw-border) {
   border-width: 1px;
+}
+
+.tw-preflight :is(.tw-border-8) {
+  border-width: 8px;
+}
+
+.tw-preflight :is(.tw-border-solid) {
+  border-style: solid;
+}
+
+.tw-preflight :is(.tw-border-blue-400) {
+  --tw-border-opacity: 1;
+  border-color: rgb(96 165 250 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.tw-border-gray-300) {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-border-t-transparent) {
+  border-top-color: transparent;
 }
 
 .tw-preflight :is(.tw-bg-blue-500) {
@@ -126,6 +194,10 @@
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-p-2) {
+  padding: 0.5rem;
+}
+
 .tw-preflight :is(.tw-p-4) {
   padding: 1rem;
 }
@@ -133,6 +205,11 @@
 .tw-preflight :is(.tw-px-2) {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
+}
+
+.tw-preflight :is(.tw-px-20) {
+  padding-left: 5rem;
+  padding-right: 5rem;
 }
 
 .tw-preflight :is(.tw-py-1) {
@@ -232,6 +309,16 @@
   font-variation-settings: normal;
   /* 6 */
   margin: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
 /*
