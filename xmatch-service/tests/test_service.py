@@ -40,6 +40,18 @@ def test_get_oids_from_coordinates_from_catalog(init_database):
     result = get_oids_from_coordinates(1.0, 1.0, 1, pool, nneighbor=2)
     assert [r.to_dict()["id"] for r in result] == ["1","2"]
 
+def test_get_oids_from_coordinates_from_catalog_none_found(init_database):
+    pool = create_connection("postgres", "postgres", "localhost", "5432", "postgres")
+    assert pool is not None
+    with pool.connection() as conn:
+        with conn.cursor() as cur:
+            query = "insert into mastercat (id, ipix, ra, dec, cat) values (%s, %s, %s, %s, %s)"
+            ipix = int(ang2pix(2**14, 1.0, 1.0, lonlat=True, nest=True))
+            cur.execute(query, ("1", ipix, 1.0, 1.0, "wise"))
+            cur.execute(query, ("2", ipix, 1.0, 1.0, "vlass"))
+    result = get_oids_from_coordinates(50, 50, 1, pool, "all", nneighbor=10)
+    assert result == []
+
 def test_get_distance_from_point():
     points = [
         Mastercat(id="1", ra=1.0, dec=1.0, cat="test"),

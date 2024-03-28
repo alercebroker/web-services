@@ -66,6 +66,8 @@ def get_distance_from_point(
     Returns:
         List[Mastercat]: List of id, ra, dec and catalog.
     """
+    if len(all_points) == 0:
+        return []
     points = [(point.ra, point.dec) for point in all_points]
     kdtree = KDTree(points) # TODO: use skycoord for better distance calculation
     indices = kdtree.query_ball_point([ra, dec], radius)
