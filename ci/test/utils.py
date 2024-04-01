@@ -22,4 +22,13 @@ _tests_selection = {
             },
         },
     ],
+    "xmatch-service": [
+        {
+            "step": healthcheck_test_step,
+            "args": {
+                "staging": [f"{staging_url}/xmatch-service"],
+                "production": [f"{prod_url}/xmatch-service"],
+            },
+        },
+    ]
 }
