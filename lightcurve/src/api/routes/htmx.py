@@ -10,7 +10,7 @@ from core.service import (
 )
 from database.mongo import database
 from database.sql import session
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from ..result_handler import handle_error, handle_success
@@ -19,18 +19,13 @@ router = APIRouter()
 templates = Jinja2Templates(directory="src/api/templates", autoescape=True, auto_reload=True)
 templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
-@router.get("/lightcurve", response_class=HTMLResponse)
-async def lightcurve(
-    request: Request, oid: str, survey_id: str = "all"
-) -> HTMLResponse:
+def setup_ralidator(request: Request):
     # el objeto ralidator viene en request.state
     request_ralidator = request.state.ralidator
-
     # permissions logic
     request_ralidator.set_required_permissions(["admin", "basic_user"])
     auth_header = request.headers.get("Authorization", None)
     token = None
-
     if auth_header:
         if re.search("bearer", auth_header, re.IGNORECASE) is None:
             raise ValueError("Malformed Authorization header")
@@ -38,18 +33,14 @@ async def lightcurve(
             token = auth_header.split()[1]
         except Exception:
             raise ValueError("Malformed Authorization header")
-
     request_ralidator.authenticate_token(token)
     allowed, code = request_ralidator.check_if_allowed()
-
     if not allowed:
-        # TODO: fix error handling here
         if code == 401:
-            return "Expired Token", code
-        else:
-            return "Forbidden", code
+            raise HTTPException(status_code=code, detail="Expired Token")
+        raise HTTPException(status_code=code, detail="Unauthorized")
 
-    # data logic
+def get_detections_as_dict(oid, survey_id):
     detections = get_detections(
         oid=oid,
         survey_id=survey_id,
@@ -58,6 +49,10 @@ async def lightcurve(
         handle_error=handle_error,
         handle_success=handle_success,
     )
+    detections = list(map(lambda det: det.__dict__, detections))
+    return detections
+
+def get_non_detections_as_dict(oid, survey_id):
     non_detections = get_non_detections(
         oid=oid,
         survey_id=survey_id,
@@ -66,6 +61,10 @@ async def lightcurve(
         handle_error=handle_error,
         handle_success=handle_success,
     )
+    non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
+    return non_detections
+
+def get_period_value(oid):
     period = get_period(
         oid=oid,
         survey_id="ztf",
@@ -74,6 +73,9 @@ async def lightcurve(
         handle_error=handle_error,
         handle_success=handle_success,
     )
+    return period.value
+
+def get_forced_photometry_as_dict(oid):
     forced_photometry = get_forced_photometry(
         oid=oid,
         survey_id="ztf",
@@ -82,32 +84,50 @@ async def lightcurve(
         handle_error=handle_error,
         handle_success=handle_success,
     )
-    dr, dr_detections = await get_data_release(
-        detections[0].ra, detections[0].dec
-    )
-    detections = list(map(lambda det: det.__dict__, detections))
-    non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
     forced_photometry = list(map(lambda fp: fp.__dict__, forced_photometry))
-    period = period.value
+    return forced_photometry
+
+async def get_data_release_as_dict(detections):
+    dr, dr_detections = await get_data_release(
+        detections[0]["ra"], detections[0]["dec"]
+    )
     dr_detections = {
         k: list(map(lambda det: det.__dict__, detections))
         for k, detections in dr_detections.items()
     }
+    return dr, dr_detections
 
-    # crear objeto de lightcurve
-    unfiltered_lightcurve = {
+def get_lightcurve(oid, survey_id):
+    detections = get_detections_as_dict(oid, survey_id)
+    non_detections = get_non_detections_as_dict(oid, survey_id)
+    forced_photometry = get_forced_photometry_as_dict(oid)
+    period = get_period_value(oid)
+    dr, dr_detections = await get_data_release_as_dict(detections)
+    return {
         "detections": detections,
         "non_detections": non_detections,
         "forced_photometry": forced_photometry,
+        "period": period,
+        "data_release": dr,
+        "dr_detections": dr_detections,
     }
-    # editar el ralidator para ejecutar filtro de lightcurveset_user_filters con "filter lightcurve altas"
-    request_ralidator.set_app_filters(["filter_atlas_lightcurve"])
-    # ejecutar apply_filters
-    filtered_lightcurve = request_ralidator.apply_filters(
-        unfiltered_lightcurve
-    )
 
-    # sacar detections y non detections del lightcurve filtrado
+def filter_atlas_lightcurve(lightcurve: dict, ralidator):
+    ralidator.set_app_filters(["filter_atlas_lightcurve"])
+    return ralidator.apply_filters(lightcurve)
+
+
+def get_data_and_filter(request: Request, oid: str, survey_id: str = "all"):
+    setup_ralidator(request)
+    unfiltered_lightcurve = get_lightcurve(oid, survey_id)
+    filtered_lightcurve = filter_atlas_lightcurve(unfiltered_lightcurve, request.state.ralidator)
+    return filtered_lightcurve
+
+@router.get("/lightcurve", response_class=HTMLResponse)
+async def lightcurve(
+    request: Request, oid: str, survey_id: str = "all"
+) -> HTMLResponse:
+    filtered_lightcurve = get_data_and_filter(request, oid, survey_id)
     return templates.TemplateResponse(
         name="lightcurve.html.j2",
         context={
@@ -115,9 +135,9 @@ async def lightcurve(
             "oid": oid,
             "detections": filtered_lightcurve["detections"],
             "non_detections": filtered_lightcurve["non_detections"],
-            "forced_photometry": forced_photometry,
-            "period": period,
-            "dr": dr,
-            "dr_detections": dr_detections,
+            "forced_photometry": filtered_lightcurve["forced_photometry"],
+            "period": filtered_lightcurve["period"],
+            "dr": filtered_lightcurve["data_release"],
+            "dr_detections": filtered_lightcurve["dr_detections"],
         },
     )
