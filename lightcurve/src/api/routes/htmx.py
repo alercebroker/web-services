@@ -97,7 +97,7 @@ async def get_data_release_as_dict(detections):
     }
     return dr, dr_detections
 
-def get_lightcurve(oid, survey_id):
+async def get_lightcurve(oid, survey_id):
     detections = get_detections_as_dict(oid, survey_id)
     non_detections = get_non_detections_as_dict(oid, survey_id)
     forced_photometry = get_forced_photometry_as_dict(oid)
@@ -127,7 +127,7 @@ def get_data_and_filter(request: Request, oid: str, survey_id: str = "all"):
 async def lightcurve(
     request: Request, oid: str, survey_id: str = "all"
 ) -> HTMLResponse:
-    filtered_lightcurve = get_data_and_filter(request, oid, survey_id)
+    filtered_lightcurve = await get_data_and_filter(request, oid, survey_id)
     return templates.TemplateResponse(
         name="lightcurve.html.j2",
         context={
