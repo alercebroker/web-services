@@ -117,9 +117,9 @@ def filter_atlas_lightcurve(lightcurve: dict, ralidator):
     return ralidator.apply_filters(lightcurve)
 
 
-def get_data_and_filter(request: Request, oid: str, survey_id: str = "all"):
+async def get_data_and_filter(request: Request, oid: str, survey_id: str = "all"):
     setup_ralidator(request)
-    unfiltered_lightcurve = get_lightcurve(oid, survey_id)
+    unfiltered_lightcurve = await get_lightcurve(oid, survey_id)
     filtered_lightcurve = filter_atlas_lightcurve(unfiltered_lightcurve, request.state.ralidator)
     return filtered_lightcurve
 
