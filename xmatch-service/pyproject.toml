@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "xmatch-service"
-version = "24.3.0-rc8"
+version = "24.4.0-rc9"
 description = ""
 authors = ["Diego Rodriguez <diegorodriguezmancini@gmail.com>"]
 readme = "README.md"
