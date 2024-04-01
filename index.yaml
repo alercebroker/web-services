@@ -504,6 +504,16 @@ entries:
     version: 0.1.18
   lightcurve:
   - apiVersion: v2
+    appVersion: 24.4.1-rc58
+    created: "2024-04-01T14:52:22.293433005Z"
+    description: Lightcurve API for ALeRCE Clients
+    digest: 9fb719e8797a74147cbb9f989ae59b1d751364ab2c2fa73b723ac5ff0229fcc3
+    name: lightcurve
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/lightcurve-24.4.91/lightcurve-24.4.91.tgz
+    version: 24.4.91
+  - apiVersion: v2
     appVersion: 24.3.1-rc55
     created: "2024-03-22T19:30:54.812143511Z"
     description: Lightcurve API for ALeRCE Clients
@@ -1323,4 +1333,15 @@ entries:
     urls:
     - https://github.com/alercebroker/web-services/releases/download/lightcurve-0.2.1/lightcurve-0.2.1.tgz
     version: 0.2.1
-generated: "2024-03-22T19:30:54.812548268Z"
+  xmatch-service:
+  - apiVersion: v2
+    appVersion: 24.4.0-rc9
+    created: "2024-04-01T14:52:22.371737105Z"
+    description: A Helm chart for Kubernetes
+    digest: ae47e243b9eb43d321df15bd015ef2e3392838815fc3aaa7d17a88b51c387ead
+    name: xmatch-service
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/xmatch-service-24.4.8/xmatch-service-24.4.8.tgz
+    version: 24.4.8
+generated: "2024-04-01T14:52:22.372075569Z"
