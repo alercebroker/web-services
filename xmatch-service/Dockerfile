@@ -22,4 +22,4 @@ WORKDIR /app
 COPY ./xmatch-service/README.md /app/README.md
 COPY ./xmatch-service/src /app/src
 RUN poetry install --only-root
-CMD ["poetry", "run", "uvicorn", "api.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "uvicorn", "http_server.api:app", "--host", "0.0.0.0", "--port", "8000"]

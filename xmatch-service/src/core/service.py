@@ -7,9 +7,10 @@ from database.database import ConnectionPool
 from scipy.spatial import KDTree
 from numpy import deg2rad
 
+
 def get_ipix_from_coordinates(ra: float, dec: float, radius: float) -> List[int]:
     """Return a list of HEALPix pixel indices at the given coordinates.
-    
+
     Args:
         ra (float): Right ascension.
         dec (float): Declination.
@@ -19,10 +20,9 @@ def get_ipix_from_coordinates(ra: float, dec: float, radius: float) -> List[int]
         List[int]: List of HEALPix pixel indices.
     """
     vec = ang2vec(ra, dec, lonlat=True)
-    radius = deg2rad(radius/3600.0)
+    radius = deg2rad(radius / 3600.0)
     ipix = query_disc(2**14, vec, radius, inclusive=True, nest=True)
     return ipix
-
 
 
 def get_oids_from_coordinates(
@@ -34,7 +34,7 @@ def get_oids_from_coordinates(
     nneighbor: int = 1,
 ) -> List[Mastercat]:
     """Return a list of object ids at the given coordinates.
-    
+
     Args:
         ra (float): Right ascension.
         dec (float): Declination.
@@ -48,6 +48,7 @@ def get_oids_from_coordinates(
     objects = find_objects_by_ipix(ipix, pool, cat)
     return get_distance_from_point(objects, ra, dec, radius, nneighbor)
 
+
 def get_distance_from_point(
     all_points: List[Mastercat],
     ra: float,
@@ -56,7 +57,7 @@ def get_distance_from_point(
     nneighbor: int,
 ) -> List[Mastercat]:
     """Return a list of object ids at the given coordinates.
-    
+
     Args:
         all_points (List[Mastercat]): List of Mastercat objects.
         ra (float): Right ascension.
@@ -70,7 +71,6 @@ def get_distance_from_point(
     if len(all_points) == 0:
         return []
     points = [(point.ra, point.dec) for point in all_points]
-    kdtree = KDTree(points) # TODO: use skycoord for better distance calculation
+    kdtree = KDTree(points)  # TODO: use skycoord for better distance calculation
     indices = kdtree.query_ball_point([ra, dec], radius)
     return [all_points[i] for i in indices[:nneighbor]]
-

@@ -1,26 +1,11 @@
 from fastapi.testclient import TestClient
 import pytest
-import os
 from healpy.pixelfunc import ang2pix
-
-@pytest.fixture
-def env_setup():
-    os.environ["DB_USER"] = "postgres"
-    os.environ["DB_PASSWORD"] = "postgres"
-    os.environ["DB_HOST"] = "localhost"
-    os.environ["DB_PORT"] = "5432"
-    os.environ["DB_DATABASE"] = "postgres"
-    yield
-    os.environ.pop("DB_USER")
-    os.environ.pop("DB_PASSWORD")
-    os.environ.pop("DB_HOST")
-    os.environ.pop("DB_PORT")
-    os.environ.pop("DB_DATABASE")
 
 @pytest.fixture
 def test_client(env_setup):
     def _client():
-        from api.api import app, pool
+        from http_server.api import app, pool
         client = TestClient(app)
         return client, pool
     return _client

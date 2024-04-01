@@ -2,6 +2,7 @@ import pytest
 import pathlib
 import psycopg
 from psycopg_pool import ConnectionPool
+import os
 
 @pytest.fixture(scope="session")
 def docker_compose_file():
@@ -63,4 +64,18 @@ def init_database(psql_service):
     create_indices(pool)
     yield 
     delete_tables(pool)
+
+@pytest.fixture
+def env_setup():
+    os.environ["DB_USER"] = "postgres"
+    os.environ["DB_PASSWORD"] = "postgres"
+    os.environ["DB_HOST"] = "localhost"
+    os.environ["DB_PORT"] = "5432"
+    os.environ["DB_DATABASE"] = "postgres"
+    yield
+    os.environ.pop("DB_USER")
+    os.environ.pop("DB_PASSWORD")
+    os.environ.pop("DB_HOST")
+    os.environ.pop("DB_PORT")
+    os.environ.pop("DB_DATABASE")
 

@@ -589,7 +589,7 @@ def _get_forced_photometry_mongo(
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e, database="MONGO")
-    result = [ForcedPhotometryModel(**res) for res in result]
+    result = [ForcedPhotometryModel(**{**res, "fid": fid_str2int(res["fid"])}) for res in result]
     return result
 
 
@@ -733,3 +733,43 @@ def _ztf_forced_photometry_to_multistream(
         candid=forced_photometry["oid"] + str(forced_photometry["pid"]),
         extra_fields=extra_fields,
     )
+
+def fid_str2int(fid: str) -> int:
+    """Converts a fid string to an integer.
+
+    :param fid: The fid as a string.
+    :type fid: str
+    :return: The fid as an integer.
+    :rtype: int
+    """
+    fid_map = {
+        "g": 1,
+        "r": 2,
+        "i": 3,
+        "z": 4,
+        "y": 5,
+    }
+    try:
+        return fid_map[fid]
+    except KeyError:
+        raise ValueError(f"Invalid fid: {fid}")
+
+def fid_int2str(fid: int) -> str:
+    """Converts a fid integer to a string.
+
+    :param fid: The fid as an integer.
+    :type fid: int
+    :return: The fid as a string.
+    :rtype: str
+    """
+    fid_map = {
+        1: "g",
+        2: "r",
+        3: "i",
+        4: "z",
+        5: "y",
+    }
+    try:
+        return fid_map[fid]
+    except KeyError:
+        raise ValueError(f"Invalid fid: {fid}")
