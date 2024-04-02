@@ -14,6 +14,7 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from ..result_handler import handle_error, handle_success
+from ..plots import difference as plot_diff
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/api/templates", autoescape=True, auto_reload=True)
@@ -129,8 +130,9 @@ async def lightcurve(
 ) -> HTMLResponse:
     filtered_lightcurve = await get_data_and_filter(request, oid, survey_id)
     return templates.TemplateResponse(
-        name="lightcurve.html.j2",
+        name="lightcurve.html.jinja",
         context={
+            "plot_diff": plot_diff,
             "request": request,
             "oid": oid,
             "detections": filtered_lightcurve["detections"],

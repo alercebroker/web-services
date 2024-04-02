@@ -1,0 +1,21 @@
+{% macro buttons() %}
+<div>
+    <!-- <button id="lc-periodogram-button" hidden -->
+    <!--     class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600" -->
+    <!--     style="display: block"> -->
+    <!--     <i class="fa fa-eye tw-me-2"></i> -->
+    <!--     Display Periodogram -->
+    <!-- </button> -->
+    <button id="lc-dr"
+        class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600">
+        <i class="fa fa-eye tw-me-2"></i>
+        Display DR
+    </button>
+</div>
+<a id="lc-download-ref" style="display: none;"></a>
+<button id="lc-download"
+    class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+    <i class="fa fa-download tw-me-2"></i>
+    Download
+</button>
+{% endmacro %}

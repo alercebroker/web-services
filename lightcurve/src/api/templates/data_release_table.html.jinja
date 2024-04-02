@@ -1,0 +1,57 @@
+{% macro data_release_table(dr) %}
+<table
+    class="tw-min-w-full tw-border tw-border-gray-300 dark:tw-border-[#404040] tw-divide-y tw-divide-gray-200 dark:tw-divide-[#404040] dark:tw-text-white">
+    <thead>
+        <tr class="tw-bg-gray-100 dark:tw-bg-[#252525]">
+            <th class="tw-w-12 tw-text-center">
+                {# <input type="checkbox" class="form-checkbox h-6 w-6" /> #}
+            </th>
+            <th class="tw-text-center">ObjectId</th>
+            <th class="tw-text-center">filterid</th>
+            <th class="tw-text-center">nepochs</th>
+            <th class="tw-text-center">fieldid</th>
+            <th class="tw-text-center">rcid</th>
+        </tr>
+    </thead>
+    <tbody class="tw-divide-y tw-divide-gray-200 dark:tw-divide-[#404040]">
+        {% for data in dr %}
+        <tr class="hover:tw-bg-gray-200 dark:hover:tw-bg-[#353535]">
+            <td class="tw-text-center">
+                <input type="checkbox" class="tw-form-checkbox tw-h-6 tw-w-6"
+                    onchange="handleDRChange(event, {{data._id}})" />
+            </td>
+            <td class="tw-text-right">{{data._id}}</td>
+            <td class="tw-text-right">{{data.filterid}}</td>
+            <td class="tw-text-right">{{data.nepochs}}</td>
+            <td class="tw-text-right">{{data.fieldid}}</td>
+            <td class="tw-text-right">{{data.rcid}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    const lc_main_elem = document.getElementById("lc-main");
+    const lc_table_elem = document.getElementById("lc-table");
+    const radio_apparent = document.getElementById("radio-apparent");
+    let current_plot = "{{current_plot}}";
+
+    function toggleDataRelease() {
+        lc_main_elem.hidden = !lc_main_elem.hidden;
+        lc_table_elem.hidden = !lc_table_elem.hidden;
+
+        // Update the plot when showing it again
+        if (lc_main_elem.hidden === false) {
+            window.setPlot("apparent");
+            radio_apparent.checked = true;
+        }
+    }
+
+    window.handleDRChange = (event, id) => {
+        const checked = event.target.checked;
+        let dr_entry = dr.find((elem) => elem._id === id);
+        dr_entry.checked = checked;
+    }
+
+    document.getElementById("lc-dr").addEventListener("click", toggleDataRelease);
+</script>
+{% endmacro %}

@@ -1,0 +1,186 @@
+<script>
+    // Conditionally loads css file to prevent duplicate downloading / parsing
+    function isCssLoaded(url) {
+        for (let css of document.styleSheets) {
+            if (css.href === url) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function conditionalCss(href) {
+        if (!isCssLoaded(href)) {
+            let link = document.createElement("link");
+            link.href = href;
+            link.type = "text/css";
+            link.rel = "stylesheet";
+            document.head.appendChild(link);
+        }
+    }
+
+    conditionalCss("{{API_URL}}/static/main.css");
+    conditionalCss("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+</script>
+<script type="module">
+    import { DifferenceLightCurveOptions } from "{{API_URL}}/static/lc-difference.js";
+    import { FoldedLightCurveOptions } from "{{API_URL}}/static/lc-folded.js";
+    import { ApparentLightCurveOptions } from "{{API_URL}}/static/lc-apparent.js";
+    import "{{API_URL}}/static/jszip.js"
+    import * as echart from "{{API_URL}}/static/echarts.min.js";
+    import { jdToDate } from "{{API_URL}}/static/astro-dates.js";
+
+    const oid = '{{ oid }}';
+    const detections = {{ detections | tojson }};
+    const non_detections = {{ non_detections | tojson }};
+    const forced_photometry = {{ forced_photometry | tojson }};
+    const dr = {{ dr | tojson }};
+    const dr_detections = {{ dr_detections | tojson }};
+    let period = {{ period }};
+
+    const lc_main_elem = document.getElementById("lc-main");
+    const lc_table_elem = document.getElementById("lc-table");
+
+    let plot_text_color = "#000";
+    let current_plot = "difference";
+    let plot_options;
+
+    function plotOnClick(detection) {
+        let index = plot_options.detections.findIndex((x) => x.mjd === detection.value[0])
+        document.body.dispatchEvent(new CustomEvent('onDetectionClick', { detail: index }))
+        const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
+        return {
+            mjd: detection.value[0],
+            date,
+            index: index,
+        }
+    }
+
+    function getDetectionsWithDR() {
+        const all_detections = [detections];
+        dr.forEach((elem) => {
+            if (elem.checked) {
+                all_detections.push(dr_detections[elem._id]);
+            }
+        });
+        return [].concat.apply([], all_detections);
+    }
+
+    /* Initialize plot */
+    let plot = echarts.init(lc_main_elem);
+    plot.on("click", plotOnClick);
+    window.addEventListener("resize", plot.resize);
+
+
+    function renderError(params, api) {
+        const xValue = api.value(0)
+        const highPoint = api.coord([xValue, api.value(1)])
+        const lowPoint = api.coord([xValue, api.value(2)])
+        const halfWidth = 1.9 // api.size([1, 0])[0] * 0.1
+        const style = api.style({
+          stroke: api.visual('color'),
+          fill: null,
+        })
+        return {
+          type: 'group',
+          children: [
+            {
+              type: 'line',
+              shape: {
+                x1: highPoint[0] - halfWidth,
+                y1: highPoint[1],
+                x2: highPoint[0] + halfWidth,
+                y2: highPoint[1],
+              },
+              style,
+            },
+            {
+              type: 'line',
+              shape: {
+                x1: highPoint[0],
+                y1: highPoint[1],
+                x2: lowPoint[0],
+                y2: lowPoint[1],
+              },
+              style,
+            },
+            {
+              type: 'line',
+              shape: {
+                x1: lowPoint[0] - halfWidth,
+                y1: lowPoint[1],
+                x2: lowPoint[0] + halfWidth,
+                y2: lowPoint[1],
+              },
+              style,
+            },
+          ],
+        }
+      }
+
+    const lc_folded_period_elem = document.getElementById("lc-folded-period");
+    const lc_periodogram_button_elem = document.getElementById("lc-periodogram-button")
+
+    /* Update plot on plot type change */
+    window.setPlot = (type) => {
+        current_plot = type;
+        if (current_plot === "difference") {
+            plot_options = new DifferenceLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color);
+        } else if (current_plot === "apparent") {
+            plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color);
+        } else if (current_plot === "folded" && period > 0) {
+            plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color, period);
+        }
+        plot.setOption(plot_options.options, true);
+        plot.resize()
+    }
+
+    /* Update plot text color on switch between dark/light mode */
+    let container = document.getElementById("lightcurve-htmx-container");
+    function setColorScheme() {
+        const color_scheme = container.classList.contains("tw-dark") ? "tw-dark" : "tw-light";
+        if (color_scheme === "tw-dark") {
+            plot_text_color = "#fff";
+        } else {
+            plot_text_color = "#000";
+        }
+        window.setPlot(current_plot);
+    }
+    let color_scheme_observer = new MutationObserver(setColorScheme);
+    color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
+
+    /* First run color setup */
+    setColorScheme()
+
+    window.addEventListener("load", setColorScheme);
+
+</script>
+
+<div id="lightcurve-htmx-container" class="tw-preflight" style="height: 100%;">
+    <div id="lightcurve"
+        class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-rounded tw-p-4 tw-flex tw-flex-col tw-h-full">
+        <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
+        {% import 'radio_button.html.jinja' as radio %}
+        <div class="tw-grid tw-grid-cols-4 tw-gap-2">
+            <div>
+                {{ radio.radio_button("data", "difference", True, "Difference Magnitude", "The difference Magnitude light curve is the absolute difference between science and reference magnitudes.") }}
+            </div>
+            <div>
+                {{ radio.radio_button("data", "apparent", False, "Apparent Magnitude", "Apparent magnitude light curve results from adding/subtracting the fluxes from the reference and difference in the same unit system and then converting to magnitudes.") }}
+            </div>
+            <div>
+                {{ radio.radio_button("data", "folded", False, "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase).") }}
+            </div>
+            <div>
+                {% import 'buttons.html.jinja' as buttons %}
+                {{ buttons.buttons() }}
+                {% import 'download_lightcurve.html.jinja' as download %}
+                {{ download.download_lightcurve(oid, detections, non_detections) }}
+            </div>
+        </div>
+        <div id="lc-table" class="tw-overflow-y-auto tw-flex-1" hidden>
+            {% import 'data_release_table.html.jinja' as dr_table %}
+            {{ dr_table.data_release_table(dr) }}
+        </div>
+    </div>
+</div>

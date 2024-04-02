@@ -1,0 +1,13 @@
+{% macro radio_button(name, value,checked, title, tooltip) %}
+  <label>
+    <input id="radio-{{ value }}" type="radio" name="{{ name }}" value="{{ value }}" onclick="setPlot(value)" {% if checked %}checked{% endif %}>
+    <span>{{title}}</span>
+    <div class="tooltip">
+        <i class="fa fa-question-circle tw-me-2"></i>
+        <div class="tooltip-text">
+            {{tooltip}}
+        </div>
+    </div>
+  </label>
+{% endmacro %}
+
