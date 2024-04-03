@@ -34,6 +34,7 @@
     const lc_table_elem = document.getElementById("lc-table");
     const radio_apparent = document.getElementById("radio-apparent");
     let current_plot = "{{current_plot}}";
+    const dr = {{dr|tojson}};
 
     function toggleDataRelease() {
         lc_main_elem.hidden = !lc_main_elem.hidden;
@@ -41,16 +42,11 @@
 
         // Update the plot when showing it again
         if (lc_main_elem.hidden === false) {
-            window.setPlot("apparent");
             radio_apparent.checked = true;
+            window.setPlot("apparent");
         }
     }
 
-    window.handleDRChange = (event, id) => {
-        const checked = event.target.checked;
-        let dr_entry = dr.find((elem) => elem._id === id);
-        dr_entry.checked = checked;
-    }
 
     document.getElementById("lc-dr").addEventListener("click", toggleDataRelease);
 </script>
