@@ -109,8 +109,11 @@ def get_error_bars_series(
 
     def get_band_data(band, forced):
         def _filter(det):
-            if forced and "distnr" in det["extra_fields"]:
-                return det["extra_fields"]["distnr"] >= 0 and det["fid"] == band
+            if forced:
+                if "distnr" in det["extra_fields"]:
+                    return det["extra_fields"]["distnr"] >= 0 and det["fid"] == band
+                else:
+                    return False
             return det["fid"] == band
 
         return list(

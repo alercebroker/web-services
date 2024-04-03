@@ -37,7 +37,7 @@
     <div id="lightcurve"
         class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-rounded tw-p-4 tw-flex tw-flex-col tw-h-full">
         {% import 'plot.html.jinja' as plot %}
-        {{ plot.lightcurve_plot(oid, detections, non_detections, forced_photometry, dr, dr_detections, period, plot_diff) }}
+        {{ plot.lightcurve_plot(oid, detections, non_detections, forced_photometry, dr, dr_detections, period, plot_diff, plot_ap) }}
         <div class="tw-grid tw-grid-cols-4 tw-gap-2">
             {% import 'radio_button.html.jinja' as radio %}
             <div>

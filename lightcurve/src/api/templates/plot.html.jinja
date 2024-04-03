@@ -1,4 +1,4 @@
-{% macro lightcurve_plot(oid, detections, non_detections, forced_photometry, dr, dr_detections, period, plot_diff) %}
+{% macro lightcurve_plot(oid, detections, non_detections, forced_photometry, dr, dr_detections, period, plot_diff, plot_ap) %}
 <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; min-height: 0;"></div>
 <script type="module">
     import { DifferenceLightCurveOptions } from "{{API_URL}}/static/lc-difference.js";
@@ -6,7 +6,6 @@
     import { ApparentLightCurveOptions } from "{{API_URL}}/static/lc-apparent.js";
     import * as echart from "{{API_URL}}/static/echarts.min.js";
     import { jdToDate } from "{{API_URL}}/static/astro-dates.js";
-
 
     let plot_text_color = "#000";
     let current_plot = "difference";
@@ -27,8 +26,11 @@
             addTooltipFormatter(plot_options)
             plot.setOption(plot_options, true)
         } else if (current_plot === "apparent") {
-            plot_options = new ApparentLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color);
-            plot.setOption(plot_options.options, true);
+            plot_options = {{plot_ap | tojson }}
+            addErrorBars(plot_options)
+            addAxisRange(plot_options)
+            addTooltipFormatter(plot_options)
+            plot.setOption(plot_options, true)
         } else if (current_plot === "folded" && period > 0) {
             plot_options = new FoldedLightCurveOptions(getDetectionsWithDR(), non_detections, forced_photometry, plot_text_color, period);
             plot.setOption(plot_options.options, true);

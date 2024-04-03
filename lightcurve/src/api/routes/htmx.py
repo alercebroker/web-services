@@ -15,6 +15,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from ..result_handler import handle_error, handle_success
 from ..plots import difference as plot_diff
+from ..plots import apparent as plot_ap
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/api/templates", autoescape=True, auto_reload=True)
@@ -136,10 +137,17 @@ async def lightcurve(
         "#000",
         request.state.ralidator,
     )
+    apparent_options = plot_ap.apparent_lightcurve_options(
+        filtered_lightcurve["detections"],
+        filtered_lightcurve["forced_photometry"],
+        "#000",
+        request.state.ralidator,
+    )
     return templates.TemplateResponse(
         name="main.html.jinja",
         context={
             "plot_diff": difference_options,
+            "plot_ap": apparent_options,
             "request": request,
             "oid": oid,
             "detections": filtered_lightcurve["detections"],
