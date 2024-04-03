@@ -65,8 +65,6 @@ export class LightCurveOptions {
           },
         },
         tooltip: {
-          // same as option.tooltip
-          // show: true,
           formatter(param) {
             return '<div>' + param.title + '</div>' // user-defined DOM structure
           },

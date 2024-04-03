@@ -129,10 +129,17 @@ async def lightcurve(
     request: Request, oid: str, survey_id: str = "all"
 ) -> HTMLResponse:
     filtered_lightcurve = await get_data_and_filter(request, oid, survey_id)
+    difference_options = plot_diff.difference_lightcurve_options(
+        filtered_lightcurve["detections"],
+        filtered_lightcurve["non_detections"],
+        filtered_lightcurve["forced_photometry"],
+        "#000",
+        request.state.ralidator,
+    )
     return templates.TemplateResponse(
-        name="lightcurve.html.jinja",
+        name="main.html.jinja",
         context={
-            "plot_diff": plot_diff,
+            "plot_diff": difference_options,
             "request": request,
             "oid": oid,
             "detections": filtered_lightcurve["detections"],

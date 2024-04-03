@@ -110,12 +110,12 @@ def test_get_non_detections_series():
         {
             "fid": 1,
             "mjd": 1,
-            "diffmaglim": 1,
+            "diffmaglim": 11,
         },
         {
             "fid": 2,
             "mjd": 2,
-            "diffmaglim": 2,
+            "diffmaglim": 20,
         },
     ]
     bands = [1, 2]
@@ -128,7 +128,7 @@ def test_get_non_detections_series():
             "scale": True,
             "color": "rgba(86, 224, 58, 0.5)",
             "symbol": "path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z",
-            "data": [[1,1]],
+            "data": [[1,11]],
         },
         {
             "name": "r non-detections",
@@ -137,7 +137,7 @@ def test_get_non_detections_series():
             "scale": True,
             "color": "rgba(212, 47, 75, 0.5)",
             "symbol": "path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z",
-            "data": [[2, 2]],
+            "data": [[2, 20]],
         },
     ]
 
