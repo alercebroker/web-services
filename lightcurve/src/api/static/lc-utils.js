@@ -1,7 +1,7 @@
 import { jdToDate } from './astro-dates.js'
 
 export class LightCurveOptions {
-  constructor(detections = [], nonDetections = [], forcedPhotometry = [], fontColor = 'fff') {
+  constructor(detections = [], nonDetections = [], forcedPhotometry = [], fontColor = 'fff', title = 'Light Curve') {
     this.bandMap = {
       1: { name: 'g', color: '#56E03A' },
       2: { name: 'r', color: '#D42F4B' },
@@ -11,11 +11,6 @@ export class LightCurveOptions {
       4: { name: 'c', color: '#00FFFF' },
       5: { name: 'o', color: '#FFA500' },
     }
-    this.detections = detections.filter(
-      (x) => x.fid in this.bandMap
-    )
-    this.nonDetections = nonDetections.filter((x) => x.diffmaglim <= 23 && x.fid in this.bandMap)
-    this.forcedPhotometry = forcedPhotometry.filter((x) => x.fid in this.bandMap)
     this.fontColor = fontColor
     this.options = {
       grid: {
@@ -24,7 +19,7 @@ export class LightCurveOptions {
         bottom: '20%'
       },
       title: {
-        text: 'Light Curve',
+        text: title,
         left: 'center',
         textStyle: {
           fontWeight: 'lighter',
@@ -143,6 +138,7 @@ export class LightCurveOptions {
       col3 +
       '</td> </tr>'
     const dataReleaseTooltip = (params) => {
+      console.log(params)
       const color = params.color
       const mjd = params.value[0]
       const mag = params.value[1].toFixed(3)

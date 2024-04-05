@@ -7,6 +7,7 @@ from db_plugins.db.sql.models import (
     Feature,
     ForcedPhotometry,
     NonDetection,
+    Object,
 )
 from pymongo.database import Database
 from pymongo.cursor import Cursor
@@ -20,7 +21,7 @@ from .exceptions import (
     DatabaseError,
     ObjectNotFound,
     SurveyIdError,
-    ParseError
+    ParseError,
 )
 from .models import DataReleaseDetection as DataReleaseDetectionModel
 from .models import Detection as DetectionModel
@@ -342,7 +343,10 @@ def _get_all_unique_non_detections(
 
     return Success(list(non_detections.values()))
 
-def _query_detections_sql(session_factory: Callable[..., AbstractContextManager[Session]], oid: str) -> list:
+
+def _query_detections_sql(
+    session_factory: Callable[..., AbstractContextManager[Session]], oid: str
+) -> list:
     try:
         with session_factory() as session:
             stmt = select(Detection, text("'ztf'")).filter(
@@ -352,8 +356,9 @@ def _query_detections_sql(session_factory: Callable[..., AbstractContextManager[
     except Exception as e:
         raise DatabaseError(e, database="PSQL")
 
+
 def _parse_sql_detection(result: list) -> list[DetectionModel]:
-    try: 
+    try:
         return [
             _ztf_detection_to_multistream(res[0].__dict__, tid=res[1])
             for res in result
@@ -373,14 +378,21 @@ def _get_detections_sql(
     result = _parse_sql_detection(result)
     return result
 
+
 def _clean_extra_fields(extra_fields: dict[str, Any]) -> dict[str, Any]:
-    if "magpsf_corr" in extra_fields and math.isnan(extra_fields.get("magpsf_corr", None)):
+    if "magpsf_corr" in extra_fields and math.isnan(
+        extra_fields.get("magpsf_corr", None)
+    ):
         extra_fields["magpsf_corr"] = None
-    if "sigmapsf_corr" in extra_fields and math.isnan(extra_fields.get("sigmapsf_corr", None)):
+    if "sigmapsf_corr" in extra_fields and math.isnan(
+        extra_fields.get("sigmapsf_corr", None)
+    ):
         extra_fields["sigmapsf_corr"] = None
-    if "sigmapsf_corr_ext" in extra_fields and math.isnan(extra_fields.get("sigmapsf_corr_ext", None)):
+    if "sigmapsf_corr_ext" in extra_fields and math.isnan(
+        extra_fields.get("sigmapsf_corr_ext", None)
+    ):
         extra_fields["sigmapsf_corr_ext"] = None
-        
+
 
 def _get_candid(result: dict[str, Any]) -> str:
     """Get the candid from a result dict. If the candid is not present, use the _id field.
@@ -397,6 +409,7 @@ def _get_candid(result: dict[str, Any]) -> str:
         candid = result["_id"]
     return str(candid)
 
+
 def _clean_parent_candid(result: dict[str, Any]) -> None:
     """Sets the parent_candid to None if it's NaN.
 
@@ -412,6 +425,7 @@ def _clean_parent_candid(result: dict[str, Any]) -> None:
     else:
         result["parent_candid"] = int(result["parent_candid"])
 
+
 def _parse_mongo_detection(res: dict[str, Any]) -> DetectionModel:
     try:
         candid = _get_candid(res)
@@ -421,13 +435,30 @@ def _parse_mongo_detection(res: dict[str, Any]) -> DetectionModel:
     except Exception as e:
         raise ParseError(e, "mongo detection")
 
-def _query_mongo_object(database: Database, oid: str) -> dict[str, Any]:
+
+def query_mongo_object(database: Database, oid: str) -> dict[str, Any]:
     obj = database["object"].find_one({"oid": oid})
     if obj is None:
         raise ObjectNotFound(oid)
     return obj
 
-def _query_detections_by_aid(database: Database, aid: str, tid: str = "all") -> Cursor:
+
+def query_psql_object(
+    oid: str,
+    session_factory: Callable[..., AbstractContextManager[Session]],
+):
+    try:
+        with session_factory() as session:
+            stmt = select(Object).where(Object.oid == oid)
+            result = session.execute(stmt)
+            return result.first()[0]
+    except Exception as e:
+        raise DatabaseError(e, database="PSQL")
+
+
+def _query_detections_by_aid(
+    database: Database, aid: str, tid: str = "all"
+) -> Cursor:
     if tid == "all":
         mongo_filter = {"aid": aid}
     elif tid == "atlas" or tid == "ztf":
@@ -440,13 +471,15 @@ def _query_detections_by_aid(database: Database, aid: str, tid: str = "all") -> 
     except Exception as e:
         raise DatabaseError(e, database="MONGO")
 
+
 def _get_aid_from_object(obj: dict[str, Any]) -> str:
     return obj["_id"]
+
 
 def _get_detections_mongo(
     database: Database, oid: str, tid: str
 ) -> list[DetectionModel]:
-    obj = _query_mongo_object(database, oid)
+    obj = query_mongo_object(database, oid)
     result = _query_detections_by_aid(database, _get_aid_from_object(obj), tid)
     result = [_parse_mongo_detection(res) for res in result]
     return result
@@ -505,7 +538,6 @@ async def get_data_release(
         "dec": dec,
         "radius": radius,
     }
-
     datareleases = []
     detections = {}
     async with httpx.AsyncClient(follow_redirects=True) as client:
@@ -513,7 +545,6 @@ async def get_data_release(
             "https://api.alerce.online/ztf/dr/v1/light_curve/",
             params=dr_params,
         )
-
         datareleases = [
             {
                 k: dr_data[k]
@@ -521,10 +552,8 @@ async def get_data_release(
             }
             for dr_data in resp.json()
         ]
-
         for datarelease in datareleases:
             datarelease["checked"] = False
-
         detections = {
             dr_data["_id"]: [
                 DataReleaseDetectionModel(
@@ -540,7 +569,6 @@ async def get_data_release(
             ]
             for dr_data in resp.json()
         }
-
     return datareleases, detections
 
 
@@ -564,7 +592,9 @@ def _get_period_sql(
     except Exception as e:
         return Failure(DatabaseError(e, database="PSQL"))
     if len(result) == 0:
-        return Success(FeatureModel(name="Multiband_period", value=0, fid=0, version="0"))
+        return Success(
+            FeatureModel(name="Multiband_period", value=0, fid=0, version="0")
+        )
     return Success(result[0])
 
 
@@ -589,7 +619,10 @@ def _get_forced_photometry_mongo(
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e, database="MONGO")
-    result = [ForcedPhotometryModel(**{**res, "fid": fid_str2int(res["fid"])}) for res in result]
+    result = [
+        ForcedPhotometryModel(**{**res, "fid": fid_str2int(res["fid"])})
+        for res in result
+    ]
     return result
 
 
@@ -734,6 +767,7 @@ def _ztf_forced_photometry_to_multistream(
         extra_fields=extra_fields,
     )
 
+
 def fid_str2int(fid: str) -> int:
     """Converts a fid string to an integer.
 
@@ -753,6 +787,7 @@ def fid_str2int(fid: str) -> int:
         return fid_map[fid]
     except KeyError:
         raise ValueError(f"Invalid fid: {fid}")
+
 
 def fid_int2str(fid: int) -> str:
     """Converts a fid integer to a string.

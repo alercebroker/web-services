@@ -1,14 +1,10 @@
 import { LightCurveOptions } from './lc-utils.js'
 
 export class FoldedLightCurveOptions extends LightCurveOptions {
-  constructor(detections, nonDetections, forcedPhotometry, fontColor, period) {
-    super(detections, nonDetections, forcedPhotometry, fontColor)
-    this.detections = this.detections.filter(
-      (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
-    )
-    this.forcedPhotometry = this.forcedPhotometry.filter(
-      (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
-    )
+  constructor(detections, forcedPhotometry, fontColor, period) {
+    super(detections, [], forcedPhotometry, fontColor, "Folded Light Curve")
+    this.detections = detections
+    this.forcedPhotometry = forcedPhotometry
     this.period = period
     this.getSeries()
     this.getLegend()
@@ -94,15 +90,15 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
 
   formatDetections(detections, band, period) {
     const folded1 = detections
-      .filter((x) => x.fid === band && x.corrected)
+    .filter((x) => x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100)
       .map((x) => {
         const phase = (x.mjd % period) / period
         return [
           phase,
           x.mag_corr,
-          x.candid,
+          x.candid !== undefined ? x.candid : x.objectid,
           x.e_mag_corr_ext,
-          x.isdiffpos,
+          x.isdiffpos !== undefined ? x.isdiffpos : x.field,
         ]
       })
     const folded2 = folded1.map((x) => {
@@ -113,15 +109,31 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
 
   formatForcedPhotometry(detections, band, period) {
     const folded1 = detections
-      .filter((x) => x.fid === band && x.corrected)
+      .filter((x) => {
+        if ('distnr' in x['extra_fields']) {
+          return (
+            x['extra_fields']['distnr'] >= 0 && 
+            x.fid === band && 
+            x.corrected &&
+            x.mag_corr > 0 &&
+            x.mag_corr < 100
+          )
+        }
+        return (
+          x.fid === band && 
+          x.corrected &&
+          x.mag_corr > 0 &&
+          x.mag_corr < 100
+        )
+      })
       .map((x) => {
         const phase = (x.mjd % period) / period
         return [
           phase,
           x.mag_corr,
-          x.candid,
+          x.candid !== undefined ? x.candid : x.objectid,
           x.e_mag_corr_ext,
-          x.isdiffpos,
+          x.isdiffpos !== undefined ? x.isdiffpos : x.field,
         ]
       })
     const folded2 = folded1.map((x) => {
@@ -137,7 +149,8 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
           x.fid === band &&
           x.corrected &&
           x.mag_corr != null &&
-          x.mag_corr < 100
+          x.mag_corr > 0 &&
+          x.e_mag_corr_ext < 100
         )
       })
       .map(function (x) {

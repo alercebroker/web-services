@@ -2,14 +2,10 @@ import { jdToDate } from './astro-dates.js'
 import { LightCurveOptions } from './lc-utils.js'
 
 export class ApparentLightCurveOptions extends LightCurveOptions {
-  constructor(detections, nonDetections, forcedPhotometry, fontColor) {
-    super(detections, nonDetections, forcedPhotometry, fontColor)
-    this.detections = this.detections.filter(
-      (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
-    )
-    this.forcedPhotometry = this.forcedPhotometry.filter(
-      (x) => x.mag_corr <= 24 && x.e_mag_corr_ext < 1
-    )
+  constructor(detections, forcedPhotometry, fontColor) {
+    super(detections, [], forcedPhotometry, fontColor, "Apparent Magnitude")
+    this.detections = detections
+    this.forcedPhotometry = forcedPhotometry
     this.getSeries()
     this.getLegend()
     this.getBoundaries()
@@ -97,7 +93,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   formatError(detections, band) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.corrected && x.mag_corr !== null
+        return x.fid === band && x.corrected && x.mag_corr !== null && x.e_mag_corr_ext < 100
       })
       .map(function (x) {
         return [
@@ -155,7 +151,6 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   }
 
   lcApparentOnClick(detection) {
-    console.log(detection);
     const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
     return {
       mjd: detection.value[0],
