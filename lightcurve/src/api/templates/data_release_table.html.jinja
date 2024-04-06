@@ -1,9 +1,10 @@
 <form 
     id="dr-table"
-    hx-get="{{API_URL}}/htmx/lightcurve-app"
+    hx-get="{{API_URL}}/htmx/lightcurve"
     hx-trigger="submit"
     hx-target="this"
     hx-swap="outerHTML"
+    hx-indicator="#loading"
 >
     <table
         class="tw-min-w-full tw-border tw-border-gray-300 dark:tw-border-[#404040] tw-divide-y tw-divide-gray-200 dark:tw-divide-[#404040] dark:tw-text-white">
@@ -41,6 +42,7 @@
         </tbody>
     </table>
     <button type="sumbit">Ok</button>
+    <p id="loading" class="htmx-indicator">Loading...</p>
     <script>
         document.addEventListener('htmx:configRequest', (event) => {
             let params = {}
@@ -48,7 +50,6 @@
             params['dr_ids'] = ids
             params['oid'] = "{{oid}}"
             params['plot_type'] = "apparent"
-            params['fetch_dr'] = true
             event.detail.parameters = params
         })
     </script>

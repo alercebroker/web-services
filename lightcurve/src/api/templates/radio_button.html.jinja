@@ -1,17 +1,10 @@
-{% macro radio_button(value,checked, title, tooltip, oid) %}
+{% macro radio_button(value,checked, title, tooltip) %}
   <label>
   <input 
     id="radio-{{ value }}" 
     type="radio" 
-    name="data"
     value="{{ value }}" 
     {% if checked %}checked{% endif %} 
-    hx-get="{{API_URL}}/htmx/lightcurve/{{value}}?oid={{oid}}"
-    ht-trigger="click"
-    hx-target="#lightcurve-plot"
-    hx-swap="outerHTML"
-    hx-indicator="#plot-indicator"
-    hx-disabled-elt="input[type=radio]"
   >
     <span>{{title}}</span>
     <div class="tooltip">

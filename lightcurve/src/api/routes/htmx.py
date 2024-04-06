@@ -17,8 +17,6 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from ..result_handler import handle_error, handle_success
-from ..plots import difference as plot_diff
-from ..plots import apparent as plot_ap
 
 router = APIRouter()
 templates = Jinja2Templates(
@@ -154,26 +152,6 @@ async def get_data_and_filter(
     return filtered_lightcurve
 
 @router.get("/lightcurve", response_class=HTMLResponse)
-async def lightcurve(
-    request: Request,
-    oid: str,
-    survey_id: str = "all",
-    plot_type: str = "difference",
-    dr_ids: Annotated[list[int], Query()] = [],
-) -> HTMLResponse:
-    return templates.TemplateResponse(
-        name="lightcurve_layout.html.jinja",
-        context={
-            "request": request,
-            "oid": oid,
-            "survey_id": survey_id,
-            "plot_type": plot_type,
-            "dr_ids": dr_ids,
-            "fetch_dr": len(dr_ids) > 0
-        },
-    )
-
-@router.get("/lightcurve-app", response_class=HTMLResponse)
 async def lightcurve_app(
     request: Request,
     oid: str,
@@ -181,73 +159,21 @@ async def lightcurve_app(
     plot_type: str = "difference",
     dr_ids: Annotated[list[int], Query()] = [],
 ) -> HTMLResponse:
+    lightcurve = await get_data_and_filter(request, oid, survey_id)
+    dr_detections = {}
+    if len(dr_ids) > 0:
+        _, dr_detections = await get_data_release_as_dict(oid, dr_ids)
+    period = get_period_value(oid)
     return templates.TemplateResponse(
         name="lightcurve_app.html.jinja",
         context={
             "request": request,
             "oid": oid,
-            "survey_id": survey_id,
+            "lightcurve": lightcurve,
             "plot_type": plot_type,
+            "dr_detections": dr_detections,
+            "period": period,
             "dr_ids": dr_ids,
-            "fetch_dr": len(dr_ids) > 0
-        },
-    )
-
-
-@router.get("/lightcurve/difference", response_class=HTMLResponse)
-async def difference(
-    request: Request, oid: str, survey_id: str = "all"
-) -> HTMLResponse:
-    lightcurve = await get_data_and_filter(request, oid, survey_id)
-    return templates.TemplateResponse(
-        name="difference.html.jinja",
-        context={"request": request, "oid": oid, "lightcurve": lightcurve},
-    )
-
-
-@router.get("/lightcurve/apparent", response_class=HTMLResponse)
-async def apparent(
-    request: Request,
-    oid: str,
-    survey_id: str = "all",
-    fetch_dr: bool = False,
-    dr_ids: Annotated[list[int], Query()] = [],
-) -> HTMLResponse:
-    lightcurve = await get_data_and_filter(request, oid, survey_id)
-    dr_detections = {}
-    if fetch_dr:
-        _, dr_detections = await get_data_release_as_dict(oid, dr_ids)
-    return templates.TemplateResponse(
-        name="apparent.html.jinja",
-        context={
-            "request": request,
-            "oid": oid,
-            "lightcurve": lightcurve,
-            "dr_detections": dr_detections,
-        },
-    )
-
-@router.get("/lightcurve/folded", response_class=HTMLResponse)
-async def folded(
-    request: Request,
-    oid: str,
-    survey_id: str = "all",
-    fetch_dr: bool = False,
-    dr_ids: Annotated[list[int], Query()] = [],
-) -> HTMLResponse:
-    lightcurve = await get_data_and_filter(request, oid, survey_id)
-    dr_detections = {}
-    if fetch_dr:
-        _, dr_detections = await get_data_release_as_dict(oid, dr_ids)
-    period = get_period_value(oid)
-    return templates.TemplateResponse(
-        name="folded.html.jinja",
-        context={
-            "request": request,
-            "oid": oid,
-            "lightcurve": lightcurve,
-            "dr_detections": dr_detections,
-            "period": period
         },
     )
 
