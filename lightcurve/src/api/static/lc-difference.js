@@ -4,9 +4,10 @@ import { LightCurveOptions } from './lc-utils.js'
 
 export class DifferenceLightCurveOptions extends LightCurveOptions {
   constructor(detections, nonDetections, forcedPhotometry, fontColor) {
-    super(detections, nonDetections, forcedPhotometry, fontColor)
-    this.detections = this.detections.filter((x) => x.mag <= 24)
-    this.forcedPhotometry = this.forcedPhotometry.filter((x) => x.mag <= 24)
+    super(detections, nonDetections, forcedPhotometry, fontColor, "Difference Magnitude")
+    this.detections = detections
+    this.nonDetections = nonDetections
+    this.forcedPhotometry = forcedPhotometry
     this.getSeries()
     this.getLegend()
     this.getBoundaries()
@@ -107,7 +108,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   formatError(detections, band) {
     return detections
       .filter(function (x) {
-        return x.fid === band
+        return x.fid === band && x.e_mag < 100
       })
       .map(function (x) {
         return [x.mjd, x.mag - x.e_mag, x.mag + x.e_mag]
@@ -117,7 +118,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   formatDetections(detections, band) {
     return detections
       .filter(function (x) {
-        return x.fid === band
+        return x.fid === band && x.mag <= 24
       })
       .map(function (x) {
         return [x.mjd, x.mag, x.candid, x.e_mag, x.isdiffpos]
@@ -128,9 +129,9 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
     return forcedPhotometry
       .filter(function (x) {
         if ("distnr" in x["extra_fields"]) {
-          return x["extra_fields"]["distnr"] >= 0 && x.fid === band
+          return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.mag <= 24
         }
-        return x.fid === band
+        return x.fid === band && x.mag <= 24
       })
       .map(function (x) {
         return [x.mjd, x.mag, "no-candid", x.e_mag, x.isdiffpos]
@@ -140,7 +141,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   formatNonDetections(nonDetections, band) {
     return nonDetections
       .filter(function (x) {
-        return x.fid === band && x.diffmaglim > 10
+        return x.fid === band && x.diffmaglim > 10 && x.diffmaglim <= 23
       })
       .map(function (x) {
         return [x.mjd, x.diffmaglim]

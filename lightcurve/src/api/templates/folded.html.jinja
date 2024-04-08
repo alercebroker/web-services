@@ -1,0 +1,65 @@
+<div id="lightcurve-plot" style="height: 100%;">
+  <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; min-height: 320px;"></div>
+    <script type="module">
+        import { FoldedLightCurveOptions } from "{{API_URL}}/static/lc-folded.js";
+        import * as echart from "{{API_URL}}/static/echarts.min.js";
+        import { jdToDate } from "{{API_URL}}/static/astro-dates.js";
+
+        let plot_text_color = "#000";
+        let plot_options;
+        let detections = {{ lightcurve.detections | tojson }};
+        let forced_photometry = {{ lightcurve.forced_photometry | tojson }};
+        let dr_detections = {{ dr_detections | tojson }};
+        let period = {{ period | tojson }};
+
+        const setPlot = () => {
+            const all_detections = getDetectionsWithDR();
+            plot_options = new FoldedLightCurveOptions(all_detections, forced_photometry, plot_text_color, period);
+            plot.setOption(plot_options.options);
+            plot.resize()
+        }
+
+        function getDetectionsWithDR() {
+            let all_detections = detections.slice(0);
+            Object.keys(dr_detections).forEach((key) => {
+                all_detections = all_detections.concat(dr_detections[key]);
+            });
+            return all_detections
+        }
+
+        function plotOnClick(detection) {
+            let index = plot_options.detections.findIndex((x) => x.mjd === detection.value[0])
+            document.body.dispatchEvent(new CustomEvent('onDetectionClick', { detail: index }))
+            const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
+            return {
+                mjd: detection.value[0],
+                date,
+                index: index,
+            }
+        }
+
+        function setColorSchemeWrapper(container) {
+            function setColorScheme() {
+                const color_scheme = container.classList.contains("tw-dark") ? "tw-dark" : "tw-light";
+                if (color_scheme === "tw-dark") {
+                    plot_text_color = "#fff";
+                } else {
+                    plot_text_color = "#000";
+                }
+                setPlot();
+            }
+            return setColorScheme;
+        }
+
+        const lc_main_elem = document.getElementById("lc-main");
+        let plot = echarts.init(lc_main_elem);
+        plot.on("click", plotOnClick);
+        window.addEventListener("resize", plot.resize);
+        window.setPlot = setPlot;
+        let container = document.getElementById("lightcurve-plot");
+        let color_scheme_observer = new MutationObserver(setColorSchemeWrapper(container));
+        color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
+        setPlot()
+        setColorSchemeWrapper(container)()
+    </script>
+</div>

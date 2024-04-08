@@ -6,17 +6,19 @@ def test_get_forced_photometry_series():
             "fid": 1,
             "mjd": 1,
             "mag_corr": 1,
-            "e_mag_corr_ext": 1,
+            "e_mag_corr_ext": 0.1,
             "isdiffpos": 1,
             "extra_fields": {"distnr": 1},
+            "corrected": True,
         },
         {
             "fid": 2,
             "mjd": 2,
             "mag_corr": 2,
-            "e_mag_corr_ext": 2,
+            "e_mag_corr_ext": 0.2,
             "isdiffpos": 2,
             "extra_fields": {"distnr": 2},
+            "corrected": True,
         },
     ]
     bands = [1, 2]
@@ -31,7 +33,7 @@ def test_get_forced_photometry_series():
             "symbol": "path://M0,0 L0,10 L10,10 L10,0 Z",
             "encode": {"x": 0, "y": 1},
             "data": [
-                [1, 1, "no-candid", 1, 1],
+                [1, 1, "no-candid", 0.1, 1],
             ],
         },
         {
@@ -43,7 +45,7 @@ def test_get_forced_photometry_series():
             "symbol": "path://M0,0 L0,10 L10,10 L10,0 Z",
             "encode": {"x": 0, "y": 1},
             "data": [
-                [2, 2, "no-candid", 2, 2],
+                [2, 2, "no-candid", 0.2, 2],
             ],
         },
     ]
@@ -54,7 +56,7 @@ def test_get_error_bars_series_for_forced_photometry():
             "fid": 1,
             "mjd": 1,
             "mag_corr": 1,
-            "e_mag_corr_ext": 1,
+            "e_mag_corr_ext": 0.1,
             "isdiffpos": 1,
             "extra_fields": {"distnr": 1},
             "corrected": True,
@@ -63,7 +65,7 @@ def test_get_error_bars_series_for_forced_photometry():
             "fid": 1,
             "mjd": 1,
             "mag_corr": 1,
-            "e_mag_corr_ext": 1,
+            "e_mag_corr_ext": 0.1,
             "isdiffpos": 1,
             "extra_fields": {"distnr": 1},
             "corrected": False,
@@ -72,7 +74,7 @@ def test_get_error_bars_series_for_forced_photometry():
             "fid": 2,
             "mjd": 2,
             "mag_corr": 2,
-            "e_mag_corr_ext": 2,
+            "e_mag_corr_ext": 0.2,
             "isdiffpos": 2,
             "extra_fields": {"distnr": 2},
             "corrected": True,
@@ -88,7 +90,7 @@ def test_get_error_bars_series_for_forced_photometry():
             "scale": True,
             "color": "rgb(86, 224, 58)",
             "data": [
-                [1, 0, 2],
+                [1, 0.9, 1.1],
             ],
             "error_bars": True,
         },
@@ -99,7 +101,7 @@ def test_get_error_bars_series_for_forced_photometry():
             "scale": True,
             "color": "rgb(212, 47, 75)",
             "data": [
-                [2, 0, 4],
+                [2, 1.8, 2.2],
             ],
             "error_bars": True,
         },
@@ -112,16 +114,18 @@ def test_get_detection_series():
             "fid": 1,
             "mjd": 1,
             "mag_corr": 1,
-            "e_mag_corr_ext": 1,
+            "e_mag_corr_ext": 0.1,
             "isdiffpos": 1,
+            "corrected": True,
         },
         {
             "candid": "2",
             "fid": 2,
             "mjd": 2,
             "mag_corr": 2,
-            "e_mag_corr_ext": 2,
+            "e_mag_corr_ext": 0.2,
             "isdiffpos": 2,
+            "corrected": True,
         },
     ]
     bands = [1, 2]
@@ -136,7 +140,7 @@ def test_get_detection_series():
             "symbol": "circle",
             "encode": {"x": 0, "y": 1},
             "zlevel": 10,
-            "data": [[1, 1, "1", 1, 1]],
+            "data": [[1, 1, "1", 0.1, 1]],
         },
         {
             "name": "r",
@@ -147,7 +151,7 @@ def test_get_detection_series():
             "symbol": "circle",
             "encode": {"x": 0, "y": 1},
             "zlevel": 10,
-            "data": [[2, 2, "2", 2, 2]],
+            "data": [[2, 2, "2", 0.2, 2]],
         },
     ]
 
@@ -158,24 +162,27 @@ def test_get_detection_series_with_data_release():
             "fid": 101,
             "mjd": 1,
             "mag_corr": 1,
-            "e_mag_corr_ext": 1,
+            "e_mag_corr_ext": 0.1,
             "field": 1,
+            "corrected": True
         },
         {
             "objectid": "2",
             "fid": 102,
             "mjd": 2,
             "mag_corr": 2,
-            "e_mag_corr_ext": 2,
+            "e_mag_corr_ext": 0.2,
             "field": 2,
+            "corrected": True
         },
         {
             "objectid": "3",
             "fid": 103,
             "mjd": 3,
             "mag_corr": 3,
-            "e_mag_corr_ext": 3,
+            "e_mag_corr_ext": 0.3,
             "field": 3,
+            "corrected": True
         },
     ]
     bands = [101, 102, 103]
@@ -190,7 +197,7 @@ def test_get_detection_series_with_data_release():
             "symbol": "square",
             "encode": {"x": 0, "y": 1},
             "zlevel": 0,
-            "data": [[1, 1, "1", 1, 1]],
+            "data": [[1, 1, "1", 0.1, 1]],
         },
         {
             "name": "r DR5",
@@ -201,7 +208,7 @@ def test_get_detection_series_with_data_release():
             "symbol": "square",
             "encode": {"x": 0, "y": 1},
             "zlevel": 0,
-            "data": [[2, 2, "2", 2, 2]],
+            "data": [[2, 2, "2", 0.2, 2]],
         },
         {
             "name": "i DR5",
@@ -212,6 +219,6 @@ def test_get_detection_series_with_data_release():
             "symbol": "square",
             "encode": {"x": 0, "y": 1},
             "zlevel": 0,
-            "data": [[3, 3, "3", 3, 3]],
+            "data": [[3, 3, "3", 0.3, 3]],
         },
     ]
