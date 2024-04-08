@@ -16,7 +16,6 @@ export class LightCurveOptions {
       grid: {
         left: '7%',
         right: '5%',
-        bottom: '20%'
       },
       title: {
         text: title,
@@ -73,6 +72,7 @@ export class LightCurveOptions {
       legend: {
         data: [], // ["g", "r", "g non-detections", "r non-detections", "g forced photometry", "r forced photometry"],
         bottom: 0,
+        type: 'scroll',
         textStyle: {
           fontWeight: 'lighter',
           color: this.fontColor,
