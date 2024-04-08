@@ -129,11 +129,36 @@ async def get_lightcurve(oid, survey_id):
     detections = get_detections_as_dict(oid, survey_id)
     non_detections = get_non_detections_as_dict(oid, survey_id)
     forced_photometry = get_forced_photometry_as_dict(oid)
+    forced_photometry = remove_duplicate_forced_photometry_by_pid(detections, forced_photometry)
     return {
         "detections": detections,
         "non_detections": non_detections,
         "forced_photometry": forced_photometry,
     }
+
+def remove_duplicate_forced_photometry_by_pid(detections: list, forced_photometry: list):
+    new_forced_photometry = []
+    pids = {}
+    size = max(len(detections), len(forced_photometry))
+    for i in range(size):
+        try:
+            dpid = detections[i]["pid"]
+            if not dpid in pids:
+                pids[dpid] = None
+            else:
+                if pids[dpid] is not None:
+                    new_forced_photometry.pop(pids[dpid])
+        except IndexError:
+            pass
+        try:
+            fpid = forced_photometry[i]["pid"]
+            if not fpid in pids:
+                pids[fpid] = i
+                new_forced_photometry.append(forced_photometry[i])
+        except IndexError:
+            pass
+    return new_forced_photometry
+
 
 
 def filter_atlas_lightcurve(lightcurve: dict, ralidator):

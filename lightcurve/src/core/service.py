@@ -699,6 +699,7 @@ def _ztf_detection_to_multistream(
         mag_corr=detection.pop("magpsf_corr", None),
         e_mag_corr=detection.pop("sigmapsf_corr", None),
         e_mag_corr_ext=detection.pop("sigmapsf_corr_ext", None),
+        pid=detection.pop("pid"),
         extra_fields=extra_fields,
     )
 

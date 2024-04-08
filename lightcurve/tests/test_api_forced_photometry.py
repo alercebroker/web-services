@@ -1,6 +1,7 @@
 import os
 
 from test_utils import create_token
+from api.routes.htmx import remove_duplicate_forced_photometry_by_pid
 
 
 def test_forced_photometry_from_ztf(
@@ -146,3 +147,21 @@ def test_forced_photometry_multistream_authenticated_with_filter(
     res = test_client.get("/forced-photometry/oid1", headers=headers)
     assert res.status_code == 200
     assert len(res.json()) == 1
+
+def test_forced_photometry_with_duplicate_pids():
+    detections = [{"pid": 1}, {"pid": 2}, {"pid": 3}]
+    forced_photometry = [{"pid": 1}, {"pid": 1}, {"pid": 2}, {"pid": 4}]
+    result = remove_duplicate_forced_photometry_by_pid(detections, forced_photometry)
+    assert len(result) == 1
+    assert result[0]["pid"] == 4
+    detections = []
+    forced_photometry = [{"pid": 1}, {"pid": 1}, {"pid": 2}, {"pid": 4}]
+    result = remove_duplicate_forced_photometry_by_pid(detections, forced_photometry)
+    assert len(result) == 3
+    assert result[0]["pid"] == 1
+    assert result[1]["pid"] == 2
+    assert result[2]["pid"] == 4
+    detections = [{"pid": 1}, {"pid": 2}, {"pid": 3}]
+    forced_photometry = []
+    result = remove_duplicate_forced_photometry_by_pid(detections, forced_photometry)
+    assert len(result) == 0
