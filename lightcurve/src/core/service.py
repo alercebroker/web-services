@@ -665,6 +665,7 @@ def _ztf_detection_to_multistream(
         "oid",
         "sid",
         "aid",
+        "pid",
         "tid",
         "mjd",
         "fid",
@@ -689,6 +690,7 @@ def _ztf_detection_to_multistream(
         if field not in fields and not field.startswith("_"):
             extra_fields[field] = value
     candid = detection.pop("candid")
+    pid = detection.pop("pid")
     return DetectionModel(
         **detection,
         candid=str(candid),
@@ -699,7 +701,7 @@ def _ztf_detection_to_multistream(
         mag_corr=detection.pop("magpsf_corr", None),
         e_mag_corr=detection.pop("sigmapsf_corr", None),
         e_mag_corr_ext=detection.pop("sigmapsf_corr_ext", None),
-        pid=detection.pop("pid"),
+        pid=pid,
         extra_fields=extra_fields,
     )
 

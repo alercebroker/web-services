@@ -138,7 +138,6 @@ export class LightCurveOptions {
       col3 +
       '</td> </tr>'
     const dataReleaseTooltip = (params) => {
-      console.log(params)
       const color = params.color
       const mjd = params.value[0]
       const mag = params.value[1].toFixed(3)

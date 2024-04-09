@@ -113,6 +113,11 @@ async def get_data_release_as_dict(oid, dr_ids: list[str] = []):
     """
     object = query_psql_object(oid, session)
     dr, dr_detections = await get_data_release(object.meanra, object.meandec)
+    if len(dr_ids) == 0:
+        return dr, {
+            k: list(map(lambda x: x.__dict__, detections))
+            for k, detections in dr_detections.items()
+        }
     dr_detections = {
         k: list(
             map(
@@ -129,14 +134,19 @@ async def get_lightcurve(oid, survey_id):
     detections = get_detections_as_dict(oid, survey_id)
     non_detections = get_non_detections_as_dict(oid, survey_id)
     forced_photometry = get_forced_photometry_as_dict(oid)
-    forced_photometry = remove_duplicate_forced_photometry_by_pid(detections, forced_photometry)
+    forced_photometry = remove_duplicate_forced_photometry_by_pid(
+        detections, forced_photometry
+    )
     return {
         "detections": detections,
         "non_detections": non_detections,
         "forced_photometry": forced_photometry,
     }
 
-def remove_duplicate_forced_photometry_by_pid(detections: list, forced_photometry: list):
+
+def remove_duplicate_forced_photometry_by_pid(
+    detections: list, forced_photometry: list
+):
     new_forced_photometry = []
     pids = {}
     size = max(len(detections), len(forced_photometry))
@@ -160,7 +170,6 @@ def remove_duplicate_forced_photometry_by_pid(detections: list, forced_photometr
     return new_forced_photometry
 
 
-
 def filter_atlas_lightcurve(lightcurve: dict, ralidator):
     ralidator.set_app_filters(["filter_atlas_lightcurve"])
     return ralidator.apply_filters(lightcurve)
@@ -176,6 +185,7 @@ async def get_data_and_filter(
     )
     return filtered_lightcurve
 
+
 @router.get("/lightcurve", response_class=HTMLResponse)
 async def lightcurve_app(
     request: Request,
@@ -183,11 +193,10 @@ async def lightcurve_app(
     survey_id: str = "all",
     plot_type: str = "difference",
     dr_ids: Annotated[list[int], Query()] = [],
+    show_dr: bool = False,
 ) -> HTMLResponse:
     lightcurve = await get_data_and_filter(request, oid, survey_id)
-    dr_detections = {}
-    if len(dr_ids) > 0:
-        _, dr_detections = await get_data_release_as_dict(oid, dr_ids)
+    _, dr_detections = await get_data_release_as_dict(oid, dr_ids)
     period = get_period_value(oid)
     return templates.TemplateResponse(
         name="lightcurve_app.html.jinja",
@@ -199,6 +208,7 @@ async def lightcurve_app(
             "dr_detections": dr_detections,
             "period": period,
             "dr_ids": dr_ids,
+            "show_dr": show_dr
         },
     )
 

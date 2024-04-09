@@ -64,6 +64,20 @@
         <div>
             {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase).") }}
         </div>
+        <label>
+          <input 
+            id="check-dr" 
+            type="checkbox" 
+            value="dr" 
+          >
+            <span>Show Data Release</span>
+            <div class="tooltip">
+                <i class="fa fa-question-circle tw-me-2"></i>
+                <div class="tooltip-text">
+                    Show data release sources from ZTF DR5
+                </div>
+            </div>
+        </label>
         <div id="tools" class="tw-flex-grow">
             <button id="lc-dr"
                 class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600"
@@ -73,7 +87,7 @@
                 hx-indicator="#plot-indicator"
             >
                 <i class="fa fa-eye tw-me-2"></i>
-                Display DR
+                Choose DR Objects
             </button>
             <a id="lc-download-ref" style="display: none;"></a>
             <button id="lc-download"
@@ -117,10 +131,26 @@
 
         function getDetectionsWithDR() {
             let all_detections = detections.slice(0);
+            let check_dr = document.getElementById("check-dr");
+            if (!check_dr.checked) {
+                return all_detections
+            }
             Object.keys(dr_detections).forEach((key) => {
                 all_detections = all_detections.concat(dr_detections[key]);
             });
             return all_detections
+        }
+
+        function showDataRelease() {
+            let all_detections = getDetectionsWithDR();
+            if (current_plot === "apparent") {
+                plot_options = new ApparentLightCurveOptions(all_detections, forced_photometry, plot_text_color);
+            }
+            if (current_plot === "folded") {
+                plot_options = new FoldedLightCurveOptions(all_detections, forced_photometry, plot_text_color, period);
+            }
+            plot.setOption(plot_options.options, true);
+            plot.resize()
         }
 
         function plotOnClick(detection) {
@@ -202,6 +232,17 @@
                     r.checked = r.value === current_plot;
                 });
             });
+        });
+        let check_dr = document.getElementById("check-dr");
+        {% if show_dr %}
+        check_dr.checked = true;
+        {% endif %}
+        check_dr.addEventListener("change", (event) => {
+            if (event.target.checked) {
+                showDataRelease();
+            } else {
+                setPlot();
+            }
         });
         const container = document.getElementById("lightcurve-app");
         const color_scheme_observer = new MutationObserver(setColorSchemeWrapper(container));
