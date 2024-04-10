@@ -85,15 +85,21 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(forcedPhotometry, band)
+      serie.data = this.formatError(forcedPhotometry, band, true)
       this.options.series.push(serie)
     })
   }
 
-  formatError(detections, band) {
+  formatError(detections, band, forced=false) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.corrected && x.mag_corr !== null && x.e_mag_corr_ext < 100
+        if (forced) {
+          if ('distnr' in x['extra_fields']) {
+            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.e_mag_corr_ext < 1 && x.mag_corr > 0 && x.mag_corr < 100
+          }
+          return x.fid === band && x.corrected && x.e_mag_corr_ext < 1 && x.mag_corr > 0 && x.mag_corr < 100
+        }
+        return x.fid === band && x.corrected && x.e_mag_corr_ext < 1 && x.mag_corr > 0 && x.mag_corr < 100
       })
       .map(function (x) {
         return [
@@ -107,7 +113,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   formatDetections(detections, band) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.corrected && x.mag_corr > 0
+        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 1
       })
       .map(function (x) {
         return [
@@ -124,9 +130,9 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
     return forcedPhotometry
       .filter(function (x) {
         if ('distnr' in x['extra_fields']) {
-          return x['extra_fields']['distnr'] >= 0 && x.fid === band
+          return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 1
         }
-        return x.fid === band
+        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 1
       })
       .map(function (x) {
         return [x.mjd, x.mag_corr, 'no-candid', x.e_mag_corr_ext, x.isdiffpos]

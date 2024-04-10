@@ -90,7 +90,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
 
   formatDetections(detections, band, period) {
     const folded1 = detections
-    .filter((x) => x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100)
+    .filter((x) => x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 1)
       .map((x) => {
         const phase = (x.mjd % period) / period
         return [
@@ -116,14 +116,16 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
             x.fid === band && 
             x.corrected &&
             x.mag_corr > 0 &&
-            x.mag_corr < 100
+            x.mag_corr < 100 &&
+            x.e_mag_corr_ext < 1
           )
         }
         return (
           x.fid === band && 
           x.corrected &&
           x.mag_corr > 0 &&
-          x.mag_corr < 100
+          x.mag_corr < 100 &&
+          x.e_mag_corr_ext < 1
         )
       })
       .map((x) => {
@@ -142,15 +144,35 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     return folded1.concat(folded2)
   }
 
-  formatError(detections, band, period) {
+  formatError(detections, band, period, forced = false) {
     const errors1 = detections
       .filter(function (x) {
+        if (forced) {
+          if ('distnr' in x['extra_fields']) {
+            return (
+              x['extra_fields']['distnr'] >= 0 &&
+              x.fid === band &&
+              x.corrected &&
+              x.e_mag_corr_ext < 1 &&
+              x.mag_corr > 0 &&
+              x.mag_corr < 100
+            )
+          }
+          return (
+            x.fid === band &&
+            x.corrected &&
+            x.e_mag_corr_ext < 1 &&
+            x.mag_corr > 0 &&
+            x.mag_corr < 100
+          )
+        }
         return (
           x.fid === band &&
           x.corrected &&
           x.mag_corr != null &&
           x.mag_corr > 0 &&
-          x.e_mag_corr_ext < 100
+          x.mag_corr < 100 &&
+          x.e_mag_corr_ext < 1
         )
       })
       .map(function (x) {

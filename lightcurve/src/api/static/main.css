@@ -10,13 +10,26 @@
   right: 50%;
 }
 
+.tw-preflight :is(.tw-col-span-3) {
+  grid-column: span 3 / span 3;
+}
+
+.tw-preflight :is(.tw-col-span-2) {
+  grid-column: span 2 / span 2;
+}
+
+.tw-preflight :is(.tw-col-span-1) {
+  grid-column: span 1 / span 1;
+}
+
 .tw-preflight :is(.tw-mx-7) {
   margin-left: 1.75rem;
   margin-right: 1.75rem;
 }
 
 .tw-preflight :is(.tw-me-2) {
-  margin-inline-end: 0.5rem;
+  -webkit-margin-end: 0.5rem;
+          margin-inline-end: 0.5rem;
 }
 
 .tw-preflight :is(.tw-mt-2) {
@@ -67,8 +80,16 @@
   min-width: 100%;
 }
 
-.tw-preflight :is(.tw-flex-1) {
-  flex: 1 1 0%;
+.tw-preflight :is(.tw-grow) {
+  flex-grow: 1;
+}
+
+.tw-preflight :is(.tw-basis-1\/2) {
+  flex-basis: 50%;
+}
+
+.tw-preflight :is(.tw-basis-3\/4) {
+  flex-basis: 75%;
 }
 
 .tw-preflight :is(.tw-translate-x-1\/2) {
@@ -99,6 +120,18 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.tw-preflight :is(.tw-grid-cols-3) {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.tw-preflight :is(.tw-grid-cols-5) {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.tw-preflight :is(.tw-flex-row) {
+  flex-direction: row;
+}
+
 .tw-preflight :is(.tw-flex-col) {
   flex-direction: column;
 }
@@ -107,18 +140,12 @@
   align-content: center;
 }
 
-.tw-preflight :is(.tw-items-center) {
-  align-items: center;
+.tw-preflight :is(.tw-gap-4) {
+  gap: 1rem;
 }
 
 .tw-preflight :is(.tw-gap-2) {
   gap: 0.5rem;
-}
-
-.tw-preflight :is(.tw-space-x-2 > :not([hidden]) ~ :not([hidden])) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
 }
 
 .tw-preflight :is(.tw-divide-y > :not([hidden]) ~ :not([hidden])) {
@@ -130,10 +157,6 @@
 .tw-preflight :is(.tw-divide-gray-200 > :not([hidden]) ~ :not([hidden])) {
   --tw-divide-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-divide-opacity));
-}
-
-.tw-preflight :is(.tw-overflow-y-auto) {
-  overflow-y: auto;
 }
 
 .tw-preflight :is(.tw-rounded) {

@@ -50,35 +50,39 @@
     document.addEventListener('htmx:configRequest', configRequest)
 </script>
 
-<div id="lightcurve-app" class="tw-preflight tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-rounded tw-p-4 tw-flex tw-flex-col tw-h-full">
+<div id="lightcurve-app" class="tw-preflight tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
     <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; min-height: 320px;"></div>
     <p id="plot-indicator" class="htmx-indicator">Loading...</p>
-    <div class="tw-flex tw-gap-1">
-        {% import 'radio_button.html.jinja' as radio %}
-        <div>
-            {{ radio.radio_button("difference", plot_type == "difference", "Difference Magnitude", "The difference Magnitude light curve is the absolute difference between science and reference magnitudes.") }}
-        </div>
-        <div>
-            {{ radio.radio_button("apparent", plot_type == "apparent", "Apparent Magnitude", "Apparent magnitude light curve results from adding/subtracting the fluxes from the reference and difference in the same unit system and then converting to magnitudes.") }}
-        </div>
-        <div>
-            {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase).") }}
-        </div>
-        <label>
-          <input 
-            id="check-dr" 
-            type="checkbox" 
-            value="dr" 
-          >
-            <span>Show Data Release</span>
-            <div class="tooltip">
-                <i class="fa fa-question-circle tw-me-2"></i>
-                <div class="tooltip-text">
-                    Show data release sources from ZTF DR5
-                </div>
+    <div class="tw-grid tw-grid-cols-5 tw-gap-2">
+        <div class="tw-col-span-2">
+            {% import 'radio_button.html.jinja' as radio %}
+            <div>
+                {{ radio.radio_button("difference", plot_type == "difference", "Difference Magnitude", "The difference Magnitude light curve is the absolute difference between science and reference magnitudes.") }}
             </div>
-        </label>
-        <div id="tools" class="tw-flex-grow">
+            <div>
+                {{ radio.radio_button("apparent", plot_type == "apparent", "Apparent Magnitude", "Apparent magnitude light curve results from adding/subtracting the fluxes from the reference and difference in the same unit system and then converting to magnitudes.") }}
+            </div>
+            <div>
+                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase).") }}
+            </div>
+        </div>
+        <div class="tw-col-span-2">
+            <label class="tw-mt-2 tw-px-2 tw-py-1">
+              <input 
+                id="check-dr" 
+                type="checkbox" 
+                value="dr" 
+              >
+                <span>Toggle DR</span>
+                <div class="tooltip">
+                    <i class="fa fa-question-circle tw-me-2"></i>
+                    <div class="tooltip-text">
+                        Show data release sources from ZTF DR5
+                    </div>
+                </div>
+            </label>
+        </div>
+        <div>
             <button id="lc-dr"
                 class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600"
                 hx-get="{{API_URL}}/htmx/lightcurve/dr?oid={{oid}}" hx-swap="outerHTML" hx-trigger="click"
@@ -87,7 +91,7 @@
                 hx-indicator="#plot-indicator"
             >
                 <i class="fa fa-eye tw-me-2"></i>
-                Choose DR Objects
+                Filter DR Objects
             </button>
             <a id="lc-download-ref" style="display: none;"></a>
             <button id="lc-download"
@@ -126,7 +130,6 @@
                 plot_options = new FoldedLightCurveOptions(all_detections, forced_photometry, plot_text_color, period);
             }
             plot.setOption(plot_options.options, true);
-            plot.resize()
         }
 
         function getDetectionsWithDR() {
@@ -142,15 +145,11 @@
         }
 
         function showDataRelease() {
-            let all_detections = getDetectionsWithDR();
-            if (current_plot === "apparent") {
-                plot_options = new ApparentLightCurveOptions(all_detections, forced_photometry, plot_text_color);
+            if (current_plot === "apparent" || current_plot === "difference") {
+                current_plot = "apparent";
             }
-            if (current_plot === "folded") {
-                plot_options = new FoldedLightCurveOptions(all_detections, forced_photometry, plot_text_color, period);
-            }
-            plot.setOption(plot_options.options, true);
-            plot.resize()
+            setPlot();
+            updateRadioButtons();
         }
 
         function plotOnClick(detection) {
@@ -217,6 +216,13 @@
                 a.click();
             });
         }
+
+        function updateRadioButtons(){
+            radio_buttons.forEach((r) => {
+                r.checked = r.value === current_plot;
+            });
+        }
+
         document.getElementById("lc-download").addEventListener("click", () => download("{{oid}}", detections, non_detections, forced_photometry));
 
         const lc_main_elem = document.getElementById("lc-main");
@@ -228,9 +234,7 @@
             radio.addEventListener("click", (event) => {
                 current_plot = event.target.value;
                 setPlot();
-                radio_buttons.forEach((r) => {
-                    r.checked = r.value === current_plot;
-                });
+                updateRadioButtons();
             });
         });
         let check_dr = document.getElementById("check-dr");

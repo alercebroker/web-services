@@ -1,18 +1,22 @@
 {% macro radio_button(value,checked, title, tooltip) %}
-  <label>
-  <input 
-    id="radio-{{ value }}" 
-    type="radio" 
-    value="{{ value }}" 
-    {% if checked %}checked{% endif %} 
-  >
-    <span>{{title}}</span>
-    <div class="tooltip">
-        <i class="fa fa-question-circle tw-me-2"></i>
-        <div class="tooltip-text">
-            {{tooltip}}
-        </div>
-    </div>
-  </label>
+<div class="tw-flex tw-flex-row">
+  <div class="tw-basis-3/4">
+    <label>
+      <input 
+        id="radio-{{ value }}" 
+        type="radio" 
+        value="{{ value }}" 
+        {% if checked %}checked{% endif %} 
+      >
+        <span>{{title}}</span>
+    </label>
+  </div>
+  <div class="tooltip">
+      <i class="fa fa-question-circle tw-me-2"></i>
+      <div class="tooltip-text">
+          {{tooltip}}
+      </div>
+  </div>
+</div>
 {% endmacro %}
 

@@ -8,7 +8,7 @@ class Detection(BaseModel):
     tid: str
     sid: Optional[str] = Field(default=None)
     aid: str = Field(default=None)
-    pid: int 
+    pid: int = Field(default=None)
     oid: str
     mjd: float
     fid: int

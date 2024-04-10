@@ -3,7 +3,7 @@ module.exports = {
   important: ".tw-preflight",
   prefix: 'tw-',
   darkMode: 'class',
-  content: ["./src/api/templates/**/*.html.j2"],
+  content: ["./src/api/templates/**/*.html.jinja"],
   theme: {
     extend: {},
   },

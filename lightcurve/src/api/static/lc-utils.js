@@ -5,6 +5,7 @@ export class LightCurveOptions {
     this.bandMap = {
       1: { name: 'g', color: '#56E03A' },
       2: { name: 'r', color: '#D42F4B' },
+      3: { name: 'i', color: '#F4D617' },
       101: { name: 'g DR5', color: '#ADA3A3' },
       102: { name: 'r DR5', color: '#377EB8' },
       103: { name: 'i DR5', color: '#FF7F00' },
@@ -99,8 +100,8 @@ export class LightCurveOptions {
           show: false,
         },
         inverse: true,
-        min: (x) => x.min - 0.1,
-        max: (x) => x.max + 0.1,
+        min: 15,
+        max: 25,
       },
       textStyle: {
         color: this.fontColor,
