@@ -3,9 +3,13 @@ import { LightCurveOptions } from './lc-utils.js'
 
 
 export class DifferenceLightCurveOptions extends LightCurveOptions {
-  constructor(detections, nonDetections, forcedPhotometry, fontColor) {
+  constructor(detections, nonDetections, forcedPhotometry, fontColor, flux=false) {
     super(detections, nonDetections, forcedPhotometry, fontColor, "Difference Magnitude")
-    this.detections = detections
+    if (flux) {
+      this.detections = LightCurveOptions.magToFlux(detections)
+    } else {
+      this.detections = detections
+    }
     this.nonDetections = nonDetections
     this.forcedPhotometry = forcedPhotometry
     this.getSeries()

@@ -132,18 +132,18 @@
         let dr_detections = {{ dr_detections | tojson }};
         let current_plot = "{{ plot_type }}";
         let period = {{ period | tojson }};
-        console.log("period", period)
 
         const setPlot = () => {
+            let flux = document.getElementById("check-flux").checked;
             const all_detections = getDetectionsWithDR();
             if (current_plot === "difference") {
-                plot_options = new DifferenceLightCurveOptions(detections, non_detections, forced_photometry, plot_text_color);
+                plot_options = new DifferenceLightCurveOptions(detections.slice(), non_detections, forced_photometry, plot_text_color, flux);
             } 
             if (current_plot === "apparent") {
-                plot_options = new ApparentLightCurveOptions(all_detections, forced_photometry, plot_text_color);
+                plot_options = new ApparentLightCurveOptions(all_detections.slice(), forced_photometry, plot_text_color);
             }
             if (current_plot === "folded") {
-                plot_options = new FoldedLightCurveOptions(all_detections, forced_photometry, plot_text_color, period);
+                plot_options = new FoldedLightCurveOptions(all_detections.slice(), forced_photometry, plot_text_color, period);
             }
             plot.setOption(plot_options.options, true);
         }
@@ -263,6 +263,10 @@
             } else {
                 setPlot();
             }
+        });
+        let check_flux = document.getElementById("check-flux");
+        check_flux.addEventListener("change", (event) => {
+            setPlot();
         });
         const container = document.getElementById("lightcurve-app");
         const color_scheme_observer = new MutationObserver(setColorSchemeWrapper(container));
