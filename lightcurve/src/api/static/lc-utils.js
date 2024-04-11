@@ -28,7 +28,7 @@ export class LightCurveOptions {
       },
       tooltip: {
         show: true,
-        trigger: 'axis',
+        trigger: 'item',
         axisPointer: {
           type: 'cross',
           label: {
@@ -126,6 +126,9 @@ export class LightCurveOptions {
   }
 
   formatTooltip(params) {
+    if (params.seriesType === 'custom') {
+      return
+    }
     const colorSpan = (color) =>
       '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' +
       color +
@@ -157,68 +160,68 @@ export class LightCurveOptions {
     }
     const calendarIcon = (color) =>
       `<span class="mdi mdi-alarm" style='font-size:13px; color: ${color};'></span>`
-    const serie = params[0].seriesName
+    const serie = params.seriesName
     let table = '<table> <tr> <th></th> <th></th> <th></th></tr>'
     if (serie === 'r non-detections' || serie === 'g non-detections') {
       table += rowTable(
-        colorSpan(params[0].color),
-        params[0].seriesName + ':',
-        params[0].value[1]
+        colorSpan(params.color),
+        params.seriesName + ':',
+        params.value[1]
       )
       table += rowTable(
-        calendarIcon(params[0].color),
+        calendarIcon(params.color),
         'MJD: ',
-        params[0].value[0]
+        params.value[0]
       )
       table += rowTable(
-        calendarIcon(params[0].color),
+        calendarIcon(params.color),
         'Date: ',
-        jdToDate(params[0].value[0]).toUTCString().slice(0, -3) + 'UT'
+        jdToDate(params.value[0]).toUTCString().slice(0, -3) + 'UT'
       )
       return table + '</table>'
-    } else if (serie === 'r' || serie === 'g') {
-      const isdiffpos = params[0].value[4] === 1 ? '(+)' : '(-)'
-      const mag = params[0].value[1].toFixed(3)
-      const err = params[0].value[3].toFixed(3)
-      table += rowTable('', 'candid: ', params[0].value[2])
+    } else if (serie === 'r' || serie === 'g' || serie === 'i') {
+      const isdiffpos = params.value[4] === 1 ? '(+)' : '(-)'
+      const mag = params.value[1].toFixed(3)
+      const err = params.value[3].toFixed(3)
+      table += rowTable('', 'candid: ', params.value[2])
       table += rowTable(
-        colorSpan(params[0].color),
-        params[0].seriesName + ': ',
+        colorSpan(params.color),
+        params.seriesName + ': ',
         `${isdiffpos} ${mag} ± ${err}`
       )
       table += rowTable(
-        calendarIcon(params[0].color),
+        calendarIcon(params.color),
         'MJD: ',
-        params[0].value[0]
+        params.value[0]
       )
       table += rowTable(
-        calendarIcon(params[0].color),
+        calendarIcon(params.color),
         'Date: ',
-        jdToDate(params[0].value[0]).toUTCString().slice(0, -3) + 'UT'
+        jdToDate(params.value[0]).toUTCString().slice(0, -3) + 'UT'
       )
       table += rowTable('', 'click to change stamp', '')
       return table + '</table>'
     } else if (serie === 'r DR5' || serie === 'g DR5' || serie === 'i DR5') {
-      table += dataReleaseTooltip(params[0])
+      table += dataReleaseTooltip(params)
       return table
     } else if (serie === 'r forced photometry' || serie === 'g forced photometry') {
-      const isdiffpos = params[0].value[4] === 1 ? '(+)' : '(-)'
-      const mag = params[0].value[1].toFixed(3)
-      const err = params[0].value[3].toFixed(3)
+      const isdiffpos = params.value[4] === 1 ? '(+)' : '(-)'
+      const mag = params.value[1].toFixed(3)
+      const err = params.value[3].toFixed(3)
       table += rowTable(
-        colorSpan(params[0].color),
-        params[0].seriesName + ': ',
+        colorSpan(params.color),
+        params.seriesName + ': ',
         `${isdiffpos} ${mag} ± ${err}`
       )
       table += rowTable(
-        calendarIcon(params[0].color),
+        calendarIcon(params.color),
         'MJD: ',
-        params[0].value[0]
+        params.value[0]
       )
       table += rowTable(
-        calendarIcon(params[0].color),
+        calendarIcon(params.color),
         'Date: ',
-        jdToDate(params[0].value[0]).toUTCString().slice(0, -3) + 'UT'
+        jdToDate(params.value[0]).toUTCString().slice(0, -3) + 'UT'
       )
       return table + '</table>'
     }
@@ -280,5 +283,13 @@ export class LightCurveOptions {
     } else {
       return 'rgb(' + r + ', ' + g + ', ' + b + ')'
     }
+  }
+
+  static magToFlux(detections){
+    const newData = detections.slice(0).map((detection) => {
+      detection.mag = 10 ** (-0.4 * (detection.mag - 23.9)) * detection.isdiffpos
+      return detection
+    })
+    return newData
   }
 }
