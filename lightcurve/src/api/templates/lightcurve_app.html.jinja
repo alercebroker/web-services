@@ -50,11 +50,11 @@
     document.addEventListener('htmx:configRequest', configRequest)
 </script>
 
-<div id="lightcurve-app" class="tw-preflight tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
-    <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; min-height: 320px;"></div>
+<div id="lightcurve-app" class="tw-preflight tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white" style="height: 100%;">
+    <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; max-height: 350px;"></div>
     <p id="plot-indicator" class="htmx-indicator">Loading...</p>
-    <div class="tw-grid tw-grid-cols-5 tw-gap-2">
-        <div class="tw-col-span-2">
+    <div class="tw-grid tw-grid-cols-6 tw-gap-2 tw-mx-2 tw-px-2">
+        <div class="tw-col-span-3">
             {% import 'radio_button.html.jinja' as radio %}
             <div>
                 {{ radio.radio_button("difference", plot_type == "difference", "Difference Magnitude", "The difference Magnitude light curve is the absolute difference between science and reference magnitudes.") }}
@@ -63,39 +63,54 @@
                 {{ radio.radio_button("apparent", plot_type == "apparent", "Apparent Magnitude", "Apparent magnitude light curve results from adding/subtracting the fluxes from the reference and difference in the same unit system and then converting to magnitudes.") }}
             </div>
             <div>
-                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase).") }}
+                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase). Disabled if no period available.", period == 0) }}
             </div>
         </div>
         <div class="tw-col-span-2">
-            <label class="tw-mt-2 tw-px-2 tw-py-1">
-              <input 
+            <input 
                 id="check-dr" 
                 type="checkbox" 
                 value="dr" 
-              >
-                <span>Toggle DR</span>
-                <div class="tooltip">
-                    <i class="fa fa-question-circle tw-me-2"></i>
-                    <div class="tooltip-text">
-                        Show data release sources from ZTF DR5
-                    </div>
-                </div>
+            />
+            <label for="check-dr" class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-px-2 tw-py-1 tw-rounded">
+                Toggle DR
             </label>
+            <div class="tooltip">
+                <i class="fa fa-question-circle tw-me-2"></i>
+                <div class="tooltip-text">
+                    Show data release sources from ZTF DR5
+                </div>
+            </div>
+            <input 
+                id="check-flux" 
+                type="checkbox" 
+                value="flux" 
+                disabled
+            />
+            <label for="check-flux" class="tw-text-xs tw-bg-gray-400 tw-text-white tw-font-bold tw-px-2 tw-py-1 tw-rounded">
+                Toggle Flux
+            </label>
+            <div class="tooltip">
+                <i class="fa fa-question-circle tw-me-2"></i>
+                <div class="tooltip-text">
+                    TODO
+                </div>
+            </div>
         </div>
         <div>
             <button id="lc-dr"
-                class="tw-bg-blue-500 dark:tw-bg-blue-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-blue-600"
+                class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"
                 hx-get="{{API_URL}}/htmx/lightcurve/dr?oid={{oid}}" hx-swap="outerHTML" hx-trigger="click"
                 hx-target="#lightcurve-app"
                 hx-swap="outerHTML"
                 hx-indicator="#plot-indicator"
             >
                 <i class="fa fa-eye tw-me-2"></i>
-                Filter DR Objects
+                Filter DR
             </button>
             <a id="lc-download-ref" style="display: none;"></a>
             <button id="lc-download"
-                class="tw-bg-green-500 dark:tw-bg-green-700 tw-text-white tw-mt-2 tw-px-2 tw-py-1 tw-rounded hover:tw-bg-green-600">
+                class="tw-text-xs tw-bg-green-500 hover:tw-bg-green-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded">
                 <i class="fa fa-download tw-me-2"></i>
                 Download
             </button>
@@ -117,6 +132,7 @@
         let dr_detections = {{ dr_detections | tojson }};
         let current_plot = "{{ plot_type }}";
         let period = {{ period | tojson }};
+        console.log("period", period)
 
         const setPlot = () => {
             const all_detections = getDetectionsWithDR();
