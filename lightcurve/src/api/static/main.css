@@ -18,14 +18,14 @@
   grid-column: span 3 / span 3;
 }
 
-.tw-preflight :is(.tw-mx-7) {
-  margin-left: 1.75rem;
-  margin-right: 1.75rem;
-}
-
 .tw-preflight :is(.tw-mx-2) {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+}
+
+.tw-preflight :is(.tw-mx-7) {
+  margin-left: 1.75rem;
+  margin-right: 1.75rem;
 }
 
 .tw-preflight :is(.tw-me-2) {
@@ -103,10 +103,6 @@
 
 .tw-preflight :is(.tw-animate-spin) {
   animation: tw-spin 1s linear infinite;
-}
-
-.tw-preflight :is(.tw-grid-cols-5) {
-  grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
 .tw-preflight :is(.tw-grid-cols-6) {
@@ -188,6 +184,11 @@
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-bg-gray-400) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.tw-bg-green-500) {
   --tw-bg-opacity: 1;
   background-color: rgb(34 197 94 / var(--tw-bg-opacity));
@@ -198,19 +199,9 @@
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-gray-500) {
+.tw-preflight :is(.tw-bg-green-400) {
   --tw-bg-opacity: 1;
-  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-gray-300) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-gray-400) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+  background-color: rgb(74 222 128 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-p-2) {
@@ -826,9 +817,9 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-backdrop-sepia: ;
 }
 
-.tw-preflight :is(.hover\:tw-bg-blue-600:hover) {
+.tw-preflight :is(.hover\:tw-bg-blue-700:hover) {
   --tw-bg-opacity: 1;
-  background-color: rgb(37 99 235 / var(--tw-bg-opacity));
+  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.hover\:tw-bg-gray-200:hover) {
@@ -839,11 +830,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.hover\:tw-bg-green-600:hover) {
   --tw-bg-opacity: 1;
   background-color: rgb(22 163 74 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.hover\:tw-bg-blue-700:hover) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.hover\:tw-bg-green-700:hover) {
@@ -869,11 +855,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#252525\]) {
   --tw-bg-opacity: 1;
   background-color: rgb(37 37 37 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-dark .dark\:tw-bg-blue-700) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-bg-green-700) {

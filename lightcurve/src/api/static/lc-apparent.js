@@ -2,24 +2,32 @@ import { jdToDate } from './astro-dates.js'
 import { LightCurveOptions } from './lc-utils.js'
 
 export class ApparentLightCurveOptions extends LightCurveOptions {
-  constructor(detections, forcedPhotometry, fontColor) {
+  constructor(detections, forcedPhotometry, fontColor, flux=false) {
     super(detections, [], forcedPhotometry, fontColor, "Apparent Magnitude")
     this.detections = detections
     this.forcedPhotometry = forcedPhotometry
-    this.getSeries()
+    this.getSeries(flux)
     this.getLegend()
     this.getBoundaries()
   }
 
-  getSeries() {
-    this.detections = this.detections.filter((item) => item.fid != 4 && item.fid != 5)
-    this.forcedPhotometry = this.forcedPhotometry.filter((item) => item.fid != 4 && item.fid != 5)
+  getSeries(flux) {
     const bands = new Set(this.detections.map((item) => item.fid))
     const fpBands = new Set(this.forcedPhotometry.map((item) => item.fid))
-    this.addDetections(this.detections, bands)
-    this.addErrorBars(this.detections, bands)
-    this.addForcedPhotometry(this.forcedPhotometry, fpBands)
-    this.addErrorBarsForcedPhotometry(this.forcedPhotometry, fpBands)
+    let detections = this.detections
+    let forcedPhotometry = this.forcedPhotometry
+    if (flux) {
+      detections = LightCurveOptions.magToFlux(this.detections, true)
+      forcedPhotometry = LightCurveOptions.magToFlux(this.forcedPhotometry, true)
+      this.options.yAxis.inverse = false
+      this.options.yAxis.name = 'uJy'
+      this.options.yAxis.nameLocation = 'end'
+      this.options.title.text = "Total Flux"
+    }
+    this.addDetections(detections, bands)
+    this.addErrorBars(detections, bands)
+    this.addForcedPhotometry(forcedPhotometry, fpBands)
+    this.addErrorBarsForcedPhotometry(forcedPhotometry, fpBands)
   }
 
   addDetections(detections, bands) {
@@ -95,11 +103,11 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
       .filter(function (x) {
         if (forced) {
           if ('distnr' in x['extra_fields']) {
-            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.e_mag_corr_ext < 1 && x.mag_corr > 0 && x.mag_corr < 100
+            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr < 100
           }
-          return x.fid === band && x.corrected && x.e_mag_corr_ext < 1 && x.mag_corr > 0 && x.mag_corr < 100
+          return x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr < 100
         }
-        return x.fid === band && x.corrected && x.e_mag_corr_ext < 1 && x.mag_corr > 0 && x.mag_corr < 100
+        return x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr < 100
       })
       .map(function (x) {
         return [
@@ -113,7 +121,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   formatDetections(detections, band) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 1
+        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 99
       })
       .map(function (x) {
         return [
@@ -130,9 +138,9 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
     return forcedPhotometry
       .filter(function (x) {
         if ('distnr' in x['extra_fields']) {
-          return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 1
+          return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 99
         }
-        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 1
+        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 99
       })
       .map(function (x) {
         return [x.mjd, x.mag_corr, 'no-candid', x.e_mag_corr_ext, x.isdiffpos]

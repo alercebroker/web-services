@@ -51,7 +51,7 @@
 </script>
 
 <div id="lightcurve-app" class="tw-preflight tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white" style="height: 100%;">
-    <div id="lc-main" style="width: 100%; height: 100%; min-width: 0; max-height: 350px;"></div>
+    <div id="lc-main" style="width: 100%;  min-width: 0; min-height: 350px;"></div>
     <p id="plot-indicator" class="htmx-indicator">Loading...</p>
     <div class="tw-grid tw-grid-cols-6 tw-gap-2 tw-mx-2 tw-px-2">
         <div class="tw-col-span-3">
@@ -85,9 +85,8 @@
                 id="check-flux" 
                 type="checkbox" 
                 value="flux" 
-                disabled
             />
-            <label for="check-flux" class="tw-text-xs tw-bg-gray-400 tw-text-white tw-font-bold tw-px-2 tw-py-1 tw-rounded">
+            <label for="check-flux" class="tw-text-xs tw-bg-green-400 hover:tw-bg-green-700 tw-text-white tw-font-bold tw-px-2 tw-py-1 tw-rounded">
                 Toggle Flux
             </label>
             <div class="tooltip">
@@ -126,30 +125,30 @@
 
         let plot_text_color = "#000";
         let plot_options;
-        let detections = {{ lightcurve.detections | tojson }};
-        let forced_photometry = {{ lightcurve.forced_photometry | tojson }};
-        let non_detections = {{ lightcurve.non_detections | tojson }};
-        let dr_detections = {{ dr_detections | tojson }};
+        const detections = {{ lightcurve.detections | tojson }};
+        const forced_photometry = {{ lightcurve.forced_photometry | tojson }};
+        const non_detections = {{ lightcurve.non_detections | tojson }};
+        const dr_detections = {{ dr_detections | tojson }};
         let current_plot = "{{ plot_type }}";
-        let period = {{ period | tojson }};
+        const period = {{ period | tojson }};
 
         const setPlot = () => {
             let flux = document.getElementById("check-flux").checked;
             const all_detections = getDetectionsWithDR();
             if (current_plot === "difference") {
-                plot_options = new DifferenceLightCurveOptions(detections.slice(), non_detections, forced_photometry, plot_text_color, flux);
+                plot_options = new DifferenceLightCurveOptions(JSON.parse(JSON.stringify(detections)), non_detections, forced_photometry, plot_text_color, flux);
             } 
             if (current_plot === "apparent") {
-                plot_options = new ApparentLightCurveOptions(all_detections.slice(), forced_photometry, plot_text_color);
+                plot_options = new ApparentLightCurveOptions(all_detections, forced_photometry, plot_text_color, flux);
             }
             if (current_plot === "folded") {
-                plot_options = new FoldedLightCurveOptions(all_detections.slice(), forced_photometry, plot_text_color, period);
+                plot_options = new FoldedLightCurveOptions(all_detections, forced_photometry, plot_text_color, period);
             }
             plot.setOption(plot_options.options, true);
         }
 
         function getDetectionsWithDR() {
-            let all_detections = detections.slice(0);
+            let all_detections = JSON.parse(JSON.stringify(detections));
             let check_dr = document.getElementById("check-dr");
             if (!check_dr.checked) {
                 return all_detections
@@ -265,9 +264,7 @@
             }
         });
         let check_flux = document.getElementById("check-flux");
-        check_flux.addEventListener("change", (event) => {
-            setPlot();
-        });
+        check_flux.addEventListener("change", setPlot);
         const container = document.getElementById("lightcurve-app");
         const color_scheme_observer = new MutationObserver(setColorSchemeWrapper(container));
         color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });

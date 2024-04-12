@@ -5,27 +5,35 @@ import { LightCurveOptions } from './lc-utils.js'
 export class DifferenceLightCurveOptions extends LightCurveOptions {
   constructor(detections, nonDetections, forcedPhotometry, fontColor, flux=false) {
     super(detections, nonDetections, forcedPhotometry, fontColor, "Difference Magnitude")
-    if (flux) {
-      this.detections = LightCurveOptions.magToFlux(detections)
-    } else {
-      this.detections = detections
-    }
+    this.detections = detections
     this.nonDetections = nonDetections
     this.forcedPhotometry = forcedPhotometry
-    this.getSeries()
+    this.getSeries(flux)
     this.getLegend()
     this.getBoundaries()
   }
 
-  getSeries() {
+  getSeries(flux) {
     const bands = new Set(this.detections.map((item) => item.fid))
     const ndBands = new Set(this.nonDetections.map((item) => item.fid))
     const fpBands = new Set(this.forcedPhotometry.map((item) => item.fid))
-    this.addDetections(this.detections, bands)
-    this.addErrorBars(this.detections, bands)
-    this.addNonDetections(this.nonDetections, ndBands)
-    this.addForcedPhotometry(this.forcedPhotometry, fpBands)
-    this.addErrorBarsForcedPhotometry(this.forcedPhotometry, fpBands)
+    let detections = this.detections
+    let forcedPhotometry = this.forcedPhotometry
+    if (flux){
+      detections = LightCurveOptions.magToFlux(this.detections)
+      forcedPhotometry = LightCurveOptions.magToFlux(this.forcedPhotometry)
+      this.options.yAxis.inverse = false
+      this.options.yAxis.name = 'uJy'
+      this.options.yAxis.nameLocation = 'end'
+      this.options.title.text = "Difference Flux"
+    }
+    this.addDetections(detections, bands)
+    this.addErrorBars(detections, bands)
+    this.addForcedPhotometry(forcedPhotometry, fpBands)
+    this.addErrorBarsForcedPhotometry(forcedPhotometry, fpBands)
+    if (!flux) {
+      this.addNonDetections(this.nonDetections, ndBands)
+    }
   }
 
   addDetections(detections, bands) {
@@ -122,7 +130,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   formatDetections(detections, band) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.mag <= 24
+        return x.fid === band && x.mag <= 99
       })
       .map(function (x) {
         return [x.mjd, x.mag, x.candid, x.e_mag, x.isdiffpos]
@@ -133,7 +141,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
     return forcedPhotometry
       .filter(function (x) {
         if ("distnr" in x["extra_fields"]) {
-          return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.mag <= 24
+          return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.mag <= 99
         }
         return x.fid === band && x.mag <= 24
       })
@@ -145,7 +153,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   formatNonDetections(nonDetections, band) {
     return nonDetections
       .filter(function (x) {
-        return x.fid === band && x.diffmaglim > 10 && x.diffmaglim <= 23
+        return x.fid === band && x.diffmaglim > 10 && x.diffmaglim <= 25
       })
       .map(function (x) {
         return [x.mjd, x.diffmaglim]

@@ -231,7 +231,7 @@ export class LightCurveOptions {
     const xValue = api.value(0)
     const highPoint = api.coord([xValue, api.value(1)])
     const lowPoint = api.coord([xValue, api.value(2)])
-    const halfWidth = 1.9 // api.size([1, 0])[0] * 0.1
+    const halfWidth = 1.9 // api.size([1, 0])[0] * 0.start1
     const style = api.style({
       stroke: api.visual('color'),
       fill: null,
@@ -285,9 +285,14 @@ export class LightCurveOptions {
     }
   }
 
-  static magToFlux(detections){
-    const newData = detections.slice(0).map((detection) => {
+  static magToFlux(detections, apparent=false){
+    const newData = detections.map((detection) => {
+      if (apparent && detection.mag_corr > 0 && detection.mag_corr < 100 && detection.e_mag_corr_ext < 1) {
+        detection.mag_corr = 10 ** (-0.4 * (detection.mag_corr - 23.9))
+        detection.e_mag_corr_ext = Math.abs(detection.e_mag_corr_ext) * Math.abs(detection.mag_corr)
+      }
       detection.mag = 10 ** (-0.4 * (detection.mag - 23.9)) * detection.isdiffpos
+      detection.e_mag = Math.abs(detection.e_mag) * Math.abs(detection.mag)
       return detection
     })
     return newData
