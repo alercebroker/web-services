@@ -11,9 +11,6 @@ from core.service import (
     get_lightcurve,
     get_non_detections,
 )
-from database.mongo import database
-from database.sql import session
-
 from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
@@ -38,6 +35,8 @@ def detections(
     oid: str,
     survey_id: str = "all",
 ):
+    session = request.app.state.psql_session
+    database = request.app.state.mongo_db
     return get_detections(
         oid=oid,
         survey_id=survey_id,
@@ -57,6 +56,8 @@ def non_detections(
     request: Request,
     survey_id: str = "all",
 ):
+    session = request.app.state.psql_session
+    database = request.app.state.mongo_db
     return get_non_detections(
         oid=oid,
         survey_id=survey_id,
@@ -76,6 +77,8 @@ def lightcurve(
     request: Request,
     survey_id: str = "all",
 ):
+    session = request.app.state.psql_session
+    database = request.app.state.mongo_db
     return get_lightcurve(
         oid=oid,
         survey_id=survey_id,
@@ -91,6 +94,8 @@ def lightcurve(
 @set_filters_decorator(["filter_atlas_forced_photometry"])
 @check_permissions_decorator
 def forced_photometry(oid: str, request: Request, survey_id: str = "all"):
+    session = request.app.state.psql_session
+    database = request.app.state.mongo_db
     return get_forced_photometry(
         oid=oid,
         survey_id=survey_id,

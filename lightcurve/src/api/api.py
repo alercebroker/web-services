@@ -8,8 +8,13 @@ from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 from .filters import get_filters_map
 from .routes import htmx, rest, period
 from config import app_config
+from database.mongo import connect as connect_mongo
+from database.sql import connect as connect_sql, session_wrapper
 
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
+app.state.mongo_db = connect_mongo()
+psql_engine = connect_sql()
+app.state.psql_session = session_wrapper(psql_engine)
 instrumentator = Instrumentator().instrument(app).expose(app)
 config = app_config()
 

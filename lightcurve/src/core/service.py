@@ -1,5 +1,5 @@
 from contextlib import AbstractContextManager
-from typing import Any, Callable
+from typing import Any, Callable, Sequence, Tuple
 
 import httpx
 from db_plugins.db.sql.models import (
@@ -13,7 +13,7 @@ from pymongo.database import Database
 from pymongo.cursor import Cursor
 from returns.pipeline import is_successful
 from returns.result import Failure, Result, Success
-from sqlalchemy import select, text
+from sqlalchemy import Row, select, text
 from sqlalchemy.orm import Session
 
 from .exceptions import (
@@ -49,11 +49,11 @@ def fail_from_list(failable_list: list):
 def get_lightcurve(
     oid: str,
     survey_id: str = "all",
-    session_factory: Callable[..., AbstractContextManager[Session]] = None,
-    mongo_db: Database = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
-    handle_error: Callable[[Exception], None] = default_handle_error,
-) -> dict[str, list[DetectionModel] | list[NonDetectionModel]]:
+    handle_error: Callable[[BaseException], None] = default_handle_error,
+) -> dict[str, list[DetectionModel] | list[NonDetectionModel]] | None:
     """Retrieves both unique detections and non detections for a given object in
     a given survey.
 
@@ -84,28 +84,28 @@ def get_lightcurve(
         forced_photometry = _get_unique_forced_photometry(
             oid, survey_id, session_factory, mongo_db
         )
+        failure = fail_from_list([detections, non_detections, forced_photometry])
+        if failure:
+            handle_error(failure)
+        return handle_success(
+            {
+                "detections": detections.unwrap(),
+                "non_detections": non_detections.unwrap(),
+                "forced_photometry": forced_photometry.unwrap(),
+            }
+        )
     else:
         handle_error(SurveyIdError(survey_id, "lightcurve"))
-    failure = fail_from_list([detections, non_detections, forced_photometry])
-    if failure:
-        handle_error(failure)
-    return handle_success(
-        {
-            "detections": detections.unwrap(),
-            "non_detections": non_detections.unwrap(),
-            "forced_photometry": forced_photometry.unwrap(),
-        }
-    )
 
 
 def get_detections(
     oid: str,
     survey_id: str = "all",
-    session_factory: Callable[..., AbstractContextManager[Session]] = None,
-    mongo_db: Database = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
     handle_success: Callable[[Any], list] = default_handle_success,
-    handle_error: Callable[[Exception], None] = default_handle_error,
-) -> list[DetectionModel]:
+    handle_error: Callable[[BaseException], None] = default_handle_error,
+) -> list[dict] | None:
     """Retrieves all unique detections from the databases for a given
     object in a given survey.
 
@@ -130,21 +130,21 @@ def get_detections(
         detections_result = _get_all_unique_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
+        if is_successful(detections_result):
+            return handle_success(detections_result.unwrap())
+        else:
+            handle_error(detections_result.failure())
     else:
         handle_error(SurveyIdError(survey_id, "detections"))
-    if is_successful(detections_result):
-        return handle_success(detections_result.unwrap())
-    else:
-        handle_error(detections_result.failure())
-
 
 def _get_all_unique_detections(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] = None,
-    mongo_db: Database = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
 ) -> Result[list[DetectionModel], BaseException]:
     try:
+        assert session_factory is not None
         sql_detections = _get_detections_sql(
             session_factory, oid, tid=survey_id
         )
@@ -153,6 +153,7 @@ def _get_all_unique_detections(
     except DatabaseError as e:
         return Failure(e)
     try:
+        assert mongo_db is not None
         mongo_detections = _get_detections_mongo(mongo_db, oid, tid=survey_id)
     except ObjectNotFound:
         mongo_detections = []
@@ -165,11 +166,11 @@ def _get_all_unique_detections(
 def get_non_detections(
     oid: str,
     survey_id: str = "all",
-    session_factory: Callable[..., AbstractContextManager[Session]] = None,
-    mongo_db: Database = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
     handle_success: Callable[[Any], list] = default_handle_success,
-    handle_error: Callable[[Exception], None] = default_handle_error,
-) -> list[NonDetectionModel]:
+    handle_error: Callable[[BaseException], None] = default_handle_error,
+) -> list[NonDetectionModel] | None:
     """Retrieves all unique non-detections from the databases for a given
     object in a given survey.
 
@@ -194,25 +195,23 @@ def get_non_detections(
         non_detections_result = _get_all_unique_non_detections(
             oid, survey_id, session_factory=session_factory, mongo_db=mongo_db
         )
+        if is_successful(non_detections_result):
+            return handle_success(non_detections_result.unwrap())
+        else:
+            handle_error(non_detections_result.failure())
     elif survey_id == "atlas":
         handle_error(AtlasNonDetectionError())
     else:
         handle_error(SurveyIdError(survey_id, "non detections"))
 
-    if is_successful(non_detections_result):
-        return handle_success(non_detections_result.unwrap())
-    else:
-        handle_error(non_detections_result.failure())
-
 
 def get_period(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] = None,
-    mongo_db: Database = None,
-    handle_success: Callable[[Any], list] = default_handle_success,
-    handle_error: Callable[[Exception], None] = default_handle_error,
-) -> FeatureModel:
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    handle_success: Callable[[Any], FeatureModel] = default_handle_success,
+    handle_error: Callable[[BaseException], None] = default_handle_error,
+) -> FeatureModel | None:
     """Retrieves the period feature from a given object. Currently only works for
     ZTF on the SQL DB.
 
@@ -235,25 +234,25 @@ def get_period(
     """
     if survey_id == "ztf":
         period_results = _get_period_sql(oid, session_factory)
+        if is_successful(period_results):
+            return handle_success(period_results.unwrap())
+        else:
+            handle_error(period_results.failure())
     elif survey_id == "atlas":
-        handle_error(NotImplementedError)
+        handle_error(NotImplementedError())
     else:
         handle_error(SurveyIdError(survey_id, "period"))
 
-    if is_successful(period_results):
-        return handle_success(period_results.unwrap())
-    else:
-        handle_error(period_results.failure())
 
 
 def get_forced_photometry(
     oid: str,
     survey_id: str = "all",
-    session_factory: Callable[..., AbstractContextManager[Session]] = None,
-    mongo_db: Database = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
-    handle_error: Callable[[Exception], None] = default_handle_error,
-) -> list[ForcedPhotometryModel]:
+    handle_error: Callable[[BaseException], None] = default_handle_error,
+) -> list[ForcedPhotometryModel] | None:
     """Retrieves the forced photometry from an object
 
     :param oid: oid for the object.
@@ -277,48 +276,51 @@ def get_forced_photometry(
         forced_photometry = _get_unique_forced_photometry(
             oid, survey_id, session_factory, mongo_db
         )
+        if is_successful(forced_photometry):
+            return handle_success(forced_photometry.unwrap())
+        else:
+            handle_error(forced_photometry.failure())
     else:
         handle_error(SurveyIdError(survey_id, "forced photometry"))
 
-    if is_successful(forced_photometry):
-        return handle_success(forced_photometry.unwrap())
-    else:
-        handle_error(forced_photometry.failure())
 
 
 def _get_unique_forced_photometry(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] = None,
-    mongo_db: Database = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
 ) -> Result[list[ForcedPhotometryModel], BaseException]:
     try:
+        assert session_factory is not None
         sql_forced_photometry = _get_forced_photometry_sql(
             session_factory, oid, tid=survey_id
         )
+        assert mongo_db is not None
         mongo_forced_photometry = _get_forced_photometry_mongo(
             mongo_db, oid, tid=survey_id
         )
+        forced_photometry = {
+            (fp.oid, fp.pid): fp
+            for fp in sql_forced_photometry + mongo_forced_photometry
+        }
+        forced_photometry = list(forced_photometry.values())
+        return Success(forced_photometry)
     except DatabaseError as e:
         return Failure(e)
     except ObjectNotFound:
         return Success([])
 
-    forced_photometry = {
-        (fp.oid, fp.pid): fp
-        for fp in sql_forced_photometry + mongo_forced_photometry
-    }
-    forced_photometry = list(forced_photometry.values())
-    return Success(forced_photometry)
 
 
 def _get_all_unique_non_detections(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] = None,
-    mongo_db: Database = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
 ) -> Result[list[NonDetectionModel], BaseException]:
     try:
+        assert session_factory is not None
         sql_non_detections = _get_non_detections_sql(
             session_factory, oid, tid=survey_id
         )
@@ -328,26 +330,27 @@ def _get_all_unique_non_detections(
         return Failure(e)
 
     try:
+        assert mongo_db is not None
         mongo_non_detections = _get_non_detections_mongo(
             mongo_db, oid, tid=survey_id
         )
+        non_detections = {
+            (n.oid, n.fid, n.mjd): n
+            for n in sql_non_detections + mongo_non_detections
+        }
+        return Success(list(non_detections.values()))
     except ObjectNotFound:
-        mongo_non_detections = []
+        return Success([])
     except DatabaseError as e:
         return Failure(e)
 
-    non_detections = {
-        (n.oid, n.fid, n.mjd): n
-        for n in sql_non_detections + mongo_non_detections
-    }
-
-    return Success(list(non_detections.values()))
 
 
 def _query_detections_sql(
     session_factory: Callable[..., AbstractContextManager[Session]], oid: str
-) -> list:
+) -> Sequence[Row[Tuple[Detection, Any]]]:
     try:
+        assert session_factory is not None
         with session_factory() as session:
             stmt = select(Detection, text("'ztf'")).filter(
                 Detection.oid == oid
@@ -374,12 +377,12 @@ def _get_detections_sql(
 ) -> list[DetectionModel]:
     if tid == "atlas":
         return []
-    result = _query_detections_sql(session_factory, oid)
+    result = list(_query_detections_sql(session_factory, oid))
     result = _parse_sql_detection(result)
     return result
 
 
-def _clean_extra_fields(extra_fields: dict[str, Any]) -> dict[str, Any]:
+def _clean_extra_fields(extra_fields: dict[str, Any]):
     if "magpsf_corr" in extra_fields and math.isnan(
         extra_fields.get("magpsf_corr", None)
     ):
@@ -451,7 +454,10 @@ def query_psql_object(
         with session_factory() as session:
             stmt = select(Object).where(Object.oid == oid)
             result = session.execute(stmt)
-            return result.first()[0]
+            first = result.first()
+            if first is None:
+                raise ObjectNotFound(oid)
+            return first[0]
     except Exception as e:
         raise DatabaseError(e, database="PSQL")
 
@@ -466,6 +472,8 @@ def _query_detections_by_aid(
             "aid": aid,
             "tid": {"$regex": f"{tid}*", "$options": "i"},
         }
+    else:
+        raise ValueError(f"Invalid tid: {tid}")
     try:
         return database["detection"].find(mongo_filter)
     except Exception as e:
@@ -532,7 +540,7 @@ def _get_non_detections_mongo(
 
 async def get_data_release(
     ra: float, dec: float, radius: float = 1.5
-) -> tuple[dict[str, Any], dict[str, list[DataReleaseDetectionModel]]]:
+) -> tuple[list[dict[str, Any]], dict[str, list[DataReleaseDetectionModel]]]:
     dr_params = {
         "ra": ra,
         "dec": dec,
@@ -571,16 +579,12 @@ async def get_data_release(
         }
     return datareleases, detections
 
-
-def _get_period_mongo():
-    pass
-
-
 def _get_period_sql(
     oid: str,
-    session_factory: Callable[..., AbstractContextManager[Session]],
+    session_factory: Callable[..., AbstractContextManager[Session]] | None,
 ) -> Result[FeatureModel, BaseException]:
     try:
+        assert session_factory is not None
         with session_factory() as session:
             stmt = (
                 select(Feature)
@@ -619,8 +623,16 @@ def _get_forced_photometry_mongo(
         raise ObjectNotFound(oid)
     except Exception as e:
         raise DatabaseError(e, database="MONGO")
+
+    def parse_result(res: dict[str, Any]) -> ForcedPhotometryModel:
+        _clean_extra_fields(res.get("extra_fields", {}))
+        candid = res["oid"] + str(res["pid"])
+        fid = res.pop("fid")
+        if isinstance(fid, str):
+            fid = fid_str2int(fid)
+        return ForcedPhotometryModel(**res, candid=candid, fid=fid)
     result = [
-        ForcedPhotometryModel(**{**res, "fid": fid_str2int(res["fid"])})
+        parse_result(res)
         for res in result
     ]
     return result
@@ -811,3 +823,29 @@ def fid_int2str(fid: int) -> str:
         return fid_map[fid]
     except KeyError:
         raise ValueError(f"Invalid fid: {fid}")
+
+
+def remove_duplicate_forced_photometry_by_pid(
+    detections: list, forced_photometry: list
+):
+    new_forced_photometry = []
+    pids = {}
+    size = max(len(detections), len(forced_photometry))
+    for i in range(size):
+        try:
+            dpid = detections[i]["pid"]
+            if not dpid in pids:
+                pids[dpid] = None
+            else:
+                if pids[dpid] is not None:
+                    new_forced_photometry.pop(pids[dpid])
+        except IndexError:
+            pass
+        try:
+            fpid = forced_photometry[i]["pid"]
+            if not fpid in pids:
+                pids[fpid] = i
+                new_forced_photometry.append(forced_photometry[i])
+        except IndexError:
+            pass
+    return new_forced_photometry

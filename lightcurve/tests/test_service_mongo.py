@@ -12,15 +12,12 @@ from test_utils import (
 
 
 def test_get_mongo_detections(
-    mongo_service,
-    mongo_database,
     init_mongo,
-    psql_service,
     init_psql,
     insert_ztf_1_oid_per_aid,
 ):
     result = _get_detections_mongo(
-        database=mongo_database,
+        database=init_mongo,
         oid="oid1",
         tid="ztf",
     )
@@ -28,15 +25,12 @@ def test_get_mongo_detections(
 
 
 def test_get_mongo_detections_multiple_oids(
-    mongo_service,
-    mongo_database,
     init_mongo,
-    psql_service,
     init_psql,
     insert_ztf_many_oid_per_aid,
 ):
     result = _get_detections_mongo(
-        database=mongo_database,
+        database=init_mongo,
         oid="oid1",
         tid="ztf",
     )
@@ -45,15 +39,12 @@ def test_get_mongo_detections_multiple_oids(
 
 
 def test_get_mongo_non_detections(
-    mongo_service,
-    mongo_database,
     init_mongo,
-    psql_service,
     init_psql,
     insert_ztf_1_oid_per_aid,
 ):
     result = _get_non_detections_mongo(
-        database=mongo_database,
+        database=init_mongo,
         oid="oid1",
         tid="ztf",
     )
@@ -61,15 +52,12 @@ def test_get_mongo_non_detections(
 
 
 def test_get_mongo_forced_photometry(
-    mongo_service,
-    mongo_database,
     init_mongo,
-    psql_service,
     init_psql,
     insert_ztf_1_oid_per_aid,
 ):
     result = _get_forced_photometry_mongo(
-        mongo_database,
+        init_mongo,
         oid="oid1",
         tid="ztf",
     )
@@ -80,16 +68,12 @@ def test_get_mongo_forced_photometry(
 
 
 def test_get_mongo_forced_photometry_multiple_oids(
-    mongo_service,
-    mongo_database,
     init_mongo,
-    psql_service,
     init_psql,
-    psql_session,
     insert_ztf_many_oid_per_aid,
 ):
     result = _get_forced_photometry_mongo(
-        mongo_database,
+        init_mongo,
         oid="oid1",
         tid="ztf",
     )
@@ -100,16 +84,12 @@ def test_get_mongo_forced_photometry_multiple_oids(
 
 
 def test_get_mongo_forced_photometry_multistream(
-    mongo_service,
-    mongo_database,
     init_mongo,
-    psql_service,
     init_psql,
-    psql_session,
     insert_many_aid_ztf_and_atlas_detections,
 ):
     result = _get_forced_photometry_mongo(
-        mongo_database,
+        init_mongo,
         oid="oid1",
         tid="all",
     )

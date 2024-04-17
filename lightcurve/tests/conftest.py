@@ -20,25 +20,16 @@ import test_utils
 
 @pytest.fixture(scope="session")
 def docker_compose_command():
-    compose_version = os.getenv("COMPOSE_VERSION", "v1")
+    compose_version = os.getenv("COMPOSE_VERSION", "v2")
     if compose_version == "v1":
         return "docker-compose"
-    return "docker compose"
+    return "docker-compose"
 
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
-    try:
-        path = pathlib.Path(pytestconfig.rootdir) / "tests/docker-compose.yml"
-        assert path.exists()
-        return path
-    except AssertionError:
-        path = (
-            pathlib.Path(pytestconfig.rootdir)
-            / "lightcurve/tests/docker-compose.yml"
-        )
-        assert path.exists()
-        return path
+    path = pathlib.Path(pytestconfig.rootdir) / "tests/docker-compose.yml"
+    return path
 
 
 def is_responsive_psql(url):
@@ -92,9 +83,37 @@ def mongo_service(docker_ip, docker_services):
     )
     return server
 
+@pytest.fixture(scope="session")
+def env_vars():
+    os.environ["ENV"] = "test"
+    os.environ["PSQL_PORT"] = "5432"
+    os.environ["PSQL_HOST"] = "localhost"
+    os.environ["PSQL_USER"] = "postgres"
+    os.environ["PSQL_PASSWORD"] = "postgres"
+    os.environ["PSQL_DATABASE"] = "postgres"
+    os.environ["MONGO_PORT"] = "27017"
+    os.environ["MONGO_HOST"] = "localhost"
+    os.environ["MONGO_DATABASE"] = "database"
+    os.environ["MONGO_USER"] = ""
+    os.environ["MONGO_PASSWORD"] = ""
+    os.environ["SECRET_KEY"] = "some_secret"
+    yield
+    os.environ.pop("MONGO_HOST")
+    os.environ.pop("MONGO_PORT")
+    os.environ.pop("MONGO_DATABASE")
+    os.environ.pop("MONGO_USER")
+    os.environ.pop("MONGO_PASSWORD")
+    os.environ.pop("PSQL_PORT")
+    os.environ.pop("PSQL_HOST")
+    os.environ.pop("PSQL_USER")
+    os.environ.pop("PSQL_PASSWORD")
+    os.environ.pop("PSQL_DATABASE")
+    os.environ.pop("ENV")
+    os.environ.pop("SECRET_KEY")
+
 
 @pytest.fixture
-def init_psql():
+def init_psql(psql_service):
     user = "postgres"
     pwd = "postgres"
     host = "localhost"
@@ -112,35 +131,31 @@ def init_psql():
     yield dbp_database
     teardown_psql(dbp_database)
 
+def teardown_psql(database):
+    database.drop_db()
 
 @pytest.fixture
-def psql_session():
-    os.environ["PSQL_PORT"] = "5432"
-    os.environ["PSQL_HOST"] = "localhost"
-    os.environ["PSQL_USER"] = "postgres"
-    os.environ["PSQL_PASSWORD"] = "postgres"
-    os.environ["PSQL_DATABASE"] = "postgres"
-    from database.sql import session
+def init_mongo(mongo_service):
+    db = MongoConnection(
+        {
+            "host": "localhost",
+            "username": "",
+            "password": "",
+            "port": 27017,
+            "database": "database",
+        }
+    )
+    db.create_db()
+    yield db.client.database
+    teardown_mongo(db)
 
-    return session
 
-
-@pytest.fixture(scope="session")
-def mongo_database():
-    os.environ["MONGO_PORT"] = "27017"
-    os.environ["MONGO_HOST"] = "localhost"
-    os.environ["MONGO_USER"] = ""
-    os.environ["MONGO_PASSWORD"] = ""
-    os.environ["MONGO_DATABASE"] = "database"
-    os.environ["MONGO_AUTH_SOURCE"] = ""
-    os.environ["SECRET_KEY"] = "some_secret"
-    from database.mongo import database
-
-    return database
+def teardown_mongo(database: MongoConnection):
+    database.drop_db()
 
 
 @pytest.fixture
-def insert_ztf_1_oid_per_aid(psql_session, mongo_database):
+def insert_ztf_1_oid_per_aid(init_psql, init_mongo):
     """
     Only one object per aid, 1 in psql 1 in mongo.
     One detection per object.
@@ -187,7 +202,7 @@ def insert_ztf_1_oid_per_aid(psql_session, mongo_database):
     ]
     features = [Feature(**feat) for feat in features]
     feature_versions = [FeatureVersion(version="lc_classifier_1.2.1-P")]
-    with psql_session() as session:
+    with init_psql.session() as session:
         session.add_all(objects)
         session.commit()
         session.add_all(detections)
@@ -197,16 +212,16 @@ def insert_ztf_1_oid_per_aid(psql_session, mongo_database):
         session.commit()
         session.add_all(features)
         session.commit()
-    mongo_database.object.insert_one(
+    init_mongo.object.insert_one(
         test_utils.create_object_data_mongo(["oid1"], "aid1")
     )
-    mongo_database.detection.insert_one(
+    init_mongo.detection.insert_one(
         test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ztf")
     )
-    mongo_database.non_detection.insert_one(
+    init_mongo.non_detection.insert_one(
         test_utils.create_non_detection_data_mongo("oid1", "aid1", "ztf")
     )
-    mongo_database.forced_photometry.insert_one(
+    init_mongo.forced_photometry.insert_one(
         test_utils.create_forced_photometry_data_mongo(
             "oid1", 123, "aid1", "ztf"
         )
@@ -214,7 +229,7 @@ def insert_ztf_1_oid_per_aid(psql_session, mongo_database):
 
 
 @pytest.fixture
-def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
+def insert_ztf_many_oid_per_aid(init_psql, init_mongo):
     """
     Many objects per aid, many id in psql, 1 aid in mongo.
     One detection per object
@@ -245,7 +260,7 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
             **test_utils.create_forced_photometry_data_psql("oid3", 789)
         ),
     ]
-    with psql_session() as session:
+    with init_psql.session() as session:
         session.add_all(objects)
         session.commit()
         session.add_all(detections)
@@ -253,38 +268,38 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
         session.add_all(forced)
         session.commit()
 
-    mongo_database.object.insert_one(
+    init_mongo.object.insert_one(
         test_utils.create_object_data_mongo(["oid1", "oid2", "oid3"], "aid1")
     )
-    mongo_database.detection.insert_one(
+    init_mongo.detection.insert_one(
         test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ztf")
     )
-    mongo_database.detection.insert_one(
+    init_mongo.detection.insert_one(
         test_utils.create_detection_data_mongo("oid2", 456, "aid1", "ztf")
     )
-    mongo_database.detection.insert_one(
+    init_mongo.detection.insert_one(
         test_utils.create_detection_data_mongo("oid3", 789, "aid1", "ztf")
     )
-    mongo_database.non_detection.insert_one(
+    init_mongo.non_detection.insert_one(
         test_utils.create_non_detection_data_mongo("oid1", "aid1", "ztf")
     )
-    mongo_database.non_detection.insert_one(
+    init_mongo.non_detection.insert_one(
         test_utils.create_non_detection_data_mongo("oid2", "aid1", "ztf")
     )
-    mongo_database.non_detection.insert_one(
+    init_mongo.non_detection.insert_one(
         test_utils.create_non_detection_data_mongo("oid3", "aid1", "ztf")
     )
-    mongo_database.forced_photometry.insert_one(
+    init_mongo.forced_photometry.insert_one(
         test_utils.create_forced_photometry_data_mongo(
             "oid1", 123, "aid1", "ztf"
         )
     )
-    mongo_database.forced_photometry.insert_one(
+    init_mongo.forced_photometry.insert_one(
         test_utils.create_forced_photometry_data_mongo(
             "oid2", 456, "aid1", "ztf"
         )
     )
-    mongo_database.forced_photometry.insert_one(
+    init_mongo.forced_photometry.insert_one(
         test_utils.create_forced_photometry_data_mongo(
             "oid3", 789, "aid1", "ztf"
         )
@@ -292,19 +307,19 @@ def insert_ztf_many_oid_per_aid(psql_session, mongo_database):
 
 
 @pytest.fixture
-def insert_atlas_1_oid_per_aid(mongo_database):
+def insert_atlas_1_oid_per_aid(init_mongo, init_psql):
     """
     Only one object per aid, none in psql 1 in mongo.
     One detection per object.
     """
 
-    mongo_database.object.insert_one(
+    init_mongo.object.insert_one(
         test_utils.create_object_data_mongo(["oid1"], "aid1")
     )
-    mongo_database.detection.insert_one(
+    init_mongo.detection.insert_one(
         test_utils.create_detection_data_mongo("oid1", 123, "aid1", "ATLASa01")
     )
-    mongo_database.forced_photometry.insert_one(
+    init_mongo.forced_photometry.insert_one(
         test_utils.create_forced_photometry_data_mongo(
             "oid1", 123, "aid1", "ATLASa01"
         )
@@ -312,7 +327,7 @@ def insert_atlas_1_oid_per_aid(mongo_database):
 
 
 @pytest.fixture
-def insert_atlas_many_oid_per_aid(mongo_database):
+def insert_atlas_many_oid_per_aid(init_mongo, init_psql):
     """Insert into mongodb data from ATLAS only
 
     Multiple oids are associated with a single aid
@@ -330,13 +345,13 @@ def insert_atlas_many_oid_per_aid(mongo_database):
             "oid2", 456, "aid1", "atlas"
         ),
     ]
-    mongo_database.object.insert_one(object)
-    mongo_database.detection.insert_many(detections)
-    mongo_database.forced_photometry.insert_many(forced)
+    init_mongo.object.insert_one(object)
+    init_mongo.detection.insert_many(detections)
+    init_mongo.forced_photometry.insert_many(forced)
 
 
 @pytest.fixture
-def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
+def insert_many_aid_ztf_and_atlas_detections(init_psql, init_mongo):
     """
     Isert 2 aids to mongo, each with 1 object from ztf and 1 from atlas.
     Will have 2 objects in psql each with 1 ztf detection
@@ -394,7 +409,7 @@ def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
         ),
     ]
 
-    with psql_session() as session:
+    with init_psql.session() as session:
         session.add_all(objects_psql)
         session.commit()
         session.add_all(detections_psql)
@@ -402,51 +417,14 @@ def insert_many_aid_ztf_and_atlas_detections(psql_session, mongo_database):
         session.add_all(forced_psql)
         session.commit()
 
-    mongo_database.object.insert_many(objects_mongo)
-    mongo_database.detection.insert_many(detections_mongo)
-    mongo_database.non_detection.insert_many(non_detections_mongo)
-    mongo_database.forced_photometry.insert_many(forced_mongo)
-
-
-def teardown_psql(database):
-    database.drop_db()
-
-
-@pytest.fixture
-def init_mongo():
-    db = MongoConnection(
-        {
-            "host": "localhost",
-            "serverSelectionTimeoutMS": 3000,  # 3 second timeout
-            "username": "",
-            "password": "",
-            "port": 27017,
-            "database": "database",
-        }
-    )
-    yield db.client.database
-    teardown_mongo(db)
-
-
-def teardown_mongo(database: MongoConnection):
-    database.drop_db()
+    init_mongo.object.insert_many(objects_mongo)
+    init_mongo.detection.insert_many(detections_mongo)
+    init_mongo.non_detection.insert_many(non_detections_mongo)
+    init_mongo.forced_photometry.insert_many(forced_mongo)
 
 
 @pytest.fixture(scope="session")
-def test_client():
-    os.environ["ENV"] = "test"
-    os.environ["PSQL_PORT"] = "5432"
-    os.environ["PSQL_HOST"] = "localhost"
-    os.environ["PSQL_USER"] = "postgres"
-    os.environ["PSQL_PASSWORD"] = "postgres"
-    os.environ["PSQL_DATABASE"] = "postgres"
-    os.environ["MONGO_PORT"] = "27017"
-    os.environ["MONGO_HOST"] = "localhost"
-    os.environ["MONGO_USER"] = ""
-    os.environ["MONGO_PASSWORD"] = ""
-    os.environ["MONGO_DATABASE"] = "database"
-    os.environ["SECRET_KEY"] = "some_secret"
-    os.environ["MONGO_AUTH_SOURCE"] = ""
+def test_client(env_vars):
     from api.api import app
 
     return TestClient(app)

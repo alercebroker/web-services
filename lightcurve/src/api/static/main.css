@@ -184,9 +184,9 @@
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-gray-400) {
+.tw-preflight :is(.tw-bg-green-400) {
   --tw-bg-opacity: 1;
-  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+  background-color: rgb(74 222 128 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-bg-green-500) {
@@ -197,11 +197,6 @@
 .tw-preflight :is(.tw-bg-white) {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-green-400) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(74 222 128 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-p-2) {

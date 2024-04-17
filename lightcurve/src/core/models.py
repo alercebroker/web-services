@@ -56,6 +56,7 @@ class NonDetection(BaseModel):
 
 
 class ForcedPhotometry(BaseModel):
+    candid: str
     tid: str
     sid: Optional[str] = None
     aid: Optional[str] = None

@@ -1,7 +1,7 @@
-from contextlib import contextmanager, AbstractContextManager
+from contextlib import contextmanager
 import logging
 import os
-from typing import Callable
+from typing import Generator
 from sqlalchemy.orm import scoped_session, sessionmaker, Session
 from sqlalchemy.engine import Engine, create_engine
 
@@ -16,21 +16,26 @@ port = os.getenv("PSQL_PORT")
 db = os.getenv("PSQL_DATABASE")
 db_url = f"postgresql://{user}:{pwd}@{host}:{port}/{db}"
 
-engine: Engine = create_engine(db_url, echo=False)
+def connect() -> Engine:
+    engine: Engine = create_engine(db_url, echo=False)
+    return engine
 
 
-@contextmanager
-def session() -> Callable[..., AbstractContextManager[Session]]:
-    session_factory = scoped_session(
-        sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    )
-    session: Session = session_factory()
-    try:
-        yield session
-    except Exception:
-        logger.debug("Connecting databases")
-        logger.exception("Session rollback because of exception")
-        session.rollback()
-        raise
-    finally:
-        session.close()
+def session_wrapper(engine: Engine):
+    @contextmanager
+    def _session() -> Generator[Session, None, None]:
+        session_factory = scoped_session(
+            sessionmaker(autocommit=False, autoflush=False, bind=engine)
+        )
+        session: Session = session_factory()
+        try:
+            yield session
+        except Exception:
+            logger.debug("Connecting databases")
+            logger.exception("Session rollback because of exception")
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
+    return _session

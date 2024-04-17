@@ -1,3 +1,4 @@
+import traceback
 import logging
 
 from fastapi import HTTPException
@@ -14,16 +15,18 @@ def handle_success(result):
     return result
 
 
-def _handle_client_error(err: Exception, code=400):
+def _handle_client_error(err: BaseException, code=400):
     raise HTTPException(status_code=code, detail=str(err))
 
 
-def _handle_server_error(err: Exception):
+def _handle_server_error(err: BaseException):
+    if err.__traceback__:
+        traceback.print_exception(err)
     logging.error(err)
     raise HTTPException(status_code=500, detail=str(err))
 
 
-def handle_error(err: Exception):
+def handle_error(err: BaseException):
     if isinstance(err, DatabaseError):
         _handle_server_error(err)
     if isinstance(err, SurveyIdError):

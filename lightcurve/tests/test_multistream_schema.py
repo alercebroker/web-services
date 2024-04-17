@@ -29,6 +29,7 @@ def test_psql_detections_to_multistream():
         "candid": "123",
         "oid": "oid1",
         "sid": "0",
+        "pid": 1,
         "aid": None,
         "tid": "0",
         "mjd": 59000.0,
@@ -48,7 +49,6 @@ def test_psql_detections_to_multistream():
         "has_stamp": False,
         "isdiffpos": True,
         "extra_fields": {
-            "pid": 1,
             "step_id_corr": "test",
         },
     }
