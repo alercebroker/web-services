@@ -102,7 +102,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
     return detections
       .filter(function (x) {
         const magLimit = flux ? 999999 : 99
-        if (forced) {
+        if (forced && 'extra_fields' in x) {
           if ('distnr' in x['extra_fields']) {
             return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr <= magLimit
           }
@@ -137,11 +137,13 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   }
 
   formatForcedPhotometry(forcedPhotometry, band, flux) {
+    const magLim = flux ? 999999 : 99
     return forcedPhotometry
       .filter(function (x) {
-        const magLim = flux ? 999999 : 99
-        if ('distnr' in x['extra_fields']) {
-          return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext < 99
+        if ('extra_fields' in x) {
+          if ('distnr' in x['extra_fields']) {
+            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext < 99
+          }
         }
         return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext < 99
       })

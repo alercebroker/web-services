@@ -126,15 +126,17 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     const emaglim = flux ? 999999 : 1
     const folded1 = detections
       .filter((x) => {
-        if ('distnr' in x['extra_fields']) {
-          return (
-            x['extra_fields']['distnr'] >= 0 && 
-            x.fid === band && 
-            x.corrected &&
-            x.mag_corr > 0 &&
-            x.mag_corr <= maglim &&
-            x.e_mag_corr_ext < emaglim
-          )
+        if ('extra_fields' in x) {
+          if ('distnr' in x['extra_fields']) {
+            return (
+              x['extra_fields']['distnr'] >= 0 && 
+              x.fid === band && 
+              x.corrected &&
+              x.mag_corr > 0 &&
+              x.mag_corr <= maglim &&
+              x.e_mag_corr_ext < emaglim
+            )
+          }
         }
         return (
           x.fid === band && 
@@ -165,7 +167,7 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     const emaglim = flux ? 999999 : 1
     const errors1 = detections
       .filter(function (x) {
-        if (forced) {
+        if (forced && 'extra_fields' in x) {
           if ('distnr' in x['extra_fields']) {
             return (
               x['extra_fields']['distnr'] >= 0 &&
