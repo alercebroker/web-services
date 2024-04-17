@@ -154,7 +154,7 @@
                 return all_detections
             }
             Object.keys(dr_detections).forEach((key) => {
-                all_detections = all_detections.concat(dr_detections[key]);
+                all_detections = all_detections.concat(JSON.parse(JSON.stringify( dr_detections[key] )));
             });
             return all_detections
         }
