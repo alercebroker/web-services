@@ -25,7 +25,6 @@ if auth_source:
 database_name = config.pop("database")
 
 def connect() -> Database:
-    print("connecting with config", config)
     client = MongoClient(**config)
     database = client[database_name]
     return database
