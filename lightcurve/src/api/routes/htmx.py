@@ -113,23 +113,19 @@ async def get_data_release_as_dict(oid, psql_session, dr_ids: list[str] = []):
         tuple: Data release object data and detections.
 
     """
-    object = query_psql_object(oid, psql_session)
-    dr, dr_detections = await get_data_release(object.meanra, object.meandec)
+    obj = query_psql_object(oid, psql_session)
+    dr, dr_detections = await get_data_release(obj.meanra, obj.meandec)
+    dr_detections = {str(k): v for k, v in dr_detections.items()}
     if len(dr_ids) == 0:
-        return dr, {
-            k: list(map(lambda x: x.__dict__, detections))
-            for k, detections in dr_detections.items()
-        }
-    dr_detections = {
-        k: list(
-            map(
-                lambda det: det.__dict__,
-                list(filter(lambda x: x.objectid in dr_ids, detections)),
-            )
-        )
-        for k, detections in dr_detections.items()
-    }
-    return dr, dr_detections
+        result = {}
+        for dr_id in dr_detections:
+            result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
+        return dr, result
+    else:
+        result = {}
+        for dr_id in dr_ids:
+            result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
+        return dr, result
 
 
 async def get_lightcurve(oid, survey_id, psql_session, mongo_database):
