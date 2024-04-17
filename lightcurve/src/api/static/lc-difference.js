@@ -23,20 +23,20 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
       detections = LightCurveOptions.magToFlux(this.detections)
       forcedPhotometry = LightCurveOptions.magToFlux(this.forcedPhotometry)
       this.options.yAxis.inverse = false
-      this.options.yAxis.name = 'uJy'
+      this.options.yAxis.name = 'Flux [uJy]'
       this.options.yAxis.nameLocation = 'end'
       this.options.title.text = "Difference Flux"
     }
-    this.addDetections(detections, bands)
-    this.addErrorBars(detections, bands)
-    this.addForcedPhotometry(forcedPhotometry, fpBands)
-    this.addErrorBarsForcedPhotometry(forcedPhotometry, fpBands)
+    this.addDetections(detections, bands, flux)
+    this.addErrorBars(detections, bands, flux)
+    this.addForcedPhotometry(forcedPhotometry, fpBands, flux)
+    this.addErrorBarsForcedPhotometry(forcedPhotometry, fpBands, flux)
     if (!flux) {
       this.addNonDetections(this.nonDetections, ndBands)
     }
   }
 
-  addDetections(detections, bands) {
+  addDetections(detections, bands, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name,
@@ -49,12 +49,12 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
           y: 1,
         },
       }
-      serie.data = this.formatDetections(detections, band)
+      serie.data = this.formatDetections(detections, band, flux)
       this.options.series.push(serie)
     })
   }
 
-  addErrorBars(detections, bands) {
+  addErrorBars(detections, bands, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name,
@@ -63,12 +63,12 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(detections, band)
+      serie.data = this.formatError(detections, band, flux)
       this.options.series.push(serie)
     })
   }
 
-  addErrorBarsForcedPhotometry(forcedPhotometry, bands) {
+  addErrorBarsForcedPhotometry(forcedPhotometry, bands, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name + ' forced photometry',
@@ -77,7 +77,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(forcedPhotometry, band)
+      serie.data = this.formatError(forcedPhotometry, band, flux)
       this.options.series.push(serie)
     })
   }
@@ -98,7 +98,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
     })
   }
 
-  addForcedPhotometry(forcedPhotometry, bands) {
+  addForcedPhotometry(forcedPhotometry, bands, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name + ' forced photometry',
@@ -112,38 +112,41 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
           y: 1,
         },
       }
-      serie.data = this.formatForcedPhotometry(forcedPhotometry, band)
+      serie.data = this.formatForcedPhotometry(forcedPhotometry, band, flux)
       this.options.series.push(serie)
     })
   }
 
-  formatError(detections, band) {
+  formatError(detections, band, flux) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.e_mag < 100
+        const magLimit = flux ? 999999 : 99
+        return x.fid === band && x.e_mag < magLimit
       })
       .map(function (x) {
         return [x.mjd, x.mag - x.e_mag, x.mag + x.e_mag]
       })
   }
 
-  formatDetections(detections, band) {
+  formatDetections(detections, band, flux) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.mag <= 99
+        const magLimit = flux ? 999999 : 99
+        return x.fid === band && x.mag <= magLimit
       })
       .map(function (x) {
         return [x.mjd, x.mag, x.candid, x.e_mag, x.isdiffpos]
       })
   }
 
-  formatForcedPhotometry(forcedPhotometry, band) {
+  formatForcedPhotometry(forcedPhotometry, band, flux) {
     return forcedPhotometry
       .filter(function (x) {
+        let magLimit = flux ? 999999 : 99
         if ("distnr" in x["extra_fields"]) {
-          return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.mag <= 99
+          return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.mag <= magLimit
         }
-        return x.fid === band && x.mag <= 24
+        return x.fid === band && x.mag <= magLimit
       })
       .map(function (x) {
         return [x.mjd, x.mag, "no-candid", x.e_mag, x.isdiffpos]

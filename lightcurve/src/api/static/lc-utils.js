@@ -287,7 +287,7 @@ export class LightCurveOptions {
 
   static magToFlux(detections, apparent=false){
     const newData = detections.map((detection) => {
-      if (apparent && detection.mag_corr > 0 && detection.mag_corr < 100 && detection.e_mag_corr_ext < 1) {
+      if (apparent && detection.mag_corr > 0 && detection.e_mag_corr_ext < 1) {
         detection.mag_corr = 10 ** (-0.4 * (detection.mag_corr - 23.9))
         detection.e_mag_corr_ext = Math.abs(detection.e_mag_corr_ext) * Math.abs(detection.mag_corr)
       }

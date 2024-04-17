@@ -92,7 +92,7 @@
             <div class="tooltip">
                 <i class="fa fa-question-circle tw-me-2"></i>
                 <div class="tooltip-text">
-                    TODO
+                    Toggle between flux and magnitude
                 </div>
             </div>
         </div>
@@ -142,7 +142,7 @@
                 plot_options = new ApparentLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
             }
             if (current_plot === "folded") {
-                plot_options = new FoldedLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, period);
+                plot_options = new FoldedLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, period, flux);
             }
             plot.setOption(plot_options.options, true);
         }

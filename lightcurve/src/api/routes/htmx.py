@@ -97,7 +97,7 @@ def get_forced_photometry_as_dict(oid, psql_session, mongo_database):
         handle_error=handle_error,
         handle_success=handle_success,
     )
-    if forced_photometry:
+    if forced_photometry is not None:
         forced_photometry = list(map(lambda fp: fp.__dict__, forced_photometry))
         return forced_photometry
 

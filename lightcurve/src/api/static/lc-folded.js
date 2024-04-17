@@ -1,26 +1,36 @@
 import { LightCurveOptions } from './lc-utils.js'
 
 export class FoldedLightCurveOptions extends LightCurveOptions {
-  constructor(detections, forcedPhotometry, fontColor, period) {
+  constructor(detections, forcedPhotometry, fontColor, period, flux) {
     super(detections, [], forcedPhotometry, fontColor, "Folded Light Curve")
     this.detections = detections
     this.forcedPhotometry = forcedPhotometry
     this.period = period
-    this.getSeries()
+    this.getSeries(flux)
     this.getLegend()
     this.getBoundaries()
   }
 
-  getSeries(data) {
+  getSeries(flux) {
     const bands = Array.from(new Set(this.detections.map((item) => item.fid)))
     const fpBands = Array.from(new Set(this.forcedPhotometry.map((item) => item.fid)))
-    this.addDetections(this.detections, bands, this.period)
-    this.addErrorBars(this.detections, bands, this.period)
-    this.addForcedPhotometry(this.forcedPhotometry, fpBands, this.period)
-    this.addErrorBarsForcedPhotometry(this.forcedPhotometry, fpBands, this.period)
+    let detections = this.detections
+    let forcedPhotometry = this.forcedPhotometry
+    if (flux) {
+      detections = LightCurveOptions.magToFlux(this.detections, true)
+      forcedPhotometry = LightCurveOptions.magToFlux(this.forcedPhotometry, true)
+      this.options.yAxis.inverse = false
+      this.options.yAxis.name = 'Flux [uJy]'
+      this.options.yAxis.nameLocation = 'end'
+      this.options.title.text = "Total Flux"
+    }
+    this.addDetections(detections, bands, this.period, flux)
+    this.addErrorBars(detections, bands, this.period, flux)
+    this.addForcedPhotometry(forcedPhotometry, fpBands, this.period, flux)
+    this.addErrorBarsForcedPhotometry(forcedPhotometry, fpBands, this.period, flux)
   }
 
-  addDetections(detections, bands, period) {
+  addDetections(detections, bands, period, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name,
@@ -35,12 +45,12 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
         },
         zlevel: band < 100 ? 10 : 0,
       }
-      serie.data = this.formatDetections(detections, band, period)
+      serie.data = this.formatDetections(detections, band, period, flux)
       this.options.series.push(serie)
     })
   }
 
-  addForcedPhotometry(detections, bands, period) {
+  addForcedPhotometry(detections, bands, period, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name + ' forced photometry',
@@ -55,12 +65,12 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
         },
         zlevel: 10,
       }
-      serie.data = this.formatForcedPhotometry(detections, band, period)
+      serie.data = this.formatForcedPhotometry(detections, band, period, flux)
       this.options.series.push(serie)
     })
   }
 
-  addErrorBars(detections, bands, period) {
+  addErrorBars(detections, bands, period, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name,
@@ -69,12 +79,12 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(detections, band, period)
+      serie.data = this.formatError(detections, band, period, flux)
       this.options.series.push(serie)
     })
   }
 
-  addErrorBarsForcedPhotometry(detections, bands, period) {
+  addErrorBarsForcedPhotometry(detections, bands, period, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name + ' forced photometry',
@@ -83,15 +93,19 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(detections, band, period)
+      serie.data = this.formatError(detections, band, period, flux)
       this.options.series.push(serie)
     })
   }
 
-  formatDetections(detections, band, period) {
+  formatDetections(detections, band, period, flux) {
+    const maglim = flux ? 999999 : 99
+    const emaglim = flux ? 999999 : 1
     const folded1 = detections
-    .filter((x) => x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 1)
-      .map((x) => {
+    .filter((x) => {
+      return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= maglim && x.e_mag_corr_ext < emaglim
+    })
+    .map((x) => {
         const phase = (x.mjd % period) / period
         return [
           phase,
@@ -107,7 +121,9 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     return folded1.concat(folded2)
   }
 
-  formatForcedPhotometry(detections, band, period) {
+  formatForcedPhotometry(detections, band, period, flux) {
+    const maglim = flux ? 999999 : 99
+    const emaglim = flux ? 999999 : 1
     const folded1 = detections
       .filter((x) => {
         if ('distnr' in x['extra_fields']) {
@@ -116,16 +132,16 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
             x.fid === band && 
             x.corrected &&
             x.mag_corr > 0 &&
-            x.mag_corr < 100 &&
-            x.e_mag_corr_ext < 1
+            x.mag_corr <= maglim &&
+            x.e_mag_corr_ext < emaglim
           )
         }
         return (
           x.fid === band && 
           x.corrected &&
           x.mag_corr > 0 &&
-          x.mag_corr < 100 &&
-          x.e_mag_corr_ext < 1
+          x.mag_corr <= maglim &&
+          x.e_mag_corr_ext < emaglim
         )
       })
       .map((x) => {
@@ -144,7 +160,9 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
     return folded1.concat(folded2)
   }
 
-  formatError(detections, band, period, forced = false) {
+  formatError(detections, band, period, forced = false, flux=false) {
+    const maglim = flux ? 999999 : 99
+    const emaglim = flux ? 999999 : 1
     const errors1 = detections
       .filter(function (x) {
         if (forced) {
@@ -153,17 +171,17 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
               x['extra_fields']['distnr'] >= 0 &&
               x.fid === band &&
               x.corrected &&
-              x.e_mag_corr_ext < 1 &&
+              x.e_mag_corr_ext < emaglim &&
               x.mag_corr > 0 &&
-              x.mag_corr < 100
+              x.mag_corr <= maglim
             )
           }
           return (
             x.fid === band &&
             x.corrected &&
-            x.e_mag_corr_ext < 1 &&
+            x.e_mag_corr_ext < emaglim &&
             x.mag_corr > 0 &&
-            x.mag_corr < 100
+            x.mag_corr <= maglim
           )
         }
         return (
@@ -171,8 +189,8 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
           x.corrected &&
           x.mag_corr != null &&
           x.mag_corr > 0 &&
-          x.mag_corr < 100 &&
-          x.e_mag_corr_ext < 1
+          x.mag_corr <= maglim &&
+          x.e_mag_corr_ext < emaglim
         )
       })
       .map(function (x) {
@@ -215,7 +233,6 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
   }
 
   lcFoldedOnClick(detection) {
-    console.log(detection);
     const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
     return {
       mjd: detection.value[0],

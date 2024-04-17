@@ -20,17 +20,17 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
       detections = LightCurveOptions.magToFlux(this.detections, true)
       forcedPhotometry = LightCurveOptions.magToFlux(this.forcedPhotometry, true)
       this.options.yAxis.inverse = false
-      this.options.yAxis.name = 'uJy'
+      this.options.yAxis.name = 'Flux [uJy]'
       this.options.yAxis.nameLocation = 'end'
       this.options.title.text = "Total Flux"
     }
-    this.addDetections(detections, bands)
-    this.addErrorBars(detections, bands)
-    this.addForcedPhotometry(forcedPhotometry, fpBands)
-    this.addErrorBarsForcedPhotometry(forcedPhotometry, fpBands)
+    this.addDetections(detections, bands, flux)
+    this.addErrorBars(detections, bands, flux)
+    this.addForcedPhotometry(forcedPhotometry, fpBands, flux)
+    this.addErrorBarsForcedPhotometry(forcedPhotometry, fpBands, flux)
   }
 
-  addDetections(detections, bands) {
+  addDetections(detections, bands, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name,
@@ -45,12 +45,12 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
         },
         zlevel: band < 100 ? 10 : 0,
       }
-      serie.data = this.formatDetections(detections, band)
+      serie.data = this.formatDetections(detections, band, flux)
       this.options.series.push(serie)
     })
   }
 
-  addForcedPhotometry(detections, bands) {
+  addForcedPhotometry(detections, bands, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name + ' forced photometry',
@@ -65,12 +65,12 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
         },
         zlevel: band < 100 ? 10 : 0,
       }
-      serie.data = this.formatForcedPhotometry(detections, band)
+      serie.data = this.formatForcedPhotometry(detections, band, flux)
       this.options.series.push(serie)
     })
   }
 
-  addErrorBars(detections, bands) {
+  addErrorBars(detections, bands, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name,
@@ -79,12 +79,12 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(detections, band)
+      serie.data = this.formatError(detections, band, flux)
       this.options.series.push(serie)
     })
   }
 
-  addErrorBarsForcedPhotometry(forcedPhotometry, bands) {
+  addErrorBarsForcedPhotometry(forcedPhotometry, bands, flux) {
     bands.forEach((band) => {
       const serie = {
         name: this.bandMap[band].name + ' forced photometry',
@@ -93,21 +93,22 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(forcedPhotometry, band, true)
+      serie.data = this.formatError(forcedPhotometry, band, true, flux)
       this.options.series.push(serie)
     })
   }
 
-  formatError(detections, band, forced=false) {
+  formatError(detections, band, forced=false, flux=false) {
     return detections
       .filter(function (x) {
+        const magLimit = flux ? 999999 : 99
         if (forced) {
           if ('distnr' in x['extra_fields']) {
-            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr < 100
+            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr <= magLimit
           }
-          return x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr < 100
+          return x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr <= magLimit
         }
-        return x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr < 100
+        return x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr <= magLimit
       })
       .map(function (x) {
         return [
@@ -118,10 +119,11 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
       })
   }
 
-  formatDetections(detections, band) {
+  formatDetections(detections, band, flux) {
     return detections
       .filter(function (x) {
-        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 99
+        const magLimit = flux ? 999999 : 99
+        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLimit && x.e_mag_corr_ext < 99
       })
       .map(function (x) {
         return [
@@ -134,13 +136,14 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
       })
   }
 
-  formatForcedPhotometry(forcedPhotometry, band) {
+  formatForcedPhotometry(forcedPhotometry, band, flux) {
     return forcedPhotometry
       .filter(function (x) {
+        const magLim = flux ? 999999 : 99
         if ('distnr' in x['extra_fields']) {
-          return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 99
+          return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext < 99
         }
-        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr < 100 && x.e_mag_corr_ext < 99
+        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext < 99
       })
       .map(function (x) {
         return [x.mjd, x.mag_corr, 'no-candid', x.e_mag_corr_ext, x.isdiffpos]
