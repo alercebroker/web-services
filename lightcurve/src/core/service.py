@@ -296,6 +296,11 @@ def _get_unique_forced_photometry(
         sql_forced_photometry = _get_forced_photometry_sql(
             session_factory, oid, tid=survey_id
         )
+    except ObjectNotFound:
+        sql_forced_photometry = []
+    except DatabaseError as e:
+        return Failure(e)
+    try:
         assert mongo_db is not None
         mongo_forced_photometry = _get_forced_photometry_mongo(
             mongo_db, oid, tid=survey_id
@@ -309,7 +314,7 @@ def _get_unique_forced_photometry(
     except DatabaseError as e:
         return Failure(e)
     except ObjectNotFound:
-        return Success([])
+        return Success(sql_forced_photometry)
 
 
 
@@ -328,7 +333,6 @@ def _get_all_unique_non_detections(
         sql_non_detections = []
     except DatabaseError as e:
         return Failure(e)
-
     try:
         assert mongo_db is not None
         mongo_non_detections = _get_non_detections_mongo(
@@ -340,7 +344,7 @@ def _get_all_unique_non_detections(
         }
         return Success(list(non_detections.values()))
     except ObjectNotFound:
-        return Success([])
+        return Success(sql_non_detections)
     except DatabaseError as e:
         return Failure(e)
 
@@ -451,6 +455,7 @@ def query_psql_object(
     session_factory: Callable[..., AbstractContextManager[Session]],
 ):
     try:
+        assert session_factory is not None
         with session_factory() as session:
             stmt = select(Object).where(Object.oid == oid)
             result = session.execute(stmt)
@@ -458,6 +463,8 @@ def query_psql_object(
             if first is None:
                 raise ObjectNotFound(oid)
             return first[0]
+    except ObjectNotFound:
+        raise
     except Exception as e:
         raise DatabaseError(e, database="PSQL")
 

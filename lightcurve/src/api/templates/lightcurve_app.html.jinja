@@ -136,13 +136,13 @@
             let flux = document.getElementById("check-flux").checked;
             const all_detections = getDetectionsWithDR();
             if (current_plot === "difference") {
-                plot_options = new DifferenceLightCurveOptions(JSON.parse(JSON.stringify(detections)), non_detections, forced_photometry, plot_text_color, flux);
+                plot_options = new DifferenceLightCurveOptions(JSON.parse(JSON.stringify(detections)), non_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
             } 
             if (current_plot === "apparent") {
-                plot_options = new ApparentLightCurveOptions(all_detections, forced_photometry, plot_text_color, flux);
+                plot_options = new ApparentLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
             }
             if (current_plot === "folded") {
-                plot_options = new FoldedLightCurveOptions(all_detections, forced_photometry, plot_text_color, period);
+                plot_options = new FoldedLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, period);
             }
             plot.setOption(plot_options.options, true);
         }

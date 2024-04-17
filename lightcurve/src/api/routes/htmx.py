@@ -155,7 +155,7 @@ async def get_data_and_filter(
     request: Request, oid: str, survey_id: str = "all"
 ):
     setup_ralidator(request)
-    unfiltered_lightcurve = await get_lightcurve(oid, survey_id, request.state.psql_session, request.state.mongo_db)
+    unfiltered_lightcurve = await get_lightcurve(oid, survey_id, request.app.state.psql_session, request.app.state.mongo_db)
     filtered_lightcurve = filter_atlas_lightcurve(
         unfiltered_lightcurve, request.state.ralidator
     )
@@ -172,8 +172,8 @@ async def lightcurve_app(
     show_dr: bool = False,
 ):
     lightcurve = await get_data_and_filter(request, oid, survey_id)
-    _, dr_detections = await get_data_release_as_dict(oid, dr_ids)
-    period = get_period_value(oid, request.state.psql_session)
+    _, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
+    period = get_period_value(oid, request.app.state.psql_session)
     return templates.TemplateResponse(
         name="lightcurve_app.html.jinja",
         context={
