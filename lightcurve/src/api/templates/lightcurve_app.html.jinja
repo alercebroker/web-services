@@ -135,16 +135,20 @@
         const setPlot = () => {
             let flux = document.getElementById("check-flux").checked;
             const all_detections = getDetectionsWithDR();
+            const diffOptions = new DifferenceLightCurveOptions(JSON.parse(JSON.stringify(detections)), non_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
+            const appOptions = new ApparentLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
+            const foldOptions = new FoldedLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, period, flux);
             if (current_plot === "difference") {
-                plot_options = new DifferenceLightCurveOptions(JSON.parse(JSON.stringify(detections)), non_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
+                plot_options = diffOptions
             } 
             if (current_plot === "apparent") {
-                plot_options = new ApparentLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
+                plot_options = appOptions
             }
             if (current_plot === "folded") {
-                plot_options = new FoldedLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, period, flux);
+                plot_options = foldOptions
             }
             plot.setOption(plot_options.options, true);
+            disableRadioButtons(diffOptions, appOptions, foldOptions);
         }
 
         function getDetectionsWithDR() {
@@ -157,6 +161,21 @@
                 all_detections = all_detections.concat(JSON.parse(JSON.stringify( dr_detections[key] )));
             });
             return all_detections
+        }
+
+        function disableRadioButtons(diffOptions, appOptions, foldOptions) {
+            const canDisplay = (options) => {
+                let canDisplay = false
+                options.series.forEach((s) => {
+                    if (s.data.length > 0) {
+                        canDisplay = true;
+                    }
+                });
+                return canDisplay;
+            };
+            document.getElementById("radio-apparent").disabled = !canDisplay(appOptions.options);
+            document.getElementById("check-dr").disabled = !canDisplay(appOptions.options);
+            document.getElementById("radio-folded").disabled = !canDisplay(foldOptions.options);
         }
 
         function showDataRelease() {
