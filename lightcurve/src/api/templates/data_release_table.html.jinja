@@ -27,7 +27,9 @@
                         type="checkbox" 
                         class="tw-form-checkbox tw-h-6 tw-w-6" 
                         name="{{data._id}}"
+                        {% if ( data._id | string ) in selected or (selected | length) == 0 %}
                         checked
+                        {% endif %}
                     />
                 </td>
                 <td class="tw-text-right">{{data._id}}</td>
@@ -42,10 +44,23 @@
     <button type="sumbit">Ok</button>
     <p id="loading" class="htmx-indicator">Loading...</p>
     <script>
+        function noneSelected() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]')
+            let none = true
+            checkboxes.forEach((checkbox) => {
+                if (checkbox.checked) {
+                    none = false
+                }
+            })
+            return none
+        }
         document.addEventListener('htmx:configRequest', (event) => {
             let params = {}
             const ids = Object.keys(event.detail.unfilteredParameters)
             params['dr_ids'] = ids
+            if (noneSelected()) {
+                params['dr_ids'].push('none')
+            }
             params['oid'] = "{{oid}}"
             params['plot_type'] = "apparent"
             params['show_dr'] = true

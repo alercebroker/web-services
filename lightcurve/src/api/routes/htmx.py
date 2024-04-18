@@ -121,6 +121,8 @@ async def get_data_release_as_dict(oid, psql_session, dr_ids: list[str] = []):
         for dr_id in dr_detections:
             result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
         return dr, result
+    elif "none" in dr_ids:
+        return dr, {}
     else:
         result = {}
         for dr_id in dr_ids:

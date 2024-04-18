@@ -38,7 +38,7 @@
 </script>
 <script>
     function configRequest(event) {
-        if (event.detail.target.id === "dr-table") {
+        if (event.detail.elt.id === "lc-dr") {
             let params = {}
             params['dr_ids'] = {{ dr_ids | tojson }}
             params['oid'] = "{{oid}}"
@@ -99,7 +99,7 @@
         <div>
             <button id="lc-dr"
                 class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"
-                hx-get="{{API_URL}}/htmx/lightcurve/dr?oid={{oid}}" hx-swap="outerHTML" hx-trigger="click"
+                hx-get="{{API_URL}}/htmx/lightcurve/dr" hx-swap="outerHTML" hx-trigger="click"
                 hx-target="#lightcurve-app"
                 hx-swap="outerHTML"
                 hx-indicator="#plot-indicator"
