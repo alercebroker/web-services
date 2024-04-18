@@ -79,7 +79,6 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
       }
       serie.data = this.formatError(forcedPhotometry, band, flux, true)
       this.options.series.push(serie)
-      console.log(serie)
     })
   }
 
@@ -190,7 +189,6 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   }
 
   lcDifferenceOnClick(detection) {
-    console.log(detection);
     const date = jdToDate(detection.value[0]).toUTCString().slice(0, -3) + 'UT'
     return {
       mjd: detection.value[0],
