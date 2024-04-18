@@ -55,16 +55,18 @@
             return none
         }
         document.addEventListener('htmx:configRequest', (event) => {
-            let params = {}
-            const ids = Object.keys(event.detail.unfilteredParameters)
-            params['dr_ids'] = ids
-            if (noneSelected()) {
-                params['dr_ids'].push('none')
+            if (event.detail.target.id === "dr-table") {
+                let params = {}
+                const ids = Object.keys(event.detail.unfilteredParameters)
+                params['dr_ids'] = ids
+                if (noneSelected()) {
+                    params['dr_ids'].push('none')
+                }
+                params['oid'] = "{{oid}}"
+                params['plot_type'] = "apparent"
+                params['show_dr'] = true
+                event.detail.parameters = params
             }
-            params['oid'] = "{{oid}}"
-            params['plot_type'] = "apparent"
-            params['show_dr'] = true
-            event.detail.parameters = params
         })
     </script>
 </form>
