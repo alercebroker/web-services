@@ -232,15 +232,26 @@
             return csv;
         }
 
+        function expandExtraFields(detections) {
+            return detections.map((d) => {
+                if ('extra_fields' in d) {
+                    let extra_fields = d.extra_fields;
+                    delete d.extra_fields;
+                    return { ...d, ...extra_fields };
+                }
+                return d;
+            });
+        }
+
         /* based in https://stackoverflow.com/questions/8847766/how-to-convert-json-to-csv-format-and-store-in-a-variable */
         function download(oid, detections, nonDetections, forcedPhotometry) {
             const today = dateToString(new Date())
             const filename = `${oid}_${today}.zip`;
             const zip = new JSZip();
-            zip.file('detections.csv', jsonToCsv(detections));
-            zip.file('non_detections.csv', jsonToCsv(nonDetections));
+            zip.file('detections.csv', jsonToCsv(expandExtraFields(JSON.parse(JSON.stringify(detections)))));
+            zip.file('non_detections.csv', jsonToCsv(expandExtraFields(JSON.parse(JSON.stringify(nonDetections)))));
             if (forcedPhotometry.length > 0) {
-                zip.file('forced_photometry.csv', jsonToCsv(forcedPhotometry));
+                zip.file('forced_photometry.csv', jsonToCsv(expandExtraFields(JSON.parse(JSON.stringify(forcedPhotometry)))));
             }
             zip.generateAsync({ type: 'blob' }).then((content) => {
                 const url = URL.createObjectURL(content);
