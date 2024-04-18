@@ -504,6 +504,16 @@ entries:
     version: 0.1.18
   lightcurve:
   - apiVersion: v2
+    appVersion: 24.4.1-rc86
+    created: "2024-04-18T20:26:04.460482402Z"
+    description: Lightcurve API for ALeRCE Clients
+    digest: 62daa7ab6f1504c6eed9d8cf87a67e7104635776fb944868e827243ecf473578
+    name: lightcurve
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/lightcurve-24.4.119/lightcurve-24.4.119.tgz
+    version: 24.4.119
+  - apiVersion: v2
     appVersion: 24.4.1-rc85
     created: "2024-04-18T20:14:43.023004347Z"
     description: Lightcurve API for ALeRCE Clients
@@ -1614,4 +1624,4 @@ entries:
     urls:
     - https://github.com/alercebroker/web-services/releases/download/xmatch-service-24.4.8/xmatch-service-24.4.8.tgz
     version: 24.4.8
-generated: "2024-04-18T20:14:43.02345704Z"
+generated: "2024-04-18T20:26:04.461054338Z"
