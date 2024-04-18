@@ -77,8 +77,9 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(forcedPhotometry, band, flux)
+      serie.data = this.formatError(forcedPhotometry, band, flux, true)
       this.options.series.push(serie)
+      console.log(serie)
     })
   }
 
@@ -117,11 +118,16 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
     })
   }
 
-  formatError(detections, band, flux) {
+  formatError(detections, band, flux, forced=false) {
+    const magLimit = flux ? 999999 : 99
     return detections
       .filter(function (x) {
-        const magLimit = flux ? 999999 : 99
-        return x.fid === band && x.e_mag < magLimit
+        if (forced && 'extra_fields' in x) {
+          if ("distnr" in x["extra_fields"]) {
+            return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.e_mag < magLimit && x.mag <= magLimit
+          }
+        }
+        return x.fid === band && x.e_mag < magLimit && x.mag <= magLimit
       })
       .map(function (x) {
         return [x.mjd, x.mag - x.e_mag, x.mag + x.e_mag]
@@ -177,7 +183,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   }
 
   getBoundaries() {
-    const sigmas = this.detections.concat(this.forcedPhotometry).map((x) => x.e_mag)
+    const sigmas = this.detections.concat(this.forcedPhotometry).map((x) => x.e_mag).filter((x) => x <= 99)
     const maxSigma = sigmas.reduce((a, b) => Math.max(a, b), -Infinity)
     this.options.yAxis.min = (x) => (x.min - maxSigma).toFixed(1)
     this.options.yAxis.max = (x) => (x.max + maxSigma).toFixed(1)
