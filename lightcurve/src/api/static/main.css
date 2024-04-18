@@ -188,6 +188,11 @@
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-bg-gray-200) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.tw-bg-green-400) {
   --tw-bg-opacity: 1;
   background-color: rgb(74 222 128 / var(--tw-bg-opacity));
@@ -201,11 +206,6 @@
 .tw-preflight :is(.tw-bg-white) {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-gray-200) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-p-2) {
@@ -858,17 +858,9 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(21 128 61 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.disabled\:tw-cursor-not-allowed:disabled) {
-  cursor: not-allowed;
-}
-
 .tw-preflight :is(.disabled\:tw-bg-gray-200:disabled) {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.disabled\:tw-opacity-50:disabled) {
-  opacity: 0.5;
 }
 
 .tw-preflight :is(:is(.tw-dark .dark\:tw-divide-\[\#404040\]) > :not([hidden]) ~ :not([hidden])) {
