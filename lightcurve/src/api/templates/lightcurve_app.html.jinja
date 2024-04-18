@@ -63,7 +63,7 @@
                 {{ radio.radio_button("apparent", plot_type == "apparent", "Apparent Magnitude", "Apparent magnitude light curve results from adding/subtracting the fluxes from the reference and difference in the same unit system and then converting to magnitudes.") }}
             </div>
             <div>
-                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase). Disabled if no period available.", period == 0) }}
+                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase). Disabled if no period available.", disabled= (period | int ) == 0) }}
             </div>
         </div>
         <div class="tw-col-span-2">
@@ -130,7 +130,7 @@
         const non_detections = {{ lightcurve.non_detections | tojson }};
         const dr_detections = {{ dr_detections | tojson }};
         let current_plot = "{{ plot_type }}";
-        const period = {{ period | tojson }};
+        const period = {{ period | float }};
 
         const setPlot = () => {
             let flux = document.getElementById("check-flux").checked;
@@ -175,7 +175,7 @@
             };
             document.getElementById("radio-apparent").disabled = !canDisplay(appOptions.options);
             document.getElementById("check-dr").disabled = !canDisplay(appOptions.options);
-            document.getElementById("radio-folded").disabled = !canDisplay(foldOptions.options);
+            document.getElementById("radio-folded").disabled = !canDisplay(foldOptions.options) || period === 0.0;
         }
 
         function showDataRelease() {
