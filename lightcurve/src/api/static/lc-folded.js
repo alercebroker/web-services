@@ -228,8 +228,8 @@ export class FoldedLightCurveOptions extends LightCurveOptions {
   }
 
   getBoundaries() {
-    const sigmas = this.detections.map((x) => x.e_mag_corr_ext)
-    const maxSigma = Math.max.apply(Math, sigmas) + 0.1
+    const sigmas = this.detections.concat(this.forcedPhotometry).map((x) => x.e_mag_corr_ext)
+    const maxSigma = sigmas.reduce((a, b) => Math.max(a, b), -Infinity)
     this.options.yAxis.min = (x) => (x.min - maxSigma).toFixed(1)
     this.options.yAxis.max = (x) => (x.max + maxSigma).toFixed(1)
   }
