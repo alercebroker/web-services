@@ -162,7 +162,7 @@ export class LightCurveOptions {
       `<span class="mdi mdi-alarm" style='font-size:13px; color: ${color};'></span>`
     const serie = params.seriesName
     let table = '<table> <tr> <th></th> <th></th> <th></th></tr>'
-    if (serie === 'r non-detections' || serie === 'g non-detections') {
+    if (serie === 'r non-detections' || serie === 'g non-detections' || serie === 'i non-detections') {
       table += rowTable(
         colorSpan(params.color),
         params.seriesName + ':',
@@ -204,7 +204,7 @@ export class LightCurveOptions {
     } else if (serie === 'r DR5' || serie === 'g DR5' || serie === 'i DR5') {
       table += dataReleaseTooltip(params)
       return table
-    } else if (serie === 'r forced photometry' || serie === 'g forced photometry') {
+    } else if (serie === 'r forced photometry' || serie === 'g forced photometry' || serie === 'i forced photometry') {
       const isdiffpos = params.value[4] === 1 ? '(+)' : '(-)'
       const mag = params.value[1].toFixed(3)
       const err = params.value[3].toFixed(3)

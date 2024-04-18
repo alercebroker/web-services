@@ -57,13 +57,13 @@
         <div class="tw-col-span-3">
             {% import 'radio_button.html.jinja' as radio %}
             <div>
-                {{ radio.radio_button("difference", plot_type == "difference", "Difference Magnitude", "The difference Magnitude light curve is the absolute difference between science and reference magnitudes.") }}
+                {{ radio.radio_button("difference", plot_type == "difference", "Difference Magnitude", "The difference magnitude light curve is the absolute difference between science and reference magnitudes.") }}
             </div>
             <div>
                 {{ radio.radio_button("apparent", plot_type == "apparent", "Apparent Magnitude", "Apparent magnitude light curve results from adding/subtracting the fluxes from the reference and difference in the same unit system and then converting to magnitudes.") }}
             </div>
             <div>
-                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The Period folded light curve, where time is transformed to time modulo the period (Phase). Disabled if no period available.", disabled= (period | int ) == 0) }}
+                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The period folded light curve, where time is transformed to time modulo the period (phase). Disabled if no period available.", disabled= (period | int ) == 0) }}
             </div>
         </div>
         <div class="tw-col-span-2">
@@ -72,13 +72,17 @@
                 type="checkbox" 
                 value="dr" 
             />
-            <label for="check-dr" class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-px-2 tw-py-1 tw-rounded">
+            <label 
+                id="check-dr-label"
+                for="check-dr" 
+                class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-px-2 tw-py-1 tw-rounded"
+            >
                 Toggle DR
             </label>
             <div class="tooltip">
                 <i class="fa fa-question-circle tw-me-2"></i>
                 <div class="tooltip-text">
-                    Show data release sources from ZTF DR5
+                    Show sources from ZTF Data Release 5
                 </div>
             </div>
             <input 
@@ -98,7 +102,7 @@
         </div>
         <div>
             <button id="lc-dr"
-                class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"
+                class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 disabled:tw-bg-gray-200 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"
                 hx-get="{{API_URL}}/htmx/lightcurve/dr" hx-swap="outerHTML" hx-trigger="click"
                 hx-target="#lightcurve-app"
                 hx-swap="outerHTML"
@@ -173,9 +177,22 @@
                 });
                 return canDisplay;
             };
-            document.getElementById("radio-apparent").disabled = !canDisplay(appOptions.options);
-            document.getElementById("check-dr").disabled = !canDisplay(appOptions.options);
-            document.getElementById("radio-folded").disabled = !canDisplay(foldOptions.options) || period === 0.0;
+            const apparent = document.getElementById("radio-apparent")
+            apparent.disabled = !canDisplay(appOptions.options);
+            apparent.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
+            apparent.classList.toggle("tw-bg-gray-200", !canDisplay(appOptions.options));
+            const check_dr = document.getElementById("check-dr")
+            check_dr.disabled = !canDisplay(appOptions.options);
+            const check_dr_label = document.getElementById("check-dr-label")
+            check_dr_label.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
+            check_dr_label.classList.toggle("tw-bg-gray-200", !canDisplay(appOptions.options));
+            check_dr_label.classList.toggle("cursor-not-allowed", !canDisplay(appOptions.options));
+            const lc_dr = document.getElementById("lc-dr")
+            lc_dr.disabled = !canDisplay(appOptions.options);
+            const folded = document.getElementById("radio-folded")
+            folded.disabled = !canDisplay(foldOptions.options) || period === 0.0;
+            folded.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
+            folded.classList.toggle("tw-bg-gray-200", !canDisplay(appOptions.options));
         }
 
         function showDataRelease() {

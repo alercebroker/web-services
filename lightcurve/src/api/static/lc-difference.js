@@ -169,7 +169,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   }
 
   getLegend() {
-    let bands = Array.from(new Set(this.detections.map((item) => item.fid)))
+    let bands = Array.from(new Set(this.detections.concat(this.forcedPhotometry).map((item) => item.fid)))
     bands = bands.sort((x, y) => x - y)
     let legend = bands.map((band) => this.bandMap[band].name)
     legend = legend.concat(
@@ -182,7 +182,7 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   }
 
   getBoundaries() {
-    const sigmas = this.detections.concat(this.forcedPhotometry).map((x) => x.e_mag).filter((x) => x <= 99)
+    const sigmas = this.options.series.filter((x) => x.type === 'scatter').map((x) => x.data).flat().map((x) => x[3]).filter((x) => x < 99)
     const maxSigma = sigmas.reduce((a, b) => Math.max(a, b), -Infinity)
     this.options.yAxis.min = (x) => (x.min - maxSigma).toFixed(1)
     this.options.yAxis.max = (x) => (x.max + maxSigma).toFixed(1)

@@ -7,7 +7,7 @@
         type="radio" 
         value="{{ value }}" 
         {% if checked %}checked{% endif %} 
-        {% if disabled %}disabled{% endif %}
+        {% if disabled %}disabled class="tw-opacity-50 tw-cursor-not-allowed"{% endif %}
       >
         <span>{{title}}</span>
     </label>

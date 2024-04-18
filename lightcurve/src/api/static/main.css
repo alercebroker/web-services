@@ -105,6 +105,10 @@
   animation: tw-spin 1s linear infinite;
 }
 
+.tw-preflight :is(.tw-cursor-not-allowed) {
+  cursor: not-allowed;
+}
+
 .tw-preflight :is(.tw-grid-cols-6) {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
@@ -199,6 +203,11 @@
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-bg-gray-200) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.tw-p-2) {
   padding: 0.5rem;
 }
@@ -240,6 +249,22 @@
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.tw-preflight :is(.tw-opacity-50) {
+  opacity: 0.5;
+}
+
+.disabled\:bg-gray-200 {
+  background-color: #e5e7eb;
+  /* Use the desired background color */
+}
+
+/* Optionally, adjust the opacity for a more subdued appearance */
+
+.disabled\:opacity-50 {
+  opacity: 0.5;
+  /* Adjust the opacity as needed */
+}
+
 .tooltip {
   position: relative;
 }
@@ -252,6 +277,7 @@
   visibility: hidden;
   width: -moz-max-content;
   width: max-content;
+  max-width: 500px;
   background-color: #000;
   color: #fff;
   text-align: center;
@@ -259,8 +285,8 @@
   padding: 4px 8px;
   position: absolute;
   font-size: 12px;
-  z-index: 1;
-  top: -30px;
+  z-index: 999;
+  top: -50px;
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
@@ -830,6 +856,19 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.hover\:tw-bg-green-700:hover) {
   --tw-bg-opacity: 1;
   background-color: rgb(21 128 61 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.disabled\:tw-cursor-not-allowed:disabled) {
+  cursor: not-allowed;
+}
+
+.tw-preflight :is(.disabled\:tw-bg-gray-200:disabled) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.disabled\:tw-opacity-50:disabled) {
+  opacity: 0.5;
 }
 
 .tw-preflight :is(:is(.tw-dark .dark\:tw-divide-\[\#404040\]) > :not([hidden]) ~ :not([hidden])) {
