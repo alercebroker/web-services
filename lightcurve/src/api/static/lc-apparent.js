@@ -153,12 +153,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   }
 
   getLegend() {
-    let bands = Array.from(new Set(this.detections.map((item) => item.fid)))
-    bands = bands.sort((x, y) => x - y)
-    let legend = bands.map((band) => this.bandMap[band].name)
-    legend = legend.concat(
-      bands.map((band) => this.bandMap[band].name + ' forced photometry')
-    )
+    let legend = this.options.series.filter((x) => x.data.length > 0).map((x) => x.name)
     this.options.legend.data = legend
   }
 
