@@ -132,6 +132,7 @@
         const forced_photometry = {{ lightcurve.forced_photometry | tojson }};
         const non_detections = {{ lightcurve.non_detections | tojson }};
         const dr_detections = {{ dr_detections | tojson }};
+        const dr = {{ dr | tojson }};
         let current_plot = "{{ plot_type }}";
         const period = {{ period | float }};
 
@@ -181,13 +182,13 @@
             apparent.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
             apparent.classList.toggle("tw-bg-transparent", !canDisplay(appOptions.options));
             const check_dr = document.getElementById("check-dr")
-            check_dr.disabled = !canDisplay(appOptions.options) || Object.keys(dr_detections).length === 0;
+            check_dr.disabled = !canDisplay(appOptions.options) || dr.length === 0;
             check_dr.classList.toggle("tw-opacity-50", check_dr.disabled);
             check_dr.classList.toggle("tw-bg-transparent", check_dr.disabled);
             const check_dr_label = document.getElementById("check-dr-label")
             check_dr_label.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
             const lc_dr = document.getElementById("lc-dr")
-            lc_dr.disabled = !canDisplay(appOptions.options) || Object.keys(dr_detections).length === 0;
+            lc_dr.disabled = !canDisplay(appOptions.options) || dr.length === 0;
             const folded = document.getElementById("radio-folded")
             folded.disabled = !canDisplay(foldOptions.options) || period === 0.0;
             folded.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));

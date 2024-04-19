@@ -170,7 +170,7 @@ async def lightcurve_app(
     show_dr: bool = False,
 ):
     lightcurve = await get_data_and_filter(request, oid, survey_id)
-    _, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
+    dr, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
     period = get_period_value(oid, request.app.state.psql_session)
     return templates.TemplateResponse(
         name="lightcurve_app.html.jinja",
@@ -182,6 +182,7 @@ async def lightcurve_app(
             "dr_detections": dr_detections,
             "period": period,
             "dr_ids": dr_ids,
+            "dr": dr,
             "show_dr": show_dr
         },
     )
