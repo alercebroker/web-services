@@ -179,8 +179,8 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   getBoundaries() {
     const sigmas = this.options.series.filter((x) => x.type === 'scatter').map((x) => x.data).flat().map((x) => x[3]).filter((x) => x < 99)
     const maxSigma = sigmas.reduce((a, b) => Math.max(a, b), -Infinity)
-    this.options.yAxis.min = (x) => (x.min - maxSigma).toFixed(1)
-    this.options.yAxis.max = (x) => (x.max + maxSigma).toFixed(1)
+    this.options.yAxis.min = (x) => (x.min - (maxSigma+0.1)).toFixed(1)
+    this.options.yAxis.max = (x) => (x.max + maxSigma + 0.1).toFixed(1)
   }
 
   lcDifferenceOnClick(detection) {
