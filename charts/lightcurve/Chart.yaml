@@ -1,8 +1,8 @@
 apiVersion: v2
-appVersion: 24.4.1-rc93
+appVersion: 24.4.1-rc94
 description: Lightcurve API for ALeRCE Clients
 name: lightcurve
 type: application
-version: 24.4.126
+version: 24.4.127
 
 
