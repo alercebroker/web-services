@@ -75,7 +75,6 @@
             <label 
                 id="check-dr-label"
                 for="check-dr" 
-                class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-px-2 tw-py-1 tw-rounded"
             >
                 Toggle DR
             </label>
@@ -90,7 +89,7 @@
                 type="checkbox" 
                 value="flux" 
             />
-            <label for="check-flux" class="tw-text-xs tw-bg-green-400 hover:tw-bg-green-700 tw-text-white tw-font-bold tw-px-2 tw-py-1 tw-rounded">
+            <label for="check-flux">
                 Toggle Flux
             </label>
             <div class="tooltip">
@@ -102,7 +101,7 @@
         </div>
         <div>
             <button id="lc-dr"
-                class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 disabled:tw-bg-gray-200 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"
+                class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 disabled:tw-bg-transparent disabled:tw-opacity-50 disabled:tw-outline tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"
                 hx-get="{{API_URL}}/htmx/lightcurve/dr" hx-swap="outerHTML" hx-trigger="click"
                 hx-target="#lightcurve-app"
                 hx-swap="outerHTML"
@@ -180,19 +179,20 @@
             const apparent = document.getElementById("radio-apparent")
             apparent.disabled = !canDisplay(appOptions.options);
             apparent.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
-            apparent.classList.toggle("tw-bg-gray-200", !canDisplay(appOptions.options));
+            apparent.classList.toggle("tw-bg-transparent", !canDisplay(appOptions.options));
             const check_dr = document.getElementById("check-dr")
             check_dr.disabled = !canDisplay(appOptions.options);
+            check_dr.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
+            check_dr.classList.toggle("tw-bg-transparent", !canDisplay(appOptions.options));
             const check_dr_label = document.getElementById("check-dr-label")
             check_dr_label.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
-            check_dr_label.classList.toggle("tw-bg-gray-200", !canDisplay(appOptions.options));
-            check_dr_label.classList.toggle("cursor-not-allowed", !canDisplay(appOptions.options));
+            check_dr_label.classList.toggle("tw-bg-transparent", !canDisplay(appOptions.options));
             const lc_dr = document.getElementById("lc-dr")
             lc_dr.disabled = !canDisplay(appOptions.options);
             const folded = document.getElementById("radio-folded")
             folded.disabled = !canDisplay(foldOptions.options) || period === 0.0;
             folded.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
-            folded.classList.toggle("tw-bg-gray-200", !canDisplay(appOptions.options));
+            folded.classList.toggle("tw-bg-transparent", !canDisplay(appOptions.options));
         }
 
         function showDataRelease() {

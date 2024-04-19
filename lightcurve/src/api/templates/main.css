@@ -1,14 +1,18 @@
 @tailwind components;
 @tailwind utilities;
 
-.disabled\:bg-gray-200 {
-    background-color: #e5e7eb; /* Use the desired background color */
+.disabled\:bg-transparent {
+    background-color: transparent;
   }
 
-  /* Optionally, adjust the opacity for a more subdued appearance */
-  .disabled\:opacity-50 {
-    opacity: 0.5; /* Adjust the opacity as needed */
-  }
+/* Optionally, adjust the opacity for a more subdued appearance */
+.disabled\:opacity-50 {
+  opacity: 0.5; /* Adjust the opacity as needed */
+}
+
+.disabled\:outline {
+  outline-style: solid;
+}
 
 .tooltip {
   position: relative;
