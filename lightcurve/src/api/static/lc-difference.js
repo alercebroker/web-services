@@ -119,14 +119,15 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
 
   formatError(detections, band, flux, forced=false) {
     const magLimit = flux ? 999999 : 99
+    const eMagLimit = flux ? 999999 : 1
     return detections
       .filter(function (x) {
         if (forced && 'extra_fields' in x) {
           if ("distnr" in x["extra_fields"]) {
-            return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.e_mag < magLimit && x.mag <= magLimit
+            return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.e_mag <= eMagLimit && x.mag <= magLimit
           }
         }
-        return x.fid === band && x.e_mag < magLimit && x.mag <= magLimit
+        return x.fid === band && x.e_mag <= eMagLimit && x.mag <= magLimit
       })
       .map(function (x) {
         return [x.mjd, x.mag - x.e_mag, x.mag + x.e_mag]
@@ -134,10 +135,11 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   }
 
   formatDetections(detections, band, flux) {
+    const magLimit = flux ? 999999 : 99
+    const eMagLimit = flux ? 999999 : 1
     return detections
       .filter(function (x) {
-        const magLimit = flux ? 999999 : 99
-        return x.fid === band && x.mag <= magLimit
+        return x.fid === band && x.mag <= magLimit && x.e_mag <= eMagLimit
       })
       .map(function (x) {
         return [x.mjd, x.mag, x.candid, x.e_mag, x.isdiffpos]
@@ -145,13 +147,14 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
   }
 
   formatForcedPhotometry(forcedPhotometry, band, flux) {
+    const magLimit = flux ? 999999 : 99
+    const eMagLimit = flux ? 999999 : 1
     return forcedPhotometry
       .filter(function (x) {
-        let magLimit = flux ? 999999 : 99
         if ("distnr" in x["extra_fields"]) {
-          return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.mag <= magLimit
+          return x["extra_fields"]["distnr"] >= 0 && x.fid === band && x.mag <= magLimit && x.e_mag <= eMagLimit
         }
-        return x.fid === band && x.mag <= magLimit
+        return x.fid === band && x.mag <= magLimit && x.e_mag <= eMagLimit
       })
       .map(function (x) {
         return [x.mjd, x.mag, "no-candid", x.e_mag, x.isdiffpos]

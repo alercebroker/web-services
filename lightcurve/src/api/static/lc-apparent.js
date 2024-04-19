@@ -99,16 +99,17 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   }
 
   formatError(detections, band, forced=false, flux=false) {
+    const magLimit = flux ? 999999 : 99
+    const eMagLimit = flux ? 999999 : 1
     return detections
       .filter(function (x) {
-        const magLimit = flux ? 999999 : 99
         if (forced && 'extra_fields' in x) {
           if ('distnr' in x['extra_fields']) {
-            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr <= magLimit
+            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.e_mag_corr_ext <= eMagLimit && x.mag_corr > 0 && x.mag_corr <= magLimit
           }
-          return x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr <= magLimit
+          return x.fid === band && x.corrected && x.e_mag_corr_ext <= eMagLimit && x.mag_corr > 0 && x.mag_corr <= magLimit
         }
-        return x.fid === band && x.corrected && x.e_mag_corr_ext < 99 && x.mag_corr > 0 && x.mag_corr <= magLimit
+        return x.fid === band && x.corrected && x.e_mag_corr_ext <= eMagLimit && x.mag_corr > 0 && x.mag_corr <= magLimit
       })
       .map(function (x) {
         return [
@@ -120,10 +121,11 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
   }
 
   formatDetections(detections, band, flux) {
+    const magLimit = flux ? 999999 : 99
+    const eMagLimit = flux ? 999999 : 1
     return detections
       .filter(function (x) {
-        const magLimit = flux ? 999999 : 99
-        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLimit && x.e_mag_corr_ext < 99
+        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLimit && x.e_mag_corr_ext <= eMagLimit
       })
       .map(function (x) {
         return [
@@ -138,14 +140,15 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
 
   formatForcedPhotometry(forcedPhotometry, band, flux) {
     const magLim = flux ? 999999 : 99
+    const eMagLim = flux ? 999999 : 1
     return forcedPhotometry
       .filter(function (x) {
         if ('extra_fields' in x) {
           if ('distnr' in x['extra_fields']) {
-            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext < 99
+            return x['extra_fields']['distnr'] >= 0 && x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext <= eMagLim
           }
         }
-        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext < 99
+        return x.fid === band && x.corrected && x.mag_corr > 0 && x.mag_corr <= magLim && x.e_mag_corr_ext <= eMagLim
       })
       .map(function (x) {
         return [x.mjd, x.mag_corr, 'no-candid', x.e_mag_corr_ext, x.isdiffpos]
