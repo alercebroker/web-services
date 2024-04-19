@@ -79,7 +79,7 @@ export class ApparentLightCurveOptions extends LightCurveOptions {
         color: this.bandMap[band].color,
         renderItem: this.renderError,
       }
-      serie.data = this.formatError(detections, band, flux)
+      serie.data = this.formatError(detections, band, false, flux)
       this.options.series.push(serie)
     })
   }
