@@ -57,7 +57,7 @@ def get_detections_as_dict(oid, survey_id, psql_session, mongo_database):
         handle_error=handle_error,
         handle_success=handle_success,
     )
-    if detections:
+    if detections is not None:
         detections = list(map(lambda det: det.__dict__, detections))
         return detections
 
@@ -71,7 +71,7 @@ def get_non_detections_as_dict(oid, survey_id, psql_session, mongo_database):
         handle_error=handle_error,
         handle_success=handle_success,
     )
-    if non_detections:
+    if non_detections is not None:
         non_detections = list(map(lambda ndet: ndet.__dict__, non_detections))
         return non_detections
 
