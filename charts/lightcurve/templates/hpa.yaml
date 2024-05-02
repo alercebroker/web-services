@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "lightcurve.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
     {{- include "lightcurve.labels" . | nindent 4 }}
 spec:
