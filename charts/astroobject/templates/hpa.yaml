@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "astroobject.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels:
     {{- include "astroobject.labels" . | nindent 4 }}
 spec:
