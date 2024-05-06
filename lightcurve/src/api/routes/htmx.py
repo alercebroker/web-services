@@ -185,8 +185,8 @@ async def lightcurve_app(
         },
     )
 
-@router.get("/lightcurve_dr", response_class=HTMLResponse)
-async def lightcurve_app(
+@router.get("/lightcurve_detections", response_class=HTMLResponse)
+async def lightcurve_app_detect(
     request: Request,
     oid: str,
     survey_id: str = "all",
