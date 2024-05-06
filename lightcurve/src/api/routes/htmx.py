@@ -185,8 +185,8 @@ async def lightcurve_app(
         },
     )
 
-@router.get("/lightcurve_detections", response_class=HTMLResponse)
-async def lightcurve_app_detect(
+@router.get("/lightcurve_complete", response_class=HTMLResponse)
+async def lightcurve_app_complete(
     request: Request,
     oid: str,
     survey_id: str = "all",
@@ -194,6 +194,7 @@ async def lightcurve_app_detect(
     dr_ids: Annotated[list[str], Query()] = [],
     show_dr: bool = False,
 ):
+    lightcurve = await get_data_and_filter(request, oid, survey_id)
     dr, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
     period = get_period_value(oid, request.app.state.psql_session)
     return templates.TemplateResponse(
@@ -201,7 +202,7 @@ async def lightcurve_app_detect(
         context={
             "request": request,
             "oid": oid,
-            #"lightcurve": lightcurve,
+            "lightcurve": lightcurve,
             "plot_type": plot_type,
             "dr_detections": dr_detections,
             "period": period,
