@@ -170,6 +170,30 @@ async def lightcurve_app(
     show_dr: bool = False,
 ):
     lightcurve = await get_data_and_filter(request, oid, survey_id)
+    return templates.TemplateResponse(
+        name="lightcurve_app.html.jinja",
+        context={
+            "request": request,
+            "oid": oid,
+            "lightcurve": lightcurve,
+            "plot_type": plot_type,
+            "dr_detections": [],
+            "period": 0,
+            "dr_ids": dr_ids,
+            "dr": [],
+            "show_dr": show_dr
+        },
+    )
+
+@router.get("/lightcurve_dr", response_class=HTMLResponse)
+async def lightcurve_app(
+    request: Request,
+    oid: str,
+    survey_id: str = "all",
+    plot_type: str = "difference",
+    dr_ids: Annotated[list[str], Query()] = [],
+    show_dr: bool = False,
+):
     dr, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
     period = get_period_value(oid, request.app.state.psql_session)
     return templates.TemplateResponse(
@@ -177,7 +201,7 @@ async def lightcurve_app(
         context={
             "request": request,
             "oid": oid,
-            "lightcurve": lightcurve,
+            #"lightcurve": lightcurve,
             "plot_type": plot_type,
             "dr_detections": dr_detections,
             "period": period,
