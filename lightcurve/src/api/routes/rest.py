@@ -108,16 +108,17 @@ def forced_photometry(oid: str, request: Request, survey_id: str = "all"):
     )
 
 @router.get("/lightcurve/dr/{oid}")
-@set_permissions_decorator(["admin", "basic_user"])
-@set_filters_decorator(["filter_atlas_lightcurve"])
-@check_permissions_decorator
 async def lightcurve_dr(
     oid: str,
     request: Request,
     dr_ids: Annotated[list[str], Query()] = [],
 ):
+    print("HERREEEEE-------")
     session = request.app.state.psql_session
     dr, dr_detections = await get_data_release_as_dict(oid, session, dr_ids)
+
+    print(dr)
+    print(dr_detections)
 
     return { 
         "dr": dr,
