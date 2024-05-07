@@ -10,7 +10,8 @@ from core.service import (
     get_period,
     get_forced_photometry,
     query_psql_object,
-    remove_duplicate_forced_photometry_by_pid
+    remove_duplicate_forced_photometry_by_pid,
+    get_data_release_as_dict
 )
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
@@ -101,35 +102,6 @@ def get_forced_photometry_as_dict(oid, psql_session, mongo_database):
         forced_photometry = list(map(lambda fp: fp.__dict__, forced_photometry))
         return forced_photometry
 
-
-async def get_data_release_as_dict(oid, psql_session, dr_ids: list[str] = []):
-    """Get data release detections for a given object and optionally filter by data release ids.
-
-    Args:
-        oid (str): Object id.
-        dr_ids (list[str], optional): Data release ids. Defaults to [].
-
-    Returns:
-        tuple: Data release object data and detections.
-
-    """
-    obj = query_psql_object(oid, psql_session)
-    dr, dr_detections = await get_data_release(obj.meanra, obj.meandec)
-    dr_detections = {str(k): v for k, v in dr_detections.items()}
-    if len(dr_ids) == 0:
-        result = {}
-        for dr_id in dr_detections:
-            result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
-        return dr, result
-    elif "none" in dr_ids:
-        return dr, {}
-    else:
-        result = {}
-        for dr_id in dr_ids:
-            result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
-        return dr, result
-
-
 async def get_lightcurve(oid, survey_id, psql_session, mongo_database):
     detections = get_detections_as_dict(oid, survey_id, psql_session, mongo_database)
     non_detections = get_non_detections_as_dict(oid, survey_id, psql_session, mongo_database)
@@ -170,6 +142,7 @@ async def lightcurve_app(
     show_dr: bool = False,
 ):
     lightcurve = await get_data_and_filter(request, oid, survey_id)
+    period = get_period_value(oid, request.app.state.psql_session)
     return templates.TemplateResponse(
         name="lightcurve_app.html.jinja",
         context={
@@ -178,15 +151,15 @@ async def lightcurve_app(
             "lightcurve": lightcurve,
             "plot_type": plot_type,
             "dr_detections": [],
-            "period": 0,
+            "period": period,
             "dr_ids": dr_ids,
             "dr": [],
             "show_dr": show_dr
         },
     )
 
-@router.get("/lightcurve_complete", response_class=HTMLResponse)
-async def lightcurve_app_complete(
+@router.get("/lightcurve_dr", response_class=HTMLResponse)
+async def lightcurve_app_eager_dr(
     request: Request,
     oid: str,
     survey_id: str = "all",
@@ -198,16 +171,16 @@ async def lightcurve_app_complete(
     dr, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
     period = get_period_value(oid, request.app.state.psql_session)
     return templates.TemplateResponse(
-        name="lightcurve_app.html.jinja",
+        name="lightcurve_app_eager_dr.html.jinja",
         context={
             "request": request,
             "oid": oid,
             "lightcurve": lightcurve,
             "plot_type": plot_type,
-            "dr_detections": {},
+            "dr_detections": dr_detections,
             "period": period,
             "dr_ids": dr_ids,
-            "dr": [],
+            "dr": dr,
             "show_dr": show_dr
         },
     )

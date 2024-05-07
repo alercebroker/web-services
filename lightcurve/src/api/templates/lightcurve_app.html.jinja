@@ -131,8 +131,8 @@
         const detections = {{ lightcurve.detections | tojson }};
         const forced_photometry = {{ lightcurve.forced_photometry | tojson }};
         const non_detections = {{ lightcurve.non_detections | tojson }};
-        const dr_detections = {{ dr_detections | tojson }};
-        const dr = {{ dr | tojson }};
+        let dr_detections = {{ dr_detections | tojson }};
+        let dr = {{ dr | tojson }};
         let current_plot = "{{ plot_type }}";
         const period = {{ period | float }};
 
@@ -320,21 +320,54 @@
         color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
         setColorSchemeWrapper(container)()
 
-        function get_dr() {
+        async function get_dr() {
             // funcion asincrona
             // opcional: activar flag llamada a dr api
             // la ruta de la api: {{API_URL}}
             // la ruta de la llamada es: {{API_URL}}/la que se crea en este pr
-            // llamada al endpoint rest del dr
+            const dr_route = "{{API_URL}}/lightcurve/dr/{{oid}}"
+            const xml_request = new XMLHttpRequest();
+            xml_request.open("GET", dr_route);
+            xml_request.responseType = "json";
+            xml_request.onload = () => {
+                if (xml_request.readyState == 4 && xml_request.status == 200) {
+                    const data = xml_request.response;
+                    console.log(data)
+                    return data
+                } else {
+                    trow Error(`Error: ${xhr.status}`);
+                }
+            };
+            xml_request.send();
         }
-        function proccess_result_get_dr() {
+        function proccess_result_get_dr(dr_result) {
             // opcional: cuando respuesta desactivar flag llamada api dr
             // lenar los datos con las detecciones y el dr (referencia linea 134 y 135 nota: pasar de const a let)
             // cuando lleguen datos si no es vacio reactivar el checkbox (toogle dr)
             // cuando lleguen datos si no es vacio activar el boton filter dr (filter_dr)
+            let res_detections = dr_result["detections"];
+            let res_dr = dr_result["dr"];
+            if ( detections.length > 0 && dr.length > 0) {
+                dr_detections = res_detections;
+                dr = res_dr;
+                // enable checkbox and button
+                const check_dr = document.getElementById("check-dr")
+                check_dr.disabled = false
+                const lc_dr = document.getElementById("lc-dr")
+                lc_dr.disabled = false
+            }
         }
 
         // esta linea es pseudo codigo revisar resolucion de promesas async functions
-        get_dr().then((res,err) => {proccess_result_get_dr(res, err)})
+        get_dr().then(
+            (res) => {
+                proccess_result_get_dr(res)
+            }
+        ).catch(
+            (err) => {
+                console.error("error geting dr " + err)
+            }
+        )
+
     </script>
 </div>
