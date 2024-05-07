@@ -185,7 +185,6 @@ async def lightcurve_app_eager_dr(
         },
     )
 
-
 @router.get("/lightcurve/dr", response_class=HTMLResponse)
 async def dr(
     request: Request, oid: str, dr_ids: Annotated[list[str], Query()] = []
