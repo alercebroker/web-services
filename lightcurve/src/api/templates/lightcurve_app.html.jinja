@@ -83,6 +83,7 @@
                 <div class="tooltip-text">
                     Show sources from ZTF Data Release 5
                 </div>
+                <i id="load-dr-spiner" class="fa fa-solid fa-spinner fa-spin" ></i>
             </div>
             <input 
                 id="check-flux" 
@@ -319,27 +320,11 @@
         const color_scheme_observer = new MutationObserver(setColorSchemeWrapper(container));
         color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
         setColorSchemeWrapper(container)()
-
-        async function get_dr() {
-            // opcional: activar flag llamada a dr api
-            const dr_route = "{{API_URL}}/lightcurve/dr/{{oid}}"
-            const xml_request = new XMLHttpRequest();
-            xml_request.open("GET", dr_route);
-            xml_request.responseType = "json";
-            xml_request.onload = () => {
-                if (xml_request.readyState == 4 && xml_request.status == 200) {
-                    const data = xml_request.response;
-                    proccess_result_get_dr(data)
-                    return data
-                } else {
-                    throw new Error(`Error: ${xhr.status}`);
-                }
-            };
-            xml_request.send();
-        }
         
         function proccess_result_get_dr(dr_result) {
             // opcional: cuando respuesta desactivar flag llamada api dr
+            let spiner = document.getElementById("load-dr-spiner")
+            spiner.style.visibility = "hidden"
             console.log(dr_result)
             let res_detections = dr_result["dr_detections"];
             let res_dr = dr_result["dr"];
@@ -355,8 +340,17 @@
             }
         }
 
-        // esta linea es pseudo codigo revisar resolucion de promesas async functions
-        get_dr()
+        // request para pedir el dr
+        const dr_route = "{{API_URL}}/lightcurve/dr/{{oid}}"
+        fetch(dr_route).then(
+            (result) => {
+                return result.json()
+            }
+        ).then(
+            (result) => {
+                proccess_result_get_dr(result)
+            }
+        )
 
     </script>
 </div>

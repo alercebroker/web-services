@@ -113,12 +113,8 @@ async def lightcurve_dr(
     request: Request,
     dr_ids: Annotated[list[str], Query()] = [],
 ):
-    print("HERREEEEE-------")
     session = request.app.state.psql_session
     dr, dr_detections = await get_data_release_as_dict(oid, session, dr_ids)
-
-    print(dr)
-    print(dr_detections)
 
     return { 
         "dr": dr,
