@@ -138,7 +138,7 @@
 
         const setPlot = () => {
             let flux = document.getElementById("check-flux").checked;
-            const all_detections = getDetecti   onsWithDR();
+            const all_detections = getDetectionsWithDR();
             const diffOptions = new DifferenceLightCurveOptions(JSON.parse(JSON.stringify(detections)), non_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
             const appOptions = new ApparentLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
             const foldOptions = new FoldedLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, period, flux);
