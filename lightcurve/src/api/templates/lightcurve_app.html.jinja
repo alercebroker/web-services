@@ -308,9 +308,7 @@
         check_dr.addEventListener("change", (event) => {
             if (event.target.checked) {
                 showDataRelease();
-            } 
-        
-            else {
+            } else {
                 setPlot();
             }
         });
@@ -325,11 +323,9 @@
             // opcional: cuando respuesta desactivar flag llamada api dr
             let spiner = document.getElementById("load-dr-spiner")
             spiner.style.visibility = "hidden"
-            console.log(dr_result)
             let res_detections = dr_result["dr_detections"];
             let res_dr = dr_result["dr"];
             if ( Object.keys(res_detections).length > 0) {
-                console.log("ENTRO AL IF")
                 dr_detections = res_detections;
                 dr = res_dr;
                 // enable checkbox and button
