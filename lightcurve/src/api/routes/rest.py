@@ -104,3 +104,7 @@ def forced_photometry(oid: str, request: Request, survey_id: str = "all"):
         handle_error=handle_error,
         handle_success=handle_success,
     )
+
+# crear endpoint de lightcurve/dr/{oid}
+# usar la funcion ger dr as dict desde el servicio
+# retornar json {"dr_detections": value, "dr": value}

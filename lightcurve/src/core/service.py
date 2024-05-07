@@ -857,3 +857,5 @@ def remove_duplicate_forced_photometry_by_pid(
         except IndexError:
             pass
     return new_forced_photometry
+
+# mover get dr as dict desde rute/htmx aqui

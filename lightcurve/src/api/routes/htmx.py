@@ -179,10 +179,10 @@ async def lightcurve_app(
             "oid": oid,
             "lightcurve": lightcurve,
             "plot_type": plot_type,
-            "dr_detections": dr_detections,
+            "dr_detections": {},
             "period": period,
             "dr_ids": dr_ids,
-            "dr": dr,
+            "dr": [],
             "show_dr": show_dr
         },
     )
@@ -192,6 +192,7 @@ async def lightcurve_app(
 async def dr(
     request: Request, oid: str, dr_ids: Annotated[list[str], Query()] = []
 ):
+    # esto se tiene que llamar desde el core
     dr, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
     return templates.TemplateResponse(
         name="data_release_table.html.jinja",

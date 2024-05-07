@@ -318,21 +318,18 @@
         setColorSchemeWrapper(container)()
 
         function get_dr() {
-            // funcion asincrona
-            // opcional: activar flag llamada a dr api
-            // la ruta de la api: {{API_URL}}
-            // la ruta de la llamada es: {{API_URL}}/la que se crea en este pr
-            // llamada al endpoint rest del dr
+            funcion asincrona
+            opcional: activar flag llamada a dr api
+            llamada al endpoint rest del dr
         }
 
         function proccess_result_get_dr() {
-            // opcional: cuando respuesta desactivar flag llamada api dr
-            // lenar los datos con las detecciones y el dr (referencia linea 134 y 135 nota: pasar de const a let)
-            // cuando llegen datos si no es vacio reactivar el checkbox (toogle dr)
-            // cuando llegen datos si no es vacio activar el boton filter dr (filter_dr)
+            opcional: cuando respuesta desactivar flag llamada api dr
+            lenar los datos con las detecciones y el dr (referencia linea 134 y 135 nota: pasar de const a let)
+            cuando llegen datos si no es vacio reactivar el checkbox (toogle dr)
+            cuando llegen datos si no es vacio activar el boton filter dr (filter_dr)
         }
 
-        // esta linea es pseudo codigo revisar resolucion de promesas async functions
-        get_dr().then((res,err) => {proccess_result_get_dr(res, err)})
+        get_dr().then((res,err) => {result_get_dr(res, err)})
     </script>
 </div>
