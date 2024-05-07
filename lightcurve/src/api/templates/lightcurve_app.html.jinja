@@ -320,7 +320,6 @@
         setColorSchemeWrapper(container)()
         
         function proccess_result_get_dr(dr_result) {
-            // opcional: cuando respuesta desactivar flag llamada api dr
             let spiner = document.getElementById("load-dr-spiner")
             spiner.style.visibility = "hidden"
             let res_detections = dr_result["dr_detections"];
