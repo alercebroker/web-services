@@ -83,7 +83,6 @@
                 <div class="tooltip-text">
                     Show sources from ZTF Data Release 5
                 </div>
-                <i id="load-dr-spiner" class="fa fa-solid fa-spinner fa-spin" ></i>
             </div>
             <input 
                 id="check-flux" 
@@ -132,8 +131,8 @@
         const detections = {{ lightcurve.detections | tojson }};
         const forced_photometry = {{ lightcurve.forced_photometry | tojson }};
         const non_detections = {{ lightcurve.non_detections | tojson }};
-        let dr_detections = {{ dr_detections | tojson }};
-        let dr = {{ dr | tojson }};
+        const dr_detections = {{ dr_detections | tojson }};
+        const dr = {{ dr | tojson }};
         let current_plot = "{{ plot_type }}";
         const period = {{ period | float }};
 
@@ -304,7 +303,6 @@
         {% if show_dr %}
         check_dr.checked = true;
         {% endif %}
-
         check_dr.addEventListener("change", (event) => {
             if (event.target.checked) {
                 showDataRelease();
@@ -318,34 +316,5 @@
         const color_scheme_observer = new MutationObserver(setColorSchemeWrapper(container));
         color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
         setColorSchemeWrapper(container)()
-        
-        function proccess_result_get_dr(dr_result) {
-            let spiner = document.getElementById("load-dr-spiner")
-            spiner.style.visibility = "hidden"
-            let res_detections = dr_result["dr_detections"];
-            let res_dr = dr_result["dr"];
-            if ( Object.keys(res_detections).length > 0) {
-                dr_detections = res_detections;
-                dr = res_dr;
-                // enable checkbox and button
-                const check_dr = document.getElementById("check-dr")
-                check_dr.disabled = false
-                const lc_dr = document.getElementById("lc-dr")
-                lc_dr.disabled = false
-            }
-        }
-
-        // request para pedir el dr
-        const dr_route = "{{API_URL}}/lightcurve/dr/{{oid}}"
-        fetch(dr_route).then(
-            (result) => {
-                return result.json()
-            }
-        ).then(
-            (result) => {
-                proccess_result_get_dr(result)
-            }
-        )
-
     </script>
 </div>
