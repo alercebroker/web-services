@@ -586,6 +586,33 @@ async def get_data_release(
         }
     return datareleases, detections
 
+async def get_data_release_as_dict(oid, psql_session, dr_ids: list[str] = []):
+    """Get data release detections for a given object and optionally filter by data release ids.
+
+    Args:
+        oid (str): Object id.
+        dr_ids (list[str], optional): Data release ids. Defaults to [].
+
+    Returns:
+        tuple: Data release object data and detections.
+
+    """
+    obj = query_psql_object(oid, psql_session)
+    dr, dr_detections = await get_data_release(obj.meanra, obj.meandec)
+    dr_detections = {str(k): v for k, v in dr_detections.items()}
+    if len(dr_ids) == 0:
+        result = {}
+        for dr_id in dr_detections:
+            result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
+        return dr, result
+    elif "none" in dr_ids:
+        return dr, {}
+    else:
+        result = {}
+        for dr_id in dr_ids:
+            result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
+        return dr, result
+
 def _get_period_sql(
     oid: str,
     session_factory: Callable[..., AbstractContextManager[Session]] | None,
@@ -857,3 +884,5 @@ def remove_duplicate_forced_photometry_by_pid(
         except IndexError:
             pass
     return new_forced_photometry
+
+# mover get dr as dict desde rute/htmx aqui

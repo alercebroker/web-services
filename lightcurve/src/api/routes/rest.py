@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Request
+from typing import Annotated
+from fastapi import APIRouter, Request, Query
 from ralidator_fastapi.decorators import (
     check_permissions_decorator,
     set_filters_decorator,
@@ -10,6 +11,7 @@ from core.service import (
     get_forced_photometry,
     get_lightcurve,
     get_non_detections,
+    get_data_release_as_dict
 )
 from ..result_handler import handle_error, handle_success
 
@@ -104,3 +106,17 @@ def forced_photometry(oid: str, request: Request, survey_id: str = "all"):
         handle_error=handle_error,
         handle_success=handle_success,
     )
+
+@router.get("/lightcurve/dr/{oid}")
+async def lightcurve_dr(
+    oid: str,
+    request: Request,
+    dr_ids: Annotated[list[str], Query()] = [],
+):
+    session = request.app.state.psql_session
+    dr, dr_detections = await get_data_release_as_dict(oid, session, dr_ids)
+
+    return { 
+        "dr": dr,
+        "dr_detections": dr_detections,
+    }
