@@ -90,7 +90,6 @@ export class Periodogram {
   }
 
   setPeriod(newPeriod) {
-    console.log(newPeriod);
     newPeriod = parseFloat(newPeriod);
 
     this.period = newPeriod;
