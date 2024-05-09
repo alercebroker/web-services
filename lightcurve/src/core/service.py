@@ -152,15 +152,18 @@ def _get_all_unique_detections(
         sql_detections = []
     except DatabaseError as e:
         return Failure(e)
-    try:
-        assert mongo_db is not None
-        mongo_detections = _get_detections_mongo(mongo_db, oid, tid=survey_id)
-    except ObjectNotFound:
-        mongo_detections = []
-    except DatabaseError as e:
-        return Failure(e)
-    detections = {d.candid: d for d in sql_detections + mongo_detections}
-    return Success(list(detections.values()))
+    
+    if mongo_db is not None:
+        try:
+            mongo_detections = _get_detections_mongo(mongo_db, oid, tid=survey_id)
+        except ObjectNotFound:
+            mongo_detections = []
+        except DatabaseError as e:
+            return Failure(e)
+        detections = {d.candid: d for d in sql_detections + mongo_detections}
+        return Success(list(detections.values()))
+    else:
+        return Success(sql_detections)
 
 
 def get_non_detections(
@@ -300,20 +303,23 @@ def _get_unique_forced_photometry(
         sql_forced_photometry = []
     except DatabaseError as e:
         return Failure(e)
-    try:
-        assert mongo_db is not None
-        mongo_forced_photometry = _get_forced_photometry_mongo(
-            mongo_db, oid, tid=survey_id
-        )
-        forced_photometry = {
-            (fp.oid, fp.pid): fp
-            for fp in sql_forced_photometry + mongo_forced_photometry
-        }
-        forced_photometry = list(forced_photometry.values())
-        return Success(forced_photometry)
-    except DatabaseError as e:
-        return Failure(e)
-    except ObjectNotFound:
+    
+    if mongo_db is not None:
+        try:
+            mongo_forced_photometry = _get_forced_photometry_mongo(
+                mongo_db, oid, tid=survey_id
+            )
+            forced_photometry = {
+                (fp.oid, fp.pid): fp
+                for fp in sql_forced_photometry + mongo_forced_photometry
+            }
+            forced_photometry = list(forced_photometry.values())
+            return Success(forced_photometry)
+        except DatabaseError as e:
+            return Failure(e)
+        except ObjectNotFound:
+            return Success(sql_forced_photometry)
+    else:
         return Success(sql_forced_photometry)
 
 
@@ -333,20 +339,22 @@ def _get_all_unique_non_detections(
         sql_non_detections = []
     except DatabaseError as e:
         return Failure(e)
-    try:
-        assert mongo_db is not None
-        mongo_non_detections = _get_non_detections_mongo(
-            mongo_db, oid, tid=survey_id
-        )
-        non_detections = {
-            (n.oid, n.fid, n.mjd): n
-            for n in sql_non_detections + mongo_non_detections
-        }
-        return Success(list(non_detections.values()))
-    except ObjectNotFound:
+    if mongo_db is not None:
+        try:
+            mongo_non_detections = _get_non_detections_mongo(
+                mongo_db, oid, tid=survey_id
+            )
+            non_detections = {
+                (n.oid, n.fid, n.mjd): n
+                for n in sql_non_detections + mongo_non_detections
+            }
+            return Success(list(non_detections.values()))
+        except ObjectNotFound:
+            return Success(sql_non_detections)
+        except DatabaseError as e:
+            return Failure(e)
+    else:
         return Success(sql_non_detections)
-    except DatabaseError as e:
-        return Failure(e)
 
 
 
