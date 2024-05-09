@@ -12,7 +12,7 @@ from database.mongo import connect as connect_mongo
 from database.sql import connect as connect_sql, session_wrapper
 
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
-app.state.mongo_db = connect_mongo()
+app.state.mongo_db = None
 psql_engine = connect_sql()
 app.state.psql_session = session_wrapper(psql_engine)
 instrumentator = Instrumentator().instrument(app).expose(app)
