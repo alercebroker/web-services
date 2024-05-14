@@ -21,4 +21,3 @@ async def compute_periodogram(lightcurve: LightcurveModel):
 @router.post("/chi_squared/")
 async def chi_squared(lightcurve_with_period: LightcurveWithPeriod):
     return {"reduced_chi_squared": compute_chi_squared(lightcurve_with_period)}
-

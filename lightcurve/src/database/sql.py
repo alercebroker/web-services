@@ -16,6 +16,7 @@ port = os.getenv("PSQL_PORT")
 db = os.getenv("PSQL_DATABASE")
 db_url = f"postgresql://{user}:{pwd}@{host}:{port}/{db}"
 
+
 def connect() -> Engine:
     engine: Engine = create_engine(db_url, echo=False)
     return engine

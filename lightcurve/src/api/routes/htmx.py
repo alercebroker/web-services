@@ -10,7 +10,7 @@ from core.service import (
     get_period,
     get_forced_photometry,
     query_psql_object,
-    remove_duplicate_forced_photometry_by_pid
+    remove_duplicate_forced_photometry_by_pid,
 )
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
@@ -98,7 +98,9 @@ def get_forced_photometry_as_dict(oid, psql_session, mongo_database):
         handle_success=handle_success,
     )
     if forced_photometry is not None:
-        forced_photometry = list(map(lambda fp: fp.__dict__, forced_photometry))
+        forced_photometry = list(
+            map(lambda fp: fp.__dict__, forced_photometry)
+        )
         return forced_photometry
 
 
@@ -119,21 +121,31 @@ async def get_data_release_as_dict(oid, psql_session, dr_ids: list[str] = []):
     if len(dr_ids) == 0:
         result = {}
         for dr_id in dr_detections:
-            result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
+            result[dr_id] = list(
+                map(lambda det: det.__dict__, dr_detections[dr_id])
+            )
         return dr, result
     elif "none" in dr_ids:
         return dr, {}
     else:
         result = {}
         for dr_id in dr_ids:
-            result[dr_id] = list(map(lambda det: det.__dict__, dr_detections[dr_id]))
+            result[dr_id] = list(
+                map(lambda det: det.__dict__, dr_detections[dr_id])
+            )
         return dr, result
 
 
 async def get_lightcurve(oid, survey_id, psql_session, mongo_database):
-    detections = get_detections_as_dict(oid, survey_id, psql_session, mongo_database)
-    non_detections = get_non_detections_as_dict(oid, survey_id, psql_session, mongo_database)
-    forced_photometry = get_forced_photometry_as_dict(oid, psql_session, mongo_database)
+    detections = get_detections_as_dict(
+        oid, survey_id, psql_session, mongo_database
+    )
+    non_detections = get_non_detections_as_dict(
+        oid, survey_id, psql_session, mongo_database
+    )
+    forced_photometry = get_forced_photometry_as_dict(
+        oid, psql_session, mongo_database
+    )
     if forced_photometry and detections:
         forced_photometry = remove_duplicate_forced_photometry_by_pid(
             detections, forced_photometry
@@ -144,6 +156,7 @@ async def get_lightcurve(oid, survey_id, psql_session, mongo_database):
         "forced_photometry": forced_photometry,
     }
 
+
 def filter_atlas_lightcurve(lightcurve: dict, ralidator):
     ralidator.set_app_filters(["filter_atlas_lightcurve"])
     return ralidator.apply_filters(lightcurve)
@@ -153,7 +166,12 @@ async def get_data_and_filter(
     request: Request, oid: str, survey_id: str = "all"
 ):
     setup_ralidator(request)
-    unfiltered_lightcurve = await get_lightcurve(oid, survey_id, request.app.state.psql_session, request.app.state.mongo_db)
+    unfiltered_lightcurve = await get_lightcurve(
+        oid,
+        survey_id,
+        request.app.state.psql_session,
+        request.app.state.mongo_db,
+    )
     filtered_lightcurve = filter_atlas_lightcurve(
         unfiltered_lightcurve, request.state.ralidator
     )
@@ -170,7 +188,9 @@ async def lightcurve_app(
     show_dr: bool = False,
 ):
     lightcurve = await get_data_and_filter(request, oid, survey_id)
-    dr, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
+    dr, dr_detections = await get_data_release_as_dict(
+        oid, request.app.state.psql_session, dr_ids
+    )
     period = get_period_value(oid, request.app.state.psql_session)
     return templates.TemplateResponse(
         name="lightcurve_app.html.jinja",
@@ -183,7 +203,7 @@ async def lightcurve_app(
             "period": period,
             "dr_ids": dr_ids,
             "dr": dr,
-            "show_dr": show_dr
+            "show_dr": show_dr,
         },
     )
 
@@ -192,7 +212,9 @@ async def lightcurve_app(
 async def dr(
     request: Request, oid: str, dr_ids: Annotated[list[str], Query()] = []
 ):
-    dr, dr_detections = await get_data_release_as_dict(oid, request.app.state.psql_session, dr_ids)
+    dr, dr_detections = await get_data_release_as_dict(
+        oid, request.app.state.psql_session, dr_ids
+    )
     return templates.TemplateResponse(
         name="data_release_table.html.jinja",
         context={
