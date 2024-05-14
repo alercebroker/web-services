@@ -1,23 +1,18 @@
 {% macro radio_button(value,checked, title, tooltip, disabled=False) %}
-<div class="tw-flex tw-flex-row">
-  <div class="tw-basis-3/4">
-    <label>
-      <input 
-        id="radio-{{ value }}" 
-        type="radio" 
-        value="{{ value }}" 
-        {% if checked %}checked{% endif %} 
-        {% if disabled %}disabled{% endif %}
-      >
-        <span>{{title}}</span>
-    </label>
-  </div>
-  <div class="tooltip">
-      <i class="fa fa-question-circle tw-me-2"></i>
-      <div class="tooltip-text">
-          {{tooltip}}
-      </div>
-  </div>
-</div>
+    <div class="tw-grid tw-grid-cols-6">
+        <div class="tw-col-span-5">
+            <label>
+                <input id="radio-{{ value }}"
+                       type="radio"
+                       value="{{ value }}"
+                       {% if checked %}checked{% endif %}
+                       {% if disabled %}disabled{% endif %}>
+                <span>{{ title }}</span>
+            </label>
+        </div>
+        <div class="tooltip tw-col-span-1">
+            <i class="fa fa-question-circle tw-me-2"></i>
+            <div class="tooltip-text">{{ tooltip }}</div>
+        </div>
+    </div>
 {% endmacro %}
-

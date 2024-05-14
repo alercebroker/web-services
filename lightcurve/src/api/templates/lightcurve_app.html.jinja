@@ -20,8 +20,8 @@
      style="height: 100%">
     <div id="lc-main" style="width: 100%;  min-width: 0; min-height: 380px;"></div>
     <p id="plot-indicator" class="htmx-indicator">Loading...</p>
-    <div class="tw-grid tw-grid-cols-6 tw-gap-2 tw-mx-2 tw-px-2">
-        <div class="tw-col-span-3">
+    <div class="tw-grid tw-grid-cols-10 tw-gap-1 tw-px-4 tw-py-4">
+        <div class="tw-col-span-4">
             {% import 'radio_button.html.jinja' as radio %}
             <div>
                 {{ radio.radio_button("difference", plot_type == "difference", "Difference Magnitude", "The difference magnitude light curve is the absolute difference between science and reference magnitudes.") }}
@@ -33,15 +33,15 @@
                 {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The period folded light curve, where time is transformed to time modulo the period (phase). Disabled if no period available.", disabled= (period | int) == 0) }}
             </div>
         </div>
-        <div class="tw-col-span-2">
+        <div class="tw-col-span-4">
             {% import 'checkbox.html.jinja' as checkbox %}
             <div>{{ checkbox.checkbox("dr", false, "Toggle DR", "Show sources from ZTF Data Release 5") }}</div>
             <div>{{ checkbox.checkbox("flux", false, "Toggle Flux", "Toggle between flux and magnitude") }}</div>
             <div>
-                {{ checkbox.checkbox("periodogram", false, "Toggle Periodogram", "Show the lightcurve periodogram. Points on the periodogram can be clicked to update the folded lightcurve plot.") }}
+                {{ checkbox.checkbox("periodogram", false, "Toggle Periodogram", "Show the lightcurve periodogram. Points on the periodogram can be clicked to update the folded lightcurve plot.", hidden=True) }}
             </div>
         </div>
-        <div class="tw-col-span-1 tw-space-y-2">
+        <div class="tw-col-span-2 tw-space-y-2">
             <div>
                 <button id="lc-dr"
                         class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 disabled:tw-bg-transparent disabled:tw-opacity-50 disabled:tw-outline tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"

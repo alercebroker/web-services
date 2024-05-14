@@ -1,6 +1,8 @@
-{% macro checkbox(value, checked, title, tooltip, disabled=False) %}
-    <div id="lc-check-row-{{ value }}" class="tw-flex tw-flex-row">
-        <div class="tw-basis-3/4">
+{% macro checkbox(value, checked, title, tooltip, disabled=False, hidden=False) %}
+    <div id="lc-check-row-{{ value }}"
+         class="tw-grid tw-grid-cols-6"
+         {% if hidden %}hidden{% endif %}>
+        <div class="tw-col-span-5">
             <label>
                 <input id="lc-check-{{ value }}"
                        type="checkbox"
@@ -10,7 +12,7 @@
                 <span id="lc-check-{{ value }}-label">{{ title }}</span>
             </label>
         </div>
-        <div class="tooltip">
+        <div class="tooltip tw-col-span-1">
             <i class="fa fa-question-circle tw-me-2"></i>
             <div class="tooltip-text">{{ tooltip }}</div>
         </div>
