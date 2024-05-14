@@ -6,8 +6,12 @@
   grid-column: span 2 / span 2;
 }
 
-.tw-preflight :is(.tw-col-span-3) {
-  grid-column: span 3 / span 3;
+.tw-preflight :is(.tw-col-span-4) {
+  grid-column: span 4 / span 4;
+}
+
+.tw-preflight :is(.tw-col-span-5) {
+  grid-column: span 5 / span 5;
 }
 
 .tw-preflight :is(.tw-m-auto) {
@@ -64,10 +68,6 @@
   min-width: 100%;
 }
 
-.tw-preflight :is(.tw-basis-3\/4) {
-  flex-basis: 75%;
-}
-
 @keyframes tw-spin {
   to {
     transform: rotate(360deg);
@@ -78,12 +78,12 @@
   animation: tw-spin 1s linear infinite;
 }
 
-.tw-preflight :is(.tw-grid-cols-6) {
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+.tw-preflight :is(.tw-grid-cols-10) {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
 }
 
-.tw-preflight :is(.tw-flex-row) {
-  flex-direction: row;
+.tw-preflight :is(.tw-grid-cols-6) {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
 .tw-preflight :is(.tw-flex-col) {
@@ -98,8 +98,8 @@
   place-items: center;
 }
 
-.tw-preflight :is(.tw-gap-2) {
-  gap: 0.5rem;
+.tw-preflight :is(.tw-gap-1) {
+  gap: 0.25rem;
 }
 
 .tw-preflight :is(.tw-space-y-2 > :not([hidden]) ~ :not([hidden])) {
@@ -194,9 +194,19 @@
   padding-right: 0.5rem;
 }
 
+.tw-preflight :is(.tw-px-4) {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .tw-preflight :is(.tw-py-1) {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+}
+
+.tw-preflight :is(.tw-py-4) {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .tw-preflight :is(.tw-ps-2) {
