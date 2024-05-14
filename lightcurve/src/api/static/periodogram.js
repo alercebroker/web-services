@@ -22,17 +22,18 @@ export class Periodogram {
     const fid_map = { 1: "g", 2: "r" };
     const detections_clean = detections.filter(
       (detection) =>
-        detection["mjd"] !== null &&
-        detection["mag_corr"] !== null &&
-        detection["e_mag_corr_ext"] !== null,
+        detection.mjd !== null &&
+        detection.mag_corr !== null &&
+        detection.e_mag_corr_ext !== null &&
+        (detection.fid === 1 || detection.fid === 2),
     );
     return {
-      mjd: detections_clean.map((detection) => detection["mjd"]),
-      brightness: detections_clean.map((detection) => detection["mag_corr"]),
+      mjd: detections_clean.map((detection) => detection.mjd),
+      brightness: detections_clean.map((detection) => detection.mag_corr),
       e_brightness: detections_clean.map(
-        (detection) => detection["e_mag_corr_ext"],
+        (detection) => detection.e_mag_corr_ext,
       ),
-      fid: detections_clean.map((detection) => fid_map[detection["fid"]]),
+      fid: detections_clean.map((detection) => fid_map[detection.fid]),
     };
   }
 
