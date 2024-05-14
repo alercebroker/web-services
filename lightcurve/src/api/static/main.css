@@ -1,13 +1,5 @@
-.tw-preflight :is(.tw-absolute) {
-  position: absolute;
-}
-
-.tw-preflight :is(.tw-bottom-1\/2) {
-  bottom: 50%;
-}
-
-.tw-preflight :is(.tw-right-1\/2) {
-  right: 50%;
+.tw-preflight :is(.tw-col-span-1) {
+  grid-column: span 1 / span 1;
 }
 
 .tw-preflight :is(.tw-col-span-2) {
@@ -18,14 +10,13 @@
   grid-column: span 3 / span 3;
 }
 
+.tw-preflight :is(.tw-m-auto) {
+  margin: auto;
+}
+
 .tw-preflight :is(.tw-mx-2) {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
-}
-
-.tw-preflight :is(.tw-mx-7) {
-  margin-left: 1.75rem;
-  margin-right: 1.75rem;
 }
 
 .tw-preflight :is(.tw-me-2) {
@@ -45,28 +36,24 @@
   display: grid;
 }
 
-.tw-preflight :is(.tw-h-1\/2) {
-  height: 50%;
+.tw-preflight :is(.tw-h-32) {
+  height: 8rem;
 }
 
 .tw-preflight :is(.tw-h-6) {
   height: 1.5rem;
 }
 
-.tw-preflight :is(.tw-h-64) {
-  height: 16rem;
-}
-
 .tw-preflight :is(.tw-w-12) {
   width: 3rem;
 }
 
-.tw-preflight :is(.tw-w-6) {
-  width: 1.5rem;
+.tw-preflight :is(.tw-w-32) {
+  width: 8rem;
 }
 
-.tw-preflight :is(.tw-w-64) {
-  width: 16rem;
+.tw-preflight :is(.tw-w-6) {
+  width: 1.5rem;
 }
 
 .tw-preflight :is(.tw-w-full) {
@@ -81,20 +68,6 @@
   flex-basis: 75%;
 }
 
-.tw-preflight :is(.tw-translate-x-1\/2) {
-  --tw-translate-x: 50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.tw-preflight :is(.tw-translate-y-1\/2) {
-  --tw-translate-y: 50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.tw-preflight :is(.tw-transform) {
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
 @keyframes tw-spin {
   to {
     transform: rotate(360deg);
@@ -103,10 +76,6 @@
 
 .tw-preflight :is(.tw-animate-spin) {
   animation: tw-spin 1s linear infinite;
-}
-
-.tw-preflight :is(.tw-cursor-not-allowed) {
-  cursor: not-allowed;
 }
 
 .tw-preflight :is(.tw-grid-cols-6) {
@@ -121,12 +90,22 @@
   flex-direction: column;
 }
 
-.tw-preflight :is(.tw-content-center) {
-  align-content: center;
+.tw-preflight :is(.tw-place-content-center) {
+  place-content: center;
+}
+
+.tw-preflight :is(.tw-place-items-center) {
+  place-items: center;
 }
 
 .tw-preflight :is(.tw-gap-2) {
   gap: 0.5rem;
+}
+
+.tw-preflight :is(.tw-space-y-2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
 }
 
 .tw-preflight :is(.tw-divide-y > :not([hidden]) ~ :not([hidden])) {
@@ -138,6 +117,10 @@
 .tw-preflight :is(.tw-divide-gray-200 > :not([hidden]) ~ :not([hidden])) {
   --tw-divide-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-divide-opacity));
+}
+
+.tw-preflight :is(.tw-place-self-center) {
+  place-self: center;
 }
 
 .tw-preflight :is(.tw-rounded) {
@@ -211,14 +194,14 @@
   padding-right: 0.5rem;
 }
 
-.tw-preflight :is(.tw-px-20) {
-  padding-left: 5rem;
-  padding-right: 5rem;
-}
-
 .tw-preflight :is(.tw-py-1) {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
+}
+
+.tw-preflight :is(.tw-ps-2) {
+  -webkit-padding-start: 0.5rem;
+          padding-inline-start: 0.5rem;
 }
 
 .tw-preflight :is(.tw-text-center) {

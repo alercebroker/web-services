@@ -1,0 +1,18 @@
+{% macro checkbox(value, checked, title, tooltip, disabled=False) %}
+    <div id="lc-check-row-{{ value }}" class="tw-flex tw-flex-row">
+        <div class="tw-basis-3/4">
+            <label>
+                <input id="lc-check-{{ value }}"
+                       type="checkbox"
+                       value="{{ value }}"
+                       {% if checked %}checked{% endif %}
+                       {% if disabled %}disabled{% endif %}>
+                <span id="lc-check-{{ value }}-label">{{ title }}</span>
+            </label>
+        </div>
+        <div class="tooltip">
+            <i class="fa fa-question-circle tw-me-2"></i>
+            <div class="tooltip-text">{{ tooltip }}</div>
+        </div>
+    </div>
+{% endmacro %}
