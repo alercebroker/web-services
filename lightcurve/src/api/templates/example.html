@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table with Row Display Control</title>
+    <style>
+        .table-container {
+            width: 50%;
+            margin: auto;
+            border: 1px solid #000;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="table-container">
+        <label for="rowSelector">Rows to display:</label>
+        <select id="rowSelector">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+        </select>
+
+        <table id="myTable">
+            <thead>
+                <tr>
+                    <th>Header 1</th>
+                    <th>Header 2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Add your table rows here -->
+                <tr><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr>
+                <tr><td>Row 2, Cell 1</td><td>Row 2, Cell 2</td></tr>
+                <tr><td>Row 3, Cell 1</td><td>Row 3, Cell 2</td></tr>
+                <tr><td>Row 4, Cell 1</td><td>Row 4, Cell 2</td></tr>
+                <tr><td>Row 5, Cell 1</td><td>Row 5, Cell 2</td></tr>
+                <tr><td>Row 6, Cell 1</td><td>Row 6, Cell 2</td></tr>
+                <tr><td>Row 7, Cell 1</td><td>Row 7, Cell 2</td></tr>
+                <tr><td>Row 8, Cell 1</td><td>Row 8, Cell 2</td></tr>
+                <tr><td>Row 9, Cell 1</td><td>Row 9, Cell 2</td></tr>
+                <tr><td>Row 10, Cell 1</td><td>Row 10, Cell 2</td></tr>
+                <tr><td>Row 11, Cell 1</td><td>Row 11, Cell 2</td></tr>
+                <tr><td>Row 12, Cell 1</td><td>Row 12, Cell 2</td></tr>
+                <tr><td>Row 13, Cell 1</td><td>Row 13, Cell 2</td></tr>
+                <tr><td>Row 14, Cell 1</td><td>Row 14, Cell 2</td></tr>
+                <tr><td>Row 15, Cell 1</td><td>Row 15, Cell 2</td></tr>
+                <tr><td>Row 16, Cell 1</td><td>Row 16, Cell 2</td></tr>
+                <tr><td>Row 17, Cell 1</td><td>Row 17, Cell 2</td></tr>
+                <tr><td>Row 18, Cell 1</td><td>Row 18, Cell 2</td></tr>
+                <tr><td>Row 19, Cell 1</td><td>Row 19, Cell 2</td></tr>
+                <tr><td>Row 20, Cell 1</td><td>Row 20, Cell 2</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rowSelector = document.getElementById('rowSelector');
+            const table = document.getElementById('myTable');
+            const rows = table.querySelectorAll('tbody tr');
+
+            function showRows(rowCount) {
+                rows.forEach((row, index) => {
+                    row.style.display = index < rowCount ? '' : 'none';
+                });
+            }
+
+            rowSelector.addEventListener('change', function () {
+                const rowCount = parseInt(rowSelector.value, 10);
+                showRows(rowCount);
+            });
+
+            // Initial display
+            showRows(parseInt(rowSelector.value, 10));
+        });
+    </script>
+</body>
+</html>
