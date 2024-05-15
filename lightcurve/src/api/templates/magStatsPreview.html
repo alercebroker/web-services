@@ -7,7 +7,9 @@
 
     <style>
         material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .box { background-color: #1e1e1e; border-radius: 10px; width: 750px; height: 450px; border: none; padding: 10px; position: relative; }
+        /* .box { background-color: #1e1e1e; border-radius: 10px; width: 750px; height: 450px; border: none; padding: 10px; position: relative; } */
+        .box { background-color: #1e1e1e;  box-sizing: content-box; border-radius: 10px; width: 750px;}
+        h1 {padding: 20px 0px 0px 30px}
         .data { color: white; }
         .link { color: rgb(50, 119, 175);text-decoration: underline;cursor:pointer}
         .left-text, .middle-text { text-align: center; width: 200px; height: 32px; }
@@ -21,16 +23,18 @@
         .other-button { background-color: #2196F3; padding: 2px 60px; }
         .flex { max-width: 100%; }
         .text-center { text-align: center; }
+        .text-left {text-align: left;}
         td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: left; }
         th { padding-left: 7.5px; padding-right: 7.5px; }
-        td:first-child, th:first-child { padding-left: 0; }
-        td:last-child, th:last-child { padding-right: 0; }
-        table { width: calc(100% + 30px); table-layout: fixed; border-spacing: 15px 0px; }
-        .table-container { overflow: hidden; width: 400px; margin: 0; }
-        .table td:first-child { text-align: left; }
-        .th,.td{padding-left: 100px;height: 40px;width: 70px;}
+        th:hover {cursor: pointer;}
+        td:first-child, th:first-child { padding-left: 0;border-top: none; }
+        td:last-child, th:last-child { padding-right: 0; border-bottom: none;}
+        table { width: calc(100% + 30px); table-layout: fixed; border-spacing: 15px 0px; border-collapse: collapse;}
+        .table-container { overflow: hidden; width: 400px; margin-left: 50px; }
+        .th,.td{padding: 0px 100px 0px 0px;height: 40px;width: 200px;}
         .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
         button, input[type="submit"], input[type="reset"] {background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;}
+
     </style>
     </style>
 </head>
@@ -40,26 +44,100 @@
     <div class="box">   
         <div class="data">
             <h1>Magnitude Statistics</h1>
-            <table class="table-container">
+            <table border=1 frame=void rules=rows class="table-container">
                 <colgroup><col><col></colgroup>
                 <thead>
-                    <th class="text-center th"> 
+                    <th class="text-left th"> 
                         Stat 
                     </th>
-                    <th class="text-center th ">
+                    <th class="text-left th ">
                         r
                     </th>
                 </thead>
-                <tbody class="table-spacing">
+                <tbody>
                     <tr class="rows">
-                        <td class="text-center td">
-                            hola mundo
+                        <td class="text-left td">
+                            stellar
                         </td>
-                        <td class="text-center td">
+                        <td class="text-left td">
                             24.4.1
                         </td>
                         
                     </tr>
+
+                    <tr class="rows">
+                        <td class="text-left td">
+                            corrected
+                        </td>
+                        <td class="text-left td"> 
+                            true
+                        </td>
+                    </tr>
+                    <tr class="'rows">
+                        <td class="text-left td">
+                            ndet
+                        </td>
+                        <td class="text-left td">
+                            1
+                        </td>
+                    </tr>
+                    <tr class="rows">
+                        <td class="text-left td">
+                            ndubiuos
+                        </td>
+                        <td class="text-left td">
+                            0
+                        </td>
+                    </tr>
+                    <tr class="rows">
+                        <td class="text-left td">
+                            magmean
+                        </td>
+                        <td class="text-left td">
+                            17.933
+                        </td>
+                    </tr>
+                    <tr class="rows">
+                        <td class="text-left td">
+                            magmedian
+                        </td>
+                        <td class="text-left td">
+                            17.933
+                        </td>
+                    </tr>
+                    <tr class="rows">
+                        <td class="text-left td">
+                            magmax
+                        </td>
+                        <td class="text-left td">
+                            17.933
+                        </td>
+                    </tr>
+                    <tr class="rows">
+                        <td class="text-left td">
+                            magmin
+                        </td>
+                        <td class="text-left td">
+                            17.933
+                        </td>
+                    </tr>
+                    <tr class="rows">
+                        <td class="text-left td">
+                            magsigma
+                        </td>
+                        <td class="text-left td">
+                            0
+                        </td>
+                    </tr>
+                    <tr class="rows">
+                        <td class="text-left td">
+                            maglast
+                        </td>
+                        <td class="text-left td">
+                            17.933
+                        </td>
+                    </tr>
+                    
                 </tbody>
                 <tbody class="right-col"></tbody>
             </table>
