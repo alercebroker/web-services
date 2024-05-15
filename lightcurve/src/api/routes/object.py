@@ -43,13 +43,9 @@ def setup_ralidator(request: Request):
 async def object_info_app(
     request: Request,
     oid: str
-    
 ):
   
     object = get_object(oid,session_factory = request.app.state.psql_session)
-    
-  ### Debemos pedir la informacion de la tabla object en psql
-  ### retornar el template con la informacion
 
     return templates.TemplateResponse(
       name='basicInformationPreview.html.jinja',

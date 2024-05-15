@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .box { background-color: #1e1e1e; border-radius: 10px; width: 750px; height: 450px; border: none; padding: 10px; position: relative; }
+        .data { color: white; }
+        .link { color: rgb(50, 119, 175);text-decoration: underline;cursor:pointer}
+        .left-text, .middle-text { text-align: center; width: 200px; height: 32px; }
+        .middle-text { width: 300px; }
+        .rows:hover { opacity: 0.7; }
+        .glow:after { content: ""; display: block; height: 50px; width: 50px; position: absolute; border-radius: 50%; }
+        .tooltip { position: relative; display: inline-block; border-bottom: 1px dotted gray; }
+        .glow .tooltiptext { display: none; width: 120px; background-color: gray; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; opacity: 1; }
+        .glow:hover .tooltiptext { display: block; }
+        .find-button, .other-button { background-color: #0097a7; padding: 2px 100px; border: none; font-weight: 550; font-size: 15px; cursor: pointer; color: white; }
+        .other-button { background-color: #2196F3; padding: 2px 60px; }
+        .flex { max-width: 100%; }
+        .text-center { text-align: center; }
+        td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: left; }
+        th { padding-left: 7.5px; padding-right: 7.5px; }
+        td:first-child, th:first-child { padding-left: 0; }
+        td:last-child, th:last-child { padding-right: 0; }
+        table { width: calc(100% + 30px); table-layout: fixed; border-spacing: 15px 0px; }
+        .table-container { overflow: hidden; width: 400px; margin: 0; }
+        .table td:first-child { text-align: left; }
+        .th,.td{padding-left: 100px;height: 40px;width: 70px;}
+        .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
+        button, input[type="submit"], input[type="reset"] {background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;}
+    </style>
+    </style>
+</head>
+<body>
+    
+
+    <div class="box">   
+        <div class="data">
+            <h1>Magnitude Statistics</h1>
+            <table class="table-container">
+                <colgroup><col><col></colgroup>
+                <thead>
+                    <th class="text-center th"> 
+                        Stat 
+                    </th>
+                    <th class="text-center th ">
+                        r
+                    </th>
+                </thead>
+                <tbody class="table-spacing">
+                    <tr class="rows">
+                        <td class="text-center td">
+                            hola mundo
+                        </td>
+                        <td class="text-center td">
+                            24.4.1
+                        </td>
+                        
+                    </tr>
+                </tbody>
+                <tbody class="right-col"></tbody>
+            </table>
+        </div>
+
+
+    </div>
+
+
+</body>
+</html>

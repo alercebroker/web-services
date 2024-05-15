@@ -27,7 +27,7 @@
         table { width: calc(100% + 30px); table-layout: fixed; border-spacing: 15px 0px; }
         .table-container { overflow: hidden; width: 400px; margin: 0; }
         .table td:first-child { text-align: left; }
-        .th,.td{padding-left: 100px;padding-rightchangeDiscoveryValue: 60px;height: 40px;width: 70px;}
+        .th,.td{padding-left: 100px;height: 40px;width: 70px;}
         .box { background-color: #1e1e1e; border-radius: 10px; width: 750px; height: 450px; border: none; padding: 10px; position: relative; }
         .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
         button, input[type="submit"], input[type="reset"] {background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;}
@@ -115,6 +115,9 @@
 
     let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
     let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
+    console.log(discoveryDateMGD);
+    console.log(lastDetectionMGD);
+
     let raTime = transformRaDec(ra);
     let decTime = transformRaDec(dec);
 
@@ -138,44 +141,30 @@
     let binaryRaDec = 0;
     changeRaDec();
 
-    function julianToGregorian(julianDate) {
-        const adjustedJulianDate = julianDate - 32045;
-        const numYears = Math.floor(adjustedJulianDate / 365.25);
-        let year = 4713 - numYears;
-        if (adjustedJulianDate < (365 * numYears + Math.floor(numYears / 4))) {
-            year -= 1;
-        }
-        let remainingDays = adjustedJulianDate - (365 * numYears + Math.floor(numYears / 4));
-        if (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) {
-            if (remainingDays > 59) { 
-                remainingDays -= 1;
-            }
-        }
-        const monthsDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-        let monthIndex = 0;
-        for (let month = 0; month < monthsDays.length; month++) {
-            const daysInMonth = monthsDays[month];
-            if (remainingDays < daysInMonth) {
-                monthIndex = month;
-                break;
-            }
-            remainingDays -= daysInMonth;
+    function convertToDate(julian) {
+        return new Date((Number(julian) - 2440587.5) * 86400000);
+    };
+
+    function julianToGregorian(mjd) {
+
+        if (mjd === undefined || mjd === null) {
+            return null
         }
 
-        const monthsNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const daysNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const date = new Date(Date.UTC(year, monthIndex, remainingDays + 1));
+        const jd = Number(mjd) + 2400000
+        const date = convertToDate(jd)
+        const year = date.getUTCFullYear()
+        let month = date.getUTCMonth() + 1
 
-        const dayName = daysNames[date.getUTCDay()];
-        const day = date.getUTCDate();
-        const monthName = monthsNames[date.getUTCMonth()];
-        const fullYear = date.getUTCFullYear();
-        const hours = date.getUTCHours().toString().padStart(2, '0');
-        const minutes = date.getUTCMinutes().toString().padStart(2, '0');
-        const seconds = date.getUTCSeconds().toString().padStart(2, '0');
+        if (month < 10) {
+            month = '0' + month
+        }
 
-        return `${dayName}, ${day} ${monthName} ${fullYear} ${hours}:${minutes}:${seconds} UTC`;
+        const day = date.getUTCDate()
+
+        return year + '-' + month + '-' + day
     }
+
 
     function transformRaDec(degrees) {
         
@@ -186,7 +175,7 @@
 
         let str = String(hours) + ':' + String(minutes) + ':' + String(seconds);
 
-        return str;
+        return str
 }
     
 
