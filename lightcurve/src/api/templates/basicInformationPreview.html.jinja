@@ -109,18 +109,42 @@
     <h6 class="tag"> Provided by <a class="link" href="https://www.wis-tns.org/">TNS</a>  <img src="https://www.wis-tns.org/sites/default/files/favicon.png"></h6>
 </div>
 
-<script type="module">
+<script>
+    function changeDiscoveryValue(){
 
-    import {
-        
-        changeDiscoveryValue, 
-        changeLastValue, 
-        changeRaDec, 
-        convertToDate, 
-        julianToGregorian,
-        transformRaDec
+        if (binaryDisc === 0) {
+            document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
+            binaryDisc = 1;
+        } else {
+            document.getElementById("discoveryDate").innerHTML = discoveryDateMJD;
+            binaryDisc = 0;
+        }
 
-    } from "{{API_URL}}/static/basicInformation.js"
+    };
+
+    function changeLastValue(){
+
+        if (binaryLast === 0) {
+            document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
+            binaryLast = 1;
+        } else {
+            document.getElementById("lastDetection").innerHTML = lastDetectionMJD;
+            binaryLast = 0;
+        }
+
+    };
+
+    function changeRaDec(){
+
+        if (binaryRaDec === 0){
+            document.getElementById("raDec").innerHTML = raDec;
+            binaryRaDec = 1;
+        } else {
+            document.getElementById("raDec").innerHTML = raDecTime;
+            binaryRaDec = 0;
+        }
+    };
+
 
     const object =  {{object | tojson}};
     const corrected = {{corrected | tojson}} ;
@@ -131,8 +155,6 @@
     const nonDetections = {{nonDetections | tojson}} ;
     let ra = {{ra | tojson}} ;
     let dec  = {{dec | tojson}};
-    const link = {{link | tojson}};
-
 
     let raDec = String(ra) + ' ' + String(dec);
 
@@ -148,16 +170,56 @@
     document.getElementById("corrected").innerHTML = corrected;
     document.getElementById("stellar").innerHTML = stellar;
     document.getElementById("detections").innerHTML = detections;
+    document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
+    document.getElementById('lastDetection').innerHTML = lastDetectionMGD;
     document.getElementById("nonDetections").innerHTML = nonDetections;
-
     document.getElementById("raDec").innerHTML = raDec;
 
-    changeDiscoveryValue(discoveryDateMGD,discoveryDateMJD);
+    let binaryDisc = 0;
+    changeDiscoveryValue();
 
-    changeLastValue(lastDetectionMGD,lastDetectionMJD);
+    let binaryLast = 0;
+    changeLastValue();
     
-    changeRaDec(raDec,raDecTime);
+    let binaryRaDec = 0;
+    changeRaDec();
 
+    function convertToDate(julian) {
+        return new Date((Number(julian) - 2440587.5) * 86400000);
+    };
+
+    function julianToGregorian(mjd) {
+
+        if (mjd === undefined || mjd === null) {
+            return null
+        }
+
+        const jd = Number(mjd) + 2400000
+        const date = convertToDate(jd)
+        const year = date.getUTCFullYear()
+        let month = date.getUTCMonth() + 1
+
+        if (month < 10) {
+            month = '0' + month
+        }
+
+        const day = date.getUTCDate()
+
+        return year + '-' + month + '-' + day
+    }
+
+
+    function transformRaDec(degrees) {
+    
+        let degreesPerHour = 360 / 24;
+        let hours = Math.floor(degrees / degreesPerHour);
+        let minutes = Math.floor((degrees % degreesPerHour) * 60 / degreesPerHour);
+        let seconds = (((degrees % degreesPerHour) * 3600 / degreesPerHour) % 60).toFixed(3);
+
+        let str = String(hours) + ':' + String(minutes) + ':' + String(seconds);
+
+        return str
+    }
     
     
 
