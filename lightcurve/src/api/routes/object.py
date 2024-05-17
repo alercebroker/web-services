@@ -3,7 +3,7 @@ import os
 from typing import Annotated
 from fastapi import Query
 
-from core.object_service import get_object
+from core.object_service import get_object, get_host
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -49,7 +49,11 @@ async def object_info_app(
                 "ra": 219.81942518329353
             }
 
+    
+
     object = get_object(oid,session_factory = request.app.state.psql_session)
+
+    #delight = get_host(object.meanra,object.meandec)
 
     return templates.TemplateResponse(
       name='basicInformationPreview.html.jinja',

@@ -7,7 +7,7 @@
     <title>Document</title>
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .data { color: white;width: 100%; }
+        .data { color: white;width: 100%; margin-left: 10px;padding-top: 5px; padding-bottom:px;}
         .link { color: rgb(50, 119, 175);text-decoration: underline;cursor:pointer}
         .left-text, .middle-text { text-align: center; width: 200px; height: 32px; }
         .middle-text { width: 300px; }
@@ -19,14 +19,11 @@
         .find-button, .other-button { background-color: #0097a7; padding: 2px 100px; border: none; font-weight: 550; font-size: 15px; cursor: pointer; color: white; }
         .other-button { background-color: #2196F3; padding: 2px 60px; position: relative;}
         .flex { max-width: 100%; }
-        .text-center { text-align: center; }
-        td, th { padding: 0 15px; height: 40px; width: 70px; text-align: center; }
-        th { padding-left: 7.5px; padding-right: 7.5px; }
-        td:first-child, th:first-child { padding-left: 0;}
-        td:last-child, th:last-child { padding-right: 0; }
-        table { width: calc(100% + 30px); table-layout: fixed; border-spacing: 15px 0px; }
-        .table-container { overflow: hidden; width: 400px; margin: 0; }
-        .table td:first-child { text-align: left; }
+        .text-center { text-align: center; } 
+        th { padding-left: 7.5px; padding-right: 7.5px; } 
+        table { width: 100%;border-spacing: 300px 0px; }
+        .table-container { overflow: hidden; width: 100% margin: 0; }
+        table td:first-child { text-align: left; }
         .th,.td{padding-left: 100px;height: 40px;width: 70px;}
         .box { box-sizing: content-box; background-color: #1e1e1e; border-radius: 10px; width: 750px; border: none; padding: 10px; position: relative; }
         .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
@@ -38,14 +35,14 @@
         .menu-box-elements {background-color: #1e1e1e; width:100%; height: 12.5%; border-bottom: solid; border-width: 1px; display:flex; justify-content: center; align-items: center;}
         .menu-box-elements:hover {background-color: #3b3939;}
         .a-elements {text-align: center; font-size: 30px;}
-        .pickHeading {background:#000000; height: 10px; border:none;}
+        .pickHeading {background:#000000; height: 10px; border:none; width: 100%;}
     </style>
 </head>
 <body>
 
 <div class="box">
     <div class="data">
-        <table bordeer=1 frame=void rules=rows class="table-container table">
+        <table rules=rows class="table-container table">
 
             <colgroup><col><col><col></colgroup>
 
@@ -78,14 +75,22 @@
             </thead>
 
             <tbody class="left-col">
-                <tr class="rows">
-                    <td class="left-text">RA(J2000) Dec(J2000)</td>
-                    <td class="middle-text" id="raDec"></td>
+                <tr class="rows" >
+                    <td class="left-text">RA(J2000)</td>
+                    <td class="middle-text" id="ra"></td>
                     <td class="end glow"> 
                         <button onclick="changeRaDec()" class="material-symbols-outlined tooltip">public</button>
                         <span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?
                         </span>
                     </td>
+                </tr >
+
+                <tr class="rows">
+                    <td class="left-text">Dec(J2000)</td>
+                    <td class="middle-text" id="dec"></td>
+                    <td class="end glow"> 
+                    </td>
+                
                 </tr>
             </tbody>
 
@@ -117,11 +122,11 @@
                     </td>
                 </tr> 
             </tbody>
-            
+
         </table>
     </div>
 
-    <div>
+    <div style="margin-left:10px; padding-top: 10px; padding-bottom:10px;">
         <div class="display-inline">
             <div class="button"> 
                 <a href="https://www.youtube.com/" target="_blank" class="find-button"><span find-btn-content>FINDING CHART</span></a>
@@ -203,10 +208,12 @@
     function changeRaDec(){
 
         if (binaryRaDec === 0){
-            document.getElementById("raDec").innerHTML = raDec;
+            document.getElementById("ra").innerHTML = ra;
+            document.getElementById("dec").innerHTML = dec;
             binaryRaDec = 1;
         } else {
-            document.getElementById("raDec").innerHTML = raDecTime;
+            document.getElementById("ra").innerHTML = raTime;
+            document.getElementById("dec").innerHTML = decTime;
             binaryRaDec = 0;
         }
     };
@@ -240,14 +247,14 @@
 
     let radecDelight = String(raDelight) + ' ' + String(decDelight);
     
-    let raDec = String(ra) + ' ' + String(dec);
+    //let raDec = String(ra) + ' ' + String(dec);
     let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
     let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
 
     let raTime = transformRaDec(ra);
     let decTime = transformRaDec(dec);
 
-    let raDecTime = String(raTime) + ' ' + String(decTime);
+    //let raDecTime = String(raTime) + ' ' + String(decTime);
 
     document.getElementById("object").innerHTML = object;
     document.getElementById("corrected").innerHTML = corrected;
@@ -256,8 +263,11 @@
     document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
     document.getElementById('lastDetection').innerHTML = lastDetectionMGD;
     document.getElementById("nonDetections").innerHTML = nonDetections;
-    document.getElementById("raDec").innerHTML = raDec;
-    document.getElementById("radecdelight").innerHTML = radecDelight;
+    //document.getElementById("raDec").innerHTML = raDec;
+    document.getElementById("ra").innerHTML = ra;
+    document.getElementById("dec").innerHTML = dec;
+    //document.getElementById("radecdelight").innerHTML = radecDelight;
+    document.getElementById()
 
     let binaryDisc = 0;
     changeDiscoveryValue();

@@ -15,6 +15,9 @@ from .exceptions import (
     SurveyIdError,
     ParseError,
 )
+
+import httpx
+
 from .object_model import ObjectReduced as ObjectModel
 from config import app_config
 
@@ -56,6 +59,20 @@ def get_object(
     except Exception as e:
         raise DatabaseError(e, database="PSQL")
     
+async def get_host(ra, dec):
+    async with httpx.AsyncClient() as client:
+        url = f'http://localhost:8082/query_delight?ra={ra}&dec={dec}'
+        response = await client.get(url)
+        if response.status_code == 200:
+            data = response.json()
+            modifiedData = {
+                "hostRa": data.get("ra"),
+                "hostDec": data.get("dec")
+            }
+            return modifiedData
+        else:
+            raise Exception(f'Error: {response.status}')   
+
 
 
 
