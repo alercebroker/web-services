@@ -17,12 +17,12 @@
         .glow .tooltiptext { display: none; width: 120px; background-color: gray; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; opacity: 1; }
         .glow:hover .tooltiptext { display: block; }
         .find-button, .other-button { background-color: #0097a7; padding: 2px 100px; border: none; font-weight: 550; font-size: 15px; cursor: pointer; color: white; }
-        .other-button { background-color: #2196F3; padding: 2px 60px; }
+        .other-button { background-color: #2196F3; padding: 2px 60px; position: relative;}
         .flex { max-width: 100%; }
         .text-center { text-align: center; }
         td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: center; }
         th { padding-left: 7.5px; padding-right: 7.5px; }
-        td:first-child, th:first-child { padding-left: 0; }
+        td:first-child, th:first-child { padding-left: 0;}
         td:last-child, th:last-child { padding-right: 0; }
         table { width: calc(100% + 30px); table-layout: fixed; border-spacing: 15px 0px; }
         .table-container { overflow: hidden; width: 400px; margin: 0; }
@@ -31,12 +31,20 @@
         .box { background-color: #1e1e1e; border-radius: 10px; width: 750px; height: 450px; border: none; padding: 10px; position: relative; }
         .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
         button, input[type="submit"], input[type="reset"] {background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;}
+        .button {display: inline;}
+        .position-relative {position: relative;}
+        .display-inline {display: inline;}
+        .menu-box {display: none;box-sizing: content-box;position:absolute; opacity: 1; width: 377px; height: 500px;margin-left: 326px;}
+        .menu-box-elements {background-color: #1e1e1e; width:100%; height: 12.5%; border-bottom: solid; border-width: 1px; display:flex; justify-content: center; align-items: center;}
+        .menu-box-elements:hover {background-color: #3b3939;}
+        .a-elements {text-align: center; font-size: 30px;}
     </style>
 </head>
 <body>
 
 <div class="box">
     <div class="data">
+
         <table bordeer=1 frame=void rules=rows class="table-container table">
             <colgroup><col><col><col></colgroup>
             <tbody class="left-col">
@@ -44,18 +52,53 @@
                 <tr class="rows"><td class="left-text">Corrected</td><td class="middle-text" id="corrected"></td><td class="end glow"><span class="material-symbols-outlined tooltip change-button">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Stellar</td><td class="middle-text" id="stellar"></td><td class="end glow"><span class="material-symbols-outlined tooltip">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
-
                 <tr class="rows"><td class="left-text">Discovery date</td><td class="middle-text" id="discoveryDate"></td><td class="end glow"><button onclick="changeDiscoveryValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                
-                <tr class="rows"><td class="left-text">Last detection</td><td class="middle-text" id="lastDetection"> </td></td><td class="end glow"><button onclick="changeLastValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="rows"><td class="left-text">Last detection</td><td class="middle-text" id="lastDetection"></td></td><td class="end glow"><button onclick="changeLastValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
                 <tr class="rows"><td class="left-text">RA(J2000) Dec(J2000)</td><td class="middle-text" id="raDec"></td><td class="end glow"> <button onclick="changeRaDec()" class="material-symbols-outlined tooltip">public</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
             </tbody>
         </table>
-        <div class="action-button">
-            <a href="https://www.youtube.com/" target="_blank" class="dclick-button find-button"><span find-btn-content>FINDING CHART</span></a>
-            <a href="https://www.github.com/" target="_blank" class="dclick-button other-button"><span class="btn-layout other-button">OTHER ARCHIVES</span></a>
+
+        <div class="display-inline">
+            <div class="button"> 
+                <a href="https://www.youtube.com/" target="_blank" class="find-button"><span find-btn-content>FINDING CHART</span></a>
+            </div>
         </div>
+        
+        <div class="position-relative display-inline">
+            <div class="button">
+                <a id="menu-button"class="other-button"><span class="other-button" click>OTHER ARCHIVES</a>
+            </div>
+        </div>    
+
+        <div class="position-relative menu-box">
+            <div class="menu-box-elements"> 
+                <a class="a-elements"> Hola mundo </a>
+            </div>
+            <div class="menu-box-elements">
+                <a class="a-elements"> Hola mundo </a>
+            </div>
+            <div class="menu-box-elements"> 
+                <a class="a-elements"> Hola mundo </a>
+            </div>
+            <div class="menu-box-elements">
+                <a class="a-elements"> Hola mundo </a>
+            </div>
+            <div class="menu-box-elements">
+                <a class="a-elements"> Hola mundo </a>
+            </div>
+            <div class="menu-box-elements">
+                <a class="a-elements"> Hola mundo </a>
+            </div>
+            <div class="menu-box-elements">
+                <a class="a-elements"> Hola mundo </a>
+            </div>
+            <div class="menu-box-elements">
+                <a class="a-elements"> Hola mundo </a>
+            </div>
+        </div>
+
+
         <div class="data">
             <table bordeer=1 frame=void rules=rows class="table-container"><colgroup><col><col><col></colgroup>
                 <thead><th class="text-center th"><span>Type</span></th><th class="text-center th"><span>Name</span></th><th class="text-center th"><span>Redshift</span></th></thead>
@@ -63,44 +106,21 @@
             </table>
         </div>
     </div>
-    <h6 class="tag"> Provided by <a class="link">TNS</a>  <img src="https://www.wis-tns.org//default/files/favicon.png"></h6>
+    <h6 class="tag"> Provided by <a class="link" href="https://www.wis-tns.org/">TNS</a>  <img src="https://www.wis-tns.org/sites/default/files/favicon.png"></h6>
 </div>
 
-<script>
+<script type="module">
 
-    function changeDiscoveryValue(){
+    import {
+        
+        changeDiscoveryValue, 
+        changeLastValue, 
+        changeRaDec, 
+        convertToDate, 
+        julianToGregorian,
+        transformRaDec
 
-        if (binaryDisc === 0) {
-            document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
-            binaryDisc = 1;
-        } else {
-            document.getElementById("discoveryDate").innerHTML = discoveryDateMJD;
-            binaryDisc = 0;
-        }
-
-    };
-
-    function changeLastValue(){
-
-        if (binaryLast === 0) {
-            document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
-            binaryLast = 1;
-        } else {
-            document.getElementById("lastDetection").innerHTML = lastDetectionMJD;
-            binaryLast = 0;
-        }
-
-    };
-
-    function changeRaDec(){
-        if (binaryRaDec === 0){
-            document.getElementById("raDec").innerHTML = raDec;
-            binaryRaDec = 1;
-        } else {
-            document.getElementById("raDec").innerHTML = raDecTime;
-            binaryRaDec = 0;
-        }
-    };
+    } from "{{API_URL}}/static/basicInformation.js"
 
     const object =  {{object | tojson}};
     const corrected = {{corrected | tojson}} ;
@@ -111,12 +131,13 @@
     const nonDetections = {{nonDetections | tojson}} ;
     let ra = {{ra | tojson}} ;
     let dec  = {{dec | tojson}};
+    const link = {{link | tojson}};
+
+
     let raDec = String(ra) + ' ' + String(dec);
 
     let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
     let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
-    console.log(discoveryDateMGD);
-    console.log(lastDetectionMGD);
 
     let raTime = transformRaDec(ra);
     let decTime = transformRaDec(dec);
@@ -127,56 +148,17 @@
     document.getElementById("corrected").innerHTML = corrected;
     document.getElementById("stellar").innerHTML = stellar;
     document.getElementById("detections").innerHTML = detections;
-
     document.getElementById("nonDetections").innerHTML = nonDetections;
 
     document.getElementById("raDec").innerHTML = raDec;
 
-    let binaryDisc = 0;
-    changeDiscoveryValue();
+    changeDiscoveryValue(discoveryDateMGD,discoveryDateMJD);
 
-    let binaryLast = 0;
-    changeLastValue();
+    changeLastValue(lastDetectionMGD,lastDetectionMJD);
     
-    let binaryRaDec = 0;
-    changeRaDec();
+    changeRaDec(raDec,raDecTime);
 
-    function convertToDate(julian) {
-        return new Date((Number(julian) - 2440587.5) * 86400000);
-    };
-
-    function julianToGregorian(mjd) {
-
-        if (mjd === undefined || mjd === null) {
-            return null
-        }
-
-        const jd = Number(mjd) + 2400000
-        const date = convertToDate(jd)
-        const year = date.getUTCFullYear()
-        let month = date.getUTCMonth() + 1
-
-        if (month < 10) {
-            month = '0' + month
-        }
-
-        const day = date.getUTCDate()
-
-        return year + '-' + month + '-' + day
-    }
-
-
-    function transformRaDec(degrees) {
-        
-        let degreesPerHour = 360 / 24;
-        let hours = Math.floor(degrees / degreesPerHour);
-        let minutes = Math.floor((degrees % degreesPerHour) * 60 / degreesPerHour);
-        let seconds = (((degrees % degreesPerHour) * 3600 / degreesPerHour) % 60).toFixed(3);
-
-        let str = String(hours) + ':' + String(minutes) + ':' + String(seconds);
-
-        return str
-}
+    
     
 
 </script>

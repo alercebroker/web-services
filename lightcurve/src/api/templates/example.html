@@ -1,89 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table with Row Display Control</title>
-    <style>
-        .table-container {
-            width: 50%;
-            margin: auto;
-            border: 1px solid #000;
-            padding: 10px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: left;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paginated Table</title>
+<style>
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  #tableContainer {
+    overflow-x: auto;
+  }
+  button {
+    padding: 10px 20px;
+    margin: 10px;
+    cursor: pointer;
+  }
+</style>
 </head>
 <body>
-    <div class="table-container">
-        <label for="rowSelector">Rows to display:</label>
-        <select id="rowSelector">
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-        </select>
 
-        <table id="myTable">
-            <thead>
-                <tr>
-                    <th>Header 1</th>
-                    <th>Header 2</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Add your table rows here -->
-                <tr><td>Row 1, Cell 1</td><td>Row 1, Cell 2</td></tr>
-                <tr><td>Row 2, Cell 1</td><td>Row 2, Cell 2</td></tr>
-                <tr><td>Row 3, Cell 1</td><td>Row 3, Cell 2</td></tr>
-                <tr><td>Row 4, Cell 1</td><td>Row 4, Cell 2</td></tr>
-                <tr><td>Row 5, Cell 1</td><td>Row 5, Cell 2</td></tr>
-                <tr><td>Row 6, Cell 1</td><td>Row 6, Cell 2</td></tr>
-                <tr><td>Row 7, Cell 1</td><td>Row 7, Cell 2</td></tr>
-                <tr><td>Row 8, Cell 1</td><td>Row 8, Cell 2</td></tr>
-                <tr><td>Row 9, Cell 1</td><td>Row 9, Cell 2</td></tr>
-                <tr><td>Row 10, Cell 1</td><td>Row 10, Cell 2</td></tr>
-                <tr><td>Row 11, Cell 1</td><td>Row 11, Cell 2</td></tr>
-                <tr><td>Row 12, Cell 1</td><td>Row 12, Cell 2</td></tr>
-                <tr><td>Row 13, Cell 1</td><td>Row 13, Cell 2</td></tr>
-                <tr><td>Row 14, Cell 1</td><td>Row 14, Cell 2</td></tr>
-                <tr><td>Row 15, Cell 1</td><td>Row 15, Cell 2</td></tr>
-                <tr><td>Row 16, Cell 1</td><td>Row 16, Cell 2</td></tr>
-                <tr><td>Row 17, Cell 1</td><td>Row 17, Cell 2</td></tr>
-                <tr><td>Row 18, Cell 1</td><td>Row 18, Cell 2</td></tr>
-                <tr><td>Row 19, Cell 1</td><td>Row 19, Cell 2</td></tr>
-                <tr><td>Row 20, Cell 1</td><td>Row 20, Cell 2</td></tr>
-            </tbody>
-        </table>
-    </div>
+<div id="tableContainer">
+  <table>
+    <thead>
+      <tr>
+        <th>Column 1</th>
+        <th>Column 2</th>
+        <th>Column 3</th>
+      </tr>
+    </thead>
+    <tbody id="dataTableBody">
+      <tr><td>Row 1 Data 1</td><td>Row 1 Data 2</td><td>Row 1 Data 3</td></tr>
+      <tr><td>Row 2 Data 1</td><td>Row 2 Data 2</td><td>Row 2 Data 3</td></tr>
+      <tr><td>Row 3 Data 1</td><td>Row 3 Data 2</td><td>Row 3 Data 3</td></tr>
+      <tr><td>Row 4 Data 1</td><td>Row 4 Data 2</td><td>Row 4 Data 3</td></tr>
+      <tr><td>Row 5 Data 1</td><td>Row 5 Data 2</td><td>Row 5 Data 3</td></tr>
+      <tr><td>Row 6 Data 1</td><td>Row 6 Data 2</td><td>Row 6 Data 3</td></tr>
+      <tr><td>Row 7 Data 1</td><td>Row 7 Data 2</td><td>Row 7 Data 3</td></tr>
+      <tr><td>Row 8 Data 1</td><td>Row 8 Data 2</td><td>Row 8 Data 3</td></tr>
+      <tr><td>Row 9 Data 1</td><td>Row 9 Data 2</td><td>Row 9 Data 3</td></tr>
+      <tr><td>Row 10 Data 1</td><td>Row 10 Data 2</td><td>Row 10 Data 3</td></tr>
+      <tr><td>Row 11 Data 1</td><td>Row 11 Data 2</td><td>Row 11 Data 3</td></tr>
+      <tr><td>Row 12 Data 1</td><td>Row 12 Data 2</td><td>Row 12 Data 3</td></tr>
+      <tr><td>Row 13 Data 1</td><td>Row 13 Data 2</td><td>Row 13 Data 3</td></tr>
+      <tr><td>Row 14 Data 1</td><td>Row 14 Data 2</td><td>Row 14 Data 3</td></tr>
+      <tr><td>Row 15 Data 1</td><td>Row 15 Data 2</td><td>Row 15 Data 3</td></tr>
+    </tbody>
+  </table>
+</div>
+<select id="rowSelect">
+  <option value="5">5 rows</option>
+  <option value="10">10 rows</option>
+  <option value="15">15 rows</option>
+</select>
+<button onclick="navigateTable(-1)">Previous</button>
+<button onclick="navigateTable(1)">Next</button>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const rowSelector = document.getElementById('rowSelector');
-            const table = document.getElementById('myTable');
-            const rows = table.querySelectorAll('tbody tr');
+<script>
+  const tableContainer = document.getElementById('tableContainer');
+  const dataTableBody = document.getElementById('dataTableBody');
+  const rowSelect = document.getElementById('rowSelect');
+  let rowsPerPage = parseInt(rowSelect.value);
+  let currentPage = 1;
 
-            function showRows(rowCount) {
-                rows.forEach((row, index) => {
-                    row.style.display = index < rowCount ? '' : 'none';
-                });
-            }
+  function navigateTable(direction) {
+    currentPage += direction;
+    const totalPages = Math.ceil(dataTableBody.rows.length / rowsPerPage);
+    if (currentPage < 1) {
+      currentPage = 1;
+    } else if (currentPage > totalPages) {
+      currentPage = totalPages;
+    }
+    showTablePage();
+  }
 
-            rowSelector.addEventListener('change', function () {
-                const rowCount = parseInt(rowSelector.value, 10);
-                showRows(rowCount);
-            });
+  function showTablePage() {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    const rows = dataTableBody.getElementsByTagName('tr');
+    for (let i = 0; i < rows.length; i++) {
+      if (i >= startIndex && i < endIndex) {
+        rows[i].style.display = 'table-row';
+      } else {
+        rows[i].style.display = 'none';
+      }
+    }
+  }
 
-            // Initial display
-            showRows(parseInt(rowSelector.value, 10));
-        });
-    </script>
+  rowSelect.addEventListener('change', () => {
+    rowsPerPage = parseInt(rowSelect.value);
+    currentPage = 1;
+    showTablePage();
+  });
+
+  // Show initial page
+  showTablePage();
+</script>
+
 </body>
 </html>
+
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableRows = document.querySelectorAll('#myTable tbody tr');
+        const rowSelect = document.getElementById('rowSelect');
+        const totalRows = 14;
+
+        function updateTable(rowsToShow) {
+            tableRows.forEach((row, index) => {
+                if (index < rowsToShow) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function showNewTable(missingTables){
+            const tableRows = document.querySelectorAll('#myTable tbody tr');
+            for (let i=0; i < missingTables.length; i++){
+                
+            };
+        }
+        let binary = 0;
+        function passTable() {
+            const rowsToShow = parseInt(rowSelect.value, 10);
+            let missingTables = [];
+
+            if (rowsToShow === 5){
+                missingTables.push(5);
+                missingTables.push(4);
+            } else if (rowsToShow === 10){
+                missingTables.push(5);
+            }
+
+            showNewTable(missingTables);
+        }
+
+        rowSelect.addEventListener('change', function() {
+            const rowsToShow = parseInt(rowSelect.value, 10);
+            updateTable(rowsToShow);
+        });
+
+        updateTable(parseInt(rowSelect.value, 10));
+    }
+)
+    
+</script> -->
