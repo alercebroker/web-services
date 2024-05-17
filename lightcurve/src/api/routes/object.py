@@ -3,7 +3,7 @@ import os
 from typing import Annotated
 from fastapi import Query
 
-from core.object_service import get_object
+from core.object_service import get_object, get_mag_stats
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -45,6 +45,9 @@ async def object_info_app(
     oid: str
 ):
   
+    link='https://acortar.link/ba5kba'
+    
+
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
     return templates.TemplateResponse(
@@ -58,7 +61,35 @@ async def object_info_app(
                 'lastDetectionMJD' : object.lastmjd,
                 'nonDetections' : '8',
                 'ra' : object.meanra ,
-                'dec': object.meandec
+                'dec': object.meandec,
+                'link':link
+               },
+  )
+
+@router.get("/mag_stats/{oid}", response_class=HTMLResponse)
+async def object_magStat_app(
+    request: Request,
+    oid: str
+):
+  
+    mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
+    
+    #print(mag_stats.__dict__)
+    ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
+    ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'
+    ##            ];
+    ##
+    ##r = ['false','true','1','0','17.933','17.933','17.933','17.933','0','17.933','17.933',
+    ##            '60432.473','60432.473','24.4.1'
+    ##            ];
+    
+    #stat_r = dict(zip(stat, r))
+
+
+    return templates.TemplateResponse(
+      name='magStatsPreview.html.jinja',
+      context={'request': request,
+               'stat_r': mag_stats.__dict__
                },
   )
 
