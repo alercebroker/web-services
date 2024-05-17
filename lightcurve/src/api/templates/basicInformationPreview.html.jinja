@@ -21,7 +21,9 @@
         .flex { max-width: 100%; }
         .text-center { text-align: center; } 
         th { padding-left: 7.5px; padding-right: 7.5px; } 
-        table { width: 100%;}
+        .border-solid-top { border-top: solid; border-width: 1px 0;}
+        .border-solid-bot { border-bottom: solid; border-width: 1px 0;}
+        table { width: 100%; border-collapse: collapse}
         .table-container { overflow: hidden; width: 100% margin: 0; }
         table td:first-child { text-align: left; }
         .th,.td{padding-left: 100px;height: 40px;width: 70px;}
@@ -48,13 +50,13 @@
 
             <tbody class="left-col">
 
-                <tr class="rows"><td class="left-text">Object</td><td class="middle-text" id="object"></td><td class="end"></td></tr>
-                <tr class="rows"><td class="left-text">Corrected</td><td class="middle-text" id="corrected"></td><td class="end glow"><span class="material-symbols-outlined tooltip change-button">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Stellar</td><td class="middle-text" id="stellar"></td><td class="end glow"><span class="material-symbols-outlined tooltip">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
-                <tr class="rows"><td class="left-text">Discovery date</td><td class="middle-text" id="discoveryDate"></td><td class="end glow"><button onclick="changeDiscoveryValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Last detection</td><td class="middle-text" id="lastDetection"></td></td><td class="end glow"><button onclick="changeLastValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
+                <tr class="rows boder-solid-bottom"><td class="left-text">Object</td><td class="middle-text" id="object"></td><td class="end"></td></tr>
+                <tr class="rows border-solid-top boder-solid-bottom"><td class="left-text">Corrected</td><td class="middle-text" id="corrected"></td><td class="end glow"><span class="material-symbols-outlined tooltip change-button">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="rows border-solid-top boder-solid-bottom"><td class="left-text">Stellar</td><td class="middle-text" id="stellar"></td><td class="end glow"><span class="material-symbols-outlined tooltip">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="rows border-solid-top boder-solid-bottom"><td class="left-text">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
+                <tr class="rows border-solid-top boder-solid-bottom"><td class="left-text">Discovery date</td><td class="middle-text" id="discoveryDate"></td><td class="end glow"><button onclick="changeDiscoveryValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="rows border-solid-top boder-solid-bottom"><td class="left-text">Last detection</td><td class="middle-text" id="lastDetection"></td></td><td class="end glow"><button onclick="changeLastValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="rows border-solid-top "><td class="left-text">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
             
             </tbody>
 
@@ -84,7 +86,6 @@
                         </span>
                     </td>
                 </tr >
-
                 <tr class="rows">
                     <td class="left-text">Dec(J2000)</td>
                     <td class="middle-text" id="dec"></td>
@@ -112,13 +113,20 @@
 
             <tbody class="left-col">
                 <tr class="rows">
-                    <td class="left-text">RA(J2000) Dec(J2000)</td>
-                    <td class="middle-text" id="radecdelight"></td>
+                    <td class="left-text">RA(J2000)</td>
+                    <td class="middle-text" id="raDelight"></td>
                     <td class="end glow"> 
                         <button onclick="changeRaDecdelight()" class="material-symbols-outlined tooltip">public
                         </button>
                         <span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?
                         </span>
+                    </td>
+                </tr> 
+
+                <tr class="rows">
+                    <td class="left-text">Dec(J2000)</td>
+                    <td class="middle-text" id="decDelight"></td>
+                    <td class="end glow"> 
                     </td>
                 </tr> 
             </tbody>
@@ -221,10 +229,12 @@
     function changeRaDecdelight(){
 
         if (binaryRaDecdelight === 0){
-            document.getElementById("radecdelight").innerHTML = radecDelight;
+            document.getElementById("raDelight").innerHTML = raDelight;
+            document.getElementById("decDelight").innerHTML = decDelight;
             binaryRaDecdelight = 1;
         } else {
-            document.getElementById("radecdelight").innerHTML = raDecTime;
+            document.getElementById("raDelight").innerHTML = raDelightTime;
+            document.getElementById("decDelight").innerHTML = decDelightTime;
             binaryRaDecdelight = 0;
         }
     };
@@ -237,24 +247,28 @@
     let discoveryDateMJD = {{discoveryDateMJD | tojson}} ;
     let lastDetectionMJD = {{lastDetectionMJD | tojson}} ;
     const nonDetections = {{nonDetections | tojson}} ;
+
     let ra = {{ra | tojson}} ;
     let dec  = {{dec | tojson}};
+
+    let raTime = transformRaDec(ra);
+    let decTime = transformRaDec(dec);
     
     let delight = {{delight | tojson}}
 
     let decDelight = Object.values(delight)[0];
     let raDelight = Object.values(delight)[1];
 
-    let radecDelight = String(raDelight) + ' ' + String(decDelight);
+    let raDelightTime = transformRaDec(raDelight);
+    let decDelightTime = transformRaDec(decDelight);
     
-    //let raDec = String(ra) + ' ' + String(dec);
+
     let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
     let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
 
-    let raTime = transformRaDec(ra);
-    let decTime = transformRaDec(dec);
+    
 
-    //let raDecTime = String(raTime) + ' ' + String(decTime);
+    
 
     document.getElementById("object").innerHTML = object;
     document.getElementById("corrected").innerHTML = corrected;
@@ -267,7 +281,8 @@
     document.getElementById("ra").innerHTML = ra;
     document.getElementById("dec").innerHTML = dec;
     //document.getElementById("radecdelight").innerHTML = radecDelight;
-    document.getElementById()
+    document.getElementById("raDelight").innerHTML = raDelight;
+    document.getElementById("decDelight").innerHTML = decDelight;
 
     let binaryDisc = 0;
     changeDiscoveryValue();
