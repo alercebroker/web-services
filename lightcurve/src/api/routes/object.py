@@ -44,7 +44,11 @@ async def object_info_app(
     request: Request,
     oid: str
 ):
-  
+    delight = {
+                "dec": 39.94524916769648,
+                "ra": 219.81942518329353
+            }
+
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
     return templates.TemplateResponse(
@@ -58,7 +62,8 @@ async def object_info_app(
                 'lastDetectionMJD' : object.lastmjd,
                 'nonDetections' : '8',
                 'ra' : object.meanra ,
-                'dec': object.meandec
+                'dec': object.meandec,
+                'delight': delight
                },
   )
 

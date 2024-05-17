@@ -7,7 +7,7 @@
     <title>Document</title>
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .data { color: white; }
+        .data { color: white;width: 100%; }
         .link { color: rgb(50, 119, 175);text-decoration: underline;cursor:pointer}
         .left-text, .middle-text { text-align: center; width: 200px; height: 32px; }
         .middle-text { width: 300px; }
@@ -20,7 +20,7 @@
         .other-button { background-color: #2196F3; padding: 2px 60px; position: relative;}
         .flex { max-width: 100%; }
         .text-center { text-align: center; }
-        td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: center; }
+        td, th { padding: 0 15px; height: 40px; width: 70px; text-align: center; }
         th { padding-left: 7.5px; padding-right: 7.5px; }
         td:first-child, th:first-child { padding-left: 0;}
         td:last-child, th:last-child { padding-right: 0; }
@@ -28,7 +28,7 @@
         .table-container { overflow: hidden; width: 400px; margin: 0; }
         .table td:first-child { text-align: left; }
         .th,.td{padding-left: 100px;height: 40px;width: 70px;}
-        .box { background-color: #1e1e1e; border-radius: 10px; width: 750px; height: 450px; border: none; padding: 10px; position: relative; }
+        .box { box-sizing: content-box; background-color: #1e1e1e; border-radius: 10px; width: 750px; border: none; padding: 10px; position: relative; }
         .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
         button, input[type="submit"], input[type="reset"] {background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;}
         .button {display: inline;}
@@ -38,16 +38,19 @@
         .menu-box-elements {background-color: #1e1e1e; width:100%; height: 12.5%; border-bottom: solid; border-width: 1px; display:flex; justify-content: center; align-items: center;}
         .menu-box-elements:hover {background-color: #3b3939;}
         .a-elements {text-align: center; font-size: 30px;}
+        .pickHeading {background:#000000; height: 10px; border:none;}
     </style>
 </head>
 <body>
 
 <div class="box">
     <div class="data">
-
         <table bordeer=1 frame=void rules=rows class="table-container table">
+
             <colgroup><col><col><col></colgroup>
+
             <tbody class="left-col">
+
                 <tr class="rows"><td class="left-text">Object</td><td class="middle-text" id="object"></td><td class="end"></td></tr>
                 <tr class="rows"><td class="left-text">Corrected</td><td class="middle-text" id="corrected"></td><td class="end glow"><span class="material-symbols-outlined tooltip change-button">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Stellar</td><td class="middle-text" id="stellar"></td><td class="end glow"><span class="material-symbols-outlined tooltip">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
@@ -55,10 +58,70 @@
                 <tr class="rows"><td class="left-text">Discovery date</td><td class="middle-text" id="discoveryDate"></td><td class="end glow"><button onclick="changeDiscoveryValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Last detection</td><td class="middle-text" id="lastDetection"></td></td><td class="end glow"><button onclick="changeLastValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
-                <tr class="rows"><td class="left-text">RA(J2000) Dec(J2000)</td><td class="middle-text" id="raDec"></td><td class="end glow"> <button onclick="changeRaDec()" class="material-symbols-outlined tooltip">public</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+            
             </tbody>
-        </table>
 
+        </table>
+    </div>
+    
+    <div class="data">
+        <table bordeer=1 frame=void rules=rows class="table-container table">
+
+            <colgroup><col><col><col></colgroup>
+
+            <thead>
+                <tr class="pickHeading">
+                    <td>
+                        Object coordinates
+                    </td>
+                </tr>
+            </thead>
+
+            <tbody class="left-col">
+                <tr class="rows">
+                    <td class="left-text">RA(J2000) Dec(J2000)</td>
+                    <td class="middle-text" id="raDec"></td>
+                    <td class="end glow"> 
+                        <button onclick="changeRaDec()" class="material-symbols-outlined tooltip">public</button>
+                        <span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?
+                        </span>
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="data">
+        <table bordeer=1 frame=void rules=rows class="table-container table">
+
+            <colgroup><col><col><col></colgroup>
+
+            <thead>
+                <tr class="pickHeading">
+                    <td>
+                        Host coordinates (DELIGHT)
+                    </td>
+                </tr>
+            </thead>
+
+            <tbody class="left-col">
+                <tr class="rows">
+                    <td class="left-text">RA(J2000) Dec(J2000)</td>
+                    <td class="middle-text" id="radecdelight"></td>
+                    <td class="end glow"> 
+                        <button onclick="changeRaDecdelight()" class="material-symbols-outlined tooltip">public
+                        </button>
+                        <span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?
+                        </span>
+                    </td>
+                </tr> 
+            </tbody>
+            
+        </table>
+    </div>
+
+    <div>
         <div class="display-inline">
             <div class="button"> 
                 <a href="https://www.youtube.com/" target="_blank" class="find-button"><span find-btn-content>FINDING CHART</span></a>
@@ -70,44 +133,47 @@
                 <a id="menu-button"class="other-button"><span class="other-button" click>OTHER ARCHIVES</a>
             </div>
         </div>    
+    </div>
 
-        <div class="position-relative menu-box">
-            <div class="menu-box-elements"> 
-                <a class="a-elements"> Hola mundo </a>
-            </div>
-            <div class="menu-box-elements">
-                <a class="a-elements"> Hola mundo </a>
-            </div>
-            <div class="menu-box-elements"> 
-                <a class="a-elements"> Hola mundo </a>
-            </div>
-            <div class="menu-box-elements">
-                <a class="a-elements"> Hola mundo </a>
-            </div>
-            <div class="menu-box-elements">
-                <a class="a-elements"> Hola mundo </a>
-            </div>
-            <div class="menu-box-elements">
-                <a class="a-elements"> Hola mundo </a>
-            </div>
-            <div class="menu-box-elements">
-                <a class="a-elements"> Hola mundo </a>
-            </div>
-            <div class="menu-box-elements">
-                <a class="a-elements"> Hola mundo </a>
-            </div>
+    <div class="position-relative menu-box">
+        <div class="menu-box-elements"> 
+            <a class="a-elements"> Hola mundo </a>
         </div>
-
-
-        <div class="data">
-            <table bordeer=1 frame=void rules=rows class="table-container"><colgroup><col><col><col></colgroup>
-                <thead><th class="text-center th"><span>Type</span></th><th class="text-center th"><span>Name</span></th><th class="text-center th"><span>Redshift</span></th></thead>
-                <tbody class="table-spacing"><tr class="rows"><td class="text-center td">-</td><td class="text-center td">-</td><td class="text-center td">-</td></tr></tbody>
-            </table>
+        <div class="menu-box-elements">
+            <a class="a-elements"> Hola mundo </a>
+        </div>
+        <div class="menu-box-elements"> 
+            <a class="a-elements"> Hola mundo </a>
+        </div>
+        <div class="menu-box-elements">
+            <a class="a-elements"> Hola mundo </a>
+        </div>
+        <div class="menu-box-elements">
+            <a class="a-elements"> Hola mundo </a>
+        </div>
+        <div class="menu-box-elements">
+            <a class="a-elements"> Hola mundo </a>
+        </div>
+        <div class="menu-box-elements">
+            <a class="a-elements"> Hola mundo </a>
+        </div>
+        <div class="menu-box-elements">
+            <a class="a-elements"> Hola mundo </a>
         </div>
     </div>
+
+
+    <div class="data">
+        <table bordeer=1 frame=void rules=rows class="table-container"><colgroup><col><col><col></colgroup>
+            <thead><th class="text-center th"><span>Type</span></th><th class="text-center th"><span>Name</span></th><th class="text-center th"><span>Redshift</span></th></thead>
+            <tbody><tr class="rows"><td class="text-center td">-</td><td class="text-center td">-</td><td class="text-center td">-</td></tr></tbody>
+        </table>
+    </div>
+
     <h6 class="tag"> Provided by <a class="link" href="https://www.wis-tns.org/">TNS</a>  <img src="https://www.wis-tns.org/sites/default/files/favicon.png"></h6>
+
 </div>
+    
 
 <script>
     function changeDiscoveryValue(){
@@ -145,6 +211,17 @@
         }
     };
 
+    function changeRaDecdelight(){
+
+        if (binaryRaDecdelight === 0){
+            document.getElementById("radecdelight").innerHTML = radecDelight;
+            binaryRaDecdelight = 1;
+        } else {
+            document.getElementById("radecdelight").innerHTML = raDecTime;
+            binaryRaDecdelight = 0;
+        }
+    };
+
 
     const object =  {{object | tojson}};
     const corrected = {{corrected | tojson}} ;
@@ -155,9 +232,15 @@
     const nonDetections = {{nonDetections | tojson}} ;
     let ra = {{ra | tojson}} ;
     let dec  = {{dec | tojson}};
+    
+    let delight = {{delight | tojson}}
 
+    let decDelight = Object.values(delight)[0];
+    let raDelight = Object.values(delight)[1];
+
+    let radecDelight = String(raDelight) + ' ' + String(decDelight);
+    
     let raDec = String(ra) + ' ' + String(dec);
-
     let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
     let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
 
@@ -174,6 +257,7 @@
     document.getElementById('lastDetection').innerHTML = lastDetectionMGD;
     document.getElementById("nonDetections").innerHTML = nonDetections;
     document.getElementById("raDec").innerHTML = raDec;
+    document.getElementById("radecdelight").innerHTML = radecDelight;
 
     let binaryDisc = 0;
     changeDiscoveryValue();
@@ -183,6 +267,9 @@
     
     let binaryRaDec = 0;
     changeRaDec();
+
+    let binaryRaDecdelight = 0;
+    changeRaDecdelight();
 
     function convertToDate(julian) {
         return new Date((Number(julian) - 2440587.5) * 86400000);
