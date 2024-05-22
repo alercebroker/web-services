@@ -2,6 +2,7 @@
 let binaryDisc = 0;
 let binaryLast = 0;
 let binaryRaDec = 0;
+let click = 0;
 
 export function changeDiscoveryValue(discoveryDateMGD,discoveryDateMJD){
     if (binaryDisc === 1) {
@@ -71,4 +72,16 @@ export function transformRaDec(degrees) {
     let str = String(hours) + ':' + String(minutes) + ':' + String(seconds);
 
     return str
+}
+
+export function display_menu(){
+
+    if (click === 0)  {
+        document.getElementById('menu-box').style.display = "block";
+        click = 1;
+    } else {
+        document.getElementById('menu-box').style.display = "none";
+        click = 0;
+    }
+    
 }

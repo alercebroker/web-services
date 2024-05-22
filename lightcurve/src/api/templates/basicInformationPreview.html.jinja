@@ -17,7 +17,7 @@
         .glow .tooltiptext { display: none; width: 120px; background-color: gray; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; opacity: 1; }
         .glow:hover .tooltiptext { display: block; }
         .find-button, .other-button { background-color: #0097a7; padding: 2px 100px; border: none; font-weight: 550; font-size: 15px; cursor: pointer; color: white; }
-        .other-button { background-color: #2196F3; padding: 2px 60px; position: relative;}
+        .other-button { background-color: #2196F3; padding: 2px 100px; position: relative;}
         .flex { max-width: 100%; }
         .text-center { text-align: center; }
         td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: center; }
@@ -68,11 +68,11 @@
         
         <div class="position-relative display-inline">
             <div class="button">
-                <a id="menu-button"class="other-button"><span class="other-button" click>OTHER ARCHIVES</a>
+                <a id="menu-button"class="other-button">OTHER ARCHIVES</a>
             </div>
         </div>    
 
-        <div class="position-relative menu-box">
+        <div id="menu-box" class="position-relative menu-box">
             <div class="menu-box-elements"> 
                 <a class="a-elements"> Hola mundo </a>
             </div>
@@ -119,7 +119,8 @@
             changeRaDec, 
             convertToDate, 
             julianToGregorian,
-            transformRaDec
+            transformRaDec,
+            display_menu
 
         } from "{{API_URL}}/static/basicInformation.js"
 
@@ -157,6 +158,8 @@
         document.getElementById('changeDiscoveryValue').addEventListener('click', () => changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD));
         document.getElementById('changeLastValue').addEventListener('click', () => changeLastValue(lastDetectionMGD, lastDetectionMJD));
         document.getElementById('changeRaDec').addEventListener('click', () => changeRaDec(raDec, raDecTime));
+
+        document.getElementById('menu-button').addEventListener('click', () => display_menu());
 
     </script>
 
