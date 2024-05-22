@@ -5,10 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    
+    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .data { color: white; }
         .link { color: rgb(50, 119, 175);text-decoration: underline;cursor:pointer}
         .left-text, .middle-text { text-align: center; width: 200px; height: 32px; }
         .middle-text { width: 300px; }
@@ -29,7 +28,7 @@
         .table-container { overflow: hidden; width: 400px; margin: 0; }
         .table td:first-child { text-align: left; }
         .th,.td{padding-left: 100px;height: 40px;width: 70px;}
-        .box { background-color: #1e1e1e; border-radius: 10px; width: 750px; height: 450px; border: none; padding: 10px; position: relative; }
+        
         .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
         button, input[type="submit"], input[type="reset"] {background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;}
         .button {display: inline;}
@@ -43,22 +42,22 @@
     </style>
 </head>
 
-<body>
+<body class="tw-preflight">
 
-<div class="box">
-    <div class="data">
+<div class="tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-border-none tw-p-[10px] tw-relative">
+    <div class="tw-text-white">
 
-        <table bordeer=1 frame=void rules=rows class="table-container table">
-            <colgroup><col><col><col></colgroup>
+        <table bordeer=1 frame=void rules=rows class="tw-truncate tw-table tw-m-0 tw-text-left tw-border-spacing-40 tw-w-full">
+            <colgroup><col class="tw-text-left"><col><col></colgroup>
             <tbody class="left-col">
-                <tr class="rows"><td class="left-text">Object</td><td class="middle-text" id="object"></td><td class="end"></td></tr>
-                <tr class="rows"><td class="left-text">Corrected</td><td class="middle-text" id="corrected"></td><td class="end glow"><span class="material-symbols-outlined tooltip change-button">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Stellar</td><td class="middle-text" id="stellar"></td><td class="end glow"><span class="material-symbols-outlined tooltip">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
-                <tr class="rows"><td class="left-text">Discovery date</td><td class="middle-text" id="discoveryDate"></td><td class="end glow"><button id="changeDiscoveryValue" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Last detection</td><td class="middle-text" id="lastDetection"></td></td><td class="end glow"><button id="changeLastValue" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
-                <tr class="rows"><td class="left-text">RA(J2000) Dec(J2000)</td><td class="middle-text" id="raDec"></td><td class="end glow"> <button id="changeRaDec" class="material-symbols-outlined tooltip">public</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Object</td><td class="tw-w-[300px]" id="object"></td><td class="end"></td></tr>
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Corrected</td><td class="middle-text" id="corrected"></td><td class="end glow"><span class="material-symbols-outlined tooltip change-button">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Stellar</td><td class="middle-text" id="stellar"></td><td class="end glow"><span class="material-symbols-outlined tooltip">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Discovery date</td><td class="middle-text" id="discoveryDate"></td><td class="end glow"><button id="changeDiscoveryValue" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Last detection</td><td class="middle-text" id="lastDetection"></td></td><td class="end glow"><button id="changeLastValue" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">RA(J2000) Dec(J2000)</td><td class="middle-text" id="raDec"></td><td class="end glow"> <button id="changeRaDec" class="material-symbols-outlined tooltip">public</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
             </tbody>
         </table>
 
