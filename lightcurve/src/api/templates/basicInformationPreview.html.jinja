@@ -38,6 +38,7 @@
         .menu-box-elements {background-color: #1e1e1e; width:100%; height: 12.5%; border-bottom: solid; border-width: 1px; display:flex; justify-content: center; align-items: center;}
         .menu-box-elements:hover {background-color: #3b3939;}
         .a-elements {text-align: center; font-size: 30px;}
+        .menu-links {color: white; text-decoration: none}
     </style>
 </head>
 
@@ -74,7 +75,7 @@
 
         <div id="menu-box" class="position-relative menu-box">
             <div class="menu-box-elements"> 
-                <a class="a-elements"> Hola mundo </a>
+                <a target="_blank" id='first-button' class="a-elements menu-links"> DESI Legacy Survey DR9</a>
             </div>
             <div class="menu-box-elements">
                 <a class="a-elements"> Hola mundo </a>
@@ -135,7 +136,6 @@
         let dec  = {{dec | tojson}};
         const link = {{link | tojson}};
 
-
         let raDec = String(ra) + ' ' + String(dec);
 
         let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
@@ -145,6 +145,17 @@
         let decTime = transformRaDec(dec);
 
         let raDecTime = String(raTime) + ' ' + String(decTime);
+
+        function first_url_modifier(ra,dec) {
+           // https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=327.475378&dec=49.0544901&layer=ls-dr9&pixscale=0.1&bands=grz
+            let url = 'https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=' + String(ra)+'&dec='+ String(dec) + '&layer=ls-dr9&pixscale=0.1&bands=grz';
+            document.getElementById('first-button').href = url;
+        }
+
+        // https://ned.ipac.caltech.edu/conesearch?search_type=Near+Position+Search&iau_style=liberal&objname=&coordinates=327.475d,49.054d&iau_name=&radius=0.17&in_csys=Equatorial&in_equinox=J2000&in_csys_IAU=Equatorial&in_equinox_IAU=B1950&z_constraint=Unconstrained&z_value1=&z_value2=&z_unit=z&ot_include=ANY&nmp_op=ANY&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1&out_csys=Same+as+Input&out_equinox=Same+as+Input&obj_sort=Distance+to+search+center&op=Go&form_build_id=form-a28snc2SSIQl3faGUe4otq7_NcjnMwxxxPoVxw5LHzg&form_id=conesearch
+
+        first_url_modifier(ra,dec);
+
 
         document.getElementById("object").innerHTML = object;
         document.getElementById("corrected").innerHTML = corrected;
@@ -160,7 +171,6 @@
         document.getElementById('changeRaDec').addEventListener('click', () => changeRaDec(raDec, raDecTime));
 
         document.getElementById('menu-button').addEventListener('click', () => display_menu());
-
     </script>
 
 </body>
