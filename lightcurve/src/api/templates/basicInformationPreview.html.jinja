@@ -40,6 +40,7 @@
         .a-elements {text-align: center; font-size: 30px;}
     </style>
 </head>
+
 <body>
 
 <div class="box">
@@ -52,10 +53,10 @@
                 <tr class="rows"><td class="left-text">Corrected</td><td class="middle-text" id="corrected"></td><td class="end glow"><span class="material-symbols-outlined tooltip change-button">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Stellar</td><td class="middle-text" id="stellar"></td><td class="end glow"><span class="material-symbols-outlined tooltip">help</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
-                <tr class="rows"><td class="left-text">Discovery date</td><td class="middle-text" id="discoveryDate"></td><td class="end glow"><button onclick="changeDiscoveryValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
-                <tr class="rows"><td class="left-text">Last detection</td><td class="middle-text" id="lastDetection"></td></td><td class="end glow"><button onclick="changeLastValue()" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="rows"><td class="left-text">Discovery date</td><td class="middle-text" id="discoveryDate"></td><td class="end glow"><button id="changeDiscoveryValue" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="rows"><td class="left-text">Last detection</td><td class="middle-text" id="lastDetection"></td></td><td class="end glow"><button id="changeLastValue" class="material-symbols-outlined tooltip">event</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
                 <tr class="rows"><td class="left-text">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
-                <tr class="rows"><td class="left-text">RA(J2000) Dec(J2000)</td><td class="middle-text" id="raDec"></td><td class="end glow"> <button onclick="changeRaDec()" class="material-symbols-outlined tooltip">public</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
+                <tr class="rows"><td class="left-text">RA(J2000) Dec(J2000)</td><td class="middle-text" id="raDec"></td><td class="end glow"> <button id="changeRaDec" class="material-symbols-outlined tooltip">public</button><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></td></tr>
             </tbody>
         </table>
 
@@ -111,57 +112,53 @@
 
 <script type="module">
 
-    import {
+        import {
+            
+            changeDiscoveryValue, 
+            changeLastValue, 
+            changeRaDec, 
+            convertToDate, 
+            julianToGregorian,
+            transformRaDec
+
+        } from "{{API_URL}}/static/basicInformation.js"
+
+        const object =  {{object | tojson}};
+        const corrected = {{corrected | tojson}} ;
+        const stellar = {{stellar | tojson}} ;
+        const detections = {{detections | tojson}} 
+        let discoveryDateMJD = {{discoveryDateMJD | tojson}} ;
+        let lastDetectionMJD = {{lastDetectionMJD | tojson}} ;
+        const nonDetections = {{nonDetections | tojson}} ;
+        let ra = {{ra | tojson}} ;
+        let dec  = {{dec | tojson}};
+        const link = {{link | tojson}};
+
+
+        let raDec = String(ra) + ' ' + String(dec);
+
+        let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
+        let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
+
+        let raTime = transformRaDec(ra);
+        let decTime = transformRaDec(dec);
+
+        let raDecTime = String(raTime) + ' ' + String(decTime);
+
+        document.getElementById("object").innerHTML = object;
+        document.getElementById("corrected").innerHTML = corrected;
+        document.getElementById("stellar").innerHTML = stellar;
+        document.getElementById("detections").innerHTML = detections;
+        document.getElementById("nonDetections").innerHTML = nonDetections;
+        document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
+        document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
+        document.getElementById("raDec").innerHTML = raDec;
         
-        changeDiscoveryValue, 
-        changeLastValue, 
-        changeRaDec, 
-        convertToDate, 
-        julianToGregorian,
-        transformRaDec
+        document.getElementById('changeDiscoveryValue').addEventListener('click', () => changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD));
+        document.getElementById('changeLastValue').addEventListener('click', () => changeLastValue(lastDetectionMGD, lastDetectionMJD));
+        document.getElementById('changeRaDec').addEventListener('click', () => changeRaDec(raDec, raDecTime));
 
-    } from "{{API_URL}}/static/basicInformation.js"
-
-    const object =  {{object | tojson}};
-    const corrected = {{corrected | tojson}} ;
-    const stellar = {{stellar | tojson}} ;
-    const detections = {{detections | tojson}} 
-    let discoveryDateMJD = {{discoveryDateMJD | tojson}} ;
-    let lastDetectionMJD = {{lastDetectionMJD | tojson}} ;
-    const nonDetections = {{nonDetections | tojson}} ;
-    let ra = {{ra | tojson}} ;
-    let dec  = {{dec | tojson}};
-    const link = {{link | tojson}};
-
-
-    let raDec = String(ra) + ' ' + String(dec);
-
-    let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
-    let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
-
-    let raTime = transformRaDec(ra);
-    let decTime = transformRaDec(dec);
-
-    let raDecTime = String(raTime) + ' ' + String(decTime);
-
-    document.getElementById("object").innerHTML = object;
-    document.getElementById("corrected").innerHTML = corrected;
-    document.getElementById("stellar").innerHTML = stellar;
-    document.getElementById("detections").innerHTML = detections;
-    document.getElementById("nonDetections").innerHTML = nonDetections;
-
-    document.getElementById("raDec").innerHTML = raDec;
-
-    changeDiscoveryValue(discoveryDateMGD,discoveryDateMJD);
-
-    changeLastValue(lastDetectionMGD,lastDetectionMJD);
-    
-    changeRaDec(raDec,raDecTime);
-
-    
-    
-
-</script>
+    </script>
 
 </body>
 </html>

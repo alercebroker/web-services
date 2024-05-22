@@ -4,25 +4,24 @@ let binaryLast = 0;
 let binaryRaDec = 0;
 
 export function changeDiscoveryValue(discoveryDateMGD,discoveryDateMJD){
-
-    if (binaryDisc === 0) {
+    if (binaryDisc === 1) {
         document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
-        binaryDisc = 1;
+        binaryDisc = 0;
     } else {
         document.getElementById("discoveryDate").innerHTML = discoveryDateMJD;
-        binaryDisc = 0;
+        binaryDisc = 1;
     }
 
 };
 
 export function changeLastValue(lastDetectionMGD,lastDetectionMJD){
 
-    if (binaryLast === 0) {
+    if (binaryLast === 1) {
         document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
-        binaryLast = 1;
+        binaryLast = 0;
     } else {
         document.getElementById("lastDetection").innerHTML = lastDetectionMJD;
-        binaryLast = 0;
+        binaryLast = 1;
     }
 
 };
