@@ -25,7 +25,7 @@ class MagStats(BaseModel):
     magmedian: float
     magmax: float
     magmin: float
-    magsigma: float
+    magsigma: Optional[float] = None
     maglast: float
     magfirst: float
     firstmjd: float
