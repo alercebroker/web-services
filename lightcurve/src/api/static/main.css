@@ -672,6 +672,21 @@
   color: rgb(254 226 226 / var(--tw-text-opacity));
 }
 
+.tw-preflight :is(.tw-text-red-600) {
+  --tw-text-opacity: 1;
+  color: rgb(220 38 38 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-red-800) {
+  --tw-text-opacity: 1;
+  color: rgb(153 27 27 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-red-500) {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
 .tw-preflight :is(.tw-opacity-50) {
   opacity: 0.5;
 }
