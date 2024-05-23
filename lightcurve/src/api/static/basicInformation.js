@@ -16,7 +16,6 @@ export function changeDiscoveryValue(discoveryDateMGD,discoveryDateMJD){
 };
 
 export function changeLastValue(lastDetectionMGD,lastDetectionMJD){
-
     if (binaryLast === 1) {
         document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
         binaryLast = 0;
