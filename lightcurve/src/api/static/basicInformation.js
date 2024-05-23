@@ -27,12 +27,12 @@ export function changeLastValue(lastDetectionMGD,lastDetectionMJD){
 };
 
 export function changeRaDec(raDec,raDecTime){
-    if (binaryRaDec === 0){
+    if (binaryRaDec === 1){
         document.getElementById("raDec").innerHTML = raDec;
-        binaryRaDec = 1;
+        binaryRaDec = 0;
     } else {
         document.getElementById("raDec").innerHTML = raDecTime;
-        binaryRaDec = 0;
+        binaryRaDec = 1;
     }
 };
 
