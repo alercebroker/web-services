@@ -156,7 +156,7 @@
 
         <div class="display-inline">
             <div class="button"> 
-                <a href="https://www.youtube.com/" target="_blank" class="find-button"><span find-btn-content>FINDING CHART</span></a>
+                <a id='find-button' target="_blank" class="find-button">FINDING CHART</a>
             </div>
         </div>
         
@@ -239,8 +239,8 @@
         let decTime = transformRaDec(dec);
 
         let raDecTime = String(raTime) + ' ' + String(decTime);
-
-        url_modifier(ra,dec);
+        console.log(String(object))
+        url_modifier(ra,dec,object);
 
         document.getElementById("object").innerHTML = object;
         document.getElementById("corrected").innerHTML = corrected;
