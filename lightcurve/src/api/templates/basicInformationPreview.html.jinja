@@ -125,13 +125,13 @@
                         </div>
                     </td>
                 </tr>
-
-                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr> 
+                
+                <tr class="hover:tw-opacity-70"><td class="tw-text-left">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
 
                 <tr class="hover:tw-opacity-70">
                     <td class="tw-text-left">RA(J2000) Dec(J2000)</td>
                     <td class="" id="raDec"></td>
-                    <td class="tw-relative tw-group">
+                    <td class="tw-group tw-relative"> 
                         <div class="tw-relative">
                             <button class="tw-relative" id="changeRaDec">
                                 <svg class="tw-h-6 tw-w-6 tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -139,20 +139,20 @@
                                 </svg>
                             </button>
                             <div class="tw-absolute tw-left-1/2 tw-transform tw--translate-x-1/2 tw-top-full tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center">
-                                <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2 tw-w-48 tw-whitespace-normal tw-translate-x-[-20%]">
-                                    hola
-                                </div>
+                            <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2 tw-w-48 tw-whitespace-normal tw-translate-x-[-20%]">
+                                View MJD
+                            </div>
+                            <div class="tw-w-2.5 tw-h-2.5 tw-bg-gray-800 tw-transform tw-rotate-45 tw-mt-1 tw-translate-x-[-20%]"></div>
                             </div>
                         </div>
                     </td>
                 </tr>
-
             </tbody>
         </table>
 
         <div class="display-inline">
             <div class="button"> 
-                <a href="https://www.youtube.com/" target="_blank" class="find-button"><span find-btn-content>FINDING CHART</span></a>
+                <a id='find-button' target="_blank" class="find-button">FINDING CHART</a>
             </div>
         </div>
         
@@ -235,8 +235,8 @@
         let decTime = transformRaDec(dec);
 
         let raDecTime = String(raTime) + ' ' + String(decTime);
-
-        url_modifier(ra,dec);
+        console.log(String(object))
+        url_modifier(ra,dec,object);
 
         document.getElementById("object").innerHTML = object;
         document.getElementById("corrected").innerHTML = corrected;

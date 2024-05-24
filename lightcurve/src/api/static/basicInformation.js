@@ -85,7 +85,7 @@ export function display_menu(){
     
 }
 
-export function url_modifier(ra,dec) {
+export function url_modifier(ra,dec,object) {
            
     let url1 = 'https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=' + String(ra)+'&dec='+ String(dec) + '&layer=ls-dr9&pixscale=0.1&bands=grz';
     document.getElementById('first-button').href = url1;
@@ -110,4 +110,7 @@ export function url_modifier(ra,dec) {
 
     let  url8 = 'https://www.aavso.org/vsx/index.php?view=results.get&coords='+String(ra) + '+' + String(dec)+ '&format=d&size=10&geom=r&unit=3&order=9';
     document.getElementById('eighth-button').href = url8
+
+    let url9 = 'https://findingchart.alerce.online/get_chart?oid='+ String(object) + '&candid=1007116353515015023'
+    document.getElementById('find-button').href = url9
 }
