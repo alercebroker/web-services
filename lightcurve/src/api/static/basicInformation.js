@@ -73,7 +73,7 @@ export function transformRaDec(degrees) {
     return str
 }
 
-export function display_menu(){
+export function display_menu(flag=false){
 
     if (click === 0)  {
         document.getElementById('menu-box').style.display = "block";
@@ -82,8 +82,10 @@ export function display_menu(){
         document.getElementById('menu-box').style.display = "none";
         click = 0;
     }
-    
+
 }
+    
+
 
 export function url_modifier(ra,dec,object) {
            
