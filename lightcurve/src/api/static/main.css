@@ -92,6 +92,26 @@
   margin-top: 30px;
 }
 
+.tw-preflight :is(.tw-ml-\[28px\]) {
+  margin-left: 28px;
+}
+
+.tw-preflight :is(.tw-ml-\[29px\]) {
+  margin-left: 29px;
+}
+
+.tw-preflight :is(.tw-ml-\[31px\]) {
+  margin-left: 31px;
+}
+
+.tw-preflight :is(.tw-ml-\[25px\]) {
+  margin-left: 25px;
+}
+
+.tw-preflight :is(.tw-ml-\[px\]) {
+  margin-left: px;
+}
+
 .tw-preflight :is(.tw-box-content) {
   box-sizing: content-box;
 }
