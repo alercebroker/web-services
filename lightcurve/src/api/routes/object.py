@@ -59,7 +59,7 @@ async def object_info_app(
                 'detections' : object.ndet,
                 'discoveryDateMJD' : object.firstmjd,
                 'lastDetectionMJD' : object.lastmjd,
-                'nonDetections' : '8',
+                'nonDetections' : '8', # Esto de donde aparece???
                 'ra' : object.meanra ,
                 'dec': object.meandec,
                 'link':link

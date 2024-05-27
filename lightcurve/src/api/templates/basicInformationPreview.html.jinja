@@ -9,24 +9,22 @@
     <style>
         td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: center; }
     </style>
-</head>
 
-<body class="tw-preflight">
+<body class="tw-preflight dark:tw-bg-black tw-dark">
 
-<div class="tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-border-none tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
-    <div class="tw-text-white">
-
+<div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
+    <div class="tw-text-[#1e1e1e] dark:tw-text-white">
         <table class="tw-truncate tw-table tw-m-0 tw-text-left tw-border-spacing-40 tw-w-full">
             <colgroup><col class="tw-text-left"><col><col></colgroup>
             <tbody>
-                <tr class="hover:tw-opacity-70 tw-border-b tw-border-white"><td class="tw-text-left">Object</td><td class="tw-w-[300px]" id="object"></td><td class="end"></td></tr>
+                <tr class="hover:tw-opacity-70 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white"><td class="tw-text-left">Object</td><td class="tw-w-[300px]" id="object"></td><td class="end"></td></tr>
 
-                <tr class="hover:tw-opacity-70 tw-border-b tw-border-white">
+                <tr class="hover:tw-opacity-70 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
                     <td class="tw-text-left">Corrected</td>
                     <td class="" id="corrected"></td>
                     <td class="tw-group tw-relative">
                         <div class="tw-relative">
-                            <svg class="tw-h-6 tw-w-6 tw-text-gray-500 tw-ml-[25px]" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500 tw-ml-[25px]" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <path   path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
                             </svg>
                             <div class="tw-absolute tw-left-1/2 tw-transform tw--translate-x-1/2 tw-top-full tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center">
@@ -38,12 +36,12 @@
                     </td>
                 </tr>
 
-                <tr class="hover:tw-opacity-70 tw-border-b tw-border-white">
+                <tr class="hover:tw-opacity-70 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
                     <td class="tw-text-left">Stellar</td>
                     <td class="" id="stellar"></td>
                     <td class="tw-group tw-relative">
                         <div class="tw-relative">
-                            <svg class="tw-h-6 tw-w-6 tw-text-gray-500 tw-ml-[25px]" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500 tw-ml-[25px]" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <path   path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
                             </svg>
                             <div class="tw-absolute tw-left-1/2 tw-transform tw--translate-x-1/2 tw-top-full tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center">
@@ -55,15 +53,15 @@
                     </td>
                 </tr>
 
-                <tr class="hover:tw-opacity-70 tw-border-b tw-border-white"><td class="tw-text-left">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
+                <tr class="hover:tw-opacity-70 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white"><td class="tw-text-left">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
 
-                <tr class="hover:tw-opacity-70 tw-border-b tw-border-white">
+                <tr class="hover:tw-opacity-70 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
                     <td class="tw-text-left">Discovery date</td>
                     <td class="" id="discoveryDate"></td>
                     <td class="tw-group tw-relative">
                         <div class="tw-relative">
                             <button class="tw-relative" id="changeDiscoveryValue">
-                                <svg class="tw-h-6 tw-w-6 tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"></path>
                                 </svg>
                             </button>
@@ -76,13 +74,13 @@
                     </td>
                 </tr>
 
-                <tr class="hover:tw-opacity-70 tw-border-b tw-border-white">
+                <tr class="hover:tw-opacity-70 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
                     <td class="tw-text-left">Last detection</td>
                     <td class="" id="lastDetection"></td>
                     <td class="tw-relative tw-group">
                         <div class="tw-relative">
                             <button class="tw-relative" id="changeLastValue">
-                                <svg class="tw-h-6 tw-w-6 tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"></path>
                                 </svg>
                             </button>
@@ -95,7 +93,7 @@
                     </td>
                 </tr>
 
-                <tr class="hover:tw-opacity-70 tw-border-b tw-border-white"><td class="tw-text-left">Non Detections</td><td class="tw-w-[300px]" id="nonDetections"></td> <td class=""></td></tr>
+                <tr class="hover:tw-opacity-70 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white"><td class="tw-text-left">Non Detections</td><td class="tw-w-[300px]" id="nonDetections"></td> <td class=""></td></tr>
 
                 <tr class="hover:tw-opacity-70">
                     <td class="tw-text-left">RA(J2000) Dec(J2000)</td>
@@ -103,7 +101,7 @@
                     <td class="tw-group tw-relative">
                         <div class="tw-relative">
                             <button class="tw-relative" id="changeRaDec">
-                                <svg class="tw-h-6 tw-w-6 tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m6.115 5.19.319 1.913A6 6 0 0 0 8.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 0 0 2.288-4.042 1.087 1.087 0 0 0-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 0 1-.98-.314l-.295-.295a1.125 1.125 0 0 1 0-1.591l.13-.132a1.125 1.125 0 0 1 1.3-.21l.603.302a.809.809 0 0 0 1.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 0 0 1.528-1.732l.146-.292M6.115 5.19A9 9 0 1 0 17.18 4.64M6.115 5.19A8.965 8.965 0 0 1 12 3c1.929 0 3.716.607 5.18 1.64"></path>
                                 </svg>
                             </button>
@@ -120,56 +118,56 @@
 
         <div class="tw-inline">
             <div class="tw-inline">
-                <a id='find-button' target="_blank" class="tw-inline tw-bg-cyan-500 hover:tw-bg-cyan-700 tw-text-white tw-font-bold tw-py-0.5 tw-px-[100px]">FINDING CHART</a>
+                <a id='find-button' target="_blank" class="tw-inline tw-bg-cyan-700 hover:tw-bg-cyan-500 dark:tw-bg-cyan-500 dark:hover:tw-bg-cyan-700 tw-text-white tw-font-bold tw-py-0.5 tw-px-[100px]">FINDING CHART</a>
             </div>
         </div>
         <div class="tw-inline">
             <div class="tw-inline">
-                <a id="menu-button" class="tw-bg-blue-400 hover:tw-bg-blue-700 tw-relative tw-py-0.5 tw-px-[100px] tw-cursor-pointer">OTHER ARCHIVES</a>
+                <a id="menu-button" class="tw-text-white tw-bg-blue-700 hover:tw-bg-blue-400 dark:tw-bg-blue-400 dark:hover:tw-bg-blue-700 tw-relative tw-py-0.5 tw-px-[100px] tw-cursor-pointer">OTHER ARCHIVES</a>
             </div>
         </div>
 
-        <div id="menu-box" class="tw-hidden tw-box-content tw-absolute tw-opacity-100 tw-w-[377px] tw-h-[500px] tw-ml-[326px] tw-rounded-[50px]">
+        <div id="menu-box" class="tw-hidden tw-box-content tw-absolute tw-opacity-100 tw-w-[377px] tw-h-[500px] tw-ml-[326px] tw-rounded-[50px] tw-shadow-2xl">
             <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id='first-button'> 
-                <div class="tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                <div class="tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                     DESI Legacy Survey DR9
                 </div>
             </a>
             <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="second-button"> 
-                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                     NED 
                 </div>
             </a>
 
             <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="third-button"> 
-                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                     PanSTARRS 
                 </div>
             </a>
 
             <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="fourth-button"> 
-                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                     SDSS DR16
                 </div>
             </a>
             
             <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="fifth-button"> 
-                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                     SIMBAD 
                 </div>
             </a>
             <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="sixth-button"> 
-                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                     TNS 
                 </div>
             </a>
             <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="seventh-button"> 
-                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                     Vizier 
                 </div>
             </a>
             <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="eighth-button"> 
-                <div class="tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                <div class="tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                     VSX 
                 </div>
             </a>
@@ -189,9 +187,10 @@
 
     </div>
 
-    <h6 class="tw-inline tw-text-white tw-absolute tw-right-0 tw-bottom-0 tw-h-auto tw-m-0 tw-text[17px]"> 
+    <h6 class="tw-inline tw-text-[#1e1e1e] dark:tw-text-white tw-absolute tw-right-0 tw-bottom-0 tw-h-auto tw-m-0 tw-text[17px]"> 
     Provided by <a target="_blank" class=" tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer" href="https://www.wis-tns.org/">TNS</a>  <img class="tw-inline" src="https://www.wis-tns.org/sites/default/files/favicon.png">
     </h6>
+
 </div>
 
 <script type="module">

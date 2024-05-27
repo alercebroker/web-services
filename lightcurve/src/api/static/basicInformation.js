@@ -48,16 +48,19 @@ export function julianToGregorian(mjd) {
 
     const jd = Number(mjd) + 2400000
     const date = convertToDate(jd)
+    console.log(date);
     const year = date.getUTCFullYear()
-    let month = date.getUTCMonth() + 1
-
-    if (month < 10) {
-        month = '0' + month
-    }
-
+    let month = date.getUTCMonth() 
     const day = date.getUTCDate()
+    const hours = date.getUTCHours()
+    const minutes = date.getUTCMinutes()
+    const seconds = date.getUTCSeconds()
+    const dayName = date.getUTCDay() 
 
-    return year + '-' + month + '-' + day
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    const days =  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+    
+    return days[dayName] + ', ' + day + ' ' + months[month] + ' ' + year + ' ' + hours + ':' + minutes + ':' + seconds + ' UTC'
 }
 
 
