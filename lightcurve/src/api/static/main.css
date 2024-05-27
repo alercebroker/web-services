@@ -22,6 +22,14 @@
   top: 100%;
 }
 
+.tw-preflight :is(.tw-bottom-0) {
+  bottom: 0px;
+}
+
+.tw-preflight :is(.tw-right-0) {
+  right: 0px;
+}
+
 .tw-preflight :is(.tw-col-span-2) {
   grid-column: span 2 / span 2;
 }
@@ -64,8 +72,32 @@
   margin-top: 0.75rem;
 }
 
+.tw-preflight :is(.tw-ml-\[326px\]) {
+  margin-left: 326px;
+}
+
+.tw-preflight :is(.tw-mt-\[4px\]) {
+  margin-top: 4px;
+}
+
+.tw-preflight :is(.tw-mt-\[30px\]) {
+  margin-top: 30px;
+}
+
+.tw-preflight :is(.tw-mr-\[30px\]) {
+  margin-right: 30px;
+}
+
+.tw-preflight :is(.tw-mr-\[60px\]) {
+  margin-right: 60px;
+}
+
 .tw-preflight :is(.tw-box-content) {
   box-sizing: content-box;
+}
+
+.tw-preflight :is(.tw-block) {
+  display: block;
 }
 
 .tw-preflight :is(.tw-inline) {
@@ -108,6 +140,26 @@
   height: 16rem;
 }
 
+.tw-preflight :is(.tw-h-\[500px\]) {
+  height: 500px;
+}
+
+.tw-preflight :is(.tw-h-\[12\.5\%\]) {
+  height: 12.5%;
+}
+
+.tw-preflight :is(.tw-h-\[100\%\]) {
+  height: 100%;
+}
+
+.tw-preflight :is(.tw-h-\[40px\]) {
+  height: 40px;
+}
+
+.tw-preflight :is(.tw-h-auto) {
+  height: auto;
+}
+
 .tw-preflight :is(.tw-w-12) {
   width: 3rem;
 }
@@ -142,6 +194,38 @@
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%;
+}
+
+.tw-preflight :is(.tw-w-\[751px\]) {
+  width: 751px;
+}
+
+.tw-preflight :is(.tw-w-\[1000px\]) {
+  width: 1000px;
+}
+
+.tw-preflight :is(.tw-w-\[377px\]) {
+  width: 377px;
+}
+
+.tw-preflight :is(.tw-w-\[100\%\]) {
+  width: 100%;
+}
+
+.tw-preflight :is(.tw-w-\[400px\]) {
+  width: 400px;
+}
+
+.tw-preflight :is(.tw-w-\[70px\]) {
+  width: 70px;
+}
+
+.tw-preflight :is(.tw-w-\[100px\]) {
+  width: 100px;
+}
+
+.tw-preflight :is(.tw-w-\[200px\]) {
+  width: 200px;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -221,6 +305,10 @@
   align-items: center;
 }
 
+.tw-preflight :is(.tw-justify-center) {
+  justify-content: center;
+}
+
 .tw-preflight :is(.tw-gap-2) {
   gap: 0.5rem;
 }
@@ -297,14 +385,19 @@
   background-color: rgb(30 30 30 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-bg-blue-400) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.tw-bg-blue-500) {
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-cyan-400) {
+.tw-preflight :is(.tw-bg-cyan-500) {
   --tw-bg-opacity: 1;
-  background-color: rgb(34 211 238 / var(--tw-bg-opacity));
+  background-color: rgb(6 182 212 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-bg-gray-100) {
@@ -336,16 +429,6 @@
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-cyan-500) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(6 182 212 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-blue-400) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity));
-}
-
 .tw-preflight :is(.tw-p-2) {
   padding: 0.5rem;
 }
@@ -369,14 +452,9 @@
   padding-right: 1rem;
 }
 
-.tw-preflight :is(.tw-py-1) {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-}
-
-.tw-preflight :is(.tw-py-2) {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+.tw-preflight :is(.tw-px-\[100px\]) {
+  padding-left: 100px;
+  padding-right: 100px;
 }
 
 .tw-preflight :is(.tw-py-0) {
@@ -389,40 +467,18 @@
   padding-bottom: 0.125rem;
 }
 
-.tw-preflight :is(.tw-px-6) {
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+.tw-preflight :is(.tw-py-1) {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
-.tw-preflight :is(.tw-px-\[100px\]) {
+.tw-preflight :is(.tw-py-2) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.tw-preflight :is(.tw-pl-\[100px\]) {
   padding-left: 100px;
-  padding-right: 100px;
-}
-
-.tw-preflight :is(.tw-px-8) {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.tw-preflight :is(.tw-px-\[50px\]) {
-  padding-left: 50px;
-  padding-right: 50px;
-}
-
-.tw-preflight :is(.tw-pb-\[2px\]) {
-  padding-bottom: 2px;
-}
-
-.tw-preflight :is(.tw-pl-\[50px\]) {
-  padding-left: 50px;
-}
-
-.tw-preflight :is(.tw-pr-\[50px\]) {
-  padding-right: 50px;
-}
-
-.tw-preflight :is(.tw-pt-\[2px\]) {
-  padding-top: 2px;
 }
 
 .tw-preflight :is(.tw-text-left) {
@@ -440,6 +496,11 @@
 .tw-preflight :is(.tw-text-xs) {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.tw-preflight :is(.tw-text-3xl) {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
 }
 
 .tw-preflight :is(.tw-font-bold) {
@@ -461,8 +522,26 @@
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.tw-preflight :is(.tw-text-cyan-400) {
+  --tw-text-opacity: 1;
+  color: rgb(34 211 238 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-blue-600) {
+  --tw-text-opacity: 1;
+  color: rgb(37 99 235 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-underline) {
+  text-decoration-line: underline;
+}
+
 .tw-preflight :is(.tw-opacity-50) {
   opacity: 0.5;
+}
+
+.tw-preflight :is(.tw-opacity-100) {
+  opacity: 1;
 }
 
 .disabled\:bg-transparent {
@@ -1058,6 +1137,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(29 78 216 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.hover\:tw-bg-cyan-700:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(14 116 144 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.hover\:tw-bg-gray-200:hover) {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
@@ -1073,9 +1157,9 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(21 128 61 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.hover\:tw-bg-cyan-700:hover) {
+.tw-preflight :is(.hover\:tw-bg-\[\#3b3939\]:hover) {
   --tw-bg-opacity: 1;
-  background-color: rgb(14 116 144 / var(--tw-bg-opacity));
+  background-color: rgb(59 57 57 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.hover\:tw-opacity-70:hover) {

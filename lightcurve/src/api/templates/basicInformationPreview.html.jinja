@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{API_URL}}/static/main.css">
     <style>
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        .link { color: rgb(50, 119, 175);text-decoration: underline;cursor:pointer}
+        
         .left-text, .middle-text { text-align: center; width: 200px; height: 32px; }
         .middle-text { width: 300px; }
         .rows:hover { opacity: 0.7; }
@@ -24,11 +24,11 @@
         th { padding-left: 7.5px; padding-right: 7.5px; }
         td:first-child, th:first-child { padding-left: 0;}
         td:last-child, th:last-child { padding-right: 0; }
-        
+
         .table-container { overflow: hidden; width: 400px; margin: 0; }
         .table td:first-child { text-align: left; }
         .th,.td{padding-left: 100px;height: 40px;width: 70px;}
-        
+
         .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
         button, input[type="submit"], input[type="reset"] {background: nonde;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;}
         .button {display: inline;}
@@ -41,6 +41,10 @@
         .menu-links {color: white; text-decoration: none; height: 100%; width: 100%;}
     </style>
 </head>
+
+
+
+
 
 <body class="tw-preflight">
 
@@ -82,7 +86,7 @@
                                     There is a matching point-like source in the reference image.
                                 </div>
                             </div>
-                        </div>    
+                        </div>
                     </td>
                 </tr>
 
@@ -103,7 +107,7 @@
                                     View MJD
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     </td>
                 </tr>
 
@@ -125,13 +129,13 @@
                         </div>
                     </td>
                 </tr>
-                
+
                 <tr class="hover:tw-opacity-70"><td class="tw-text-left">Non Detections</td><td class="middle-text" id="nonDetections"></td> <td class="end"></td></tr>
 
                 <tr class="hover:tw-opacity-70">
                     <td class="tw-text-left">RA(J2000) Dec(J2000)</td>
                     <td class="" id="raDec"></td>
-                    <td class="tw-group tw-relative"> 
+                    <td class="tw-group tw-relative">
                         <div class="tw-relative">
                             <button class="tw-relative" id="changeRaDec">
                                 <svg class="tw-h-6 tw-w-6 tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -151,62 +155,91 @@
         </table>
 
         <div class="tw-inline">
-            <div class="tw-inline">  
+            <div class="tw-inline">
                 <a id='find-button' target="_blank" class="tw-inline tw-bg-cyan-500 hover:tw-bg-cyan-700 tw-text-white tw-font-bold tw-py-0.5 tw-px-[100px]">FINDING CHART</a>
             </div>
-        </div>  
+        </div>
         <div class="tw-inline">
             <div class="tw-inline">
                 <a id="menu-button" class="tw-bg-blue-400 hover:tw-bg-blue-700 tw-relative tw-py-0.5 tw-px-[100px] tw-cursor-pointer">OTHER ARCHIVES</a>
             </div>
-        </div>    
-
-        <div id="menu-box" class="position-relative menu-box">
-            <div class="menu-box-elements"> 
-                <a target="_blank" id='first-button' class="a-elements menu-links"> DESI Legacy Survey DR9</a>
-            </div>
-            <div class="menu-box-elements">
-                <a target="_blank" class="a-elements menu-links" id="second-button"> NED </a>
-            </div>
-            <div class="menu-box-elements"> 
-                <a target="_blank" class="a-elements menu-links" id="third-button"> PanSTARRS </a>
-            </div>
-            <div class="menu-box-elements">
-                <a target="_blank" class="a-elements menu-links" id="fourth-button"> SDSS DR16 </a>
-            </div>
-            <div class="menu-box-elements">
-                <a target="_blank" class="a-elements menu-links" id="fifth-button"> SIMBAD </a>
-            </div>
-            <div class="menu-box-elements">
-                <a target="_blank" class="a-elements menu-links" id="sixth-button"> TNS </a>
-            </div>
-            <div class="menu-box-elements">
-                <a target="_blank" class="a-elements menu-links" id="seventh-button"> Vizier </a>
-            </div>
-            <div class="menu-box-elements">
-                <a target="_blank" class="a-elements menu-links" id="eighth-button"> VSX </a>
-            </div>
         </div>
 
+        <div id="menu-box" class="tw-hidden tw-box-content tw-absolute tw-opacity-100 tw-w-[377px] tw-h-[500px] tw-ml-[326px]">
+            <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id='first-button'> 
+                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-border-solid tw-border tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                    DESI Legacy Survey DR9
+                </div>
+            </a>
+            <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="second-button"> 
+                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-border-solid tw-border tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                    NED 
+                </div>
+            </a>
 
-        <div class="data">
-            <table bordeer=1 frame=void rules=rows class="table-container"><colgroup><col><col><col></colgroup>
-                <thead><th class="text-center th"><span>Type</span></th><th class="text-center th"><span>Name</span></th><th class="text-center th"><span>Redshift</span></th></thead>
-                <tbody class="table-spacing"><tr class="rows"><td class="text-center td">-</td><td class="text-center td">-</td><td class="text-center td">-</td></tr></tbody>
+            <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="third-button"> 
+                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-border-solid tw-border tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                    PanSTARRS 
+                </div>
+            </a>
+
+            <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="fourth-button"> 
+                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-border-solid tw-border tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                    SDSS DR16
+                </div>
+            </a>
+            
+            <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="fifth-button"> 
+                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-border-solid tw-border tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                    SIMBAD 
+                </div>
+            </a>
+            <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="sixth-button"> 
+                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-border-solid tw-border tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                    TNS 
+                </div>
+            </a>
+            <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="seventh-button"> 
+                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-border-solid tw-border tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                    Vizier 
+                </div>
+            </a>
+            <a target="_blank" class="tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="eighth-button"> 
+                <div class="tw-cursor-pointer tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-border-solid tw-border tw-grid tw-justify-center tw-items-center hover:tw-bg-[#3b3939]">
+                    VSX 
+                </div>
+            </a>
+        </div>
+
+        <div>
+            <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0"><colgroup><col><col><col></colgroup>
+                <thead>
+                    <th class="tw-text-center tw-h-[40px] tw-w-[70px]"> Type </th>
+                    <th class="tw-text-center tw-h-[40px] tw-w-[70px]">Name</th>
+                    <th class="tw-text-center tw-h-[40px] tw-w-[70px]">Redshift</th>
+                </thead>
+                <tbody class=""><tr class="hover:tw-opacity-70"><td class="tw-text-center tw-h-[40px] tw-w-[70px]">-</td><td class="tw-text-center tw-h-[40px] tw-w-[70px]">-</td><td class="tw-text-center tw-h-[40px] tw-w-[70px]">-</td></tr></tbody>
             </table>
         </div>
+        
+
     </div>
-    <h6 class="tag"> Provided by <a target="_blank" class="link" href="https://www.wis-tns.org/">TNS</a>  <img src="https://www.wis-tns.org/sites/default/files/favicon.png"></h6>
+    {# .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px} 
+        .link { color: rgb(50, 119, 175);text-decoration: underline;cursor:pointer}
+    #}
+    <h6 class="tw-inline tw-text-white tw-absolute tw-right-0 tw-bottom-0 tw-h-auto tw-m-0 tw-text[17px]"> 
+    Provided by <a target="_blank" class=" tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer" href="https://www.wis-tns.org/">TNS</a>  <img class="tw-inline" src="https://www.wis-tns.org/sites/default/files/favicon.png">
+    </h6>
 </div>
 
 <script type="module">
 
         import {
-            
-            changeDiscoveryValue, 
-            changeLastValue, 
-            changeRaDec, 
-            convertToDate, 
+
+            changeDiscoveryValue,
+            changeLastValue,
+            changeRaDec,
+            convertToDate,
             julianToGregorian,
             transformRaDec,
             display_menu,
@@ -217,7 +250,7 @@
         const object =  {{object | tojson}};
         const corrected = {{corrected | tojson}} ;
         const stellar = {{stellar | tojson}} ;
-        const detections = {{detections | tojson}} 
+        const detections = {{detections | tojson}}
         let discoveryDateMJD = {{discoveryDateMJD | tojson}} ;
         let lastDetectionMJD = {{lastDetectionMJD | tojson}} ;
         const nonDetections = {{nonDetections | tojson}} ;
@@ -245,7 +278,7 @@
         document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
         document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
         document.getElementById("raDec").innerHTML = raDec;
-        
+
         document.getElementById('changeDiscoveryValue').addEventListener('click', () => changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD));
         document.getElementById('changeLastValue').addEventListener('click', () => changeLastValue(lastDetectionMGD, lastDetectionMJD));
         document.getElementById('changeRaDec').addEventListener('click', () => changeRaDec(raDec, raDecTime));
