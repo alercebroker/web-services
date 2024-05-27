@@ -50,7 +50,7 @@ export function julianToGregorian(mjd) {
     const date = convertToDate(jd)
     console.log(date);
     const year = date.getUTCFullYear()
-    let month = date.getUTCMonth() 
+    let month = date.getUTCMonth()
     const day = date.getUTCDate()
     const hours = date.getUTCHours()
     const minutes = date.getUTCMinutes()
