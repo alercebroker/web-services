@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
     <title>Document</title>
 
     <style>
@@ -40,83 +41,98 @@
         .arrow-up  {display: none;}
         .arrow-up:hover {display: flex; vertical-align: middle}
     </style>
-    </style>
 </head>
-<body>
-    
+<body class='tw-preflight dark:tw-bg-black tw-dark'>
 
-    <div class="box">   
-        <div class="data" id="tableContainer">
-            <h1>Magnitude Statistics <span class="glow"><span class="material-symbols-outlined tooltip change-button">info</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></span></h1>
-            <table class="table-container" id="myTable">
-                <colgroup><col><col></colgroup>
-                <thead>
-                    <tr>
-                        <th class="text-left th">Stat <span class="arrow-up"><span class="material-symbols-outlined">arrow_upward_alt</span></span></th>
-                        <th class="text-left th">r</th>
-                    </tr>
-                </thead>
-                <tbody id="dataTableBody">
-                    <tr class="rows">
-                        <td class="text-left td" id="a11"></td>
-                        <td class="text-left td" id="a21"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a12"></td>
-                        <td class="text-left td" id="a22"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a13"></td>
-                        <td class="text-left td" id="a23"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a14"></td>
-                        <td class="text-left td" id="a24"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a15"></td>
-                        <td class="text-left td" id="a25"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a16"></td>
-                        <td class="text-left td" id="a26"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a17"></td>
-                        <td class="text-left td" id="a27"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a18"></td>
-                        <td class="text-left td" id="a28"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a19"></td>
-                        <td class="text-left td" id="a29"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a110"></td>
-                        <td class="text-left td" id="a210"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a111"></td>
-                        <td class="text-left td" id="a211"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a112"></td>
-                        <td class="text-left td" id="a212"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a113"></td>
-                        <td class="text-left td" id="a213"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a114"></td>
-                        <td class="text-left td" id="a214"></td>
-                    </tr>
-                </tbody>
-                <tbody class="right-col"></tbody>
-            </table>
+    <div class="tw-bg-[#1e1e1e] box-content rounded-[10px] tw-w-[750px] tw-pb-[30px]">   
+        
+        <div class="tw-inline tw-text-white tw-flex tw-items-center">
+            <div class="tw-inline">
+                <h1>Magnitude Statistics</h1>
+            </div>
+
+            <div class="tw-inline tw-relative tw-ml-2 tw-mt-[30px] tw-group">
+                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                </svg>
+                <div class="tw-absolute tw-left-1/2 tw-transform tw--translate-x-1/2 tw-top-full tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center">
+                    <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2 tw-w-48 tw-whitespace-normal tw-translate-x-\[-20%\]">
+                        There is a matching source in the reference image. The apparent magnitude combines the difference and reference fluxes.
+                    </div>
+                </div>
+            </div>
         </div>
+            <div class="tw-text-white" id="tableContainer">  
+                <table class="table-container" id="myTable">
+                    <colgroup><col><col></colgroup>
+                    <thead>
+                        <tr>
+                            <th class="text-left th">Stat <span class="arrow-up"><span class="material-symbols-outlined">arrow_upward_alt</span></span></th>
+                            <th class="text-left th">r</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <tr class="rows">
+                            <td class="text-left td" id="a11"></td>
+                            <td class="text-left td" id="a21"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a12"></td>
+                            <td class="text-left td" id="a22"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a13"></td>
+                            <td class="text-left td" id="a23"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a14"></td>
+                            <td class="text-left td" id="a24"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a15"></td>
+                            <td class="text-left td" id="a25"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a16"></td>
+                            <td class="text-left td" id="a26"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a17"></td>
+                            <td class="text-left td" id="a27"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a18"></td>
+                            <td class="text-left td" id="a28"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a19"></td>
+                            <td class="text-left td" id="a29"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a110"></td>
+                            <td class="text-left td" id="a210"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a111"></td>
+                            <td class="text-left td" id="a211"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a112"></td>
+                            <td class="text-left td" id="a212"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a113"></td>
+                            <td class="text-left td" id="a213"></td>
+                        </tr>
+                        <tr class="rows">
+                            <td class="text-left td" id="a114"></td>
+                            <td class="text-left td" id="a214"></td>
+                        </tr>
+                    </tbody>
+                    <tbody class="right-col"></tbody>
+                </table>
+            </div>
+
         <div style="display: inline;">
             <div style="padding:25px 0px 0px 0px ; display: inline-block;">
                 <label style="color:white; padding: 0px 0px 0px 50px;" for="rowSelector">Rows to display:</label>
@@ -135,6 +151,7 @@
             </div>
             
         </div>
+        
     </div>
 
 <script>
