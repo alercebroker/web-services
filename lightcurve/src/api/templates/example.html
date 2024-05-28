@@ -1,159 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Paginated Table</title>
-<style>
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-  }
-  th {
-    background-color: #f2f2f2;
-  }
-  #tableContainer {
-    overflow-x: auto;
-  }
-  button {
-    padding: 10px 20px;
-    margin: 10px;
-    cursor: pointer;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tailwind CSS Hover Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body>
-
-<div id="tableContainer">
-  <table>
-    <thead>
-      <tr>
-        <th>Column 1</th>
-        <th>Column 2</th>
-        <th>Column 3</th>
-      </tr>
-    </thead>
-    <tbody id="dataTableBody">
-      <tr><td>Row 1 Data 1</td><td>Row 1 Data 2</td><td>Row 1 Data 3</td></tr>
-      <tr><td>Row 2 Data 1</td><td>Row 2 Data 2</td><td>Row 2 Data 3</td></tr>
-      <tr><td>Row 3 Data 1</td><td>Row 3 Data 2</td><td>Row 3 Data 3</td></tr>
-      <tr><td>Row 4 Data 1</td><td>Row 4 Data 2</td><td>Row 4 Data 3</td></tr>
-      <tr><td>Row 5 Data 1</td><td>Row 5 Data 2</td><td>Row 5 Data 3</td></tr>
-      <tr><td>Row 6 Data 1</td><td>Row 6 Data 2</td><td>Row 6 Data 3</td></tr>
-      <tr><td>Row 7 Data 1</td><td>Row 7 Data 2</td><td>Row 7 Data 3</td></tr>
-      <tr><td>Row 8 Data 1</td><td>Row 8 Data 2</td><td>Row 8 Data 3</td></tr>
-      <tr><td>Row 9 Data 1</td><td>Row 9 Data 2</td><td>Row 9 Data 3</td></tr>
-      <tr><td>Row 10 Data 1</td><td>Row 10 Data 2</td><td>Row 10 Data 3</td></tr>
-      <tr><td>Row 11 Data 1</td><td>Row 11 Data 2</td><td>Row 11 Data 3</td></tr>
-      <tr><td>Row 12 Data 1</td><td>Row 12 Data 2</td><td>Row 12 Data 3</td></tr>
-      <tr><td>Row 13 Data 1</td><td>Row 13 Data 2</td><td>Row 13 Data 3</td></tr>
-      <tr><td>Row 14 Data 1</td><td>Row 14 Data 2</td><td>Row 14 Data 3</td></tr>
-      <tr><td>Row 15 Data 1</td><td>Row 15 Data 2</td><td>Row 15 Data 3</td></tr>
-    </tbody>
-  </table>
-</div>
-<select id="rowSelect">
-  <option value="5">5 rows</option>
-  <option value="10">10 rows</option>
-  <option value="15">15 rows</option>
-</select>
-<button onclick="navigateTable(-1)">Previous</button>
-<button onclick="navigateTable(1)">Next</button>
-
-<script>
-  const tableContainer = document.getElementById('tableContainer');
-  const dataTableBody = document.getElementById('dataTableBody');
-  const rowSelect = document.getElementById('rowSelect');
-  let rowsPerPage = parseInt(rowSelect.value);
-  let currentPage = 1;
-
-  function navigateTable(direction) {
-    currentPage += direction;
-    const totalPages = Math.ceil(dataTableBody.rows.length / rowsPerPage);
-    if (currentPage < 1) {
-      currentPage = 1;
-    } else if (currentPage > totalPages) {
-      currentPage = totalPages;
-    }
-    showTablePage();
-  }
-
-  function showTablePage() {
-    const startIndex = (currentPage - 1) * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
-    const rows = dataTableBody.getElementsByTagName('tr');
-    for (let i = 0; i < rows.length; i++) {
-      if (i >= startIndex && i < endIndex) {
-        rows[i].style.display = 'table-row';
-      } else {
-        rows[i].style.display = 'none';
-      }
-    }
-  }
-
-  rowSelect.addEventListener('change', () => {
-    rowsPerPage = parseInt(rowSelect.value);
-    currentPage = 1;
-    showTablePage();
-  });
-
-  // Show initial page
-  showTablePage();
-</script>
-
+    <div class="tw-inline-block">
+        <button id="statButton" class="tw-inline">
+            <svg class="tw-h-6 tw-w-6 tw-hidden hover:tw-block" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z"/>
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="16" y1="9" x2="12" y2="5" />
+                <line x1="8" y1="9" x2="12" y2="5" />
+            </svg>
+        </button>
+    </div>
 </body>
 </html>
-
-
-<!-- <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const tableRows = document.querySelectorAll('#myTable tbody tr');
-        const rowSelect = document.getElementById('rowSelect');
-        const totalRows = 14;
-
-        function updateTable(rowsToShow) {
-            tableRows.forEach((row, index) => {
-                if (index < rowsToShow) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        function showNewTable(missingTables){
-            const tableRows = document.querySelectorAll('#myTable tbody tr');
-            for (let i=0; i < missingTables.length; i++){
-                
-            };
-        }
-        let binary = 0;
-        function passTable() {
-            const rowsToShow = parseInt(rowSelect.value, 10);
-            let missingTables = [];
-
-            if (rowsToShow === 5){
-                missingTables.push(5);
-                missingTables.push(4);
-            } else if (rowsToShow === 10){
-                missingTables.push(5);
-            }
-
-            showNewTable(missingTables);
-        }
-
-        rowSelect.addEventListener('change', function() {
-            const rowsToShow = parseInt(rowSelect.value, 10);
-            updateTable(rowsToShow);
-        });
-
-        updateTable(parseInt(rowSelect.value, 10));
-    }
-)
-    
-</script> -->

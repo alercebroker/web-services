@@ -84,8 +84,24 @@
   margin-top: 30px;
 }
 
+.tw-preflight :is(.tw-mt-\[20px\]) {
+  margin-top: 20px;
+}
+
+.tw-preflight :is(.tw-mt-\[40px\]) {
+  margin-top: 40px;
+}
+
+.tw-preflight :is(.tw-ml-\[50px\]) {
+  margin-left: 50px;
+}
+
 .tw-preflight :is(.tw-box-content) {
   box-sizing: content-box;
+}
+
+.tw-preflight :is(.tw-inline-block) {
+  display: inline-block;
 }
 
 .tw-preflight :is(.tw-inline) {
@@ -140,6 +156,18 @@
   height: auto;
 }
 
+.tw-preflight :is(.tw-h-8) {
+  height: 2rem;
+}
+
+.tw-preflight :is(.tw-h-2) {
+  height: 0.5rem;
+}
+
+.tw-preflight :is(.tw-h-5) {
+  height: 1.25rem;
+}
+
 .tw-preflight :is(.tw-w-12) {
   width: 3rem;
 }
@@ -184,12 +212,32 @@
   width: 100%;
 }
 
+.tw-preflight :is(.tw-w-8) {
+  width: 2rem;
+}
+
+.tw-preflight :is(.tw-w-2) {
+  width: 0.5rem;
+}
+
+.tw-preflight :is(.tw-w-5) {
+  width: 1.25rem;
+}
+
 .tw-preflight :is(.tw-min-w-full) {
   min-width: 100%;
 }
 
 .tw-preflight :is(.tw-basis-3\/4) {
   flex-basis: 75%;
+}
+
+.tw-preflight :is(.tw-table-fixed) {
+  table-layout: fixed;
+}
+
+.tw-preflight :is(.tw-border-collapse) {
+  border-collapse: collapse;
 }
 
 .tw-preflight :is(.tw-border-spacing-40) {
@@ -275,6 +323,10 @@
   border-color: rgb(229 231 235 / var(--tw-divide-opacity));
 }
 
+.tw-preflight :is(.tw-overflow-hidden) {
+  overflow: hidden;
+}
+
 .tw-preflight :is(.tw-truncate) {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -335,6 +387,10 @@
 
 .tw-preflight :is(.tw-border-solid) {
   border-style: solid;
+}
+
+.tw-preflight :is(.tw-border-none) {
+  border-style: none;
 }
 
 .tw-preflight :is(.tw-border-\[\#1e1e1e\]) {
@@ -454,6 +510,46 @@
 
 .tw-preflight :is(.tw-pr-\[100px\]) {
   padding-right: 100px;
+}
+
+.tw-preflight :is(.tw-pt-\[25px\]) {
+  padding-top: 25px;
+}
+
+.tw-preflight :is(.tw-pl-\[50px\]) {
+  padding-left: 50px;
+}
+
+.tw-preflight :is(.tw-pl-\[40px\]) {
+  padding-left: 40px;
+}
+
+.tw-preflight :is(.tw-pl-\[60px\]) {
+  padding-left: 60px;
+}
+
+.tw-preflight :is(.tw-pr-\[20px\]) {
+  padding-right: 20px;
+}
+
+.tw-preflight :is(.tw-pr-\[30px\]) {
+  padding-right: 30px;
+}
+
+.tw-preflight :is(.tw-pt-\[30px\]) {
+  padding-top: 30px;
+}
+
+.tw-preflight :is(.tw-pl-\[30px\]) {
+  padding-left: 30px;
+}
+
+.tw-preflight :is(.tw-pl-\[7\.5px\]) {
+  padding-left: 7.5px;
+}
+
+.tw-preflight :is(.tw-pr-\[7\.5px\]) {
+  padding-right: 7.5px;
 }
 
 .tw-preflight :is(.tw-text-left) {
@@ -1111,6 +1207,18 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-backdrop-opacity: ;
   --tw-backdrop-saturate: ;
   --tw-backdrop-sepia: ;
+}
+
+.tw-preflight :is(.hover\:tw-block:hover) {
+  display: block;
+}
+
+.tw-preflight :is(.hover\:tw-inline:hover) {
+  display: inline;
+}
+
+.tw-preflight :is(.hover\:tw-cursor-pointer:hover) {
+  cursor: pointer;
 }
 
 .tw-preflight :is(.hover\:tw-bg-\[\#e5e4e2\]:hover) {
