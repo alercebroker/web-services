@@ -4,137 +4,133 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
     <title>Document</title>
 
     <style>
-        material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        /* .box { background-color: #1e1e1e; border-radius: 10px; width: 750px; height: 450px; border: none; padding: 10px; position: relative; } */
-        .box { background-color: #1e1e1e;  box-sizing: content-box; border-radius: 10px; width: 750px;padding-bottom: 30px;}
-        h1 {padding: 30px 0px 0px 30px;}
-        .data { color: white; }
-        .link { color: rgb(50, 119, 175);text-decoration: underline;cursor:pointer}
-        .left-text, .middle-text { text-align: center; width: 200px; height: 32px; }
-        .middle-text { width: 300px; }
-        .rows:hover { opacity: 0.7; }
-        .tooltip { position: sticky; display: inline-block; border-bottom: 1px dotted gray; }
-        .glow .tooltiptext { display: none; width: 200px; background-color: gray; color: #fff; text-align: center; border-radius: 6px; padding: 5px 0; position: absolute; z-index: 1; opacity: 0.5; }
-        .glow:hover .tooltiptext { display: block; }
-        .find-button, .other-button { background-color: #0097a7; padding: 2px 100px; border: none; font-weight: 550; font-size: 15px; cursor: pointer; color: white; }
-        .other-button { background-color: #2196F3; padding: 2px 60px; }
-        .flex { max-width: 100%; }
-        .text-center { text-align: center; }
-        .text-left {text-align: left;}
         td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: left; }
-        th { padding-left: 7.5px; padding-right: 7.5px; }
-        th:hover {cursor: pointer;}
-        tr {border: solid; border-width: 1px 0;}
-        tr:first-child { border-top: 0;}
-        td:first-child, th:first-child { padding-left: 0;border-top: none; }
-        td:last-child, th:last-child { padding-right: 0; border-bottom: none;}
-        table { width: calc(100% + 30px); table-layout: fixed; border-spacing: 15px 0px; border-collapse: collapse;}
-        .table-container { overflow: hidden; width: 400px; margin-left: 50px; }
-        .th,.td{padding: 0px 100px 0px 0px;height: 40px;width: 200px;}
-        .tag {color: white; position: absolute; right:0%; bottom: 0%; height: auto; margin: 0;font-size:17px}
-        button, input[type="submit"], input[type="reset"] {background: none;color: inherit;border: none;padding: 0;font: inherit;cursor: pointer;outline: inherit;}
-        .info-icon {vertical-align: middle;}
-        .arrow-up  {display: none;}
-        .arrow-up:hover {display: flex; vertical-align: middle}
-    </style>
     </style>
 </head>
-<body>
-    
+<body class='tw-preflight dark:tw-bg-black tw-dark'>
 
-    <div class="box">   
-        <div class="data" id="tableContainer">
-            <h1>Magnitude Statistics <span class="glow"><span class="material-symbols-outlined tooltip change-button">info</span><span class="tooltiptext">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Harum incidunt consectetur aspernatur repellendus. Voluptates sunt odit numquam esse iure obcaecati quaerat officia inventore perspiciatis earum ea veniam vero, consequuntur voluptas?</span></span></h1>
-            <table class="table-container" id="myTable">
-                <colgroup><col><col></colgroup>
-                <thead>
-                    <tr>
-                        <th class="text-left th">Stat <span class="arrow-up"><span class="material-symbols-outlined">arrow_upward_alt</span></span></th>
-                        <th class="text-left th">r</th>
-                    </tr>
-                </thead>
-                <tbody id="dataTableBody">
-                    <tr class="rows">
-                        <td class="text-left td" id="a11"></td>
-                        <td class="text-left td" id="a21"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a12"></td>
-                        <td class="text-left td" id="a22"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a13"></td>
-                        <td class="text-left td" id="a23"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a14"></td>
-                        <td class="text-left td" id="a24"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a15"></td>
-                        <td class="text-left td" id="a25"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a16"></td>
-                        <td class="text-left td" id="a26"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a17"></td>
-                        <td class="text-left td" id="a27"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a18"></td>
-                        <td class="text-left td" id="a28"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a19"></td>
-                        <td class="text-left td" id="a29"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a110"></td>
-                        <td class="text-left td" id="a210"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a111"></td>
-                        <td class="text-left td" id="a211"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a112"></td>
-                        <td class="text-left td" id="a212"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a113"></td>
-                        <td class="text-left td" id="a213"></td>
-                    </tr>
-                    <tr class="rows">
-                        <td class="text-left td" id="a114"></td>
-                        <td class="text-left td" id="a214"></td>
-                    </tr>
-                </tbody>
-                <tbody class="right-col"></tbody>
-            </table>
+    <div class="tw-bg-[#1e1e1e] box-content rounded-[10px] tw-w-[750px] tw-pb-[30px]">
+
+        <div class="tw-inline tw-text-white tw-flex tw-items-center">
+            <div class="tw-inline">
+                <h1 class="tw-pt-[30px] tw-pl-[30px]">Magnitude Statistics</h1>
+            </div>
+
+            <div class="tw-inline tw-relative tw-ml-2 tw-mt-[30px] tw-group">
+                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                </svg>
+                <div class="tw-absolute tw-left-1/2 tw-transform tw--translate-x-1/2 tw-top-full tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center">
+                    <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2 tw-w-48 tw-whitespace-normal tw-translate-x-\[-20%\]">
+                        There is a matching source in the reference image. The apparent magnitude combines the difference and reference fluxes.
+                    </div>
+                </div>
+            </div>
         </div>
-        <div style="display: inline;">
-            <div style="padding:25px 0px 0px 0px ; display: inline-block;">
-                <label style="color:white; padding: 0px 0px 0px 50px;" for="rowSelector">Rows to display:</label>
-                <select id="rowSelect" style="color: white; background-color: #1e1e1e; border: none; border-bottom: solid; border-width: 1px;">
+            <div class="tw-text-white" id="tableContainer">
+                <table class="tw-overflow-hidden tw-w-[400px] tw-ml-[50px] tw-table-fixed tw-border-spacing-[15px 0px] tw-border-collapse" id="myTable">
+                    <colgroup><col><col></colgroup>
+                    <thead>
+                        <tr>
+                            <th class="tw-text-left hover:tw-cursor-pointer">
+                                <p class="tw-inline"> Stat </p>
+                                <button id="statButton" class="">
+                                    <svg class="tw-h-6 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z"/>
+                                        <line x1="12" y1="5" x2="12" y2="19" />
+                                        <line x1="16" y1="9" x2="12" y2="5" />
+                                        <line x1="8" y1="9" x2="12" y2="5" />
+                                    </svg>
+                                </button>
+                            </th>
+                            <th class="tw-text-left"> <p class="tw-inline"> r </p><button class="tw-inline"> <svg class="tw-h-6 tw-w-6"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="16" y1="9" x2="12" y2="5" />  <line x1="8" y1="9" x2="12" y2="5" /></svg> </button></th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left" id="a11"></td>
+                            <td class="tw-text-left" id="a21"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a12"></td>
+                            <td class="tw-text-left " id="a22"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a13"></td>
+                            <td class="tw-text-left " id="a23"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a14"></td>
+                            <td class="tw-text-left " id="a24"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a15"></td>
+                            <td class="tw-text-left " id="a25"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a16"></td>
+                            <td class="tw-text-left " id="a26"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a17"></td>
+                            <td class="tw-text-left " id="a27"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a18"></td>
+                            <td class="tw-text-left " id="a28"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a19"></td>
+                            <td class="tw-text-left " id="a29"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a110"></td>
+                            <td class="tw-text-left " id="a210"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a111"></td>
+                            <td class="tw-text-left " id="a211"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a112"></td>
+                            <td class="tw-text-left " id="a212"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a113"></td>
+                            <td class="tw-text-left " id="a213"></td>
+                        </tr>
+                        <tr class="hover:tw-opacity-70">
+                            <td class="tw-text-left " id="a114"></td>
+                            <td class="tw-text-left " id="a214"></td>
+                        </tr>
+                    </tbody>
+                    <tbody class=""></tbody>
+                </table>
+            </div>
+
+        <div class="tw-inline">
+            <div class="tw-pt-[25px] tw-inline-block">
+                <label class="tw-pl-[50px] tw-text-white" for="rowSelector">Rows to display:</label>
+                <select id="rowSelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-none tw-border-b-solid tw-border">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="14">All</option>
                 </select>
             </div>
-            <div style="display: inline-block; color: white; padding-left: 40px;">
+            <div class="tw-inline-block tw-text-white tw-pl-[40px]">
                 <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
             </div>
-            <div style="display: inline-block; padding-left: 60px;">
-                    <button onclick="navigateTable(-1)" style="color:white; padding: 0px 20px 10px 0px;"> < </span>
-                    <button onclick="navigateTable(1)" style="color:white;"> > </button>
+            <div class="tw-inline-block tw-pl-[60px]">
+                    <button onclick="navigateTable(-1)" class="tw-text-white tw-pr-[20px]"> < </span>
+                    <button onclick="navigateTable(1)"  class="tw-text-white"> > </button>
             </div>
-            
+
         </div>
+
     </div>
 
 <script>
@@ -149,18 +145,47 @@
     const stat = Object.keys(statR);
     const r = Object.values(statR);
 
-    for (let i = 0; i < stat.length * 2; i++){
+    let fakeStat = stat.slice()
+    let fakeR = r.slice()
+    const statReversed = fakeStat.reverse()
+    const rReversed = fakeR.reverse()
 
-        if (i < 14){
-            let row = '1';
-            let name = 'a' + row + String(i+1);
-            document.getElementById(name).innerHTML = stat[i];
+    function displayColumns(stat,r,statReversed,rReversed){
+        if (boolColumns === 0){
+            for (let i = 0; i < stat.length * 2; i++){
+
+                if (i < 14){
+                    let row = '1';
+                    let name = 'a' + row + String(i+1);
+                    document.getElementById(name).innerHTML = stat[i];
+                } else {
+                    row = '2';
+                    let name = 'a' + row + String(i - stat.length + 1);
+                    document.getElementById(name).innerHTML = r[i - stat.length];
+                }
+            }
+            boolColumns = 1;
+
         } else {
-            row = '2';
-            let name = 'a' + row + String(i - stat.length + 1);
-            document.getElementById(name).innerHTML = r[i - stat.length];
+            for (let i = 0; i < stat.length * 2; i++){
+
+                if (i < 14){
+                    let row = '1';
+                    let name = 'a' + row + String(i+1);
+                    document.getElementById(name).innerHTML = statReversed[i];
+                } else {
+                    row = '2';
+                    let name = 'a' + row + String(i - statReversed.length + 1);
+                    document.getElementById(name).innerHTML = rReversed[i - statReversed.length];
+                }
+            }
+            boolColumns = 0;
         }
     }
+    let boolColumns = 0;
+    displayColumns(stat,r,statReversed,rReversed,boolColumns);
+
+    document.getElementById('statButton').addEventListener('click',() => displayColumns(stat,r,statReversed,rReversed))
 
     function navigateTable(direction) {
         currentPage += direction;
@@ -186,7 +211,7 @@
         } else {
             document.getElementById('second-number').innerHTML = endIndex;
         }
-        
+
 
         const rows = dataTableBody.getElementsByTagName('tr');
         for (let i = 0; i < rows.length; i++) {
@@ -209,8 +234,10 @@
         currentPage = 1;
         showTablePage();
     });
-
     showTablePage();
+
+
+
 </script>
 
 </body>
