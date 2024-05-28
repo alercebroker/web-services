@@ -96,6 +96,18 @@
   margin-left: 50px;
 }
 
+.tw-preflight :is(.tw-ml-\[30px\]) {
+  margin-left: 30px;
+}
+
+.tw-preflight :is(.tw-mb-\[20px\]) {
+  margin-bottom: 20px;
+}
+
+.tw-preflight :is(.tw-mt-\[10px\]) {
+  margin-top: 10px;
+}
+
 .tw-preflight :is(.tw-box-content) {
   box-sizing: content-box;
 }
@@ -222,6 +234,26 @@
 
 .tw-preflight :is(.tw-w-5) {
   width: 1.25rem;
+}
+
+.tw-preflight :is(.tw-w-\[600px\]) {
+  width: 600px;
+}
+
+.tw-preflight :is(.tw-w-\[700px\]) {
+  width: 700px;
+}
+
+.tw-preflight :is(.tw-w-\[650px\]) {
+  width: 650px;
+}
+
+.tw-preflight :is(.tw-w-\[95\%\]) {
+  width: 95%;
+}
+
+.tw-preflight :is(.tw-w-\[90\%\]) {
+  width: 90%;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -552,6 +584,18 @@
   padding-right: 7.5px;
 }
 
+.tw-preflight :is(.tw-pl-\[10px\]) {
+  padding-left: 10px;
+}
+
+.tw-preflight :is(.tw-pl-\[8px\]) {
+  padding-left: 8px;
+}
+
+.tw-preflight :is(.tw-pl-\[5px\]) {
+  padding-left: 5px;
+}
+
 .tw-preflight :is(.tw-text-left) {
   text-align: left;
 }
@@ -572,6 +616,11 @@
 .tw-preflight :is(.tw-text-xs) {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.tw-preflight :is(.tw-text-2xl) {
+  font-size: 1.5rem;
+  line-height: 2rem;
 }
 
 .tw-preflight :is(.tw-font-bold) {
