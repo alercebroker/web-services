@@ -435,6 +435,11 @@
   background-color: rgb(146 146 146 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-bg-black) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.tw-p-2) {
   padding: 0.5rem;
 }
