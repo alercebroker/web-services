@@ -123,7 +123,6 @@ async def object_mag_app(
 ):
   
     mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
-    
     #print(mag_stats.__dict__)
     ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
     ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'

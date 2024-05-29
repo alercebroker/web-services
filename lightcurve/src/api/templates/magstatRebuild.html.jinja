@@ -33,84 +33,7 @@
         </div>
 
         <div class="tw-text-white" id="tableContainer">
-            <table class="tw-truncate tw-table tw-m-0 tw-text-left tw-border-spacing-40 tw-w-full" id="myTable">
-                <colgroup><col><col></colgroup>
-                <thead>
-                    <tr>
-                        <th class="tw-text-left hover:tw-cursor-pointer">
-                            <p class="tw-inline"> Stat </p>
-                            <button id="statButton" class="">
-                                
-                            </button>
-                        </th>
-                        <th class="tw-text-left"> 
-                            <p class="tw-inline"> r </p>
-                            <button id="rButton" class="tw-inline"> 
-                            
-                            </button>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="dataTableBody">
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left" id="a11"></td>
-                        <td class="tw-text-left" id="a21"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a12"></td>
-                        <td class="tw-text-left " id="a22"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a13"></td>
-                        <td class="tw-text-left " id="a23"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a14"></td>
-                        <td class="tw-text-left " id="a24"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a15"></td>
-                        <td class="tw-text-left " id="a25"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a16"></td>
-                        <td class="tw-text-left " id="a26"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a17"></td>
-                        <td class="tw-text-left " id="a27"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a18"></td>
-                        <td class="tw-text-left " id="a28"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a19"></td>
-                        <td class="tw-text-left " id="a29"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a110"></td>
-                        <td class="tw-text-left " id="a210"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a111"></td>
-                        <td class="tw-text-left " id="a211"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a112"></td>
-                        <td class="tw-text-left " id="a212"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
-                        <td class="tw-text-left " id="a113"></td>
-                        <td class="tw-text-left " id="a213"></td>
-                    </tr>
-                    <tr class="hover:tw-bg-[#757575] tw-duration-200">
-                        <td class="tw-text-left " id="a114"></td>
-                        <td class="tw-text-left " id="a214"></td>
-                    </tr>
-                </tbody>
-                <tbody class=""></tbody>
-            </table>
+            
         </div>
 
         <div class="tw-inline">
@@ -141,31 +64,73 @@
     let rowsPerPage = parseInt(rowSelect.value);
     let currentPage = 1;
 
-    let statR = {{stat_r | tojson}};
+    let stat = {{stat_r | tojson}};
+    console.log(stat)
+    //const stat = Object.keys(statR);
+    //const r = Object.values(statR);
 
-    const stat = Object.keys(statR);
-    const r = Object.values(statR);
+    //let fakeStat = stat.slice()
+    //let fakeR = r.slice()
+    //const statReversed = fakeStat.reverse()
+    //const rReversed = fakeR.reverse()
 
-    let fakeStat = stat.slice()
-    let fakeR = r.slice()
-    const statReversed = fakeStat.reverse()
-    const rReversed = fakeR.reverse()
+    function createTable() {
 
-    function displayColumns(stat,r,statReversed,rReversed){
+        let columNames = ['Stat','g','r','i','a','s','d']
+        const numColumns = 3; // Esto  es numero de bandas + 1
+        const numRows = 14; // Fixed at 14 rows
+        const tableContainer = document.getElementById("tableContainer");
+
+        // Clear any existing table
+        tableContainer.innerHTML = "";
+
+        // Create the table element
+        const table = document.createElement("table");
+
+        // Create the table header row
+        const headerRow = document.createElement("tr");
+        for (let i = 0; i < numColumns; i++) {
+            const th = document.createElement("th");
+            th.textContent = columNames[i];
+            th.style.padding = '8px'
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        // Create the table data rows
+        for (let i = 0; i < numRows; i++) {
+            const dataRow = document.createElement("tr");
+            for (let j = 0; j < numColumns; j++) {
+                const td = document.createElement("td");
+                td.style.padding = '8px'
+                td.id = `cell-${i}-${j}`
+                dataRow.appendChild(td);
+            }
+            table.appendChild(dataRow);
+        }
+
+        // Append the table to the container
+        tableContainer.appendChild(table);
+    }
+
+    createTable()
+    function displayColumns(stat){
+
+        let boolColumns = 0;
+        let nCols = 3;
+        let nRows = 14;
         if (boolColumns === 0){
-            for (let i = 0; i < stat.length * 2; i++){
-
-                if (i < 14){
-                    let row = '1';
-                    let name = 'a' + row + String(i+1);
-                    document.getElementById(name).innerHTML = stat[i];
-                } else {
-                    row = '2';
-                    let name = 'a' + row + String(i - stat.length + 1);
-                    document.getElementById(name).innerHTML = r[i - stat.length];
+            
+            for (let i = 0; i < nCols; i++){
+                for (let j = 0; j < nRows; j++){
+                    let name = 'cell-'+String(i)+'-'+String(j)
+                    if (i === 0){
+                        console.log(stat)
+                        //document.getElementById(name).innerHTML = Object.keys(stat[0])[j]
+                    }
+                    
                 }
             }
-            boolColumns = 1;
 
         } else {
             for (let i = 0; i < stat.length * 2; i++){
@@ -184,7 +149,7 @@
         }
     }
     let boolColumns = 0;
-    displayColumns(stat,r,statReversed,rReversed,boolColumns);
+    //displayColumns(stat);
     
 
     const arrowUp = `<svg class="tw-h-6 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -278,7 +243,7 @@
     });
     showTablePage();
     
-
+    
 
 
 </script>
