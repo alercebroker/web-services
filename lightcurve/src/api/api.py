@@ -41,6 +41,7 @@ app.include_router(prefix="/htmx", router=htmx.router)
 app.include_router(prefix="/period", router=period.router)
 app.include_router(prefix="/object", router=object.router)
 app.include_router(prefix="/magStat", router=object.router)
+app.include_router(prefix="/crossmatch", router=object.router)
 
 app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
 
