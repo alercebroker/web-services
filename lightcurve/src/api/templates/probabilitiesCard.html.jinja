@@ -14,12 +14,12 @@
 
     <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
 
-        <div class="tw-flex tw-justify-center">
-            <select id="mySelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-none">
+        <div class="tw-flex tw-justify-center tw-border-solid tw-border-yellow-400">
+            <select id="mySelect" class="tw-appearance-none tw-text-white tw-bg-[#1e1e1e] tw-border-[0px] tw-outline-[0px] tw-border-b-[2px] tw-border-[#1e1e1e] tw-border-b-white tw-w-[50%]">
             </select>
         </div>
 
-        <div class="tw-relative tw-w-[50%] tw-h-[50%] tw-justify-center">
+        <div class="tw-flex tw-w-[50%] tw-h-[50%] tw-justify-center">
             <canvas id="myChart"></canvas>
         </div>
 
@@ -132,14 +132,34 @@
                 },
             }
         };
+        // Function to capitalize just the first letter of a word
+        function capitalize(word){
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }
+        // Function that split the word by the _ and joins with spaces and capitalized words
+        function changeTitles(uniquekeys){
+            let keysTitle = [];
+
+            for (let i = 0; i < uniqueKeys.length; i++){
+                let splittedWord = uniqueKeys[i].split('_');
+                let auxList = []
+                for (let j = 0; j < splittedWord.length; j++){
+                    auxList.push(capitalize(splittedWord[j]));
+                }
+                keysTitle.push(auxList.join(' '))
+            }
+            return keysTitle;
+        }
+
+        let keysTitle = changeTitles(uniqueKeys)
 
         // The next for loop generates the options in the select html automaticly and add values to the element
         for (let i = 0; i < uniqueKeys.length; i++){
-
+            
             const option = document.createElement('option');
 
             option.value = uniqueKeys[i];
-            option.text  = uniqueKeys[i];
+            option.text  = keysTitle[i];
             selectElement.appendChild(option);
 
         }
