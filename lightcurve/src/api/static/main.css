@@ -136,6 +136,10 @@
   height: 100%;
 }
 
+.tw-preflight :is(.tw-h-\[100vh\]) {
+  height: 100vh;
+}
+
 .tw-preflight :is(.tw-h-\[12\.5\%\]) {
   height: 12.5%;
 }
@@ -144,20 +148,16 @@
   height: 40px;
 }
 
+.tw-preflight :is(.tw-h-\[50\%\]) {
+  height: 50%;
+}
+
 .tw-preflight :is(.tw-h-\[500px\]) {
   height: 500px;
 }
 
 .tw-preflight :is(.tw-h-auto) {
   height: auto;
-}
-
-.tw-preflight :is(.tw-h-\[100vh\]) {
-  height: 100vh;
-}
-
-.tw-preflight :is(.tw-h-\[50\%\]) {
-  height: 50%;
 }
 
 .tw-preflight :is(.tw-w-12) {
@@ -192,6 +192,10 @@
   width: 400px;
 }
 
+.tw-preflight :is(.tw-w-\[50\%\]) {
+  width: 50%;
+}
+
 .tw-preflight :is(.tw-w-\[70px\]) {
   width: 70px;
 }
@@ -202,10 +206,6 @@
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%;
-}
-
-.tw-preflight :is(.tw-w-\[50\%\]) {
-  width: 50%;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -1169,10 +1169,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-backdrop-opacity: ;
   --tw-backdrop-saturate: ;
   --tw-backdrop-sepia: ;
-}
-
-.tw-preflight :is(.hover\:tw-block:hover) {
-  display: block;
 }
 
 .tw-preflight :is(.hover\:tw-cursor-pointer:hover) {

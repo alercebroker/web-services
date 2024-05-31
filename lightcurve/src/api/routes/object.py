@@ -115,3 +115,26 @@ async def object_crossmatch_app(
       context={'request': request,
                },
   )
+
+@router.get("/probabilities/", response_class=HTMLResponse)
+async def object_crossmatch_app(
+    request: Request,
+):
+    
+    #print(mag_stats.__dict__)
+    ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
+    ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'
+    ##            ];
+    ##
+    ##r = ['false','true','1','0','17.933','17.933','17.933','17.933','0','17.933','17.933',
+    ##            '60432.473','60432.473','24.4.1'
+    ##            ];
+    
+    #stat_r = dict(zip(stat, r))
+
+
+    return templates.TemplateResponse(
+      name='probabilitiesCard.html.jinja',
+      context={'request': request,
+               },
+  )
