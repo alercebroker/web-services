@@ -361,6 +361,10 @@
   border-style: solid;
 }
 
+.tw-preflight :is(.tw-border-none) {
+  border-style: none;
+}
+
 .tw-preflight :is(.tw-border-\[\#1e1e1e\]) {
   --tw-border-opacity: 1;
   border-color: rgb(30 30 30 / var(--tw-border-opacity));
@@ -563,6 +567,10 @@
 
 .tw-preflight :is(.tw-underline) {
   text-decoration-line: underline;
+}
+
+.tw-preflight :is(.tw-decoration-1) {
+  text-decoration-thickness: 1px;
 }
 
 .tw-preflight :is(.tw-opacity-100) {
