@@ -12,19 +12,18 @@
 
 <body class="tw-preflight dark:tw-bg-black tw-dark tw-flex tw-justify-center tw-h-[100vh]">
 
-    <div
-        class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
+    <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
 
-        <div class="display-menu">
-
+        <div class="tw-flex tw-justify-center">
+            <select id="mySelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-none">
+            </select>
         </div>
-        <div class="tw-relative tw-w-[50%] tw-h-[50%]">
+
+        <div class="tw-relative tw-w-[50%] tw-h-[50%] tw-justify-center">
             <canvas id="myChart"></canvas>
         </div>
 
-
     </div>
-
 
 
 
@@ -33,7 +32,7 @@
     <script>
 
         let db = [{ "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "SNIa", "probability": 0.066, "ranking": 4 }, { "classifier_name": "lc_classifier_periodic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "LPV", "probability": 0.308, "ranking": 1 }, { "classifier_name": "lc_classifier_stochastic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "QSO", "probability": 0.028, "ranking": 4 }, { "classifier_name": "lc_classifier_top", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "Transient", "probability": 1.0, "ranking": 1 }, { "classifier_name": "lc_classifier_transient", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "SNIa", "probability": 0.066, "ranking": 4 }, { "classifier_name": "stamp_classifier", "classifier_version": "stamp_classifier_1.0.0", "class_name": "SN", "probability": 0.79377556, "ranking": 1 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "SNIbc", "probability": 0.12, "ranking": 3 }, { "classifier_name": "lc_classifier_periodic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "E", "probability": 0.068, "ranking": 6 }, { "classifier_name": "lc_classifier_stochastic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "AGN", "probability": 0.076, "ranking": 3 }, { "classifier_name": "lc_classifier_top", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "Stochastic", "probability": 0.0, "ranking": 2 }, { "classifier_name": "lc_classifier_transient", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "SNIbc", "probability": 0.12, "ranking": 3 }, { "classifier_name": "stamp_classifier", "classifier_version": "stamp_classifier_1.0.0", "class_name": "AGN", "probability": 0.054537576, "ranking": 3 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "SNII", "probability": 0.666, "ranking": 1 }, { "classifier_name": "lc_classifier_periodic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "DSCT", "probability": 0.072, "ranking": 5 }, { "classifier_name": "lc_classifier_stochastic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "Blazar", "probability": 0.132, "ranking": 2 }, { "classifier_name": "lc_classifier_top", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "Periodic", "probability": 0.0, "ranking": 2 }, { "classifier_name": "lc_classifier_transient", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "SNII", "probability": 0.666, "ranking": 1 }, { "classifier_name": "stamp_classifier", "classifier_version": "stamp_classifier_1.0.0", "class_name": "VS", "probability": 0.06481175, "ranking": 2 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "SLSN", "probability": 0.148, "ranking": 2 }, { "classifier_name": "lc_classifier_periodic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "RRL", "probability": 0.252, "ranking": 2 }, { "classifier_name": "lc_classifier_stochastic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "CV/Nova", "probability": 0.74, "ranking": 1 }, { "classifier_name": "lc_classifier_transient", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "SLSN", "probability": 0.148, "ranking": 2 }, { "classifier_name": "stamp_classifier", "classifier_version": "stamp_classifier_1.0.0", "class_name": "asteroid", "probability": 0.0374948, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "QSO", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier_periodic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "CEP", "probability": 0.164, "ranking": 3 }, { "classifier_name": "lc_classifier_stochastic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "YSO", "probability": 0.024, "ranking": 5 }, { "classifier_name": "stamp_classifier", "classifier_version": "stamp_classifier_1.0.0", "class_name": "bogus", "probability": 0.049380366, "ranking": 4 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "AGN", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier_periodic", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "Periodic-Other", "probability": 0.136, "ranking": 4 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "Blazar", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "CV/Nova", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "YSO", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "LPV", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "E", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "DSCT", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "RRL", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "CEP", "probability": 0.0, "ranking": 5 }, { "classifier_name": "lc_classifier", "classifier_version": "hierarchical_rf_1.1.0", "class_name": "Periodic-Other", "probability": 0.0, "ranking": 5 }]
-        
+
         function uniqueValues(db) {
             
             const classKeys = [];
@@ -75,11 +74,10 @@
             return principalDict[uniqueKeys[n]];
         }
 
-        let currentDict = selector(0);
-
         const ctx = document.getElementById('myChart').getContext('2d');
+        const selectElement = document.getElementById('mySelect');
 
-        
+         let currentDict = selector(0);
 
         const data = {
             labels: Object.keys(currentDict),
@@ -130,11 +128,29 @@
             }
         };
 
-        const myChart = new Chart(ctx, config);
+        
 
 
+        for (let i = 0; i < uniqueKeys.length; i++){
+            const option = document.createElement('option');
+
+            option.value = uniqueKeys[i];
+            option.text  = uniqueKeys[i];
+            selectElement.appendChild(option);
+
+        }
+
+        let myChart = new Chart(ctx, config);
+
+        selectElement.addEventListener('change', function() {
+            let currentDictChanged = selector(uniqueKeys.indexOf(this.value));
+            myChart.data.labels = Object.keys(currentDictChanged)
+            myChart.data.datasets.data = Object.keys(currentDictChanged)
+            myChart.update();
+        });
 
     </script>
 </body>
 
 </html>
+
