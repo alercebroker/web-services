@@ -160,6 +160,54 @@
   height: auto;
 }
 
+.tw-preflight :is(.tw-h-\[600px\]) {
+  height: 600px;
+}
+
+.tw-preflight :is(.tw-h-\[550px\]) {
+  height: 550px;
+}
+
+.tw-preflight :is(.tw-h-\[16\.66666\%\]) {
+  height: 16.66666%;
+}
+
+.tw-preflight :is(.tw-h-\[\'\+String\(optionsHeight\)\+\'\%\]) {
+  height: '+String(optionsHeight)+'%;
+}
+
+.tw-preflight :is(.tw-h-\[\'\+String\(16\.666\)\+\'\%\]) {
+  height: '+String(16.666)+'%;
+}
+
+.tw-preflight :is(.tw-h-\[16\.6\'\+\'6666\%\]) {
+  height: 16.6'+'6666%;
+}
+
+.tw-preflight :is(.tw-h-\[\'\+optionsHeight\+\'\%\]) {
+  height: '+optionsHeight+'%;
+}
+
+.tw-preflight :is(.tw-h-\[16\.666666666666\%\]) {
+  height: 16.666666666666%;
+}
+
+.tw-preflight :is(.tw-h-\[16\.66666666666\%\]) {
+  height: 16.66666666666%;
+}
+
+.tw-preflight :is(.tw-h-\[optionsHeight\%\]) {
+  height: optionsHeight%;
+}
+
+.tw-preflight :is(.tw-h-\[30px\]) {
+  height: 30px;
+}
+
+.tw-preflight :is(.tw-h-\[70\%\]) {
+  height: 70%;
+}
+
 .tw-preflight :is(.tw-w-12) {
   width: 3rem;
 }
@@ -206,6 +254,18 @@
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%;
+}
+
+.tw-preflight :is(.tw-w-\[90\%\]) {
+  width: 90%;
+}
+
+.tw-preflight :is(.tw-w-\[80\%\]) {
+  width: 80%;
+}
+
+.tw-preflight :is(.tw-w-\[70\%\]) {
+  width: 70%;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -363,10 +423,6 @@
   border-width: 0px;
 }
 
-.tw-preflight :is(.tw-border-\[2px\]) {
-  border-width: 2px;
-}
-
 .tw-preflight :is(.tw-border-b) {
   border-bottom-width: 1px;
 }
@@ -377,6 +433,10 @@
 
 .tw-preflight :is(.tw-border-solid) {
   border-style: solid;
+}
+
+.tw-preflight :is(.tw-border-none) {
+  border-style: none;
 }
 
 .tw-preflight :is(.tw-border-\[\#1e1e1e\]) {
@@ -399,16 +459,16 @@
   border-color: rgb(250 204 21 / var(--tw-border-opacity));
 }
 
+.tw-preflight :is(.tw-border-b-white) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
 .tw-preflight :is(.tw-border-t-transparent) {
   border-top-color: transparent;
 }
 
-.tw-preflight :is(.tw-border-b-yellow-400) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(250 204 21 / var(--tw-border-opacity));
-}
-
-.tw-preflight :is(.tw-border-b-white) {
+.tw-preflight :is(.tw-border-b-\[white\]) {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
@@ -614,14 +674,6 @@
 
 .tw-preflight :is(.tw-outline-\[0px\]) {
   outline-width: 0px;
-}
-
-.tw-preflight :is(.tw-outline-\[2px\]) {
-  outline-width: 2px;
-}
-
-.tw-preflight :is(.tw-outline-\[opx\]) {
-  outline-color: opx;
 }
 
 .tw-preflight :is(.tw-duration-200) {
