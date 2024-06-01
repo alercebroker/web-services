@@ -1,3 +1,11 @@
+.tw-preflight :is(.tw-static) {
+  position: static;
+}
+
+.tw-preflight :is(.tw-fixed) {
+  position: fixed;
+}
+
 .tw-preflight :is(.tw-absolute) {
   position: absolute;
 }
@@ -28,6 +36,74 @@
 
 .tw-preflight :is(.tw-top-full) {
   top: 100%;
+}
+
+.tw-preflight :is(.tw-left-\[20px\]) {
+  left: 20px;
+}
+
+.tw-preflight :is(.tw-left-\[100px\]) {
+  left: 100px;
+}
+
+.tw-preflight :is(.tw-left-\[200px\]) {
+  left: 200px;
+}
+
+.tw-preflight :is(.tw-right-\[200px\]) {
+  right: 200px;
+}
+
+.tw-preflight :is(.tw-left-\[300px\]) {
+  left: 300px;
+}
+
+.tw-preflight :is(.tw-right-\[300px\]) {
+  right: 300px;
+}
+
+.tw-preflight :is(.tw-right-\[500px\]) {
+  right: 500px;
+}
+
+.tw-preflight :is(.tw-right-\[800px\]) {
+  right: 800px;
+}
+
+.tw-preflight :is(.tw-right-\[600px\]) {
+  right: 600px;
+}
+
+.tw-preflight :is(.tw-right-\[700px\]) {
+  right: 700px;
+}
+
+.tw-preflight :is(.tw-right-\[680px\]) {
+  right: 680px;
+}
+
+.tw-preflight :is(.tw-right-\[750px\]) {
+  right: 750px;
+}
+
+.tw-preflight :is(.tw-right-\[730px\]) {
+  right: 730px;
+}
+
+.tw-preflight :is(.tw-right-\[65px\]) {
+  right: 65px;
+}
+
+.tw-preflight :is(.tw-right-\[650px\]) {
+  right: 650px;
+}
+
+.tw-preflight :is(.tw-right-\[660px\]) {
+  right: 660px;
+}
+
+.tw-preflight :is(.tw-right-\[10px\]) {
+  right: 10px;
 }
 
 .tw-preflight :is(.tw-col-span-2) {
@@ -90,6 +166,30 @@
 
 .tw-preflight :is(.tw-mt-\[30px\]) {
   margin-top: 30px;
+}
+
+.tw-preflight :is(.tw-ml-\[10px\]) {
+  margin-left: 10px;
+}
+
+.tw-preflight :is(.tw-ml-\[30px\]) {
+  margin-left: 30px;
+}
+
+.tw-preflight :is(.tw-ml-\[60px\]) {
+  margin-left: 60px;
+}
+
+.tw-preflight :is(.tw-ml-\[80px\]) {
+  margin-left: 80px;
+}
+
+.tw-preflight :is(.tw-mr-\[100px\]) {
+  margin-right: 100px;
+}
+
+.tw-preflight :is(.tw-ml-\[40px\]) {
+  margin-left: 40px;
 }
 
 .tw-preflight :is(.tw-box-content) {
@@ -266,6 +366,18 @@
 
 .tw-preflight :is(.tw-w-\[70\%\]) {
   width: 70%;
+}
+
+.tw-preflight :is(.tw-w-\[75\%\]) {
+  width: 75%;
+}
+
+.tw-preflight :is(.tw-w-\[30\%\]) {
+  width: 30%;
+}
+
+.tw-preflight :is(.tw-w-\[40\%\]) {
+  width: 40%;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -591,6 +703,22 @@
 
 .tw-preflight :is(.tw-pt-\[30px\]) {
   padding-top: 30px;
+}
+
+.tw-preflight :is(.tw-pl-\[200px\]) {
+  padding-left: 200px;
+}
+
+.tw-preflight :is(.tw-pr-\[200px\]) {
+  padding-right: 200px;
+}
+
+.tw-preflight :is(.tw-pr-\[500px\]) {
+  padding-right: 500px;
+}
+
+.tw-preflight :is(.tw-pr-\[100px\]) {
+  padding-right: 100px;
 }
 
 .tw-preflight :is(.tw-text-left) {

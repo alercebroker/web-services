@@ -33,9 +33,9 @@
 
     <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-h-[550px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
         
-        <button class="tw-w-[80%] tw-h-[30px] tw-border-none tw-border-b-[2px] tw-border-b-[white] tw-text-white tw-justify-center"> Hola mundo</button>
+        <button id="display-button" class="tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-[0px] tw-outline-[0px] tw-border-b-[2px] tw-border-[#1e1e1e] tw-border-b-white tw-text-white tw-justify-center"></button>
 
-        <div id="mySelect" class="tw-hidden tw-box-content tw-absolute tw-opacity-100 tw-w-[377px] tw-h-[500px] tw-ml-[326px] tw-rounded-[50px] tw-shadow-2xl">
+        <div id="mySelect" class="tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-[500px] tw-rounded-[50px] tw-shadow-2xl">
             
         </div>
 
@@ -103,6 +103,7 @@
         
 
         let currentDict = selector(0);
+
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
         const data = {
             labels: Object.keys(currentDict),
@@ -177,11 +178,12 @@
         }
 
         let keysTitle = changeTitles(uniqueKeys)
+        document.getElementById('display-button').innerHTML = keysTitle[0]
+
         const selectElement = document.getElementById('mySelect');
 
         // The next for loop generates the menu of options and indexes the eventListener to every option in the menu to change the charts
         for (let i = 0; i < uniqueKeys.length; i++){
-            
             
             const newA = document.createElement('a');
             newA.id = keysTitle[i];
@@ -200,6 +202,8 @@
             selectElement.appendChild(newA);
 
             document.getElementById(keysTitle[i]).addEventListener('click', function() {
+                
+                document.getElementById('display-button').innerHTML = keysTitle[i];
 
                 let currentDictChanged = selector(uniqueKeys.indexOf(this.value));
                 myChart.data.labels = Object.keys(currentDictChanged)
