@@ -92,6 +92,26 @@
   margin-top: 30px;
 }
 
+.tw-preflight :is(.tw-ml-\[30px\]) {
+  margin-left: 30px;
+}
+
+.tw-preflight :is(.tw-ml-\[40px\]) {
+  margin-left: 40px;
+}
+
+.tw-preflight :is(.tw-ml-\[80px\]) {
+  margin-left: 80px;
+}
+
+.tw-preflight :is(.tw-mt-\[4px\]) {
+  margin-top: 4px;
+}
+
+.tw-preflight :is(.tw-mt-\[60px\]) {
+  margin-top: 60px;
+}
+
 .tw-preflight :is(.tw-box-content) {
   box-sizing: content-box;
 }
@@ -152,6 +172,30 @@
   height: auto;
 }
 
+.tw-preflight :is(.tw-h-\[100vh\]) {
+  height: 100vh;
+}
+
+.tw-preflight :is(.tw-h-\[16\.66666666666\%\]) {
+  height: 16.66666666666%;
+}
+
+.tw-preflight :is(.tw-h-\[30px\]) {
+  height: 30px;
+}
+
+.tw-preflight :is(.tw-h-\[550px\]) {
+  height: 550px;
+}
+
+.tw-preflight :is(.tw-h-\[70\%\]) {
+  height: 70%;
+}
+
+.tw-preflight :is(.tw-h-\[optionsHeight\%\]) {
+  height: optionsHeight%;
+}
+
 .tw-preflight :is(.tw-w-12) {
   width: 3rem;
 }
@@ -196,8 +240,24 @@
   width: 100%;
 }
 
+.tw-preflight :is(.tw-w-\[30px\]) {
+  width: 30px;
+}
+
+.tw-preflight :is(.tw-w-\[75\%\]) {
+  width: 75%;
+}
+
+.tw-preflight :is(.tw-w-\[90\%\]) {
+  width: 90%;
+}
+
 .tw-preflight :is(.tw-min-w-full) {
   min-width: 100%;
+}
+
+.tw-preflight :is(.tw-flex-grow) {
+  flex-grow: 1;
 }
 
 .tw-preflight :is(.tw-basis-3\/4) {
@@ -341,8 +401,16 @@
   border-width: 8px;
 }
 
+.tw-preflight :is(.tw-border-\[0px\]) {
+  border-width: 0px;
+}
+
 .tw-preflight :is(.tw-border-b) {
   border-bottom-width: 1px;
+}
+
+.tw-preflight :is(.tw-border-b-\[2px\]) {
+  border-bottom-width: 2px;
 }
 
 .tw-preflight :is(.tw-border-solid) {
@@ -565,6 +633,10 @@
   --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.tw-preflight :is(.tw-outline-\[0px\]) {
+  outline-width: 0px;
 }
 
 .tw-preflight :is(.tw-duration-200) {
@@ -1157,6 +1229,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-backdrop-opacity: ;
   --tw-backdrop-saturate: ;
   --tw-backdrop-sepia: ;
+}
+
+.tw-preflight :is(.hover\:tw-block:hover) {
+  display: block;
 }
 
 .tw-preflight :is(.hover\:tw-cursor-pointer:hover) {
