@@ -80,6 +80,10 @@
   margin-left: 326px;
 }
 
+.tw-preflight :is(.tw-ml-\[40px\]) {
+  margin-left: 40px;
+}
+
 .tw-preflight :is(.tw-ml-\[80px\]) {
   margin-left: 80px;
 }
@@ -100,68 +104,16 @@
   margin-top: 30px;
 }
 
-.tw-preflight :is(.tw-ml-\[500px\]) {
-  margin-left: 500px;
-}
-
-.tw-preflight :is(.tw-ml-\[550px\]) {
-  margin-left: 550px;
-}
-
-.tw-preflight :is(.tw-ml-\[525px\]) {
-  margin-left: 525px;
-}
-
-.tw-preflight :is(.tw-ml-\[530px\]) {
-  margin-left: 530px;
-}
-
-.tw-preflight :is(.tw-ml-\[540px\]) {
-  margin-left: 540px;
-}
-
-.tw-preflight :is(.tw-mt-\[40px\]) {
-  margin-top: 40px;
+.tw-preflight :is(.tw-mt-\[4px\]) {
+  margin-top: 4px;
 }
 
 .tw-preflight :is(.tw-mt-\[60px\]) {
   margin-top: 60px;
 }
 
-.tw-preflight :is(.tw-mb-\[60px\]) {
-  margin-bottom: 60px;
-}
-
-.tw-preflight :is(.tw-mt-\[5px\]) {
-  margin-top: 5px;
-}
-
-.tw-preflight :is(.tw-mt-\[2px\]) {
-  margin-top: 2px;
-}
-
-.tw-preflight :is(.tw-mt-\[3px\]) {
-  margin-top: 3px;
-}
-
-.tw-preflight :is(.tw-mt-\[4px\]) {
-  margin-top: 4px;
-}
-
-.tw-preflight :is(.tw-ml-\[35px\]) {
-  margin-left: 35px;
-}
-
-.tw-preflight :is(.tw-ml-\[40px\]) {
-  margin-left: 40px;
-}
-
 .tw-preflight :is(.tw-box-content) {
   box-sizing: content-box;
-}
-
-.tw-preflight :is(.tw-block) {
-  display: block;
 }
 
 .tw-preflight :is(.tw-inline-block) {
@@ -244,10 +196,6 @@
   height: auto;
 }
 
-.tw-preflight :is(.tw-h-\[50px\]) {
-  height: 50px;
-}
-
 .tw-preflight :is(.tw-w-12) {
   width: 3rem;
 }
@@ -270,6 +218,10 @@
 
 .tw-preflight :is(.tw-w-\[300px\]) {
   width: 300px;
+}
+
+.tw-preflight :is(.tw-w-\[30px\]) {
+  width: 30px;
 }
 
 .tw-preflight :is(.tw-w-\[377px\]) {
@@ -298,18 +250,6 @@
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%;
-}
-
-.tw-preflight :is(.tw-w-\[30px\]) {
-  width: 30px;
-}
-
-.tw-preflight :is(.tw-w-\[60px\]) {
-  width: 60px;
-}
-
-.tw-preflight :is(.tw-w-\[50px\]) {
-  width: 50px;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -347,26 +287,6 @@
 
 .tw-preflight :is(.tw-translate-y-1\/2) {
   --tw-translate-y: 50%;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.tw-preflight :is(.tw--translate-y-2) {
-  --tw-translate-y: -0.5rem;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.tw-preflight :is(.tw--translate-y-0) {
-  --tw-translate-y: -0px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.tw-preflight :is(.tw-translate-y-0) {
-  --tw-translate-y: 0px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.tw-preflight :is(.tw-translate-y-2) {
-  --tw-translate-y: 0.5rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -410,10 +330,6 @@
 
 .tw-preflight :is(.tw-justify-center) {
   justify-content: center;
-}
-
-.tw-preflight :is(.tw-justify-between) {
-  justify-content: space-between;
 }
 
 .tw-preflight :is(.tw-gap-2) {
@@ -516,18 +432,8 @@
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
 }
 
-.tw-preflight :is(.tw-border-b-white) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
-}
-
 .tw-preflight :is(.tw-border-t-transparent) {
   border-top-color: transparent;
-}
-
-.tw-preflight :is(.tw-border-b-black) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.tw-bg-\[\#1e1e1e\]) {
@@ -650,26 +556,6 @@
   padding-top: 30px;
 }
 
-.tw-preflight :is(.tw-pt-\[10px\]) {
-  padding-top: 10px;
-}
-
-.tw-preflight :is(.tw-pb-\[10px\]) {
-  padding-bottom: 10px;
-}
-
-.tw-preflight :is(.tw-pb-\[30px\]) {
-  padding-bottom: 30px;
-}
-
-.tw-preflight :is(.tw-pb-\[60px\]) {
-  padding-bottom: 60px;
-}
-
-.tw-preflight :is(.tw-pl-\[30px\]) {
-  padding-left: 30px;
-}
-
 .tw-preflight :is(.tw-text-left) {
   text-align: left;
 }
@@ -741,14 +627,6 @@
 
 .tw-preflight :is(.tw-opacity-50) {
   opacity: 0.5;
-}
-
-.tw-preflight :is(.tw-opacity-0) {
-  opacity: 0;
-}
-
-.tw-preflight :is(.tw-opacity-20) {
-  opacity: 0.2;
 }
 
 .tw-preflight :is(.tw-shadow-2xl) {
@@ -1426,11 +1304,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.dark\:tw-border-white:is(.tw-dark *)) {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
-}
-
-.tw-preflight :is(.dark\:tw-border-b-white:is(.tw-dark *)) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.dark\:tw-bg-\[\#1e1e1e\]:is(.tw-dark *)) {
