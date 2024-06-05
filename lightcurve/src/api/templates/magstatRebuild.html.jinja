@@ -74,11 +74,7 @@
     //const statReversed = fakeStat.reverse()
     //const rReversed = fakeR.reverse()
 
-    function createTable() {
-
-        let columNames = ['Stat','g','r','i','a','s','d']
-
-        const db = [
+    const db = [
             {
                 "fid": 1,
                 "stellar": false,
@@ -131,11 +127,13 @@
                 "step_id_corr": "24.5.1"
             }
         ]
+    const numColumns = db.length + 1; // Esto  es numero de bandas + 1
+    const numRows = 14; // Fixed at 14 rows
+    function createTable() {
 
-        console.log(db[0])
+        let columNames = ['Stat','g','r','i','a','s','d']
 
-        const numColumns = db.length + 1; // Esto  es numero de bandas + 1
-        const numRows = 14; // Fixed at 14 rows
+        
         const tableContainer = document.getElementById("tableContainer");
 
         // Clear any existing table
@@ -172,19 +170,18 @@
 
     createTable()
     
-    function displayColumns(stat){
+    function displayColumns(db){
 
         let boolColumns = 0;
-        let nCols = 3;
-        let nRows = 14;
         if (boolColumns === 0){
-            
-            for (let i = 0; i < nCols; i++){
-                for (let j = 0; j < nRows; j++){
-                    let name = 'cell-'+String(i)+'-'+String(j)
+            // Let's note that here i is for columns and j is for rows
+            for (let i = 0; i < numColumns; i++){
+                for (let j = 0; j < numRows; j++){
+                    let name = 'cell-'+String(j)+'-'+String(i)
                     if (i === 0){
-                        console.log(stat)
-                        //document.getElementById(name).innerHTML = Object.keys(stat[0])[j]
+                        document.getElementById(name).innerHTML = Object.keys(db[i])[j]
+                    } else {
+                        document.getElementById(name).innerHTML = Object.values(db[i])[j]
                     }
                     
                 }
@@ -206,6 +203,8 @@
             boolColumns = 0;
         }
     }
+
+    displayColumns(db);
     let boolColumns = 0;
     //displayColumns(stat);
     
