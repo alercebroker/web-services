@@ -42,7 +42,7 @@
                 <select id="rowSelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-b ">
                     <option value="5">5</option>
                     <option value="10">10</option>
-                    <option value="14">All</option>
+                    <option value="15">All</option>
                 </select>
             </div>
             <div class="tw-inline-block tw-text-white tw-pl-[40px]">
@@ -59,8 +59,7 @@
 
 <script>
     const tableContainer = document.getElementById('tableContainer');
-    const dataTableBody = document.getElementById('dataTableBody');
-    const rowSelect = document.getElementById('rowSelect');
+    //const rowSelect = document.getElementById('rowSelect');
     let rowsPerPage = parseInt(rowSelect.value);
     let currentPage = 1;
 
@@ -128,7 +127,8 @@
             }
         ]
     const numColumns = db.length + 1; // Esto  es numero de bandas + 1
-    const numRows = 14; // Fixed at 14 rows
+    const numRows = Object.keys(db[0]).length; 
+
     function createTable() {
 
         let columNames = ['Stat','g','r','i','a','s','d']
@@ -152,6 +152,8 @@
         }
         table.appendChild(headerRow);
 
+        const tBody = document.createElement('tbody')
+        tBody.setAttribute('id','dataTableBody')
         // Create the table data rows
         for (let i = 0; i < numRows; i++) {
             const dataRow = document.createElement("tr");
@@ -161,8 +163,9 @@
                 td.id = `cell-${i}-${j}`
                 dataRow.appendChild(td);
             }
-            table.appendChild(dataRow);
+            tBody.appendChild(dataRow);
         }
+        table.appendChild(tBody)
 
         // Append the table to the container
         tableContainer.appendChild(table);
@@ -171,19 +174,20 @@
     createTable()
     
     function displayColumns(db){
+        
+        for (let j = 0; j < numRows; j++) {
+            let name = 'cell-'+String(j)+'-'+String(0)
+            document.getElementById(name).innerHTML = Object.keys(db[0])[j]
+        }
 
-        let boolColumns = 0;
+        let boolColumns = 0; // por el momento, hasta que se agreguen los botones para reordenar
         if (boolColumns === 0){
             // Let's note that here i is for columns and j is for rows
-            for (let i = 0; i < numColumns; i++){
+            for (let i = 1; i < numColumns; i++){
                 for (let j = 0; j < numRows; j++){
                     let name = 'cell-'+String(j)+'-'+String(i)
-                    if (i === 0){
-                        document.getElementById(name).innerHTML = Object.keys(db[i])[j]
-                    } else {
-                        document.getElementById(name).innerHTML = Object.values(db[i])[j]
-                    }
-                    
+                    //console.log(Object.values(db[i-1])[j],i-1,j )
+                    document.getElementById(name).innerHTML = Object.values(db[i-1])[j]   
                 }
             }
 
@@ -205,77 +209,39 @@
     }
 
     displayColumns(db);
+    
+    const dataTableBody = document.getElementById('dataTableBody');
     let boolColumns = 0;
-    //displayColumns(stat);
-    
-
-    const arrowUp = `<svg class="tw-h-6 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z"/>
-                                    <line x1="12" y1="5" x2="12" y2="19" />
-                                    <line x1="16" y1="9" x2="12" y2="5" />
-                                    <line x1="8" y1="9" x2="12" y2="5" />
-                                </svg>`;
-
-    const arrowDown = `<svg class="tw-h-6 tw-w-6"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="16" y1="15" x2="12" y2="19" />  <line x1="8" y1="15" x2="12" y2="19" /></svg>`;
-    
-    document.getElementById('statButton').innerHTML = arrowUp;
-    document.getElementById('rButton').innerHTML = arrowUp;
-
-    document.getElementById('statButton').addEventListener('click',() => {
-        
-        displayColumns(stat,r,statReversed,rReversed);
-
-        if (boolColumns === 1) {
-            document.getElementById('statButton').innerHTML = arrowUp;
-            document.getElementById('rButton').innerHTML = arrowUp;
-        } else { 
-            document.getElementById('statButton').innerHTML = arrowDown;
-            document.getElementById('rButton').innerHTML = arrowDown;
-        }
-
-        }
-    )
-
-    document.getElementById('rButton').addEventListener('click',() => {
-        
-        displayColumns(stat,r,statReversed,rReversed);
-
-        if (boolColumns === 1) {
-            document.getElementById('statButton').innerHTML = arrowUp;
-            document.getElementById('rButton').innerHTML = arrowUp;
-        } else { 
-            document.getElementById('statButton').innerHTML = arrowDown;
-            document.getElementById('rButton').innerHTML = arrowDown;document.getElementById('rButton').innerHTML = arrowDown;document.getElementById('rButton').innerHTML = arrowDown;
-        }
-
-        }
-    )
 
     function navigateTable(direction) {
+
         currentPage += direction;
         const totalPages = Math.ceil(dataTableBody.rows.length / rowsPerPage);
+        
         if (currentPage < 1) {
-        currentPage = 1;
+            currentPage = 1;
         } else if (currentPage > totalPages) {
-        currentPage = totalPages;
+            currentPage = totalPages;
         }
-        showTablePage();
+        displayRows();
     }
 
-    function showTablePage() {
-        const startIndex = (currentPage - 1) * rowsPerPage;
+    let rowsToShow = 5;
+
+    function displayRows(rowsToShow) {
+
+        const startIndex = (currentPage - 1) * rowsToShow;
         if (startIndex === 0){
             document.getElementById('first-number').innerHTML = 1;
         } else {
             document.getElementById('first-number').innerHTML = startIndex;
         }
-        const endIndex = startIndex + rowsPerPage;
+        const endIndex = startIndex + rowsToShow;
         if (endIndex > dataTableBody.rows.length){
             document.getElementById('second-number').innerHTML = dataTableBody.rows.length;
         } else {
             document.getElementById('second-number').innerHTML = endIndex;
         }
-
 
         const rows = dataTableBody.getElementsByTagName('tr');
         for (let i = 0; i < rows.length; i++) {
@@ -285,20 +251,15 @@
             rows[i].style.display = 'none';
         }
         }
-    }
+    };
 
-    let startIndex = currentPage;
-    let endIndex = rowsPerPage;
+    displayRows(rowsToShow);
 
-    document.getElementById('first-number').innerHTML = startIndex;
-    document.getElementById('second-number').innerHTML = endIndex;
-    document.getElementById('total-number').innerHTML = dataTableBody.rows.length;
     rowSelect.addEventListener('change', () => {
-        rowsPerPage = parseInt(rowSelect.value);
+        rowsToShow = parseInt(rowSelect.value);
         currentPage = 1;
-        showTablePage();
+        displayRows(rowsToShow);
     });
-    showTablePage();
     
     
 
