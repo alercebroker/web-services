@@ -34,5 +34,13 @@ class MagStats(BaseModel):
 
     pass
 
+class Probability(BaseModel):
 
+    classifier_name: str 
+    classifier_version: str
+    class_name: str
+    probability: float
+    ranking: int
+    
+    pass
 

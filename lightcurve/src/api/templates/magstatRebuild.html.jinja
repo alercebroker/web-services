@@ -62,70 +62,7 @@
     //const rowSelect = document.getElementById('rowSelect');
     let rowsPerPage = parseInt(rowSelect.value);
     let currentPage = 1;
-
-  //  let stat = {{stat_r | tojson}};
-
-    //const stat = Object.keys(statR);
-    //const r = Object.values(statR);
-
-    //let fakeStat = stat.slice()
-    //let fakeR = r.slice()
-    //const statReversed = fakeStat.reverse()
-    //const rReversed = fakeR.reverse()
-
-    //const db = [
-    //        {
-    //            "fid": 1,
-    //            "stellar": false,
-    //            "corrected": true,
-    //            "ndet": 90,
-    //            "ndubious": 0,
-    //            "magmean": 19.945906,
-    //            "magmedian": 19.8591,
-    //            "magmax": 20.6775,
-    //            "magmin": 19.5176,
-    //            "magsigma": 0.2843235,
-    //            "maglast": 19.56272,
-    //            "magfirst": 20.3966,
-    //            "firstmjd": 58560.54,
-    //            "lastmjd": 60463.348,
-    //            "step_id_corr": "24.5.1"
-    //        },
-    //        {
-    //            "fid": 2,
-    //            "stellar": false,
-    //            "corrected": true,
-    //            "ndet": 37,
-    //            "ndubious": 0,
-    //            "magmean": 19.876518,
-    //            "magmedian": 19.8228,
-    //            "magmax": 20.3522,
-    //            "magmin": 19.632046,
-    //            "magsigma": 0.17786467,
-    //            "maglast": 19.751026,
-    //            "magfirst": 20.3522,
-    //            "firstmjd": 58572.473,
-    //            "lastmjd": 60463.363,
-    //            "step_id_corr": "24.5.1"
-    //        },
-    //        {
-    //            "fid": 3,
-    //            "stellar": false,
-    //            "corrected": true,
-    //            "ndet": 2,
-    //            "ndubious": 0,
-    //            "magmean": 19.35922,
-    //            "magmedian": 19.35922,
-    //            "magmax": 19.411596,
-    //            "magmin": 19.306843,
-    //            "magsigma": 0.052376747,
-    //            "maglast": 19.306843,
-    //            "magfirst": 19.411596,
-    //            "firstmjd": 60437.375,
-    //            "lastmjd": 60438.367,
-    //            "step_id_corr": "24.5.1"
-    //        }
-    //    ]
+    
     const rawDb = {{stat_r | tojson}}
     const db = Object.values(rawDb)
     const numColumns = db.length + 1; // Esto  es numero de bandas + 1

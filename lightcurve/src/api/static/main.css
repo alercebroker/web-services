@@ -252,18 +252,6 @@
   width: 100%;
 }
 
-.tw-preflight :is(.tw-w-\[70\%\]) {
-  width: 70%;
-}
-
-.tw-preflight :is(.tw-w-\[10\%\]) {
-  width: 10%;
-}
-
-.tw-preflight :is(.tw-w-\[1000\%\]) {
-  width: 1000%;
-}
-
 .tw-preflight :is(.tw-min-w-full) {
   min-width: 100%;
 }
@@ -1241,10 +1229,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-backdrop-opacity: ;
   --tw-backdrop-saturate: ;
   --tw-backdrop-sepia: ;
-}
-
-.tw-preflight :is(.hover\:tw-block:hover) {
-  display: block;
 }
 
 .tw-preflight :is(.hover\:tw-cursor-pointer:hover) {

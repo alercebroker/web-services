@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Query
 import json
 
-from core.object_service import get_object, get_mag_stats
+from core.object_service import get_object, get_mag_stats, get_probabilities,get_taxonomies
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -85,44 +85,15 @@ async def object_mag_app(
                },
   )
 
-@router.get("/crossmatch/", response_class=HTMLResponse)
+@router.get("/probabilities/{oid}", response_class=HTMLResponse)
 async def object_crossmatch_app(
     request: Request,
+    oid: str
 ):
-    
-    #print(mag_stats.__dict__)
-    ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
-    ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'
-    ##            ];
-    ##
-    ##r = ['false','true','1','0','17.933','17.933','17.933','17.933','0','17.933','17.933',
-    ##            '60432.473','60432.473','24.4.1'
-    ##            ];
-    
-    #stat_r = dict(zip(stat, r))
-
-
-    return templates.TemplateResponse(
-      name='crossmatchCard.html.jinja',
-      context={'request': request,
-               },
-  )
-
-@router.get("/probabilities/", response_class=HTMLResponse)
-async def object_crossmatch_app(
-    request: Request,
-):
-    
-    #print(mag_stats.__dict__)
-    ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
-    ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'
-    ##            ];
-    ##
-    ##r = ['false','true','1','0','17.933','17.933','17.933','17.933','0','17.933','17.933',
-    ##            '60432.473','60432.473','24.4.1'
-    ##            ];
-    
-    #stat_r = dict(zip(stat, r))
+    prob_list = get_probabilities(oid,session_factory = request.app.state.psql_session)
+    taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
+    print('Prob List: ',prob_list)
+    print('Taxo List: ',taxonomy_list)
 
 
     return templates.TemplateResponse(
@@ -131,29 +102,5 @@ async def object_crossmatch_app(
                },
   )
 
-# @router.get("/mag/{oid}", response_class=HTMLResponse)
-# async def object_mag_app(
-#     request: Request,
-#     oid: str
-# ):
-  
-#     mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
-#     ##print(mag_stats)
-#     #print(mag_stats.__dict__)
-#     ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
-#     ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'
-#     ##            ];
-#     ##
-#     ##r = ['false','true','1','0','17.933','17.933','17.933','17.933','0','17.933','17.933',
-#     ##            '60432.473','60432.473','24.4.1'
-#     ##            ];
-    
-#     #stat_r = dict(zip(stat, r))
 
 
-#     return templates.TemplateResponse(
-#       name='magstatRebuild.html.jinja',
-#       context={'request': request,
-#                'stat_r': mag_stats
-#                },
-#   )
