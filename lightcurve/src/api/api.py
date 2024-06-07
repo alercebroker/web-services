@@ -43,6 +43,7 @@ app.include_router(prefix="/object", router=object.router)
 app.include_router(prefix="/magStat", router=object.router)
 app.include_router(prefix="/crossmatch", router=object.router)
 app.include_router(prefix="/probabilities", router=object.router)
+app.include_router(prefix="/mag", router=object.router)
 
 app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
 

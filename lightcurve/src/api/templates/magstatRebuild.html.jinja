@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
+    <title>Document</title>
+
+    <style>
+        td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: left; }
+    </style>
+</head>
+<body class='tw-preflight dark:tw-bg-black tw-dark'>
+
+    <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
+
+        <div class="tw-inline tw-text-white tw-flex tw-items-center">
+            <div class="tw-inline">
+                <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Magnitude Statistics</h1>
+            </div>
+
+            <div class="tw-inline tw-relative tw-ml-2 tw-mt-[10px] tw-group">
+                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                </svg>
+                <div class="tw-absolute tw-left-1/2 tw-transform tw--translate-x-1/2 tw-top-full tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center">
+                    <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2 tw-w-48 tw-whitespace-normal tw-translate-x-\[-20%\]">
+                        There is a matching source in the reference image. The apparent magnitude combines the difference and reference fluxes.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tw-text-white" id="tableContainer">
+            
+        </div>
+
+        <div class="tw-inline">
+            <div class="tw-pt-[25px] tw-inline-block">
+                <label class="tw-pl-[50px] tw-text-white" for="rowSelector">Rows per page:</label>
+                <select id="rowSelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-b ">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="14">All</option>
+                </select>
+            </div>
+            <div class="tw-inline-block tw-text-white tw-pl-[40px]">
+                <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
+            </div>
+            <div class="tw-inline-block tw-pl-[60px]">
+                    <button onclick="navigateTable(-1)" class="tw-text-white tw-pr-[20px]"> < </span>
+                    <button onclick="navigateTable(1)"  class="tw-text-white"> > </button>
+            </div>
+
+        </div>
+
+    </div>
+
+<script>
+    const tableContainer = document.getElementById('tableContainer');
+    //const rowSelect = document.getElementById('rowSelect');
+    let rowsPerPage = parseInt(rowSelect.value);
+    let currentPage = 1;
+
+  //  let stat = {{stat_r | tojson}};
+
+    //const stat = Object.keys(statR);
+    //const r = Object.values(statR);
+
+    //let fakeStat = stat.slice()
+    //let fakeR = r.slice()
+    //const statReversed = fakeStat.reverse()
+    //const rReversed = fakeR.reverse()
+
+    //const db = [
+    //        {
+    //            "fid": 1,
+    //            "stellar": false,
+    //            "corrected": true,
+    //            "ndet": 90,
+    //            "ndubious": 0,
+    //            "magmean": 19.945906,
+    //            "magmedian": 19.8591,
+    //            "magmax": 20.6775,
+    //            "magmin": 19.5176,
+    //            "magsigma": 0.2843235,
+    //            "maglast": 19.56272,
+    //            "magfirst": 20.3966,
+    //            "firstmjd": 58560.54,
+    //            "lastmjd": 60463.348,
+    //            "step_id_corr": "24.5.1"
+    //        },
+    //        {
+    //            "fid": 2,
+    //            "stellar": false,
+    //            "corrected": true,
+    //            "ndet": 37,
+    //            "ndubious": 0,
+    //            "magmean": 19.876518,
+    //            "magmedian": 19.8228,
+    //            "magmax": 20.3522,
+    //            "magmin": 19.632046,
+    //            "magsigma": 0.17786467,
+    //            "maglast": 19.751026,
+    //            "magfirst": 20.3522,
+    //            "firstmjd": 58572.473,
+    //            "lastmjd": 60463.363,
+    //            "step_id_corr": "24.5.1"
+    //        },
+    //        {
+    //            "fid": 3,
+    //            "stellar": false,
+    //            "corrected": true,
+    //            "ndet": 2,
+    //            "ndubious": 0,
+    //            "magmean": 19.35922,
+    //            "magmedian": 19.35922,
+    //            "magmax": 19.411596,
+    //            "magmin": 19.306843,
+    //            "magsigma": 0.052376747,
+    //            "maglast": 19.306843,
+    //            "magfirst": 19.411596,
+    //            "firstmjd": 60437.375,
+    //            "lastmjd": 60438.367,
+    //            "step_id_corr": "24.5.1"
+    //        }
+    //    ]
+    const rawDb = {{stat_r | tojson}}
+    const db = Object.values(rawDb)
+    const numColumns = db.length + 1; // Esto  es numero de bandas + 1
+    const numRows = Object.keys(db[0]).length; 
+
+
+    function createTable() {
+
+        let columNames = ['Stat','g','r','i','a','s','d']
+
+        
+        const tableContainer = document.getElementById("tableContainer");
+
+        // Clear any existing table
+        tableContainer.innerHTML = "";
+
+        // Create the table element
+        const table = document.createElement("table");
+
+        // Create the table header row
+        const headerRow = document.createElement("tr");
+        for (let i = 0; i < numColumns; i++) {
+            const th = document.createElement("th");
+            th.textContent = columNames[i];
+            th.style.padding = '8px'
+            headerRow.appendChild(th);
+        }
+        table.appendChild(headerRow);
+
+        const tBody = document.createElement('tbody')
+        tBody.setAttribute('id','dataTableBody')
+        // Create the table data rows
+        for (let i = 0; i < numRows; i++) {
+            const dataRow = document.createElement("tr");
+            for (let j = 0; j < numColumns; j++) {
+                const td = document.createElement("td");
+                td.style.padding = '8px'
+                td.id = `cell-${i}-${j}`
+                dataRow.appendChild(td);
+            }
+            tBody.appendChild(dataRow);
+        }
+        table.appendChild(tBody)
+
+        // Append the table to the container
+        tableContainer.appendChild(table);
+    }
+
+    createTable()
+    
+    function displayColumns(db){
+        
+        for (let j = 0; j < numRows; j++) {
+            let name = 'cell-'+String(j)+'-'+String(0)
+            document.getElementById(name).innerHTML = Object.keys(db[0])[j]
+        }
+
+        let boolColumns = 0; // por el momento, hasta que se agreguen los botones para reordenar
+        if (boolColumns === 0){
+            // Let's note that here i is for columns and j is for rows
+            for (let i = 1; i < numColumns; i++){
+                for (let j = 0; j < numRows; j++){
+                    let name = 'cell-'+String(j)+'-'+String(i)
+                    //console.log(Object.values(db[i-1])[j],i-1,j )
+                    document.getElementById(name).innerHTML = Object.values(db[i-1])[j]   
+                }
+            }
+
+        } else {
+            for (let i = 0; i < stat.length * 2; i++){
+
+                if (i < 14){
+                    let row = '1';
+                    let name = 'a' + row + String(i+1);
+                    document.getElementById(name).innerHTML = statReversed[i];
+                } else {
+                    row = '2';
+                    let name = 'a' + row + String(i - statReversed.length + 1);
+                    document.getElementById(name).innerHTML = rReversed[i - statReversed.length];
+                }
+            }
+            boolColumns = 0;
+        }
+    }
+
+    displayColumns(db);
+    
+    const dataTableBody = document.getElementById('dataTableBody');
+    let boolColumns = 0;
+
+    function navigateTable(direction) {
+
+        currentPage += direction;
+        const totalPages = Math.ceil(dataTableBody.rows.length / rowsPerPage);
+        
+        if (currentPage < 1) {
+            currentPage = 1;
+        } else if (currentPage > totalPages) {
+            currentPage = totalPages;
+        }
+
+        displayRows();
+    }
+
+    function displayRows() {
+
+        const startIndex = (currentPage - 1) * rowsToShow;
+        if (startIndex === 0){
+            document.getElementById('first-number').innerHTML = 1;
+        } else {
+            document.getElementById('first-number').innerHTML = startIndex;
+        }
+        const endIndex = startIndex + rowsToShow;
+        if (endIndex > dataTableBody.rows.length){
+            document.getElementById('second-number').innerHTML = dataTableBody.rows.length;
+        } else {
+            document.getElementById('second-number').innerHTML = endIndex;
+        }
+
+        const rows = dataTableBody.getElementsByTagName('tr');
+        for (let i = 0; i < rows.length; i++) {
+        if (i >= startIndex && i < endIndex) {
+            rows[i].style.display = 'table-row';
+        } else {
+            rows[i].style.display = 'none';
+        }
+        }
+    };
+    let rowsToShow = 5;
+    displayRows();
+
+    rowSelect.addEventListener('change', () => {
+        rowsToShow = parseInt(rowSelect.value);
+        currentPage = 1;
+        displayRows();
+    });
+    
+    
+
+
+</script>
+
+</body>
+</html>
