@@ -42,7 +42,7 @@
                 <select id="rowSelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-b ">
                     <option value="5">5</option>
                     <option value="10">10</option>
-                    <option value="15">All</option>
+                    <option value="14">All</option>
                 </select>
             </div>
             <div class="tw-inline-block tw-text-white tw-pl-[40px]">
@@ -73,61 +73,64 @@
     //const statReversed = fakeStat.reverse()
     //const rReversed = fakeR.reverse()
 
-    const db = [
-            {
-                "fid": 1,
-                "stellar": false,
-                "corrected": true,
-                "ndet": 90,
-                "ndubious": 0,
-                "magmean": 19.945906,
-                "magmedian": 19.8591,
-                "magmax": 20.6775,
-                "magmin": 19.5176,
-                "magsigma": 0.2843235,
-                "maglast": 19.56272,
-                "magfirst": 20.3966,
-                "firstmjd": 58560.54,
-                "lastmjd": 60463.348,
-                "step_id_corr": "24.5.1"
-            },
-            {
-                "fid": 2,
-                "stellar": false,
-                "corrected": true,
-                "ndet": 37,
-                "ndubious": 0,
-                "magmean": 19.876518,
-                "magmedian": 19.8228,
-                "magmax": 20.3522,
-                "magmin": 19.632046,
-                "magsigma": 0.17786467,
-                "maglast": 19.751026,
-                "magfirst": 20.3522,
-                "firstmjd": 58572.473,
-                "lastmjd": 60463.363,
-                "step_id_corr": "24.5.1"
-            },
-            {
-                "fid": 3,
-                "stellar": false,
-                "corrected": true,
-                "ndet": 2,
-                "ndubious": 0,
-                "magmean": 19.35922,
-                "magmedian": 19.35922,
-                "magmax": 19.411596,
-                "magmin": 19.306843,
-                "magsigma": 0.052376747,
-                "maglast": 19.306843,
-                "magfirst": 19.411596,
-                "firstmjd": 60437.375,
-                "lastmjd": 60438.367,
-                "step_id_corr": "24.5.1"
-            }
-        ]
+    //const db = [
+    //        {
+    //            "fid": 1,
+    //            "stellar": false,
+    //            "corrected": true,
+    //            "ndet": 90,
+    //            "ndubious": 0,
+    //            "magmean": 19.945906,
+    //            "magmedian": 19.8591,
+    //            "magmax": 20.6775,
+    //            "magmin": 19.5176,
+    //            "magsigma": 0.2843235,
+    //            "maglast": 19.56272,
+    //            "magfirst": 20.3966,
+    //            "firstmjd": 58560.54,
+    //            "lastmjd": 60463.348,
+    //            "step_id_corr": "24.5.1"
+    //        },
+    //        {
+    //            "fid": 2,
+    //            "stellar": false,
+    //            "corrected": true,
+    //            "ndet": 37,
+    //            "ndubious": 0,
+    //            "magmean": 19.876518,
+    //            "magmedian": 19.8228,
+    //            "magmax": 20.3522,
+    //            "magmin": 19.632046,
+    //            "magsigma": 0.17786467,
+    //            "maglast": 19.751026,
+    //            "magfirst": 20.3522,
+    //            "firstmjd": 58572.473,
+    //            "lastmjd": 60463.363,
+    //            "step_id_corr": "24.5.1"
+    //        },
+    //        {
+    //            "fid": 3,
+    //            "stellar": false,
+    //            "corrected": true,
+    //            "ndet": 2,
+    //            "ndubious": 0,
+    //            "magmean": 19.35922,
+    //            "magmedian": 19.35922,
+    //            "magmax": 19.411596,
+    //            "magmin": 19.306843,
+    //            "magsigma": 0.052376747,
+    //            "maglast": 19.306843,
+    //            "magfirst": 19.411596,
+    //            "firstmjd": 60437.375,
+    //            "lastmjd": 60438.367,
+    //            "step_id_corr": "24.5.1"
+    //        }
+    //    ]
+    const rawDb = {{stat_r | tojson}}
+    const db = Object.values(rawDb)
     const numColumns = db.length + 1; // Esto  es numero de bandas + 1
     const numRows = Object.keys(db[0]).length; 
+
 
     function createTable() {
 
@@ -223,12 +226,11 @@
         } else if (currentPage > totalPages) {
             currentPage = totalPages;
         }
+
         displayRows();
     }
 
-    let rowsToShow = 5;
-
-    function displayRows(rowsToShow) {
+    function displayRows() {
 
         const startIndex = (currentPage - 1) * rowsToShow;
         if (startIndex === 0){
@@ -252,13 +254,13 @@
         }
         }
     };
-
-    displayRows(rowsToShow);
+    let rowsToShow = 5;
+    displayRows();
 
     rowSelect.addEventListener('change', () => {
         rowsToShow = parseInt(rowSelect.value);
         currentPage = 1;
-        displayRows(rowsToShow);
+        displayRows();
     });
     
     

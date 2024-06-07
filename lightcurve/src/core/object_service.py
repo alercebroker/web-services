@@ -61,10 +61,15 @@ def get_mag_stats(
         with session_factory() as session:
             stmt = select(MagStats).where(MagStats.oid == oid)
             result = session.execute(stmt)
-            first = result.all()[0]
+            first = result.all()
+            mag_stats_objs = [row[0] for row in first]
+            dict_list = []
+            for mag in mag_stats_objs:
+                #print(MagStatsModel(mag[0].__dict__))
+                dict_list.append(MagStatsModel(**mag.__dict__))
             if first is None:
                 raise ObjectNotFound(oid)
-            return MagStatsModel(**first[0].__dict__)
+            return dict_list
     except ObjectNotFound:
         raise
     except Exception as e:

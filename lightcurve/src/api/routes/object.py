@@ -2,6 +2,7 @@ import re
 import os
 from typing import Annotated
 from fastapi import Query
+import json
 
 from core.object_service import get_object, get_mag_stats
 from fastapi import APIRouter, Request, HTTPException
@@ -66,30 +67,21 @@ async def object_info_app(
                },
   )
 
-@router.get("/mag_stats/{oid}", response_class=HTMLResponse)
-async def object_magStat_app(
+@router.get("/mag/{oid}", response_class=HTMLResponse)
+async def object_mag_app(
     request: Request,
     oid: str
 ):
   
     mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
-    
-    #print(mag_stats.__dict__)
-    ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
-    ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'
-    ##            ];
-    ##
-    ##r = ['false','true','1','0','17.933','17.933','17.933','17.933','0','17.933','17.933',
-    ##            '60432.473','60432.473','24.4.1'
-    ##            ];
-    
-    #stat_r = dict(zip(stat, r))
-
+    mag_stats_dict = {}
+    for n in range(len(mag_stats)):
+        mag_stats_dict[f"band_{n+1}"] = mag_stats[n].__dict__
 
     return templates.TemplateResponse(
-      name='magStatsPreview.html.jinja',
+      name='magstatRebuild.html.jinja',
       context={'request': request,
-               'stat_r': mag_stats.__dict__
+               'stat_r': mag_stats_dict
                },
   )
 
@@ -116,28 +108,29 @@ async def object_crossmatch_app(
                },
   )
 
-@router.get("/mag/{oid}", response_class=HTMLResponse)
-async def object_mag_app(
-    request: Request,
-    oid: str
-):
+# @router.get("/mag/{oid}", response_class=HTMLResponse)
+# async def object_mag_app(
+#     request: Request,
+#     oid: str
+# ):
   
-    mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
-    #print(mag_stats.__dict__)
-    ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
-    ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'
-    ##            ];
-    ##
-    ##r = ['false','true','1','0','17.933','17.933','17.933','17.933','0','17.933','17.933',
-    ##            '60432.473','60432.473','24.4.1'
-    ##            ];
+#     mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
+#     ##print(mag_stats)
+#     #print(mag_stats.__dict__)
+#     ##stat = ['stellar', 'corrected', 'ndet', 'ndubious','magmean','magmedian','magmax','magmin',
+#     ##                'magsigma','maglast','magfirst','firstmjd','lastmjd','step_id_corr'
+#     ##            ];
+#     ##
+#     ##r = ['false','true','1','0','17.933','17.933','17.933','17.933','0','17.933','17.933',
+#     ##            '60432.473','60432.473','24.4.1'
+#     ##            ];
     
-    #stat_r = dict(zip(stat, r))
+#     #stat_r = dict(zip(stat, r))
 
 
-    return templates.TemplateResponse(
-      name='magstatRebuild.html.jinja',
-      context={'request': request,
-               'stat_r': mag_stats.__dict__
-               },
-  )
+#     return templates.TemplateResponse(
+#       name='magstatRebuild.html.jinja',
+#       context={'request': request,
+#                'stat_r': mag_stats
+#                },
+#   )
