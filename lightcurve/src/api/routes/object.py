@@ -74,9 +74,10 @@ async def object_mag_app(
 ):
   
     mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
+    print(mag_stats)
     mag_stats_dict = {}
     for n in range(len(mag_stats)):
-        mag_stats_dict[f"band_{n+1}"] = mag_stats[n].__dict__
+        mag_stats_dict[f"band_{n+1}"] = mag_stats[n].__dict__ ## Es necesario cambiar el nombre de las keys por los fid y trabajar con el conversor que esta en probability en alerts-api
 
     return templates.TemplateResponse(
       name='magstatRebuild.html.jinja',
@@ -84,6 +85,19 @@ async def object_mag_app(
                'stat_r': mag_stats_dict
                },
   )
+
+def prob_filter(prob_list, taxonomy_list):
+
+    prob_dict = {}
+    taxonomy_dict  = {}
+
+    for n in range(len(taxonomy_list)):
+        taxonomy_dict[f'tax_{n+1}'] = taxonomy_list[n].__dict__
+
+    for k in range(len(prob_list)):
+        prob_dict[f'prob_{k+1}'] = prob_list[k].__dict__
+
+    return taxonomy_dict, prob_dict
 
 @router.get("/probabilities/{oid}", response_class=HTMLResponse)
 async def object_crossmatch_app(
@@ -93,11 +107,13 @@ async def object_crossmatch_app(
     prob_list = get_probabilities(oid,session_factory = request.app.state.psql_session)
     taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
 
+    taxonomy_dict, prob_dict = prob_filter(prob_list, taxonomy_list)
+
     return templates.TemplateResponse(
       name='probabilitiesCard.html.jinja',
       context={'request': request,
-               'prob_list': prob_list,
-               'taxonomy_list': taxonomy_list
+               'prob_dict': prob_dict,
+               'taxonomy_dict': taxonomy_dict
                },
   )
 

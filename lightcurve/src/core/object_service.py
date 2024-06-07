@@ -15,7 +15,7 @@ from .exceptions import (
     SurveyIdError,
     ParseError,
 )
-from .object_model import ObjectReduced as ObjectModel, MagStats as MagStatsModel, Probability as ProbabilityModel
+from .object_model import ObjectReduced as ObjectModel, MagStats as MagStatsModel, Probability as ProbabilityModel, Taxonomy as  TaxonomyModel
 from config import app_config
 
 def default_handle_success(result):
@@ -65,7 +65,6 @@ def get_mag_stats(
             mag_stats_objs = [row[0] for row in first]
             dict_list = []
             for mag in mag_stats_objs:
-                print(mag.__dict__)
                 dict_list.append(MagStatsModel(**mag.__dict__))
             if first is None:
                 raise ObjectNotFound(oid)
@@ -115,7 +114,7 @@ def get_taxonomies(
             get_taxonomy_data = [row[0] for row in taxonomy_list]
             get_taxonomy_list = []
             for prob in get_taxonomy_data:
-                get_taxonomy_list.append(prob.__dict__)
+                get_taxonomy_list.append(TaxonomyModel(**prob.__dict__))
             return get_taxonomy_list
     except ObjectNotFound:
         raise

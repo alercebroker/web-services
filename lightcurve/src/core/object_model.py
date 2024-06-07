@@ -41,6 +41,13 @@ class Probability(BaseModel):
     class_name: str
     probability: float
     ranking: int
+
+    pass
+
+class Taxonomy(BaseModel):
+
+    classes: list
+    classifier_name: str
     
     pass
 
