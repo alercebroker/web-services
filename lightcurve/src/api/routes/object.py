@@ -92,13 +92,12 @@ async def object_crossmatch_app(
 ):
     prob_list = get_probabilities(oid,session_factory = request.app.state.psql_session)
     taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
-    print('Prob List: ',prob_list)
-    print('Taxo List: ',taxonomy_list)
-
 
     return templates.TemplateResponse(
       name='probabilitiesCard.html.jinja',
       context={'request': request,
+               'prob_list': prob_list,
+               'taxonomy_list': taxonomy_list
                },
   )
 
