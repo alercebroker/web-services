@@ -54,9 +54,6 @@
         const db = Object.values(raw_db);
         const tax = Object.values(raw_tax);
 
-        console.log(db)
-        console.log(tax)
-
         function hasBodyClass(className) {
             const body = document.body;
             return body.classList.contains(className);
@@ -164,64 +161,73 @@
                 pointHoverBackgroundColor: '#fff',
                 pointHoverBorderColor: 'rgb(255, 0, 54)',
             }]
-        };
+            };
 
-        let gridColor; 
+            let gridColor;
 
-        if (isDarkMode) {
+            if (isDarkMode) {
             gridColor = 'white';
-        } else {
+            } else {
             gridColor = 'black';
-        }
+            }
 
-        const config = {
+            const config = {
             type: 'radar',
             data: data,
             options: {
                 animation: {
-                    duration: 200
+                duration: 200
                 },
-
                 elements: {
-                    line: {
-                        borderWidth: 1,
-                    },
+                line: {
+                    borderWidth: 1,
+                },
                 },
                 scales: {
-                    r: {
-                        ticks: {
-                            display: false,
-                            maxTicksLimit: 5,
-
-                        },
-                        grid: {
-                            color: gridColor
-                        },
-                        angleLines: {
-                            color: gridColor
-                        },
-                        
-                        pointLabels: {
-                            color: gridColor
-                        }
+                r: {
+                    ticks: {
+                    display: false,
+                    maxTicksLimit: 5,
                     },
-
+                    grid: {
+                    color: gridColor
+                    },
+                    angleLines: {
+                    color: gridColor
+                    },
+                    pointLabels: {
+                    color: gridColor
+                    }
+                },
                 },
                 plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        mode: 'index',
-                    },
-
+                legend: {
+                    display: false
                 },
+                tooltip: {
+                    mode: 'nearest',
+                    intersect: false, 
+                    callbacks: {
+                    label: function(context) {
+                        let tooltipText = [];
+                        const datasetLabel = context.dataset.label || '';
 
-                
-                
+                        // Loop through all data points
+                        context.dataset.data.forEach((value, index) => {
+                        const label = context.chart.data.labels[index];
+                        tooltipText.push(`${label}: ${value}`);
+                        });
+
+                        // Add the dataset label at the beginning
+                        tooltipText.unshift(`${datasetLabel}:`);
+
+                        return tooltipText;
+                    }
+                    }
+                },
+                },
             },
-
-        };
+            };
 
         
 
