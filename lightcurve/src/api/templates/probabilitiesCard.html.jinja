@@ -65,26 +65,74 @@
         // Usage
         const isDarkMode = hasBodyClass('tw-dark');
 
-        
+        // This function detects if there is more than one classifier_name with the same value and detects what of them is the higher version.
+
+        function uniqueValues() {
+
+            let uniqueName = [];
+            let uniqueVersion = [];
+            let repeatedArray = []; // if len(repeatedArray[i]) > 1 then there  is a repetition in i
+            
+            for (let i = 0; i < tax.length; i++){
+
+                if(!(uniqueName.includes(tax[i].classifier_name))){
+                    uniqueName.push(tax[i].classifier_name);
+                    uniqueVersion.push(tax[i].classifier_version)
+                    repeatedArray.push([tax[i].classifier_version]) 
+                } else {
+                    repeatedArray[uniqueName.indexOf(tax[i].classifier_name)].push(tax[i].classifier_version)
+                }
+
+            }
+
+            for (let j = 0; j < repeatedArray.length; j++){
+
+                let maxVersion = 0;
+
+                if (repeatedArray[j].length > 1){
+                    for (let k = 0; k < repeatedArray[j].length; k++){
+
+                        let splitted = repeatedArray[j][k].split('_');
+                        let splitted_numbers = splitted[splitted.length - 1].split('.')
+                        let partialSum = 0;
+
+                        for (let i = 0;i < splitted_numbers.length; i++){
+                            partialSum += Number(splitted_numbers[i]);
+
+                        }
+
+                        if (maxVersion < partialSum){
+                            maxVersion = partialSum;
+                            uniqueVersion[j] = repeatedArray[j][k];
+                        }
+                    }
+                }
+
+            }
+
+            return [uniqueName,uniqueVersion]
+
+        }
+
         // generateDictionaries functions takes the uniqueValues return and generates a dictionary of empty dictionaries, one for every classifier_name in the uniqueValues return
         function generateDictionaries() {
 
-            const uniqueKeys = uniqueValues(db);
+            const [uniqueName,uniqueVersion] = uniqueValues();
             const result = {};
 
-            for (let i = 0; i < uniqueKeys.length; i++) {
-                result[uniqueKeys[i]] = {};
+            for (let i = 0; i < uniqueName.length; i++) {
+                result[uniqueName[i]] = {};
             }
 
-            return [result,uniqueKeys];
+            return [result,uniqueName,uniqueVersion];
         }
 
         // getData is the function that fill the dictionary generated in generateDictionaries. tha data is separated by his classfier_name and added as: class_name:probability
         // where class_name is the key and probability is the value
+        // uniqueVersion is not used because db only has 1 version, but if we must choose the higher version, then the uniqueVersion list has it.
         function getData(db){
 
-            const [principalDict,uniqueKeys] = generateDictionaries();
-
+            const [principalDict,uniqueKeys,uniqueVersion] = generateDictionaries();
             for (let i = 0; i < db.length; i++){
                 principalDict[db[i].classifier_name][db[i].class_name] = db[i].probability;
             }
