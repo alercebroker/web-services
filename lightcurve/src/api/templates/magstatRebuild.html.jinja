@@ -49,8 +49,8 @@
                 <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
             </div>
             <div class="tw-inline-block tw-pl-[60px]">
-                    <button onclick="navigateTable(-1)" class="tw-text-white tw-pr-[20px]"> < </span>
-                    <button onclick="navigateTable(1)"  class="tw-text-white"> > </button>
+                    <button onclick="navigateTable(-1)" class="tw-text-white tw-pr-[20px] tw-text-2xl" id='leftArrow'> < </span>
+                    <button onclick="navigateTable(1)"  class="tw-text-white tw-text-2xl" id="rightArrow"> > </button>
             </div>
 
         </div>
@@ -59,8 +59,6 @@
 
 <script>
     const tableContainer = document.getElementById('tableContainer');
-    //const rowSelect = document.getElementById('rowSelect');
-    let rowsPerPage = parseInt(rowSelect.value);
     let currentPage = 1;
     
     const rawDb = {{stat_r | tojson}}
@@ -126,7 +124,6 @@
             for (let i = 1; i < numColumns; i++){
                 for (let j = 0; j < numRows; j++){
                     let name = 'cell-'+String(j)+'-'+String(i)
-                    //console.log(Object.values(db[i-1])[j],i-1,j )
                     document.getElementById(name).innerHTML = Object.values(db[i-1])[j]   
                 }
             }
@@ -155,9 +152,12 @@
 
     function navigateTable(direction) {
 
+        const rowSelect = document.getElementById('rowSelect');
+        let rowsPerPage = parseInt(rowSelect.value);
+
         currentPage += direction;
         const totalPages = Math.ceil(dataTableBody.rows.length / rowsPerPage);
-        
+
         if (currentPage < 1) {
             currentPage = 1;
         } else if (currentPage > totalPages) {
@@ -171,21 +171,28 @@
 
         const startIndex = (currentPage - 1) * rowsToShow;
         if (startIndex === 0){
+            document.getElementById('leftArrow').style.color = 'gray'
             document.getElementById('first-number').innerHTML = 1;
         } else {
             document.getElementById('first-number').innerHTML = startIndex;
+            document.getElementById('leftArrow').style.color = 'white'
         }
         const endIndex = startIndex + rowsToShow;
         if (endIndex > dataTableBody.rows.length){
             document.getElementById('second-number').innerHTML = dataTableBody.rows.length;
+            document.getElementById('rightArrow').style.color = 'gray'
         } else {
             document.getElementById('second-number').innerHTML = endIndex;
+            document.getElementById('rightArrow').style.color = 'white'
+
         }
+
 
         const rows = dataTableBody.getElementsByTagName('tr');
         for (let i = 0; i < rows.length; i++) {
         if (i >= startIndex && i < endIndex) {
             rows[i].style.display = 'table-row';
+            rows[i].style.borderBottom = '1px solid white';
         } else {
             rows[i].style.display = 'none';
         }

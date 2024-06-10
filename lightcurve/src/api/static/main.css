@@ -252,6 +252,10 @@
   width: 100%;
 }
 
+.tw-preflight :is(.tw-w-\[20px\]) {
+  width: 20px;
+}
+
 .tw-preflight :is(.tw-min-w-full) {
   min-width: 100%;
 }
@@ -581,6 +585,11 @@
 .tw-preflight :is(.tw-text-xs) {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.tw-preflight :is(.tw-text-xl) {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
 }
 
 .tw-preflight :is(.tw-font-bold) {
