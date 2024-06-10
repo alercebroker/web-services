@@ -196,6 +196,10 @@
   height: auto;
 }
 
+.tw-preflight :is(.tw-h-5) {
+  height: 1.25rem;
+}
+
 .tw-preflight :is(.tw-w-12) {
   width: 3rem;
 }
