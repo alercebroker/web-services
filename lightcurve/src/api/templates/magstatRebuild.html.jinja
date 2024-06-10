@@ -59,9 +59,10 @@
 
 <script>
     const bandMapping = {
-        1:'g',
+        
         2:'r',
-        3:'i'
+        3:'i',
+        1:'g',
     }
 
     const tableContainer = document.getElementById('tableContainer');
@@ -69,13 +70,29 @@
     
     const rawDb = {{stat_r | tojson}}
     const db = Object.values(rawDb)
+
+    let numBands = []
+
+    for (let i = 0; i < db.length; i++){
+        numBands.push(db[i]['fid'])
+        delete db[i]['fid']
+    }
+
+    let realBands = []
+
+    for (let i = 0; i < numBands.length; i++){
+        realBands.push(bandMapping[numBands[i]])
+    }
+
+    console.log(realBands)
+
     const numColumns = db.length + 1; // Esto  es numero de bandas + 1
     const numRows = Object.keys(db[0]).length; 
 
 
     function createTable() {
-
-        let columNames = ['Stat','g','r','i','a','s','d']
+        
+        let columNames = ['Stat'].concat(realBands)
 
         
         const tableContainer = document.getElementById("tableContainer");
@@ -219,4 +236,4 @@
 </script>
 
 </body>
-</html>    console.log(bandMapping)
+</html> 

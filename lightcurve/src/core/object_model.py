@@ -31,6 +31,7 @@ class MagStats(BaseModel):
     firstmjd: float
     lastmjd: float
     step_id_corr: str
+    fid: int
 
     pass
 
