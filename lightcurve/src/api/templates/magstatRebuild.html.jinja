@@ -140,15 +140,13 @@
 
     createTable()
     
-    function displayColumns(db){
-        
-        for (let j = 0; j < numRows; j++) {
-            let name = 'cell-'+String(j)+'-'+String(0)
-            document.getElementById(name).innerHTML = Object.keys(db[0])[j]
-        }
+    function displayColumns(){
 
-        let boolColumns = 0; // por el momento, hasta que se agreguen los botones para reordenar
         if (boolColumns === 0){
+            for (let j = 0; j < numRows; j++) {
+                let name = 'cell-'+String(j)+'-'+String(0)
+                document.getElementById(name).innerHTML = Object.keys(db[0])[j]
+            }
             // Let's note that here i is for columns and j is for rows
             for (let i = 1; i < numColumns; i++){
                 for (let j = 0; j < numRows; j++){
@@ -157,17 +155,17 @@
                 }
             }
 
-        } else {
-            for (let i = 0; i < stat.length * 2; i++){
+            boolColumns = 1;
 
-                if (i < 14){
-                    let row = '1';
-                    let name = 'a' + row + String(i+1);
-                    document.getElementById(name).innerHTML = statReversed[i];
-                } else {
-                    row = '2';
-                    let name = 'a' + row + String(i - statReversed.length + 1);
-                    document.getElementById(name).innerHTML = rReversed[i - statReversed.length];
+        } else {
+            for (let j = 0; j < numRows; j++) {
+                let name = 'cell-'+String(j)+'-'+String(0)
+                document.getElementById(name).innerHTML = Object.keys(db[0])[numRows - j - 1]
+            }
+            for (let i = 1; i < numColumns; i++){
+                for (let j = 0; j < numRows; j++){
+                    let name = 'cell-'+String(j)+'-'+String(i)
+                    document.getElementById(name).innerHTML = Object.values(db[i-1])[numRows - j - 1]   
                 }
             }
             boolColumns = 0;
@@ -187,23 +185,22 @@
 
     document.getElementById('arrowButton').addEventListener('click',() => {
         
-        displayColumns(stat,r,statReversed,rReversed);
+        displayColumns();
 
         if (boolColumns === 1) {
-            document.getElementById('statButton').innerHTML = arrowUp;
-            document.getElementById('rButton').innerHTML = arrowUp;
+            document.getElementById('arrowButton').innerHTML = arrowUp;
         } else { 
-            document.getElementById('statButton').innerHTML = arrowDown;
-            document.getElementById('rButton').innerHTML = arrowDown;
+            document.getElementById('arrowButton').innerHTML = arrowDown;
         }
 
         }
     )
-
+    let boolColumns = 0;
+    
     displayColumns(db);
     
     const dataTableBody = document.getElementById('dataTableBody');
-    let boolColumns = 0;
+    
 
     function navigateTable(direction) {
 

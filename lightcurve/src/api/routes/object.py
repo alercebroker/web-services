@@ -74,7 +74,6 @@ async def object_mag_app(
 ):
   
     mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
-    print(mag_stats)
     mag_stats_dict = {}
     for n in range(len(mag_stats)):
         mag_stats_dict[f"band_{n+1}"] = mag_stats[n].__dict__ ## Es necesario cambiar el nombre de las keys por los fid y trabajar con el conversor que esta en probability en alerts-api
