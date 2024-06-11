@@ -321,6 +321,18 @@
             document.getElementById('arrow-svg').style.color = 'black'
             document.getElementById('display-button').style.borderColor = 'black'
         }
+
+        const myClick = document.getElementById('display-button');
+
+        function handleOutsideClick(event) {
+            if (!myClick.contains(event.target)) {
+                boolDisplay = 0;
+                displayMenu();
+            }
+        }
+
+        document.addEventListener('click', handleOutsideClick);
+
         function displayMenu() {
 
             if (boolDisplay === 1){
