@@ -38,7 +38,7 @@
 
         <div class="tw-inline">
             <div class="tw-pt-[25px] tw-inline-block">
-                <label class="tw-pl-[50px] tw-text-white" for="rowSelector">Rows per page:</label>
+                <label class="tw-text-white" for="rowSelector">Rows per page:</label>
                 <select id="rowSelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-b ">
                     <option value="5">5</option>
                     <option value="10">10</option>
@@ -58,6 +58,10 @@
     </div>
 
 <script>
+
+    // Only usefull definitions and getting the data from Python
+
+    
     const bandMapping = {
         
         2:'r',
@@ -90,7 +94,13 @@
     const numColumns = db.length + 1; // Esto  es numero de bandas + 1
     const numRows = Object.keys(db[0]).length; 
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    // Here is created the table dinamicly.
+
+
+    // This function creates the entire html structure dinamicly.
     function createTable() {
         
         let columNames = ['Stat'].concat(realBands)
@@ -106,10 +116,14 @@
 
         // Create the table header row
         const headerRow = document.createElement("tr");
+
+        headerRow.classList.add('hover:tw-opacity-70')
+        headerRow.classList.add('hover:tw-cursor-pointer')
+
         for (let i = 0; i < numColumns; i++) {
             const th = document.createElement("th");
             th.textContent = columNames[i];
-            th.style.padding = '8px'
+            th.style.padding = '0 30px'
 
             const arrowButton = document.createElement('button');
             arrowButton.setAttribute('id','arrowButton');
@@ -124,9 +138,10 @@
         // Create the table data rows
         for (let i = 0; i < numRows; i++) {
             const dataRow = document.createElement("tr");
+            dataRow.classList.add('hover:tw-bg-[#757575]')
             for (let j = 0; j < numColumns; j++) {
                 const td = document.createElement("td");
-                td.style.padding = '8px'
+                td.style.padding = '0 30px'
                 td.id = `cell-${i}-${j}`
                 dataRow.appendChild(td);
             }
@@ -138,8 +153,7 @@
         tableContainer.appendChild(table);
     }
 
-    createTable()
-    
+    // This function inject the data into the html table created in createTable function
     function displayColumns(){
 
         if (boolColumns === 0){
@@ -172,6 +186,20 @@
         }
     }
 
+    // We call the function to create the html structure
+    createTable()
+    
+    let boolColumns = 0;
+    // We call the function to inject the data.
+    displayColumns();
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////
+
+    // From here the code is only for the display of the rows per page, the buttons and the display menu to select that
+
+
+    // We define the arrows to change the order of the rows display in the  table
     const arrowUp = `<svg class="tw-h-5 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="M0 0h24v24H0z"/>
                                     <line x1="12" y1="5" x2="12" y2="19" />
@@ -183,6 +211,7 @@
     
     document.getElementById('arrowButton').innerHTML = arrowUp;
 
+    // We add an event listener to detect if the user wants to change the order
     document.getElementById('arrowButton').addEventListener('click',() => {
         
         displayColumns();
@@ -195,13 +224,10 @@
 
         }
     )
-    let boolColumns = 0;
-    
-    displayColumns(db);
-    
+
     const dataTableBody = document.getElementById('dataTableBody');
     
-
+    // This function change the page of the table if there is less rows selected by the user to show
     function navigateTable(direction) {
 
         const rowSelect = document.getElementById('rowSelect');
@@ -219,6 +245,7 @@
         displayRows();
     }
 
+    // This function decide what rows are showed depends of the rows per page selected by the user
     function displayRows() {
 
         const startIndex = (currentPage - 1) * rowsToShow;
@@ -250,6 +277,7 @@
         }
         }
     };
+
     let rowsToShow = 5;
     displayRows();
 
