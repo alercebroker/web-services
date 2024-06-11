@@ -11,11 +11,11 @@
         td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: left; }
     </style>
 </head>
-<body class='tw-preflight dark:tw-bg-black tw-dark'>
+<body class='tw-preflight dark:tw-bg-black'>
 
     <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
 
-        <div class="tw-inline tw-text-white tw-flex tw-items-center">
+        <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
             <div class="tw-inline">
                 <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Magnitude Statistics</h1>
             </div>
@@ -38,19 +38,19 @@
 
         <div class="tw-inline">
             <div class="tw-pt-[25px] tw-inline-block">
-                <label class="tw-text-white" for="rowSelector">Rows per page:</label>
-                <select id="rowSelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-b ">
+                <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
+                <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b ">
                     <option value="5">5</option>
                     <option value="10">10</option>
                     <option value="14">All</option>
                 </select>
             </div>
-            <div class="tw-inline-block tw-text-white tw-pl-[40px]">
+            <div class="tw-inline-block tw-text-black dark:tw-text-white tw-pl-[40px]">
                 <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
             </div>
             <div class="tw-inline-block tw-pl-[60px]">
-                    <button onclick="navigateTable(-1)" class="tw-text-white tw-pr-[10px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> < </span>
-                    <button onclick="navigateTable(1)"  class="tw-text-white tw-pl-[10px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> > </button>
+                    <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> < </span>
+                    <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> > </button>
             </div>
 
         </div>
@@ -94,6 +94,14 @@
     const numColumns = db.length + 1; // Esto  es numero de bandas + 1
     const numRows = Object.keys(db[0]).length; 
 
+    function hasBodyClass(className) {
+        const body = document.body;
+        return body.classList.contains(className);
+    }
+
+    // Usage
+    const isDarkMode = hasBodyClass('tw-dark');
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -119,6 +127,8 @@
 
         headerRow.classList.add('hover:tw-opacity-70')
         headerRow.classList.add('hover:tw-cursor-pointer')
+        headerRow.classList.add('dark:tw-text-white')
+        headerRow.classList.add('tw-text-black')
 
         for (let i = 0; i < numColumns; i++) {
             const th = document.createElement("th");
@@ -139,6 +149,14 @@
         for (let i = 0; i < numRows; i++) {
             const dataRow = document.createElement("tr");
             dataRow.classList.add('hover:tw-bg-[#757575]')
+            dataRow.classList.add('dark:tw-text-white')
+            dataRow.classList.add('tw-text-black')
+            dataRow.classList.add('tw-border-b-[1px]')
+            dataRow.classList.add('tw-border-b-solid')
+            dataRow.classList.add('tw-border-b-black')
+            dataRow.classList.add('dark:tw-border-b-white')
+            
+
             for (let j = 0; j < numColumns; j++) {
                 const td = document.createElement("td");
                 td.style.padding = '0 30px'
@@ -254,24 +272,32 @@
             document.getElementById('first-number').innerHTML = 1;
         } else {
             document.getElementById('first-number').innerHTML = startIndex;
-            document.getElementById('leftArrow').style.color = 'white'
+            if (isDarkMode){ 
+                document.getElementById('leftArrow').style.color = 'white'
+            } else {
+                document.getElementById('leftArrow').style.color = 'black'
+            }
         }
         const endIndex = startIndex + rowsToShow;
-        if (endIndex > dataTableBody.rows.length){
+        if (endIndex >= dataTableBody.rows.length){
             document.getElementById('second-number').innerHTML = dataTableBody.rows.length;
             document.getElementById('rightArrow').style.color = 'gray'
         } else {
             document.getElementById('second-number').innerHTML = endIndex;
-            document.getElementById('rightArrow').style.color = 'white'
-
+            if (isDarkMode){ 
+                document.getElementById('rightArrow').style.color = 'white'
+            } else {
+                document.getElementById('rightArrow').style.color = 'black'
+            }
         }
 
 
         const rows = dataTableBody.getElementsByTagName('tr');
+
         for (let i = 0; i < rows.length; i++) {
         if (i >= startIndex && i < endIndex) {
             rows[i].style.display = 'table-row';
-            rows[i].style.borderBottom = '1px solid white';
+            //rows[i].style.borderBottom = '1px solid white';
         } else {
             rows[i].style.display = 'none';
         }
@@ -281,6 +307,7 @@
     let rowsToShow = 5;
     displayRows();
 
+    document.getElementById('total-number').innerHTML = dataTableBody.rows.length;
     rowSelect.addEventListener('change', () => {
         rowsToShow = parseInt(rowSelect.value);
         currentPage = 1;

@@ -423,6 +423,10 @@
   border-bottom-width: 2px;
 }
 
+.tw-preflight :is(.tw-border-b-\[1px\]) {
+  border-bottom-width: 1px;
+}
+
 .tw-preflight :is(.tw-border-solid) {
   border-style: solid;
 }
@@ -444,6 +448,16 @@
 
 .tw-preflight :is(.tw-border-t-transparent) {
   border-top-color: transparent;
+}
+
+.tw-preflight :is(.tw-border-b-white) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-border-b-black) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.tw-bg-\[\#1e1e1e\]) {
@@ -1344,6 +1358,16 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.dark\:tw-border-white:is(.tw-dark *)) {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.dark\:tw-border-b-black:is(.tw-dark *)) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.dark\:tw-border-b-white:is(.tw-dark *)) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.dark\:tw-bg-\[\#1e1e1e\]:is(.tw-dark *)) {
