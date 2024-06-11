@@ -47,7 +47,6 @@ export function julianToGregorian(mjd) {
 
     const jd = Number(mjd) + 2400000
     const date = convertToDate(jd)
-    console.log(date);
     const year = date.getUTCFullYear()
     let month = date.getUTCMonth()
     const day = date.getUTCDate()
