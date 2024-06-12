@@ -274,12 +274,6 @@
   border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
 }
 
-.tw-preflight :is(.tw-border-spacing-8) {
-  --tw-border-spacing-x: 2rem;
-  --tw-border-spacing-y: 2rem;
-  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
-}
-
 .tw-preflight :is(.tw--translate-x-1\/2) {
   --tw-translate-x: -50%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -419,12 +413,12 @@
   border-bottom-width: 1px;
 }
 
-.tw-preflight :is(.tw-border-b-\[2px\]) {
-  border-bottom-width: 2px;
-}
-
 .tw-preflight :is(.tw-border-b-\[1px\]) {
   border-bottom-width: 1px;
+}
+
+.tw-preflight :is(.tw-border-b-\[2px\]) {
+  border-bottom-width: 2px;
 }
 
 .tw-preflight :is(.tw-border-solid) {
@@ -446,18 +440,13 @@
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
 }
 
-.tw-preflight :is(.tw-border-t-transparent) {
-  border-top-color: transparent;
-}
-
-.tw-preflight :is(.tw-border-b-white) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
-}
-
 .tw-preflight :is(.tw-border-b-black) {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-border-t-transparent) {
+  border-top-color: transparent;
 }
 
 .tw-preflight :is(.tw-bg-\[\#1e1e1e\]) {
@@ -502,11 +491,6 @@
 .tw-preflight :is(.tw-bg-white) {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(117 117 117 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-p-2) {
@@ -591,14 +575,6 @@
 
 .tw-preflight :is(.tw-pt-\[30px\]) {
   padding-top: 30px;
-}
-
-.tw-preflight :is(.tw-pl-2) {
-  padding-left: 0.5rem;
-}
-
-.tw-preflight :is(.tw-pr-2) {
-  padding-right: 0.5rem;
 }
 
 .tw-preflight :is(.tw-text-left) {
@@ -1358,11 +1334,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.dark\:tw-border-white:is(.tw-dark *)) {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
-}
-
-.tw-preflight :is(.dark\:tw-border-b-black:is(.tw-dark *)) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.dark\:tw-border-b-white:is(.tw-dark *)) {
