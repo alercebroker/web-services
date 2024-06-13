@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Query
 import json
 
-from core.services.object import get_object
+from core.services.object import get_mag_stats
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -18,30 +18,19 @@ templates.env.globals["OAPI_URL"] = os.getenv(
     "OBJECT_API_URL", "http://localhost:8001"
 )
 
-@router.get("/object/{oid}", response_class=HTMLResponse)
-async def object_info_app(
+@router.get("/mag/{oid}", response_class=HTMLResponse)
+async def object_mag_app(
     request: Request,
     oid: str
 ):
   
-    link='https://acortar.link/ba5kba'
-    
+    mag_stats = get_mag_stats(oid,session_factory = request.app.state.psql_session)
+    mag_stats_dict = {}
+    for n in range(len(mag_stats)):
+        mag_stats_dict[f"band_{n+1}"] = mag_stats[n].__dict__ ## Es necesario cambiar el nombre de las keys por los fid y trabajar con el conversor que esta en probability en alerts-api
 
-    object = get_object(oid,session_factory = request.app.state.psql_session)
-
-    return {
+    return { 
         'request': request,
-        'object': object.oid,
-        'corrected': object.corrected,
-        'stellar' : object.stellar,
-        'detections' : object.ndet,
-        'discoveryDateMJD' : object.firstmjd,
-        'lastDetectionMJD' : object.lastmjd,
-        'ra' : object.meanra ,
-        'dec': object.meandec,
-        'link':link
+        'stat_r': mag_stats_dict
     }
-
-
-
 

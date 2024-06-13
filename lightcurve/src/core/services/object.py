@@ -8,14 +8,14 @@ from db_plugins.db.sql.models import Object, MagStats, Probability, Taxonomy
 from sqlalchemy import Row, select, text
 from sqlalchemy.orm import Session
 
-from .exceptions import (
+from ..exceptions import (
     AtlasNonDetectionError,
     DatabaseError,
     ObjectNotFound,
     SurveyIdError,
     ParseError,
 )
-from .object_model import ObjectReduced as ObjectModel, MagStats as MagStatsModel, Probability as ProbabilityModel, Taxonomy as  TaxonomyModel
+from ..models.object import ObjectReduced as ObjectModel, MagStats as MagStatsModel, Probability as ProbabilityModel, Taxonomy as  TaxonomyModel
 from config import app_config
 
 def default_handle_success(result):
