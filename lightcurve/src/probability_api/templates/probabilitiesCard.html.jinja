@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Probabilities</title>
+    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
+</head>
+
+<body class="tw-preflight dark:tw-bg-black tw-flex tw-justify-center tw-h-[100vh] tw-dark">
+
+    <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-h-[550px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
+        
+        <div class="tw-flex">
+            <div id='robot' class="tw-absolute tw-ml-[40px] tw-mt-[4px]">
+                <svg class="tw-h-[30px] tw-w-[30px]" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/></svg>
+            </div>
+            
+            <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-[0px] tw-outline-[0px] tw-border-b-[2px] tw-border-[#1e1e1e] tw-text-black dark:tw-text-white">
+                <div id="display-button-text" class="tw-flex-grow">
+                    
+                </div>
+
+                <div id='arrow-svg' class="tw-ml-2">
+                
+                </div>
+                
+            </button>
+        </div>
+
+        <div id="mySelect" class="tw-hidden tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-[500px] tw-rounded-[50px] tw-shadow-2xl">
+            
+        </div>
+
+        <div class="tw-flex tw-w-[100%] tw-h-[70%] tw-justify-center tw-mt-[60px]">
+            <canvas id="myChart"></canvas>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        const raw_db = {{prob_dict | tojson}};
+        const raw_tax = {{taxonomy_dict | tojson}};
+
+        const db = Object.values(raw_db);
+        const tax = Object.values(raw_tax);
+
+        function hasBodyClass(className) {
+            const body = document.body;
+            return body.classList.contains(className);
+        }
+
+        // Usage
+        const isDarkMode = hasBodyClass('tw-dark');
+
+        // This function detects if there is more than one classifier_name with the same value and detects what of them is the higher version.
+
+        function uniqueValues() {
+
+            let uniqueName = [];
+            let uniqueVersion = [];
+            let repeatedArray = []; // if len(repeatedArray[i]) > 1 then there  is a repetition in i
+            
+            for (let i = 0; i < tax.length; i++){
+
+                if(!(uniqueName.includes(tax[i].classifier_name))){
+                    uniqueName.push(tax[i].classifier_name);
+                    uniqueVersion.push(tax[i].classifier_version)
+                    repeatedArray.push([tax[i].classifier_version]) 
+                } else {
+                    repeatedArray[uniqueName.indexOf(tax[i].classifier_name)].push(tax[i].classifier_version)
+                }
+
+            }
+
+            for (let j = 0; j < repeatedArray.length; j++){
+
+                let maxVersion = 0;
+
+                if (repeatedArray[j].length > 1){
+                    for (let k = 0; k < repeatedArray[j].length; k++){
+
+                        let splitted = repeatedArray[j][k].split('_');
+                        let splitted_numbers = splitted[splitted.length - 1].split('.')
+                        let partialSum = 0;
+
+                        for (let i = 0;i < splitted_numbers.length; i++){
+                            partialSum += Number(splitted_numbers[i]);
+
+                        }
+
+                        if (maxVersion < partialSum){
+                            maxVersion = partialSum;
+                            uniqueVersion[j] = repeatedArray[j][k];
+                        }
+                    }
+                }
+
+            }
+
+            return [uniqueName,uniqueVersion]
+
+        }
+
+        // generateDictionaries functions takes the uniqueValues return and generates a dictionary of empty dictionaries, one for every classifier_name in the uniqueValues return
+        function generateDictionaries() {
+
+            const [uniqueName,uniqueVersion] = uniqueValues();
+            const result = {};
+
+            for (let i = 0; i < uniqueName.length; i++) {
+                result[uniqueName[i]] = {};
+            }
+
+            return [result,uniqueName,uniqueVersion];
+        }
+
+        // getData is the function that fill the dictionary generated in generateDictionaries. tha data is separated by his classfier_name and added as: class_name:probability
+        // where class_name is the key and probability is the value
+        // uniqueVersion is not used because db only has 1 version, but if we must choose the higher version, then the uniqueVersion list has it.
+        function getData(db){
+
+            const [principalDict,uniqueKeys,uniqueVersion] = generateDictionaries();
+            for (let i = 0; i < db.length; i++){
+                principalDict[db[i].classifier_name][db[i].class_name] = db[i].probability;
+            }
+
+            return [principalDict,uniqueKeys]
+        }
+        
+        const [principalDict,uniqueKeys] = getData(db);
+
+        // selector function returns the dictionary required in the initial moment and when the user selects another chart
+        function selector(n){
+            return principalDict[uniqueKeys[n]];
+        }
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        let currentDict = selector(0);
+
+        // Data is a variable required in config, and config with ctx are the values required to generate de chart
+        const data = {
+            labels: Object.keys(currentDict),
+            datasets: [{
+                label: 'Probabilities',
+                data: Object.values(currentDict),
+                fill: true,
+                backgroundColor: 'rgba(255, 0, 54, 0.7)',
+                borderColor: 'rgb(255, 0, 54)',
+                pointBackgroundColor: 'rgb(255, 0, 54)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(255, 0, 54)',
+            }]
+            };
+
+            let gridColor;
+
+            if (isDarkMode) {
+            gridColor = 'white';
+            } else {
+            gridColor = 'black';
+            }
+
+            const config = {
+            type: 'radar',
+            data: data,
+            options: {
+                animation: {
+                duration: 200
+                },
+                elements: {
+                line: {
+                    borderWidth: 1,
+                },
+                },
+                scales: {
+                r: {
+                    ticks: {
+                    display: false,
+                    maxTicksLimit: 5,
+                    },
+                    grid: {
+                    color: gridColor
+                    },
+                    angleLines: {
+                    color: gridColor
+                    },
+                    pointLabels: {
+                    color: gridColor
+                    }
+                },
+                },
+                plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    intersect: false,
+                    displayColors: false,
+                    callbacks: {
+                    title: function() {
+                        return 'Probabilities (Score)';
+                    },
+                    label: function(context) {
+                        let tooltipText = [];
+                        // Loop through all data points
+                        context.dataset.data.forEach((value, index) => {
+                        const label = context.chart.data.labels[index];
+                        tooltipText.push(`${label}: ${value}`);
+                        });
+
+
+                        return tooltipText;
+                    }
+                    }
+                },
+                },
+            },
+            };
+
+        
+
+        // Function to capitalize just the first letter of a word
+        function capitalize(word){
+            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }
+        // Function that split the word by the _ and joins with spaces and capitalized words
+        function changeTitles(uniquekeys){
+            let keysTitle = [];
+
+            for (let i = 0; i < uniqueKeys.length; i++){
+
+                let splittedWord = uniqueKeys[i].split('_');
+                let auxList = []
+
+                for (let j = 0; j < splittedWord.length; j++){
+                    auxList.push(capitalize(splittedWord[j]));
+                }
+                keysTitle.push(auxList.join(' '))
+            }
+            return keysTitle;
+        }
+
+        let keysTitle = changeTitles(uniqueKeys)
+        document.getElementById('display-button-text').innerHTML = keysTitle[0]
+
+        if (isDarkMode){
+            document.getElementById('robot').style.color = 'white'
+        } else {
+            document.getElementById('robot').style.color = 'black'
+        }
+
+        const selectElement = document.getElementById('mySelect');
+        // The next for loop generates the menu of options and indexes the eventListener to every option in the menu to change the charts
+        for (let i = 0; i < uniqueKeys.length; i++){
+
+            const newA = document.createElement('a');
+            newA.id = keysTitle[i];
+            newA.value = uniqueKeys[i];
+            newA.classList = 'tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]'
+            newA.target = '_blank'
+            
+            const newDiv = document.createElement('div');
+            newDiv.innerHTML = keysTitle[i];
+            newDiv.id = 'div'+keysTitle[i];
+            newDiv.classList = 'tw-h-[16.66666666666%] tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]';
+            
+            const optionsHeight = String(100 / uniqueKeys.length) // como podemos poner esto como tw-h-[optionsHeight%] ??
+
+            newA.appendChild(newDiv);
+            selectElement.appendChild(newA);
+
+            document.getElementById(keysTitle[i]).addEventListener('click', function() {
+                const arrowSvgElement = document.getElementById('arrow-svg');
+                const displayButtonTextElement = document.getElementById('display-button-text');
+
+                if (arrowSvgElement && displayButtonTextElement) {
+                    displayButtonTextElement.innerHTML = keysTitle[i]
+
+                    let currentDictChanged = selector(uniqueKeys.indexOf(this.value));
+
+                    myChart.data.labels = Object.keys(currentDictChanged);
+                    myChart.data.datasets[0].data = Object.values(currentDictChanged);
+                    myChart.update();
+
+                    displayMenu();
+                }
+            });
+
+        }
+        // new Chart deploys the chart
+        let myChart = new Chart(ctx, config);
+
+        let boolDisplay = 1;
+        document.getElementById('display-button').addEventListener('click', () => {displayMenu()});
+
+        const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>`
+
+        const arrowUp = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>`
+
+
+        document.getElementById('arrow-svg').innerHTML = arrowDown;
+        
+        if (isDarkMode){
+            document.getElementById('arrow-svg').style.color = 'white'
+            document.getElementById('display-button').style.borderColor = 'white'
+        } else {
+            document.getElementById('arrow-svg').style.color = 'black'
+            document.getElementById('display-button').style.borderColor = 'black'
+        }
+
+        const myClick = document.getElementById('display-button');
+
+        function handleOutsideClick(event) {
+            if (!myClick.contains(event.target)) {
+                boolDisplay = 0;
+                displayMenu();
+            }
+        }
+
+        document.addEventListener('click', handleOutsideClick);
+
+        function displayMenu() {
+
+            if (boolDisplay === 1){
+                document.getElementById('mySelect').style.display = 'block';
+                document.getElementById('arrow-svg').innerHTML = arrowUp
+                document.getElementById('robot').style.color = '#1976d2'
+                document.getElementById('arrow-svg').style.color = '#1976d2'
+                document.getElementById('display-button').style.borderColor = '#1976d2'
+                boolDisplay = 0;
+            } else {
+                document.getElementById('mySelect').style.display = 'none';
+                document.getElementById('arrow-svg').innerHTML = arrowDown
+                if (isDarkMode){
+                    document.getElementById('arrow-svg').style.color = 'white'
+                    document.getElementById('robot').style.color = 'white'
+                    document.getElementById('display-button').style.borderColor = 'white'
+                } else {
+                    document.getElementById('arrow-svg').style.color = 'black'
+                    document.getElementById('robot').style.color = 'black'
+                    document.getElementById('display-button').style.borderColor = 'black'
+                }
+                
+                boolDisplay = 1;
+            }
+        }
+
+    </script>
+</body>
+
+</html>
+
