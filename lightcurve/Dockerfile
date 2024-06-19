@@ -24,6 +24,8 @@ WORKDIR /lightcurve
 RUN npx tailwindcss -o /compiled/main.css
 
 
+
+
 FROM python:3.11-slim as production
 RUN pip install poetry
 COPY --from=builder /app /app

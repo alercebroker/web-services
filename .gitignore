@@ -6,7 +6,7 @@ tests/tests.out
 .coverage
 htmlcov/
 .DS_Store
-.env
+*.env
 .log/
 coverage.*
 .python-version
