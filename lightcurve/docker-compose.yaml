@@ -39,6 +39,7 @@ services:
       - filled_variables.env
     environment:
       SERVICE: object_api
+      API_URL: http://localhost:8002
 
   magstats:
     build:
@@ -50,6 +51,7 @@ services:
       - filled_variables.env
     environment:
       SERVICE: magstats_api
+      API_URL: http://localhost:8003
 
   probability:
     build:
@@ -61,3 +63,4 @@ services:
       - filled_variables.env
     environment:
       SERVICE: probability_api
+      API_URL: http://localhost:8004
