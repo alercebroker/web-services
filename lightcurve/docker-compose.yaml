@@ -16,3 +16,48 @@ services:
       - MONGO_INITDB_DATABASE=database
     ports:
       - 27017:27017
+
+  lightcurve:
+    build:
+      context: ../
+      dockerfile: lightcurve/Dockerfile
+    ports:
+      - 8001:8000
+    env_file:
+      - filled_variables.env
+    environment:
+      SERVICE: api
+      API_URL: http://localhost:8001
+
+  object:
+    build:
+      context: ../
+      dockerfile: lightcurve/Dockerfile
+    ports:
+      - 8002:8000
+    env_file:
+      - filled_variables.env
+    environment:
+      SERVICE: object_api
+
+  magstats:
+    build:
+      context: ../
+      dockerfile: lightcurve/Dockerfile
+    ports:
+      - 8003:8000
+    env_file:
+      - filled_variables.env
+    environment:
+      SERVICE: magstats_api
+
+  probability:
+    build:
+      context: ../
+      dockerfile: lightcurve/Dockerfile
+    ports:
+      - 8004:8000
+    env_file:
+      - filled_variables.env
+    environment:
+      SERVICE: probability_api
