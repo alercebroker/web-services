@@ -1,1 +1,2 @@
 *.env
+lightcurve/src/magstats_api/static/main.css
