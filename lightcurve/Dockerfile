@@ -13,10 +13,15 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 FROM python-base as builder
 RUN pip install poetry
 WORKDIR /app
-COPY ./lightcurve/poetry.lock ./lightcurve/pyproject.toml /app
+COPY ./lightcurve/poetry.lock ./lightcurve/pyproject.toml /app/
 COPY ./libs/ralidator-core /libs/ralidator-core
 COPY ./libs/ralidator-fastapi /libs/ralidator-fastapi
 RUN poetry install --no-root --without=test
+
+FROM node:22-alpine as tailwindcss
+COPY ./lightcurve/ /lightcurve/
+WORKDIR /lightcurve
+RUN npx tailwindcss -o /compiled/main.css
 
 
 FROM python:3.11-slim as production
@@ -27,5 +32,10 @@ WORKDIR /app
 COPY ./lightcurve/README.md /app/README.md
 COPY ./lightcurve/scripts /app/scripts
 COPY ./lightcurve/src /app/src
+# coing compiled main.css to each service static folder
+COPY --from=tailwindcss /compiled/main.css /app/src/api/static
+COPY --from=tailwindcss /compiled/main.css /app/src/magstats_api/static
+COPY --from=tailwindcss /compiled/main.css /app/src/object_api/static
+COPY --from=tailwindcss /compiled/main.css /app/src/probability_api/static
 RUN poetry install --only-root
 CMD ["bash", "scripts/entrypoint.sh"]

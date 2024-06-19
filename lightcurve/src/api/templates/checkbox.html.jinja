@@ -1,13 +1,15 @@
-{% macro radio_button(value,checked, title, tooltip, disabled=False) %}
-    <div class="tw-grid tw-grid-cols-6">
+{% macro checkbox(value, checked, title, tooltip, disabled=False, hidden=False) %}
+    <div id="lc-check-row-{{ value }}"
+         class="tw-grid tw-grid-cols-6"
+         {% if hidden %}hidden{% endif %}>
         <div class="tw-col-span-5">
             <label>
-                <input id="radio-{{ value }}"
-                       type="radio"
+                <input id="lc-check-{{ value }}"
+                       type="checkbox"
                        value="{{ value }}"
                        {% if checked %}checked{% endif %}
                        {% if disabled %}disabled{% endif %}>
-                <span>{{ title }}</span>
+                <span id="lc-check-{{ value }}-label">{{ title }}</span>
             </label>
         </div>
         <div class="tooltip tw-col-span-1">

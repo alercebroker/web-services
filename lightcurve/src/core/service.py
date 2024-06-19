@@ -49,7 +49,8 @@ def fail_from_list(failable_list: list):
 def get_lightcurve(
     oid: str,
     survey_id: str = "all",
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
     mongo_db: Database | None = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error,
@@ -84,7 +85,9 @@ def get_lightcurve(
         forced_photometry = _get_unique_forced_photometry(
             oid, survey_id, session_factory, mongo_db
         )
-        failure = fail_from_list([detections, non_detections, forced_photometry])
+        failure = fail_from_list(
+            [detections, non_detections, forced_photometry]
+        )
         if failure:
             handle_error(failure)
         return handle_success(
@@ -101,7 +104,8 @@ def get_lightcurve(
 def get_detections(
     oid: str,
     survey_id: str = "all",
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
     mongo_db: Database | None = None,
     handle_success: Callable[[Any], list] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error,
@@ -137,10 +141,12 @@ def get_detections(
     else:
         handle_error(SurveyIdError(survey_id, "detections"))
 
+
 def _get_all_unique_detections(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
     mongo_db: Database | None = None,
 ) -> Result[list[DetectionModel], BaseException]:
     try:
@@ -152,10 +158,12 @@ def _get_all_unique_detections(
         sql_detections = []
     except DatabaseError as e:
         return Failure(e)
-    
+
     if mongo_db is not None:
         try:
-            mongo_detections = _get_detections_mongo(mongo_db, oid, tid=survey_id)
+            mongo_detections = _get_detections_mongo(
+                mongo_db, oid, tid=survey_id
+            )
         except ObjectNotFound:
             mongo_detections = []
         except DatabaseError as e:
@@ -169,7 +177,8 @@ def _get_all_unique_detections(
 def get_non_detections(
     oid: str,
     survey_id: str = "all",
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
     mongo_db: Database | None = None,
     handle_success: Callable[[Any], list] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error,
@@ -211,7 +220,8 @@ def get_non_detections(
 def get_period(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
     handle_success: Callable[[Any], FeatureModel] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error,
 ) -> FeatureModel | None:
@@ -247,11 +257,11 @@ def get_period(
         handle_error(SurveyIdError(survey_id, "period"))
 
 
-
 def get_forced_photometry(
     oid: str,
     survey_id: str = "all",
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
     mongo_db: Database | None = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error,
@@ -287,11 +297,11 @@ def get_forced_photometry(
         handle_error(SurveyIdError(survey_id, "forced photometry"))
 
 
-
 def _get_unique_forced_photometry(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
     mongo_db: Database | None = None,
 ) -> Result[list[ForcedPhotometryModel], BaseException]:
     try:
@@ -303,7 +313,7 @@ def _get_unique_forced_photometry(
         sql_forced_photometry = []
     except DatabaseError as e:
         return Failure(e)
-    
+
     if mongo_db is not None:
         try:
             mongo_forced_photometry = _get_forced_photometry_mongo(
@@ -323,11 +333,11 @@ def _get_unique_forced_photometry(
         return Success(sql_forced_photometry)
 
 
-
 def _get_all_unique_non_detections(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
     mongo_db: Database | None = None,
 ) -> Result[list[NonDetectionModel], BaseException]:
     try:
@@ -355,7 +365,6 @@ def _get_all_unique_non_detections(
             return Failure(e)
     else:
         return Success(sql_non_detections)
-
 
 
 def _query_detections_sql(
@@ -594,6 +603,7 @@ async def get_data_release(
         }
     return datareleases, detections
 
+
 def _get_period_sql(
     oid: str,
     session_factory: Callable[..., AbstractContextManager[Session]] | None,
@@ -647,10 +657,8 @@ def _get_forced_photometry_mongo(
         if isinstance(fid, str):
             fid = fid_str2int(fid)
         return ForcedPhotometryModel(**res, candid=candid, fid=fid)
-    result = [
-        parse_result(res)
-        for res in result
-    ]
+
+    result = [parse_result(res) for res in result]
     return result
 
 

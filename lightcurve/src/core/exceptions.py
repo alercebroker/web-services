@@ -16,6 +16,7 @@ class DatabaseError(WrapperException):
     def __str__(self) -> str:
         return f"{self.database} error: {self.original_exception.__str__()}"
 
+
 class ParseError(WrapperException):
     def __init__(self, original_e, model_to_parse: str, subcode=None):
         self.model_to_parse = model_to_parse
@@ -27,6 +28,7 @@ class ParseError(WrapperException):
             "error": self.original_exception.__str__(),
         }
         return f"Parse error: {error_dict}"
+
 
 class DetectionsNotFound(BaseException):
     def __init__(self, object_id) -> None:

@@ -1,41 +1,7 @@
 <script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="{{API_URL}}/static/main.css">
-<script>
-    // Conditionally loads css file to prevent duplicate downloading / parsing
-    function isCssLoaded(url) {
-        for (let css of document.styleSheets) {
-            if (css.href === url) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function conditionalCss(href) {
-        if (!isCssLoaded(href)) {
-            let link = document.createElement("link");
-            link.href = href;
-            link.type = "text/css";
-            link.rel = "stylesheet";
-            document.head.appendChild(link);
-        }
-    }
-
-    function conditionalHTMX() {
-        h = document.getElementById("htmx-script");
-        if (h === null) {
-            let script = document.createElement("script");
-            script.src = "https://unpkg.com/htmx.org@1.9.11";
-            script.id = "htmx-script";
-            document.head.appendChild(script);
-        }
-    }
-
-    conditionalHTMX();
-    conditionalCss("{{API_URL}}/static/main.css");
-    conditionalCss("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
-</script>
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{{ API_URL }}/static/main.css">
 <script>
     function configRequest(event) {
         if (event.detail.elt.id === "lc-dr") {
@@ -49,12 +15,13 @@
     document.removeEventListener('htmx:configRequest', configRequest)
     document.addEventListener('htmx:configRequest', configRequest)
 </script>
-
-<div id="lightcurve-app" class="tw-preflight tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white" style="height: 100%;">
+<div id="lightcurve-app"
+     class="tw-preflight tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white"
+     style="height: 100%">
     <div id="lc-main" style="width: 100%;  min-width: 0; min-height: 380px;"></div>
     <p id="plot-indicator" class="htmx-indicator">Loading...</p>
-    <div class="tw-grid tw-grid-cols-6 tw-gap-2 tw-mx-2 tw-px-2">
-        <div class="tw-col-span-3">
+    <div class="tw-grid tw-grid-cols-10 tw-gap-1 tw-px-4 tw-py-4">
+        <div class="tw-col-span-4">
             {% import 'radio_button.html.jinja' as radio %}
             <div>
                 {{ radio.radio_button("difference", plot_type == "difference", "Difference Magnitude", "The difference magnitude light curve is the absolute difference between science and reference magnitudes.") }}
@@ -63,65 +30,47 @@
                 {{ radio.radio_button("apparent", plot_type == "apparent", "Apparent Magnitude", "Apparent magnitude light curve results from adding/subtracting the fluxes from the reference and difference in the same unit system and then converting to magnitudes.") }}
             </div>
             <div>
-                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The period folded light curve, where time is transformed to time modulo the period (phase). Disabled if no period available.", disabled= (period | int ) == 0) }}
+                {{ radio.radio_button("folded", plot_type == "folded", "Folded", "The period folded light curve, where time is transformed to time modulo the period (phase). Disabled if no period available.", disabled= (period | int) == 0) }}
             </div>
         </div>
-        <div class="tw-col-span-2">
-            <input 
-                id="check-dr" 
-                type="checkbox" 
-                value="dr" 
-            />
-            <label 
-                id="check-dr-label"
-                for="check-dr" 
-            >
-                Toggle DR
-            </label>
-            <div class="tooltip">
-                <i class="fa fa-question-circle tw-me-2"></i>
-                <div class="tooltip-text">
-                    Show sources from ZTF Data Release 5
-                </div>
-            </div>
-            <input 
-                id="check-flux" 
-                type="checkbox" 
-                value="flux" 
-            />
-            <label for="check-flux">
-                Toggle Flux
-            </label>
-            <div class="tooltip">
-                <i class="fa fa-question-circle tw-me-2"></i>
-                <div class="tooltip-text">
-                    Toggle between flux and magnitude
-                </div>
+        <div class="tw-col-span-4">
+            {% import 'checkbox.html.jinja' as checkbox %}
+            <div>{{ checkbox.checkbox("dr", false, "Toggle DR", "Show sources from ZTF Data Release 5") }}</div>
+            <div>{{ checkbox.checkbox("flux", false, "Toggle Flux", "Toggle between flux and magnitude") }}</div>
+            <div>
+                {{ checkbox.checkbox("periodogram", false, "Toggle Periodogram", "Show the lightcurve periodogram. Points on the periodogram can be clicked to update the folded lightcurve plot.", hidden=True) }}
             </div>
         </div>
-        <div>
-            <button id="lc-dr"
-                class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 disabled:tw-bg-transparent disabled:tw-opacity-50 disabled:tw-outline tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"
-                hx-get="{{API_URL}}/htmx/lightcurve/dr" hx-swap="outerHTML" hx-trigger="click"
-                hx-target="#lightcurve-app"
-                hx-swap="outerHTML"
-                hx-indicator="#plot-indicator"
-            >
-                <i class="fa fa-eye tw-me-2"></i>
-                Filter DR
-            </button>
-            <a id="lc-download-ref" style="display: none;"></a>
-            <button id="lc-download"
-                class="tw-text-xs tw-bg-green-500 hover:tw-bg-green-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded">
-                <i class="fa fa-download tw-me-2"></i>
-                Download
-            </button>
+        <div class="tw-col-span-2 tw-space-y-2">
+            <div>
+                <button id="lc-dr"
+                        class="tw-text-xs tw-bg-blue-500 hover:tw-bg-blue-700 disabled:tw-bg-transparent disabled:tw-opacity-50 disabled:tw-outline tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded"
+                        hx-get="{{ API_URL }}/htmx/lightcurve/dr"
+                        hx-swap="outerHTML"
+                        hx-trigger="click"
+                        hx-target="#lightcurve-app"
+                        hx-swap="outerHTML"
+                        hx-indicator="#plot-indicator">
+                    <i class="fa fa-eye tw-me-2"></i>
+                    Filter DR
+                </button>
+            </div>
+            <div>
+                <a id="lc-download-ref" style="display: none;"></a>
+                <button id="lc-download"
+                        class="tw-text-xs tw-bg-green-500 hover:tw-bg-green-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded">
+                    <i class="fa fa-download tw-me-2"></i>
+                    Download
+                </button>
+            </div>
         </div>
     </div>
+    {% include 'periodogram.html.jinja' %}
     <script type="module">
         import { ApparentLightCurveOptions } from "{{API_URL}}/static/lc-apparent.js";
         import { DifferenceLightCurveOptions } from "{{API_URL}}/static/lc-difference.js";
         import { FoldedLightCurveOptions } from "{{API_URL}}/static/lc-folded.js";
+        import { Periodogram } from "{{API_URL}}/static/periodogram.js";
         import * as echart from "{{API_URL}}/static/echarts.min.js";
         import { jdToDate } from "{{API_URL}}/static/astro-dates.js";
         import "{{API_URL}}/static/jszip.js"
@@ -134,14 +83,37 @@
         const dr_detections = {{ dr_detections | tojson }};
         const dr = {{ dr | tojson }};
         let current_plot = "{{ plot_type }}";
-        const period = {{ period | float }};
+        let period = {{ period | float }};
+        const apiUrl = "{{ API_URL }}"
 
         const setPlot = () => {
-            let flux = document.getElementById("check-flux").checked;
+            let flux = document.getElementById("lc-check-flux").checked;
             const all_detections = getDetectionsWithDR();
-            const diffOptions = new DifferenceLightCurveOptions(JSON.parse(JSON.stringify(detections)), non_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
-            const appOptions = new ApparentLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, flux);
-            const foldOptions = new FoldedLightCurveOptions(all_detections, JSON.parse(JSON.stringify(forced_photometry)), plot_text_color, period, flux);
+
+            const periodogram = document.getElementById("lc-periodogram");
+            const periodogram_check = document.getElementById("lc-check-row-periodogram");
+
+            const diffOptions = new DifferenceLightCurveOptions(
+                JSON.parse(JSON.stringify(detections)),
+                non_detections,
+                JSON.parse(JSON.stringify(forced_photometry)),
+                plot_text_color,
+                flux
+            );
+            const appOptions = new ApparentLightCurveOptions(
+                all_detections,
+                JSON.parse(JSON.stringify(forced_photometry)),
+                plot_text_color,
+                flux
+            );
+            const foldOptions = new FoldedLightCurveOptions(
+                all_detections,
+                JSON.parse(JSON.stringify(forced_photometry)),
+                plot_text_color,
+                period,
+                flux
+            );
+
             if (current_plot === "difference") {
                 plot_options = diffOptions
             } 
@@ -151,13 +123,17 @@
             if (current_plot === "folded") {
                 plot_options = foldOptions
             }
+
+            periodogram.hidden = current_plot !== "folded";
+            periodogram_check.hidden = current_plot !== "folded";
+
             plot.setOption(plot_options.options, true);
             disableRadioButtons(diffOptions, appOptions, foldOptions);
         }
 
         function getDetectionsWithDR() {
             let all_detections = JSON.parse(JSON.stringify(detections));
-            let check_dr = document.getElementById("check-dr");
+            let check_dr = document.getElementById("lc-check-dr");
             if (!check_dr.checked) {
                 return all_detections
             }
@@ -181,11 +157,11 @@
             apparent.disabled = !canDisplay(appOptions.options);
             apparent.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
             apparent.classList.toggle("tw-bg-transparent", !canDisplay(appOptions.options));
-            const check_dr = document.getElementById("check-dr")
+            const check_dr = document.getElementById("lc-check-dr")
             check_dr.disabled = !canDisplay(appOptions.options) || dr.length === 0;
             check_dr.classList.toggle("tw-opacity-50", check_dr.disabled);
             check_dr.classList.toggle("tw-bg-transparent", check_dr.disabled);
-            const check_dr_label = document.getElementById("check-dr-label")
+            const check_dr_label = document.getElementById("lc-check-dr-label")
             check_dr_label.classList.toggle("tw-opacity-50", !canDisplay(appOptions.options));
             const lc_dr = document.getElementById("lc-dr")
             lc_dr.disabled = !canDisplay(appOptions.options) || dr.length === 0;
@@ -213,20 +189,6 @@
                 index: index,
             }
         }
-
-        function setColorSchemeWrapper(container) {
-            function setColorScheme() {
-                const color_scheme = container.classList.contains("tw-dark") ? "tw-dark" : "tw-light";
-                if (color_scheme === "tw-dark") {
-                    plot_text_color = "#fff";
-                } else {
-                    plot_text_color = "#000";
-                }
-                setPlot();
-            }
-            return setColorScheme;
-        }
-
 
         function dateToString(date) {
             date = date.toISOString();
@@ -299,7 +261,7 @@
                 updateRadioButtons();
             });
         });
-        let check_dr = document.getElementById("check-dr");
+        let check_dr = document.getElementById("lc-check-dr");
         {% if show_dr %}
         check_dr.checked = true;
         {% endif %}
@@ -310,9 +272,43 @@
                 setPlot();
             }
         });
-        let check_flux = document.getElementById("check-flux");
+        let check_flux = document.getElementById("lc-check-flux");
         check_flux.addEventListener("change", setPlot);
         const container = document.getElementById("lightcurve-app");
+
+
+        // Add periodogram
+        const periodogram_elements = {
+            main: document.getElementById("lc-periodogram-main"),
+            spiner: document.getElementById("lc-periodogram-spinner"),
+            slider: document.getElementById("lc-periodogram-slider"),
+            field: document.getElementById("lc-periodogram-value"),
+            doubleButton: document.getElementById("lc-periodogram-double"),
+            halfButton: document.getElementById("lc-periodogram-half"),
+            check: document.getElementById("lc-check-periodogram"),
+        };
+
+        const periodogram = new Periodogram(period, detections, periodogram_elements, apiUrl, setPlot);
+        periodogram.onSetPeriod = (newPeriod) => {
+            period = newPeriod;
+            setPlot();
+        };
+
+        // Update color scheme
+        function setColorSchemeWrapper(container) {
+            function setColorScheme() {
+                const color_scheme = container.classList.contains("tw-dark") || container.classList.contains("theme--dark")? "tw-dark" : "tw-light";
+                if (color_scheme === "tw-dark") {
+                    plot_text_color = "#fff";
+                } else {
+                    plot_text_color = "#000";
+                }
+                setPlot();
+                periodogram.updateColorScheme(color_scheme);
+            }
+            return setColorScheme;
+        }
+
         const color_scheme_observer = new MutationObserver(setColorSchemeWrapper(container));
         color_scheme_observer.observe(container, { attributes: true, attributeFilter: ["class"] });
         setColorSchemeWrapper(container)()
