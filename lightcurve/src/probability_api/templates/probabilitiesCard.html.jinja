@@ -30,7 +30,7 @@
             </button>
         </div>
 
-        <div id="mySelect" class="tw-hidden tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-[500px] tw-rounded-[50px] tw-shadow-2xl">
+        <div id="mySelect" class="tw-hidden tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-fit tw-rounded-[50px] tw-shadow-2xl">
             
         </div>
 
@@ -50,6 +50,21 @@
         const db = Object.values(raw_db);
         const tax = Object.values(raw_tax);
 
+        function howManyGraphsFilter(db){
+
+            const uniqueList = []
+
+            for (let i = 0; i < db.length; i++){ 
+                if (!uniqueList.includes(db[i].classifier_name)){
+                    uniqueList.push(db[i].classifier_name)
+                }
+            }
+
+            return uniqueList
+        }
+
+        const uniqueNameAux = howManyGraphsFilter(db);
+
         function hasBodyClass(className) {
             const body = document.body;
             return body.classList.contains(className);
@@ -65,7 +80,7 @@
             let uniqueName = [];
             let uniqueVersion = [];
             let repeatedArray = []; // if len(repeatedArray[i]) > 1 then there  is a repetition in i
-            
+            console.log(tax)
             for (let i = 0; i < tax.length; i++){
 
                 if(!(uniqueName.includes(tax[i].classifier_name))){
@@ -101,6 +116,10 @@
                     }
                 }
 
+            }
+
+            if (uniqueName.length > uniqueNameAux.length){
+                uniqueName = uniqueNameAux;
             }
 
             return [uniqueName,uniqueVersion]
@@ -257,21 +276,31 @@
         }
 
         const selectElement = document.getElementById('mySelect');
-        // The next for loop generates the menu of options and indexes the eventListener to every option in the menu to change the charts
-        for (let i = 0; i < uniqueKeys.length; i++){
 
+        // The next for loop generates the menu of options and indexes the eventListener to every option in the menu to change the charts
+        for (let i = 0; i < uniqueKeys.length; i++) {
             const newA = document.createElement('a');
             newA.id = keysTitle[i];
             newA.value = uniqueKeys[i];
-            newA.classList = 'tw-text-center tw-text-3xl  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]'
-            newA.target = '_blank'
-            
+            newA.classList = 'tw-text-center tw-text-3xl tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
+            newA.target = '_blank';
+
             const newDiv = document.createElement('div');
             newDiv.innerHTML = keysTitle[i];
-            newDiv.id = 'div'+keysTitle[i];
-            newDiv.classList = 'tw-h-[16.66666666666%] tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]';
+            newDiv.id = 'div' + keysTitle[i];
+
             
-            const optionsHeight = String(100 / uniqueKeys.length) // como podemos poner esto como tw-h-[optionsHeight%] ??
+
+            newDiv.classList = `tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]`;
+            
+            const optionsHeight = String(100 / uniqueKeys.length);
+
+            selectElement.setAttribute('style',`height: ${83.333333333*uniqueKeys.length}px`)
+
+            console.log(optionsHeight)
+
+            newDiv.setAttribute('style', `height: ${optionsHeight}%`);
+
 
             newA.appendChild(newDiv);
             selectElement.appendChild(newA);
@@ -281,19 +310,18 @@
                 const displayButtonTextElement = document.getElementById('display-button-text');
 
                 if (arrowSvgElement && displayButtonTextElement) {
-                    displayButtonTextElement.innerHTML = keysTitle[i]
+                displayButtonTextElement.innerHTML = keysTitle[i];
 
-                    let currentDictChanged = selector(uniqueKeys.indexOf(this.value));
+                let currentDictChanged = selector(uniqueKeys.indexOf(this.value));
 
-                    myChart.data.labels = Object.keys(currentDictChanged);
-                    myChart.data.datasets[0].data = Object.values(currentDictChanged);
-                    myChart.update();
+                myChart.data.labels = Object.keys(currentDictChanged);
+                myChart.data.datasets[0].data = Object.values(currentDictChanged);
+                myChart.update();
 
-                    displayMenu();
+                displayMenu();
                 }
             });
-
-        }
+            }
         // new Chart deploys the chart
         let myChart = new Chart(ctx, config);
 
