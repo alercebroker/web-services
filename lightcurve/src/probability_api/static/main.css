@@ -367,8 +367,8 @@
   padding-bottom: 0.5rem;
 }
 
-.tw-preflight :is(.tw-pl-\[10px\]) {
-  padding-left: 10px;
+.tw-preflight :is(.tw-pl-\[20px\]) {
+  padding-left: 20px;
 }
 
 .tw-preflight :is(.tw-pl-\[40px\]) {
@@ -383,8 +383,8 @@
   padding-left: 60px;
 }
 
-.tw-preflight :is(.tw-pr-\[10px\]) {
-  padding-right: 10px;
+.tw-preflight :is(.tw-pr-\[20px\]) {
+  padding-right: 20px;
 }
 
 .tw-preflight :is(.tw-pt-\[25px\]) {
