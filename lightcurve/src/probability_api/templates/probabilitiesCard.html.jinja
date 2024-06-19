@@ -289,18 +289,13 @@
             newDiv.innerHTML = keysTitle[i];
             newDiv.id = 'div' + keysTitle[i];
 
-            
-
             newDiv.classList = `tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]`;
             
             const optionsHeight = String(100 / uniqueKeys.length);
 
             selectElement.setAttribute('style',`height: ${83.333333333*uniqueKeys.length}px`)
 
-            console.log(optionsHeight)
-
             newDiv.setAttribute('style', `height: ${optionsHeight}%`);
-
 
             newA.appendChild(newDiv);
             selectElement.appendChild(newA);
