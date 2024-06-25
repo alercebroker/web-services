@@ -98,7 +98,7 @@ def prob_filter(prob_list, taxonomy_list):
 
     return taxonomy_dict, prob_dict
 
-@router.get("/probability/{oid}", response_class=HTMLResponse)
+@router.get("/probabilities/{oid}", response_class=HTMLResponse)
 async def object_crossmatch_app(
     request: Request,
     oid: str
