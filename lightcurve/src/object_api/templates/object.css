@@ -579,3 +579,5 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-backdrop-saturate: ;
   --tw-backdrop-sepia: ;
 }
+
+td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: center; }

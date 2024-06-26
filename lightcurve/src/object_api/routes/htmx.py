@@ -14,8 +14,8 @@ router = APIRouter()
 templates = Jinja2Templates(
     directory="src/object_api/templates", autoescape=True, auto_reload=True
 )
-templates.env.globals["OAPI_URL"] = os.getenv(
-    "OBJECT_API_URL", "http://localhost:8001"
+templates.env.globals["API_URL"] = os.getenv(
+    "OBJECT_API_URL", "http://localhost:8002"
 )
 
 @router.get("/object/{oid}", response_class=HTMLResponse)
@@ -23,10 +23,7 @@ async def object_info_app(
     request: Request,
     oid: str
 ):
-  
-    link='https://acortar.link/ba5kba'
     
-
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
     return templates.TemplateResponse(
@@ -42,7 +39,6 @@ async def object_info_app(
                 'lastDetectionMJD' : object.lastmjd,
                 'ra' : object.meanra ,
                 'dec': object.meandec,
-                'link':link
             },
   )
 

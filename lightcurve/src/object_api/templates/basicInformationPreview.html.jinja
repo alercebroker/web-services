@@ -1,29 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+    <script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
-    <style>
-        td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: center; }
-    </style>
+    <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
-<body class="tw-preflight dark:tw-bg-black tw-dark">
+{# <div class="tw-preflight dark:tw-bg-black"> #}
 
-<div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
+<div class="tw-preflight tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3" style="width: 100%;  min-width: 0; min-height: 380px;">
     <div class="tw-text-[#1e1e1e] dark:tw-text-white">
         <table class="tw-truncate tw-table tw-m-0 tw-text-left tw-border-spacing-40 tw-w-full">
             <colgroup><col class="tw-text-left"><col><col></colgroup>
             <tbody>
-                <tr class="hover:tw-bg-[#757575] tw-duration-200  tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
+                <tr class="hover:tw-bg-[#757575] tw-duration-200  tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20">
                     <td class="tw-text-left">Object</td>
                     <td class="tw-w-[300px]" id="object"></td>
                     <td class="end"></td>
                 </tr>
 
-                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20">
                     <td class="tw-text-left">Corrected</td>
                     <td class="" id="corrected"></td>
                     <td class="tw-group tw-relative">
@@ -40,7 +32,7 @@
                     </td>
                 </tr>
 
-                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20">
                     <td class="tw-text-left">Stellar</td>
                     <td class="" id="stellar"></td>
                     <td class="tw-group tw-relative">
@@ -57,9 +49,9 @@
                     </td>
                 </tr>
 
-                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white"><td class="tw-text-left">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20"><td class="tw-text-left">Detections</td><td class="middle-text" id=detections></td><td class="end"></td></tr>
 
-                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20">
                     <td class="tw-text-left">Discovery date</td>
                     <td class="" id="discoveryDate"></td>
                     <td class="tw-group tw-relative">
@@ -78,7 +70,7 @@
                     </td>
                 </tr>
 
-                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20">
                     <td class="tw-text-left">Last detection</td>
                     <td class="" id="lastDetection"></td>
                     <td class="tw-relative tw-group">
@@ -96,7 +88,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white">
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20">
                     <td class="tw-text-left">RA(J2000) Dec(J2000)</td>
                     <td class="" id="raDec"></td>
                     <td class="tw-relative tw-group">
@@ -226,7 +218,6 @@
         const nonDetections = {{nonDetections | tojson}} ;
         let ra = {{ra | tojson}} ;
         let dec  = {{dec | tojson}};
-        const link = {{link | tojson}};
 
         let raDec = String(ra) + ' ' + String(dec);
 
@@ -307,7 +298,6 @@
 
     </script>
 
-</body>
-</html>
+{# </div> #}
 
 

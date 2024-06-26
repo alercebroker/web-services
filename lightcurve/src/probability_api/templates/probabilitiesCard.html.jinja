@@ -1,10 +1,10 @@
 <script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
-<link rel="stylesheet" href="{{API_URL}}/static/main.css">
+<link rel="stylesheet" href="{{API_URL}}/static/probability.css">
 
 
-<div class="tw-preflight dark:tw-bg-black tw-flex tw-justify-center tw-h-[100vh] tw-dark">
+{# <div class="tw-preflight dark:tw-bg-black tw-flex tw-justify-center tw-h-[100vh] container"> #}
 
-    <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-h-[550px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
+    <div class="tw-preflight tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-h-[550px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3" style="width: 100%;  min-width: 0; min-height: 380px;">
         
         <div class="tw-flex">
             <div id='robot' class="tw-absolute tw-ml-[40px] tw-mt-[4px]">
@@ -31,7 +31,6 @@
             <canvas id="myChart"></canvas>
         </div>
 
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -349,14 +348,19 @@
         function displayMenu() {
 
             if (boolDisplay === 1){
+
                 document.getElementById('mySelect').style.display = 'block';
+
                 document.getElementById('arrow-svg').innerHTML = arrowUp
                 document.getElementById('robot').style.color = '#1976d2'
                 document.getElementById('arrow-svg').style.color = '#1976d2'
                 document.getElementById('display-button').style.borderColor = '#1976d2'
                 boolDisplay = 0;
+                
             } else {
+
                 document.getElementById('mySelect').style.display = 'none';
+
                 document.getElementById('arrow-svg').innerHTML = arrowDown
                 if (isDarkMode){
                     document.getElementById('arrow-svg').style.color = 'white'
@@ -373,4 +377,5 @@
         }
 
     </script>
-</div>
+    </div>
+{# </div> #}
