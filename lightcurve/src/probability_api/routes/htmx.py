@@ -15,7 +15,7 @@ templates = Jinja2Templates(
     directory="src/probability_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8000"
+    "API_URL", "http://localhost:8004"
 )
 
 def prob_filter(prob_list, taxonomy_list):
