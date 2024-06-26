@@ -31,7 +31,7 @@ RUN npx tailwindcss -i /lightcurve/src/object_api/templates/main.css -o /compile
 FROM node:22-alpine as tailwindcss_magstats
 COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
-RUN npx tailwindcss -i /lightcurve/src/magstats_api/templates/main.css -o /compiled/main.css
+RUN npx tailwindcss -i /lightcurve/src/magstats_api/templates/magstats.css -o /compiled/magstats.css
 
 FROM node:22-alpine as tailwindcss_probability
 COPY ./lightcurve/ /lightcurve/
@@ -51,7 +51,7 @@ COPY ./lightcurve/scripts /app/scripts
 COPY ./lightcurve/src /app/src
 # coing compiled main.css to each service static folder
 COPY --from=tailwindcss_lightcurve /compiled/main.css /app/src/api/static
-COPY --from=tailwindcss_magstats /compiled/main.css /app/src/magstats_api/static
+COPY --from=tailwindcss_magstats /compiled/magstats.css /app/src/magstats_api/static
 COPY --from=tailwindcss_object /compiled/main.css /app/src/object_api/static
 COPY --from=tailwindcss_probability /compiled/main.css /app/src/probability_api/static
 RUN poetry install --only-root

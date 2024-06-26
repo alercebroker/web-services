@@ -1,19 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
-    <title>Document</title>
+<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="{{API_URL}}/static/magstats.css">
 
-    <style>
-        td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: left; }
-    </style>
-</head>
-<body class='tw-preflight dark:tw-bg-black tw-dark'>
+<div class='tw-preflight dark:tw-bg-black'>
 
-    <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-fit tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
+    <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-fit tw-rounded-[6px] tw-box-content tw-relative">
 
         <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
             <div class="tw-inline">
@@ -148,14 +139,15 @@
         // Create the table data rows
         for (let i = 0; i < numRows; i++) {
             const dataRow = document.createElement("tr");
-            dataRow.classList.add('hover:tw-bg-[#757575]')
-            dataRow.classList.add('dark:tw-text-white')
-            dataRow.classList.add('tw-text-black')
-            dataRow.classList.add('tw-border-b-[1px]')
-            dataRow.classList.add('tw-border-b-solid')
-            dataRow.classList.add('tw-border-b-black')
-            dataRow.classList.add('dark:tw-border-b-white')
-            
+            dataRow.classList = 'hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white'
+            //dataRow.classList.add('hover:tw-bg-[#757575]')
+            //dataRow.classList.add('dark:tw-text-white')
+            //dataRow.classList.add('tw-text-black')
+            //dataRow.classList.add('tw-border-b-[1px]')
+            //dataRow.classList.add('tw-border-b-solid')
+            //dataRow.classList.add('tw-border-b-black')
+            //dataRow.classList.add('dark:tw-border-b-white')
+            //
 
             for (let j = 0; j < numColumns; j++) {
                 const td = document.createElement("td");
@@ -319,5 +311,4 @@
 
 </script>
 
-</body>
-</html> 
+</div>
