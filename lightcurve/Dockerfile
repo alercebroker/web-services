@@ -28,10 +28,12 @@ COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
 RUN npx tailwindcss -i /lightcurve/src/object_api/templates/object.css -o /compiled/object.css
 
+
 FROM node:22-alpine as tailwindcss_magstats
 COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
 RUN npx tailwindcss -i /lightcurve/src/magstats_api/templates/magstats.css -o /compiled/magstats.css
+
 
 FROM node:22-alpine as tailwindcss_probability
 COPY ./lightcurve/ /lightcurve/

@@ -3,9 +3,9 @@
 <link rel="stylesheet" href="{{API_URL}}/static/magstats.css">
 
 
-    <div id='magstats-app' class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-fit tw-rounded-[6px] tw-box-content tw-relative" style="width: 100%;  min-width: 0; min-height: 380px;">
+    <div id='magstats-app' class="tw-preflight tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-fit tw-rounded-[6px] tw-box-content tw-relative" style="width: 100%;  min-width: 0; min-height: 380px;">
 
-        <div class="tw-preflight tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
+        <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
             <div class="tw-inline">
                 <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Magnitude Statistics</h1>
             </div>
@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <div class="tw-text-white" id="tableContainer">
+        <div class="tw-preflight dark:tw-text-white tw-text-black" id="tableContainer">
             
         </div>
 
@@ -111,6 +111,8 @@
 
         // Create the table element
         const table = document.createElement("table");
+        table.classList = 'tw-preflight tw-overflow-auto tw-ml-3' 
+        table.style.width = '100%'
 
         // Create the table header row
         const headerRow = document.createElement("tr");
@@ -119,7 +121,7 @@
         for (let i = 0; i < numColumns; i++) {
             const th = document.createElement("th");
             th.textContent = columNames[i];
-            th.style.padding = '0 30px'
+           //th.style.padding = '0 30px'
 
             const arrowButton = document.createElement('button');
             arrowButton.setAttribute('id','arrowButton');
@@ -134,11 +136,11 @@
         // Create the table data rows
         for (let i = 0; i < numRows; i++) {
             const dataRow = document.createElement("tr");
-            dataRow.classList = 'hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20'
+            dataRow.classList = 'tw-preflight hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20 dark:tw-border-opacity-20'
 
             for (let j = 0; j < numColumns; j++) {
                 const td = document.createElement("td");
-                td.style.padding = '0 30px'
+                //td.style.padding = '0 30px'
                 td.id = `cell-${i}-${j}`
                 dataRow.appendChild(td);
             }
@@ -251,7 +253,7 @@
             document.getElementById('first-number').innerHTML = 1;
         } else {
             document.getElementById('first-number').innerHTML = startIndex + 1;
-            if (isDarkMode){ 
+            if (!isDarkMode){ 
                 document.getElementById('leftArrow').style.color = 'white'
             } else {
                 document.getElementById('leftArrow').style.color = 'black'
@@ -263,7 +265,7 @@
             document.getElementById('rightArrow').style.color = 'gray'
         } else {
             document.getElementById('second-number').innerHTML = endIndex;
-            if (isDarkMode){ 
+            if (!isDarkMode){ 
                 document.getElementById('rightArrow').style.color = 'white'
             } else {
                 document.getElementById('rightArrow').style.color = 'black'
