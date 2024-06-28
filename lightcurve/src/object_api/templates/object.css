@@ -580,4 +580,13 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-backdrop-sepia: ;
 }
 
-td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: center; }
+.tw-table-full {
+  width: 100%;
+  table-layout: fixed;
+}
+.tw-table-full colgroup,
+.tw-table-full tbody,
+.tw-table-full tr,
+.tw-table-full td {
+  width: 100%;
+}
