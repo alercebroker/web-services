@@ -225,3 +225,16 @@ async def dr(
             "selected": dr_ids,
         },
     )
+
+@router.get("/watchlist", response_class=HTMLResponse)
+async def dr(
+    request: Request
+):
+
+    return templates.TemplateResponse(
+        name="watchlist_form_filter.html.jinja",
+        context={
+            "request": request,
+        },
+    )
+
