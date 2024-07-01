@@ -101,13 +101,13 @@
                 flux
             );
             const appOptions = new ApparentLightCurveOptions(
-                all_detections,
+                JSON.parse(JSON.stringify(all_detections)),
                 JSON.parse(JSON.stringify(forced_photometry)),
                 plot_text_color,
                 flux
             );
             const foldOptions = new FoldedLightCurveOptions(
-                all_detections,
+                JSON.parse(JSON.stringify(all_detections)),
                 JSON.parse(JSON.stringify(forced_photometry)),
                 plot_text_color,
                 period,
