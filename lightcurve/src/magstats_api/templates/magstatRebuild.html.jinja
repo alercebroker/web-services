@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="{{API_URL}}/static/magstats.css">
 
 
-    <div id='magstats-app' class="tw-preflight tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-fit tw-rounded-[6px] tw-box-content tw-relative" style="width: 100%;  min-width: 0; min-height: 380px;">
+    <div id='magstats-app' class="tw-flex tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-relative tw-mt-3 tw-w-full tw-text-sm">
 
         <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
             <div class="tw-inline">
@@ -14,8 +14,8 @@
                 <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
                 </svg>
-                <div class="tw-absolute tw-left-1/2 tw-transform tw--translate-x-1/2 tw-top-full tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center">
-                    <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2 tw-w-48 tw-whitespace-normal tw-translate-x-\[-20%\]">
+                <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
+                    <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2">
                         There is a matching source in the reference image. The apparent magnitude combines the difference and reference fluxes.
                     </div>
                 </div>
@@ -26,23 +26,24 @@
             
         </div>
 
-        <div class="tw-inline">
-            <div class="tw-pt-[25px] tw-inline-block">
-                <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
-                <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b ">
-                    <option value="5">5</option>
-                    <option value="10">10</option>
-                    <option value="14">All</option>
-                </select>
+        <div class="tw-w-[95%] tw-mx-auto">
+            <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
+                <div>
+                    <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
+                    <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="14">All</option>
+                    </select>
+                </div>
+                <div class="tw-text-black dark:tw-text-white">
+                    <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
+                </div>
+                <div>
+                    <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[20px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
+                    <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[20px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+                </div>
             </div>
-            <div class="tw-inline-block tw-text-black dark:tw-text-white tw-pl-[40px]">
-                <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
-            </div>
-            <div class="tw-inline-block tw-pl-[60px]">
-                    <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[20px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> < </span>
-                    <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[20px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> > </button>
-            </div>
-
         </div>
 
     </div>
@@ -111,17 +112,19 @@
 
         // Create the table element
         const table = document.createElement("table");
-        table.classList = 'tw-preflight tw-overflow-auto tw-ml-3' 
-        table.style.width = '100%'
+        table.classList = 'tw-preflight tw-overflow-auto tw-w-[95%] tw-mx-auto tw-table-full tw-justify-center tw-text-sm';
+
+        //const colGroup = document.createElement('colgroup');
+        //colGroup.classList = 'tw-w-[95%] tw-mx-auto';
 
         // Create the table header row
         const headerRow = document.createElement("tr");
-        headerRow.classList = 'hover:tw-opacity-70 hover:tw-cursor-pointer dark:tw-text-white tw-text-black'
+        headerRow.classList = 'hover:tw-opacity-70 hover:tw-cursor-pointer dark:tw-text-white tw-text-black tw-w-full';
 
         for (let i = 0; i < numColumns; i++) {
+
             const th = document.createElement("th");
             th.textContent = columNames[i];
-           //th.style.padding = '0 30px'
 
             const arrowButton = document.createElement('button');
             arrowButton.setAttribute('id','arrowButton');
@@ -131,21 +134,26 @@
         }
         table.appendChild(headerRow);
 
-        const tBody = document.createElement('tbody')
-        tBody.setAttribute('id','dataTableBody')
+        const tBody = document.createElement('tbody');
+        tBody.setAttribute('id','dataTableBody');
         // Create the table data rows
         for (let i = 0; i < numRows; i++) {
+
+
             const dataRow = document.createElement("tr");
-            dataRow.classList = 'tw-preflight hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20 dark:tw-border-opacity-20'
+            dataRow.classList = 'tw-w-full tw-preflight hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20 dark:tw-border-opacity-20'
 
             for (let j = 0; j < numColumns; j++) {
                 const td = document.createElement("td");
-                //td.style.padding = '0 30px'
-                td.id = `cell-${i}-${j}`
+                if (j < numColumns - 1){
+                    td.setAttribute('style', `max-width: ${1/(numColumns-1)*100}%`);
+                };
+                td.id = `cell-${i}-${j}`;
                 dataRow.appendChild(td);
             }
             tBody.appendChild(dataRow);
         }
+        //table.appendChild(colGroup)
         table.appendChild(tBody)
 
         // Append the table to the container
