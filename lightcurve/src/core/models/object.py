@@ -53,3 +53,22 @@ class Taxonomy(BaseModel):
 
     pass
 
+class Score(BaseModel):
+
+    detector_name: str
+    detector_version: str
+    category_name: str
+    score: str
+
+    pass
+
+class Distribution(BaseModel):
+
+    detector_name: str
+    detector_version: str
+    category_name: str
+    distribution_name: str
+    distribution_version: str
+    distribution_value: float
+
+    pass

@@ -26,22 +26,26 @@
             
         </div>
 
-        <div class="tw-w-[95%] tw-mx-auto">
+        <div class="tw-w-[95%] tw-mx-auto tw-text-sm">
             <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
-                <div>
+                <div class="tw-flex tw-items-center tw-space-x-2">
                     <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
-                    <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b">
-                        <option value="5">5</option>
-                        <option value="10">10</option>
-                        <option value="14">All</option>
-                    </select>
+                    <button class="tw-relative hover:tw-cursor-pointer" onclick="changeMenuArrow()">
+                            <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b tw-pr-2 tw-appearance-none tw-pointer-events-auto">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="14">All</option>
+                            </select>
+                            {# <div id="menuArrow" class="tw-absolute tw-right-0 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-pointer-events-none">
+                            </div> #}
+                    </button>
                 </div>
                 <div class="tw-text-black dark:tw-text-white">
                     <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
                 </div>
-                <div>
-                    <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[20px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
-                    <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[20px] tw-text-2xl tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+                <div class="tw-text-sm">
+                    <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
+                    <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
                 </div>
             </div>
         </div>
@@ -204,6 +208,31 @@
     //////////////////////////////////////////////////////////////////////////////////
 
     // From here the code is only for the display of the rows per page, the buttons and the display menu to select that
+
+    const menuArrowDown = `<svg class="tw-h-5 tw-w-5 tw-text-black dark:tw-text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                            </svg>`;
+
+    const menuArrowUp = `<svg class="tw-h-5 tw-w-5 tw-text-black dark:tw-text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                        </svg>`;
+
+    //function changeMenuArrow(){
+    //    console.log('hola mundo')
+    //    if (boolMenuArrow === 1) {
+    //    console.log('hola mundo1')
+    //        document.getElementById('menuArrow').innerHTML = menuArrowUp;
+    //        boolMenuArrow = 0;
+    //    } else { 
+    //    console.log('hola mundo2')
+    //        document.getElementById('menuArrow').innerHTML = menuArrowDown;
+    //        boolMenuArrow = 1;
+    //    }
+//
+    //};
+//
+    //var boolMenuArrow = 0;
+    //changeMenuArrow();
 
 
     // We define the arrows to change the order of the rows display in the  table
