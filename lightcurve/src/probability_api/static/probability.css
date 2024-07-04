@@ -218,6 +218,10 @@
   height: fit-content;
 }
 
+.tw-preflight :is(.tw-h-\[90\%\]) {
+  height: 90%;
+}
+
 .tw-preflight :is(.tw-max-h-\[50\%\]) {
   max-height: 50%;
 }
