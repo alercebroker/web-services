@@ -8,14 +8,18 @@ module.exports = {
             "./src/probability_api/templates/**/*.{html.jinja,html,css}",
             "./src/object_api/templates/**/*.{html.jinja,html,css}",
             "./src/magstats_api/templates/**/*.{html.jinja,html,css}",
-            "./node_modules/flowbite/**/*.js",
-           ],
+          ],
   theme: {
     extend: {},
   },
-  plugins: [require('flowbite/plugin')],
   corePlugins: {
     preflight: false,
-  }
+  },
+  daisyui: {
+    utils: true, // adds responsive and modifier utility classes
+    prefix: "du-", // prefix for daisyUI classnames (components, 
+  },
+  plugins: [require('daisyui'),],
+
 }
 

@@ -1,0 +1,6 @@
+/* custom.css */
+button.tw-du-btn.tw-du-btn-primary {
+    all: unset; /* Reset all inherited styles */
+    /* Add DaisyUI button styles if necessary */
+  }
+  

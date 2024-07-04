@@ -4,9 +4,7 @@
   "description": "Set up environment variables. Look at [example](.env.example)  Run with `poetry run uvicorn api.api:app` or `poetry run dev`",
   "author": "",
   "devDependencies": {
+    "daisyui": "^4.12.10",
     "tailwindcss": "^3.4.3"
-  },
-  "dependencies": {
-    "flowbite": "^2.4.1"
   }
 }

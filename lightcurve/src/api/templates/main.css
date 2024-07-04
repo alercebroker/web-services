@@ -1,6 +1,7 @@
-
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "daisyui";
 
 .disabled\:bg-transparent {
     background-color: transparent;

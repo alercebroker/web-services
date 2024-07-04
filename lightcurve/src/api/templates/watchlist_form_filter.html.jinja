@@ -1,41 +1,42 @@
 <script>
-    let link = document.createElement('link');
-    link.rel = 'stylesheet'
-    link.href = '{{ API_URL }}/static/flowbite/flowbite.min.css'
-
     let linkCss = document.createElement('link');
     linkCss.rel = 'stylesheet'
-    linkCss.href = '{{ API_URL }}/static/main.css';
+    linkCss.href = '{{ API_URL }}/static/test.css';
 
     document.head.appendChild(linkCss);
-    document.head.appendChild(link)
 </script>
-<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-<div class=" tw-preflight container">
-    <div id="filter-form" class="tw-grid tw-grid-rows-4 tw-grid-flow-col">
+
+<div>
+    <div id="filter-form" class="tw-preflight tw-grid tw-grid-rows-4 tw-grid-flow-col ">
         <div class="tw-row-span-1">
             <div class="tw-grid tw-grid-cols-3 tw-gap-4">
-                <div class=" tw-col-span-1 tw-flex tw-flex-col">
-                    <label for="condition">Condition:</label>
-                    <select name="condition" id="condition">
-                    <option value="Constant">Constant</option>
-                    <option value="Difference">Difference</option>
-                    <option value="No filter">No filter</option>
-                    </select>
+                <div class="tw-col-span-1 tw-flex tw-flex-col tw-relative">
+                    <div>
+                        <label for="condition">Condition:</label>
+                        <input type="text" id="condition" name="condition" onkeyup="showResults(this.value, 'condition','valuesConditions')" class="tw-input tw-input-bordered tw-w-full max-w-xs">
+                        <div id="valuesConditions" class="tw-absolute tw-bg-white tw-w-full"></div>
+                    </div>
+                </div>
+                <div class="tw-col-span-1 tw-flex tw-flex-col tw-relative">
+                    <div>
+                        <label for="property">Property:</label>
+                        <input type="text" id="property" name="property" onkeyup="showResults(this.value, 'property','valuesProperties')" class="tw-input tw-input-bordered tw-w-full max-w-xs">
+                        <div id="valuesProperties" class="tw-absolute tw-bg-white tw-w-full"></div>
+                    </div>
                 </div>
                 <div class="tw-col-span-1 tw-flex tw-flex-col">
-                    <label for="property">Property:</label>
-                    <select name="property" id="property">
-                    <option value="mag">mag</option>
-                    </select>
+                    <div>
+                        <input type="text" name="q" id="q" onKeyUp="showResults(this.value, 'q','result')"/>
+                        <div id="result" class="tw-bg-white tw-absolute"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="tw-row-span-1 ">
+        <div class="tw-row-span-1">
             <div class="tw-grid tw-grid-cols-3 tw-gap-4">
                 <div class=" tw-col-span-1 tw-flex tw-flex-col">
                     <label for="operation">Operation:</label>
-                    <select name="operation" id="operation">
+                    <select class="tw-select tw-select-bordered tw-du-w-full tw-max-w-xs" name="operation" id="operation">
                     <option value="Equal">Equal</option>
                     <option value="Less than">Less than</option>
                     <option value="Less tan or equal">Less tan or equal</option>
@@ -45,11 +46,11 @@
                 </div>
                 <div class="tw-col-span-1 tw-flex tw-flex-col">
                     <label for="value">Value:</label>
-                    <input type="number" id="value" name="value">
+                    <input type="number" id="value" name="value" class="tw-input tw-input-bordered w-full max-w-xs">
                 </div>
                 <div class="tw-col-span-1 tw-flex tw-flex-col">
                     <label for="band">Band:</label>
-                    <select name="band" id="band">
+                    <select class="tw-select tw-select-bordered tw-w-full tw-max-w-xs" name="band" id="band">
                     <option value="g">g</option>
                     <option value="r">r</option>
                     <option value="i">i</option>
@@ -58,26 +59,43 @@
             </div>
         </div>
         <div class="tw-row-span-1">
-            <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an option</label>
-            <select id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                <option selected>Choose a country</option>
-                <option value="US">United States</option>
-                <option value="CA">Canada</option>
-                <option value="FR">France</option>
-                <option value="DE">Germany</option>
-            </select>
-        </div>
-        <div class="relative max-w-sm">
-            <div class="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z"/>
-                </svg>
-            </div>
-            <input datepicker id="default-datepicker" type="text" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Select date">
+            <button class="tw-btn tw-btn-primary">Button</button>
         </div>
     </div>
-    
 </div>
-<script src="https://unpkg.com/flowbite@2.4.1/dist/flowbite.js"></script>
 
-<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    let search_conditions = ['constant', 'difference', 'no filter']
+    let search_property = ['mag']
+
+    function autocompleteMatch(input, elementId) {
+        if (input == '') {
+            return [];
+        }
+        let reg = new RegExp(input)
+        if( elementId == "result"){
+            return search_terms.filter((term) => term.match(reg));
+        } else if ( elementId == "valuesConditions") {
+            return search_conditions.filter((term) => term.match(reg))
+        } else if ( elementId == "valuesProperties") {
+            return search_property.filter((term) => term.match(reg))
+        }
+    }
+
+    function showResults(val, inputId, elementId) {
+        res = document.getElementById(elementId);
+        res.innerHTML = '';
+        let list = '';
+        let terms = autocompleteMatch(val.toLowerCase(), elementId);
+        for (i=0; i<terms.length; i++) {
+            list += `<li onclick="selectResult(this, '${inputId}', '${elementId}')">${terms[i]}</li>`;
+        }
+        res.innerHTML = '<ul>' + list + '</ul>';
+    }
+
+    function selectResult(element, inputId, elementId) {
+        console.log(element, inputId)
+        document.getElementById(inputId).value = element.innerText;
+        document.getElementById(elementId).innerHTML = '';
+    }
+</script>
