@@ -1,63 +1,143 @@
-<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
-<link rel="stylesheet" href="{{API_URL}}/static/scores.css">
+{# <script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script> #}
+{# <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"> #}
+{# <link rel="stylesheet" href="{{API_URL}}/static/scores.css"> #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{API_URL}}/static/scores.css">
+    <title>Scores</title>
 
+</head>
 
- <div class="tw-flex tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-relative tw-mt-3 tw-w-full tw-text-sm">
-    
-    <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
-            <div class="tw-inline">
-                <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Scores</h1>
-            </div>
-
-            {# <div class="tw-inline tw-relative tw-ml-2 tw-mt-[10px] tw-group">
-                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
-                </svg>
-                <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
-                    <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2">
-                        Scores explanation
-                    </div>
+ <body class="tw-dark tw-flex tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-relative tw-mt-3">  
+ {# tw-w-full tw-text-sm #}
+     <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3 ">
+        <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
+                <div class="tw-inline">
+                    <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Scores</h1>
                 </div>
-            </div> #}
+
+                 <div class="tw-inline tw-relative tw-ml-2 tw-mt-[10px] tw-group">
+                    <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                    </svg>
+                    <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
+                        <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                            If a value is None,  then that implies that there is no distribution value higher than the category score
+                        </div>
+                    </div>
+                </div> 
         </div>
 
-    <div id="mySelect" class="tw-preflight tw-hidden tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-fit tw-rounded-[50px] tw-shadow-2xl">
-    </div>
+        <div id="mySelect" class="tw-preflight tw-hidden tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-fit tw-rounded-[50px] tw-shadow-2xl">
+        </div>
 
-    <div class="tw-preflight dark:tw-text-white tw-text-black" id="tableContainer">
-            
-    </div>
+        <div class="tw-table tw-preflight dark:tw-text-white tw-text-black tw-w-full" id="tableContainer">
+                
+        </div>
 
-    <div class="tw-w-[95%] tw-mx-auto tw-text-sm">
-        <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
-            <div class="tw-flex tw-items-center tw-space-x-2">
-                <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
-                <button class="tw-relative hover:tw-cursor-pointer" onclick="changeMenuArrow()">
-                        <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b tw-pr-2 tw-appearance-none tw-pointer-events-auto">
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="14">All</option>
-                        </select>
-                        {# <div id="menuArrow" class="tw-absolute tw-right-0 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-pointer-events-none">
-                        </div> #}
-                </button>
-            </div>
-            <div class="tw-text-black dark:tw-text-white">
-                <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
-            </div>
-            <div class="tw-text-sm">
-                <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
-                <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+        <div class="tw-w-[95%] tw-mx-auto tw-text-sm">
+            <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
+                <div class="tw-flex tw-items-center tw-space-x-2">
+                    <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
+                    <button class="tw-relative hover:tw-cursor-pointer" onclick="changeMenuArrow()">
+                            <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b tw-pr-2 tw-appearance-none tw-pointer-events-auto">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="14">All</option>
+                            </select>
+                            {# <div id="menuArrow" class="tw-absolute tw-right-0 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-pointer-events-none">
+                            </div> #}
+                    </button>
+                </div>
+                <div class="tw-text-black dark:tw-text-white">
+                    <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
+                </div>
+                <div class="tw-text-sm">
+                    <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
+                    <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+                </div>
             </div>
         </div>
-    </div>
-
- </div>
+     </div>
 
  <script>
  
-    const db = [{'category': 'Periodic', 'score': 800.0, 'decil': None, 'percentil': 0}, {'category': 'Stochastic', 'score': 100.0, 'decil': 210, 'percentil': 50.0}, {'category': 'Transient', 'score': 356.0, 'decil': 400, 'percentil': 100.0}];
+    const db = [{'category': 'Periodic', 'score': 800.0, 'value': 'None', 'decil': 0}, {'category': 'Stochastic', 'score': 100.0, 'value': 210, 'decil': 50.0}, {'category': 'Transient', 'score': 356.0, 'value': 400, 'decil': 100.0}];
+    const dbKeys = Object.keys(db[0]);
+    const numRows = db.length;
+    const numColumns = dbKeys.length - 1; // esto puede cambiar
+
+    const tableContainer = document.getElementById('tableContainer');
+    tableContainer.classList.add('tw-overflow-x-auto');
+    
+    const table = document.createElement('table');
+    table.classList = 'tw-table dark:tw-text-white tw-w-full';
+
+    const headerRow = document.createElement("tr");
+    //headerRow.classList = 'hover:tw-opacity-70 hover:tw-cursor-pointer dark:tw-text-white tw-text-black tw-w-full';
+
+    for (let i = 0; i < dbKeys.length - 1; i++) {
+
+        const th = document.createElement("th");
+
+        if (i < numRows - 1){
+                th.textContent = dbKeys[i];
+            } else if (i === numRows - 1){
+                th.textContent = String(dbKeys[i+1]) + ' ' + '(' + String(dbKeys[i]) + ')';
+            };
+
+        const arrowButton = document.createElement('button');
+        arrowButton.setAttribute('id','arrowButton');
+
+        th.appendChild(arrowButton);
+        headerRow.appendChild(th);
+
+    };
+
+    table.appendChild(headerRow);
+    
+    const tBody = document.createElement('tbody');
+    tBody.setAttribute('id','dataTableBody');
+    // Create the table data rows where i = rows and j = columns
+    for (let i = 0; i < numRows; i++) {
+
+        const dataRow = document.createElement("tr");
+                  
+        for (let j = 0; j < numColumns; j++) {
+            const td = document.createElement("td");
+            td.classList = 'tw-px-2 tw-py-1 tw-text-left'
+
+            td.id = `cell-${i}-${j}`;
+            dataRow.appendChild(td);
+        };
+        tBody.appendChild(dataRow);
+    };
+    //table.appendChild(colGroup)
+    table.appendChild(tBody);
+
+    // Append the table to the container
+    tableContainer.appendChild(table);
+
+    // inyeccion de datos
+    for (let i = 0; i < numRows; i++) {
+        for (let j = 0; j < numColumns; j++){
+            let name = 'cell-'+String(i)+'-'+String(j);
+            if (j < numColumns - 1){
+                document.getElementById(name).innerHTML = db[i][dbKeys[j]];
+            } else if (j === numColumns - 1){
+                document.getElementById(name).innerHTML = String(db[i][dbKeys[j+1]]) + ' ' + '(' + String(db[i][dbKeys[j]]) + ')';
+            };
+
+        };
+    };
+
+    
 
 
  </script>
+ </body>
+
