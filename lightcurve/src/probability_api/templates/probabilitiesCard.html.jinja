@@ -8,7 +8,7 @@
         
         <div class="tw-preflight tw-flex">
             <div id='robot' class="tw-absolute tw-ml-[40px] tw-mt-[4px]">
-                <svg class="tw-h-[30px] tw-w-[30px]" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/></svg>
+                <svg class="tw-h-[30px] tw-w-[30px] tw-text-black dark:tw-text-white" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/></svg>
             </div>
             
             <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-[0px] tw-outline-[0px] tw-border-b-[2px] tw-border-[#1e1e1e] tw-text-black dark:tw-text-white">
@@ -27,14 +27,11 @@
             
         </div>
 
-        <div class="tw-preflight tw-flex tw-justify-center">
+        <div class="tw-preflight tw-flex tw-justify-center tw-max-w-[75%] tw-max-h-[75%] tw-translate-x-16">
             <canvas id="myChart"></canvas>
         </div>
 
-    {# <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> #}
-
     <script>
-        import Chart from 'chart.js/auto'
         
         const raw_db = {{prob_dict | tojson}};
         const raw_tax = {{taxonomy_dict | tojson}};
@@ -154,6 +151,14 @@
         const ctx = document.getElementById('myChart').getContext('2d');
         let currentDict = selector(0);
 
+        let gridColor;
+
+        if (isDarkMode) {
+            gridColor = 'white';
+        } else {
+            gridColor = 'black';
+        };
+
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
         const data = {
             labels: Object.keys(currentDict),
@@ -170,13 +175,7 @@
             }]
             };
 
-            let gridColor;
-
-            if (isDarkMode) {
-            gridColor = 'white';
-            } else {
-            gridColor = 'black';
-            }
+            
 
             const config = {
             type: 'radar',

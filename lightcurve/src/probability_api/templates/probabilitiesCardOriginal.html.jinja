@@ -31,10 +31,9 @@
             <canvas id="myChart"></canvas>
         </div>
 
-    {# <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
 
     <script>
-        import Chart from 'chart.js/auto'
         
         const raw_db = {{prob_dict | tojson}};
         const raw_tax = {{taxonomy_dict | tojson}};
