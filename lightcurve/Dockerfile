@@ -40,6 +40,11 @@ COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
 RUN npx tailwindcss -i /lightcurve/src/probability_api/templates/probability.css -o /compiled/probability.css
 
+FROM node:22-alpine as tailwindcss_banner
+COPY ./lightcurve/ /lightcurve/
+WORKDIR /lightcurve
+RUN npx tailwindcss -i /lightcurve/src/banner_api/templates/banner.css -o /compiled/banner.css
+
 
 
 
@@ -56,5 +61,6 @@ COPY --from=tailwindcss_lightcurve /compiled/main.css /app/src/api/static
 COPY --from=tailwindcss_magstats /compiled/magstats.css /app/src/magstats_api/static
 COPY --from=tailwindcss_object /compiled/object.css /app/src/object_api/static
 COPY --from=tailwindcss_probability /compiled/probability.css /app/src/probability_api/static
+COPY --from=tailwindcss_banner /compiled/banner.css /app/src/banner_api/static
 RUN poetry install --only-root
 CMD ["bash", "scripts/entrypoint.sh"]
