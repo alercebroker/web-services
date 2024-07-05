@@ -15,7 +15,7 @@ templates = Jinja2Templates(
     directory="src/banner_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
-    "OBJECT_API_URL", "http://localhost:8006"
+    "OBJECT_API_URL", "http://localhost:8000"
 )
 
 @router.get("/banner", response_class=HTMLResponse)
@@ -25,7 +25,6 @@ async def object_banner_app(
 
     return templates.TemplateResponse(
       name='banner.html.jinja',
-      context={'request': request,
-               },
+      context={'request': request},
   )
 

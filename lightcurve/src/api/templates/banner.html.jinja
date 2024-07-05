@@ -1,15 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  
-<head>
-  <meta charset="UTF-8">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="/lightcurve/src/banner_api/static/banner.css" rel="stylesheet" >
-  <title>Banner</title>
-</head>
 
-<body class="tw-preflight ">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="{{ API_URL }}/static/main.css">
+
+<div class="tw-preflight" id="banner-info">
     <div class="tw-border-none tw-bg-green-300 tw-text-green-900 tw-mt-10 tw-ml-10 tw-w-[500px] 
               tw-rounded-xl tw-min-h-28 tw-flex tw-flex-row tw-justify-between tw-items-center tw-relative
               ">
@@ -35,13 +28,12 @@
         </p>
       </div>
     </div>
+</div>
 
-    <script>
+<script>
 
-      document.addEventListener('closeClick', ()=> {
+    document.addEventListener('closeClick', ()=> {
         document.getElementById('closeClick').style.display = 'none';
-      })
+    })
 
-    </script>
-  </body>
-</html>
+</script>
