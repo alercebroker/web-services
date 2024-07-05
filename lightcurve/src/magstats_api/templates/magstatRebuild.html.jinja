@@ -7,11 +7,11 @@
 
         <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
             <div class="tw-inline">
-                <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Magnitude Statistics</h1>
+                <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px] tw-text-black dark:tw-text-white">Magnitude Statistics</h1>
             </div>
 
             <div class="tw-inline tw-relative tw-ml-2 tw-mt-[10px] tw-group">
-                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
                 </svg>
                 <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
@@ -29,7 +29,7 @@
         <div class="tw-w-[95%] tw-mx-auto tw-text-sm">
             <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
                 <div class="tw-flex tw-items-center tw-space-x-2">
-                    <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
+                    <label class="tw-text-black dark:tw-text-white">Rows per page:</label>
                     <button class="tw-relative hover:tw-cursor-pointer" onclick="changeMenuArrow()">
                             <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b tw-pr-2 tw-appearance-none tw-pointer-events-auto">
                                 <option value="5">5</option>
@@ -41,7 +41,7 @@
                     </button>
                 </div>
                 <div class="tw-text-black dark:tw-text-white">
-                    <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
+                    <span id="first-number" class="tw-text-black dark:tw-text-white"></span> - <span id="second-number" class="tw-text-black dark:tw-text-white"></span> of <span id="total-number" class="tw-text-black dark:tw-text-white"></span>
                 </div>
                 <div class="tw-text-sm">
                     <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
