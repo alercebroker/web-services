@@ -230,8 +230,12 @@ async def dr(
 async def object_mag_app(
     request: Request,
 ):
+    notifications = ["hola", "soy yo", "siiiiiiiiiiii"]
 
     return templates.TemplateResponse(
       name='banner.html.jinja',
-      context={'request': request},
-  )
+      context={
+        'request': request,
+        'notifications': notifications
+        },
+    )
