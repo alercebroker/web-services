@@ -9,7 +9,8 @@ module.exports = {
             "./src/probability_api/templates//*.{html.jinja,html,css}",
             "./src/object_api/templates//*.{html.jinja,html,css}",
             "./src/magstats_api/templates//*.{html.jinja,html,css}",
-            "./src/scores_api/templates//*.{html.jinja,html,css}"
+            "./src/scores_api/templates//*.{html.jinja,html,css}",
+            "./src/banner_api/templates//*.{html.jinja,html,css}"
            ],
   theme: {
     extend: {},
