@@ -64,3 +64,16 @@ services:
     environment:
       SERVICE: probability_api
       API_URL: http://localhost:8004
+
+  banner:
+    build:
+      context: ../
+      dockerfile: lightcurve/Dockerfile
+    ports:
+      - 8006:8000
+    env_file:
+      - variables.env
+    environment:
+      SERVICE: banner_api
+      API_URL: http://localhost:8006
+    

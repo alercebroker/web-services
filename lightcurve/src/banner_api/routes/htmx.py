@@ -18,8 +18,8 @@ templates.env.globals["API_URL"] = os.getenv(
     "OBJECT_API_URL", "http://localhost:8000"
 )
 
-@router.get("/mag", response_class=HTMLResponse)
-async def object_mag_app(
+@router.get("/banner", response_class=HTMLResponse)
+async def object_banner_app(
     request: Request,
 ):
 
