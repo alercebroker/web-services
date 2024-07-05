@@ -1,32 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banner</title>
-</head>
-<body>
-    <div class="banner">
-      <p>
-        We use tracking cookies to understand how you use the product
-        and help us improve it.
-        Please accept cookies to help us improve.
-      </p>
-      <button type="button" @click="acceptCookies">Accept cookies</button>
-      <button type="button" @click="declineCookies">Decline cookies</button>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="{{ API_URL }}/static/main.css">
+
+<div class="tw-preflight" id="banner-info">
+    <div class="tw-border-none tw-bg-green-300 tw-text-green-900 tw-mt-10 tw-ml-10 tw-w-[500px] 
+              tw-rounded-xl tw-min-h-28 tw-flex tw-flex-row tw-justify-between tw-items-center tw-relative
+              ">
+      <button id="closeClick" class="tw-absolute tw-top-0 tw-right-0 tw-mt-[5px] tw-mr-[5px]"> 
+        <div class="hover:tw-bg-green-200 tw-text-sm tw-text-green-900 tw-border tw-border-green-300 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-w-8 tw-h-8 hover:tw-text-green-900 transition-colors duration-300">
+          X 
+        </div>
+      </button>
+
+      <div class="tw-border-none tw-bg-green-400 tw-rounded-full tw-p-5 tw-inline-flex tw-items-center tw-justify-centert tw-ml-6">
+
+        <div class="">
+          <svg class="tw-w-6 tw-h-6 tw-text-green-900 " xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+          </svg>
+        </div>
+
+      </div>
+ 
+      <div class="tw-flex-grow tw-flex tw-justify-center tw-max-w-full tw-box-content tw-ml-[10px] tw-mt-[10px] tw-mb-[10px] tw-mr-[10x]">
+        <p class="tw-text-green-800 tw-overflow-wrap-break-word tw-text-sm">
+          New features added this week!
+        </p>
+      </div>
     </div>
-  </body>
-  <script>
-  export default {
-    name: "CookieBanner",
-    methods: {
-      acceptCookies() {
-        this.$posthog.opt_in_capturing();
-      },
-      declineCookies() {
-        this.$posthog.opt_out_capturing();
-      }
-    }
-  };
-  </script>
-</html>
+</div>
+
+<script>
+
+    document.addEventListener('closeClick', ()=> {
+        document.getElementById('closeClick').style.display = 'none';
+    })
+
+</script>

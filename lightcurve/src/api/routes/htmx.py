@@ -225,3 +225,13 @@ async def dr(
             "selected": dr_ids,
         },
     )
+
+@router.get("/mag", response_class=HTMLResponse)
+async def object_mag_app(
+    request: Request,
+):
+
+    return templates.TemplateResponse(
+      name='banner.html.jinja',
+      context={'request': request},
+  )
