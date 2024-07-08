@@ -6,7 +6,7 @@
     <div id='magstats-app' class="tw-flex tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-relative tw-mt-3 tw-w-full tw-text-sm">
 
         <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
-            <div class="tw-inline">
+            <div class="tw-inline tw-text-black dark:tw-text-white">
                 <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px] tw-text-black dark:tw-text-white">Magnitude Statistics</h1>
             </div>
 
@@ -44,9 +44,8 @@
                     <span id="first-number" class="tw-text-black dark:tw-text-white"></span> - <span id="second-number" class="tw-text-black dark:tw-text-white"></span> of <span id="total-number" class="tw-text-black dark:tw-text-white"></span>
                 </div>
                 <div class="tw-text-sm">
-                    <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
-                    <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
-                </div>
+                    <button onclick="navigateTable(-1)" class="tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
+                    <button onclick="navigateTable(1)"  class="tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button></div>
             </div>
         </div>
 
@@ -283,43 +282,40 @@
 
     // This function decide what rows are showed depends of the rows per page selected by the user
     function displayRows() {
-
         const startIndex = (currentPage - 1) * rowsToShow;
-        if (startIndex === 0){
-            document.getElementById('leftArrow').style.color = 'gray'
-            document.getElementById('first-number').innerHTML = 1;
-        } else {
-            document.getElementById('first-number').innerHTML = startIndex + 1;
-            if (!isDarkMode){ 
-                document.getElementById('leftArrow').style.color = 'white'
-            } else {
-                document.getElementById('leftArrow').style.color = 'black'
-            }
-        }
         const endIndex = startIndex + rowsToShow;
-        if (endIndex >= dataTableBody.rows.length){
-            document.getElementById('second-number').innerHTML = dataTableBody.rows.length;
-            document.getElementById('rightArrow').style.color = 'gray'
-        } else {
-            document.getElementById('second-number').innerHTML = endIndex;
-            if (!isDarkMode){ 
-                document.getElementById('rightArrow').style.color = 'white'
-            } else {
-                document.getElementById('rightArrow').style.color = 'black'
-            }
-        }
+        const totalRows = dataTableBody.rows.length;
 
+        const leftArrow = document.getElementById('leftArrow');
+        const rightArrow = document.getElementById('rightArrow');
+        const firstNumber = document.getElementById('first-number');
+        const secondNumber = document.getElementById('second-number');
 
-        const rows = dataTableBody.getElementsByTagName('tr');
+        // Update numbers
+        firstNumber.textContent = startIndex === 0 ? 1 : startIndex + 1;
+        secondNumber.textContent = Math.min(endIndex, totalRows);
 
-        for (let i = 0; i < rows.length; i++) {
-        if (i >= startIndex && i < endIndex) {
-            rows[i].style.display = 'table-row';
-        } else {
-            rows[i].style.display = 'none';
-        }
-        }
+        // Update arrow colors
+        console.log(startIndex);
+        updateArrowColor(leftArrow, startIndex === 0);
+        updateArrowColor(rightArrow, endIndex >= totalRows);
+
+        // Show/hide rows
+        Array.from(dataTableBody.rows).forEach((row, index) => {
+            row.style.display = (index >= startIndex && index < endIndex) ? 'table-row' : 'none';
+        });
+
     };
+
+    function updateArrowColor(arrowElement, isDisabled) {
+        arrowElement.classList.remove('tw-text-gray-400', 'tw-text-black', 'tw-text-white','dark:tw-text-white');
+        if (isDisabled) {
+            arrowElement.classList.add('tw-text-gray-400',);
+        } else {
+            arrowElement.classList.add('tw-text-black', 'dark:tw-text-white');
+        };
+    };
+
 
     let rowsToShow = 5;
     displayRows();

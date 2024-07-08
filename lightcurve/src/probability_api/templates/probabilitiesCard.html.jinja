@@ -4,22 +4,16 @@
 
 {# <div class="tw-preflight dark:tw-bg-black tw-flex tw-justify-center tw-h-[100vh] container"> #}
 
-    <div class="tw-preflight tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-8 tw-ml-3" style="width: 100%;  min-width: 0; min-height: 380px;">
+    <div id="WUJAJAJA" class="tw-preflight tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-8 tw-ml-3" style="width: 100%;  min-width: 0; min-height: 380px;">
         
-        <div class="tw-preflight tw-flex tw-text-black dark:tw-text-white">
-            <div id='robot' class="tw-absolute tw-ml-[40px] tw-mt-[4px] tw-text-black dark:tw-text-white">
-                <svg class="tw-h-[30px] tw-w-[30px] tw-text-black dark:tw-text-white" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/></svg>
+        <div class="tw-preflight tw-flex">
+            <div id='robot' class="tw-absolute tw-ml-[40px] tw-mt-[4px]">
+                <svg class="tw-h-[30px] tw-w-[30px]" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/></svg>
             </div>
             
-            <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-b-[1px] tw-border-[#1e1e1e] tw-text-black dark:tw-text-white tw-border-b-black dark:tw-border-b-white">
-                <div id="display-button-text" class="tw-flex-grow">
-                    
-                </div>
-
-                <div id='arrow-svg' class="tw-ml-2">
-                
-                </div>
-                
+            <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-b tw-text-black dark:tw-text-white">
+                <div id="display-button-text" class="tw-flex-grow"></div>
+                <div id='arrow-svg' class="tw-ml-2 tw-text-black dark:tw-text-white"></div>
             </button>
         </div>
 
@@ -58,9 +52,6 @@
             const body = document.body;
             return body.classList.contains(className);
         }
-
-        // Usage
-        const isDarkMode = hasBodyClass('tw-dark');
 
         // This function detects if there is more than one classifier_name with the same value and detects what of them is the higher version.
 
@@ -151,13 +142,9 @@
         const ctx = document.getElementById('myChart').getContext('2d');
         let currentDict = selector(0);
 
-        let gridColor;
-
-        if (isDarkMode) {
-            gridColor = 'white';
-        } else {
-            gridColor = 'black';
-        };
+        function isDarkMode() {
+            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
 
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
         const data = {
@@ -175,67 +162,81 @@
             }]
             };
 
-            
+        let gridColor; 
+
+        if (isDarkMode()){
             gridColor = 'white';
-            const config = {
-            type: 'radar',
-            data: data,
-            options: {
-                animation: {
-                duration: 200
-                },
-                elements: {
-                line: {
-                    borderWidth: 1,
-                },
-                },
-                scales: {
-                r: {
-                    ticks: {
-                    display: false,
-                    maxTicksLimit: 5,
-                    },
-                    grid: {
-                    color: gridColor
-                    },
-                    angleLines: {
-                    color: gridColor
-                    },
-                    pointLabels: {
-                    color: gridColor
-                    }
-                },
-                },
-                plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    intersect: false,
-                    displayColors: false,
-                    callbacks: {
-                    title: function() {
-                        return 'Probabilities (Score)';
-                    },
-                    label: function(context) {
-                        let tooltipText = [];
-                        // Loop through all data points
-                        context.dataset.data.forEach((value, index) => {
-                        const label = context.chart.data.labels[index];
-                        tooltipText.push(`${label}: ${value}`);
-                        });
+        } else {
+            gridColor = 'black';
+        }
 
-
-                        return tooltipText;
-                    }
-                    }
-                },
-                },
+        const config = {
+        type: 'radar',
+        data: data,
+        options: {
+            animation: {
+            duration: 200
             },
+            elements: {
+            line: {
+                borderWidth: 1,
+            },
+            },
+            scales: {
+            r: {
+                ticks: {
+                display: false,
+                maxTicksLimit: 5,
+                },
+                grid: {
+                color: 'white'
+                },
+                angleLines: {
+                color: 'white'
+                },
+                pointLabels: {
+                color: 'white'
+                }
+            },
+            },
+            plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                intersect: false,
+                displayColors: false,
+                callbacks: {
+                title: function() {
+                    return 'Probabilities (Score)';
+                },
+                label: function(context) {
+                    let tooltipText = [];
+                    // Loop through all data points
+                    context.dataset.data.forEach((value, index) => {
+                    const label = context.chart.data.labels[index];
+                    tooltipText.push(`${label}: ${value}`);
+                    });
+
+
+                    return tooltipText;
+                }
+                }
+            },
+            },
+        },
+        };
+
+        const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
+
+        function handleDarkModeChange(e) {
+            var isDarkModeOn = e.matches;
+            if (isDarkModeOn){
+                myChart.options.r.grid.color = 'white';
+            } else {
+                myChart.options.r.grid.color = 'black';
             };
-
-        
-
+        };
         // Function to capitalize just the first letter of a word
         function capitalize(word){
             return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
@@ -259,12 +260,6 @@
 
         let keysTitle = changeTitles(uniqueKeys)
         document.getElementById('display-button-text').innerHTML = keysTitle[0]
-
-        if (isDarkMode){
-            document.getElementById('robot').style.color = 'white'
-        } else {
-            document.getElementById('robot').style.color = 'black'
-        }
 
         const selectElement = document.getElementById('mySelect');
 
@@ -324,15 +319,6 @@
 
 
         document.getElementById('arrow-svg').innerHTML = arrowDown;
-        
-        if (isDarkMode){
-            document.getElementById('arrow-svg').style.color = 'white'
-            document.getElementById('display-button').style.borderColor = 'white'
-        } else {
-            document.getElementById('arrow-svg').style.color = 'black'
-            document.getElementById('display-button').style.borderColor = 'black'
-        }
-
         const myClick = document.getElementById('display-button');
 
         function handleOutsideClick(event) {
@@ -345,35 +331,32 @@
         document.addEventListener('click', handleOutsideClick);
 
         function displayMenu() {
+            const mySelect = document.getElementById('mySelect');
+            const arrowSvg = document.getElementById('arrow-svg');
+            const robot = document.getElementById('robot');
+            const displayButton = document.getElementById('display-button');
 
-            if (boolDisplay === 1){
-
-                document.getElementById('mySelect').style.display = 'block';
-
-                document.getElementById('arrow-svg').innerHTML = arrowUp
-                document.getElementById('robot').style.color = '#1976d2'
-                document.getElementById('arrow-svg').style.color = '#1976d2'
-                document.getElementById('display-button').style.borderColor = '#1976d2'
+            if (boolDisplay === 1) {
+                mySelect.style.display = 'block';
+                arrowSvg.innerHTML = arrowUp;
+                robot.classList.remove('tw-text-black', 'dark:tw-text-white');
+                robot.classList.add('tw-text-[#1976d2]');
+                arrowSvg.classList.remove('tw-text-black', 'dark:tw-text-white');
+                arrowSvg.classList.add('tw-text-[#1976d2]');
+                displayButton.classList.remove('tw-border-b-black','dark:tw-border-b-white');
+                displayButton.classList.add('tw-border-b-[#1976d2]');
                 boolDisplay = 0;
-                
             } else {
-
-                document.getElementById('mySelect').style.display = 'none';
-
-                document.getElementById('arrow-svg').innerHTML = arrowDown
-                if (isDarkMode){
-                    document.getElementById('arrow-svg').style.color = 'white'
-                    document.getElementById('robot').style.color = 'white'
-                    document.getElementById('display-button').style.borderColor = 'white'
-                } else {
-                    document.getElementById('arrow-svg').style.color = 'black'
-                    document.getElementById('robot').style.color = 'black'
-                    document.getElementById('display-button').style.borderColor = 'black'
-                }
-                
+                mySelect.style.display = 'none';
+                arrowSvg.innerHTML = arrowDown;
+                robot.classList.add('tw-text-black', 'dark:tw-text-white');
+                robot.classList.remove('tw-text-[#1976d2]');
+                arrowSvg.classList.remove('tw-text-[#1976d2]');
+                arrowSvg.classList.add('tw-text-black', 'dark:tw-text-white');
+                displayButton.classList.remove('tw-border-b-[#1976d2]');
+                displayButton.classList.add('tw-border-b-black','dark:tw-border-b-white');
                 boolDisplay = 1;
-            }
-        }
-
+            };
+        };
     </script>
     </div>
