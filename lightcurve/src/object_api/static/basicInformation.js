@@ -77,7 +77,7 @@ export function transformRaDec(degrees) {
 
 export function url_modifier(ra,dec,object) {
            
-    let url1 = 'https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=' + String(ra)+'&dec='+ String(dec) + '&layer=ls-dr9&pixscale=0.1&bands=grz';
+    let url1 = 'https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=' + String(ra)+'&dec='+ String(dec) + '&layer=ls-dr10&pixscale=0.1&bands=grz';
     document.getElementById('first-button').href = url1;
 
     let url2 = 'https://ned.ipac.caltech.edu/conesearch?search_type=Near+Position+Search&iau_style=liberal&objname=&coordinates=' + String(ra) + 'd,' + String(49.054) +'d&iau_name=&radius=0.17&in_csys=Equatorial&in_equinox=J2000&in_csys_IAU=Equatorial&in_equinox_IAU=B1950&z_constraint=Unconstrained&z_value1=&z_value2=&z_unit=z&ot_include=ANY&nmp_op=ANY&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1&out_csys=Same+as+Input&out_equinox=Same+as+Input&obj_sort=Distance+to+search+center&op=Go&form_build_id=form-a28snc2SSIQl3faGUe4otq7_NcjnMwxxxPoVxw5LHzg&form_id=conesearch'
