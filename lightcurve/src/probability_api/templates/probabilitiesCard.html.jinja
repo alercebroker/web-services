@@ -25,6 +25,10 @@
             <canvas id="myChart"></canvas>
         </div>
 
+        <div id="myElement" class="tw-text-black dark:tw-text-white">
+        </div>
+
+    </div>
     <script>
         
         const raw_db = {{prob_dict | tojson}};
@@ -169,6 +173,17 @@
         } else {
             gridColor = 'black';
         }
+        
+        function getTextColor() {
+
+            const element = document.getElementById('myElement');
+            const computedStyle = window.getComputedStyle(element);
+            const color = computedStyle.getPropertyValue('color');
+
+            return color 
+        }
+
+        const textColor = getTextColor();
 
         const config = {
         type: 'radar',
@@ -189,13 +204,13 @@
                 maxTicksLimit: 5,
                 },
                 grid: {
-                color: 'white'
+                color: textColor
                 },
                 angleLines: {
-                color: 'white'
+                color: textColor
                 },
                 pointLabels: {
-                color: 'white'
+                color: textColor
                 }
             },
             },
@@ -358,5 +373,34 @@
                 boolDisplay = 1;
             };
         };
+
+        function onColorChange(callback) {
+            const element = document.getElementById('myElement');
+            let currentColor = getComputedColor();
+
+            // Function to get the current computed color
+            function getComputedColor() {
+                const style = window.getComputedStyle(element);
+                return style.color;
+            }
+
+            // Check for changes periodically
+            setInterval(() => {
+                const newColor = getComputedColor();
+                if (newColor !== currentColor) {
+                currentColor = newColor;
+                callback(currentColor);
+                }
+            }, 100); // Check every 100ms
+            }
+
+            // Usage
+            onColorChange((newColor) => {
+                console.log(`Text color changed to: ${newColor}`);
+                myChart.options.scales.r.grid.color = newColor; 
+                myChart.options.scales.r.angleLines.color = newColor; 
+                myChart.options.scales.r.pointLabels.color = newColor; 
+                myChart.update();
+        });
+
     </script>
-    </div>
