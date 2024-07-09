@@ -29,7 +29,8 @@ def test_get_ztf_detections_multiple_oids_per_aid(
     res = test_client.get("/detections/oid1")
     assert res.status_code == 200
     assert len(res.json()) == 3
-    
+
+
 
 
 def test_get_atlas_detections_1_oid_per_aid_unauthenticated(
