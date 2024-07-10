@@ -17,7 +17,6 @@ from fastapi.testclient import TestClient
 from pymongo import MongoClient
 import test_utils
 
-
 @pytest.fixture(scope="session")
 def docker_compose_command():
     compose_version = os.getenv("COMPOSE_VERSION", "v2")
@@ -367,6 +366,8 @@ def insert_many_aid_ztf_and_atlas_detections(init_psql, init_mongo):
         Detection(**test_utils.create_detection_data_psql("oid1", 123)),
         Detection(**test_utils.create_detection_data_psql("oid2", 456)),
     ]
+
+
     non_detections_psql = [
         NonDetection(**test_utils.create_non_detection_data_psql("oid1")),
         NonDetection(**test_utils.create_non_detection_data_psql("oid2")),
@@ -413,6 +414,7 @@ def insert_many_aid_ztf_and_atlas_detections(init_psql, init_mongo):
         session.add_all(objects_psql)
         session.commit()
         session.add_all(detections_psql)
+        session.commit()
         session.add_all(non_detections_psql)
         session.add_all(forced_psql)
         session.commit()

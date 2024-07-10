@@ -95,7 +95,7 @@ def test_forced_photometry_multistream_authenticated_without_filter(
     headers = {"Authorization": "bearer " + token}
     res = test_client.get("/forced-photometry/oid1", headers=headers)
     assert res.status_code == 200
-    assert len(res.json()) == 2
+    assert len(res.json()) == 1
 
 
 def test_forced_photometry_multistream_authenticated_with_filter(

@@ -11,9 +11,11 @@ def test_non_detections_from_ztf_multiple_oid_per_aid(
     test_client,
     insert_ztf_many_oid_per_aid,
 ):
+    #no tiene sentido que me regrese mas de un oid si la url solo tiene uno.
     res = test_client.get("/non_detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
-    assert len(res.json()) == 3
+    #assert len(res.json()) == 3
+    assert len(res.json()) == 1
 
 
 def test_non_detections_from_atlas(
@@ -34,13 +36,14 @@ def test_non_detections_multistream(
     test_client,
     insert_many_aid_ztf_and_atlas_detections,
 ):
+    # before changes, assert are equal two.
     res = test_client.get("/non_detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
-    assert len(res.json()) == 2
+    assert len(res.json()) == 1
     res = test_client.get(
         "/non_detections/oid1", params={"survey_id": "atlas"}
     )
     assert res.status_code == 400
     res = test_client.get("/non_detections/oid1")
     assert res.status_code == 200
-    assert len(res.json()) == 2
+    assert len(res.json()) == 1
