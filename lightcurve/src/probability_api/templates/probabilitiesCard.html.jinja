@@ -13,7 +13,7 @@
             
             <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-b tw-text-black dark:tw-text-white">
                 <div id="display-button-text" class="tw-flex-grow"></div>
-                <div id='arrow-svg' class="tw-ml-2 tw-text-black dark:tw-text-white"></div>
+                <div id='arrow-svg' class="tw-text-black dark:tw-text-white"></div>
             </button>
         </div>
 
@@ -151,6 +151,7 @@
         }
 
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
+        console.log(Object.keys(currentDict))
         const data = {
             labels: Object.keys(currentDict),
             datasets: [{
@@ -322,7 +323,9 @@
         let myChart = new Chart(ctx, config);
 
         let boolDisplay = 1;
-        document.getElementById('display-button').addEventListener('click', () => {displayMenu()});
+        document.getElementById('display-button').addEventListener('click', () => {  
+            displayMenu()
+            });
 
         const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
