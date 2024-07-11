@@ -29,7 +29,26 @@
         </div>
 
     </div>
-    <script>
+
+    {# <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> #}
+    <script type="module">
+
+        import {
+                howManyGraphsFilter,
+                hasBodyClass,
+                uniqueValues,
+                generateDictionaries,
+                getData,
+                selector,
+                isDarkMode,
+                getTextColor,
+                handleDarkModeChange,
+                capitalize,
+                changeTitles,
+                getComputedColor,
+                onColorChange,
+                displayMenu
+            } from "{{API_URL}}/static/probability.js"
         
         const raw_db = {{prob_dict | tojson}};
         const raw_tax = {{taxonomy_dict | tojson}};
@@ -37,121 +56,22 @@
         const db = Object.values(raw_db);
         const tax = Object.values(raw_tax);
 
-        function howManyGraphsFilter(db){
+        const order = [ ['SNIa','Periodic-Other','CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
+                        ['QSO', 'YSO', 'CV/Nova', 'Blazar','AGN'],
+                        ['LPV', 'Periodic-Other', 'CEP', 'RRL', 'DSCT', 'E'],
+                        ['SN', 'bogus', 'asteroid', 'VS', 'AGN']];
 
-            const uniqueList = []
-
-            for (let i = 0; i < db.length; i++){ 
-                if (!uniqueList.includes(db[i].classifier_name)){
-                    uniqueList.push(db[i].classifier_name)
-                }
-            }
-
-            return uniqueList
-        }
 
         const uniqueNameAux = howManyGraphsFilter(db);
+        const [principalDict,uniqueKeys] = getData(db, tax, uniqueNameAux);
 
-        function hasBodyClass(className) {
-            const body = document.body;
-            return body.classList.contains(className);
-        }
-
-        // This function detects if there is more than one classifier_name with the same value and detects what of them is the higher version.
-
-        function uniqueValues() {
-
-            let uniqueName = [];
-            let uniqueVersion = [];
-            let repeatedArray = []; // if len(repeatedArray[i]) > 1 then there  is a repetition in i
-            console.log(tax)
-            for (let i = 0; i < tax.length; i++){
-
-                if(!(uniqueName.includes(tax[i].classifier_name))){
-                    uniqueName.push(tax[i].classifier_name);
-                    uniqueVersion.push(tax[i].classifier_version)
-                    repeatedArray.push([tax[i].classifier_version]) 
-                } else {
-                    repeatedArray[uniqueName.indexOf(tax[i].classifier_name)].push(tax[i].classifier_version)
-                }
-
-            }
-
-            for (let j = 0; j < repeatedArray.length; j++){
-
-                let maxVersion = 0;
-
-                if (repeatedArray[j].length > 1){
-                    for (let k = 0; k < repeatedArray[j].length; k++){
-
-                        let splitted = repeatedArray[j][k].split('_');
-                        let splitted_numbers = splitted[splitted.length - 1].split('.')
-                        let partialSum = 0;
-
-                        for (let i = 0;i < splitted_numbers.length; i++){
-                            partialSum += Number(splitted_numbers[i]);
-
-                        }
-
-                        if (maxVersion < partialSum){
-                            maxVersion = partialSum;
-                            uniqueVersion[j] = repeatedArray[j][k];
-                        }
-                    }
-                }
-
-            }
-
-            if (uniqueName.length > uniqueNameAux.length){
-                uniqueName = uniqueNameAux;
-            }
-
-            return [uniqueName,uniqueVersion]
-
-        }
-
-        // generateDictionaries functions takes the uniqueValues return and generates a dictionary of empty dictionaries, one for every classifier_name in the uniqueValues return
-        function generateDictionaries() {
-
-            const [uniqueName,uniqueVersion] = uniqueValues();
-            const result = {};
-
-            for (let i = 0; i < uniqueName.length; i++) {
-                result[uniqueName[i]] = {};
-            }
-
-            return [result,uniqueName,uniqueVersion];
-        }
-
-        // getData is the function that fill the dictionary generated in generateDictionaries. tha data is separated by his classfier_name and added as: class_name:probability
-        // where class_name is the key and probability is the value
-        // uniqueVersion is not used because db only has 1 version, but if we must choose the higher version, then the uniqueVersion list has it.
-        function getData(db){
-
-            const [principalDict,uniqueKeys,uniqueVersion] = generateDictionaries();
-            for (let i = 0; i < db.length; i++){
-                principalDict[db[i].classifier_name][db[i].class_name] = db[i].probability;
-            }
-
-            return [principalDict,uniqueKeys]
-        }
         
-        const [principalDict,uniqueKeys] = getData(db);
-
-        // selector function returns the dictionary required in the initial moment and when the user selects another chart
-        function selector(n){
-            return principalDict[uniqueKeys[n]];
-        }
 
         const ctx = document.getElementById('myChart').getContext('2d');
-        let currentDict = selector(0);
-
-        function isDarkMode() {
-            return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
+        let currentDict = selector(0, principalDict, uniqueKeys);
 
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
-        console.log(Object.keys(currentDict))
+        
         const data = {
             labels: Object.keys(currentDict),
             datasets: [{
@@ -173,15 +93,6 @@
             gridColor = 'white';
         } else {
             gridColor = 'black';
-        }
-        
-        function getTextColor() {
-
-            const element = document.getElementById('myElement');
-            const computedStyle = window.getComputedStyle(element);
-            const color = computedStyle.getPropertyValue('color');
-
-            return color 
         }
 
         const textColor = getTextColor();
@@ -245,34 +156,7 @@
 
         const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
 
-        function handleDarkModeChange(e) {
-            var isDarkModeOn = e.matches;
-            if (isDarkModeOn){
-                myChart.options.r.grid.color = 'white';
-            } else {
-                myChart.options.r.grid.color = 'black';
-            };
-        };
-        // Function to capitalize just the first letter of a word
-        function capitalize(word){
-            return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-        }
-        // Function that split the word by the _ and joins with spaces and capitalized words
-        function changeTitles(uniquekeys){
-            let keysTitle = [];
-
-            for (let i = 0; i < uniqueKeys.length; i++){
-
-                let splittedWord = uniqueKeys[i].split('_');
-                let auxList = []
-
-                for (let j = 0; j < splittedWord.length; j++){
-                    auxList.push(capitalize(splittedWord[j]));
-                }
-                keysTitle.push(auxList.join(' '))
-            }
-            return keysTitle;
-        }
+        
 
         let keysTitle = changeTitles(uniqueKeys)
         document.getElementById('display-button-text').innerHTML = keysTitle[0]
@@ -309,8 +193,8 @@
                 if (arrowSvgElement && displayButtonTextElement) {
                 displayButtonTextElement.innerHTML = keysTitle[i];
 
-                let currentDictChanged = selector(uniqueKeys.indexOf(this.value));
-
+                let currentDictChanged = selector(uniqueKeys.indexOf(this.value), principalDict, uniqueKeys);
+                console.log(Object.keys(currentDictChanged)) 
                 myChart.data.labels = Object.keys(currentDictChanged);
                 myChart.data.datasets[0].data = Object.values(currentDictChanged);
                 myChart.update();
@@ -322,7 +206,6 @@
         // new Chart deploys the chart
         let myChart = new Chart(ctx, config);
 
-        let boolDisplay = 1;
         document.getElementById('display-button').addEventListener('click', () => {  
             displayMenu()
             });
@@ -338,71 +221,24 @@
 
         document.getElementById('arrow-svg').innerHTML = arrowDown;
         const myClick = document.getElementById('display-button');
-
+        let auxBool;
         function handleOutsideClick(event) {
             if (!myClick.contains(event.target)) {
-                boolDisplay = 0;
-                displayMenu();
+                auxBool = 1;
+                displayMenu(auxBool);
             }
         }
 
-        document.addEventListener('click', handleOutsideClick);
+        document.addEventListener('click',handleOutsideClick);
 
-        function displayMenu() {
-            const mySelect = document.getElementById('mySelect');
-            const arrowSvg = document.getElementById('arrow-svg');
-            const robot = document.getElementById('robot');
-            const displayButton = document.getElementById('display-button');
+        
 
-            if (boolDisplay === 1) {
-                mySelect.style.display = 'block';
-                arrowSvg.innerHTML = arrowUp;
-                robot.classList.remove('tw-text-black', 'dark:tw-text-white');
-                robot.classList.add('tw-text-[#1976d2]');
-                arrowSvg.classList.remove('tw-text-black', 'dark:tw-text-white');
-                arrowSvg.classList.add('tw-text-[#1976d2]');
-                displayButton.classList.remove('tw-border-b-black','dark:tw-border-b-white');
-                displayButton.classList.add('tw-border-b-[#1976d2]');
-                boolDisplay = 0;
-            } else {
-                mySelect.style.display = 'none';
-                arrowSvg.innerHTML = arrowDown;
-                robot.classList.add('tw-text-black', 'dark:tw-text-white');
-                robot.classList.remove('tw-text-[#1976d2]');
-                arrowSvg.classList.remove('tw-text-[#1976d2]');
-                arrowSvg.classList.add('tw-text-black', 'dark:tw-text-white');
-                displayButton.classList.remove('tw-border-b-[#1976d2]');
-                displayButton.classList.add('tw-border-b-black','dark:tw-border-b-white');
-                boolDisplay = 1;
-            };
-        };
-
-        function onColorChange(callback) {
-            const element = document.getElementById('myElement');
-            let currentColor = getComputedColor();
-
-            // Function to get the current computed color
-            function getComputedColor() {
-                const style = window.getComputedStyle(element);
-                return style.color;
-            }
-
-            // Check for changes periodically
-            setInterval(() => {
-                const newColor = getComputedColor();
-                if (newColor !== currentColor) {
-                currentColor = newColor;
-                callback(currentColor);
-                }
-            }, 100); // Check every 100ms
-            }
-
-            // Usage
-            onColorChange((newColor) => {
-                myChart.options.scales.r.grid.color = newColor; 
-                myChart.options.scales.r.angleLines.color = newColor; 
-                myChart.options.scales.r.pointLabels.color = newColor; 
-                myChart.update();
+        onColorChange((newColor) => {
+            myChart.options.scales.r.grid.color = newColor; 
+            myChart.options.scales.r.angleLines.color = newColor; 
+            myChart.options.scales.r.pointLabels.color = newColor; 
+            myChart.update();
         });
+        
 
     </script>
