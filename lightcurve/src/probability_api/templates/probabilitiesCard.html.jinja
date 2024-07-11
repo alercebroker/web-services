@@ -221,6 +221,14 @@
 
         document.getElementById('arrow-svg').innerHTML = arrowDown;
         const myClick = document.getElementById('display-button');
+
+        onColorChange((newColor) => {
+            myChart.options.scales.r.grid.color = newColor; 
+            myChart.options.scales.r.angleLines.color = newColor; 
+            myChart.options.scales.r.pointLabels.color = newColor; 
+            myChart.update();
+        });
+        
         let auxBool;
         function handleOutsideClick(event) {
             if (!myClick.contains(event.target)) {
@@ -230,15 +238,5 @@
         }
 
         document.addEventListener('click',handleOutsideClick);
-
-        
-
-        onColorChange((newColor) => {
-            myChart.options.scales.r.grid.color = newColor; 
-            myChart.options.scales.r.angleLines.color = newColor; 
-            myChart.options.scales.r.pointLabels.color = newColor; 
-            myChart.update();
-        });
-        
 
     </script>
