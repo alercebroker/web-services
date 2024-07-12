@@ -121,11 +121,24 @@
 
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
         
+        let [orderedKeys, orderedValues] = processWithFilter(currentDict, filterList);
+        console.log(orderedKeys)
+
+        let firstKeys;
+        let firstValues;
+
+        if (!orderedKeys){
+            firstKeys = Object.keys(currentDict);
+            firstValues = Object.values(currentDict);
+        } else{
+            firstKeys = orderedKeys;
+            firstValues = orderedValues;
+        };
         const data = {
-            labels: Object.keys(currentDict),
+            labels: firstKeys,
             datasets: [{
                 label: 'Probabilities',
-                data: Object.values(currentDict),
+                data: firstValues,
                 fill: true,
                 backgroundColor: 'rgba(255, 0, 54, 0.7)',
                 borderColor: 'rgb(255, 0, 54)',
