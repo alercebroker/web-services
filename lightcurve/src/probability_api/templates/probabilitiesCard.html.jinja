@@ -30,6 +30,8 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script type="module">
 
         import {
@@ -70,34 +72,52 @@
 
         const ctx = document.getElementById('myChart').getContext('2d');
         let currentDict = selector(0, principalDict, uniqueKeys);
-        //console.log(uniqueKeys)
 
-        //let values = [];
-        //for (let i = 0; i < uniqueKeys.length; i++){
-        //    let value = [];
-        //    for (let j = 0; j < filterList.length; j++){
-        //        
-        //        let principalAux = Object.keys(principalDict[uniqueKeys[i]]).slice();
-        //        let filterAux = filterList[j].slice();
-//
-        //        principalAux.sort();
-        //        filterAux.sort();
-//
-        //        console.log(principalAux)
-        //        console.log(filterAux)
-//
-        //        if (JSON.stringify(principalAux) === JSON.stringify(filterAux)){
-        //            for (let k = 0; k < filterAux.length; k++){
-        //                console.log(principalDict)
-        //                console.log(principalDict[filterList[j]])
-        //                value.push(principalDict[filterList[j]][k]);
-        //            }
-        //            values.push(value);
-        //            break;
-        //        }                    
-        //    }
-        //}
-        //console.log(values)
+        function orderedStrings(string1,string2){
+            let string1Aux = string1.slice();
+            let string2Aux = string2.slice();
+
+            return [string1Aux.sort(), string2Aux.sort()];
+        }
+        
+        function findMatchingFilter(dictKeys, filterLists){
+
+            for (const filterList of filterLists){
+                let [filterSort, dictKeysSort] = orderedStrings(filterList, dictKeys); 
+                if (JSON.stringify(filterSort) !== JSON.stringify(dictKeysSort)){
+                    continue;
+                } else {
+                    return filterList;
+                }
+            }
+
+            return null;
+        };
+
+        function processWithFilter(inputObj, filterLists){
+            const dictKeys = Object.keys(inputObj);
+            const matchingFilter = findMatchingFilter(dictKeys, filterLists);
+
+            if (!matchingFilter){
+                return [null,null];
+            };
+
+            return processDictInOrder(inputObj, matchingFilter);
+        };
+
+        function processDictInOrder(inputObj, orderList) {
+            const orderedKeys = [];
+            const orderedValues = [];
+            
+            for (const key of orderList) {
+                if (key in inputObj) {
+                    orderedKeys.push(key);
+                    orderedValues.push(inputObj[key]);
+                }
+            }
+            
+            return [orderedKeys, orderedValues];
+        }
 
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
         
@@ -219,9 +239,17 @@
                 displayButtonTextElement.innerHTML = keysTitle[i];
 
                 let currentDictChanged = selector(uniqueKeys.indexOf(this.value), principalDict, uniqueKeys);
-                console.log(Object.keys(currentDictChanged)) 
-                myChart.data.labels = Object.keys(currentDictChanged);
-                myChart.data.datasets[0].data = Object.values(currentDictChanged);
+                
+                let [orderedKeys, orderedValues] = processWithFilter(currentDictChanged, filterList);
+
+                if (!orderedKeys){
+                    myChart.data.labels = Object.keys(currentDictChanged);
+                    myChart.data.datasets[0].data = Object.values(currentDictChanged);
+                } else{
+                    myChart.data.labels = orderedKeys;
+                    myChart.data.datasets[0].data = orderedValues;
+                }
+
                 myChart.update();
 
                 displayMenu();
@@ -235,6 +263,9 @@
             displayMenu()
             });
 
+        const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>`
 
         document.getElementById('arrow-svg').innerHTML = arrowDown;
         const myClick = document.getElementById('display-button');
