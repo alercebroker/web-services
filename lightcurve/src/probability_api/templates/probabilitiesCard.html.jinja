@@ -50,12 +50,13 @@
             } from "{{API_URL}}/static/probability.js"
         
         const raw_db = {{prob_dict | tojson}};
+        //console.log(raw_db)
         const raw_tax = {{taxonomy_dict | tojson}};
 
         const db = Object.values(raw_db);
         const tax = Object.values(raw_tax);
 
-        const order = [ ['SNIa','Periodic-Other','CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
+        const filterList = [['SNIa','Periodic-Other','CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
                         ['QSO', 'YSO', 'CV/Nova', 'Blazar','AGN'],
                         ['LPV', 'Periodic-Other', 'CEP', 'RRL', 'DSCT', 'E'],
                         ['SN', 'bogus', 'asteroid', 'VS', 'AGN']];
@@ -64,10 +65,39 @@
         const uniqueNameAux = howManyGraphsFilter(db);
         const [principalDict,uniqueKeys] = getData(db, tax, uniqueNameAux);
 
-        
+        //console.log('hola mundo ')
+        //console.log(principalDict)
 
         const ctx = document.getElementById('myChart').getContext('2d');
         let currentDict = selector(0, principalDict, uniqueKeys);
+        //console.log(uniqueKeys)
+
+        //let values = [];
+        //for (let i = 0; i < uniqueKeys.length; i++){
+        //    let value = [];
+        //    for (let j = 0; j < filterList.length; j++){
+        //        
+        //        let principalAux = Object.keys(principalDict[uniqueKeys[i]]).slice();
+        //        let filterAux = filterList[j].slice();
+//
+        //        principalAux.sort();
+        //        filterAux.sort();
+//
+        //        console.log(principalAux)
+        //        console.log(filterAux)
+//
+        //        if (JSON.stringify(principalAux) === JSON.stringify(filterAux)){
+        //            for (let k = 0; k < filterAux.length; k++){
+        //                console.log(principalDict)
+        //                console.log(principalDict[filterList[j]])
+        //                value.push(principalDict[filterList[j]][k]);
+        //            }
+        //            values.push(value);
+        //            break;
+        //        }                    
+        //    }
+        //}
+        //console.log(values)
 
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
         
@@ -152,10 +182,6 @@
             },
         },
         };
-
-        const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
-
-        
 
         let keysTitle = changeTitles(uniqueKeys)
         document.getElementById('display-button-text').innerHTML = keysTitle[0]

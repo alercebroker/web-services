@@ -160,7 +160,6 @@ export function getComputedColor() {
 }
 
 export function onColorChange(callback) {
-    const element = document.getElementById('myElement');
     let currentColor = getComputedColor();
 
     // Check for changes periodically
