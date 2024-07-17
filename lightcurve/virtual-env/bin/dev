@@ -1,6 +1,0 @@
-#!/home/alerce/Desktop/alerce/web-services/lightcurve/virtual-env/bin/python
-import sys
-from scripts.run_dev import run
-
-if __name__ == '__main__':
-    sys.exit(run())
