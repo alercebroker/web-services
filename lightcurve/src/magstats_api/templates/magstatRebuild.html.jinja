@@ -55,7 +55,6 @@
 
     // Only usefull definitions and getting the data from Python
 
-    
     const bandMapping = {
         
         2:'r',
@@ -69,7 +68,6 @@
     const rawDb = {{stat_r | tojson}}
     const db = Object.values(rawDb)
 
-
     let numBands = []
 
     for (let i = 0; i < db.length; i++){
@@ -82,8 +80,6 @@
     for (let i = 0; i < numBands.length; i++){
         realBands.push(bandMapping[numBands[i]])
     }
-
-    console.log(realBands)
 
     const numColumns = db.length + 1; // Esto  es numero de bandas + 1
     const numRows = Object.keys(db[0]).length; 
@@ -215,24 +211,6 @@
     const menuArrowUp = `<svg class="tw-h-5 tw-w-5 tw-text-black dark:tw-text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
                         </svg>`;
-
-    //function changeMenuArrow(){
-    //    console.log('hola mundo')
-    //    if (boolMenuArrow === 1) {
-    //    console.log('hola mundo1')
-    //        document.getElementById('menuArrow').innerHTML = menuArrowUp;
-    //        boolMenuArrow = 0;
-    //    } else { 
-    //    console.log('hola mundo2')
-    //        document.getElementById('menuArrow').innerHTML = menuArrowDown;
-    //        boolMenuArrow = 1;
-    //    }
-//
-    //};
-//
-    //var boolMenuArrow = 0;
-    //changeMenuArrow();
-
 
     // We define the arrows to change the order of the rows display in the  table
     const arrowUp = `<svg class="tw-h-5 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
