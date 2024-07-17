@@ -286,10 +286,11 @@
             "cache-control": "no-cache",
             "content-type": "application/json",
         },
-        "body": `{ra:${ra},dec:${dec}}`,
+        "body": "{\"ra\":" + String(ra) + ",\"dec\":" + String(dec)+ "}",
         "method": "POST",
         "mode": "cors",
         }).then(response =>  response.json()).then(data => lastInformation(data))
+
 
 
     </script>
