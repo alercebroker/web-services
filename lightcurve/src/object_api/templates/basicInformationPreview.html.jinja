@@ -278,6 +278,8 @@
             }
         }
         
+        document.addEventListener('click', handleOutsideClick);
+
         fetch("https://tns.alerce.online/search", {
         "headers": {
             "accept": "application/json",
