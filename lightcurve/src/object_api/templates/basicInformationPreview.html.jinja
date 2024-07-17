@@ -227,10 +227,13 @@
         // En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
         // Tambien, si se ocupa la variable binaria, declararla antes.
         function display_menu(){
-            if (document.getElementById('menu-box').style.display === "none")  {
+
+            if (click === 0)  {
                 document.getElementById('menu-box').style.display = "block";
-            } else if (document.getElementById('menu-box').style.display === "block") {
+                click = 1;
+            } else {
                 document.getElementById('menu-box').style.display = "none";
+                click = 0;
             }
 
         }
