@@ -266,10 +266,11 @@
             }
         }
 
-        // const myClick = document.getElementById('menu-button');
-        // Intentar hacer query a traves del plano xy
+        const myClick = document.getElementById('menu-button');
+
         function handleOutsideClick(event) {
-            if (document.getElementById('menu-box').style.display === "block") {
+            if (!myClick.contains(event.target)) {
+                click = 1;
                 display_menu();
             }
         }
