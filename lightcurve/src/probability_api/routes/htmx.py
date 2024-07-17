@@ -42,7 +42,6 @@ async def object_probability_app(
 
     taxonomy_dict, prob_dict = prob_filter(prob_list, taxonomy_list)
 
-
     return templates.TemplateResponse(
       name='probabilitiesCard.html.jinja',
       context={'request': request,
