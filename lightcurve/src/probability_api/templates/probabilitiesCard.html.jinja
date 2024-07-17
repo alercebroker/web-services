@@ -30,7 +30,8 @@
 
     </div>
 
-    {# <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> #}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script type="module">
 
         import {
@@ -51,12 +52,13 @@
             } from "{{API_URL}}/static/probability.js"
         
         const raw_db = {{prob_dict | tojson}};
+        //console.log(raw_db)
         const raw_tax = {{taxonomy_dict | tojson}};
 
         const db = Object.values(raw_db);
         const tax = Object.values(raw_tax);
 
-        const order = [ ['SNIa','Periodic-Other','CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
+        const filterList = [['SNIa','Periodic-Other','CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
                         ['QSO', 'YSO', 'CV/Nova', 'Blazar','AGN'],
                         ['LPV', 'Periodic-Other', 'CEP', 'RRL', 'DSCT', 'E'],
                         ['SN', 'bogus', 'asteroid', 'VS', 'AGN']];
@@ -65,18 +67,78 @@
         const uniqueNameAux = howManyGraphsFilter(db);
         const [principalDict,uniqueKeys] = getData(db, tax, uniqueNameAux);
 
-        
+        //console.log('hola mundo ')
+        //console.log(principalDict)
 
         const ctx = document.getElementById('myChart').getContext('2d');
         let currentDict = selector(0, principalDict, uniqueKeys);
 
+        function orderedStrings(string1,string2){
+            let string1Aux = string1.slice();
+            let string2Aux = string2.slice();
+
+            return [string1Aux.sort(), string2Aux.sort()];
+        }
+        
+        function findMatchingFilter(dictKeys, filterLists){
+
+            for (const filterList of filterLists){
+                let [filterSort, dictKeysSort] = orderedStrings(filterList, dictKeys); 
+                if (JSON.stringify(filterSort) !== JSON.stringify(dictKeysSort)){
+                    continue;
+                } else {
+                    return filterList;
+                }
+            }
+
+            return null;
+        };
+
+        function processWithFilter(inputObj, filterLists){
+            const dictKeys = Object.keys(inputObj);
+            const matchingFilter = findMatchingFilter(dictKeys, filterLists);
+
+            if (!matchingFilter){
+                return [null,null];
+            };
+
+            return processDictInOrder(inputObj, matchingFilter);
+        };
+
+        function processDictInOrder(inputObj, orderList) {
+            const orderedKeys = [];
+            const orderedValues = [];
+            
+            for (const key of orderList) {
+                if (key in inputObj) {
+                    orderedKeys.push(key);
+                    orderedValues.push(inputObj[key]);
+                }
+            }
+            
+            return [orderedKeys, orderedValues];
+        }
+
         // Data is a variable required in config, and config with ctx are the values required to generate de chart
         
+        let [orderedKeys, orderedValues] = processWithFilter(currentDict, filterList);
+        console.log(orderedKeys)
+
+        let firstKeys;
+        let firstValues;
+
+        if (!orderedKeys){
+            firstKeys = Object.keys(currentDict);
+            firstValues = Object.values(currentDict);
+        } else{
+            firstKeys = orderedKeys;
+            firstValues = orderedValues;
+        };
         const data = {
-            labels: Object.keys(currentDict),
+            labels: firstKeys,
             datasets: [{
                 label: 'Probabilities',
-                data: Object.values(currentDict),
+                data: firstValues,
                 fill: true,
                 backgroundColor: 'rgba(255, 0, 54, 0.7)',
                 borderColor: 'rgb(255, 0, 54)',
@@ -154,10 +216,6 @@
         },
         };
 
-        const darkModeListener = window.matchMedia('(prefers-color-scheme: dark)');
-
-        
-
         let keysTitle = changeTitles(uniqueKeys)
         document.getElementById('display-button-text').innerHTML = keysTitle[0]
 
@@ -168,7 +226,7 @@
             const newA = document.createElement('a');
             newA.id = keysTitle[i];
             newA.value = uniqueKeys[i];
-            newA.classList = 'tw-text-center tw-text-lg tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
+            newA.classList = 'tw-text-center tw-text-3xl tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
             newA.target = '_blank';
 
             const newDiv = document.createElement('div');
@@ -191,15 +249,23 @@
                 const displayButtonTextElement = document.getElementById('display-button-text');
 
                 if (arrowSvgElement && displayButtonTextElement) {
-                    displayButtonTextElement.innerHTML = keysTitle[i];
+                displayButtonTextElement.innerHTML = keysTitle[i];
 
-                    let currentDictChanged = selector(uniqueKeys.indexOf(this.value), principalDict, uniqueKeys);
-                    console.log(Object.keys(currentDictChanged)) 
+                let currentDictChanged = selector(uniqueKeys.indexOf(this.value), principalDict, uniqueKeys);
+                
+                let [orderedKeys, orderedValues] = processWithFilter(currentDictChanged, filterList);
+
+                if (!orderedKeys){
                     myChart.data.labels = Object.keys(currentDictChanged);
                     myChart.data.datasets[0].data = Object.values(currentDictChanged);
-                    myChart.update();
+                } else{
+                    myChart.data.labels = orderedKeys;
+                    myChart.data.datasets[0].data = orderedValues;
+                }
 
-                    displayMenu();
+                myChart.update();
+
+                displayMenu();
                 }
             });
             }
@@ -214,13 +280,16 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                                 </svg>`
 
-        const arrowUp = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                </svg>`
-
-
         document.getElementById('arrow-svg').innerHTML = arrowDown;
         const myClick = document.getElementById('display-button');
+
+        onColorChange((newColor) => {
+            myChart.options.scales.r.grid.color = newColor; 
+            myChart.options.scales.r.angleLines.color = newColor; 
+            myChart.options.scales.r.pointLabels.color = newColor; 
+            myChart.update();
+        });
+
         let auxBool;
         function handleOutsideClick(event) {
             if (!myClick.contains(event.target)) {
@@ -230,15 +299,5 @@
         }
 
         document.addEventListener('click',handleOutsideClick);
-
-        
-
-        onColorChange((newColor) => {
-            myChart.options.scales.r.grid.color = newColor; 
-            myChart.options.scales.r.angleLines.color = newColor; 
-            myChart.options.scales.r.pointLabels.color = newColor; 
-            myChart.update();
-        });
-        
 
     </script>
