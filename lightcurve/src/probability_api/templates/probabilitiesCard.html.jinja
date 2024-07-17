@@ -168,7 +168,7 @@
             const newA = document.createElement('a');
             newA.id = keysTitle[i];
             newA.value = uniqueKeys[i];
-            newA.classList = 'tw-text-center tw-text-3xl tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
+            newA.classList = 'tw-text-center tw-text-lg tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
             newA.target = '_blank';
 
             const newDiv = document.createElement('div');
@@ -191,15 +191,15 @@
                 const displayButtonTextElement = document.getElementById('display-button-text');
 
                 if (arrowSvgElement && displayButtonTextElement) {
-                displayButtonTextElement.innerHTML = keysTitle[i];
+                    displayButtonTextElement.innerHTML = keysTitle[i];
 
-                let currentDictChanged = selector(uniqueKeys.indexOf(this.value), principalDict, uniqueKeys);
-                console.log(Object.keys(currentDictChanged)) 
-                myChart.data.labels = Object.keys(currentDictChanged);
-                myChart.data.datasets[0].data = Object.values(currentDictChanged);
-                myChart.update();
+                    let currentDictChanged = selector(uniqueKeys.indexOf(this.value), principalDict, uniqueKeys);
+                    console.log(Object.keys(currentDictChanged)) 
+                    myChart.data.labels = Object.keys(currentDictChanged);
+                    myChart.data.datasets[0].data = Object.values(currentDictChanged);
+                    myChart.update();
 
-                displayMenu();
+                    displayMenu();
                 }
             });
             }
