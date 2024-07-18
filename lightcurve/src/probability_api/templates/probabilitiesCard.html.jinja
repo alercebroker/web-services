@@ -226,7 +226,7 @@
             const newA = document.createElement('a');
             newA.id = keysTitle[i];
             newA.value = uniqueKeys[i];
-            newA.classList = 'tw-text-center tw-text-3xl tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
+            newA.classList = 'tw-text-center tw-text-lg tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
             newA.target = '_blank';
 
             const newDiv = document.createElement('div');
@@ -237,7 +237,7 @@
             
             const optionsHeight = String(100 / uniqueKeys.length);
 
-            selectElement.setAttribute('style',`height: ${83.333333333*uniqueKeys.length}px`)
+            selectElement.setAttribute('style',`height: ${400}px`)
 
             newDiv.setAttribute('style', `height: ${optionsHeight}%`);
 
