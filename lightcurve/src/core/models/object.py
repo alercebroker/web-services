@@ -58,7 +58,7 @@ class Score(BaseModel):
     detector_name: str
     detector_version: str
     category_name: str
-    score: str
+    score: float
 
     pass
 
