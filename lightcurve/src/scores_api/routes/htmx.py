@@ -27,7 +27,7 @@ async def scores_app(
     #scores = get_scores(oid="prueba", session_factory = request.app.state.psql_session)
     #nota el detector name se puede sacar 1 por cada detector de score
     #distributions = get_scores_distribution(detector_name="anomaly_detector", session_factory = request.app.state.psql_session)
-     
+    
     scores = get_scores(oid, session_factory = request.app.state.psql_session)
     print("SCORES:-------\n", scores)
     distributions = get_scores_distribution("anomaly_detector", session_factory = request.app.state.psql_session)
@@ -70,6 +70,7 @@ async def scores_app(
             def_value = 0 
 
         table_rows.append({'category': current_category, 'score': current_score, 'percentil': percentil, 'percentil_cut': def_value})
+        
 
     print("---------------\n", table_rows)
     # armar el input para la tabla scores
