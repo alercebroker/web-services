@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lightcurve"
-version = "24.5.1-rc104"
+version = "24.7.1-rc105"
 description = "Get lightcurve of objects from ZTF and ATLAS surveys"
 authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
@@ -22,7 +22,7 @@ ralidator-fastapi = { path = "../libs/ralidator-fastapi", develop = true }
 prometheus-fastapi-instrumentator = "^6.1.0"
 jinja2 = "^3.1.2"
 httpx = "^0.24.1"
-db-plugins = "^6.1.1a45"
+db-plugins = "^24.5.2a11"
 numpy = "^1.26.4"
 scipy = "^1.12.0"
 pandas = "^2.2.1"

@@ -4,7 +4,14 @@ from typing import Any, Callable, Sequence, Tuple
 from pymongo.database import Database
 from pymongo.cursor import Cursor
 
-from db_plugins.db.sql.models import Object, MagStats, Probability, Taxonomy
+from db_plugins.db.sql.models import (
+    Object,
+    MagStats,
+    Probability,
+    Taxonomy,
+    Score,
+    ScoreDistribution
+)
 from sqlalchemy import Row, select, text
 from sqlalchemy.orm import Session
 
@@ -15,7 +22,14 @@ from ..exceptions import (
     SurveyIdError,
     ParseError,
 )
-from ..models.object import ObjectReduced as ObjectModel, MagStats as MagStatsModel, Probability as ProbabilityModel, Taxonomy as  TaxonomyModel
+from ..models.object import (
+    ObjectReduced as ObjectModel,
+    MagStats as MagStatsModel,
+    Probability as ProbabilityModel,
+    Taxonomy as  TaxonomyModel,
+    Score as ScoreModel,
+    Distribution as DistributionModel
+)
 from config import app_config
 
 def default_handle_success(result):
@@ -128,27 +142,21 @@ def get_scores(
     handle_success: Callable[[Any], Any] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error
 ) -> list | None:
-    placeholder_scores = [
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Periodic",
-            "score": 800,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Stochastic",
-            "score": 100,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Transient",
-            "score": 356,
-        },
-    ]
-    return placeholder_scores
+    try:
+        assert session_factory is not None
+        with session_factory() as session:
+            stmt = select(Score).where(Score.oid == oid)
+            result = session.execute(stmt)
+            score_list = result.all()
+            get_score_data = [row[0] for row in score_list]
+            get_score_list = []
+            for score in get_score_data:
+                get_score_list.append(ScoreModel(**score.__dict__))
+            return get_score_list
+    except ObjectNotFound:
+        raise
+    except Exception as e:
+        raise DatabaseError(e, database="PSQL")
 
 def get_scores_distribution(
     detector_name: str,
@@ -157,103 +165,19 @@ def get_scores_distribution(
     handle_success: Callable[[Any], Any] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error
 ) -> list | None:
-    placeholder_distributions = [
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Transient",
-            "distribution_name": "percentil_10",
-            "distribution_version": "1.0.0",
-            "distribution_value": 33,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Transient",
-            "distribution_name": "percentil_50",
-            "distribution_version": "1.0.0",
-            "distribution_value": 78,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Transient",
-            "distribution_name": "percentil_90",
-            "distribution_version": "1.0.0",
-            "distribution_value": 345,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Transient",
-            "distribution_name": "saturation",
-            "distribution_version": "1.0.0",
-            "distribution_value": 400,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Periodic",
-            "distribution_name": "percentil_10",
-            "distribution_version": "1.0.0",
-            "distribution_value": 99,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Periodic",
-            "distribution_name": "percentil_50",
-            "distribution_version": "1.0.0",
-            "distribution_value": 240,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Periodic",
-            "distribution_name": "percentil_90",
-            "distribution_version": "1.0.0",
-            "distribution_value": 500,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Periodic",
-            "distribution_name": "saturation",
-            "distribution_version": "1.0.0",
-            "distribution_value": 550,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Stochastic",
-            "distribution_name": "percentil_10",
-            "distribution_version": "1.0.0",
-            "distribution_value": 40,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Stochastic",
-            "distribution_name": "percentil_50",
-            "distribution_version": "1.0.0",
-            "distribution_value": 210,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Stochastic",
-            "distribution_name": "percentil_90",
-            "distribution_version": "1.0.0",
-            "distribution_value": 280,
-        },
-        {
-            "detector_name": "anomaly_detector",
-            "detector_version": "1.0.0",
-            "category_name": "Stochastic",
-            "distribution_name": "saturation",
-            "distribution_version": "1.0.0",
-            "distribution_value": 300,
-        },
-
-    ]
-    return placeholder_distributions
+    try:
+        assert session_factory is not None
+        with session_factory() as session:
+            stmt = select(ScoreDistribution).where(Score.detector_name == detector_name)
+            result = session.execute(stmt)
+            distribution_list = result.all()
+            get_distribution_data = [row[0] for row in distribution_list]
+            get_disribution_list = []
+            for dist in get_distribution_data:
+                print("---------\n---\DEBUG \n ", dist.__dict__)
+                get_disribution_list.append(DistributionModel(**dist.__dict__))
+            return get_disribution_list
+    except ObjectNotFound:
+        raise
+    except Exception as e:
+        raise DatabaseError(e, database="PSQL")

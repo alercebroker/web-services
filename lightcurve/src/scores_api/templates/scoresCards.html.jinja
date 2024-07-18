@@ -66,7 +66,7 @@
 
  <script>
  
-    const db = [{'category': 'Periodic', 'score': 800.0, 'value': 'None', 'decil': 0}, {'category': 'Stochastic', 'score': 100.0, 'value': 210, 'decil': 50.0}, {'category': 'Transient', 'score': 356.0, 'value': 400, 'decil': 100.0}];
+    const db = {{ table_rows | tojson }}
     const dbKeys = Object.keys(db[0]);
     const numRows = db.length;
     const numColumns = dbKeys.length - 1; // esto puede cambiar
