@@ -23,7 +23,7 @@ async def object_info_app(
     request: Request,
     oid: str
 ):
-    
+    # Cambiar todo este return por object entero y trabajar con el diccionario entero a traves de un loop al igual que con lo que se hizo con el menu desplegable.
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
     return templates.TemplateResponse(

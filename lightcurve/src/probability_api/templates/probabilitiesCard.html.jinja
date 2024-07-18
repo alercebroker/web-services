@@ -1,9 +1,6 @@
 <script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/probability.css">
 
-
-{# <div class="tw-preflight dark:tw-bg-black tw-flex tw-justify-center tw-h-[100vh] container"> #}
-
     <div class="tw-preflight tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-8 tw-ml-3" style="width: 100%;  min-width: 0; min-height: 380px;">
         
         <div class="tw-preflight tw-flex">
@@ -30,8 +27,6 @@
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <script type="module">
 
         import {
@@ -52,7 +47,6 @@
             } from "{{API_URL}}/static/probability.js"
         
         const raw_db = {{prob_dict | tojson}};
-        //console.log(raw_db)
         const raw_tax = {{taxonomy_dict | tojson}};
 
         const db = Object.values(raw_db);
@@ -63,12 +57,8 @@
                         ['LPV', 'Periodic-Other', 'CEP', 'RRL', 'DSCT', 'E'],
                         ['SN', 'bogus', 'asteroid', 'VS', 'AGN']];
 
-
         const uniqueNameAux = howManyGraphsFilter(db);
         const [principalDict,uniqueKeys] = getData(db, tax, uniqueNameAux);
-
-        //console.log('hola mundo ')
-        //console.log(principalDict)
 
         const ctx = document.getElementById('myChart').getContext('2d');
         let currentDict = selector(0, principalDict, uniqueKeys);
@@ -226,7 +216,7 @@
             const newA = document.createElement('a');
             newA.id = keysTitle[i];
             newA.value = uniqueKeys[i];
-            newA.classList = 'tw-text-center tw-text-3xl tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
+            newA.classList = 'tw-text-center tw-text-lg tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
             newA.target = '_blank';
 
             const newDiv = document.createElement('div');
@@ -237,7 +227,7 @@
             
             const optionsHeight = String(100 / uniqueKeys.length);
 
-            selectElement.setAttribute('style',`height: ${83.333333333*uniqueKeys.length}px`)
+            selectElement.setAttribute('style',`height: ${400}px`)
 
             newDiv.setAttribute('style', `height: ${optionsHeight}%`);
 

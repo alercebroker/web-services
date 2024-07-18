@@ -75,32 +75,20 @@ export function transformRaDec(degrees) {
 
 }
 
-export function url_modifier(ra,dec,object) {
-           
-    let url1 = 'https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=' + String(ra)+'&dec='+ String(dec) + '&layer=ls-dr10&pixscale=0.1&bands=grz';
-    document.getElementById('first-button').href = url1;
+export function setMenuUrl(ra,dec,object) {
 
-    let url2 = 'https://ned.ipac.caltech.edu/conesearch?search_type=Near+Position+Search&iau_style=liberal&objname=&coordinates=' + String(ra) + 'd,' + String(49.054) +'d&iau_name=&radius=0.17&in_csys=Equatorial&in_equinox=J2000&in_csys_IAU=Equatorial&in_equinox_IAU=B1950&z_constraint=Unconstrained&z_value1=&z_value2=&z_unit=z&ot_include=ANY&nmp_op=ANY&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1&out_csys=Same+as+Input&out_equinox=Same+as+Input&obj_sort=Distance+to+search+center&op=Go&form_build_id=form-a28snc2SSIQl3faGUe4otq7_NcjnMwxxxPoVxw5LHzg&form_id=conesearch'
-    document.getElementById('second-button').href = url2
+    const urlDict = {'desi-button': `https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=${ra}&dec=${dec}&layer=ls-dr10&pixscale=0.1&bands=grz`,
+                     'ned-button': `https://ned.ipac.caltech.edu/conesearch?search_type=Near+Position+Search&iau_style=liberal&objname=&coordinates=${ra}d,${dec}d&iau_name=&radius=0.17&in_csys=Equatorial&in_equinox=J2000&in_csys_IAU=Equatorial&in_equinox_IAU=B1950&z_constraint=Unconstrained&z_value1=&z_value2=&z_unit=z&ot_include=ANY&nmp_op=ANY&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1&out_csys=Same+as+Input&out_equinox=Same+as+Input&obj_sort=Distance+to+search+center&op=Go&form_build_id=form-a28snc2SSIQl3faGUe4otq7_NcjnMwxxxPoVxw5LHzg&form_id=conesearch`,
+                     'pan-button': `https://ps1images.stsci.edu/cgi-bin/ps1cutouts?pos=${ra}+${dec}&filter=color`,
+                    'sdss-button': `https://skyserver.sdss.org/dr16/en/tools/chart/navi.aspx?ra=${ra}8&dec=${dec}`,
+                    'simbad-button':`https://simbad.u-strasbg.fr/simbad/sim-coo?Coord=${ra}%20${dec}&Radius.unit=arcsec&Radius=10`,
+                    'tns-button': `https://www.wis-tns.org/search?ra=${ra}&decl=${dec}&radius=10&coords_unit=arcsec`,
+                    'viz-button': `https://vizier.cds.unistra.fr/viz-bin/VizieR-4?-c=${ra}+${dec}&-c.rs=10&-out.add=_r&-sort=_r&-out.max=$4`,
+                    'vsx-button': `https://www.aavso.org/vsx/index.php?view=results.get&coords=${ra}+${dec}&format=d&size=10&geom=r&unit=3&order=9`,
+                    'find-button': `https://findingchart.alerce.online/get_chart?oid=${object}&candid=1007116353515015023`
+                    }
 
-    let url3 = 'https://ps1images.stsci.edu/cgi-bin/ps1cutouts?pos='+String(ra)+ '+' + String(dec) + '&filter=color';
-    document.getElementById('third-button').href = url3
-
-    let url4 = 'https://skyserver.sdss.org/dr16/en/tools/chart/navi.aspx?ra='+ String(ra)+'8&dec='+ String(dec);
-    document.getElementById('fourth-button').href = url4
-
-    let url5 = 'https://simbad.u-strasbg.fr/simbad/sim-coo?Coord='+ String(ra) + '%20'+String(dec)+ '&Radius.unit=arcsec&Radius=10';
-    document.getElementById('fifth-button').href = url5
-
-    let url6 = 'https://www.wis-tns.org/search?ra='+ String(ra)+'&decl=' +String(dec) + '&radius=10&coords_unit=arcsec';
-    document.getElementById('sixth-button').href = url6
-
-    let url7 = 'https://vizier.cds.unistra.fr/viz-bin/VizieR-4?-c='+String(ra) + '+' + String(dec) + '&-c.rs=10&-out.add=_r&-sort=_r&-out.max=$4';
-    document.getElementById('seventh-button').href = url7
-
-    let  url8 = 'https://www.aavso.org/vsx/index.php?view=results.get&coords='+String(ra) + '+' + String(dec)+ '&format=d&size=10&geom=r&unit=3&order=9';
-    document.getElementById('eighth-button').href = url8
-
-    let url9 = 'https://findingchart.alerce.online/get_chart?oid='+ String(object) + '&candid=1007116353515015023'
-    document.getElementById('find-button').href = url9
+    for (let button in urlDict){
+        document.getElementById(button).href = urlDict[button];
+    };
 }
