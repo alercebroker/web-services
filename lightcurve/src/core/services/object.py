@@ -150,8 +150,8 @@ def get_scores(
             score_list = result.all()
             get_score_data = [row[0] for row in score_list]
             get_score_list = []
-            for prob in get_score_data:
-                get_score_list.append(TaxonomyModel(**prob.__dict__))
+            for score in get_score_data:
+                get_score_list.append(ScoreModel(**score.__dict__))
             return get_score_list
     except ObjectNotFound:
         raise
@@ -173,8 +173,9 @@ def get_scores_distribution(
             distribution_list = result.all()
             get_distribution_data = [row[0] for row in distribution_list]
             get_disribution_list = []
-            for prob in get_distribution_data:
-                get_disribution_list.append(TaxonomyModel(**prob.__dict__))
+            for dist in get_distribution_data:
+                print("---------\n---\DEBUG \n ", dist.__dict__)
+                get_disribution_list.append(DistributionModel(**dist.__dict__))
             return get_disribution_list
     except ObjectNotFound:
         raise

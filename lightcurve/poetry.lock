@@ -538,13 +538,13 @@ files = [
 
 [[package]]
 name = "db-plugins"
-version = "24.5.2a10"
+version = "24.5.2a11"
 description = "ALeRCE database plugins."
 optional = false
 python-versions = "<3.12,>=3.7"
 files = [
-    {file = "db_plugins-24.5.2a10-py3-none-any.whl", hash = "sha256:72b81d0cb425cac8b013979c29403955baeff21b67e9e1fea21bfb763de19406"},
-    {file = "db_plugins-24.5.2a10.tar.gz", hash = "sha256:bb938b983e9f24507bbbf04b9f80a2c35f0a8bafe3e1a42f9934868e06481ced"},
+    {file = "db_plugins-24.5.2a11-py3-none-any.whl", hash = "sha256:bb6a274751ec645d51e286aa9c87b4e4ba9e916ad267389994d41e28f65be4be"},
+    {file = "db_plugins-24.5.2a11.tar.gz", hash = "sha256:14658de9f8f47022bbf01247b5ea05dfae50c7130d58c5fbe9f7d3703738ba55"},
 ]
 
 [package.dependencies]
@@ -2375,4 +2375,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "ca0a003e735354de3a3a0913550e0dc67a2c4bc901764e2d34982acea0868141"
+content-hash = "28d9a556ace0741613b4875a85ed2de53410ab01ad7b2a9c8e13180d74f64fb9"

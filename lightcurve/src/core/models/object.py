@@ -65,7 +65,6 @@ class Score(BaseModel):
 class Distribution(BaseModel):
 
     detector_name: str
-    detector_version: str
     category_name: str
     distribution_name: str
     distribution_version: str
