@@ -22,131 +22,53 @@ templates.env.globals["API_URL"] = os.getenv(
 async def scores_app(
     request: Request,
     oid: str,
-):
+):  
     
+    # Si scores = vacio, retornar nada (no hay data)
     scores = get_scores(oid, session_factory = request.app.state.psql_session)
     distributions = get_scores_distribution(session_factory = request.app.state.psql_session)
     taxonomies = get_taxonomies(session_factory = request.app.state.psql_session)
 
     scores_data = {}
-    table_rows = []
 
-    for taxonomie in taxonomies:
-        taxonomie_dict = taxonomie.__dict__
-        if "detector" in taxonomie_dict["classifier_name"].split("_"):
-            scores_data[taxonomie_dict["classifier_name"]] = {
-                "categories": {
-                    x: {} for x in taxonomie_dict["classes"]
+    if len(scores) != 0:
+        for taxonomie in taxonomies:
+            taxonomie_dict = taxonomie.__dict__
+            if "detector" in taxonomie_dict["classifier_name"].split("_"):
+                scores_data[taxonomie_dict["classifier_name"]] = {
+                    "categories": {
+                        x: {} for x in taxonomie_dict["classes"]
+                    }
                 }
-            }
-    
-    for score in scores:
-        score_dict = score.__dict__
-        if score_dict["detector_name"] in scores_data.keys():
-            scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["score"] = score_dict["score"]
-            scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["percentil"] = 0
-            scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["percentil_cut"] = 0
-            scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["graph_data"] = []
 
-    for distribution in distributions:
-        distribution_dict = distribution.__dict__
-        if distribution_dict["detector_name"] in scores_data.keys():
-            if "percentil" in distribution_dict["distribution_name"].split("_") or "saturation" == distribution_dict["distribution_name"]:
-                scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["graph_data"].append({
-                    "label": distribution_dict["distribution_name"], "value": distribution_dict["distribution_value"]
-                })
-                print("debug----", distribution_dict["distribution_value"]  )
-                if (distribution_dict["distribution_value"] <= scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["score"] 
-                and
-                distribution_dict["distribution_value"] > scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil_cut"]):
-                    scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil"] = distribution_dict["distribution_name"]
-                    scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil_cut"] = distribution_dict["distribution_value"]
-                    
+        for score in scores:
+            score_dict = score.__dict__
+            if score_dict["detector_name"] in scores_data.keys():
+                scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["score"] = score_dict["score"]
+                scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["percentil"] = 0
+                scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["percentil_cut"] = 0
+                scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["graph_data"] = []
 
-
+        for distribution in distributions:
+            distribution_dict = distribution.__dict__
+            if distribution_dict["detector_name"] in scores_data.keys():
+                if "percentil" in distribution_dict["distribution_name"].split("_") or "saturation" == distribution_dict["distribution_name"]:
+                    scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["graph_data"].append({
+                        "label": distribution_dict["distribution_name"], "value": distribution_dict["distribution_value"]
+                    })
+                    if (distribution_dict["distribution_value"] <= scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["score"] 
+                    and
+                    distribution_dict["distribution_value"] > scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil_cut"]):
+                        scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil"] = distribution_dict["distribution_name"]
+                        scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil_cut"] = distribution_dict["distribution_value"]
 
     import pprint
     print("DEBUG-----\n")
     pprint.pprint(scores_data)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    def str_separator(word):
-
-        if word == 'saturation':
-            return float(100)
-        else:
-            return float(word.split('_')[1])
-
-    for dic in range(len(scores)):
-
-        current_category = scores[dic].__dict__['category_name']
-        current_score = float(scores[dic].__dict__['score'])
-    
-        flag = 0
-
-        for dist in range(len(distributions)):
-
-            if distributions[dist].__dict__['category_name'] == current_category:
-                if flag == 0:
-                    if current_score < float(distributions[dist].__dict__['distribution_value']):
-                        flag = 1
-                        def_value = distributions[dist].__dict__['distribution_value']
-                        def_index = dist
-        
-            if flag == 1:
-                break
-        
-        if flag == 1:
-            percentil = str_separator(distributions[def_index].__dict__['distribution_name'])
-        else: 
-            percentil = 0
-            def_value = 0 
-        print('hola mundo')
-        print('category\n', current_category)
-        table_rows.append({'category': current_category, 'score': current_score, 'percentil': percentil, 'percentil_cut': def_value})
-        
-    #print("---------------Hola mundo\n", table_rows)
-    # armar el input para la tabla scores
-
     return templates.TemplateResponse(
       name='scoresCards.html.jinja',
       context={'request': request,
-               'table_rows': table_rows
+               'scores_data': scores_data #Si scores = 0, entonces scores = {}
                },
   )

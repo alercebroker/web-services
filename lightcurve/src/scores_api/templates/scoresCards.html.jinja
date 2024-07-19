@@ -63,73 +63,79 @@
 
  <script>
  
-    const db = {{ table_rows | tojson }}
-    const dbKeys = Object.keys(db[0]);
-    const numRows = db.length;
-    const numColumns = dbKeys.length - 1; // esto puede cambiar
-    
-    const tableContainer = document.getElementById('tableContainer');
-    tableContainer.classList.add('tw-overflow-x-auto');
-    
-    const table = document.createElement('table');
-    table.classList = 'tw-table dark:tw-text-white tw-w-full';
+    const db = {{ scores_data | tojson }}
 
-    const headerRow = document.createElement("tr");
+    if (Object.keys(db).length === 0 ){
+        // Hacer un box que diga que no hay scores para este objeto.
+    } else {
+        
+        const dbKeys = Object.keys(db[0]);
+        const numRows = db.length;
+        const numColumns = dbKeys.length - 1; // esto puede cambiar
+        
+        const tableContainer = document.getElementById('tableContainer');
+        tableContainer.classList.add('tw-overflow-x-auto');
+        
+        const table = document.createElement('table');
+        table.classList = 'tw-table dark:tw-text-white tw-w-full';
 
-    for (let i = 0; i < dbKeys.length - 1; i++) {
+        const headerRow = document.createElement("tr");
 
-        const th = document.createElement("th");
+        for (let i = 0; i < dbKeys.length - 1; i++) {
 
-        if (i < numRows - 1){
-                th.textContent = dbKeys[i];
-            } else if (i === numRows - 1){
-                th.textContent = String(dbKeys[i+1]) + ' ' + '(' + String(dbKeys[i]) + ')';
-            };
+            const th = document.createElement("th");
 
-        const arrowButton = document.createElement('button');
-        arrowButton.setAttribute('id','arrowButton');
+            if (i < numRows - 1){
+                    th.textContent = dbKeys[i];
+                } else if (i === numRows - 1){
+                    th.textContent = String(dbKeys[i+1]) + ' ' + '(' + String(dbKeys[i]) + ')';
+                };
 
-        th.appendChild(arrowButton);
-        headerRow.appendChild(th);
+            const arrowButton = document.createElement('button');
+            arrowButton.setAttribute('id','arrowButton');
 
-    };
-
-    table.appendChild(headerRow);
-    
-    const tBody = document.createElement('tbody');
-    tBody.setAttribute('id','dataTableBody');
-    // Create the table data rows where i = rows and j = columns
-    for (let i = 0; i < numRows; i++) {
-
-        const dataRow = document.createElement("tr");
-                  
-        for (let j = 0; j < numColumns; j++) {
-            const td = document.createElement("td");
-            td.classList = 'tw-px-2 tw-py-1 tw-text-left'
-
-            td.id = `cell-${i}-${j}`;
-            dataRow.appendChild(td);
-        };
-        tBody.appendChild(dataRow);
-    };
-    //table.appendChild(colGroup)
-    table.appendChild(tBody);
-
-    // Append the table to the container
-    tableContainer.appendChild(table);
-
-    // inyeccion de datos
-    for (let i = 0; i < numRows; i++) {
-        for (let j = 0; j < numColumns; j++){
-            let name = 'cell-'+String(i)+'-'+String(j);
-            if (j < numColumns - 1){
-                document.getElementById(name).innerHTML = db[i][dbKeys[j]];
-            } else if (j === numColumns - 1){
-                document.getElementById(name).innerHTML = String(db[i][dbKeys[j+1]]) + ' ' + '(' + String(db[i][dbKeys[j]]) + ')';
-            };
+            th.appendChild(arrowButton);
+            headerRow.appendChild(th);
 
         };
-    };
+
+        table.appendChild(headerRow);
+        
+        const tBody = document.createElement('tbody');
+        tBody.setAttribute('id','dataTableBody');
+        // Create the table data rows where i = rows and j = columns
+        for (let i = 0; i < numRows; i++) {
+
+            const dataRow = document.createElement("tr");
+                    
+            for (let j = 0; j < numColumns; j++) {
+                const td = document.createElement("td");
+                td.classList = 'tw-px-2 tw-py-1 tw-text-left'
+
+                td.id = `cell-${i}-${j}`;
+                dataRow.appendChild(td);
+            };
+            tBody.appendChild(dataRow);
+        };
+        //table.appendChild(colGroup)
+        table.appendChild(tBody);
+
+        // Append the table to the container
+        tableContainer.appendChild(table);
+
+        // inyeccion de datos
+        for (let i = 0; i < numRows; i++) {
+            for (let j = 0; j < numColumns; j++){
+                let name = 'cell-'+String(i)+'-'+String(j);
+                if (j < numColumns - 1){
+                    document.getElementById(name).innerHTML = db[i][dbKeys[j]];
+                } else if (j === numColumns - 1){
+                    document.getElementById(name).innerHTML = String(db[i][dbKeys[j+1]]) + ' ' + '(' + String(db[i][dbKeys[j]]) + ')';
+                };
+
+            };
+        };
+    }
 
     
 
