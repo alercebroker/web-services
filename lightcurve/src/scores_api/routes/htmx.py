@@ -31,11 +31,6 @@ async def scores_app(
     scores_data = {}
     table_rows = []
 
-    def get_detector_taxonomies(tax: list):
-        dict_list = [x.__dict__ for x in tax]
-        filtered_list = filter(lambda x: "detector" in x["classifier_name"].split("_"), dict_list)
-        return list(filtered_list)
-    
     for taxonomie in taxonomies:
         taxonomie_dict = taxonomie.__dict__
         if "detector" in taxonomie_dict["classifier_name"].split("_"):
@@ -44,7 +39,6 @@ async def scores_app(
                     x: {} for x in taxonomie_dict["classes"]
                 }
             }
-    
     
     for score in scores:
         score_dict = score.__dict__
