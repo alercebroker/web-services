@@ -159,7 +159,6 @@ def get_scores(
         raise DatabaseError(e, database="PSQL")
 
 def get_scores_distribution(
-    detector_name: str,
     session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
     mongo_db: Database | None = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
@@ -168,13 +167,12 @@ def get_scores_distribution(
     try:
         assert session_factory is not None
         with session_factory() as session:
-            stmt = select(ScoreDistribution).where(Score.detector_name == detector_name)
+            stmt = select(ScoreDistribution)
             result = session.execute(stmt)
             distribution_list = result.all()
             get_distribution_data = [row[0] for row in distribution_list]
             get_disribution_list = []
             for dist in get_distribution_data:
-                print("---------\n---\DEBUG \n ", dist.__dict__)
                 get_disribution_list.append(DistributionModel(**dist.__dict__))
             return get_disribution_list
     except ObjectNotFound:

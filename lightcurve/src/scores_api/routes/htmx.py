@@ -24,18 +24,93 @@ async def scores_app(
     oid: str,
 ):
     
-    #scores = get_scores(oid="prueba", session_factory = request.app.state.psql_session)
-    #nota el detector name se puede sacar 1 por cada detector de score
-    #distributions = get_scores_distribution(detector_name="anomaly_detector", session_factory = request.app.state.psql_session)
-    
     scores = get_scores(oid, session_factory = request.app.state.psql_session)
-    print("SCORES:-------\n", scores)
-    distributions = get_scores_distribution("anomaly_detector", session_factory = request.app.state.psql_session)
-    print("DISTRIBUTIONS:---------\n", distributions)
+    distributions = get_scores_distribution(session_factory = request.app.state.psql_session)
     taxonomies = get_taxonomies(session_factory = request.app.state.psql_session)
-    # una tabla con 
-    # category | score | decil (el mas chico de los que sean mayores) numero (valor del percentil) | 
+
+    scores_data = {}
     table_rows = []
+
+    def get_detector_taxonomies(tax: list):
+        dict_list = [x.__dict__ for x in tax]
+        filtered_list = filter(lambda x: "detector" in x["classifier_name"].split("_"), dict_list)
+        return list(filtered_list)
+    
+    for taxonomie in taxonomies:
+        taxonomie_dict = taxonomie.__dict__
+        if "detector" in taxonomie_dict["classifier_name"].split("_"):
+            scores_data[taxonomie_dict["classifier_name"]] = {
+                "categories": {
+                    x: {} for x in taxonomie_dict["classes"]
+                }
+            }
+    
+    
+    for score in scores:
+        score_dict = score.__dict__
+        if score_dict["detector_name"] in scores_data.keys():
+            scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["score"] = score_dict["score"]
+            scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["percentil"] = 0
+            scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["percentil_cut"] = 0
+            scores_data[score_dict["detector_name"]]["categories"][score_dict["category_name"]]["graph_data"] = []
+
+    for distribution in distributions:
+        distribution_dict = distribution.__dict__
+        if distribution_dict["detector_name"] in scores_data.keys():
+            if "percentil" in distribution_dict["distribution_name"].split("_") or "saturation" == distribution_dict["distribution_name"]:
+                scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["graph_data"].append({
+                    "label": distribution_dict["distribution_name"], "value": distribution_dict["distribution_value"]
+                })
+                print("debug----", distribution_dict["distribution_value"]  )
+                if (distribution_dict["distribution_value"] <= scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["score"] 
+                and
+                distribution_dict["distribution_value"] > scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil_cut"]):
+                    scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil"] = distribution_dict["distribution_name"]
+                    scores_data[distribution_dict["detector_name"]]["categories"][distribution_dict["category_name"]]["percentil_cut"] = distribution_dict["distribution_value"]
+                    
+
+
+
+    import pprint
+    print("DEBUG-----\n")
+    pprint.pprint(scores_data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def str_separator(word):
 
