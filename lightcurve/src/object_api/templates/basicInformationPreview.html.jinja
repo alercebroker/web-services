@@ -256,20 +256,36 @@
 
         var obj;
 
-        function lastInformation(dict){
-            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-            console.log(dict)
-            if (Object.keys(Object.values(dict)[0]).length > 25) {
-                document.getElementById('type').innerHTML = Object.values(dict)[2];
-                document.getElementById('name').innerHTML = Object.values(dict)[1];
-                document.getElementById('tns-link').href = `https://www.wis-tns.org/object/${Object.values(dict)[1]}`
-                document.getElementById('redshift').innerHTML = Object.values(Object.values(dict)[0])[21];
+        function lastInformation(data) {
+            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+            console.log(data);
+
+            let type, name, tnsLink, redshift;
+
+            if (data.error) {
+                type = name = redshift = 'Error';
+                tnsLink = 'https://www.wis-tns.org/';
+                console.error("Error en la búsqueda:", data.message);
+            } else if (typeof data === 'object' && data !== null) {
+                if (Object.keys(Object.values(data)[0] || {}).length > 25) {
+                    type = Object.values(data)[2] || 'No disponible';
+                    name = Object.values(data)[1] || 'No disponible';
+                    tnsLink = `https://www.wis-tns.org/object/${Object.values(data)[1] || ''}`;
+                    redshift = Object.values(Object.values(data)[0])[21] || 'No disponible';
+                } else {
+                    type = name = redshift = 'No encontrado';
+                    tnsLink = 'https://www.wis-tns.org/';
+                }
             } else {
-                document.getElementById('type').innerHTML = '-'
-                document.getElementById('name').innerHTML = '-'
-                document.getElementById('tns-link').href = `https://www.wis-tns.org/`
-                document.getElementById('redshift').innerHTML = '-'
+                type = name = redshift = 'Respuesta inesperada';
+                tnsLink = 'https://www.wis-tns.org/';
+                console.error("Respuesta inesperada:", data);
             }
+
+            document.getElementById('type').innerHTML = type;
+            document.getElementById('name').innerHTML = name;
+            document.getElementById('tns-link').href = tnsLink;
+            document.getElementById('redshift').innerHTML = redshift;
         }
 
         const myClick = document.getElementById('menu-button');
@@ -283,6 +299,7 @@
         
         document.addEventListener('click', handleOutsideClick);
 
+        console.log('Fetch begin')
         fetch("https://tns.alerce.online/search", {
             "headers": {
                 "accept": "application/json",
@@ -292,7 +309,33 @@
             "body": "{\"ra\":" + String(ra) + ",\"dec\":" + String(dec)+ "}",
             "method": "POST",
             "mode": "cors",
-            }).then(response =>  response.json()).then(data => lastInformation(data))
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(text => {
+            console.log("Respuesta recibida:", text);
+            if (text.includes("Error message")) {
+                throw new Error(text);
+            }
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.log("La respuesta no es JSON válido, se procesará como texto");
+                return text;
+            }
+        })
+        .then(data => {
+            console.log("Datos procesados:", data);
+            lastInformation(data);
+        })
+        .catch(error => {
+            console.error("Error en la petición:", error.message);
+            lastInformation({
+                error: true,
+                message: error.message
+            });
+        });
 
 
 
