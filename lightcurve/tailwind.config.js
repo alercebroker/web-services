@@ -15,11 +15,7 @@ module.exports = {
   corePlugins: {
     preflight: false,
   },
-  daisyui: {
-    utils: true, // adds responsive and modifier utility classes
-    prefix: "du-", // prefix for daisyUI classnames (components, 
-  },
-  plugins: [require('daisyui'),],
+  plugins: [],
 
 }
 

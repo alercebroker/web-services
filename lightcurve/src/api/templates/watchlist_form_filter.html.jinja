@@ -1,56 +1,56 @@
+<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
+
 <script>
     let linkCss = document.createElement('link');
     linkCss.rel = 'stylesheet'
-    linkCss.href = '{{ API_URL }}/static/test.css';
+    linkCss.href = '{{ API_URL }}/static/main.css';
 
     document.head.appendChild(linkCss);
 </script>
 
-<div>
-    <div id="filter-form" class="tw-preflight tw-grid tw-grid-rows-4 tw-grid-flow-col ">
+<div class="tw-preflight">
+    <div id="filter-form" class="tw-grid tw-grid-rows-4 tw-grid-flow-col mx-auto">
         <div class="tw-row-span-1">
             <div class="tw-grid tw-grid-cols-3 tw-gap-4">
                 <div class="tw-col-span-1 tw-flex tw-flex-col tw-relative">
                     <div>
                         <label for="condition">Condition:</label>
-                        <input type="text" id="condition" name="condition" onkeyup="showResults(this.value, 'condition','valuesConditions')" class="tw-input tw-input-bordered tw-w-full max-w-xs">
-                        <div id="valuesConditions" class="tw-absolute tw-bg-white tw-w-full"></div>
+                        <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full max-w-xs" name="condition" id="condition">
+                        <option value="constant">Constant</option>
+                        <option value="difference">Difference</option>
+                        <option value="">No filter</option>
+                        <option value="2">x</option>
+                        </select>
                     </div>
                 </div>
                 <div class="tw-col-span-1 tw-flex tw-flex-col tw-relative">
                     <div>
                         <label for="property">Property:</label>
-                        <input type="text" id="property" name="property" onkeyup="showResults(this.value, 'property','valuesProperties')" class="tw-input tw-input-bordered tw-w-full max-w-xs">
-                        <div id="valuesProperties" class="tw-absolute tw-bg-white tw-w-full"></div>
-                    </div>
-                </div>
-                <div class="tw-col-span-1 tw-flex tw-flex-col">
-                    <div>
-                        <input type="text" name="q" id="q" onKeyUp="showResults(this.value, 'q','result')"/>
-                        <div id="result" class="tw-bg-white tw-absolute"></div>
+                        <input type="text" id="property" name="property" onkeyup="showResults(this.value, 'property','valuesProperties')" class="tw-border-2 tw-rounded-lg tw-w-full max-w-xs">
+                        <div id="valuesProperties" class="tw-absolute tw-w-full"></div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="tw-row-span-1">
+        <div class="tw-row-span-1 tw-mt-4">
             <div class="tw-grid tw-grid-cols-3 tw-gap-4">
                 <div class=" tw-col-span-1 tw-flex tw-flex-col">
                     <label for="operation">Operation:</label>
-                    <select class="tw-select tw-select-bordered tw-du-w-full tw-max-w-xs" name="operation" id="operation">
-                    <option value="Equal">Equal</option>
-                    <option value="Less than">Less than</option>
-                    <option value="Less tan or equal">Less tan or equal</option>
-                    <option value="Greater than">Greater than</option>
-                    <option value="Less tan or equal">Greater than or equal</option>
+                    <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full max-w-xs" name="operation" id="operation">
+                    <option value="equal">Equal</option>
+                    <option value="less">Less than</option>
+                    <option value="less eq">Less tan or equal</option>
+                    <option value="greater">Greater than</option>
+                    <option value="greater eq">Greater than or equal</option>
                     </select>
                 </div>
                 <div class="tw-col-span-1 tw-flex tw-flex-col">
                     <label for="value">Value:</label>
-                    <input type="number" id="value" name="value" class="tw-input tw-input-bordered w-full max-w-xs">
+                    <input type="number" id="value" name="value" class="tw-border-2 tw-rounded-lg w-full max-w-xs">
                 </div>
                 <div class="tw-col-span-1 tw-flex tw-flex-col">
                     <label for="band">Band:</label>
-                    <select class="tw-select tw-select-bordered tw-w-full tw-max-w-xs" name="band" id="band">
+                    <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full max-w-xs" name="band" id="band">
                     <option value="g">g</option>
                     <option value="r">r</option>
                     <option value="i">i</option>
@@ -58,15 +58,17 @@
                 </div>
             </div>
         </div>
-        <div class="tw-row-span-1">
+        <div class="tw-mt-4">
             <button class="tw-btn tw-btn-primary">Button</button>
         </div>
     </div>
 </div>
 
 <script>
-    let search_conditions = ['constant', 'difference', 'no filter']
-    let search_property = ['mag']
+    const search_conditions = ['constant', 'difference', '']
+    const search_property = ['mag']
+    const search_operations = ['equal', 'less', 'less eq', 'greater','greater eq']
+    const search_bands = ['g', 'r', 'i']
 
     function autocompleteMatch(input, elementId) {
         if (input == '') {
@@ -90,12 +92,140 @@
         for (i=0; i<terms.length; i++) {
             list += `<li onclick="selectResult(this, '${inputId}', '${elementId}')">${terms[i]}</li>`;
         }
-        res.innerHTML = '<ul>' + list + '</ul>';
+
+        if (terms.length !=0 ){
+            res.innerHTML = '<ul class="tw-bg-white tw-border-2">' + list + '</ul>';
+        } else {
+            res.innerHTML = '<ul>' + list + '</ul>';
+        }
     }
 
     function selectResult(element, inputId, elementId) {
-        console.log(element, inputId)
         document.getElementById(inputId).value = element.innerText;
         document.getElementById(elementId).innerHTML = '';
+    }
+
+
+    const select_condition = document.getElementById("condition");
+    const select_operation = document.getElementById("operation");
+    const select_bands = document.getElementById("band");
+    const input_property = document.getElementById("property");
+    const input_value = document.getElementById("value")
+    
+    select_condition.addEventListener('change', (e) =>{
+        let messageHTML = document.getElementById(`${e.target.id}-error`);
+        if(messageHTML) {
+            messageHTML.remove();
+        }
+        selectValidations(e.target)
+    })
+
+    select_operation.addEventListener('change', (e) =>{
+        let messageHTML = document.getElementById(`${e.target.id}-error`);
+        if(messageHTML) {
+            messageHTML.remove();
+        }
+        selectOperationValidations(e.target)
+    })
+
+
+    select_bands.addEventListener('change', (e) =>{
+        let messageHTML = document.getElementById(`${e.target.id}-error`);
+        if(messageHTML) {
+            messageHTML.remove();
+        }
+        selectBandValidations(e.target)
+    })
+
+    input_property.addEventListener('change', (e) => {
+        let messageHTML = document.getElementById(`${e.target.id}-error`);
+        if(messageHTML) {
+            messageHTML.remove();
+        }
+        propertyValidation(e.target)
+    })
+
+    input_value.addEventListener('change', (e) => {
+        let messageHTML = document.getElementById(`${e.target.id}-error`);
+        if(messageHTML) {
+            messageHTML.remove();
+        }
+        propertyValidation(e.target)
+    })
+
+    function propertyValidation(val) {
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (!isNaN(val.value)){
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "Please enter a letter.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+
+    }
+
+    function valueValidation(val) {
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (isNaN(val.value)){
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "Please enter a number.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+
+    }
+
+    function selectValidations(val) {
+
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (search_conditions.includes(val.value)){
+            return true;
+        } else {
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "The field must be one of the options shown.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+    }
+
+    function selectOperationValidations(val) {
+
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (search_operations.includes(val.value)){
+            return true;
+        } else {
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "The field must be one of the options shown.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+    }
+
+    function selectBandValidations(val) {
+
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (search_bands.includes(val.value)){
+            return true;
+        } else {
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "The field must be one of the options shown.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
     }
 </script>

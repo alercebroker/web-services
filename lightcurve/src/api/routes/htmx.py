@@ -12,7 +12,7 @@ from core.service import (
     query_psql_object,
     remove_duplicate_forced_photometry_by_pid,
 )
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException,Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from ..result_handler import handle_error, handle_success
@@ -237,4 +237,3 @@ async def dr(
             "request": request,
         },
     )
-
