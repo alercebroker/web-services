@@ -48,7 +48,7 @@ async def scores_app(
 
         current_category = scores[dic].__dict__['category_name']
         current_score = float(scores[dic].__dict__['score'])
-
+    
         flag = 0
 
         for dist in range(len(distributions)):

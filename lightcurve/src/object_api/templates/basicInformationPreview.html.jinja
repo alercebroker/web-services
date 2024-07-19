@@ -183,7 +183,7 @@
     </div>
 
     <h6 class="tw-inline tw-text-[#1e1e1e] dark:tw-text-white tw-absolute tw-right-0 tw-bottom-0 tw-h-auto tw-m-0 tw-text-[17px] tw-mt-20px">
-    Provided by <a target="_blank" class=" tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer" href="https://www.wis-tns.org/">TNS</a>  <img class="tw-inline" src="https://www.wis-tns.org/sites/default/files/favicon.png">
+    Provided by <a id="tns-link" target="_blank" class=" tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer">TNS</a>  <img class="tw-inline" src="https://www.wis-tns.org/sites/default/files/favicon.png">
     </h6>
 
 </div>
@@ -257,10 +257,12 @@
         var obj;
 
         function lastInformation(dict){
-            
+            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+            console.log(dict)
             if (Object.keys(Object.values(dict)[0]).length > 25) {
                 document.getElementById('type').innerHTML = Object.values(dict)[2];
                 document.getElementById('name').innerHTML = Object.values(dict)[1];
+                document.getElementById('tns-link').href = `https://www.wis-tns.org/object/${Object.values(dict)[1]}`
                 document.getElementById('redshift').innerHTML = Object.values(Object.values(dict)[0])[21];
             } else {
                 document.getElementById('type').innerHTML = '-'
