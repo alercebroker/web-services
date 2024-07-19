@@ -673,6 +673,11 @@
   font-size: 17px;
 }
 
+.tw-preflight :is(.tw-text-lg) {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 .tw-preflight :is(.tw-text-sm) {
   font-size: 0.875rem;
   line-height: 1.25rem;

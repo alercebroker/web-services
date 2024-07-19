@@ -42,10 +42,6 @@
   z-index: 9999;
 }
 
-.tw-preflight :is(.tw-z-\[999\]) {
-  z-index: 999;
-}
-
 .tw-preflight :is(.tw-col-span-1) {
   grid-column: span 1 / span 1;
 }
@@ -125,6 +121,10 @@
   margin-top: 0.75rem;
 }
 
+.tw-preflight :is(.tw-mt-8) {
+  margin-top: 2rem;
+}
+
 .tw-preflight :is(.tw-mt-\[10px\]) {
   margin-top: 10px;
 }
@@ -139,10 +139,6 @@
 
 .tw-preflight :is(.tw-mt-\[5px\]) {
   margin-top: 5px;
-}
-
-.tw-preflight :is(.tw-ml-\[100px\]) {
-  margin-left: 100px;
 }
 
 .tw-preflight :is(.tw-box-content) {
@@ -205,6 +201,10 @@
   height: 500px;
 }
 
+.tw-preflight :is(.tw-h-\[90\%\]) {
+  height: 90%;
+}
+
 .tw-preflight :is(.tw-h-auto) {
   height: auto;
 }
@@ -212,6 +212,10 @@
 .tw-preflight :is(.tw-h-fit) {
   height: -moz-fit-content;
   height: fit-content;
+}
+
+.tw-preflight :is(.tw-max-h-\[75\%\]) {
+  max-height: 75%;
 }
 
 .tw-preflight :is(.tw-w-1\/3) {
@@ -240,10 +244,6 @@
 
 .tw-preflight :is(.tw-w-\[100\%\]) {
   width: 100%;
-}
-
-.tw-preflight :is(.tw-w-\[250px\]) {
-  width: 250px;
 }
 
 .tw-preflight :is(.tw-w-\[30px\]) {
@@ -286,6 +286,10 @@
   max-width: 40%;
 }
 
+.tw-preflight :is(.tw-max-w-\[75\%\]) {
+  max-width: 75%;
+}
+
 .tw-preflight :is(.tw-flex-grow) {
   flex-grow: 1;
 }
@@ -303,6 +307,11 @@
 
 .tw-preflight :is(.tw--translate-x-1\/2) {
   --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.tw-preflight :is(.tw-translate-x-16) {
+  --tw-translate-x: 4rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -364,14 +373,6 @@
 
 .tw-preflight :is(.tw-gap-1) {
   gap: 0.25rem;
-}
-
-.tw-preflight :is(.tw-gap-6) {
-  gap: 1.5rem;
-}
-
-.tw-preflight :is(.tw-gap-5) {
-  gap: 1.25rem;
 }
 
 .tw-preflight :is(.tw-space-x-2 > :not([hidden]) ~ :not([hidden])) {
@@ -672,6 +673,11 @@
   font-size: 17px;
 }
 
+.tw-preflight :is(.tw-text-lg) {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
 .tw-preflight :is(.tw-text-sm) {
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -706,6 +712,11 @@
   color: rgb(37 99 235 / var(--tw-text-opacity));
 }
 
+.tw-preflight :is(.tw-text-gray-400) {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity));
+}
+
 .tw-preflight :is(.tw-text-gray-900) {
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity));
@@ -722,7 +733,8 @@
 }
 
 .tw-preflight :is(.tw-underline) {
-  text-decoration-line: underline;
+  -webkit-text-decoration-line: underline;
+          text-decoration-line: underline;
 }
 
 .tw-preflight :is(.tw-opacity-100) {
