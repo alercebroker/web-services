@@ -29,9 +29,9 @@ async def scores_app(
     #distributions = get_scores_distribution(detector_name="anomaly_detector", session_factory = request.app.state.psql_session)
     
     scores = get_scores(oid, session_factory = request.app.state.psql_session)
-    print("SCORES:-------\n", scores)
+    #print("SCORES:-------\n", scores)
     distributions = get_scores_distribution("anomaly_detector", session_factory = request.app.state.psql_session)
-    print("DISTRIBUTIONS:---------\n", distributions)
+    #print("DISTRIBUTIONS:---------\n", distributions)
     taxonomies = get_taxonomies(session_factory = request.app.state.psql_session)
     # una tabla con 
     # category | score | decil (el mas chico de los que sean mayores) numero (valor del percentil) | 
@@ -71,8 +71,7 @@ async def scores_app(
 
         table_rows.append({'category': current_category, 'score': current_score, 'percentil': percentil, 'percentil_cut': def_value})
         
-
-    print("---------------\n", table_rows)
+    #print("---------------Hola mundo\n", table_rows)
     # armar el input para la tabla scores
 
     return templates.TemplateResponse(
