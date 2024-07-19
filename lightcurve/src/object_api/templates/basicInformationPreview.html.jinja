@@ -267,6 +267,7 @@
             } else {
                 document.getElementById('type').innerHTML = '-'
                 document.getElementById('name').innerHTML = '-'
+                document.getElementById('tns-link').href = `https://www.wis-tns.org/`
                 document.getElementById('redshift').innerHTML = '-'
             }
         }
@@ -283,15 +284,15 @@
         document.addEventListener('click', handleOutsideClick);
 
         fetch("https://tns.alerce.online/search", {
-        "headers": {
-            "accept": "application/json",
-            "cache-control": "no-cache",
-            "content-type": "application/json",
-        },
-        "body": "{\"ra\":" + String(ra) + ",\"dec\":" + String(dec)+ "}",
-        "method": "POST",
-        "mode": "cors",
-        }).then(response =>  response.json()).then(data => lastInformation(data))
+            "headers": {
+                "accept": "application/json",
+                "cache-control": "no-cache",
+                "content-type": "application/json",
+            },
+            "body": "{\"ra\":" + String(ra) + ",\"dec\":" + String(dec)+ "}",
+            "method": "POST",
+            "mode": "cors",
+            }).then(response =>  response.json()).then(data => lastInformation(data))
 
 
 
