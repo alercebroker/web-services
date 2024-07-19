@@ -148,6 +148,7 @@ def get_scores(
             stmt = select(Score).where(Score.oid == oid)
             result = session.execute(stmt)
             score_list = result.all()
+            print(score_list)
             get_score_data = [row[0] for row in score_list]
             get_score_list = []
             for score in get_score_data:
@@ -168,15 +169,15 @@ def get_scores_distribution(
     try:
         assert session_factory is not None
         with session_factory() as session:
-            stmt = select(ScoreDistribution).where(Score.detector_name == detector_name)
+            stmt = select(ScoreDistribution).where(ScoreDistribution.detector_name == detector_name)
             result = session.execute(stmt)
             distribution_list = result.all()
             get_distribution_data = [row[0] for row in distribution_list]
-            get_disribution_list = []
+            get_distribution_list = []
             for dist in get_distribution_data:
-                print("---------\n---\DEBUG \n ", dist.__dict__)
-                get_disribution_list.append(DistributionModel(**dist.__dict__))
-            return get_disribution_list
+                #print("---------\n---\DEBUG \n ", dist.__dict__)
+                get_distribution_list.append(DistributionModel(**dist.__dict__))
+            return get_distribution_list
     except ObjectNotFound:
         raise
     except Exception as e:

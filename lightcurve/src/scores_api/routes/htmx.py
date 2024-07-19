@@ -29,7 +29,7 @@ async def scores_app(
     #distributions = get_scores_distribution(detector_name="anomaly_detector", session_factory = request.app.state.psql_session)
     
     scores = get_scores(oid, session_factory = request.app.state.psql_session)
-    #print("SCORES:-------\n", scores)
+    print("SCORES:-------\n", scores)
     distributions = get_scores_distribution("anomaly_detector", session_factory = request.app.state.psql_session)
     #print("DISTRIBUTIONS:---------\n", distributions)
     taxonomies = get_taxonomies(session_factory = request.app.state.psql_session)
@@ -68,7 +68,8 @@ async def scores_app(
         else: 
             percentil = 0
             def_value = 0 
-
+        print('hola mundo')
+        print('category\n', current_category)
         table_rows.append({'category': current_category, 'score': current_score, 'percentil': percentil, 'percentil_cut': def_value})
         
     #print("---------------Hola mundo\n", table_rows)
