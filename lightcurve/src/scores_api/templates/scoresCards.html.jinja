@@ -38,7 +38,7 @@
                 
         </div>
 
-        <div class="tw-w-[95%] tw-mx-auto tw-text-sm">
+        <div id="navigationMenu" class="tw-w-[95%] tw-mx-auto tw-text-sm">
             <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
                 <div class="tw-flex tw-items-center tw-space-x-2">
                     <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
@@ -66,9 +66,13 @@
     const db = {{ scores_data | tojson }}
 
     if (Object.keys(db).length === 0 ){
-        // Hacer un box que diga que no hay scores para este objeto.
+
+        document.getElementById('navigationMenu').style.display = 'block';
+        const tableContainer = document.getElementById('tableContainer');
+        const alertButton = document.createElement('button');
+        //alertButton.classList = 'tw-'
     } else {
-        
+
         const dbKeys = Object.keys(db[0]);
         const numRows = db.length;
         const numColumns = dbKeys.length - 1; // esto puede cambiar
