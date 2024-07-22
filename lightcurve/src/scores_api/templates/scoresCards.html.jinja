@@ -62,7 +62,8 @@
      </div>
 
  <script>
- 
+    const columnNames = ['Category names','Score', 'Percentil', 'Percentil cut'];
+
     const db = {
         'anomaly_detector_top': {
             'categories': {
@@ -195,17 +196,16 @@
         tableContainer.appendChild(alertDiv)
 
     } else {
+
         const anomalies = Object.keys(db);
         const numberOfAnomalies = anomalies.length;
 
-        const currentCategories = Object.keys(db.categories);
+        const currentCategories = Object.keys(db[anomalies[0]].categories);
         const numberOfCategories = currentCategories.length;
 
+        console.log(anomalies[0]);
+        console.log(currentCategories)
 
-        const dbKeys = Object.keys(db[0]);
-        const numRows = db.length;
-        const numColumns = dbKeys.length - 1; // esto puede cambiar
-        
         const tableContainer = document.getElementById('tableContainer');
         tableContainer.classList.add('tw-overflow-x-auto');
         
@@ -214,36 +214,29 @@
 
         const headerRow = document.createElement("tr");
 
-        for (let i = 0; i < dbKeys.length - 1; i++) {
+        for (let i = 0; i < columnNames.length; i++) {
 
             const th = document.createElement("th");
 
-            if (i < numRows - 1){
-                    th.textContent = dbKeys[i];
-                } else if (i === numRows - 1){
-                    th.textContent = String(dbKeys[i+1]) + ' ' + '(' + String(dbKeys[i]) + ')';
-                };
+            th.textContent = columnNames[i];
 
-            const arrowButton = document.createElement('button');
-            arrowButton.setAttribute('id','arrowButton');
-
-            th.appendChild(arrowButton);
             headerRow.appendChild(th);
 
         };
 
         table.appendChild(headerRow);
+        tableContainer.appendChild(table);
         
         const tBody = document.createElement('tbody');
         tBody.setAttribute('id','dataTableBody');
         // Create the table data rows where i = rows and j = columns
-        for (let i = 0; i < numRows; i++) {
+        for (let i = 0; i < numberOfCategories; i++) {
 
             const dataRow = document.createElement("tr");
                     
             for (let j = 0; j < numColumns; j++) {
                 const td = document.createElement("td");
-                td.classList = 'tw-px-2 tw-py-1 tw-text-left'
+                td.classList = 'tw-px-2 tw-py-1 tw-text-left';
 
                 td.id = `cell-${i}-${j}`;
                 dataRow.appendChild(td);
