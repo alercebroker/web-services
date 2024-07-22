@@ -63,15 +63,144 @@
 
  <script>
  
-    const db = {{ scores_data | tojson }}
+    const db = {
+        'anomaly_detector_top': {
+            'categories': {
+                'Periodic': {
+                    'graph_data': [
+                        {'label': 'percentil_10', 'value': 10.0},
+                        {'label': 'percentil_20', 'value': 40.0},
+                        {'label': 'percentil_30', 'value': 70.0},
+                        {'label': 'percentil_40', 'value': 100.0},
+                        {'label': 'percentil_50', 'value': 130.0},
+                        {'label': 'percentil_60', 'value': 160.0},
+                        {'label': 'percentil_70', 'value': 190.0},
+                        {'label': 'percentil_80', 'value': 210.0},
+                        {'label': 'percentil_90', 'value': 230.0},
+                        {'label': 'saturation', 'value': 250.0}
+                    ],
+                    'percentil': 'percentil_60',
+                    'percentil_cut': 160.0,
+                    'score': 169.66998291015625
+                },
+                'Stochastic': {
+                    'graph_data': [
+                        {'label': 'percentil_10', 'value': 10.0},
+                        {'label': 'percentil_20', 'value': 40.0},
+                        {'label': 'percentil_30', 'value': 70.0},
+                        {'label': 'percentil_40', 'value': 100.0},
+                        {'label': 'percentil_50', 'value': 130.0},
+                        {'label': 'percentil_60', 'value': 160.0},
+                        {'label': 'percentil_70', 'value': 190.0},
+                        {'label': 'percentil_80', 'value': 210.0},
+                        {'label': 'percentil_90', 'value': 230.0},
+                        {'label': 'saturation', 'value': 250.0}
+                    ],
+                    'percentil': 0,
+                    'percentil_cut': 0,
+                    'score': 0.2181013524532318
+                },
+                'Transient': {
+                    'graph_data': [
+                        {'label': 'percentil_10', 'value': 10.0},
+                        {'label': 'percentil_20', 'value': 40.0},
+                        {'label': 'percentil_30', 'value': 70.0},
+                        {'label': 'percentil_40', 'value': 100.0},
+                        {'label': 'percentil_50', 'value': 130.0},
+                        {'label': 'percentil_60', 'value': 160.0},
+                        {'label': 'percentil_70', 'value': 190.0},
+                        {'label': 'percentil_80', 'value': 210.0},
+                        {'label': 'percentil_90', 'value': 230.0},
+                        {'label': 'saturation', 'value': 250.0}
+                    ],
+                    'percentil': 0,
+                    'percentil_cut': 0,
+                    'score': 4.202813625335693
+                }
+            }
+        },
+        'anomaly_detector_top_2': {
+            'categories': {
+                'Periodic_2': {
+                    'graph_data': [
+                        {'label': 'percentil_10', 'value': 10.0},
+                        {'label': 'percentil_20', 'value': 40.0},
+                        {'label': 'percentil_30', 'value': 70.0},
+                        {'label': 'percentil_40', 'value': 100.0},
+                        {'label': 'percentil_50', 'value': 130.0},
+                        {'label': 'percentil_60', 'value': 160.0},
+                        {'label': 'percentil_70', 'value': 190.0},
+                        {'label': 'percentil_80', 'value': 210.0},
+                        {'label': 'percentil_90', 'value': 230.0},
+                        {'label': 'saturation', 'value': 250.0}
+                    ],
+                    'percentil': 'percentil_60',
+                    'percentil_cut': 160.0,
+                    'score': 169.66998291015625
+                },
+                'Stochastic_2': {
+                    'graph_data': [
+                        {'label': 'percentil_10', 'value': 10.0},
+                        {'label': 'percentil_20', 'value': 40.0},
+                        {'label': 'percentil_30', 'value': 70.0},
+                        {'label': 'percentil_40', 'value': 100.0},
+                        {'label': 'percentil_50', 'value': 130.0},
+                        {'label': 'percentil_60', 'value': 160.0},
+                        {'label': 'percentil_70', 'value': 190.0},
+                        {'label': 'percentil_80', 'value': 210.0},
+                        {'label': 'percentil_90', 'value': 230.0},
+                        {'label': 'saturation', 'value': 250.0}
+                    ],
+                    'percentil': 0,
+                    'percentil_cut': 0,
+                    'score': 0.2181013524532318
+                },
+                'Transient_2': {
+                    'graph_data': [
+                        {'label': 'percentil_10', 'value': 10.0},
+                        {'label': 'percentil_20', 'value': 40.0},
+                        {'label': 'percentil_30', 'value': 70.0},
+                        {'label': 'percentil_40', 'value': 100.0},
+                        {'label': 'percentil_50', 'value': 130.0},
+                        {'label': 'percentil_60', 'value': 160.0},
+                        {'label': 'percentil_70', 'value': 190.0},
+                        {'label': 'percentil_80', 'value': 210.0},
+                        {'label': 'percentil_90', 'value': 230.0},
+                        {'label': 'saturation', 'value': 250.0}
+                    ],
+                    'percentil': 0,
+                    'percentil_cut': 0,
+                    'score': 4.202813625335693
+                }
+            }
+        }
+    }
 
     if (Object.keys(db).length === 0 ){
-
-        document.getElementById('navigationMenu').style.display = 'block';
+        
+        document.getElementById('navigationMenu').style.display = 'none';
         const tableContainer = document.getElementById('tableContainer');
-        const alertButton = document.createElement('button');
-        //alertButton.classList = 'tw-'
+        const alertDiv = document.createElement('div');
+        alertDiv.classList = "tw-ml-[100px] tw-mb-[50px] tw-opacity-70 tw-border-none tw-bg-red-900 tw-mt-10 tw-ml-10 tw-w-[500px] tw-rounded-xl tw-min-h-28 tw-flex tw-flex-row tw-justify-between tw-items-center"
+
+        const textDiv = document.createElement('div');
+        textDiv.classList = "tw-flex-grow tw-flex tw-justify-center tw-max-w-full tw-box-content tw-ml-[10px] tw-mt-[10px] tw-mb-[10px] tw-mr-[10x]";
+
+        const paragraph = document.createElement('p');
+        paragraph.classList = "tw-text-white tw-overflow-wrap-break-word tw-text-lg";
+        paragraph.innerHTML = 'No scores for this object'
+
+        textDiv.appendChild(paragraph);
+        alertDiv.appendChild(textDiv);
+        tableContainer.appendChild(alertDiv)
+
     } else {
+        const anomalies = Object.keys(db);
+        const numberOfAnomalies = anomalies.length;
+
+        const currentCategories = Object.keys(db.categories);
+        const numberOfCategories = currentCategories.length;
+
 
         const dbKeys = Object.keys(db[0]);
         const numRows = db.length;
