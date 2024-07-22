@@ -62,7 +62,7 @@
      </div>
 
  <script>
-    const columnNames = ['Category names','Score', 'Percentil', 'Percentil cut'];
+    const columnNames = ['Category names','score', 'percentil', 'percentil_cut'];
 
     const db = {
         'anomaly_detector_top': {
@@ -197,6 +197,66 @@
 
     } else {
 
+        function createTableHead(columnNames, tableContainer, table){
+
+            const headerRow = document.createElement("tr");
+
+            for (let i = 0; i < columnNames.length; i++) {
+
+                const th = document.createElement("th");
+
+                th.textContent = columnNames[i];
+
+                headerRow.appendChild(th);
+
+            };
+
+            table.appendChild(headerRow);
+            tableContainer.appendChild(table);
+        };
+
+        function createTableBody(numberOfCategories, columnNames, tableContainer, table){
+            const tBody = document.createElement('tbody');
+            tBody.setAttribute('id','dataTableBody');
+            // Create the table data rows where i = rows and j = columns
+            for (let i = 0; i < numberOfCategories; i++) {
+
+                const dataRow = document.createElement("tr");
+                        
+                for (let j = 0; j < columnNames.length; j++) {
+                    const td = document.createElement("td");
+                    td.classList = 'tw-px-2 tw-py-1 tw-text-left';
+
+                    td.id = `cell-${i}-${j}`;
+                    dataRow.appendChild(td);
+                };
+                tBody.appendChild(dataRow);
+            };
+
+            table.appendChild(tBody);
+            tableContainer.appendChild(table);
+        }
+
+        function dataInjection(numberOfCategories, columnNames, db, currentAnomaly){
+            // inyeccion de datos
+            const currentDict = db[currentAnomaly]['categories'];
+            const categoryKeys = Object.keys(currentDict)
+            for (let i = 0; i < numberOfCategories ; i++) {
+                for (let j = 0; j < columnNames.length; j++){
+                    let name = 'cell-'+String(i)+'-'+String(j);
+                    if (j === 0){
+                        console.log(categoryKeys[i])
+                        document.getElementById(name).innerHTML = categoryKeys[i];
+                    } else {
+                        console.log(currentDict[categoryKeys[i]][columnNames[j]])
+                        document.getElementById(name).innerHTML = currentDict[categoryKeys[i]][columnNames[j]]
+                    }
+
+                };
+            };
+        }
+
+
         const anomalies = Object.keys(db);
         const numberOfAnomalies = anomalies.length;
 
@@ -206,61 +266,18 @@
         console.log(anomalies[0]);
         console.log(currentCategories)
 
+        // Creating base table
+
         const tableContainer = document.getElementById('tableContainer');
         tableContainer.classList.add('tw-overflow-x-auto');
         
         const table = document.createElement('table');
         table.classList = 'tw-table dark:tw-text-white tw-w-full';
 
-        const headerRow = document.createElement("tr");
-
-        for (let i = 0; i < columnNames.length; i++) {
-
-            const th = document.createElement("th");
-
-            th.textContent = columnNames[i];
-
-            headerRow.appendChild(th);
-
-        };
-
-        table.appendChild(headerRow);
-        tableContainer.appendChild(table);
+        createTableHead(columnNames, tableContainer, table);
+        createTableBody(numberOfCategories, columnNames, tableContainer, table);
         
-        const tBody = document.createElement('tbody');
-        tBody.setAttribute('id','dataTableBody');
-        // Create the table data rows where i = rows and j = columns
-        for (let i = 0; i < numberOfCategories; i++) {
-
-            const dataRow = document.createElement("tr");
-                    
-            for (let j = 0; j < numColumns; j++) {
-                const td = document.createElement("td");
-                td.classList = 'tw-px-2 tw-py-1 tw-text-left';
-
-                td.id = `cell-${i}-${j}`;
-                dataRow.appendChild(td);
-            };
-            tBody.appendChild(dataRow);
-        };
-        //table.appendChild(colGroup)
-        table.appendChild(tBody);
-
-        // Append the table to the container
-        tableContainer.appendChild(table);
-
-        // inyeccion de datos
-        for (let i = 0; i < numRows; i++) {
-            for (let j = 0; j < numColumns; j++){
-                let name = 'cell-'+String(i)+'-'+String(j);
-                if (j < numColumns - 1){
-                    document.getElementById(name).innerHTML = db[i][dbKeys[j]];
-                } else if (j === numColumns - 1){
-                    document.getElementById(name).innerHTML = String(db[i][dbKeys[j+1]]) + ' ' + '(' + String(db[i][dbKeys[j]]) + ')';
-                };
-
-            };
-        };
+        dataInjection(numberOfCategories, columnNames, db, anomalies[0]);
     }
 
     
