@@ -31,7 +31,12 @@
                 </div> 
         </div>
 
-        <div id="mySelect" class="tw-preflight tw-hidden tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-fit tw-rounded-[50px] tw-shadow-2xl">
+        <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-b tw-text-black dark:tw-text-white">
+                <div id="display-button-text" class="tw-flex-grow tw-justify-center"></div>
+                <div id='arrow-svg' class="tw-text-black dark:tw-text-white"></div>
+        </button>
+
+        <div id="mySelect" class="tw-preflight tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-fit tw-rounded-[50px] tw-shadow-2xl" style="display: none;">
         </div>
 
         <div class="tw-table tw-preflight dark:tw-text-white tw-text-black tw-w-full" id="tableContainer">
@@ -137,7 +142,7 @@
                     ],
                     'percentil': 'percentil_60',
                     'percentil_cut': 160.0,
-                    'score': 169.66998291015625
+                    'score': 179.66998291015625
                 },
                 'Stochastic_2': {
                     'graph_data': [
@@ -154,7 +159,7 @@
                     ],
                     'percentil': 0,
                     'percentil_cut': 0,
-                    'score': 0.2181013524532318
+                    'score': 0.3181013524532318
                 },
                 'Transient_2': {
                     'graph_data': [
@@ -171,7 +176,24 @@
                     ],
                     'percentil': 0,
                     'percentil_cut': 0,
-                    'score': 4.202813625335693
+                    'score': 5.202813625335693
+                },
+                'Transient_3': {
+                    'graph_data': [
+                        {'label': 'percentil_10', 'value': 10.0},
+                        {'label': 'percentil_20', 'value': 40.0},
+                        {'label': 'percentil_30', 'value': 70.0},
+                        {'label': 'percentil_40', 'value': 100.0},
+                        {'label': 'percentil_50', 'value': 130.0},
+                        {'label': 'percentil_60', 'value': 160.0},
+                        {'label': 'percentil_70', 'value': 190.0},
+                        {'label': 'percentil_80', 'value': 210.0},
+                        {'label': 'percentil_90', 'value': 230.0},
+                        {'label': 'saturation', 'value': 250.0}
+                    ],
+                    'percentil': 10,
+                    'percentil_cut': 0,
+                    'score': 5.202813625335693
                 }
             }
         }
@@ -215,26 +237,33 @@
             tableContainer.appendChild(table);
         };
 
-        function createTableBody(numberOfCategories, columnNames, tableContainer, table){
-            const tBody = document.createElement('tbody');
-            tBody.setAttribute('id','dataTableBody');
-            // Create the table data rows where i = rows and j = columns
-            for (let i = 0; i < numberOfCategories; i++) {
+        function createTableBody(numberOfCategories, columnNames, tableContainer, table) {
 
+            const existingTBody = table.querySelector('tbody');
+            if (existingTBody) {
+                existingTBody.remove();
+            }
+
+            const tBody = document.createElement('tbody');
+            tBody.setAttribute('id', 'dataTableBody');
+
+            for (let i = 0; i < numberOfCategories; i++) {
                 const dataRow = document.createElement("tr");
-                        
+                
                 for (let j = 0; j < columnNames.length; j++) {
                     const td = document.createElement("td");
-                    td.classList = 'tw-px-2 tw-py-1 tw-text-left';
-
+                    td.className = 'tw-px-2 tw-py-1 tw-text-left';
                     td.id = `cell-${i}-${j}`;
                     dataRow.appendChild(td);
-                };
+                }
                 tBody.appendChild(dataRow);
-            };
+            }
 
             table.appendChild(tBody);
-            tableContainer.appendChild(table);
+
+            if (!tableContainer.contains(table)) {
+                tableContainer.appendChild(table);
+            }
         }
 
         function dataInjection(numberOfCategories, columnNames, db, currentAnomaly){
@@ -245,26 +274,82 @@
                 for (let j = 0; j < columnNames.length; j++){
                     let name = 'cell-'+String(i)+'-'+String(j);
                     if (j === 0){
-                        console.log(categoryKeys[i])
                         document.getElementById(name).innerHTML = categoryKeys[i];
                     } else {
-                        console.log(currentDict[categoryKeys[i]][columnNames[j]])
                         document.getElementById(name).innerHTML = currentDict[categoryKeys[i]][columnNames[j]]
                     }
 
                 };
             };
-        }
+        };
 
+        function createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer){
 
+            const mySelect = document.getElementById('mySelect')
+            for (let i = 0; i < numberOfAnomalies; i++){
+                newA = document.createElement('a');
+                newA.id = anomalies[i];
+                newA.value = anomalies[i];
+                newA.classList = 'tw-text-center tw-text-lg tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
+                newA.target = '_blank';
+
+                const newDiv = document.createElement('div');
+                
+                newDiv.innerHTML = anomalies[i];
+                newDiv.classList = `tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]`;
+                
+                const optionsHeight = String(100 / anomalies.length);
+
+                mySelect.style.height = `${40 * anomalies.length}px`
+
+                newDiv.setAttribute('style', `height: ${optionsHeight}%`);
+
+                newA.appendChild(newDiv);
+                mySelect.appendChild(newA);
+
+                document.getElementById(anomalies[i]).addEventListener('click', function() {
+                    //const arrowSvgElement = document.getElementById('arrow-svg');
+                    const displayButtonTextElement = document.getElementById('display-button-text');
+
+                    if (displayButtonTextElement) {
+                        console.log(db)
+
+                        displayButtonTextElement.innerHTML = anomalies[i];
+                        const currentCategories = Object.keys(db[anomalies[i]].categories);
+                        const numberOfCategories = currentCategories.length;
+
+                        createTableBody(numberOfCategories, columnNames, tableContainer, table);
+                        dataInjection(numberOfCategories, columnNames, db, anomalies[i]);
+
+                        displayMenu();
+                    }
+                });
+
+            };
+        };
+
+        function displayMenu(){
+            if (boolDisplay === 0){
+                document.getElementById('mySelect').style.display = 'block';
+                boolDisplay = 1;
+            } else {
+                document.getElementById('mySelect').style.display = 'none';
+                boolDisplay = 0;
+            };
+
+        };
         const anomalies = Object.keys(db);
         const numberOfAnomalies = anomalies.length;
 
+        let boolDisplay = 0; 
+        document.getElementById('display-button').addEventListener('click', () => {  
+            displayMenu()
+            });
+
+        document.getElementById('display-button-text').innerHTML = anomalies[0];
+
         const currentCategories = Object.keys(db[anomalies[0]].categories);
         const numberOfCategories = currentCategories.length;
-
-        console.log(anomalies[0]);
-        console.log(currentCategories)
 
         // Creating base table
 
@@ -274,10 +359,12 @@
         const table = document.createElement('table');
         table.classList = 'tw-table dark:tw-text-white tw-w-full';
 
+        createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer);
         createTableHead(columnNames, tableContainer, table);
         createTableBody(numberOfCategories, columnNames, tableContainer, table);
-        
         dataInjection(numberOfCategories, columnNames, db, anomalies[0]);
+
+        
     }
 
     
