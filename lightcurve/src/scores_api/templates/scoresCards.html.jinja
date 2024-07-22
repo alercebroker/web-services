@@ -13,57 +13,62 @@
 </head>
 
  <body class="tw-dark tw-flex tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-relative tw-mt-3">  
-     <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3 ">
-        <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
-                <div class="tw-inline">
-                    <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Scores</h1>
-                </div>
-
-                 <div class="tw-inline tw-relative tw-ml-2 tw-mt-[10px] tw-group">
-                    <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
-                    </svg>
-                    <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
-                        <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2">
-                            If a value is None,  then that implies that there is no distribution value higher than the category score
-                        </div>
+     
+     <div class="tw-bg-white tw-flex tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[1500px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3 ">
+        <div class=tw-w-[50%]>
+            <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
+                    <div class="tw-inline">
+                        <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Scores</h1>
                     </div>
-                </div> 
-        </div>
 
-        <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-b tw-text-black dark:tw-text-white">
-                <div id="display-button-text" class="tw-flex-grow tw-justify-center"></div>
-                <div id='arrow-svg' class="tw-text-black dark:tw-text-white"></div>
-        </button>
+                    <div class="tw-inline tw-relative tw-ml-2 tw-mt-[10px] tw-group">
+                        <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                        </svg>
+                        <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
+                            <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                If a value is None,  then that implies that there is no distribution value higher than the category score
+                            </div>
+                        </div>
+                    </div> 
+            </div>
 
-        <div id="mySelect" class="tw-preflight tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-fit tw-rounded-[50px] tw-shadow-2xl" style="display: none;">
-        </div>
+            <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-b tw-text-black dark:tw-text-white">
+                    <div id="display-button-text" class="tw-flex-grow tw-justify-center"></div>
+                    <div id='arrow-svg' class="tw-text-black dark:tw-text-white"></div>
+            </button>
 
-        <div class="tw-table tw-preflight dark:tw-text-white tw-text-black tw-w-full" id="tableContainer">
-                
-        </div>
+            <div id="mySelect" class="tw-preflight tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[45%] tw-h-fit tw-rounded-[50px] tw-shadow-2xl" style="display: none;">
+            </div>
 
-        <div id="navigationMenu" class="tw-w-[95%] tw-mx-auto tw-text-sm">
-            <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
-                <div class="tw-flex tw-items-center tw-space-x-2">
-                    <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
-                    <button class="tw-relative hover:tw-cursor-pointer" onclick="changeMenuArrow()">
-                            <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b tw-pr-2 tw-appearance-none tw-pointer-events-auto">
-                                <option value="5">5</option>
-                                <option value="10">10</option>
-                                <option value="14">All</option>
-                            </select>
-                    </button>
-                </div>
-                <div class="tw-text-black dark:tw-text-white">
-                    <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
-                </div>
-                <div class="tw-text-sm">
-                    <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
-                    <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+            <div class="tw-table tw-preflight dark:tw-text-white tw-text-black tw-w-full" id="tableContainer">
+                    
+            </div>
+
+            <div id="navigationMenu" class="tw-w-[95%] tw-mx-auto tw-text-sm">
+                <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
+                    <div class="tw-flex tw-items-center tw-space-x-2">
+                        <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
+                        <button class="tw-relative hover:tw-cursor-pointer" onclick="changeMenuArrow()">
+                                <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b tw-pr-2 tw-appearance-none tw-pointer-events-auto">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="14">All</option>
+                                </select>
+                        </button>
+                    </div>
+                    <div class="tw-text-black dark:tw-text-white">
+                        <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
+                    </div>
+                    <div class="tw-text-sm">
+                        <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
+                        <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div id="charDiv" class=tw-w-[50%]></div>
      </div>
 
  <script>
@@ -191,7 +196,7 @@
                         {'label': 'percentil_90', 'value': 230.0},
                         {'label': 'saturation', 'value': 250.0}
                     ],
-                    'percentil': 10,
+                    'percentil': 0,
                     'percentil_cut': 0,
                     'score': 5.202813625335693
                 }
@@ -227,7 +232,7 @@
 
                 const th = document.createElement("th");
 
-                th.textContent = columnNames[i];
+                th.textContent = wordsCleaner(columnNames[i]);
 
                 headerRow.appendChild(th);
 
@@ -276,7 +281,11 @@
                     if (j === 0){
                         document.getElementById(name).innerHTML = categoryKeys[i];
                     } else {
-                        document.getElementById(name).innerHTML = currentDict[categoryKeys[i]][columnNames[j]]
+                        if (j === 2 && currentDict[categoryKeys[i]][columnNames[j]] !== 0){
+                            document.getElementById(name).innerHTML = wordsCleaner(currentDict[categoryKeys[i]][columnNames[j]]);
+                        } else {
+                            document.getElementById(name).innerHTML = currentDict[categoryKeys[i]][columnNames[j]];
+                        }
                     }
 
                 };
@@ -314,7 +323,7 @@
                     if (displayButtonTextElement) {
                         console.log(db)
 
-                        displayButtonTextElement.innerHTML = anomalies[i];
+                        displayButtonTextElement.innerHTML = wordsCleaner(anomalies[i]);
                         const currentCategories = Object.keys(db[anomalies[i]].categories);
                         const numberOfCategories = currentCategories.length;
 
@@ -338,6 +347,19 @@
             };
 
         };
+
+        function wordsCleaner(word){
+
+            let wordSplitted = word.split('_');
+
+            if (wordSplitted.length === 1){
+                return wordSplitted[0].charAt(0).toUpperCase() + wordSplitted[0].slice(1);
+            } else {
+                wordSplitted[0] = wordSplitted[0].charAt(0).toUpperCase() + wordSplitted[0].slice(1);
+                return wordSplitted.join(' ');
+            };
+        };
+
         const anomalies = Object.keys(db);
         const numberOfAnomalies = anomalies.length;
 
@@ -346,7 +368,7 @@
             displayMenu()
             });
 
-        document.getElementById('display-button-text').innerHTML = anomalies[0];
+        document.getElementById('display-button-text').innerHTML = wordsCleaner(anomalies[0]);
 
         const currentCategories = Object.keys(db[anomalies[0]].categories);
         const numberOfCategories = currentCategories.length;
