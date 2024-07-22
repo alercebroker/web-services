@@ -321,7 +321,6 @@
                     const displayButtonTextElement = document.getElementById('display-button-text');
 
                     if (displayButtonTextElement) {
-                        console.log(db)
 
                         displayButtonTextElement.innerHTML = wordsCleaner(anomalies[i]);
                         const currentCategories = Object.keys(db[anomalies[i]].categories);
@@ -418,12 +417,8 @@
         }
 
         document.addEventListener('click',handleOutsideClick);
-
         
     }
-
-    
-
 
  </script>
  </body>
