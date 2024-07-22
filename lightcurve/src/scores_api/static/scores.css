@@ -169,6 +169,14 @@
   margin-top: 5px;
 }
 
+.tw-preflight :is(.tw-mt-4) {
+  margin-top: 1rem;
+}
+
+.tw-preflight :is(.tw-mt-5) {
+  margin-top: 1.25rem;
+}
+
 .tw-preflight :is(.tw-box-content) {
   box-sizing: content-box;
 }

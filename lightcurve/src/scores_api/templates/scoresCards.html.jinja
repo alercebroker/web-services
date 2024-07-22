@@ -41,7 +41,7 @@
             <div id="mySelect" class="tw-preflight tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[45%] tw-h-fit tw-rounded-[50px] tw-shadow-2xl" style="display: none;">
             </div>
 
-            <div class="tw-table tw-preflight dark:tw-text-white tw-text-black tw-w-full" id="tableContainer">
+            <div class="tw-table tw-preflight dark:tw-text-white tw-text-black tw-w-full tw-mt-5" id="tableContainer">
                     
             </div>
 
@@ -304,7 +304,7 @@
 
                 const newDiv = document.createElement('div');
                 
-                newDiv.innerHTML = anomalies[i];
+                newDiv.innerHTML = wordsCleaner(anomalies[i]);
                 newDiv.classList = `tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]`;
                 
                 const optionsHeight = String(100 / anomalies.length);
@@ -337,12 +337,27 @@
             };
         };
 
-        function displayMenu(){
+        function displayMenu(auxBool = 0){
+
+            const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>`
+
+            const arrowUp = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                    </svg>`
+
+            if (auxBool === 1){
+                boolDisplay = 1;
+            }
+
             if (boolDisplay === 0){
                 document.getElementById('mySelect').style.display = 'block';
+                document.getElementById('arrow-svg').innerHTML = arrowUp;
                 boolDisplay = 1;
             } else {
                 document.getElementById('mySelect').style.display = 'none';
+                document.getElementById('arrow-svg').innerHTML = arrowDown;
                 boolDisplay = 0;
             };
 
@@ -359,6 +374,12 @@
                 return wordSplitted.join(' ');
             };
         };
+
+        const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>`
+                            
+        document.getElementById('arrow-svg').innerHTML = arrowDown;
 
         const anomalies = Object.keys(db);
         const numberOfAnomalies = anomalies.length;
@@ -385,6 +406,18 @@
         createTableHead(columnNames, tableContainer, table);
         createTableBody(numberOfCategories, columnNames, tableContainer, table);
         dataInjection(numberOfCategories, columnNames, db, anomalies[0]);
+
+        const clickInButton = document.getElementById('display-button');
+        
+        let auxBool;
+        function handleOutsideClick(event) {
+            if (!clickInButton.contains(event.target)) {
+                auxBool = 1;
+                displayMenu(auxBool);
+            }
+        }
+
+        document.addEventListener('click',handleOutsideClick);
 
         
     }
