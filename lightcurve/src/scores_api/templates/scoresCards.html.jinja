@@ -78,7 +78,136 @@
 <script>
 const columnNames = ['Category names','score', 'percentil', 'percentil_cut'];
 
-const db = {{ scores_data | tojson }};
+const db = {
+    'anomaly_detector_top': {
+        'categories': {
+            'Periodic': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 15.0},
+                    {'label': 'percentil_20', 'value': 45.0},
+                    {'label': 'percentil_30', 'value': 75.0},
+                    {'label': 'percentil_40', 'value': 15.0},
+                    {'label': 'percentil_50', 'value': 135.0},
+                    {'label': 'percentil_60', 'value': 165.0},
+                    {'label': 'percentil_70', 'value': 195.0},
+                    {'label': 'percentil_80', 'value': 215.0},
+                    {'label': 'percentil_90', 'value': 235.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 'percentil_60',
+                'percentil_cut': 160.0,
+                'score': 169.66998291015625
+            },
+            'Stochastic': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 0.2181013524532318
+            },
+            'Transient': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 20.0},
+                    {'label': 'percentil_20', 'value': 50.0},
+                    {'label': 'percentil_30', 'value': 80.0},
+                    {'label': 'percentil_40', 'value': 110.0},
+                    {'label': 'percentil_50', 'value': 140.0},
+                    {'label': 'percentil_60', 'value': 170.0},
+                    {'label': 'percentil_70', 'value': 200.0},
+                    {'label': 'percentil_80', 'value': 220.0},
+                    {'label': 'percentil_90', 'value': 240.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 4.202813625335693
+            }
+        }
+    },
+
+    'anomaly_detector_top_2': {
+        'categories': {
+            'Periodic_2': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 'percentil_60',
+                'percentil_cut': 160.0,
+                'score': 179.66998291015625
+            },
+            'Stochastic_2': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 15.0},
+                    {'label': 'percentil_20', 'value': 50.0},
+                    {'label': 'percentil_30', 'value': 55.0},
+                    {'label': 'percentil_40', 'value': 90.0},
+                    {'label': 'percentil_50', 'value': 140.0},
+                    {'label': 'percentil_60', 'value': 180.0},
+                    {'label': 'percentil_70', 'value': 200.0},
+                    {'label': 'percentil_80', 'value': 215.0},
+                    {'label': 'percentil_90', 'value': 250.0},
+                    {'label': 'saturation', 'value': 270.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 0.3181013524532318
+            },
+            'Transient_2': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 5.0},
+                    {'label': 'percentil_20', 'value': 50.0},
+                    {'label': 'percentil_30', 'value': 75.0},
+                    {'label': 'percentil_40', 'value': 140.0},
+                    {'label': 'percentil_50', 'value': 145.0},
+                    {'label': 'percentil_60', 'value': 170.0},
+                    {'label': 'percentil_70', 'value': 180.0},
+                    {'label': 'percentil_80', 'value': 220.0},
+                    {'label': 'percentil_90', 'value': 235.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 5.202813625335693
+            },
+            'Transient_3': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 15.0},
+                    {'label': 'percentil_20', 'value': 45.0},
+                    {'label': 'percentil_30', 'value': 80.0},
+                    {'label': 'percentil_40', 'value': 180.0},
+                    {'label': 'percentil_50', 'value': 200.0},
+                    {'label': 'percentil_60', 'value': 210.0},
+                    {'label': 'percentil_70', 'value': 220.0},
+                    {'label': 'percentil_80', 'value': 230.0},
+                    {'label': 'percentil_90', 'value': 240.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 5.202813625335693
+            }
+        }
+    }
+}
 
 if (Object.keys(db).length === 0 ){
     
@@ -104,17 +233,15 @@ if (Object.keys(db).length === 0 ){
         
         const dictKeys = Object.keys(db[currentAnomaly]['categories'][currentCategory]['graph_data']);
 
-        const percentilAxis = [];
+       // const percentilAxis = [];
         const valueAxis = [];
 
         for (let i = 0; i < dictKeys.length; i++){
-            percentilAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['label']);
+           // percentilAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['label']);
             valueAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['value']);
         }
 
-        console.log(percentilAxis);
-        console.log(valueAxis);
-        return [percentilAxis, valueAxis];
+        return valueAxis;
 
     }
 
@@ -224,6 +351,11 @@ if (Object.keys(db).length === 0 ){
                     createTableBody(numberOfCategories, columnNames, tableContainer, table);
                     dataInjection(numberOfCategories, columnNames, db, anomalies[i]);
 
+                    let currentDictChanged = createDictionaryDataForChart(db, numberOfCategories, currentCategories, this.value)
+
+                    mixedChart.data = currentDictChanged;
+                    mixedChart.update();
+
                     displayMenu();
                 }
             });
@@ -319,23 +451,63 @@ if (Object.keys(db).length === 0 ){
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     const ctx = document.getElementById('myChart').getContext('2d');
-
     const mixedChart = new Chart(ctx, {
-        data: {
-            datasets: [{
-                type: 'line',
-                label: 'Transient_2',
-                data: [10, 40, 70, 100, 130, 160, 190, 210, 230, 250],
-            }, {
-                type: 'line',
-                label: 'Stochastic_2',
-                data: [20, 50, 60, 90, 120, 140, 150, 270, 250, 260],
-            }],
-            labels: ['percentil_10', 'percentil_20', 'percentil_30', 'percentil_40', 'percentil_50', 'percentil_60', 'percentil_70', 'percentil_80', 'percentil_90', 'saturation']
-        },
+        type: 'line',
+        data: createDictionaryDataForChart(db, numberOfCategories, currentCategories, 'anomaly_detector_top'),
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Mixed Chart'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
     });
- 
     
+    function createDictionaryDataForChart(db, numberOfCategories, categories, currentAnomaly){
+
+        const dataSetsList = [];
+
+        for (let i = 0; i < numberOfCategories; i++){
+
+
+            dataSetsList.push({
+                type: 'line',
+                label: `${categories[i]}`,
+                data: getGraphData(db, currentAnomaly, categories[i]),
+                pointRadius: 3,
+            })
+
+            if (db[currentAnomaly]['categories'][categories[i]]['percentil_cut'] > 0){
+
+                const numbber = db[currentAnomaly]['categories'][categories[i]]['percentil_cut'];
+
+                dataSetsList.push({
+                type: 'line',
+                label: `${categories[i]}_cut`,
+                data: [numbber,numbber,numbber,numbber,numbber,numbber,numbber,numbber,numbber,numbber], // obviamente hay que rehacer esta aberracion, pero por mientras sirve
+                pointRadius: 0,
+            })
+
+            } 
+        }
+
+        const finalData = {
+            labels: ['Percentil 10', 'Percentil 20', 'Percentil 30', 'Percentil 40', 'Percentil 50', 'Percentil 60', 'Percentil 70', 'Percentil 80', 'Percentil 90', 'Saturation'],
+            datasets: dataSetsList
+        };
+
+        return finalData
+    }
 }
 
 </script>
