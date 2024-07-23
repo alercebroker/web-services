@@ -71,355 +71,357 @@
         <div id="charDiv" class=tw-w-[50%]></div>
      </div>
 
- <script>
-    const columnNames = ['Category names','score', 'percentil', 'percentil_cut'];
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    const db = {
-        'anomaly_detector_top': {
-            'categories': {
-                'Periodic': {
-                    'graph_data': [
-                        {'label': 'percentil_10', 'value': 10.0},
-                        {'label': 'percentil_20', 'value': 40.0},
-                        {'label': 'percentil_30', 'value': 70.0},
-                        {'label': 'percentil_40', 'value': 100.0},
-                        {'label': 'percentil_50', 'value': 130.0},
-                        {'label': 'percentil_60', 'value': 160.0},
-                        {'label': 'percentil_70', 'value': 190.0},
-                        {'label': 'percentil_80', 'value': 210.0},
-                        {'label': 'percentil_90', 'value': 230.0},
-                        {'label': 'saturation', 'value': 250.0}
-                    ],
-                    'percentil': 'percentil_60',
-                    'percentil_cut': 160.0,
-                    'score': 169.66998291015625
-                },
-                'Stochastic': {
-                    'graph_data': [
-                        {'label': 'percentil_10', 'value': 10.0},
-                        {'label': 'percentil_20', 'value': 40.0},
-                        {'label': 'percentil_30', 'value': 70.0},
-                        {'label': 'percentil_40', 'value': 100.0},
-                        {'label': 'percentil_50', 'value': 130.0},
-                        {'label': 'percentil_60', 'value': 160.0},
-                        {'label': 'percentil_70', 'value': 190.0},
-                        {'label': 'percentil_80', 'value': 210.0},
-                        {'label': 'percentil_90', 'value': 230.0},
-                        {'label': 'saturation', 'value': 250.0}
-                    ],
-                    'percentil': 0,
-                    'percentil_cut': 0,
-                    'score': 0.2181013524532318
-                },
-                'Transient': {
-                    'graph_data': [
-                        {'label': 'percentil_10', 'value': 10.0},
-                        {'label': 'percentil_20', 'value': 40.0},
-                        {'label': 'percentil_30', 'value': 70.0},
-                        {'label': 'percentil_40', 'value': 100.0},
-                        {'label': 'percentil_50', 'value': 130.0},
-                        {'label': 'percentil_60', 'value': 160.0},
-                        {'label': 'percentil_70', 'value': 190.0},
-                        {'label': 'percentil_80', 'value': 210.0},
-                        {'label': 'percentil_90', 'value': 230.0},
-                        {'label': 'saturation', 'value': 250.0}
-                    ],
-                    'percentil': 0,
-                    'percentil_cut': 0,
-                    'score': 4.202813625335693
-                }
+<script>
+const columnNames = ['Category names','score', 'percentil', 'percentil_cut'];
+
+const db = {
+    'anomaly_detector_top': {
+        'categories': {
+            'Periodic': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 'percentil_60',
+                'percentil_cut': 160.0,
+                'score': 169.66998291015625
+            },
+            'Stochastic': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 0.2181013524532318
+            },
+            'Transient': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 4.202813625335693
             }
-        },
-        'anomaly_detector_top_2': {
-            'categories': {
-                'Periodic_2': {
-                    'graph_data': [
-                        {'label': 'percentil_10', 'value': 10.0},
-                        {'label': 'percentil_20', 'value': 40.0},
-                        {'label': 'percentil_30', 'value': 70.0},
-                        {'label': 'percentil_40', 'value': 100.0},
-                        {'label': 'percentil_50', 'value': 130.0},
-                        {'label': 'percentil_60', 'value': 160.0},
-                        {'label': 'percentil_70', 'value': 190.0},
-                        {'label': 'percentil_80', 'value': 210.0},
-                        {'label': 'percentil_90', 'value': 230.0},
-                        {'label': 'saturation', 'value': 250.0}
-                    ],
-                    'percentil': 'percentil_60',
-                    'percentil_cut': 160.0,
-                    'score': 179.66998291015625
-                },
-                'Stochastic_2': {
-                    'graph_data': [
-                        {'label': 'percentil_10', 'value': 10.0},
-                        {'label': 'percentil_20', 'value': 40.0},
-                        {'label': 'percentil_30', 'value': 70.0},
-                        {'label': 'percentil_40', 'value': 100.0},
-                        {'label': 'percentil_50', 'value': 130.0},
-                        {'label': 'percentil_60', 'value': 160.0},
-                        {'label': 'percentil_70', 'value': 190.0},
-                        {'label': 'percentil_80', 'value': 210.0},
-                        {'label': 'percentil_90', 'value': 230.0},
-                        {'label': 'saturation', 'value': 250.0}
-                    ],
-                    'percentil': 0,
-                    'percentil_cut': 0,
-                    'score': 0.3181013524532318
-                },
-                'Transient_2': {
-                    'graph_data': [
-                        {'label': 'percentil_10', 'value': 10.0},
-                        {'label': 'percentil_20', 'value': 40.0},
-                        {'label': 'percentil_30', 'value': 70.0},
-                        {'label': 'percentil_40', 'value': 100.0},
-                        {'label': 'percentil_50', 'value': 130.0},
-                        {'label': 'percentil_60', 'value': 160.0},
-                        {'label': 'percentil_70', 'value': 190.0},
-                        {'label': 'percentil_80', 'value': 210.0},
-                        {'label': 'percentil_90', 'value': 230.0},
-                        {'label': 'saturation', 'value': 250.0}
-                    ],
-                    'percentil': 0,
-                    'percentil_cut': 0,
-                    'score': 5.202813625335693
-                },
-                'Transient_3': {
-                    'graph_data': [
-                        {'label': 'percentil_10', 'value': 10.0},
-                        {'label': 'percentil_20', 'value': 40.0},
-                        {'label': 'percentil_30', 'value': 70.0},
-                        {'label': 'percentil_40', 'value': 100.0},
-                        {'label': 'percentil_50', 'value': 130.0},
-                        {'label': 'percentil_60', 'value': 160.0},
-                        {'label': 'percentil_70', 'value': 190.0},
-                        {'label': 'percentil_80', 'value': 210.0},
-                        {'label': 'percentil_90', 'value': 230.0},
-                        {'label': 'saturation', 'value': 250.0}
-                    ],
-                    'percentil': 0,
-                    'percentil_cut': 0,
-                    'score': 5.202813625335693
-                }
+        }
+    },
+    'anomaly_detector_top_2': {
+        'categories': {
+            'Periodic_2': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 'percentil_60',
+                'percentil_cut': 160.0,
+                'score': 179.66998291015625
+            },
+            'Stochastic_2': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 0.3181013524532318
+            },
+            'Transient_2': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 5.202813625335693
+            },
+            'Transient_3': {
+                'graph_data': [
+                    {'label': 'percentil_10', 'value': 10.0},
+                    {'label': 'percentil_20', 'value': 40.0},
+                    {'label': 'percentil_30', 'value': 70.0},
+                    {'label': 'percentil_40', 'value': 100.0},
+                    {'label': 'percentil_50', 'value': 130.0},
+                    {'label': 'percentil_60', 'value': 160.0},
+                    {'label': 'percentil_70', 'value': 190.0},
+                    {'label': 'percentil_80', 'value': 210.0},
+                    {'label': 'percentil_90', 'value': 230.0},
+                    {'label': 'saturation', 'value': 250.0}
+                ],
+                'percentil': 0,
+                'percentil_cut': 0,
+                'score': 5.202813625335693
             }
         }
     }
+}
 
-    if (Object.keys(db).length === 0 ){
-        
-        document.getElementById('navigationMenu').style.display = 'none';
-        const tableContainer = document.getElementById('tableContainer');
-        const alertDiv = document.createElement('div');
-        alertDiv.classList = "tw-ml-[100px] tw-mb-[50px] tw-opacity-70 tw-border-none tw-bg-red-900 tw-mt-10 tw-ml-10 tw-w-[500px] tw-rounded-xl tw-min-h-28 tw-flex tw-flex-row tw-justify-between tw-items-center"
+if (Object.keys(db).length === 0 ){
+    
+    document.getElementById('navigationMenu').style.display = 'none';
+    const tableContainer = document.getElementById('tableContainer');
+    const alertDiv = document.createElement('div');
+    alertDiv.classList = "tw-ml-[100px] tw-mb-[50px] tw-opacity-70 tw-border-none tw-bg-red-900 tw-mt-10 tw-ml-10 tw-w-[500px] tw-rounded-xl tw-min-h-28 tw-flex tw-flex-row tw-justify-between tw-items-center"
 
-        const textDiv = document.createElement('div');
-        textDiv.classList = "tw-flex-grow tw-flex tw-justify-center tw-max-w-full tw-box-content tw-ml-[10px] tw-mt-[10px] tw-mb-[10px] tw-mr-[10x]";
+    const textDiv = document.createElement('div');
+    textDiv.classList = "tw-flex-grow tw-flex tw-justify-center tw-max-w-full tw-box-content tw-ml-[10px] tw-mt-[10px] tw-mb-[10px] tw-mr-[10x]";
 
-        const paragraph = document.createElement('p');
-        paragraph.classList = "tw-text-white tw-overflow-wrap-break-word tw-text-lg";
-        paragraph.innerHTML = 'No scores for this object'
+    const paragraph = document.createElement('p');
+    paragraph.classList = "tw-text-white tw-overflow-wrap-break-word tw-text-lg";
+    paragraph.innerHTML = 'No scores for this object'
 
-        textDiv.appendChild(paragraph);
-        alertDiv.appendChild(textDiv);
-        tableContainer.appendChild(alertDiv)
+    textDiv.appendChild(paragraph);
+    alertDiv.appendChild(textDiv);
+    tableContainer.appendChild(alertDiv)
 
-    } else {
+} else {
 
-        function createTableHead(columnNames, tableContainer, table){
+    function createTableHead(columnNames, tableContainer, table){
 
-            const headerRow = document.createElement("tr");
+        const headerRow = document.createElement("tr");
 
-            for (let i = 0; i < columnNames.length; i++) {
+        for (let i = 0; i < columnNames.length; i++) {
 
-                const th = document.createElement("th");
+            const th = document.createElement("th");
 
-                th.textContent = wordsCleaner(columnNames[i]);
+            th.textContent = wordsCleaner(columnNames[i]);
 
-                headerRow.appendChild(th);
+            headerRow.appendChild(th);
 
-            };
-
-            table.appendChild(headerRow);
-            tableContainer.appendChild(table);
         };
 
-        function createTableBody(numberOfCategories, columnNames, tableContainer, table) {
+        table.appendChild(headerRow);
+        tableContainer.appendChild(table);
+    };
 
-            const existingTBody = table.querySelector('tbody');
-            if (existingTBody) {
-                existingTBody.remove();
-            }
+    function createTableBody(numberOfCategories, columnNames, tableContainer, table) {
 
-            const tBody = document.createElement('tbody');
-            tBody.setAttribute('id', 'dataTableBody');
-
-            for (let i = 0; i < numberOfCategories; i++) {
-                const dataRow = document.createElement("tr");
-                
-                for (let j = 0; j < columnNames.length; j++) {
-                    const td = document.createElement("td");
-                    td.className = 'tw-px-2 tw-py-1 tw-text-left';
-                    td.id = `cell-${i}-${j}`;
-                    dataRow.appendChild(td);
-                }
-                tBody.appendChild(dataRow);
-            }
-
-            table.appendChild(tBody);
-
-            if (!tableContainer.contains(table)) {
-                tableContainer.appendChild(table);
-            }
+        const existingTBody = table.querySelector('tbody');
+        if (existingTBody) {
+            existingTBody.remove();
         }
 
-        function dataInjection(numberOfCategories, columnNames, db, currentAnomaly){
-            // inyeccion de datos
-            const currentDict = db[currentAnomaly]['categories'];
-            const categoryKeys = Object.keys(currentDict)
-            for (let i = 0; i < numberOfCategories ; i++) {
-                for (let j = 0; j < columnNames.length; j++){
-                    let name = 'cell-'+String(i)+'-'+String(j);
-                    if (j === 0){
-                        document.getElementById(name).innerHTML = categoryKeys[i];
-                    } else {
-                        if (j === 2 && currentDict[categoryKeys[i]][columnNames[j]] !== 0){
-                            document.getElementById(name).innerHTML = wordsCleaner(currentDict[categoryKeys[i]][columnNames[j]]);
-                        } else {
-                            document.getElementById(name).innerHTML = currentDict[categoryKeys[i]][columnNames[j]];
-                        }
-                    }
+        const tBody = document.createElement('tbody');
+        tBody.setAttribute('id', 'dataTableBody');
 
-                };
-            };
-        };
-
-        function createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer){
-
-            const mySelect = document.getElementById('mySelect')
-            for (let i = 0; i < numberOfAnomalies; i++){
-                newA = document.createElement('a');
-                newA.id = anomalies[i];
-                newA.value = anomalies[i];
-                newA.classList = 'tw-text-center tw-text-lg tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
-                newA.target = '_blank';
-
-                const newDiv = document.createElement('div');
-                
-                newDiv.innerHTML = wordsCleaner(anomalies[i]);
-                newDiv.classList = `tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]`;
-                
-                const optionsHeight = String(100 / anomalies.length);
-
-                mySelect.style.height = `${40 * anomalies.length}px`
-
-                newDiv.setAttribute('style', `height: ${optionsHeight}%`);
-
-                newA.appendChild(newDiv);
-                mySelect.appendChild(newA);
-
-                document.getElementById(anomalies[i]).addEventListener('click', function() {
-                    //const arrowSvgElement = document.getElementById('arrow-svg');
-                    const displayButtonTextElement = document.getElementById('display-button-text');
-
-                    if (displayButtonTextElement) {
-
-                        displayButtonTextElement.innerHTML = wordsCleaner(anomalies[i]);
-                        const currentCategories = Object.keys(db[anomalies[i]].categories);
-                        const numberOfCategories = currentCategories.length;
-
-                        createTableBody(numberOfCategories, columnNames, tableContainer, table);
-                        dataInjection(numberOfCategories, columnNames, db, anomalies[i]);
-
-                        displayMenu();
-                    }
-                });
-
-            };
-        };
-
-        function displayMenu(auxBool = 0){
-
-            const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-            </svg>`
-
-            const arrowUp = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
-                                    </svg>`
-
-            if (auxBool === 1){
-                boolDisplay = 1;
+        for (let i = 0; i < numberOfCategories; i++) {
+            const dataRow = document.createElement("tr");
+            
+            for (let j = 0; j < columnNames.length; j++) {
+                const td = document.createElement("td");
+                td.className = 'tw-px-2 tw-py-1 tw-text-left';
+                td.id = `cell-${i}-${j}`;
+                dataRow.appendChild(td);
             }
+            tBody.appendChild(dataRow);
+        }
 
-            if (boolDisplay === 0){
-                document.getElementById('mySelect').style.display = 'block';
-                document.getElementById('arrow-svg').innerHTML = arrowUp;
-                boolDisplay = 1;
-            } else {
-                document.getElementById('mySelect').style.display = 'none';
-                document.getElementById('arrow-svg').innerHTML = arrowDown;
-                boolDisplay = 0;
+        table.appendChild(tBody);
+
+        if (!tableContainer.contains(table)) {
+            tableContainer.appendChild(table);
+        }
+    }
+
+    function dataInjection(numberOfCategories, columnNames, db, currentAnomaly){
+        // inyeccion de datos
+        const currentDict = db[currentAnomaly]['categories'];
+        const categoryKeys = Object.keys(currentDict)
+        for (let i = 0; i < numberOfCategories ; i++) {
+            for (let j = 0; j < columnNames.length; j++){
+                let name = 'cell-'+String(i)+'-'+String(j);
+                if (j === 0){
+                    document.getElementById(name).innerHTML = categoryKeys[i];
+                } else {
+                    if (j === 2 && currentDict[categoryKeys[i]][columnNames[j]] !== 0){
+                        document.getElementById(name).innerHTML = wordsCleaner(currentDict[categoryKeys[i]][columnNames[j]]);
+                    } else {
+                        document.getElementById(name).innerHTML = currentDict[categoryKeys[i]][columnNames[j]];
+                    }
+                }
+
             };
-
         };
+    };
 
-        function wordsCleaner(word){
+    function createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer){
 
-            let wordSplitted = word.split('_');
+        const mySelect = document.getElementById('mySelect')
+        for (let i = 0; i < numberOfAnomalies; i++){
+            newA = document.createElement('a');
+            newA.id = anomalies[i];
+            newA.value = anomalies[i];
+            newA.classList = 'tw-text-center tw-text-lg tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
+            newA.target = '_blank';
 
-            if (wordSplitted.length === 1){
-                return wordSplitted[0].charAt(0).toUpperCase() + wordSplitted[0].slice(1);
-            } else {
-                wordSplitted[0] = wordSplitted[0].charAt(0).toUpperCase() + wordSplitted[0].slice(1);
-                return wordSplitted.join(' ');
-            };
-        };
+            const newDiv = document.createElement('div');
+            
+            newDiv.innerHTML = wordsCleaner(anomalies[i]);
+            newDiv.classList = `tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]`;
+            
+            const optionsHeight = String(100 / anomalies.length);
 
-        const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>`
-                            
-        document.getElementById('arrow-svg').innerHTML = arrowDown;
+            mySelect.style.height = `${40 * anomalies.length}px`
 
-        const anomalies = Object.keys(db);
-        const numberOfAnomalies = anomalies.length;
+            newDiv.setAttribute('style', `height: ${optionsHeight}%`);
 
-        let boolDisplay = 0; 
-        document.getElementById('display-button').addEventListener('click', () => {  
-            displayMenu()
+            newA.appendChild(newDiv);
+            mySelect.appendChild(newA);
+
+            document.getElementById(anomalies[i]).addEventListener('click', function() {
+                //const arrowSvgElement = document.getElementById('arrow-svg');
+                const displayButtonTextElement = document.getElementById('display-button-text');
+
+                if (displayButtonTextElement) {
+
+                    displayButtonTextElement.innerHTML = wordsCleaner(anomalies[i]);
+                    const currentCategories = Object.keys(db[anomalies[i]].categories);
+                    const numberOfCategories = currentCategories.length;
+
+                    createTableBody(numberOfCategories, columnNames, tableContainer, table);
+                    dataInjection(numberOfCategories, columnNames, db, anomalies[i]);
+
+                    displayMenu();
+                }
             });
 
-        document.getElementById('display-button-text').innerHTML = wordsCleaner(anomalies[0]);
+        };
+    };
 
-        const currentCategories = Object.keys(db[anomalies[0]].categories);
-        const numberOfCategories = currentCategories.length;
+    function displayMenu(auxBool = 0){
 
-        // Creating base table
+        const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+        </svg>`
 
-        const tableContainer = document.getElementById('tableContainer');
-        tableContainer.classList.add('tw-overflow-x-auto');
-        
-        const table = document.createElement('table');
-        table.classList = 'tw-table dark:tw-text-white tw-w-full';
+        const arrowUp = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                                </svg>`
 
-        createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer);
-        createTableHead(columnNames, tableContainer, table);
-        createTableBody(numberOfCategories, columnNames, tableContainer, table);
-        dataInjection(numberOfCategories, columnNames, db, anomalies[0]);
-
-        const clickInButton = document.getElementById('display-button');
-        
-        let auxBool;
-        function handleOutsideClick(event) {
-            if (!clickInButton.contains(event.target)) {
-                auxBool = 1;
-                displayMenu(auxBool);
-            }
+        if (auxBool === 1){
+            boolDisplay = 1;
         }
 
-        document.addEventListener('click',handleOutsideClick);
-        
+        if (boolDisplay === 0){
+            document.getElementById('mySelect').style.display = 'block';
+            document.getElementById('arrow-svg').innerHTML = arrowUp;
+            boolDisplay = 1;
+        } else {
+            document.getElementById('mySelect').style.display = 'none';
+            document.getElementById('arrow-svg').innerHTML = arrowDown;
+            boolDisplay = 0;
+        };
+
+    };
+
+    function wordsCleaner(word){
+
+        let wordSplitted = word.split('_');
+
+        if (wordSplitted.length === 1){
+            return wordSplitted[0].charAt(0).toUpperCase() + wordSplitted[0].slice(1);
+        } else {
+            wordSplitted[0] = wordSplitted[0].charAt(0).toUpperCase() + wordSplitted[0].slice(1);
+            return wordSplitted.join(' ');
+        };
+    };
+
+    const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                            </svg>`
+                        
+    document.getElementById('arrow-svg').innerHTML = arrowDown;
+
+    const anomalies = Object.keys(db);
+    const numberOfAnomalies = anomalies.length;
+
+    let boolDisplay = 0; 
+    document.getElementById('display-button').addEventListener('click', () => {  
+        displayMenu()
+        });
+
+    document.getElementById('display-button-text').innerHTML = wordsCleaner(anomalies[0]);
+
+    const currentCategories = Object.keys(db[anomalies[0]].categories);
+    const numberOfCategories = currentCategories.length;
+
+    // Creating base table
+
+    const tableContainer = document.getElementById('tableContainer');
+    tableContainer.classList.add('tw-overflow-x-auto');
+    
+    const table = document.createElement('table');
+    table.classList = 'tw-table dark:tw-text-white tw-w-full';
+
+    createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer);
+    createTableHead(columnNames, tableContainer, table);
+    createTableBody(numberOfCategories, columnNames, tableContainer, table);
+    dataInjection(numberOfCategories, columnNames, db, anomalies[0]);
+
+    const clickInButton = document.getElementById('display-button');
+    
+    let auxBool;
+    function handleOutsideClick(event) {
+        if (!clickInButton.contains(event.target)) {
+            auxBool = 1;
+            displayMenu(auxBool);
+        }
     }
 
- </script>
+    document.addEventListener('click',handleOutsideClick);
+    
+}
+
+</script>
  </body>
 
