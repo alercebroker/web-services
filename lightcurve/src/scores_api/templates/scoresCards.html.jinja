@@ -100,23 +100,24 @@ if (Object.keys(db).length === 0 ){
 
 } else {
 
-    function getGraphData(db, currentAnomaly, currentCategory){
-        
-        const dictKeys = Object.keys(db[currentAnomaly]['categories'][currentCategory]['graph_data']);
+        function getGraphData(db, currentAnomaly, currentCategory){
+            console.log("-----------------------")
+            console.log(currentCategory)
+            console.log(db[currentAnomaly]['categories'][[currentCategory]])
+            console.log("-----------------------")
+            const dictKeys = Object.keys(db[currentAnomaly]['categories'][currentCategory]['graph_data']);
+        // const percentilAxis = [];
+            const valueAxis = [];
 
-       // const percentilAxis = [];
-        const valueAxis = [];
+            for (let i = 0; i < dictKeys.length; i++){
+            // percentilAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['label']);
+                valueAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['value']);
+            }
 
-        for (let i = 0; i < dictKeys.length; i++){
-           // percentilAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['label']);
-            valueAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['value']);
-        }
-
-        return valueAxis;
+            return valueAxis;
 
     }
 
-    getGraphData(db, 'anomaly_detector_top', 'Periodic');
     function createTableHead(columnNames, tableContainer, table){
 
         const headerRow = document.createElement("tr");
@@ -186,7 +187,7 @@ if (Object.keys(db).length === 0 ){
     };
 
     function createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer){
-
+        console.log(anomalies)
         const mySelect = document.getElementById('mySelect')
         for (let i = 0; i < numberOfAnomalies; i++){
             newA = document.createElement('a');
@@ -221,8 +222,10 @@ if (Object.keys(db).length === 0 ){
 
                     createTableBody(numberOfCategories, columnNames, tableContainer, table);
                     dataInjection(numberOfCategories, columnNames, db, anomalies[i]);
-
-                    let currentDictChanged = createDictionaryDataForChart(db, numberOfCategories, currentCategories, this.value)
+                    //console.log('%%%%%%%%%%%%%%%%%%%%%%')
+                    //console.log(this.value)
+                    //console.log('%%%%%%%%%%%%%%%%%%%%%%')
+                    let currentDictChanged = createDictionaryDataForChart(db, numberOfCategories, currentCategories, anomalies[i])
 
                     mixedChart.data = currentDictChanged;
                     mixedChart.update();
@@ -279,6 +282,9 @@ if (Object.keys(db).length === 0 ){
     document.getElementById('arrow-svg').innerHTML = arrowDown;
 
     const anomalies = Object.keys(db);
+    //console.log('#############################')
+    //console.log(anomalies)
+    //console.log('#############################')
     const numberOfAnomalies = anomalies.length;
 
     let boolDisplay = 0; 
@@ -288,7 +294,7 @@ if (Object.keys(db).length === 0 ){
 
     document.getElementById('display-button-text').innerHTML = wordsCleaner(anomalies[0]);
 
-    const currentCategories = Object.keys(db[anomalies[0]].categories);
+    const currentCategories = Object.keys(db[anomalies[1]].categories);
     const numberOfCategories = currentCategories.length;
 
     // Creating base table
@@ -324,7 +330,7 @@ if (Object.keys(db).length === 0 ){
     const ctx = document.getElementById('myChart').getContext('2d');
     const mixedChart = new Chart(ctx, {
         type: 'line',
-        data: createDictionaryDataForChart(db, numberOfCategories, currentCategories, 'anomaly_detector_top'),
+        data: createDictionaryDataForChart(db, numberOfCategories, ['Transient','Stochastic','Periodic'], 'anomaly_detector_top'),
         options: {
             responsive: true,
             plugins: {
@@ -348,8 +354,9 @@ if (Object.keys(db).length === 0 ){
 
         const dataSetsList = [];
 
-        for (let i = 0; i < numberOfCategories; i++){
+        console.log(currentAnomaly)
 
+        for (let i = 0; i < numberOfCategories; i++){
 
             dataSetsList.push({
                 type: 'line',
