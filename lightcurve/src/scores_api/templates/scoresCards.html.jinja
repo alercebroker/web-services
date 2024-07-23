@@ -45,7 +45,7 @@
                     
             </div>
 
-            <div id="navigationMenu" class="tw-w-[95%] tw-mx-auto tw-text-sm">
+            <div id="navigationMenu" class="tw-hidden tw-w-[95%] tw-mx-auto tw-text-sm">
                 <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
                     <div class="tw-flex tw-items-center tw-space-x-2">
                         <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
@@ -78,136 +78,7 @@
 <script>
 const columnNames = ['Category names','score', 'percentil', 'percentil_cut'];
 
-const db = {
-    'anomaly_detector_top': {
-        'categories': {
-            'Periodic': {
-                'graph_data': [
-                    {'label': 'percentil_10', 'value': 15.0},
-                    {'label': 'percentil_20', 'value': 45.0},
-                    {'label': 'percentil_30', 'value': 75.0},
-                    {'label': 'percentil_40', 'value': 15.0},
-                    {'label': 'percentil_50', 'value': 135.0},
-                    {'label': 'percentil_60', 'value': 165.0},
-                    {'label': 'percentil_70', 'value': 195.0},
-                    {'label': 'percentil_80', 'value': 215.0},
-                    {'label': 'percentil_90', 'value': 235.0},
-                    {'label': 'saturation', 'value': 250.0}
-                ],
-                'percentil': 'percentil_60',
-                'percentil_cut': 160.0,
-                'score': 169.66998291015625
-            },
-            'Stochastic': {
-                'graph_data': [
-                    {'label': 'percentil_10', 'value': 10.0},
-                    {'label': 'percentil_20', 'value': 40.0},
-                    {'label': 'percentil_30', 'value': 70.0},
-                    {'label': 'percentil_40', 'value': 100.0},
-                    {'label': 'percentil_50', 'value': 130.0},
-                    {'label': 'percentil_60', 'value': 160.0},
-                    {'label': 'percentil_70', 'value': 190.0},
-                    {'label': 'percentil_80', 'value': 210.0},
-                    {'label': 'percentil_90', 'value': 230.0},
-                    {'label': 'saturation', 'value': 250.0}
-                ],
-                'percentil': 0,
-                'percentil_cut': 0,
-                'score': 0.2181013524532318
-            },
-            'Transient': {
-                'graph_data': [
-                    {'label': 'percentil_10', 'value': 20.0},
-                    {'label': 'percentil_20', 'value': 50.0},
-                    {'label': 'percentil_30', 'value': 80.0},
-                    {'label': 'percentil_40', 'value': 110.0},
-                    {'label': 'percentil_50', 'value': 140.0},
-                    {'label': 'percentil_60', 'value': 170.0},
-                    {'label': 'percentil_70', 'value': 200.0},
-                    {'label': 'percentil_80', 'value': 220.0},
-                    {'label': 'percentil_90', 'value': 240.0},
-                    {'label': 'saturation', 'value': 250.0}
-                ],
-                'percentil': 0,
-                'percentil_cut': 0,
-                'score': 4.202813625335693
-            }
-        }
-    },
-
-    'anomaly_detector_top_2': {
-        'categories': {
-            'Periodic_2': {
-                'graph_data': [
-                    {'label': 'percentil_10', 'value': 10.0},
-                    {'label': 'percentil_20', 'value': 40.0},
-                    {'label': 'percentil_30', 'value': 70.0},
-                    {'label': 'percentil_40', 'value': 100.0},
-                    {'label': 'percentil_50', 'value': 130.0},
-                    {'label': 'percentil_60', 'value': 160.0},
-                    {'label': 'percentil_70', 'value': 190.0},
-                    {'label': 'percentil_80', 'value': 210.0},
-                    {'label': 'percentil_90', 'value': 230.0},
-                    {'label': 'saturation', 'value': 250.0}
-                ],
-                'percentil': 'percentil_60',
-                'percentil_cut': 160.0,
-                'score': 179.66998291015625
-            },
-            'Stochastic_2': {
-                'graph_data': [
-                    {'label': 'percentil_10', 'value': 15.0},
-                    {'label': 'percentil_20', 'value': 50.0},
-                    {'label': 'percentil_30', 'value': 55.0},
-                    {'label': 'percentil_40', 'value': 90.0},
-                    {'label': 'percentil_50', 'value': 140.0},
-                    {'label': 'percentil_60', 'value': 180.0},
-                    {'label': 'percentil_70', 'value': 200.0},
-                    {'label': 'percentil_80', 'value': 215.0},
-                    {'label': 'percentil_90', 'value': 250.0},
-                    {'label': 'saturation', 'value': 270.0}
-                ],
-                'percentil': 0,
-                'percentil_cut': 0,
-                'score': 0.3181013524532318
-            },
-            'Transient_2': {
-                'graph_data': [
-                    {'label': 'percentil_10', 'value': 5.0},
-                    {'label': 'percentil_20', 'value': 50.0},
-                    {'label': 'percentil_30', 'value': 75.0},
-                    {'label': 'percentil_40', 'value': 140.0},
-                    {'label': 'percentil_50', 'value': 145.0},
-                    {'label': 'percentil_60', 'value': 170.0},
-                    {'label': 'percentil_70', 'value': 180.0},
-                    {'label': 'percentil_80', 'value': 220.0},
-                    {'label': 'percentil_90', 'value': 235.0},
-                    {'label': 'saturation', 'value': 250.0}
-                ],
-                'percentil': 0,
-                'percentil_cut': 0,
-                'score': 5.202813625335693
-            },
-            'Transient_3': {
-                'graph_data': [
-                    {'label': 'percentil_10', 'value': 15.0},
-                    {'label': 'percentil_20', 'value': 45.0},
-                    {'label': 'percentil_30', 'value': 80.0},
-                    {'label': 'percentil_40', 'value': 180.0},
-                    {'label': 'percentil_50', 'value': 200.0},
-                    {'label': 'percentil_60', 'value': 210.0},
-                    {'label': 'percentil_70', 'value': 220.0},
-                    {'label': 'percentil_80', 'value': 230.0},
-                    {'label': 'percentil_90', 'value': 240.0},
-                    {'label': 'saturation', 'value': 250.0}
-                ],
-                'percentil': 0,
-                'percentil_cut': 0,
-                'score': 5.202813625335693
-            }
-        }
-    }
-}
+const db = {{ scores_data | tojson }};
 
 if (Object.keys(db).length === 0 ){
     
