@@ -149,6 +149,10 @@
   margin-top: 0.75rem;
 }
 
+.tw-preflight :is(.tw-mt-5) {
+  margin-top: 1.25rem;
+}
+
 .tw-preflight :is(.tw-mt-8) {
   margin-top: 2rem;
 }
@@ -167,14 +171,6 @@
 
 .tw-preflight :is(.tw-mt-\[5px\]) {
   margin-top: 5px;
-}
-
-.tw-preflight :is(.tw-mt-4) {
-  margin-top: 1rem;
-}
-
-.tw-preflight :is(.tw-mt-5) {
-  margin-top: 1.25rem;
 }
 
 .tw-preflight :is(.tw-box-content) {
@@ -286,6 +282,10 @@
   width: 100%;
 }
 
+.tw-preflight :is(.tw-w-\[1500px\]) {
+  width: 1500px;
+}
+
 .tw-preflight :is(.tw-w-\[30px\]) {
   width: 30px;
 }
@@ -298,12 +298,16 @@
   width: 400px;
 }
 
-.tw-preflight :is(.tw-w-\[500px\]) {
-  width: 500px;
+.tw-preflight :is(.tw-w-\[45\%\]) {
+  width: 45%;
 }
 
-.tw-preflight :is(.tw-w-\[600px\]) {
-  width: 600px;
+.tw-preflight :is(.tw-w-\[50\%\]) {
+  width: 50%;
+}
+
+.tw-preflight :is(.tw-w-\[500px\]) {
+  width: 500px;
 }
 
 .tw-preflight :is(.tw-w-\[75\%\]) {
@@ -324,26 +328,6 @@
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%;
-}
-
-.tw-preflight :is(.tw-w-\[1500\]) {
-  width: 1500;
-}
-
-.tw-preflight :is(.tw-w-\[1500px\]) {
-  width: 1500px;
-}
-
-.tw-preflight :is(.tw-w-\[50\%\]) {
-  width: 50%;
-}
-
-.tw-preflight :is(.tw-w-\[40\%\]) {
-  width: 40%;
-}
-
-.tw-preflight :is(.tw-w-\[45\%\]) {
-  width: 45%;
 }
 
 .tw-preflight :is(.tw-min-w-full) {

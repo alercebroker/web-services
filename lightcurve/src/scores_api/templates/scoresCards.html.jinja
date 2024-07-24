@@ -45,7 +45,7 @@
                     
             </div>
 
-            <div id="navigationMenu" class="tw-hidden tw-w-[95%] tw-mx-auto tw-text-sm">
+            <div id="navigationMenu" class="tw-w-[95%] tw-mx-auto tw-text-sm">
                 <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
                     <div class="tw-flex tw-items-center tw-space-x-2">
                         <label class="tw-text-black dark:tw-text-white" for="rowSelector">Rows per page:</label>
@@ -136,7 +136,7 @@ if (Object.keys(db).length === 0 ){
         tableContainer.appendChild(table);
     };
 
-    function createTableBody(numberOfCategories, columnNames, tableContainer, table) {
+    function createTableBody(numberOfCategories, columnNamesLen, tableContainer, table) {
 
         const existingTBody = table.querySelector('tbody');
         if (existingTBody) {
