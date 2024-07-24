@@ -100,21 +100,21 @@ if (Object.keys(db).length === 0 ){
 
 } else {
 
-        function getGraphData(db, currentAnomaly, currentCategory){
-            console.log("-----------------------")
-            console.log(currentCategory)
-            console.log(db[currentAnomaly]['categories'][[currentCategory]])
-            console.log("-----------------------")
-            const dictKeys = Object.keys(db[currentAnomaly]['categories'][currentCategory]['graph_data']);
-        // const percentilAxis = [];
-            const valueAxis = [];
+    function getGraphData(db, currentAnomaly, currentCategory){
+        //console.log("-----------------------")
+        //console.log(currentCategory)
+        //console.log(db[currentAnomaly]['categories'][[currentCategory]])
+        //console.log("-----------------------")
+        const dictKeys = Object.keys(db[currentAnomaly]['categories'][currentCategory]['graph_data']);
+    // const percentilAxis = [];
+        const valueAxis = [];
 
-            for (let i = 0; i < dictKeys.length; i++){
-            // percentilAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['label']);
-                valueAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['value']);
-            }
+        for (let i = 0; i < dictKeys.length; i++){
+        // percentilAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['label']);
+            valueAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['value']);
+        }
 
-            return valueAxis;
+        return valueAxis;
 
     }
 
@@ -136,7 +136,7 @@ if (Object.keys(db).length === 0 ){
         tableContainer.appendChild(table);
     };
 
-    function createTableBody(numberOfCategories, columnNamesLen, tableContainer, table) {
+    function createTableBody(numberOfCategories, columNames, tableContainer, table) {
 
         const existingTBody = table.querySelector('tbody');
         if (existingTBody) {
@@ -146,7 +146,7 @@ if (Object.keys(db).length === 0 ){
         const tBody = document.createElement('tbody');
         tBody.setAttribute('id', 'dataTableBody');
 
-        for (let i = 0; i < numberOfCategories; i++) {
+        for (let i = 0; i < 5; i++) {
             const dataRow = document.createElement("tr");
             
             for (let j = 0; j < columnNames.length; j++) {
@@ -165,11 +165,12 @@ if (Object.keys(db).length === 0 ){
         }
     }
 
-    function dataInjection(numberOfCategories, columnNames, db, currentAnomaly){
+    function dataInjection(numberOfCategories, columnNames, db, currentAnomaly, startRow, lastRow){
         // inyeccion de datos
+        console.log(currentAnomaly)
         const currentDict = db[currentAnomaly]['categories'];
         const categoryKeys = Object.keys(currentDict)
-        for (let i = 0; i < numberOfCategories ; i++) {
+        for (let i = startRow; i < lastRow ; i++) {
             for (let j = 0; j < columnNames.length; j++){
                 let name = 'cell-'+String(i)+'-'+String(j);
                 if (j === 0){
@@ -187,7 +188,7 @@ if (Object.keys(db).length === 0 ){
     };
 
     function createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer){
-        console.log(anomalies)
+        //console.log(anomalies)
         const mySelect = document.getElementById('mySelect')
         for (let i = 0; i < numberOfAnomalies; i++){
             newA = document.createElement('a');
@@ -219,12 +220,17 @@ if (Object.keys(db).length === 0 ){
                     displayButtonTextElement.innerHTML = wordsCleaner(anomalies[i]);
                     const currentCategories = Object.keys(db[anomalies[i]].categories);
                     const numberOfCategories = currentCategories.length;
-
-                    createTableBody(numberOfCategories, columnNames, tableContainer, table);
-                    dataInjection(numberOfCategories, columnNames, db, anomalies[i]);
-                    //console.log('%%%%%%%%%%%%%%%%%%%%%%')
-                    //console.log(this.value)
-                    //console.log('%%%%%%%%%%%%%%%%%%%%%%')
+                    if (numberOfCategories < 5){
+                        createTableBody(numberOfCategories, columnNames.length, tableContainer, table);
+                        dataInjection(numberOfCategories, columnNames, db, anomalies[i], 0, numberOfCategories );
+                    } else {
+                        createTableBody(numberOfCategories, columnNames, tableContainer, table);
+                        currentAnomaly = anomalies[i]
+                        changePage(0);
+                    }
+                    ////console.log('%%%%%%%%%%%%%%%%%%%%%%')
+                    ////console.log(this.value)
+                    ////console.log('%%%%%%%%%%%%%%%%%%%%%%')
                     let currentDictChanged = createDictionaryDataForChart(db, numberOfCategories, currentCategories, anomalies[i])
 
                     mixedChart.data = currentDictChanged;
@@ -282,9 +288,9 @@ if (Object.keys(db).length === 0 ){
     document.getElementById('arrow-svg').innerHTML = arrowDown;
 
     const anomalies = Object.keys(db);
-    //console.log('#############################')
-    //console.log(anomalies)
-    //console.log('#############################')
+    ////console.log('#############################')
+    ////console.log(anomalies)
+    ////console.log('#############################')
     const numberOfAnomalies = anomalies.length;
 
     let boolDisplay = 0; 
@@ -308,7 +314,7 @@ if (Object.keys(db).length === 0 ){
     createDisplayMenu(numberOfAnomalies, anomalies, numberOfCategories, columnNames, db, table, tableContainer);
     createTableHead(columnNames, tableContainer, table);
     createTableBody(numberOfCategories, columnNames, tableContainer, table);
-    dataInjection(numberOfCategories, columnNames, db, anomalies[0]);
+    //dataInjection(numberOfCategories, columnNames, db, anomalies[0]);
 
     const clickInButton = document.getElementById('display-button');
     
@@ -354,7 +360,7 @@ if (Object.keys(db).length === 0 ){
 
         const dataSetsList = [];
 
-        console.log(currentAnomaly)
+        //console.log(currentAnomaly)
 
         for (let i = 0; i < numberOfCategories; i++){
 
@@ -386,6 +392,25 @@ if (Object.keys(db).length === 0 ){
 
         return finalData
     }
+
+    let startRow = 0;
+    let lastRow = 5; 
+
+    document.getElementById('display-button').addEventListener('click', () => {
+        currentAnomaly = this.value;
+    })
+
+    currentAnomaly = anomalies[0];
+
+    function changePage(bool){
+        
+        startRow += 5*bool;
+        lastRow += 5*bool;
+        
+        dataInjection(numberOfCategories, columnNames, db, currentAnomaly, startRow, lastRow)
+    }
+
+    changePage(0);
 }
 
 </script>
