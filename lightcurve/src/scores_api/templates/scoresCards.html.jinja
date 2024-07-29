@@ -61,8 +61,8 @@
                         <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
                     </div>
                     <div class="tw-text-sm">
-                        <button onclick="navigateTable(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
-                        <button onclick="navigateTable(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+                        <button onclick="changePage(-1)" class="tw-text-black dark:tw-text-white tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
+                        <button onclick="changePage(1)"  class="tw-text-black dark:tw-text-white tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
                     </div>
                 </div>
             </div>
@@ -101,16 +101,12 @@ if (Object.keys(db).length === 0 ){
 } else {
 
     function getGraphData(db, currentAnomaly, currentCategory){
-        //console.log("-----------------------")
-        //console.log(currentCategory)
-        //console.log(db[currentAnomaly]['categories'][[currentCategory]])
-        //console.log("-----------------------")
+
         const dictKeys = Object.keys(db[currentAnomaly]['categories'][currentCategory]['graph_data']);
-    // const percentilAxis = [];
+
         const valueAxis = [];
 
         for (let i = 0; i < dictKeys.length; i++){
-        // percentilAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['label']);
             valueAxis.push(db[currentAnomaly]['categories'][currentCategory]['graph_data'][i]['value']);
         }
 
@@ -167,19 +163,26 @@ if (Object.keys(db).length === 0 ){
 
     function dataInjection(numberOfCategories, columnNames, db, currentAnomaly, startRow, lastRow){
         // inyeccion de datos
-        console.log(currentAnomaly)
+        //console.log(currentAnomaly)
         const currentDict = db[currentAnomaly]['categories'];
         const categoryKeys = Object.keys(currentDict)
-        for (let i = startRow; i < lastRow ; i++) {
+        let totalRows;
+        if (numberOfCategories < 5){
+            totalRows = numberOfCategories;
+        } else {
+            totalRows = 5;
+        }
+
+        for (let i = 0; i < totalRows ; i++) {
             for (let j = 0; j < columnNames.length; j++){
                 let name = 'cell-'+String(i)+'-'+String(j);
                 if (j === 0){
-                    document.getElementById(name).innerHTML = categoryKeys[i];
+                    document.getElementById(name).innerHTML = categoryKeys[i + startRow];
                 } else {
-                    if (j === 2 && currentDict[categoryKeys[i]][columnNames[j]] !== 0){
-                        document.getElementById(name).innerHTML = wordsCleaner(currentDict[categoryKeys[i]][columnNames[j]]);
+                    if (j === 2 && currentDict[categoryKeys[i + startRow]][columnNames[j]] !== 0){
+                        document.getElementById(name).innerHTML = wordsCleaner(currentDict[categoryKeys[i + startRow]][columnNames[j]]);
                     } else {
-                        document.getElementById(name).innerHTML = currentDict[categoryKeys[i]][columnNames[j]];
+                        document.getElementById(name).innerHTML = currentDict[categoryKeys[i + startRow]][columnNames[j]];
                     }
                 }
 
@@ -222,15 +225,16 @@ if (Object.keys(db).length === 0 ){
                     const numberOfCategories = currentCategories.length;
                     if (numberOfCategories < 5){
                         createTableBody(numberOfCategories, columnNames.length, tableContainer, table);
-                        dataInjection(numberOfCategories, columnNames, db, anomalies[i], 0, numberOfCategories );
+                        dataInjection(numberOfCategories, columnNames, db, anomalies[i], 0, numberOfCategories);
                     } else {
                         createTableBody(numberOfCategories, columnNames, tableContainer, table);
                         currentAnomaly = anomalies[i]
                         changePage(0);
                     }
-                    ////console.log('%%%%%%%%%%%%%%%%%%%%%%')
-                    ////console.log(this.value)
-                    ////console.log('%%%%%%%%%%%%%%%%%%%%%%')
+                    //console.log('%%%%%%%%%%%%%%%%%%%%%%')
+                    //console.log(this.value)
+                    //console.log('%%%%%%%%%%%%%%%%%%%%%%')
+                    console.log(anomalies[i])
                     let currentDictChanged = createDictionaryDataForChart(db, numberOfCategories, currentCategories, anomalies[i])
 
                     mixedChart.data = currentDictChanged;
@@ -288,9 +292,9 @@ if (Object.keys(db).length === 0 ){
     document.getElementById('arrow-svg').innerHTML = arrowDown;
 
     const anomalies = Object.keys(db);
-    ////console.log('#############################')
-    ////console.log(anomalies)
-    ////console.log('#############################')
+    //console.log('#############################')
+    //console.log(anomalies)
+    //console.log('#############################')
     const numberOfAnomalies = anomalies.length;
 
     let boolDisplay = 0; 
@@ -300,7 +304,7 @@ if (Object.keys(db).length === 0 ){
 
     document.getElementById('display-button-text').innerHTML = wordsCleaner(anomalies[0]);
 
-    const currentCategories = Object.keys(db[anomalies[1]].categories);
+    const currentCategories = Object.keys(db[anomalies[0]].categories);
     const numberOfCategories = currentCategories.length;
 
     // Creating base table
@@ -334,9 +338,11 @@ if (Object.keys(db).length === 0 ){
     ///////////////////////////////////////////////////////////////////////////////////////////////////
 
     const ctx = document.getElementById('myChart').getContext('2d');
+
+
     const mixedChart = new Chart(ctx, {
         type: 'line',
-        data: createDictionaryDataForChart(db, numberOfCategories, ['Transient','Stochastic','Periodic'], 'anomaly_detector_top'),
+        data: createDictionaryDataForChart(db, numberOfCategories, Object.keys(db[anomalies[0]]['categories']), anomalies[0]),
         options: {
             responsive: true,
             plugins: {
@@ -348,9 +354,13 @@ if (Object.keys(db).length === 0 ){
                     text: 'Mixed Chart'
                 }
             },
+            indexAxis: 'y',
             scales: {
-                y: {
+                x: {
                     beginAtZero: true
+                },
+                y:{
+                    reverse: true
                 }
             }
         }
@@ -360,16 +370,18 @@ if (Object.keys(db).length === 0 ){
 
         const dataSetsList = [];
 
-        //console.log(currentAnomaly)
+        //console.log(numberOfCategories)
 
         for (let i = 0; i < numberOfCategories; i++){
-
+            //console.log(categories[i])
+            //console.log(getGraphData(db, currentAnomaly, categories[i]))
             dataSetsList.push({
                 type: 'line',
                 label: `${categories[i]}`,
                 data: getGraphData(db, currentAnomaly, categories[i]),
                 pointRadius: 3,
             })
+        // NO BORRAR LAS LINEAS COMENTADAS     
 
             if (db[currentAnomaly]['categories'][categories[i]]['percentil_cut'] > 0){
 
@@ -384,10 +396,10 @@ if (Object.keys(db).length === 0 ){
 
             } 
         }
-
+        //console.log(dataSetsList)
         const finalData = {
             labels: ['Percentil 10', 'Percentil 20', 'Percentil 30', 'Percentil 40', 'Percentil 50', 'Percentil 60', 'Percentil 70', 'Percentil 80', 'Percentil 90', 'Saturation'],
-            datasets: dataSetsList
+            datasets: dataSetsList,
         };
 
         return finalData
@@ -395,19 +407,37 @@ if (Object.keys(db).length === 0 ){
 
     let startRow = 0;
     let lastRow = 5; 
-
+    let auxNumber = findNearestDivisibleByFive(numberOfCategories);
     document.getElementById('display-button').addEventListener('click', () => {
         currentAnomaly = this.value;
     })
 
     currentAnomaly = anomalies[0];
 
+    function findNearestDivisibleByFive(num) {
+        return Math.ceil(num / 5) * 5;
+    }
+
     function changePage(bool){
         
-        startRow += 5*bool;
-        lastRow += 5*bool;
-        
-        dataInjection(numberOfCategories, columnNames, db, currentAnomaly, startRow, lastRow)
+
+        if (bool === -1 && startRow === 0){
+        } else if (bool === 1 && lastRow > 20) {
+        } else {
+
+            if (lastRow < numberOfCategories){
+                startRow += 5*bool;
+                lastRow += 5*bool;
+            } else {
+                lastRow = numberOfCategories;
+            }
+            
+            if (startRow >= 0){
+                dataInjection(numberOfCategories, columnNames, db, currentAnomaly, startRow, lastRow);
+            }
+        }
+        //console.log(startRow)
+        //console.log(lastRow)
     }
 
     changePage(0);
