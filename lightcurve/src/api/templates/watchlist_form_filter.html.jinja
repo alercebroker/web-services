@@ -9,57 +9,29 @@
 </script>
 
 <div class="tw-preflight">
-    <div id="filter-form" class="tw-grid tw-grid-rows-4 tw-grid-flow-col mx-auto">
-        <div class="tw-row-span-1">
-            <div class="tw-grid tw-grid-cols-3 tw-gap-4">
-                <div class="tw-col-span-1 tw-flex tw-flex-col tw-relative">
-                    <div>
-                        <label for="condition">Condition:</label>
-                        <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full max-w-xs" name="condition" id="condition">
-                        <option value="constant">Constant</option>
-                        <option value="difference">Difference</option>
-                        <option value="">No filter</option>
-                        <option value="2">x</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="tw-col-span-1 tw-flex tw-flex-col tw-relative">
-                    <div>
-                        <label for="property">Property:</label>
-                        <input type="text" id="property" name="property" onkeyup="showResults(this.value, 'property','valuesProperties')" class="tw-border-2 tw-rounded-lg tw-w-full max-w-xs">
-                        <div id="valuesProperties" class="tw-absolute tw-w-full"></div>
-                    </div>
-                </div>
+    <div id="filter-form" class="tw-container tw-mx-auto tw-grid tw-grid-rows-4 tw-grid-flow-col">
+        <div class="tw-row-span-1 tw-h-20">
+            <div class="tw-flex tw-flex-col">
+                <label for="condition">Condition:</label>
+                <select 
+                class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-1/4" 
+                name="condition" 
+                id="condition" 
+                hx-get="{{ API_URL }}/htmx/filters"
+                hx-trigger="click"
+                hx-target="#filterCall"
+                hx-swap="outerHTML"
+                >
+                <option style="display:none" ></option>
+                <option value="constant">Constant</option>
+                <option value="difference">Difference</option>
+                <option value="">No filter</option>
+                </select>
             </div>
         </div>
-        <div class="tw-row-span-1 tw-mt-4">
-            <div class="tw-grid tw-grid-cols-3 tw-gap-4">
-                <div class=" tw-col-span-1 tw-flex tw-flex-col">
-                    <label for="operation">Operation:</label>
-                    <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full max-w-xs" name="operation" id="operation">
-                    <option value="equal">Equal</option>
-                    <option value="less">Less than</option>
-                    <option value="less eq">Less tan or equal</option>
-                    <option value="greater">Greater than</option>
-                    <option value="greater eq">Greater than or equal</option>
-                    </select>
-                </div>
-                <div class="tw-col-span-1 tw-flex tw-flex-col">
-                    <label for="value">Value:</label>
-                    <input type="number" id="value" name="value" class="tw-border-2 tw-rounded-lg w-full max-w-xs">
-                </div>
-                <div class="tw-col-span-1 tw-flex tw-flex-col">
-                    <label for="band">Band:</label>
-                    <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full max-w-xs" name="band" id="band">
-                    <option value="g">g</option>
-                    <option value="r">r</option>
-                    <option value="i">i</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="tw-mt-4">
-            <button class="tw-btn tw-btn-primary">Button</button>
+        <div id="filterCall" class="tw-row-span-1"></div>
+        <div class="tw-row-span-1 tw-flex tw-flex-row-reverse tw-mx-8">
+            <button class="tw-btn tw-btn-primary">Save</button>
         </div>
     </div>
 </div>
@@ -69,49 +41,13 @@
     const search_property = ['mag']
     const search_operations = ['equal', 'less', 'less eq', 'greater','greater eq']
     const search_bands = ['g', 'r', 'i']
-
-    function autocompleteMatch(input, elementId) {
-        if (input == '') {
-            return [];
-        }
-        let reg = new RegExp(input)
-        if( elementId == "result"){
-            return search_terms.filter((term) => term.match(reg));
-        } else if ( elementId == "valuesConditions") {
-            return search_conditions.filter((term) => term.match(reg))
-        } else if ( elementId == "valuesProperties") {
-            return search_property.filter((term) => term.match(reg))
-        }
-    }
-
-    function showResults(val, inputId, elementId) {
-        res = document.getElementById(elementId);
-        res.innerHTML = '';
-        let list = '';
-        let terms = autocompleteMatch(val.toLowerCase(), elementId);
-        for (i=0; i<terms.length; i++) {
-            list += `<li onclick="selectResult(this, '${inputId}', '${elementId}')">${terms[i]}</li>`;
-        }
-
-        if (terms.length !=0 ){
-            res.innerHTML = '<ul class="tw-bg-white tw-border-2">' + list + '</ul>';
-        } else {
-            res.innerHTML = '<ul>' + list + '</ul>';
-        }
-    }
-
-    function selectResult(element, inputId, elementId) {
-        document.getElementById(inputId).value = element.innerText;
-        document.getElementById(elementId).innerHTML = '';
-    }
-
-
     const select_condition = document.getElementById("condition");
-    const select_operation = document.getElementById("operation");
-    const select_bands = document.getElementById("band");
-    const input_property = document.getElementById("property");
-    const input_value = document.getElementById("value")
-    
+
+    let select_operation =  null;
+    let select_bands = null;
+    let input_property = null;
+    let input_value = null;
+
     select_condition.addEventListener('change', (e) =>{
         let messageHTML = document.getElementById(`${e.target.id}-error`);
         if(messageHTML) {
@@ -120,67 +56,6 @@
         selectValidations(e.target)
     })
 
-    select_operation.addEventListener('change', (e) =>{
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        selectOperationValidations(e.target)
-    })
-
-
-    select_bands.addEventListener('change', (e) =>{
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        selectBandValidations(e.target)
-    })
-
-    input_property.addEventListener('change', (e) => {
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        propertyValidation(e.target)
-    })
-
-    input_value.addEventListener('change', (e) => {
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        propertyValidation(e.target)
-    })
-
-    function propertyValidation(val) {
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (!isNaN(val.value)){
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "Please enter a letter.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-
-    }
-
-    function valueValidation(val) {
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (isNaN(val.value)){
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "Please enter a number.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-
-    }
-
     function selectValidations(val) {
 
         const existingErrorElement = document.querySelector(`#${val.id}-error`)
@@ -188,38 +63,6 @@
             return null;
         }
         if (search_conditions.includes(val.value)){
-            return true;
-        } else {
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "The field must be one of the options shown.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-    }
-
-    function selectOperationValidations(val) {
-
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (search_operations.includes(val.value)){
-            return true;
-        } else {
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "The field must be one of the options shown.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-    }
-
-    function selectBandValidations(val) {
-
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (search_bands.includes(val.value)){
             return true;
         } else {
             const errorElement = document.createElement('span');

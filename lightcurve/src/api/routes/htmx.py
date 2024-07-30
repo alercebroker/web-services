@@ -237,3 +237,31 @@ async def dr(
             "request": request,
         },
     )
+
+@router.get("/filters", response_class=HTMLResponse)
+async def dr(
+    request: Request,
+    condition: str,
+):
+    if condition == "constant":
+        return templates.TemplateResponse(
+            name="./filtersTemplates/constant_filter.html.jinja",
+            context={
+                "request": request,
+            },
+        )
+    
+    if condition == "difference":
+        return templates.TemplateResponse(
+            name="./filtersTemplates/difference_filter.html.jinja",
+            context={
+                "request": request,
+            },
+        )
+    
+    return templates.TemplateResponse(
+        name="./filtersTemplates/empty_filter.html.jinja",
+        context={
+            "request": request,
+        },
+    )

@@ -1,0 +1,188 @@
+<div 
+ id="filterCall"
+ class="tw-row-span-2"
+ hx-on::after-settle="settleDom()" 
+ hx-on::before-swap="destroyScript()">
+    <div class="tw-grid tw-grid-cols-12 tw-gap-4">
+        <div class="tw-col-span-6 tw-flex tw-flex-col tw-relative">
+            <div>
+                <label for="property">Property:</label>
+                <input type="text" id="property" name="property" onkeyup="showResults(this.value, 'property','valuesProperties')" class="tw-border-2 tw-rounded-lg tw-w-full">
+                <div id="valuesProperties" class="tw-absolute tw-w-full"></div>
+            </div>
+        </div>
+        <div class="tw-col-span-6">
+            <label for="operation">Operation:</label>
+            <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="operation" id="operation">
+            <option value="equal">Equal</option>
+            <option value="less">Less than</option>
+            <option value="less eq">Less tan or equal</option>
+            <option value="greater">Greater than</option>
+            <option value="greater eq">Greater than or equal</option>
+            <option value="2">x</option>
+            </select>
+        </div>
+        <div class="tw-col-span-6">
+            <label for="value">Value:</label>
+            <input type="number" id="value" name="value" class="tw-border-2 tw-rounded-lg tw-w-full">
+        </div>
+        <div class="tw-col-span-6">
+            <label for="band">Band:</label>
+            <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="band" id="band">
+            <option value="g">g</option>
+            <option value="r">r</option>
+            <option value="i">i</option>
+            <option value="2">x</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<script id="constantFilter">
+
+    function settleDom() {
+        select_operation = document.getElementById("operation");
+        select_bands = document.getElementById("band");
+        input_property = document.getElementById("property");
+        input_value = document.getElementById("value");
+
+        select_operation.addEventListener('change', (e) =>{
+            let messageHTML = document.getElementById(`${e.target.id}-error`);
+            if(messageHTML) {
+                messageHTML.remove();
+            }
+            selectOperationValidations(e.target)
+        })
+
+
+        select_bands.addEventListener('change', (e) =>{
+            let messageHTML = document.getElementById(`${e.target.id}-error`);
+            if(messageHTML) {
+                messageHTML.remove();
+            }
+            selectBandValidations(e.target)
+        })
+
+        input_property.addEventListener('change', (e) => {
+            let messageHTML = document.getElementById(`${e.target.id}-error`);
+            if(messageHTML) {
+                messageHTML.remove();
+            }
+            propertyValidation(e.target)
+        })
+
+        input_value.addEventListener('change', (e) => {
+            let messageHTML = document.getElementById(`${e.target.id}-error`);
+            if(messageHTML) {
+                messageHTML.remove();
+            }
+            valueValidation(e.target)
+        })
+    }
+
+    function destroyScript() {
+        // Remove event listeners
+        select_operation.remove();
+        select_bands.remove();
+        input_property.remove();
+        input_value.remove();
+
+        const fullScript = document.getElementById("constantFilter");
+        fullScript.remove();
+    }
+
+    function autocompleteMatch(input, elementId) {
+        if (input == '') {
+            return [];
+        }
+        let reg = new RegExp(input)
+        if( elementId == "result"){
+            return search_terms.filter((term) => term.match(reg));
+        } else if ( elementId == "valuesConditions") {
+            return search_conditions.filter((term) => term.match(reg))
+        } else if ( elementId == "valuesProperties") {
+            return search_property.filter((term) => term.match(reg))
+        }
+    }
+
+    function showResults(val, inputId, elementId) {
+        res = document.getElementById(elementId);
+        res.innerHTML = '';
+        let list = '';
+        let terms = autocompleteMatch(val.toLowerCase(), elementId);
+        for (i=0; i<terms.length; i++) {
+            list += `<li onclick="selectResult(this, '${inputId}', '${elementId}')">${terms[i]}</li>`;
+        }
+
+        if (terms.length !=0 ){
+            res.innerHTML = '<ul class="tw-bg-white tw-border-2">' + list + '</ul>';
+        } else {
+            res.innerHTML = '<ul>' + list + '</ul>';
+        }
+    }
+
+    function selectResult(element, inputId, elementId) {
+        document.getElementById(inputId).value = element.innerText;
+        document.getElementById(elementId).innerHTML = '';
+    }
+
+    function propertyValidation(val) {
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (!isNaN(val.value)){
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "Please enter a letter.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+
+    }
+
+    function valueValidation(val) {
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (isNaN(val.value)){
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "Please enter a number.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+
+    }
+
+    function selectOperationValidations(val) {
+
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (search_operations.includes(val.value)){
+            return true;
+        } else {
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "The field must be one of the options shown.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+    }
+
+    function selectBandValidations(val) {
+
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (search_bands.includes(val.value)){
+            return true;
+        } else {
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "The field must be one of the options shown.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+    }
+</script>

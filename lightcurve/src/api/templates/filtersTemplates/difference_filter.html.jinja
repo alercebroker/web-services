@@ -1,0 +1,21 @@
+<div 
+ id="filterCall"
+ class="tw-row-span-1"
+ hx-on::after-settle="" 
+ hx-on::before-swap="destroyScript()"
+>
+ <div class="tw-grid tw-grid-cols-12 tw-gap-4">
+    <div class="tw-col-span-4 tw-flex tw-flex-col">
+        <label for="dateEntry">Date entry: </label>
+        <input type="date" id="dateEntry" name="dateEntry" class="tw-border-2 tw-rounded-lg tw-w-full">
+    </div>
+    <div class="tw-col-span-4 tw-flex tw-flex-col">
+        <label for="dateEnd">Date end: </label>
+        <input type="date" id="dateEnd" name="dateEnd" class="tw-border-2 tw-rounded-lg tw-w-full">
+    </div>
+    <div class="tw-col-span-4 tw-flex tw-flex-col">
+        <label for="standardDeviation">Standard deviation: </label>
+        <input type="number" id="standardDeviation" name="standardDeviation" class="tw-border-2 tw-rounded-lg tw-w-full">
+    </div>
+ </div>
+</div>
