@@ -9,12 +9,11 @@
 </script>
 
 <div class="tw-preflight">
-    <div id="filter-form" class="tw-container tw-mx-auto tw-grid tw-grid-rows-4 tw-grid-flow-col">
-        <div class="tw-row-span-1 tw-h-20">
-            <div class="tw-flex tw-flex-col">
+    <div id="filter-form" class="tw-container tw-mx-auto">
+        <div id="conditionContainer" class="tw-container tw-flex tw-flex-col">
                 <label for="condition">Condition:</label>
                 <select 
-                class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-1/4" 
+                class="tw-border-gray-400 tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-1/4" 
                 name="condition" 
                 id="condition" 
                 hx-get="{{ API_URL }}/htmx/filters"
@@ -27,10 +26,11 @@
                 <option value="difference">Difference</option>
                 <option value="">No filter</option>
                 </select>
-            </div>
         </div>
-        <div id="filterCall" class="tw-row-span-1"></div>
-        <div class="tw-row-span-1 tw-flex tw-flex-row-reverse tw-mx-8">
+        <div id="inputsContainer" class="tw-container tw-py-4">
+            <div id="filterCall"></div>
+        </div>
+        <div id="btnContainer" class="tw-container tw-flex tw-flex-row-reverse tw-mx-8">
             <button class="tw-btn tw-btn-primary">Save</button>
         </div>
     </div>
@@ -47,6 +47,10 @@
     let select_bands = null;
     let input_property = null;
     let input_value = null;
+
+    let date_entry = null;
+    let date_end = null;
+    let standard_deviation = null;
 
     select_condition.addEventListener('change', (e) =>{
         let messageHTML = document.getElementById(`${e.target.id}-error`);

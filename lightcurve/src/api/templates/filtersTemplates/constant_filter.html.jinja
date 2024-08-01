@@ -1,19 +1,18 @@
 <div 
  id="filterCall"
- class="tw-row-span-2"
  hx-on::after-settle="settleDom()" 
  hx-on::before-swap="destroyScript()">
     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
         <div class="tw-col-span-6 tw-flex tw-flex-col tw-relative">
             <div>
                 <label for="property">Property:</label>
-                <input type="text" id="property" name="property" onkeyup="showResults(this.value, 'property','valuesProperties')" class="tw-border-2 tw-rounded-lg tw-w-full">
+                <input type="text" id="property" name="property" onkeyup="showResults(this.value, 'property','valuesProperties')" class="tw-border-gray-400  tw-border-2 tw-rounded-lg tw-w-full">
                 <div id="valuesProperties" class="tw-absolute tw-w-full"></div>
             </div>
         </div>
         <div class="tw-col-span-6">
             <label for="operation">Operation:</label>
-            <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="operation" id="operation">
+            <select class="tw-border-gray-400  tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="operation" id="operation">
             <option value="equal">Equal</option>
             <option value="less">Less than</option>
             <option value="less eq">Less tan or equal</option>
@@ -24,11 +23,11 @@
         </div>
         <div class="tw-col-span-6">
             <label for="value">Value:</label>
-            <input type="number" id="value" name="value" class="tw-border-2 tw-rounded-lg tw-w-full">
+            <input type="number" id="value" name="value" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
         </div>
         <div class="tw-col-span-6">
             <label for="band">Band:</label>
-            <select class="tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="band" id="band">
+            <select class="tw-border-gray-400 tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="band" id="band">
             <option value="g">g</option>
             <option value="r">r</option>
             <option value="i">i</option>
@@ -81,7 +80,6 @@
     }
 
     function destroyScript() {
-        // Remove event listeners
         select_operation.remove();
         select_bands.remove();
         input_property.remove();

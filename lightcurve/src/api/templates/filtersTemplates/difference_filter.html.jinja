@@ -1,21 +1,100 @@
 <div 
  id="filterCall"
- class="tw-row-span-1"
- hx-on::after-settle="" 
- hx-on::before-swap="destroyScript()"
+ hx-on::after-settle="settleDom()" 
+ hx-on::before-swap=""
 >
- <div class="tw-grid tw-grid-cols-12 tw-gap-4">
-    <div class="tw-col-span-4 tw-flex tw-flex-col">
-        <label for="dateEntry">Date entry: </label>
-        <input type="date" id="dateEntry" name="dateEntry" class="tw-border-2 tw-rounded-lg tw-w-full">
+    <div class="tw-grid tw-grid-cols-12 tw-gap-4">
+        <div class="tw-col-span-4 tw-h-24 tw-flex tw-flex-col">
+            <label for="dateEntry">Date entry: </label>
+            <input type="date" id="dateEntry" name="dateEntry"
+            class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+        </div>
+        <div class="tw-col-span-4 tw-flex tw-flex-col">
+            <label for="dateEnd">Date end: </label>
+            <input type="date" id="dateEnd" name="dateEnd" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+        </div>
+        <div class="tw-col-span-4 tw-flex tw-flex-col">
+            <label for="standardDeviation">Standard deviation: </label>
+            <input type="number" id="standardDeviation" name="standardDeviation" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+        </div>
+        <div class="tw-col-span-12 tw-border-gray-400 tw-border-2"></div>
+        <div class="tw-col-span-4 tw-flex tw-flex-col">
+            <label for="preview">preview: </label>
+            <input 
+            type="text"
+            id="preview"
+            name="oid"
+            class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full"
+            hx-get="{{ API_URL }}/htmx/lightcurve"
+            hx-trigger="change"
+            hx-target="#lightcurve"
+            hx-swap="innerHTML">
+        </div>
     </div>
-    <div class="tw-col-span-4 tw-flex tw-flex-col">
-        <label for="dateEnd">Date end: </label>
-        <input type="date" id="dateEnd" name="dateEnd" class="tw-border-2 tw-rounded-lg tw-w-full">
+    <div id="lightcurve" class="tw-mx-auto tw-h-1/2 tw-w-1/2">
     </div>
-    <div class="tw-col-span-4 tw-flex tw-flex-col">
-        <label for="standardDeviation">Standard deviation: </label>
-        <input type="number" id="standardDeviation" name="standardDeviation" class="tw-border-2 tw-rounded-lg tw-w-full">
-    </div>
- </div>
 </div>
+
+<script id="differenceFilter">
+    function settleDom() {
+        date_entry = document.getElementById("dateEntry");
+        date_end = document.getElementById("dateEnd");
+        standard_deviation = document.getElementById("standardDeviation");
+
+        date_entry.addEventListener('change', (e) =>{
+            let messageHTML = document.getElementById(`${e.target.id}-error`);
+            if(messageHTML) {
+                messageHTML.remove();
+            }
+            validateDate(e.target);
+        })
+
+
+        date_end.addEventListener('change', (e) =>{
+            let messageHTML = document.getElementById(`${e.target.id}-error`);
+            if(messageHTML) {
+                messageHTML.remove();
+            }
+            validateDate(e.target);
+        })
+
+        standard_deviation.addEventListener('change', (e) => {
+            let messageHTML = document.getElementById(`${e.target.id}-error`);
+            if(messageHTML) {
+                messageHTML.remove();
+            }
+            validateStandardDeviation(e.target);
+        })
+    }
+
+    function destroyScript() {
+        date_entry.remove();
+        date_end.remove();
+        standard_deviation.remove();
+
+        const fullScript = document.getElementById("differenceFilter");
+        fullScript.remove();
+    }
+
+    function validateDate(val) {
+        if(val.type == "date") {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function validateStandardDeviation(val) {
+        const existingErrorElement = document.querySelector(`#${val.id}-error`)
+        if (existingErrorElement) {
+            return null;
+        }
+        if (isNaN(val.value)){
+            const errorElement = document.createElement('span');
+            errorElement.id = `${val.id}-error`;
+            errorElement.innerHTML = "Please enter a number.";
+            val.insertAdjacentElement("afterend", errorElement);
+        }
+
+    }
+</script>
