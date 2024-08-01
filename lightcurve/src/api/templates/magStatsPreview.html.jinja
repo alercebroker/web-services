@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
+    <title>Document</title>
+
+    <style>
+        td, th { padding: 0 7.5px; height: 40px; width: 70px; text-align: left; }
+    </style>
+</head>
+<body class='tw-preflight dark:tw-bg-black tw-dark'>
+
+    <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[750px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3">
+
+        <div class="tw-inline tw-text-white tw-flex tw-items-center">
+            <div class="tw-inline">
+                <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px]">Magnitude Statistics</h1>
+            </div>
+
+            <div class="tw-inline tw-relative tw-ml-2 tw-mt-[10px] tw-group">
+                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-gray-500" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                </svg>
+                <div class="tw-absolute tw-left-1/2 tw-transform tw--translate-x-1/2 tw-top-full tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center">
+                    <div class="tw-bg-gray-900 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2 tw-w-48 tw-whitespace-normal tw-translate-x-\[-20%\]">
+                        There is a matching source in the reference image. The apparent magnitude combines the difference and reference fluxes.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tw-text-white" id="tableContainer">
+            <table class="tw-truncate tw-table tw-m-0 tw-text-left tw-border-spacing-40 tw-w-full" id="myTable">
+                <colgroup><col><col></colgroup>
+                <thead>
+                    <tr>
+                        <th class="tw-text-left hover:tw-cursor-pointer">
+                            <p class="tw-inline"> Stat </p>
+                            <button id="statButton" class="">
+                                
+                            </button>
+                        </th>
+                        <th class="tw-text-left"> 
+                            <p class="tw-inline"> r </p>
+                            <button id="rButton" class="tw-inline"> 
+                            
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="dataTableBody">
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left" id="a11"></td>
+                        <td class="tw-text-left" id="a21"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a12"></td>
+                        <td class="tw-text-left " id="a22"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a13"></td>
+                        <td class="tw-text-left " id="a23"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a14"></td>
+                        <td class="tw-text-left " id="a24"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a15"></td>
+                        <td class="tw-text-left " id="a25"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a16"></td>
+                        <td class="tw-text-left " id="a26"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a17"></td>
+                        <td class="tw-text-left " id="a27"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a18"></td>
+                        <td class="tw-text-left " id="a28"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a19"></td>
+                        <td class="tw-text-left " id="a29"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a110"></td>
+                        <td class="tw-text-left " id="a210"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a111"></td>
+                        <td class="tw-text-left " id="a211"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a112"></td>
+                        <td class="tw-text-left " id="a212"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b">
+                        <td class="tw-text-left " id="a113"></td>
+                        <td class="tw-text-left " id="a213"></td>
+                    </tr>
+                    <tr class="hover:tw-bg-[#757575] tw-duration-200">
+                        <td class="tw-text-left " id="a114"></td>
+                        <td class="tw-text-left " id="a214"></td>
+                    </tr>
+                </tbody>
+                <tbody class=""></tbody>
+            </table>
+        </div>
+
+        <div class="tw-inline">
+            <div class="tw-pt-[25px] tw-inline-block">
+                <label class="tw-pl-[50px] tw-text-white" for="rowSelector">Rows per page:</label>
+                <select id="rowSelect" class="tw-text-white tw-bg-[#1e1e1e] tw-border-b ">
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="14">All</option>
+                </select>
+            </div>
+            <div class="tw-inline-block tw-text-white tw-pl-[40px]">
+                <span id="first-number"></span> - <span id="second-number"></span> of <span id="total-number"></span>
+            </div>
+            <div class="tw-inline-block tw-pl-[60px]">
+                    <button onclick="navigateTable(-1)" class="tw-text-white tw-pr-[20px]"> < </span>
+                    <button onclick="navigateTable(1)"  class="tw-text-white"> > </button>
+            </div>
+
+        </div>
+
+    </div>
+
+<script>
+    const tableContainer = document.getElementById('tableContainer');
+    const dataTableBody = document.getElementById('dataTableBody');
+    const rowSelect = document.getElementById('rowSelect');
+    let rowsPerPage = parseInt(rowSelect.value);
+    let currentPage = 1;
+
+    let statR = {{stat_r | tojson}};
+
+    console.log(statR)
+
+    const stat = Object.keys(statR);
+    const r = Object.values(statR);
+
+    let fakeStat = stat.slice()
+    let fakeR = r.slice()
+    const statReversed = fakeStat.reverse()
+    const rReversed = fakeR.reverse()
+
+    function displayColumns(stat,r,statReversed,rReversed){
+        if (boolColumns === 0){
+            for (let i = 0; i < stat.length * 2; i++){
+
+                if (i < 14){
+                    let row = '1';
+                    let name = 'a' + row + String(i+1);
+                    document.getElementById(name).innerHTML = stat[i];
+                } else {
+                    row = '2';
+                    let name = 'a' + row + String(i - stat.length + 1);
+                    document.getElementById(name).innerHTML = r[i - stat.length];
+                }
+            }
+            boolColumns = 1;
+
+        } else {
+            for (let i = 0; i < stat.length * 2; i++){
+
+                if (i < 14){
+                    let row = '1';
+                    let name = 'a' + row + String(i+1);
+                    document.getElementById(name).innerHTML = statReversed[i];
+                } else {
+                    row = '2';
+                    let name = 'a' + row + String(i - statReversed.length + 1);
+                    document.getElementById(name).innerHTML = rReversed[i - statReversed.length];
+                }
+            }
+            boolColumns = 0;
+        }
+    }
+    let boolColumns = 0;
+    displayColumns(stat,r,statReversed,rReversed,boolColumns);
+    
+
+    const arrowUp = `<svg class="tw-h-6 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z"/>
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="16" y1="9" x2="12" y2="5" />
+                                    <line x1="8" y1="9" x2="12" y2="5" />
+                                </svg>`;
+
+    const arrowDown = `<svg class="tw-h-6 tw-w-6"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="16" y1="15" x2="12" y2="19" />  <line x1="8" y1="15" x2="12" y2="19" /></svg>`;
+    
+    document.getElementById('statButton').innerHTML = arrowUp;
+    document.getElementById('rButton').innerHTML = arrowUp;
+
+    document.getElementById('statButton').addEventListener('click',() => {
+        
+        displayColumns(stat,r,statReversed,rReversed);
+
+        if (boolColumns === 1) {
+            document.getElementById('statButton').innerHTML = arrowUp;
+            document.getElementById('rButton').innerHTML = arrowUp;
+        } else { 
+            document.getElementById('statButton').innerHTML = arrowDown;
+            document.getElementById('rButton').innerHTML = arrowDown;
+        }
+
+        }
+    )
+
+    document.getElementById('rButton').addEventListener('click',() => {
+        
+        displayColumns(stat,r,statReversed,rReversed);
+
+        if (boolColumns === 1) {
+            document.getElementById('statButton').innerHTML = arrowUp;
+            document.getElementById('rButton').innerHTML = arrowUp;
+        } else { 
+            document.getElementById('statButton').innerHTML = arrowDown;
+            document.getElementById('rButton').innerHTML = arrowDown;document.getElementById('rButton').innerHTML = arrowDown;document.getElementById('rButton').innerHTML = arrowDown;
+        }
+
+        }
+    )
+
+    function navigateTable(direction) {
+        currentPage += direction;
+        const totalPages = Math.ceil(dataTableBody.rows.length / rowsPerPage);
+        if (currentPage < 1) {
+        currentPage = 1;
+        } else if (currentPage > totalPages) {
+        currentPage = totalPages;
+        }
+        showTablePage();
+    }
+
+    function showTablePage() {
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        if (startIndex === 0){
+            document.getElementById('first-number').innerHTML = 1;
+        } else {
+            document.getElementById('first-number').innerHTML = startIndex;
+        }
+        const endIndex = startIndex + rowsPerPage;
+        if (endIndex > dataTableBody.rows.length){
+            document.getElementById('second-number').innerHTML = dataTableBody.rows.length;
+        } else {
+            document.getElementById('second-number').innerHTML = endIndex;
+        }
+
+
+        const rows = dataTableBody.getElementsByTagName('tr');
+        for (let i = 0; i < rows.length; i++) {
+        if (i >= startIndex && i < endIndex) {
+            rows[i].style.display = 'table-row';
+        } else {
+            rows[i].style.display = 'none';
+        }
+        }
+    }
+
+    let startIndex = currentPage;
+    let endIndex = rowsPerPage;
+
+    document.getElementById('first-number').innerHTML = startIndex;
+    document.getElementById('second-number').innerHTML = endIndex;
+    document.getElementById('total-number').innerHTML = dataTableBody.rows.length;
+    rowSelect.addEventListener('change', () => {
+        rowsPerPage = parseInt(rowSelect.value);
+        currentPage = 1;
+        showTablePage();
+    });
+    showTablePage();
+    
+
+
+
+</script>
+
+</body>
+</html>

@@ -23,11 +23,11 @@ from .exceptions import (
     SurveyIdError,
     ParseError,
 )
-from .models import DataReleaseDetection as DataReleaseDetectionModel
-from .models import Detection as DetectionModel
-from .models import Feature as FeatureModel
-from .models import ForcedPhotometry as ForcedPhotometryModel
-from .models import NonDetection as NonDetectionModel
+from .model import DataReleaseDetection as DataReleaseDetectionModel
+from .model import Detection as DetectionModel
+from .model import Feature as FeatureModel
+from .model import ForcedPhotometry as ForcedPhotometryModel
+from .model import NonDetection as NonDetectionModel
 from config import app_config
 import math
 

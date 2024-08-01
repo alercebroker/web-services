@@ -6,7 +6,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 
 from .filters import get_filters_map
-from .routes import htmx, rest, period
+from .routes import htmx, rest, period, object
 from config import app_config
 from database.mongo import connect as connect_mongo
 from database.sql import connect as connect_sql, session_wrapper

@@ -1,0 +1,9 @@
+{
+  "name": "lightcurve",
+  "version": "1.0.0",
+  "description": "Set up environment variables. Look at [example](.env.example)  Run with `poetry run uvicorn api.api:app` or `poetry run dev`",
+  "author": "",
+  "devDependencies": {
+    "tailwindcss": "^3.4.3"
+  }
+}

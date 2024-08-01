@@ -1,0 +1,4 @@
+*.env
+./node_modules/
+virtual-env
+node_modules

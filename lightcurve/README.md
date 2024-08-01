@@ -21,3 +21,23 @@ The htmx returned by this API's htmx endpoint emits the following events:
 |:----------------:|:-----------------:|:-----------------------:|:-------------:|
 | onDetectionClick | Clicked detection | Clicked detection index | document.body |
 
+## .env file for services configuration
+The environment variables for each container are defined from an .env file.
+.env example.
+
+```
+ENV=dev
+API_URL=http://localhost:8000
+SECRET_KEY=some_secret
+MONGO_USER=mongo
+MONGO_PASSWORD=mongo
+MONGO_HOST=localhost
+MONGO_PORT=27017
+MONGO_DATABASE=database
+MONGO_AUTH_SOURCE=admin
+PSQL_USER=postgres
+PSQL_PASSWORD=postgres
+PSQL_DATABASE=postgres
+PSQL_HOST=localhost
+PSQL_PORT=5432
+```
