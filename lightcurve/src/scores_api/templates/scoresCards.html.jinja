@@ -420,9 +420,11 @@ if (Object.keys(db).length === 0 ){
 
     function changePage(bool){
         
+        console.log(bool)
+        console.log(lastRow)
 
         if (bool === -1 && startRow === 0){
-        } else if (bool === 1 && lastRow > 20) {
+        } else if (bool === 1 && lastRow >= 25) {
         } else {
 
             if (lastRow < numberOfCategories){
