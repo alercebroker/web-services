@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{API_URL}}/static/main.css">
+    <link rel="stylesheet" href="{{API_URL}}/static/crossmatch.css">
 
     <title>Crossmatch</title>
 </head>
@@ -12,26 +12,23 @@
 
     <div class="tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-w-[1000px] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-3 tw-ml-3 tw-mb-3">
 
-        <div class="tw-inline">
+        <div class="tw-inline tw-mb-[5px]">
                 <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px] dark:tw-text-white tw-text-black"> Crossmatch</h1>
         </div>
 
-        <div class="distance-arcsec">
-
-            <div class="Max-distance">
-                <div>
-                    <input type="range" id="slider" min="0" max="20" value="0" step="0.01">
-                </div>
-
-                <div>
-                    <input type="number" id="numberInput" min="0" max="20" value="0">
-                </div>
+        <div class="tw-flex tw-items-center tw-mb-[10px] tw-max-w-[95%] tw-m-auto">
+            <div class="tw-whitespace-nowrap">
+                <p class="tw-text-white"> Max. distance </p>
             </div>
-
-            <div class="arcsec">
-
+            <div class="tw-grow tw-mx-4">
+                <input class="tw-w-full tw-h-[3px] tw-bg-pink-400 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700" type="range" id="slider" min="0" max="20" value="0" step="0.01">
             </div>
-
+            <div>
+                <div id="customInput" contenteditable="true" class="tw-text-white tw-inline-block tw-border-b tw-p-[5px] tw-min-w-[10px] tw-min-h-[6px] tw-overflow-hidden  tw-text-overflow-ellipsis">
+                    Hola
+                </div>
+                {# <input class="" type="number" id="numberInput" min="0" max="20" value="0"> #}
+            </div>
         </div>
 
         <div id="tables-container" class="tw-table tw-preflight dark:tw-text-white tw-text-black tw-w-full">
@@ -44,7 +41,15 @@
 
         const rawCross = {{cross | tojson}};
         const headCross = ['Attribute', 'unit', 'value'];
-        
+
+        let arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>`;
+
+        let arrowUp = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+                    </svg>`   
+    
         // Getting all keys
         const crossKeys = [];
         for (let i = 0; i < Object.values(rawCross).length; i++){
@@ -55,6 +60,7 @@
 
         const n = rawCross.length;
         const tableContainer = document.getElementById('tables-container');
+        tableContainer.classList = 'tw-h-full'
         // Initial binaryVector
         var binaryVector = new Array(n).fill(0)
 
@@ -68,24 +74,23 @@
             var parentDiv = document.createElement('div');
             console.log(crossKeys[i])
             parentDiv.id = 'parent-'+String(crossKeys[i])
-            parentDiv.classList = 'tw-bg-[#1e1e1e] tw-w-[90%] tw-h-fit tw-ml-[30px] tw-rounded-[4px] tw-text-white tw-border-opacity-10 tw-border-[0px] tw-border-b-[1px] tw-border-b-solid tw-border-b-white';
+            parentDiv.classList = 'tw-bg-[#1e1e1e] tw-w-[90%] tw-block tw-h-fit tw-ml-[30px] tw-rounded-[4px] tw-text-white tw-border-opacity-10 tw-border-[0px] tw-border-b-[1px] tw-border-b-solid tw-border-b-white';
             
             // First paragraph to put the name of the row
             const nameParagraph = document.createElement('p');
             nameParagraph.classList = 'dark:tw-text-white tw-text-black tw-m-[5px] tw-text-left tw-float-left';
             nameParagraph.textContent = crossKeys[i];
 
-            // We define the arrow in a div to put in the second paragraph
-            var arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
-                                </svg>`;
+            // We define the arrow in a div to put in the second paragraph                 
 
-            const arrowDiv = document.createElement('div');
+            let arrowDiv = document.createElement('div');
             arrowDiv.innerHTML = arrowDown;
+            arrowDiv.id = 'arrow' + String(i);
+            arrowDiv.classList = 'tw-ml-[5px]'
 
             // Second paragraph to show the distance and the arrow
             const distanceParagraph = document.createElement('p');
-            distanceParagraph.classList = 'dark:tw-text-white tw-text-black tw-text-right tw-float-right';
+            distanceParagraph.classList = 'tw-flex dark:tw-text-white tw-text-black tw-text-right tw-float-right';
 
             // Esta es la clave para poder ocultar los botones dependiendo del input. Object.values(rawCross[i][String(crossKeys[i])].distance)[1].toFixed(3) es el value.
             const distanceCross = 'Distance: ' + String(Object.values(rawCross[i][String(crossKeys[i])].distance)[1].toFixed(3)) + '  ' + String(Object.values(rawCross[i][String(crossKeys[i])].distance)[0]);
@@ -105,7 +110,7 @@
 
             // we put newdiv into parentdiv
             parentDiv.appendChild(newDiv);
-            parentDiv.classList = 'tw-w-full'
+            parentDiv.classList = 'tw-w-full';
 
             // we create the div that will contain the table
             const tableDiv = document.createElement('div');
@@ -186,8 +191,11 @@
             idButtons.push('button' + String(i));
             newButton.id = 'button' + String(i); // aque hay que poner la distancia 
             newButton.value = String(Object.values(rawCross[i][String(crossKeys[i])].distance)[1].toFixed(3));
-            newButton.addEventListener('click', () => {binaryVectorUpdate('tb-'+String(crossKeys[i]))})
-            newButton.classList = 'tw-bg-[#1e1e1e] tw-w-[90%] tw-h-fit tw-ml-[30px] tw-rounded-[4px] tw-text-white tw-border-opacity-10 tw-border-[0px] tw-border-b-[1px] tw-border-b-solid tw-border-b-white'
+            newButton.addEventListener('click', () => {
+                binaryVectorUpdate('tb-'+String(crossKeys[i]))
+                changeArrow('arrow' + String(i));
+            })
+            newButton.classList = 'tw-bg-[#1e1e1e] tw-w-[90%] tw-ml-[30px] tw-rounded-[4px] tw-text-white tw-border-opacity-10 tw-border-[0px] tw-border-b-[1px] tw-border-b-solid tw-border-b-white'
 
             // we put the parent div into the newbutton. this makes that all the row works like a button.
             newButton.appendChild(parentDiv)
@@ -195,13 +203,21 @@
             // we put the entire button-row into the table container
             tableContainer.appendChild(newButton);
         }
+        let boolArrow = 1;
+        function changeArrow(arrow){
 
+            if (boolArrow === 0){
+                document.getElementById(arrow).innerHTML = arrowDown;
+                boolArrow = 1;
+            } else {
+                document.getElementById(arrow).innerHTML = arrowUp;
+                boolArrow = 0;
+            }
+        }
         // this function closes a table if the user click twice in the same row (open-close) and if the user clicks in another, closes the current table.
         function binaryVectorUpdate(id){
             
             const pos = idList.indexOf(id);
-            console.log(idList)
-
             if (pos === binaryVector.indexOf(1)){
 
                 document.getElementById(idList[pos]).style.display = 'none'
@@ -256,9 +272,36 @@
         const numberInput = document.getElementById('numberInput');
 
         slider.addEventListener('input', function() {
-            numberInput.value = this.value;
+            //numberInput.value = this.value;
             hideButtonWithTables(this.value);
         });
+
+        const customInput = document.getElementById('customInput');
+
+        // Simular el comportamiento de un input
+        customInput.addEventListener('input', function() {
+            // Aquí puedes manejar los cambios en el contenido
+            console.log('Valor actual:', this.textContent);
+        });
+
+        // Opcional: Limitar la longitud del texto
+        customInput.addEventListener('keydown', function(e) {
+            const maxLength = 50; // Ajusta según tus necesidades
+            if (this.textContent.length >= maxLength && e.key !== 'Backspace' && e.key !== 'Delete') {
+                e.preventDefault();
+            }
+        });
+
+        // Opcional: Manejar el foco
+        customInput.addEventListener('focus', function() {
+            this.style.outline = '2px solid blue'; // Estilo al enfocar
+        });
+
+        customInput.addEventListener('blur', function() {
+            this.style.outline = 'none'; // Quitar estilo al perder foco
+        });
+
+
 
         numberInput.addEventListener('input', function() {
             slider.value = this.value;

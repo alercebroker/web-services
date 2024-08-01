@@ -45,10 +45,10 @@ COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
 RUN npx tailwindcss -i /lightcurve/src/scores_api/templates/scores.css -o /compiled/scores.css
 
-FROM node:22-alpine as tailwindcss_crossmatch
-COPY ./lightcurve/ /lightcurve/
-WORKDIR /lightcurve
-RUN npx tailwindcss -i /lightcurve/src/crossmatch_api/templates/crossmatch.css -o /compiled/crossmatch.css
+# FROM node:22-alpine as tailwindcss_crossmatch
+# COPY ./lightcurve/ /lightcurve/
+# WORKDIR /lightcurve
+# RUN npx tailwindcss -i /lightcurve/src/crossmatch_api/templates/crossmatch.css -o /compiled/crossmatch.css
 
 
 FROM python:3.11-slim as production
@@ -64,7 +64,7 @@ COPY --from=tailwindcss_lightcurve /compiled/main.css /app/src/api/static
 COPY --from=tailwindcss_magstats /compiled/magstats.css /app/src/magstats_api/static
 COPY --from=tailwindcss_object /compiled/object.css /app/src/object_api/static
 COPY --from=tailwindcss_probability /compiled/probability.css /app/src/probability_api/static
-COPY --from=tailwindcss_crossmatch /compiled/crossmatch.css /app/src/crossmatch_api/static
+# COPY --from=tailwindcss_crossmatch /compiled/crossmatch.css /app/src/crossmatch_api/static
 COPY --from=tailwindcss_scores /compiled/scores.css /app/src/scores_api/static
 RUN poetry install --only-root
 CMD ["bash", "scripts/entrypoint.sh"]

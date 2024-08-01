@@ -65,17 +65,17 @@ services:
       SERVICE: probability_api
       API_URL: http://localhost:8004
 
-  crossmatch:
-    build:
-      context: ../
-      dockerfile: lightcurve/Dockerfile
-    ports:
-      - 8005:8000
-    env_file:
-      - variables.env
-    environment:
-      SERVICE: crossmatch_api
-      API_URL: http://localhost:8005
+  # crossmatch:
+  #   build:
+  #     context: ../
+  #     dockerfile: lightcurve/Dockerfile
+  #   ports:
+  #     - 8005:8000
+  #   env_file:
+  #     - variables.env
+  #   environment:
+  #     SERVICE: crossmatch_api
+  #     API_URL: http://localhost:8005
       
   scores:
     build:

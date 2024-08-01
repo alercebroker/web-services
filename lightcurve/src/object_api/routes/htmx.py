@@ -15,7 +15,7 @@ templates = Jinja2Templates(
     directory="src/object_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
-    "OBJECT_API_URL", "http://localhost:8000"
+    "OBJECT_API_URL", "http://localhost:8002"
 )
 
 @router.get("/object/{oid}", response_class=HTMLResponse)
