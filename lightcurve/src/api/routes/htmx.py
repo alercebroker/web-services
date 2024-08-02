@@ -228,7 +228,7 @@ async def dr(
 
 @router.get("/watchlist", response_class=HTMLResponse)
 async def dr(
-    request: Request
+    request: Request,
 ):
 
     return templates.TemplateResponse(

@@ -1,0 +1,8 @@
+{% macro select(name, options=[])%}
+    <label for="{{name}}">Operation:</label>
+    <select class="tw-border-gray-400  tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="{{name}}" id="{{name}}">
+    {% for option in options%}
+        <option value="{{option}}">{{option}}</option>
+    {% endfor %}
+    </select>
+{% endmacro %}
