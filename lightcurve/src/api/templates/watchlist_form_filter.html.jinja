@@ -23,62 +23,36 @@
                 <option value="">No filter</option>
                 </select>
         </div>
-        <!--
-        <div id="inputsContainer" class="tw-container tw-py-4">
-            <div id="filterCall"></div>
-        </div>
-        <div id="btnContainer" class="tw-container tw-flex tw-flex-row-reverse tw-mx-8">
-            <button class="tw-btn tw-btn-primary">Save</button>
-        </div>
-        -->
         <div id="inputsContainer" class="tw-container tw-py-4">
             <div id="constantDiv" class="tw-grid tw-grid-cols-12 tw-gap-4 tw-hidden">
+            {% import './filtersTemplates/select.html.jinja' as select %}
+            {% import './filtersTemplates/input_number.html.jinja' as input %}
+            {% import './filtersTemplates/input_text.html.jinja' as input_text %}
+            {% import './filtersTemplates/input_date.html.jinja' as input_date %}
                 <div class="tw-col-span-6 tw-flex tw-flex-col tw-relative">
-                    <div>
-                        <label for="property">Property:</label>
-                        <input type="text" id="property" name="property" onkeyup="showResults(this.value, 'property','valuesProperties')" class="tw-border-gray-400  tw-border-2 tw-rounded-lg tw-w-full">
-                        <div id="valuesProperties" class="tw-absolute tw-w-full"></div>
-                    </div>
+                    {{ input_text.input_text("property") }}
+                    <div id="valuesProperties" class="tw-absolute tw-w-full"></div>
                 </div>
                 <div class="tw-col-span-6">
-                    <label for="operation">Operation:</label>
-                    <select class="tw-border-gray-400  tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="operation" id="operation">
-                    <option value="equal">Equal</option>
-                    <option value="less">Less than</option>
-                    <option value="less eq">Less tan or equal</option>
-                    <option value="greater">Greater than</option>
-                    <option value="greater eq">Greater than or equal</option>
-                    <option value="2">x</option>
-                    </select>
+                    {{ select.select("operation", ['equal', 'less', 'less eq', 'greater','greater eq']) }}
                 </div>
                 <div class="tw-col-span-6">
-                    <label for="value">Value:</label>
-                    <input type="number" id="value" name="value" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+                    {{ input.input("value") }}
                 </div>
                 <div class="tw-col-span-6">
-                    <label for="band">Band:</label>
-                    <select class="tw-border-gray-400 tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-full" name="band" id="band">
-                    <option value="g">g</option>
-                    <option value="r">r</option>
-                    <option value="i">i</option>
-                    <option value="2">x</option>
-                    </select>
+                    {{ select.select("band", ['g', 'r', 'i']) }}
                 </div>
             </div>
             <div id="differenceDiv" class="tw-hidden">
                 <div class="tw-grid tw-grid-cols-12 tw-gap-4">
                     <div class="tw-col-span-4 tw-h-24 tw-flex tw-flex-col">
-                        <label for="dateEntry">Date entry: </label>
-                        <input type="date" id="dateEntry" name="dateEntry"
-                        class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+                        {{ input_date.input_date("dateEntry") }}
                     </div>
                     <div class="tw-col-span-4 tw-flex tw-flex-col">
-                        <label for="dateEnd">Date end: </label>
-                        <input type="date" id="dateEnd" name="dateEnd" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+                        {{ input_date.input_date("dateEnd") }}
                     </div>
                     <div class="tw-col-span-4 tw-flex tw-flex-col">
-                        <label for="standardDeviation">Standard deviation: </label>
-                        <input type="number" id="standardDeviation" name="standardDeviation" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+                        {{ input.input("standardDeviation")}}
                     </div>
                     <div class="tw-col-span-12 tw-border-gray-400 tw-border-2"></div>
                     <div class="tw-col-span-4 tw-flex tw-flex-col">
@@ -97,27 +71,18 @@
                 <div id="lightcurve" class="tw-mx-auto tw-h-1/2 tw-w-1/2"></div>
             </div>
         </div>
+        <div id="btnContainer" class="tw-container tw-flex tw-flex-row-reverse">
+            <button id="saveBtn" class="tw-border-gray-700 tw-border-2 tw-rounded-lg tw-px-4">Save</button>
+        </div>
     </div>
 </div>
 
 <script>
     const search_conditions = ['constant', 'difference', '']
     const search_property = ['mag']
-    const search_operations = ['equal', 'less', 'less eq', 'greater','greater eq']
-    const search_bands = ['g', 'r', 'i']
     const select_condition = document.getElementById("condition");
+    const save_btn = document.getElementById("saveBtn");
     let previous_select_condition = ""
-
-    let select_operation =  document.getElementById("operation");
-    let select_bands = document.getElementById("band");
-    let input_property = document.getElementById("property");
-    let input_value = document.getElementById("value");
-
-    let date_entry = document.getElementById("dateEntry");
-    let date_end = document.getElementById("dateEnd");
-    let standard_deviation = document.getElementById("standardDeviation");
-
-    /* EventListener constant*/
 
     select_condition.addEventListener('change', (e) =>{
         let messageHTML = document.getElementById(`${e.target.id}-error`);
@@ -125,64 +90,17 @@
             messageHTML.remove();
         }
         selectValidations(e.target)
-    })
+    });
 
-    select_operation.addEventListener('change', (e) =>{
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        selectOperationValidations(e.target)
-    })
+    save_btn.addEventListener('click', () => {
+        if(select_condition.value == "condition" && input_boolean_value && input_boolean_property && input_boolean_operation && input_boolean_band){
+            console.log("approved");
+        };
+    });
 
-    select_bands.addEventListener('change', (e) =>{
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        selectBandValidations(e.target)
-    })
-
-    input_property.addEventListener('change', (e) => {
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        propertyValidation(e.target)
-    })
-
-    input_value.addEventListener('change', (e) => {
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        valueValidation(e.target)
-    })
+    /* EventListener constant*/
 
     /* EventListener difference*/
-    date_entry.addEventListener('change', (e) =>{
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        validateDate(e.target);
-    })
-
-    date_end.addEventListener('change', (e) =>{
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        validateDate(e.target);
-    })
-
-    standard_deviation.addEventListener('change', (e) => {
-        let messageHTML = document.getElementById(`${e.target.id}-error`);
-        if(messageHTML) {
-            messageHTML.remove();
-        }
-        validateStandardDeviation(e.target);
-    })
 
     /* dynamic search*/
     function autocompleteMatch(input, elementId) {
@@ -221,7 +139,6 @@
     }
 
 
-    /* validations constant*/
     function selectValidations(val) {
 
         const existingErrorElement = document.querySelector(`#${val.id}-error`)
@@ -257,87 +174,7 @@
         }
     }
 
-    function propertyValidation(val) {
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (!isNaN(val.value)){
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "Please enter a letter.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-
-    }
-
-    function valueValidation(val) {
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (isNaN(val.value)){
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "Please enter a number.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-
-    }
-
-    function selectOperationValidations(val) {
-
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (search_operations.includes(val.value)){
-            return true;
-        } else {
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "The field must be one of the options shown.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-    }
-
-    function selectBandValidations(val) {
-
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (search_bands.includes(val.value)){
-            return true;
-        } else {
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "The field must be one of the options shown.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-    }
+    /* validations constant*/
 
     /* validations difference*/
-
-    function validateDate(val) {
-        if(val.type == "date") {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    function validateStandardDeviation(val) {
-        const existingErrorElement = document.querySelector(`#${val.id}-error`)
-        if (existingErrorElement) {
-            return null;
-        }
-        if (isNaN(val.value)){
-            const errorElement = document.createElement('span');
-            errorElement.id = `${val.id}-error`;
-            errorElement.innerHTML = "Please enter a number.";
-            val.insertAdjacentElement("afterend", errorElement);
-        }
-
-    }
 </script>

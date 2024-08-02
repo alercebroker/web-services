@@ -1,0 +1,35 @@
+{% macro input(name)%}
+    <label for="{{name}}">{{name}}:</label>
+    <input type="number" id="{{name}}" name="{{name}}" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+
+    <script>
+        let input_{{name}} = document.getElementById("{{name}}");
+        let input_boolean_{{name}} = false;
+
+        input_{{name}}.addEventListener('change', (e) =>{
+        let messageHTML = document.getElementById(`${e.target.id}-error`);
+            if(messageHTML) {
+                messageHTML.remove();
+            }
+           input_boolean_{{name}} = inputCustomValidation(e.target)
+
+        })
+
+
+        function inputCustomValidation(val) {
+            const existingErrorElement = document.querySelector(`#${val.id}-error`)
+            if (existingErrorElement) {
+                return false;
+            }
+            if (isNaN(val.value)){
+                const errorElement = document.createElement('span');
+                errorElement.id = `${val.id}-error`;
+                errorElement.innerHTML = "Please enter a number.";
+                val.insertAdjacentElement("afterend", errorElement);
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+{% endmacro %}
