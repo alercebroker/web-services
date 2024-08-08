@@ -315,14 +315,6 @@
   min-height: 7rem;
 }
 
-.tw-preflight :is(.tw-min-h-\[50px\]) {
-  min-height: 50px;
-}
-
-.tw-preflight :is(.tw-min-h-\[60px\]) {
-  min-height: 60px;
-}
-
 .tw-preflight :is(.tw-min-h-\[64px\]) {
   min-height: 64px;
 }
@@ -1706,6 +1698,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.dark\:tw-text-white:is(.tw-dark *)) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.dark\:tw-text-gray-600:is(.tw-dark *)) {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
 }
 
 .tw-preflight :is(.dark\:hover\:tw-bg-\[\#353535\]:hover:is(.tw-dark *)) {

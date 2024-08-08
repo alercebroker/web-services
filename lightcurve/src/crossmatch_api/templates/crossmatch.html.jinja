@@ -51,6 +51,7 @@
     <script>
 
         const rawCross = {{cross | tojson}};
+        console.log(rawCross)
         const headCross = ['Attribute', 'unit', 'value'];
 
         let arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -67,6 +68,11 @@
 
             crossKeys.push(Object.keys(Object.values(rawCross)[i])[0])
 
+        };
+        let lengthList = [];
+
+        for (let i = 0; i < crossKeys.length; i++){
+            lengthList.push(Object.keys(Object.values(rawCross)[i][crossKeys[i]]).length)
         };
 
         const n = rawCross.length;
@@ -91,6 +97,10 @@
             const nameParagraph = document.createElement('p');
             nameParagraph.classList = 'dark:tw-text-white tw-text-black tw-m-[5px] tw-text-left tw-float-left';
             nameParagraph.textContent = crossKeys[i];
+
+            const lenghtParagraph = document.createElement('p');
+            lenghtParagraph.classList = 'dark:tw-text-gray-600 tw-text-black tw-m-[5px] tw-text-left tw-float-left';
+            lenghtParagraph.textContent = `(` + String(lengthList[i]) + ` attributes)`;
 
             // We define the arrow in a div to put in the second paragraph                 
 
@@ -117,6 +127,7 @@
             newDiv.classList = 'tw-overflow-hidden tw-rounded-[4px] tw-w-full tw-h-fit tw-bg-white dark:tw-bg-[#1e1e1e] tw-shadow-2xl tw-text-left tw-mb-[1px] tw-shadow-2xl tw-border-[0px] tw-border-white dark:tw-border-[#1e1e1e]';
 
             newDiv.appendChild(nameParagraph);
+            newDiv.appendChild(lenghtParagraph)
             newDiv.appendChild(distanceParagraph);
 
             // we put newdiv into parentdiv
@@ -204,7 +215,7 @@
             newButton.value = String(Object.values(rawCross[i][String(crossKeys[i])].distance)[1].toFixed(3));
             newButton.addEventListener('click', () => {
                 binaryVectorUpdate('tb-'+String(crossKeys[i]))
-                changeArrow('arrow' + String(i));button
+                changeArrow('arrow' + String(i));
             })
             newButton.classList = 'tw-bg-[#1e1e1e] tw-w-[90%] tw-ml-[30px] tw-min-h-[64px] tw-rounded-[4px] tw-text-white tw-border-opacity-10 tw-border-[0px] tw-border-b-[1px] tw-border-b-solid tw-border-b-white'
 
