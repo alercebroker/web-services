@@ -257,15 +257,12 @@
         var obj;
 
         function lastInformation(data) {
-            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-            console.log(data);
 
             let type, name, tnsLink, redshift;
 
             if (data.error) {
                 type = name = redshift = 'Error';
                 tnsLink = 'https://www.wis-tns.org/';
-                console.error("Error en la búsqueda:", data.message);
             } else if (typeof data === 'object' && data !== null) {
                 if (Object.keys(Object.values(data)[0] || {}).length > 25) {
                     type = Object.values(data)[2] || 'No disponible';
@@ -279,7 +276,6 @@
             } else {
                 type = name = redshift = 'Respuesta inesperada';
                 tnsLink = 'https://www.wis-tns.org/';
-                console.error("Respuesta inesperada:", data);
             }
 
             document.getElementById('type').innerHTML = type;
@@ -299,7 +295,6 @@
         
         document.addEventListener('click', handleOutsideClick);
 
-        console.log('Fetch begin')
         fetch("https://tns.alerce.online/search", {
             "headers": {
                 "accept": "application/json",
@@ -314,23 +309,19 @@
             return response.text();
         })
         .then(text => {
-            console.log("Respuesta recibida:", text);
             if (text.includes("Error message")) {
                 throw new Error(text);
             }
             try {
                 return JSON.parse(text);
             } catch (e) {
-                console.log("La respuesta no es JSON válido, se procesará como texto");
                 return text;
             }
         })
         .then(data => {
-            console.log("Datos procesados:", data);
             lastInformation(data);
         })
         .catch(error => {
-            console.error("Error en la petición:", error.message);
             lastInformation({
                 error: true,
                 message: error.message

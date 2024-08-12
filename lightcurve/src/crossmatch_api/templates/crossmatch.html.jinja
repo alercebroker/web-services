@@ -51,7 +51,6 @@
     <script>
 
         const rawCross = {{cross | tojson}};
-        console.log(rawCross)
         const headCross = ['Attribute', 'unit', 'value'];
 
         let arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -89,7 +88,6 @@
             
             // parentDiv is the div that will contain the div with paragraphs and the div with the tables
             var parentDiv = document.createElement('div');
-            console.log(crossKeys[i])
             parentDiv.id = 'parent-'+String(crossKeys[i])
             parentDiv.classList = 'tw-bg-[#1e1e1e] tw-w-[90%] tw-block tw-h-fit tw-ml-[30px] tw-rounded-[4px] tw-text-white tw-border-opacity-10 tw-border-[0px] tw-border-b-[1px] tw-border-b-solid tw-border-b-white';
             
