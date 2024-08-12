@@ -9,8 +9,26 @@
 </script>
 
 <div class="tw-preflight">
+    {% import './filtersTemplates/select.html.jinja' as select %}
+    {% import './filtersTemplates/input_number.html.jinja' as input %}
+    {% import './filtersTemplates/input_text.html.jinja' as input_text %}
+    {% import './filtersTemplates/input_date.html.jinja' as input_date %}
     <div id="filter-form" class="tw-container tw-mx-auto">
-        <div id="conditionContainer" class="tw-container tw-flex tw-flex-col">
+        <div id="targetContainer" class="tw-container tw-grid tw-grid-cols-12 tw-gap-4">
+            <div class="tw-col-span-12">
+                {{ input_text.input_text("targetName")}}
+            </div>
+            <div class="tw-col-span-4">
+                {{ input.input("ra")}}
+            </div>
+            <div class="tw-col-span-4">
+                {{ input.input("dec")}}
+            </div>
+            <div class="tw-col-span-4">
+                {{ input.input("radius") }}
+            </div>
+        </div>
+        <div id="conditionContainer" class="tw-container tw-flex tw-flex-col tw-mt-4">
                 <label for="condition">Condition:</label>
                 <select 
                 class="tw-border-gray-400 tw-bg-transparent tw-border-2 tw-rounded-lg tw-w-1/4" 
@@ -25,13 +43,11 @@
         </div>
         <div id="inputsContainer" class="tw-container tw-py-4">
             <div id="constantDiv" class="tw-grid tw-grid-cols-12 tw-gap-4 tw-hidden">
-            {% import './filtersTemplates/select.html.jinja' as select %}
-            {% import './filtersTemplates/input_number.html.jinja' as input %}
-            {% import './filtersTemplates/input_text.html.jinja' as input_text %}
-            {% import './filtersTemplates/input_date.html.jinja' as input_date %}
                 <div class="tw-col-span-6 tw-flex tw-flex-col tw-relative">
-                    {{ input_text.input_text("property") }}
-                    <div id="valuesProperties" class="tw-absolute tw-w-full"></div>
+                    <div>
+                        {{ input_text.input_text("property") }}
+                        <div id="valuesProperties" class="tw-absolute tw-w-full"></div>
+                    </div>
                 </div>
                 <div class="tw-col-span-6">
                     {{ select.select("operation", ['equal', 'less', 'less eq', 'greater','greater eq']) }}
@@ -80,8 +96,10 @@
 <script>
     const search_conditions = ['constant', 'difference', '']
     const search_property = ['mag']
+    
     const select_condition = document.getElementById("condition");
     const save_btn = document.getElementById("saveBtn");
+    
     let previous_select_condition = ""
 
     select_condition.addEventListener('change', (e) =>{
@@ -97,10 +115,6 @@
             console.log("approved");
         };
     });
-
-    /* EventListener constant*/
-
-    /* EventListener difference*/
 
     /* dynamic search*/
     function autocompleteMatch(input, elementId) {
@@ -138,6 +152,7 @@
         document.getElementById(elementId).innerHTML = '';
     }
 
+    /* end dynamic search*/
 
     function selectValidations(val) {
 
@@ -174,7 +189,4 @@
         }
     }
 
-    /* validations constant*/
-
-    /* validations difference*/
 </script>

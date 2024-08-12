@@ -1,17 +1,16 @@
-{% macro input_text(name)%}
+{% macro input_text(name = "")%}
     <label for="{{name}}">{{name}}:</label>
-    <input type="text" id="{{name}}" name="{{name}}" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full">
+    <input type="text" id="{{name}}" name="{{name}}" class="tw-border-gray-400 tw-border-2 tw-rounded-lg tw-w-full ">
 
     <script>
         let input_{{name}} = document.getElementById("{{name}}");
         let input_boolean_{{name}} = false;
 
-        if({{name}} == "property"){
-            input_{{name}}.addEventListener('onkeyup', (e) =>{
-                console.log("hola")
-                showResults(e.value, 'property','valuesProperties');
-            })
-        }
+        {% if name == "property" %}
+            document.getElementById("{{name}}").addEventListener('keyup', (e) =>{
+                showResults(e.target.value, 'property','valuesProperties');
+            });
+        {% endif %}
 
         input_{{name}}.addEventListener('change', (e) =>{
         let messageHTML = document.getElementById(`${e.target.id}-error`);
