@@ -425,6 +425,6 @@ def insert_many_aid_ztf_and_atlas_detections(init_psql, init_mongo):
 
 @pytest.fixture(scope="session")
 def test_client(env_vars):
-    from api.api import app
+    from lightcurve_api.api import app
 
     return TestClient(app)

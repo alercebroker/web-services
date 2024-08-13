@@ -1,7 +1,7 @@
 # ALeRCE Lightcurve API
 ## For developers
 Set up environment variables. Look at [example](.env.example) 
-Run with `poetry run uvicorn api.api:app` or `poetry run dev`
+Run with `poetry run uvicorn lightcurve_api.api:app` or `poetry run dev`
 
 ### Connecting to remote databases without public IPs
 If you want to test against a remote database that doesn't have public IP enabled, you can connect using an SSH tunnel via a proxy server. Check the EC2 console for the IP of the proxy server or ask on slack.

@@ -19,7 +19,7 @@ from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
 templates = Jinja2Templates(
-    directory="src/api/templates", autoescape=True, auto_reload=True
+    directory="src/lightcurve_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8000"
