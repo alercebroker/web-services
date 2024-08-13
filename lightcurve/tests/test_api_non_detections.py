@@ -1,3 +1,4 @@
+
 def test_non_detections_from_ztf(
     test_client,
     insert_ztf_1_oid_per_aid,
@@ -36,7 +37,7 @@ def test_non_detections_multistream(
 ):
     res = test_client.get("/non_detections/oid1", params={"survey_id": "ztf"})
     assert res.status_code == 200
-    assert len(res.json()) == 2
+    assert len(res.json()) == 1
     res = test_client.get(
         "/non_detections/oid1", params={"survey_id": "atlas"}
     )

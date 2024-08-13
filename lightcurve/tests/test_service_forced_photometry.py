@@ -1,6 +1,6 @@
 import pytest
 from core.exceptions import SurveyIdError
-from core.models import ForcedPhotometry as ForcedPhotometryModel
+from core.model import ForcedPhotometry as ForcedPhotometryModel
 from core.service import get_forced_photometry
 
 

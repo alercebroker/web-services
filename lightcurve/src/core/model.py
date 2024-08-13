@@ -110,6 +110,7 @@ class LightcurveModel(BaseModel):
     e_brightness: List[float | int]
     fid: List[str]
 
-
+    
 class LightcurveWithPeriod(LightcurveModel):
     period: float | int
+

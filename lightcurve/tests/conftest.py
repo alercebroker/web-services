@@ -5,6 +5,7 @@ import psycopg2
 import pytest
 from db_plugins.db.mongo._connection import MongoConnection
 from db_plugins.db.sql._connection import PsqlDatabase as DbpDatabase
+
 from db_plugins.db.sql.models import (
     Detection,
     ForcedPhotometry,

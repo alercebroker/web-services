@@ -1,6 +1,6 @@
 import pytest
 from core.exceptions import AtlasNonDetectionError, SurveyIdError
-from core.models import NonDetection as NonDetectionModel
+from core.model import NonDetection as NonDetectionModel
 from core.service import get_non_detections
 from test_utils import required_non_detection_fields
 

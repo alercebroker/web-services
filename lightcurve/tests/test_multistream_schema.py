@@ -1,5 +1,5 @@
-from core.models import Detection as DetectionModel
-from core.models import NonDetection as NonDetectionModel
+from core.model import Detection as DetectionModel
+from core.model import NonDetection as NonDetectionModel
 from core.service import (
     _ztf_detection_to_multistream,
     _ztf_non_detection_to_multistream,

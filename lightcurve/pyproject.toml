@@ -58,4 +58,3 @@ line-length = 79
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
 tunnel = "scripts.sshproxy:run_tunnel"
-
