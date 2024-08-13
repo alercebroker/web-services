@@ -1,6 +1,6 @@
 import pytest
 from core.exceptions import SurveyIdError
-from core.service import get_lightcurve
+from core.services.lightcurve_service import get_lightcurve
 
 
 def test_get_ztf_lightcurve(

@@ -1,7 +1,7 @@
 import os
 
 from test_utils import create_token
-from core.service import remove_duplicate_forced_photometry_by_pid
+from core.services.lightcurve_service import remove_duplicate_forced_photometry_by_pid
 
 
 def test_forced_photometry_from_ztf(

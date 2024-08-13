@@ -1,4 +1,4 @@
-from core.service import get_period
+from core.services.lightcurve_service import get_period
 
 
 def test_get_period(

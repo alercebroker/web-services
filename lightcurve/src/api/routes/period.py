@@ -3,7 +3,7 @@ from fastapi import APIRouter
 
 from core.compute_periodogram import PeriodogramComputer
 from core.harmonics import compute_chi_squared
-from core.models import LightcurveModel, LightcurveWithPeriod
+from core.models.lightcurve_model import LightcurveModel, LightcurveWithPeriod
 
 periodogram_computer = PeriodogramComputer()
 

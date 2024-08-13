@@ -3,7 +3,7 @@ import os
 from typing import Annotated
 from fastapi import Query
 
-from core.service import (
+from core.services.lightcurve_service import (
     get_data_release,
     get_detections,
     get_non_detections,

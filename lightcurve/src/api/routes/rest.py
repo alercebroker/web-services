@@ -5,7 +5,7 @@ from ralidator_fastapi.decorators import (
     set_permissions_decorator,
 )
 
-from core.service import (
+from core.services.lightcurve_service import (
     get_detections,
     get_forced_photometry,
     get_lightcurve,

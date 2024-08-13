@@ -16,18 +16,18 @@ from returns.result import Failure, Result, Success
 from sqlalchemy import Row, select, text
 from sqlalchemy.orm import Session
 
-from .exceptions import (
+from ..exceptions import (
     AtlasNonDetectionError,
     DatabaseError,
     ObjectNotFound,
     SurveyIdError,
     ParseError,
 )
-from .models import DataReleaseDetection as DataReleaseDetectionModel
-from .models import Detection as DetectionModel
-from .models import Feature as FeatureModel
-from .models import ForcedPhotometry as ForcedPhotometryModel
-from .models import NonDetection as NonDetectionModel
+from ..models.lightcurve_model import DataReleaseDetection as DataReleaseDetectionModel
+from ..models.lightcurve_model import Detection as DetectionModel
+from ..models.lightcurve_model import Feature as FeatureModel
+from ..models.lightcurve_model import ForcedPhotometry as ForcedPhotometryModel
+from ..models.lightcurve_model import NonDetection as NonDetectionModel
 from config import app_config
 import math
 
