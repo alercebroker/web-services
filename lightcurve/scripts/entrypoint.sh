@@ -1,3 +1,3 @@
 #!/usr/bin/env sh
 
-poetry run uvicorn --port $PORT lightcurve_api.api:app
+poetry run uvicorn --port $PORT $SERVICE.api:app
