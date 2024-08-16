@@ -15,7 +15,7 @@ templates = Jinja2Templates(
     directory="src/magstats_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
-    "OBJECT_API_URL", "http://localhost:8003"
+    "OBJECT_API_URL", "http://localhost:8000"
 )
 
 @router.get("/mag/{oid}", response_class=HTMLResponse)
