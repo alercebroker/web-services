@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Query
 import json
 
-from core._services.object import get_object, get_mag_stats, get_probabilities,get_taxonomies
+from core.services.object import get_object, get_mag_stats, get_probabilities,get_taxonomies
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
