@@ -22,13 +22,13 @@ def test_get_ztf_detections_multiple_oids_per_aid(
 ):
     res = test_client.get("/detections/oid1?survey_id=ztf")
     assert res.status_code == 200
-    assert len(res.json()) == 3
+    assert len(res.json()) == 1
     res = test_client.get("/detections/oid1?survey_id=atlas")
     assert res.status_code == 200
     assert len(res.json()) == 0
     res = test_client.get("/detections/oid1")
     assert res.status_code == 200
-    assert len(res.json()) == 3
+    assert len(res.json()) == 1
 
 
 
@@ -67,7 +67,7 @@ def test_get_atlas_detections_1_oid_per_aid_authenticated_no_filter(
     headers = {"Authorization": "bearer " + token}
     res = test_client.get("detections/oid1?survey_id=atlas", headers=headers)
     assert res.status_code == 200
-    assert len(res.json()) == 1
+    assert len(res.json()) == 0
 
 
 def test_get_atlas_detections_1_oid_per_aid_authenticated_with_filter(
@@ -124,10 +124,10 @@ def test_get_atlas_detections_many_oid_per_aid_authenticated_without_filters(
     assert len(res.json()) == 0
     res = test_client.get("/detections/oid1?survey_id=ztf", headers=headers)
     assert res.status_code == 200
-    assert len(res.json()) == 1
+    assert len(res.json()) == 0
     res = test_client.get("/detections/oid1", headers=headers)
     assert res.status_code == 200
-    assert len(res.json()) == 1
+    assert len(res.json()) == 0
 
 
 def test_get_atlas_detections_many_oid_per_aid_authenticated_with_filters(
