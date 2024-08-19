@@ -22,15 +22,13 @@ import test_utils
 def docker_compose_command():
     compose_version = os.getenv("COMPOSE_VERSION", "v2")
     if compose_version == "v1":
-        return "docker-compose"
+        return "docker compose"
     return "docker-compose"
 
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
-    path = pathlib.Path(os.path.dirname(__file__)).parent / "docker-compose.yml"
-    print("HERE-------------------------------------")
-    print(path)
+    path = pathlib.Path(pytestconfig.rootdir) / "tests/docker-compose.yml"
     return path
 
 
@@ -427,6 +425,6 @@ def insert_many_aid_ztf_and_atlas_detections(init_psql, init_mongo):
 
 @pytest.fixture(scope="session")
 def test_client(env_vars):
-    from api.api import app
+    from lightcuce_api.api import app
 
     return TestClient(app)

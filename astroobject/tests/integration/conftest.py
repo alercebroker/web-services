@@ -16,13 +16,12 @@ from db_plugins.db.sql._connection import PsqlDatabase
 def docker_compose_command():
     compose_version = os.getenv("COMPOSE_VERSION", "v1")
     if compose_version == "v1":
-        return "docker-compose"
+        return "docker compose"
     return "docker compose"
 
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
-    print(pytestconfig.rootdir)
     try:
         path = (
             pathlib.Path(pytestconfig.rootdir) / "tests/integration/docker-compose.yaml"
