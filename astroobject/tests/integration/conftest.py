@@ -22,6 +22,7 @@ def docker_compose_command():
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
+    print(pytestconfig.rootdir)
     try:
         path = (
             pathlib.Path(pytestconfig.rootdir) / "tests/integration/docker-compose.yaml"

@@ -28,7 +28,9 @@ def docker_compose_command():
 
 @pytest.fixture(scope="session")
 def docker_compose_file(pytestconfig):
-    path = pathlib.Path(pytestconfig.rootdir) / "tests/docker-compose.yml"
+    path = pathlib.Path(os.path.dirname(__file__)).parent / "docker-compose.yml"
+    print("path")
+    assert False
     return path
 
 
