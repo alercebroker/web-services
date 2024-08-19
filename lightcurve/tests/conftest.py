@@ -30,7 +30,7 @@ def docker_compose_command():
 def docker_compose_file(pytestconfig):
     path = pathlib.Path(os.path.dirname(__file__)).parent / "docker-compose.yml"
     print(path)
-    assert False
+    assert path == "."
     return path
 
 
