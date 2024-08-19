@@ -13,6 +13,16 @@ entries:
     version: 23.12.8
   astroobject:
   - apiVersion: v2
+    appVersion: 24.8.1-rc31
+    created: "2024-08-19T14:48:14.736083119Z"
+    description: Astro Object API for ALeRCE Clients
+    digest: b3844e4ce0951db54ec5ceb0d58f2200f27913fc495f52cc6bf5e80d0f6be4e1
+    name: astroobject
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/astroobject-24.8.78/astroobject-24.8.78.tgz
+    version: 24.8.78
+  - apiVersion: v2
     appVersion: 24.5.1-rc30
     created: "2024-05-06T16:12:19.980822212Z"
     description: Astro Object API for ALeRCE Clients
@@ -513,6 +523,16 @@ entries:
     - https://github.com/alercebroker/web-services/releases/download/astroobject-0.1.18/astroobject-0.1.18.tgz
     version: 0.1.18
   lightcurve:
+  - apiVersion: v2
+    appVersion: 24.8.1-rc106
+    created: "2024-08-19T14:48:14.892567595Z"
+    description: Lightcurve API for ALeRCE Clients
+    digest: f5d1ccbc5c77b76421b5d35f615af44515837bc21fde5469ea375e8cb44d7089
+    name: lightcurve
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/lightcurve-24.8.139/lightcurve-24.8.139.tgz
+    version: 24.8.139
   - apiVersion: v2
     appVersion: 24.7.1-rc105
     created: "2024-07-09T16:32:29.417503863Z"
@@ -1804,4 +1824,4 @@ entries:
     urls:
     - https://github.com/alercebroker/web-services/releases/download/xmatch-service-24.4.8/xmatch-service-24.4.8.tgz
     version: 24.4.8
-generated: "2024-07-09T16:32:29.417996624Z"
+generated: "2024-08-19T14:48:14.893071525Z"
