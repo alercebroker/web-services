@@ -1,7 +1,7 @@
 import pytest
 from core.exceptions import SurveyIdError
-from core.models import Detection as DetectionModel
-from core.service import get_detections
+from core.models.lightcurve_model import Detection as DetectionModel
+from core.services.lightcurve_service import get_detections
 
 
 def test_get_ztf_detections(

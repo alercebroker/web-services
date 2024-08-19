@@ -40,7 +40,7 @@ app.include_router(rest.router)
 app.include_router(prefix="/htmx", router=htmx.router)
 app.include_router(prefix="/period", router=period.router)
 
-app.mount("/static", StaticFiles(directory="src/api/static"), name="static")
+app.mount("/static", StaticFiles(directory="src/lightcurve_api/static"), name="static")
 
 
 @app.get("/openapi.json")

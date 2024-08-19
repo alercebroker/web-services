@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [
     { include = "core", from = "src" },
     { include = "config", from = "src" },
-    { include = "api", from = "src" },
+    { include = "lightcurve_api", from = "src" },
     { include = "database", from = "src" },
 ]
 

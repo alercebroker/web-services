@@ -1,4 +1,4 @@
-from core.service import (
+from core.services.lightcurve_service import (
     _get_detections_sql,
     _get_forced_photometry_sql,
     _get_non_detections_sql,

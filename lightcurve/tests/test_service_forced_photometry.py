@@ -1,7 +1,7 @@
 import pytest
 from core.exceptions import SurveyIdError
-from core.models import ForcedPhotometry as ForcedPhotometryModel
-from core.service import get_forced_photometry
+from core.models.lightcurve_model import ForcedPhotometry as ForcedPhotometryModel
+from core.services.lightcurve_service import get_forced_photometry
 
 
 def test_get_ztf_forced_photometry(

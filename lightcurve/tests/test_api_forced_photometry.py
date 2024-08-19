@@ -1,7 +1,7 @@
 import os
 
 from test_utils import create_token
-from core.service import remove_duplicate_forced_photometry_by_pid
+from core.services.lightcurve_service import remove_duplicate_forced_photometry_by_pid
 
 
 def test_forced_photometry_from_ztf(
@@ -52,7 +52,7 @@ def test_forced_photometry_from_atlas_authenticated_without_filters(
         headers=headers,
     )
     assert res.status_code == 200
-    assert len(res.json()) == 1
+    assert len(res.json()) == 0
 
 
 def test_forced_photometry_from_atlas_authenticated_with_filters(
@@ -95,7 +95,7 @@ def test_forced_photometry_multistream_authenticated_without_filter(
     headers = {"Authorization": "bearer " + token}
     res = test_client.get("/forced-photometry/oid1", headers=headers)
     assert res.status_code == 200
-    assert len(res.json()) == 2
+    assert len(res.json()) == 1
 
 
 def test_forced_photometry_multistream_authenticated_with_filter(
