@@ -1,0 +1,1161 @@
+.tw-preflight :is(.tw-pointer-events-none) {
+  pointer-events: none;
+}
+
+.tw-preflight :is(.tw-pointer-events-auto) {
+  pointer-events: auto;
+}
+
+.tw-preflight :is(.tw-absolute) {
+  position: absolute;
+}
+
+.tw-preflight :is(.tw-relative) {
+  position: relative;
+}
+
+.tw-preflight :is(.tw-left-10) {
+  left: 2.5rem;
+}
+
+.tw-preflight :is(.tw-right-0) {
+  right: 0px;
+}
+
+.tw-preflight :is(.tw-top-1) {
+  top: 0.25rem;
+}
+
+.tw-preflight :is(.tw-top-1\/2) {
+  top: 50%;
+}
+
+.tw-preflight :is(.tw-z-\[9999\]) {
+  z-index: 9999;
+}
+
+.tw-preflight :is(.tw-col-span-1) {
+  grid-column: span 1 / span 1;
+}
+
+.tw-preflight :is(.tw-col-span-2) {
+  grid-column: span 2 / span 2;
+}
+
+.tw-preflight :is(.tw-col-span-4) {
+  grid-column: span 4 / span 4;
+}
+
+.tw-preflight :is(.tw-col-span-5) {
+  grid-column: span 5 / span 5;
+}
+
+.tw-preflight :is(.tw-m-auto) {
+  margin: auto;
+}
+
+.tw-preflight :is(.tw-mx-2) {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.tw-preflight :is(.tw-mx-auto) {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tw-preflight :is(.tw-mb-\[20px\]) {
+  margin-bottom: 20px;
+}
+
+.tw-preflight :is(.tw-me-2) {
+  margin-inline-end: 0.5rem;
+}
+
+.tw-preflight :is(.tw-ml-2) {
+  margin-left: 0.5rem;
+}
+
+.tw-preflight :is(.tw-mt-2) {
+  margin-top: 0.5rem;
+}
+
+.tw-preflight :is(.tw-mt-3) {
+  margin-top: 0.75rem;
+}
+
+.tw-preflight :is(.tw-mt-\[10px\]) {
+  margin-top: 10px;
+}
+
+.tw-preflight :is(.tw-inline) {
+  display: inline;
+}
+
+.tw-preflight :is(.tw-flex) {
+  display: flex;
+}
+
+.tw-preflight :is(.tw-grid) {
+  display: grid;
+}
+
+.tw-preflight :is(.tw-hidden) {
+  display: none;
+}
+
+.tw-preflight :is(.tw-h-32) {
+  height: 8rem;
+}
+
+.tw-preflight :is(.tw-h-5) {
+  height: 1.25rem;
+}
+
+.tw-preflight :is(.tw-h-6) {
+  height: 1.5rem;
+}
+
+.tw-preflight :is(.tw-w-12) {
+  width: 3rem;
+}
+
+.tw-preflight :is(.tw-w-32) {
+  width: 8rem;
+}
+
+.tw-preflight :is(.tw-w-5) {
+  width: 1.25rem;
+}
+
+.tw-preflight :is(.tw-w-6) {
+  width: 1.5rem;
+}
+
+.tw-preflight :is(.tw-w-\[95\%\]) {
+  width: 95%;
+}
+
+.tw-preflight :is(.tw-w-full) {
+  width: 100%;
+}
+
+.tw-preflight :is(.tw-min-w-full) {
+  min-width: 100%;
+}
+
+.tw-preflight :is(.-tw-translate-y-1) {
+  --tw-translate-y: -0.25rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.tw-preflight :is(.-tw-translate-y-1\/2) {
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.tw-preflight :is(.tw-transform) {
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+@keyframes tw-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tw-preflight :is(.tw-animate-spin) {
+  animation: tw-spin 1s linear infinite;
+}
+
+.tw-preflight :is(.tw-appearance-none) {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+}
+
+.tw-preflight :is(.tw-grid-cols-10) {
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+}
+
+.tw-preflight :is(.tw-grid-cols-6) {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.tw-preflight :is(.tw-flex-col) {
+  flex-direction: column;
+}
+
+.tw-preflight :is(.tw-place-content-center) {
+  place-content: center;
+}
+
+.tw-preflight :is(.tw-place-items-center) {
+  place-items: center;
+}
+
+.tw-preflight :is(.tw-items-center) {
+  align-items: center;
+}
+
+.tw-preflight :is(.tw-justify-center) {
+  justify-content: center;
+}
+
+.tw-preflight :is(.tw-justify-between) {
+  justify-content: space-between;
+}
+
+.tw-preflight :is(.tw-gap-1) {
+  gap: 0.25rem;
+}
+
+.tw-preflight :is(.tw-space-x-2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-x-reverse: 0;
+  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+}
+
+.tw-preflight :is(.tw-space-y-2 > :not([hidden]) ~ :not([hidden])) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
+}
+
+.tw-preflight :is(.tw-divide-y > :not([hidden]) ~ :not([hidden])) {
+  --tw-divide-y-reverse: 0;
+  border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+  border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
+}
+
+.tw-preflight :is(.tw-divide-gray-200 > :not([hidden]) ~ :not([hidden])) {
+  --tw-divide-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-divide-opacity));
+}
+
+.tw-preflight :is(.tw-place-self-center) {
+  place-self: center;
+}
+
+.tw-preflight :is(.tw-overflow-auto) {
+  overflow: auto;
+}
+
+.tw-preflight :is(.tw-rounded) {
+  border-radius: 0.25rem;
+}
+
+.tw-preflight :is(.tw-rounded-\[6px\]) {
+  border-radius: 6px;
+}
+
+.tw-preflight :is(.tw-rounded-full) {
+  border-radius: 9999px;
+}
+
+.tw-preflight :is(.tw-rounded-md) {
+  border-radius: 0.375rem;
+}
+
+.tw-preflight :is(.tw-border) {
+  border-width: 1px;
+}
+
+.tw-preflight :is(.tw-border-8) {
+  border-width: 8px;
+}
+
+.tw-preflight :is(.tw-border-b) {
+  border-bottom-width: 1px;
+}
+
+.tw-preflight :is(.tw-border-b-\[1px\]) {
+  border-bottom-width: 1px;
+}
+
+.tw-preflight :is(.tw-border-solid) {
+  border-style: solid;
+}
+
+.tw-preflight :is(.tw-border-blue-400) {
+  --tw-border-opacity: 1;
+  border-color: rgb(96 165 250 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-border-gray-300) {
+  --tw-border-opacity: 1;
+  border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-border-b-black) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-border-t-transparent) {
+  border-top-color: transparent;
+}
+
+.tw-preflight :is(.tw-border-opacity-20) {
+  --tw-border-opacity: 0.2;
+}
+
+.tw-preflight :is(.tw-bg-blue-500) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(59 130 246 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-gray-100) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-gray-900) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-green-500) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(34 197 94 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-transparent) {
+  background-color: transparent;
+}
+
+.tw-preflight :is(.tw-bg-white) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-p-2) {
+  padding: 0.5rem;
+}
+
+.tw-preflight :is(.tw-px-2) {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.tw-preflight :is(.tw-px-4) {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.tw-preflight :is(.tw-py-1) {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.tw-preflight :is(.tw-py-2) {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.tw-preflight :is(.tw-py-4) {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.tw-preflight :is(.tw-pl-\[10px\]) {
+  padding-left: 10px;
+}
+
+.tw-preflight :is(.tw-pl-\[5px\]) {
+  padding-left: 5px;
+}
+
+.tw-preflight :is(.tw-pr-2) {
+  padding-right: 0.5rem;
+}
+
+.tw-preflight :is(.tw-pr-\[10px\]) {
+  padding-right: 10px;
+}
+
+.tw-preflight :is(.tw-ps-2) {
+  padding-inline-start: 0.5rem;
+}
+
+.tw-preflight :is(.tw-pt-\[25px\]) {
+  padding-top: 25px;
+}
+
+.tw-preflight :is(.tw-pt-\[30px\]) {
+  padding-top: 30px;
+}
+
+.tw-preflight :is(.tw-text-center) {
+  text-align: center;
+}
+
+.tw-preflight :is(.tw-text-right) {
+  text-align: right;
+}
+
+.tw-preflight :is(.tw-text-2xl) {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+
+.tw-preflight :is(.tw-text-sm) {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.tw-preflight :is(.tw-text-xs) {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.tw-preflight :is(.tw-font-bold) {
+  font-weight: 700;
+}
+
+.tw-preflight :is(.tw-ordinal) {
+  --tw-ordinal: ordinal;
+  font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
+}
+
+.tw-preflight :is(.tw-text-\[\#1e1e1e\]) {
+  --tw-text-opacity: 1;
+  color: rgb(30 30 30 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-black) {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-gray-400) {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-gray-900) {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-red-500) {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-white) {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-opacity-50) {
+  opacity: 0.5;
+}
+
+.tw-preflight :is(.tw-shadow-2xl) {
+  --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.disabled\:bg-transparent {
+  background-color: transparent;
+}
+
+/* Optionally, adjust the opacity for a more subdued appearance */
+
+.disabled\:opacity-50 {
+  opacity: 0.5;
+  /* Adjust the opacity as needed */
+}
+
+.disabled\:outline {
+  outline-style: solid;
+}
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip .fa-question-circle {
+  cursor: pointer;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  width: -moz-max-content;
+  width: max-content;
+  max-width: 500px;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 4px 8px;
+  position: absolute;
+  font-size: 12px;
+  z-index: 999;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.tw-preflight *,
+::before,
+::after {
+  box-sizing: border-box;
+  /* 1 */
+  border-width: 0;
+  /* 2 */
+  border-style: solid;
+  /* 2 */
+  border-color: #e5e7eb;
+  /* 2 */
+}
+
+.tw-preflight ::before,
+.tw-preflight ::after {
+  --tw-content: "";
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+*/
+
+.tw-preflight {
+  line-height: 1.5;
+  /* 1 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+  -moz-tab-size: 4;
+  /* 3 */
+  -o-tab-size: 4;
+  tab-size: 4;
+  /* 3 */
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
+  /* 4 */
+  font-feature-settings: normal;
+  /* 5 */
+  font-variation-settings: normal;
+  /* 6 */
+  margin: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+.tw-preflight hr {
+  height: 0;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  border-top-width: 1px;
+  /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+.tw-preflight abbr:where([title]) {
+  -webkit-text-decoration: underline dotted;
+  text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+.tw-preflight h1,
+.tw-preflight h2,
+.tw-preflight h3,
+.tw-preflight h4,
+.tw-preflight h5,
+.tw-preflight h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+.tw-preflight a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+.tw-preflight b,
+.tw-preflight strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font family by default.
+2. Correct the odd `em` font sizing in all browsers.
+*/
+
+.tw-preflight code,
+.tw-preflight kbd,
+.tw-preflight samp,
+.tw-preflight pre {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+.tw-preflight small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+.tw-preflight sub,
+.tw-preflight sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.tw-preflight sub {
+  bottom: -0.25em;
+}
+
+.tw-preflight sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+.tw-preflight table {
+  text-indent: 0;
+  /* 1 */
+  border-color: inherit;
+  /* 2 */
+  border-collapse: collapse;
+  /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+.tw-preflight button,
+.tw-preflight input,
+.tw-preflight optgroup,
+.tw-preflight select,
+.tw-preflight textarea {
+  font-family: inherit;
+  /* 1 */
+  font-feature-settings: inherit;
+  /* 1 */
+  font-variation-settings: inherit;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  font-weight: inherit;
+  /* 1 */
+  line-height: inherit;
+  /* 1 */
+  color: inherit;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+  padding: 0;
+  /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+.tw-preflight button,
+.tw-preflight select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+.tw-preflight button,
+.tw-preflight [type="button"],
+.tw-preflight [type="reset"],
+.tw-preflight [type="submit"] {
+  -webkit-appearance: button;
+  /* 1 */
+  background-color: transparent;
+  /* 2 */
+  background-image: none;
+  /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+.tw-preflight :-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+.tw-preflight :-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+.tw-preflight progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+.tw-preflight ::-webkit-inner-spin-button,
+.tw-preflight ::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+.tw-preflight [type="search"] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+.tw-preflight ::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+.tw-preflight ::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+.tw-preflight summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+.tw-preflight blockquote,
+.tw-preflight dl,
+.tw-preflight dd,
+.tw-preflight h1,
+.tw-preflight h2,
+.tw-preflight h3,
+.tw-preflight h4,
+.tw-preflight h5,
+.tw-preflight h6,
+.tw-preflight hr,
+.tw-preflight figure,
+.tw-preflight p,
+.tw-preflight pre {
+  margin: 0;
+}
+
+.tw-preflight fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+.tw-preflight legend {
+  padding: 0;
+}
+
+.tw-preflight ol,
+.tw-preflight ul,
+.tw-preflight menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+
+.tw-preflight dialog {
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+.tw-preflight textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+.tw-preflight input::-moz-placeholder,
+.tw-preflight textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+.tw-preflight input::-moz-placeholder, .tw-preflight textarea::-moz-placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+.tw-preflight input::placeholder,
+.tw-preflight textarea::placeholder {
+  opacity: 1;
+  /* 1 */
+  color: #9ca3af;
+  /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+.tw-preflight button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+.tw-preflight :disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+.tw-preflight img,
+.tw-preflight svg,
+.tw-preflight,
+.tw-preflight canvas,
+.tw-preflight,
+.tw-preflight iframe,
+.tw-preflight embed,
+.tw-preflight object {
+  display: block;
+  /* 1 */
+  vertical-align: middle;
+  /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+.tw-preflight img,
+.tw-preflight video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+
+.tw-preflight [hidden] {
+  display: none;
+}
+
+.tw-preflight *,
+.tw-preflight ::before,
+.tw-preflight ::after {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x: ;
+  --tw-pan-y: ;
+  --tw-pinch-zoom: ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position: ;
+  --tw-gradient-via-position: ;
+  --tw-gradient-to-position: ;
+  --tw-ordinal: ;
+  --tw-slashed-zero: ;
+  --tw-numeric-figure: ;
+  --tw-numeric-spacing: ;
+  --tw-numeric-fraction: ;
+  --tw-ring-inset: ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur: ;
+  --tw-brightness: ;
+  --tw-contrast: ;
+  --tw-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-invert: ;
+  --tw-saturate: ;
+  --tw-sepia: ;
+  --tw-drop-shadow: ;
+  --tw-backdrop-blur: ;
+  --tw-backdrop-brightness: ;
+  --tw-backdrop-contrast: ;
+  --tw-backdrop-grayscale: ;
+  --tw-backdrop-hue-rotate: ;
+  --tw-backdrop-invert: ;
+  --tw-backdrop-opacity: ;
+  --tw-backdrop-saturate: ;
+  --tw-backdrop-sepia: ;
+}
+
+.tw-preflight ::backdrop {
+  --tw-border-spacing-x: 0;
+  --tw-border-spacing-y: 0;
+  --tw-translate-x: 0;
+  --tw-translate-y: 0;
+  --tw-rotate: 0;
+  --tw-skew-x: 0;
+  --tw-skew-y: 0;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  --tw-pan-x: ;
+  --tw-pan-y: ;
+  --tw-pinch-zoom: ;
+  --tw-scroll-snap-strictness: proximity;
+  --tw-gradient-from-position: ;
+  --tw-gradient-via-position: ;
+  --tw-gradient-to-position: ;
+  --tw-ordinal: ;
+  --tw-slashed-zero: ;
+  --tw-numeric-figure: ;
+  --tw-numeric-spacing: ;
+  --tw-numeric-fraction: ;
+  --tw-ring-inset: ;
+  --tw-ring-offset-width: 0px;
+  --tw-ring-offset-color: #fff;
+  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-shadow: 0 0 #0000;
+  --tw-ring-shadow: 0 0 #0000;
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  --tw-blur: ;
+  --tw-brightness: ;
+  --tw-contrast: ;
+  --tw-grayscale: ;
+  --tw-hue-rotate: ;
+  --tw-invert: ;
+  --tw-saturate: ;
+  --tw-sepia: ;
+  --tw-drop-shadow: ;
+  --tw-backdrop-blur: ;
+  --tw-backdrop-brightness: ;
+  --tw-backdrop-contrast: ;
+  --tw-backdrop-grayscale: ;
+  --tw-backdrop-hue-rotate: ;
+  --tw-backdrop-invert: ;
+  --tw-backdrop-opacity: ;
+  --tw-backdrop-saturate: ;
+  --tw-backdrop-sepia: ;
+}
+
+.tw-table-full {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.tw-table-full colgroup,
+.tw-table-full tbody,
+.tw-table-full tr,
+.tw-table-full td {
+  width: 100%;
+}
+
+.tw-preflight :is(.hover\:tw-cursor-pointer:hover) {
+  cursor: pointer;
+}
+
+.tw-preflight :is(.hover\:tw-bg-\[\#757575\]:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(117 117 117 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.hover\:tw-bg-blue-700:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.hover\:tw-bg-gray-200:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.hover\:tw-bg-green-600:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(22 163 74 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.hover\:tw-bg-green-700:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(21 128 61 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.hover\:tw-text-gray-600:hover) {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.hover\:tw-opacity-70:hover) {
+  opacity: 0.7;
+}
+
+.tw-preflight :is(.disabled\:tw-bg-transparent:disabled) {
+  background-color: transparent;
+}
+
+.tw-preflight :is(.disabled\:tw-opacity-50:disabled) {
+  opacity: 0.5;
+}
+
+.tw-preflight :is(.disabled\:tw-outline:disabled) {
+  outline-style: solid;
+}
+
+.tw-preflight :is(.tw-group:hover .group-hover\:tw-flex) {
+  display: flex;
+}
+
+.tw-preflight :is(.tw-group:hover .group-hover\:tw-opacity-60) {
+  opacity: 0.6;
+}
+
+.tw-preflight :is(:is(.tw-dark .dark\:tw-divide-\[\#404040\]) > :not([hidden]) ~ :not([hidden])) {
+  --tw-divide-opacity: 1;
+  border-color: rgb(64 64 64 / var(--tw-divide-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-border-\[\#404040\]) {
+  --tw-border-opacity: 1;
+  border-color: rgb(64 64 64 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-border-b-white) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-border-opacity-20) {
+  --tw-border-opacity: 0.2;
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#1e1e1e\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 30 30 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#252525\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(37 37 37 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-green-700) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(21 128 61 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-white) {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:hover\:tw-bg-\[\#353535\]:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(53 53 53 / var(--tw-bg-opacity));
+}
