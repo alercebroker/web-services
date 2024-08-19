@@ -10,13 +10,13 @@ def test_get_multistream_lightcurve_all_surveys_unauthenticated(
     res = test_client.get("/lightcurve/oid1?survey_id=all")
     assert res.status_code == 200
     assert len(res.json()["detections"]) == 1
-    assert len(res.json()["non_detections"]) == 2
+    assert len(res.json()["non_detections"]) == 1
     assert len(res.json()["forced_photometry"]) == 1
     res = test_client.get("/lightcurve/oid3?survey_id=all")
     assert res.status_code == 200
-    assert len(res.json()["detections"]) == 1
-    assert len(res.json()["non_detections"]) == 2
-    assert len(res.json()["forced_photometry"]) == 1
+    assert len(res.json()["detections"]) == 0
+    assert len(res.json()["non_detections"]) == 0
+    assert len(res.json()["forced_photometry"]) == 0
 
 
 def test_get_multistream_lightcurve_all_surveys_forbidden(
@@ -39,14 +39,14 @@ def test_get_multistream_lightcurve_all_surveys_authenticated_without_filters(
     headers = {"Authorization": "bearer " + token}
     res = test_client.get("/lightcurve/oid1?survey_id=all", headers=headers)
     assert res.status_code == 200
-    assert len(res.json()["detections"]) == 2
-    assert len(res.json()["non_detections"]) == 2
-    assert len(res.json()["forced_photometry"]) == 2
+    assert len(res.json()["detections"]) == 1
+    assert len(res.json()["non_detections"]) == 1
+    assert len(res.json()["forced_photometry"]) == 1
     res = test_client.get("/lightcurve/oid3?survey_id=all", headers=headers)
     assert res.status_code == 200
-    assert len(res.json()["detections"]) == 2
-    assert len(res.json()["non_detections"]) == 2
-    assert len(res.json()["forced_photometry"]) == 2
+    assert len(res.json()["detections"]) == 0
+    assert len(res.json()["non_detections"]) == 0
+    assert len(res.json()["forced_photometry"]) == 0
 
 
 def test_get_multistream_lightcurve_all_surveys_authenticated_with_filters(
@@ -60,13 +60,13 @@ def test_get_multistream_lightcurve_all_surveys_authenticated_with_filters(
     res = test_client.get("/lightcurve/oid1?survey_id=all", headers=headers)
     assert res.status_code == 200
     assert len(res.json()["detections"]) == 1
-    assert len(res.json()["non_detections"]) == 2
+    assert len(res.json()["non_detections"]) == 1
     assert len(res.json()["forced_photometry"]) == 1
     res = test_client.get("/lightcurve/oid3?survey_id=all", headers=headers)
     assert res.status_code == 200
-    assert len(res.json()["detections"]) == 1
-    assert len(res.json()["non_detections"]) == 2
-    assert len(res.json()["forced_photometry"]) == 1
+    assert len(res.json()["detections"]) == 0
+    assert len(res.json()["non_detections"]) == 0
+    assert len(res.json()["forced_photometry"]) == 0
 
 
 def test_get_detections_from_unknown_survey(

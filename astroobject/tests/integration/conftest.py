@@ -14,7 +14,7 @@ from db_plugins.db.sql._connection import PsqlDatabase
 
 @pytest.fixture(scope="session")
 def docker_compose_command():
-    compose_version = os.getenv("COMPOSE_VERSION", "v1")
+    compose_version = os.getenv("COMPOSE_VERSION", "v2")
     if compose_version == "v1":
         return "docker-compose"
     return "docker compose"

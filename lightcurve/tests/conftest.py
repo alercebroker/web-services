@@ -23,7 +23,7 @@ def docker_compose_command():
     compose_version = os.getenv("COMPOSE_VERSION", "v2")
     if compose_version == "v1":
         return "docker-compose"
-    return "docker-compose"
+    return "docker compose"
 
 
 @pytest.fixture(scope="session")
