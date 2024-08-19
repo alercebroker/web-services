@@ -21,7 +21,7 @@ RUN poetry install --no-root --without=test
 FROM node:22-alpine as tailwindcss_lightcurve
 COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
-RUN npx tailwindcss -i /lightcurve/src/api/templates/main.css -o /compiled/main.css
+RUN npx tailwindcss -i /lightcurve/src/lightcurve_api/templates/main.css -o /compiled/main.css
 
 FROM node:22-alpine as tailwindcss_object
 COPY ./lightcurve/ /lightcurve/

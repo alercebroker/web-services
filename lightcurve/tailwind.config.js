@@ -6,6 +6,7 @@ module.exports = {
   content: [
     "./src/lightcurve_api/templates//*.{html.jinja,html,css}",
     "./src/magstats_api/templates//*.{html.jinja,html,css}",
+    "./src/object_api/templates//*.{html.jinja,html,css}",
   ],
   theme: {
     extend: {},
