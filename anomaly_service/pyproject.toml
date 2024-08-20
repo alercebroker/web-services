@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "anomaly-service"
+version = "0.1.0"
+description = ""
+authors = ["Bastiancito <bastian.gamboa@ug.uchile.cl>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+sqlalchemy = "^2.0.32"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
