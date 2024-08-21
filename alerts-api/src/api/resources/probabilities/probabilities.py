@@ -59,5 +59,7 @@ class Probabilities(Resource):
             order = dict(zip(latest.classes, range(len(latest.classes))))
             return order[e.class_name]
 
-        probs.sort(key=sorting_order)
-        return probs
+        taxonomies_names = [x.classifier_name for x in taxonomy]
+        probs_filtered = list(filter(lambda x: x.classifier_name in taxonomies_names, probs))
+        probs_filtered.sort(key=sorting_order)
+        return probs_filtered
