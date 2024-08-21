@@ -163,7 +163,7 @@ jobs:
           CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
 
   deploy-production:
-    if: inputs.event == 'push'
+    if: inputs.event == 'release'
     needs: release-chart
     runs-on: ubuntu-latest
     permissions:
