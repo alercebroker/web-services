@@ -12,7 +12,6 @@ def get_db_url(config: dict):
 
 # logger = logging.getLogger(__name__)
 
-
 # class PsqlDatabase:
 #     def __init__(self, db_config: dict, engine=None) -> None:
 #         db_url = get_db_url(db_config)
