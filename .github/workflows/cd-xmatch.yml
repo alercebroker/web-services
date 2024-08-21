@@ -14,6 +14,7 @@ jobs:
     uses: ./.github/workflows/cd-template.yml
     with:
       packages: 'xmatch-service' # comma separated list of packages
+      event: ${{ github.event_name }} 
     secrets:
       ADMIN_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
       AWS_ROLE_STAGING: '${{ secrets.AWS_ROLE_STAGING }}'
