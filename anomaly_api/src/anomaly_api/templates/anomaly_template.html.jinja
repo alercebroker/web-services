@@ -7,11 +7,11 @@
         <div id="filtersContainer" class="tw-container tw-col-span-4 tw-border-gray-600 tw-rounded-xl tw-bg-lime-300">
 
             <div id="oidSearchContainer" class="tw-mx-4 tw-my-4">
-                <div id="btnOidSearch" class="tw-bg-blue-600 tw-text-blue-100 tw-text-lg tw-rounded-lg tw-mb-4">
+                <div id="btnOidSearch" class="tw-bg-blue-600 tw-text-blue-100 tw-rounded-lg tw-mb-4">
                     oid
 
                 </div>
-                <div id="inputOidContainer" class="tw-px-4 tw-py-4 tw-bg-white tw-w-5/5 tw-flex tw-flex-col tw-items-center tw-rounded-lg">
+                <div id="inputOidContainer" class="tw-p-4 tw-bg-white tw-w-5/5 tw-flex tw-flex-col tw-items-center tw-rounded-lg tw-hidden">
                     <span>Object id</span>
                     <input type="text" class="tw-w-2/5">
                     <button class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-w-1/6 tw-self-end ">search</button>
@@ -23,7 +23,7 @@
                 <div id="scoreSearchBtn" class="tw-bg-blue-600 tw-text-blue-100 tw-rounded-lg tw-mb-4">
                     score search
                 </div>
-                <div id="formContainer" class="tw-bg-white tw-rounded-lg tw-px-4">
+                <div id="scoreFormContainer" class="tw-bg-white tw-rounded-lg tw-p-4 tw-hidden">
                     <div id="numberDectections" class="tw-my-4">
                         <p>number of detections</p>
                         <div class="tw-flex tw-gap-4">
@@ -39,9 +39,9 @@
                         </div>
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
-                        <div class="tw-col-span-3">
+                        <div id="scoreCategory" class="tw-col-span-3">
                             <label for="Category">Category:</label>
-                            <select id="Category">
+                            <select id="Category" class="tw-w-full">
                             <option value=""></option>
                             <option value="transient">Transient</option>
                             <option value="stochastic">Stochastic</option>
@@ -94,7 +94,7 @@
                 <div id="multipleScoreSearchBtn" class="tw-bg-blue-600 tw-text-blue-100 tw-rounded-lg tw-mb-4">
                     multiple score search
                 </div>
-                <div id="multipleFormContainer" class="tw-bg-white tw-rounded-lg tw-px-4">
+                <div id="multipleFormContainer" class="tw-bg-white tw-rounded-lg tw-p-4 tw-hidden">
                     <div id="multipleNumberDectections" class="tw-my-4">
                         <p>number of detections</p>
                         <div class="tw-flex tw-gap-4">
@@ -222,7 +222,7 @@
                 <div id="probabilitySearchBtn" class="tw-bg-blue-600 tw-text-blue-100 tw-rounded-lg tw-mb-4">
                     probability score search
                 </div>
-                <div id="probabilityFormContainer" class="tw-bg-white tw-rounded-lg tw-px-4">
+                <div id="probabilityFormContainer" class="tw-bg-white tw-rounded-lg tw-p-4 tw-hidden">
                     <div id="numberDectections" class="tw-my-4">
                         <p>number of detections</p>
                         <div class="tw-flex tw-gap-4">
@@ -306,3 +306,40 @@
         </div>
     </div>
 </div>
+
+<script>
+    const btnOid = document.getElementById("btnOidSearch");
+    const btnScore = document.getElementById("scoreSearchBtn");
+    const btnMultipleScore = document.getElementById("multipleScoreSearchBtn");
+    const btnProbability = document.getElementById("probabilitySearchBtn");
+
+    btnOid.addEventListener("click", () => {
+        handleVisibility("inputOidContainer");
+        console.log("hola");
+    });
+
+    btnScore.addEventListener("click", () => {
+        handleVisibility("scoreFormContainer");
+        console.log("hola");
+    });
+
+    btnMultipleScore.addEventListener("click", () => {
+        handleVisibility("multipleFormContainer");
+        console.log("hola");
+    });
+
+    btnProbability.addEventListener("click", () => {
+        handleVisibility("probabilityFormContainer");
+        console.log("hola");
+    });
+
+
+    function handleVisibility(id){
+        let element = document.getElementById(id);
+        if(element.classList.contains("tw-hidden")) {
+            element.classList.remove("tw-hidden");
+        } else {
+            element.classList.add("tw-hidden");
+        }
+    }
+</script>
