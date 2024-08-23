@@ -48,6 +48,14 @@
   grid-column: 1 / -1
 }
 
+.tw-preflight :is(.tw-col-span-6) {
+  grid-column: span 6 / span 6
+}
+
+.tw-preflight :is(.tw-col-span-4) {
+  grid-column: span 4 / span 4
+}
+
 .tw-preflight :is(.tw-m-4) {
   margin: 1rem
 }
@@ -99,12 +107,36 @@
   width: 100%
 }
 
+.tw-preflight :is(.tw-w-2\/6) {
+  width: 33.333333%
+}
+
+.tw-preflight :is(.tw-basis-3\/6) {
+  flex-basis: 50%
+}
+
+.tw-preflight :is(.tw-basis-1\/4) {
+  flex-basis: 25%
+}
+
 .tw-preflight :is(.tw-grid-cols-12) {
   grid-template-columns: repeat(12, minmax(0, 1fr))
 }
 
+.tw-preflight :is(.tw-grid-cols-4) {
+  grid-template-columns: repeat(4, minmax(0, 1fr))
+}
+
+.tw-preflight :is(.tw-flex-row) {
+  flex-direction: row
+}
+
 .tw-preflight :is(.tw-flex-col) {
   flex-direction: column
+}
+
+.tw-preflight :is(.tw-flex-wrap) {
+  flex-wrap: wrap
 }
 
 .tw-preflight :is(.tw-items-center) {
@@ -139,12 +171,12 @@
   border-radius: 0.75rem
 }
 
-.tw-preflight :is(.tw-border-0) {
-  border-width: 0px
-}
-
 .tw-preflight :is(.tw-border) {
   border-width: 1px
+}
+
+.tw-preflight :is(.tw-border-0) {
+  border-width: 0px
 }
 
 .tw-preflight :is(.tw-border-b-2) {
@@ -155,13 +187,18 @@
   border-style: solid
 }
 
-.tw-preflight :is(.tw-border-transparent) {
-  border-color: transparent
-}
-
 .tw-preflight :is(.tw-border-black) {
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity))
+}
+
+.tw-preflight :is(.tw-border-gray-500) {
+  --tw-border-opacity: 1;
+  border-color: rgb(107 114 128 / var(--tw-border-opacity))
+}
+
+.tw-preflight :is(.tw-border-transparent) {
+  border-color: transparent
 }
 
 .tw-preflight :is(.tw-border-b-gray-500) {
@@ -172,11 +209,6 @@
 .tw-preflight :is(.tw-bg-blue-500) {
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity))
-}
-
-.tw-preflight :is(.tw-bg-blue-600) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(37 99 235 / var(--tw-bg-opacity))
 }
 
 .tw-preflight :is(.tw-bg-green-300) {
@@ -208,6 +240,11 @@
   padding-bottom: 0.25rem
 }
 
+.tw-preflight :is(.tw-py-4) {
+  padding-top: 1rem;
+  padding-bottom: 1rem
+}
+
 .tw-preflight :is(.tw-text-xs) {
   font-size: 0.75rem;
   line-height: 1rem
@@ -217,19 +254,29 @@
   font-weight: 700
 }
 
+.tw-preflight :is(.tw-text-white) {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity))
+}
+
 .tw-preflight :is(.tw-text-black) {
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity))
 }
 
-.tw-preflight :is(.tw-text-blue-100) {
-  --tw-text-opacity: 1;
-  color: rgb(219 234 254 / var(--tw-text-opacity))
+.tw-preflight :is(.hover\:tw-border-gray-200:hover) {
+  --tw-border-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-border-opacity))
 }
 
-.tw-preflight :is(.tw-text-white) {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity))
+.tw-preflight :is(.hover\:tw-border-b-gray-200:hover) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(229 231 235 / var(--tw-border-opacity))
+}
+
+.tw-preflight :is(.hover\:tw-border-b-gray-300:hover) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(209 213 219 / var(--tw-border-opacity))
 }
 
 .tw-preflight :is(.hover\:tw-bg-\[\#757575\]:hover) {
@@ -252,6 +299,11 @@
   color: rgb(255 255 255 / var(--tw-text-opacity))
 }
 
+.tw-preflight :is(.tw-dark .dark\:tw-text-black) {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity))
+}
+
 @media (min-width: 768px) {
   .tw-preflight :is(.md\:tw-col-span-12) {
     grid-column: span 12 / span 12
@@ -265,5 +317,9 @@
 
   .tw-preflight :is(.lg\:tw-col-span-8) {
     grid-column: span 8 / span 8
+  }
+
+  .tw-preflight :is(.lg\:tw-col-span-12) {
+    grid-column: span 12 / span 12
   }
 }
