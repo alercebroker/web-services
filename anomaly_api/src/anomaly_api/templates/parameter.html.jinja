@@ -1,14 +1,14 @@
-{% macro parameter(name="", id="")%}
+{% macro parameter(name="", id="", min_id="", max_id="")%}
     <p for="{{id}}">{{name}}</p>
     <div id="{{id}}" class="tw-flex tw-gap-4">
         <div>
             <label>min: </label>
-            <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
+            <input id="{{min_id}}" type="number" onchange="test('hola')" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
         </div>
                             
         <div >
             <label>max: </label>
-            <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
+            <input id="{{max_id}}" type="number" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
         </div>
     </div>
 {% endmacro %}
