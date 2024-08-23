@@ -24,6 +24,8 @@ class AnomalyScoreTop(Base):
     score_stochastic = Column(Float, primary_key=False)
     score_periodic = Column(Float, primary_key=False)
 
+    # __table_args__ = {"schema": "anomaly"}
+
 
 class AnomalyScore(Base):
     __tablename__ = "scores"
@@ -52,6 +54,8 @@ class AnomalyScore(Base):
     score_RLLab = Column(Float, primary_key=False)
     score_RLLc = Column(Float, primary_key=False)
     score_DSCT = Column(Float, primary_key=False)
+
+    # __table_args__ = {"schema": "anomaly"}
 
 
 class AnomalyDistributions(Base):
