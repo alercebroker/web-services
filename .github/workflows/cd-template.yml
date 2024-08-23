@@ -163,11 +163,10 @@ jobs:
           CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
 
   deploy-production:
-    if: inputs.event == 'release'
     needs: release-chart
     runs-on: ubuntu-latest
     permissions:
-    #  id-token: write
+      id-token: write
       contents: read
     steps:
       - name: Checkout
