@@ -128,7 +128,7 @@ jobs:
           aws-region: us-east-1
           output-credentials: true
           unset-current-credentials: true
-      - name: Install poetryhelm_package
+      - name: Install poetry
         run: pipx install poetry
       - name: Set up Python
         uses: actions/setup-python@v4
