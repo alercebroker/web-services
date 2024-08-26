@@ -2,15 +2,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "lightcurve.fullname" . }}
+  name: {{ include "service.fullname" . }}
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "lightcurve.labels" . | nindent 4 }}
+    {{- include "service.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "lightcurve.fullname" . }}
+    name: {{ include "service.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

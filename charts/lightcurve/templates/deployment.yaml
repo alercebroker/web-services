@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "lightcurve.fullname" . }}
+  name: {{ include "service.fullname" . }}
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "lightcurve.labels" . | nindent 4 }}
+    {{- include "service.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "lightcurve.selectorLabels" . | nindent 6 }}
+      {{- include "service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "lightcurve.selectorLabels" . | nindent 8 }}
+        {{- include "service.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -35,13 +35,18 @@ spec:
             - name: PORT
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "lightcurve.fullname" . }}
+                  name: {{ include "service.fullname" . }}
                   key: port
             - name: API_URL
               valueFrom:
                 configMapKeyRef:
-                  name: {{ include "lightcurve.fullname" . }}
+                  name: {{ include "service.fullname" . }}
                   key: api-url
+            - name: SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.fullname" . }}
+                  key: service
             - name: PSQL_HOST
               valueFrom:
                 secretKeyRef:

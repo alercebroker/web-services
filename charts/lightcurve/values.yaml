@@ -42,9 +42,12 @@ affinity:
               ## Override this value with the NodeGroup tag accordingly
               values: []
 
+nameOverride: ""
+
 configmap:
   port: ""
   apiUrl: ""
+  service: ""
 
 ingress:
   certificateArn: ""
