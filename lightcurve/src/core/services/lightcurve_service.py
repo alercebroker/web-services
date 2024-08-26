@@ -618,7 +618,7 @@ def _get_period_sql(
             )
             result = session.execute(stmt)
             result = [FeatureModel(**res[0].__dict__) for res in result.all()]
-            result = list(filter(lambda x: "23." not in x.version and x.value != None, result))
+            result = list(filter(lambda x: "23." not in x.version and "25." not in x.version and x.value != None, result))
     except Exception as e:
         return Failure(DatabaseError(e, database="PSQL"))
     if len(result) == 0:
