@@ -1,13 +1,9 @@
-from sqlalchemy import (
-    Column,
-    String,
-    Float,
-    DateTime,
-)
+from sqlalchemy import Column, String, Float, DateTime
 
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.sql import func
 from sqlalchemy.schema import PrimaryKeyConstraint
+from pgvector.sqlalchemy import Vector
 
 
 class Base(DeclarativeBase):
@@ -68,3 +64,12 @@ class AnomalyDistributions(Base):
     created_date = Column(DateTime, primary_key=False, onupdate=func.now())
 
     __table_args__ = (PrimaryKeyConstraint("name", "category"),)
+
+
+# class AnomalyEmbeddings(Base):
+#     __tablename__ = "embeddings"
+
+#     oid = Column(String, primary_key=True)
+#     update_date = Column(DateTime, primary_key=False, server_default=func.now())
+#     created_date = Column(DateTime, primary_key=False, onupdate=func.now())
+#     embedding = Column(Vector(64))

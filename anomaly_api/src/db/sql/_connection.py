@@ -13,13 +13,19 @@ def get_db_url(config: dict):
 def wrapper_url_maker(credentials: dict):
     return get_db_url(credentials)
 
+
 class MockerDatabase:
     def __init__(self, engine=None, credentials=None, **kwargs) -> None:
         """provide an engine or create a new one whit credentials"""
         self._engine = (
             engine
             if engine is not None
-            else create_engine(wrapper_url_maker(credentials))
+            else create_engine(
+                wrapper_url_maker(credentials),
+                connect_args={
+                    "options": "-csearch_path={}".format(credentials["SCHEMA"])
+                },
+            )
         )
         self._session_factory = sessionmaker(
             autocommit=False, autoflush=False, bind=self._engine
@@ -33,7 +39,7 @@ class MockerDatabase:
 
     @contextmanager
     def session(self):
-        session: Session = self._session_factory()
+        session = self._session_factory()
         try:
             """ session """
             yield session

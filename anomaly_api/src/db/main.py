@@ -9,3 +9,5 @@ if __name__ == "__main__":
     engine = create_engine(f"sqlite:///{BASE_DIR}/sqlite.db", echo=True)
     model = MockerDatabase(engine=engine)
     model.create_db()
+    time.sleep(5)
+    model.drop_db()

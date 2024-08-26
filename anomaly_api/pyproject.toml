@@ -9,6 +9,8 @@ packages = [{include = "anomaly_api", from = "src"}]
 [tool.poetry.dependencies]
 python = "^3.10"
 sqlalchemy = "^2.0.32"
+psycopg2-binary = "^2.9.9"
+pgvector = "^0.3.2"
 
 
 [build-system]
