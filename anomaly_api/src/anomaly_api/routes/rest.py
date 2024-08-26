@@ -29,3 +29,24 @@ def grafico(request: Request):
         },
     )
 
+@router.get("/tabla", response_class="HTMLResponse")
+def grafico(request: Request):
+    return templates.TemplateResponse(
+        name="table_template.html.jinja",
+        context={
+            "request": request,
+        },
+    )
+
+
+
+@router.get("/detalles", response_class="HTMLResponse")
+def grafico(request: Request):
+    return templates.TemplateResponse(
+        name="details_template.html.jinja",
+        context={
+            "request": request,
+        },
+    )
+
+

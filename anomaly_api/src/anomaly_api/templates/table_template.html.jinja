@@ -1,0 +1,89 @@
+<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
+<link rel="stylesheet" href="{{ API_URL }}/static/main.css">
+
+
+<div class="tw-preflight">
+    <div id="tableContainer" class="tw-container tw-mx-auto tw-flex tw-justify-center dark:tw-text-white tw-text-black">
+        <table id="anomalyTable" class="tw-table-auto tw-border-collapse">
+            <thead class="tw-border-0 tw-border-b tw-border-solid tw-border-black">
+                <tr>
+                    <th>oid</th>
+                    <th>ndet</th>
+                    <th>firstMJD</th>
+                    <th>lastMJD</th>
+                    <th>score transcient</th>
+                    <th>score stochastic</th>
+                    <th>score periodic</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                </tr>
+
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="paginationContainer"></div>
+</div>
+
+<script>
+
+    const table = document.getElementById("anomalyTable");
+    const items = Array.from(table.getElementsByTagName('tr')).slice(1);
+    const itemsPerPage = 5;
+
+    let currentPage = 0;
+
+    function showPage(page){
+        const startIndex = page * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        items.forEach((item, index) => {
+            item.classList.toggle('tw-hidden', index < startIndex || index >= endIndex);
+        });
+        updateActiveButtonStates();
+    }
+
+    function createPageButtons() {
+        const totalPages = Math.ceil(items.length / itemsPerPage);
+        const paginationContainer = document.createElement('div');
+        const paginationDiv = document.body.appendChild(paginationContainer);
+        paginationContainer.classList.add('pagination');
+
+        for(let i = 0; i < totalPages; i++){
+            const pageButton = document.createElement('button');
+            pageButton.textContent = i + 1;
+            pageButton-addEventListener('click', () => {
+                currentPage = i;
+                showPage(currentPage);
+                updateActiveButtonStates();
+            })
+            table.appendChild(paginationContainer);
+            paginationDiv.appendChild(pageButton);
+        }
+    }
+
+    function showDetails(){
+        console.log("hola")
+    }
+
+    createPageButtons();
+    showPage(currentPage);
+</script>
