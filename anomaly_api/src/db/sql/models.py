@@ -66,10 +66,10 @@ class AnomalyDistributions(Base):
     __table_args__ = (PrimaryKeyConstraint("name", "category"),)
 
 
-# class AnomalyEmbeddings(Base):
-#     __tablename__ = "embeddings"
+class AnomalyEmbeddings(Base):
+    __tablename__ = "embeddings"
 
-#     oid = Column(String, primary_key=True)
-#     update_date = Column(DateTime, primary_key=False, server_default=func.now())
-#     created_date = Column(DateTime, primary_key=False, onupdate=func.now())
-#     embedding = Column(Vector(64))
+    oid = Column(String, primary_key=True)
+    update_date = Column(DateTime, primary_key=False, server_default=func.now())
+    created_date = Column(DateTime, primary_key=False, onupdate=func.now())
+    embedding = Column(Vector(64))
