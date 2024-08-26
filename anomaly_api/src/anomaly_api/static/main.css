@@ -32,28 +32,16 @@
   }
 }
 
-.tw-preflight :is(.tw-col-span-4) {
-  grid-column: span 4 / span 4
-}
-
-.tw-preflight :is(.tw-col-span-8) {
-  grid-column: span 8 / span 8
-}
-
-.tw-preflight :is(.tw-col-span-10) {
-  grid-column: span 10 / span 10
-}
-
-.tw-preflight :is(.tw-col-span-2) {
-  grid-column: span 2 / span 2
+.tw-preflight :is(.tw-col-span-12) {
+  grid-column: span 12 / span 12
 }
 
 .tw-preflight :is(.tw-col-span-3) {
   grid-column: span 3 / span 3
 }
 
-.tw-preflight :is(.tw-col-span-5) {
-  grid-column: span 5 / span 5
+.tw-preflight :is(.tw-col-span-6) {
+  grid-column: span 6 / span 6
 }
 
 .tw-preflight :is(.tw-col-span-9) {
@@ -62,14 +50,6 @@
 
 .tw-preflight :is(.tw-col-span-full) {
   grid-column: 1 / -1
-}
-
-.tw-preflight :is(.tw-col-span-1) {
-  grid-column: span 1 / span 1
-}
-
-.tw-preflight :is(.tw-col-span-12) {
-  grid-column: span 12 / span 12
 }
 
 .tw-preflight :is(.tw-m-4) {
@@ -115,25 +95,8 @@
   width: 40%
 }
 
-.tw-preflight :is(.tw-w-2\/6) {
-  width: 33.333333%
-}
-
-.tw-preflight :is(.tw-w-1\/5) {
-  width: 20%
-}
-
-.tw-preflight :is(.tw-w-4\/6) {
-  width: 66.666667%
-}
-
 .tw-preflight :is(.tw-w-3\/6) {
   width: 50%
-}
-
-.tw-preflight :is(.tw-w-max) {
-  width: -moz-max-content;
-  width: max-content
 }
 
 .tw-preflight :is(.tw-w-full) {
@@ -160,8 +123,8 @@
   justify-content: center
 }
 
-.tw-preflight :is(.tw-justify-items-end) {
-  justify-items: end
+.tw-preflight :is(.tw-justify-items-center) {
+  justify-items: center
 }
 
 .tw-preflight :is(.tw-gap-4) {
@@ -172,62 +135,46 @@
   align-self: flex-end
 }
 
-.tw-preflight :is(.tw-rounded) {
-  border-radius: 0.25rem
+.tw-preflight :is(.tw-justify-self-center) {
+  justify-self: center
 }
 
-.tw-preflight :is(.tw-rounded-xl) {
-  border-radius: 0.75rem
+.tw-preflight :is(.tw-rounded) {
+  border-radius: 0.25rem
 }
 
 .tw-preflight :is(.tw-rounded-lg) {
   border-radius: 0.5rem
 }
 
-.tw-preflight :is(.tw-border-2) {
-  border-width: 2px
+.tw-preflight :is(.tw-border) {
+  border-width: 1px
 }
 
-.tw-preflight :is(.tw-border-4) {
-  border-width: 4px
+.tw-preflight :is(.tw-border-0) {
+  border-width: 0px
 }
 
 .tw-preflight :is(.tw-border-b-2) {
   border-bottom-width: 2px
 }
 
-.tw-preflight :is(.tw-border-gray-600) {
+.tw-preflight :is(.tw-border-solid) {
+  border-style: solid
+}
+
+.tw-preflight :is(.tw-border-gray-500) {
   --tw-border-opacity: 1;
-  border-color: rgb(75 85 99 / var(--tw-border-opacity))
+  border-color: rgb(107 114 128 / var(--tw-border-opacity))
 }
 
 .tw-preflight :is(.tw-border-transparent) {
   border-color: transparent
 }
 
-.tw-preflight :is(.tw-border-black) {
+.tw-preflight :is(.tw-border-b-gray-500) {
   --tw-border-opacity: 1;
-  border-color: rgb(0 0 0 / var(--tw-border-opacity))
-}
-
-.tw-preflight :is(.tw-border-gray-700) {
-  --tw-border-opacity: 1;
-  border-color: rgb(55 65 81 / var(--tw-border-opacity))
-}
-
-.tw-preflight :is(.tw-border-gray-800) {
-  --tw-border-opacity: 1;
-  border-color: rgb(31 41 55 / var(--tw-border-opacity))
-}
-
-.tw-preflight :is(.tw-border-b-indigo-500) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(99 102 241 / var(--tw-border-opacity))
-}
-
-.tw-preflight :is(.tw-border-b-gray-800) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(31 41 55 / var(--tw-border-opacity))
+  border-bottom-color: rgb(107 114 128 / var(--tw-border-opacity))
 }
 
 .tw-preflight :is(.tw-bg-blue-500) {
@@ -235,51 +182,13 @@
   background-color: rgb(59 130 246 / var(--tw-bg-opacity))
 }
 
-.tw-preflight :is(.tw-bg-green-300) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(134 239 172 / var(--tw-bg-opacity))
-}
-
-.tw-preflight :is(.tw-bg-lime-300) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(190 242 100 / var(--tw-bg-opacity))
-}
-
 .tw-preflight :is(.tw-bg-white) {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity))
 }
 
-.tw-preflight :is(.tw-bg-blue-600) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(37 99 235 / var(--tw-bg-opacity))
-}
-
-.tw-preflight :is(.tw-bg-blue-300) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(147 197 253 / var(--tw-bg-opacity))
-}
-
-.tw-preflight :is(.tw-bg-blue-200) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(191 219 254 / var(--tw-bg-opacity))
-}
-
-.tw-preflight :is(.tw-bg-blue-400) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity))
-}
-
-.tw-preflight :is(.tw-p-0) {
-  padding: 0px
-}
-
 .tw-preflight :is(.tw-p-4) {
   padding: 1rem
-}
-
-.tw-preflight :is(.tw-p-2) {
-  padding: 0.5rem
 }
 
 .tw-preflight :is(.tw-px-2) {
@@ -287,43 +196,19 @@
   padding-right: 0.5rem
 }
 
-.tw-preflight :is(.tw-py-1) {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem
-}
-
-.tw-preflight :is(.tw-py-0) {
-  padding-top: 0px;
-  padding-bottom: 0px
-}
-
 .tw-preflight :is(.tw-px-4) {
   padding-left: 1rem;
   padding-right: 1rem
 }
 
-.tw-preflight :is(.tw-py-4) {
-  padding-top: 1rem;
-  padding-bottom: 1rem
-}
-
-.tw-preflight :is(.tw-pl-4) {
-  padding-left: 1rem
-}
-
-.tw-preflight :is(.tw-text-xl) {
-  font-size: 1.25rem;
-  line-height: 1.75rem
+.tw-preflight :is(.tw-py-1) {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem
 }
 
 .tw-preflight :is(.tw-text-xs) {
   font-size: 0.75rem;
   line-height: 1rem
-}
-
-.tw-preflight :is(.tw-text-lg) {
-  font-size: 1.125rem;
-  line-height: 1.75rem
 }
 
 .tw-preflight :is(.tw-font-bold) {
@@ -335,12 +220,32 @@
   color: rgb(255 255 255 / var(--tw-text-opacity))
 }
 
-.tw-preflight :is(.tw-text-blue-100) {
-  --tw-text-opacity: 1;
-  color: rgb(219 234 254 / var(--tw-text-opacity))
+.tw-preflight :is(.hover\:tw-border-b-gray-300:hover) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(209 213 219 / var(--tw-border-opacity))
+}
+
+.tw-preflight :is(.hover\:tw-bg-\[\#757575\]:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(117 117 117 / var(--tw-bg-opacity))
 }
 
 .tw-preflight :is(.hover\:tw-bg-blue-700:hover) {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity))
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#1e1e1e\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(30 30 30 / var(--tw-bg-opacity))
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-black) {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity))
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-white) {
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity))
 }

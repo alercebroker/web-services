@@ -3,63 +3,52 @@
 
 
 <div class="tw-preflight">
-    <div id="mainContainer" class="tw-container tw-grid tw-grid-cols-12 tw-gap-4 tw-mx-auto">
-        <div id="filtersContainer" class="tw-container tw-col-span-4 tw-border-gray-600 tw-rounded-xl tw-bg-lime-300">
+    <div id="anomaly-app" class="tw-container tw-grid tw-grid-cols-12 tw-gap-4 tw-mx-auto">
+        {% import './parameter.html.jinja' as parameter %}
+        <div id="filtersContainer" class="tw-container tw-my-4 tw-col-span-12 tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
             <div id="oidSearchContainer" class="tw-mx-4 tw-my-4">
-                <div id="btnOidSearch" class="tw-bg-blue-600 tw-text-blue-100 tw-rounded-lg tw-mb-4">
+                <div id="btnOidSearch" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] dark:tw-text-white tw-mb-4">
                     oid
-
                 </div>
-                <div id="inputOidContainer" class="tw-p-4 tw-bg-white tw-w-5/5 tw-flex tw-flex-col tw-items-center tw-rounded-lg tw-hidden">
+                <div id="inputOidContainer" class="tw-p-4 tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-5/5 tw-flex tw-flex-col tw-items-center tw-rounded-lg tw-border tw-border-solid tw-border-gray-500 tw-hidden">
                     <span>Object id</span>
-                    <input type="text" class="tw-w-2/5">
+                    <input type="text" class="tw-w-2/5 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                     <button class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-w-1/6 tw-self-end ">search</button>
                 </div>
             </div>
 
 
             <div id="scoreSearchContainer" class="tw-m-4 tw-rounded-lg">
-                <div id="scoreSearchBtn" class="tw-bg-blue-600 tw-text-blue-100 tw-rounded-lg tw-mb-4">
+                <div id="scoreSearchBtn" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] tw-mb-4">
                     score search
                 </div>
-                <div id="scoreFormContainer" class="tw-bg-white tw-rounded-lg tw-p-4 tw-hidden">
+                <div id="scoreFormContainer" class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-rounded-lg tw-p-4 tw-hidden tw-border tw-border-solid tw-border-gray-500">
                     <div id="numberDectections" class="tw-my-4">
-                        <p>number of detections</p>
-                        <div class="tw-flex tw-gap-4">
-                            <div>
-                                <label>min: </label>
-                                <input type="number" class="tw-w-3/6">
-                            </div>
-                            
-                            <div >
-                                <label>max: </label>
-                                <input type="number" class="tw-w-3/6">
-                            </div>
-                        </div>
+                        {{ parameter.parameter("number of detections", "scoreDetections","scoreMin", "scoreMax") }}
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
                         <div id="scoreCategory" class="tw-col-span-3">
                             <label for="Category">Category:</label>
-                            <select id="Category" class="tw-w-full">
+                            <select id="Category" class="tw-w-full tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 dark:tw-text-white hover:tw-border-b-gray-300">
                             <option value=""></option>
-                            <option value="transient">Transient</option>
-                            <option value="stochastic">Stochastic</option>
-                            <option value="periodic">Periodic</option>
+                            <option value="transient" class="dark:tw-text-black">Transient</option>
+                            <option value="stochastic" class="dark:tw-text-black">Stochastic</option>
+                            <option value="periodic" class="dark:tw-text-black">Periodic</option>
                             </select>
                         </div>
-                        <div class="tw-col-span-9">
+                        <div class="tw-col-span-9 tw-justify-self-center">
                             <div id="score" class=" tw-col-span-full">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                     
                                     <div >
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>
@@ -68,16 +57,16 @@
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                     
                                     <div >
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>
-                            <div id="graphic" class="tw-col-span-full tw-mb-4">
+                            <div id="graphic" class="tw-col-span-full tw-mb-4 tw-border tw-border-solid tw-border-gray-500">
                                 <img src="../static/grafico-torta-etiquetas.png" style="width:300px;height:100px;">
                             </div>
                             <div id="actions" class="tw-col-span-full tw-flex tw-justify-end tw-gap-4 tw-px-4 tw-mb-4">
@@ -91,122 +80,128 @@
 
 
             <div id="multipleScoreSearchContainer" class="tw-m-4 tw-rounded-lg">
-                <div id="multipleScoreSearchBtn" class="tw-bg-blue-600 tw-text-blue-100 tw-rounded-lg tw-mb-4">
+                <div id="multipleScoreSearchBtn" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] tw-mb-4">
                     multiple score search
                 </div>
-                <div id="multipleFormContainer" class="tw-bg-white tw-rounded-lg tw-p-4 tw-hidden">
+                <div id="multipleFormContainer" class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-rounded-lg tw-p-4 tw-border tw-border-solid tw-border-gray-500 tw-hidden">
                     <div id="multipleNumberDectections" class="tw-my-4">
                         <p>number of detections</p>
                         <div class="tw-flex tw-gap-4">
                             <div>
                                 <label>min: </label>
-                                <input type="number" class="tw-w-3/6">
+                                <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                             </div>
                             
                             <div >
                                 <label>max: </label>
-                                <input type="number" class="tw-w-3/6">
+                                <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                             </div>
                         </div>
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
-                        <div id="multipleTransient" class="tw-col-span-12 tw-mb-4  tw-flex tw-gap-4">
-                            <label>Transient</label>
-                            <div class=" tw-w-3/6">
+                        <div id="multipleTransient" class="tw-col-span-12 tw-mb-4 tw-grid tw-gap-4">
+                            <div class="tw-col-span-12">
+                                <label>Transient</label>
+                            </div>
+                            <div class="tw-col-span-6">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                         
                                     <div>
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="tw-w-3/6">
+                            <div class="tw-col-span-6">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                         
                                     <div >
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>       
                         </div>
-                        <div id="multipleStochastic" class="tw-col-span-12 tw-mb-4  tw-flex tw-gap-4">
-                            <label>Stochastic</label>
-                            <div class=" tw-w-3/6">
+                        <div id="multipleStochastic" class="tw-col-span-12 tw-mb-4 tw-grid tw-gap-4">
+                            <div class="tw-col-span-12">
+                                <label>Stochastic</label>
+                            </div>
+                            <div class="tw-col-span-6">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                         
                                     <div>
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="tw-w-3/6">
+                            <div class="tw-col-span-6">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                         
                                     <div >
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>       
                         </div>
-                        <div id="multiplePeriodic" class="tw-col-span-12 tw-mb-4  tw-flex tw-gap-4">
-                            <label>Periodic</label>
-                            <div class="tw-w-3/6">
+                        <div id="multiplePeriodic" class="tw-col-span-12 tw-mb-4 tw-grid tw-gap-4">
+                            <div class="tw-col-span-12">
+                                <label>Periodic</label>
+                            </div>
+                            <div class="tw-col-span-6">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                         
                                     <div>
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="tw-w-3/6">
+                            <div class="tw-col-span-6">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                         
                                     <div >
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>       
                         </div>
-                        <div id="multipleGraphic" class="tw-col-span-12 tw-mb-4 tw-flex tw-justify-center">
+                        <div id="multipleGraphic" class="tw-col-span-12 tw-mb-4 tw-flex tw-justify-center tw-border tw-border-solid tw-border-gray-500">
                             <img src="../static/grafico-torta-etiquetas.png" style="width:300px;height:100px;">
                         </div>
                         <div id="multipleActions" class="tw-col-span-full tw-flex tw-justify-end tw-gap-4 tw-px-4 tw-mb-4">
@@ -218,29 +213,29 @@
             </div>
 
 
-            <div id="probabilitySearchContainer" class="tw-m-4 tw-rounded-lg">
-                <div id="probabilitySearchBtn" class="tw-bg-blue-600 tw-text-blue-100 tw-rounded-lg tw-mb-4">
+            <div id="probabilitySearchContainer" class="tw-m-4  tw-rounded-lg">
+                <div id="probabilitySearchBtn" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] tw-mb-4">
                     probability score search
                 </div>
-                <div id="probabilityFormContainer" class="tw-bg-white tw-rounded-lg tw-p-4 tw-hidden">
+                <div id="probabilityFormContainer" class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-rounded-lg tw-p-4 tw-border tw-border-solid tw-border-gray-500 tw-hidden">
                     <div id="numberDectections" class="tw-my-4">
                         <p>number of detections</p>
                         <div class="tw-flex tw-gap-4">
                             <div>
                                 <label>min: </label>
-                                <input type="number" class="tw-w-3/6">
+                                <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                             </div>
                             
                             <div >
                                 <label>max: </label>
-                                <input type="number" class="tw-w-3/6">
+                                <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                             </div>
                         </div>
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
                         <div class="tw-col-span-3">
                             <label for="Category">Category:</label>
-                            <select id="Category" class="tw-w-full">
+                            <select id="Category" class="tw-w-full tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                             <option value=""></option>
                             <option value="SNIa">SNIa</option>
                             <option value="QSO">QSO</option>
@@ -253,12 +248,12 @@
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                     
                                     <div >
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>
@@ -267,12 +262,12 @@
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                     
                                     <div >
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>
@@ -281,12 +276,12 @@
                                 <div class="tw-flex tw-gap-4">
                                     <div>
                                         <label>min: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                     
                                     <div >
                                         <label>max: </label>
-                                        <input type="number" class="tw-w-3/6">
+                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                                     </div>
                                 </div>
                             </div>
@@ -301,9 +296,6 @@
 
         </div>
 
-        <div id="tableContainer" class="tw-container tw-col-span-8 tw-bg-green-300">
-            HOLA
-        </div>
     </div>
 </div>
 
@@ -313,26 +305,29 @@
     const btnMultipleScore = document.getElementById("multipleScoreSearchBtn");
     const btnProbability = document.getElementById("probabilitySearchBtn");
 
+    const minId = document.getElementById("scoreMin");
+    const maxId = document.getElementById("scoreMax");
+
     btnOid.addEventListener("click", () => {
         handleVisibility("inputOidContainer");
-        console.log("hola");
     });
 
     btnScore.addEventListener("click", () => {
         handleVisibility("scoreFormContainer");
-        console.log("hola");
     });
 
     btnMultipleScore.addEventListener("click", () => {
         handleVisibility("multipleFormContainer");
-        console.log("hola");
     });
 
     btnProbability.addEventListener("click", () => {
         handleVisibility("probabilityFormContainer");
-        console.log("hola");
     });
 
+
+    function test(val){
+        console.log(val)
+    }
 
     function handleVisibility(id){
         let element = document.getElementById(id);
