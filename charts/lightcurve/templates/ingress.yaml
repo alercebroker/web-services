@@ -16,10 +16,10 @@ spec:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: /v2/lightcurve
+          - path: {{ .Values.ingress.path }}
             pathType: Prefix
             backend:
               service:
-                name: lightcurve
+                name: {{ include "service.name" . }}
                 port:
                   number: {{ .Values.service.port }}

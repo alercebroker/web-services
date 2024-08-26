@@ -54,6 +54,7 @@ ingress:
   host: ""
   k8sGroupName: ""
   k8sTags: ""
+  path: "" # path without end /
 
 secrets:
   secretKey: ""
