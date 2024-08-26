@@ -23,13 +23,6 @@ def get_configure_aws_command(cluster_name, cluster_alias):
 def prepare_k8s_container(
     client: dagger.Client, cluster_name: str, cluster_alias: str, package: str
 ) -> dagger.Container:
-    values_names_dict = {
-        "lightcurve": "lightcurve-service-helm-values",
-        "magstats": "magstats-service-helm-values",
-        "object-details": "object-details-service-helm-values",
-    }
-    package_values = values_names_dict[package] if package in values_names_dict.keys() else package
-
     k8s_container = (
         client.container()
         .from_("alpine/k8s:1.27.5")
@@ -60,7 +53,7 @@ def prepare_k8s_container(
             get_values(
                 client,
                 str(pathlib.Path().cwd().parent.absolute()),
-                package_values,
+                f"{package}-service-helm-values",
             )
         )
     )
@@ -96,18 +89,10 @@ def helm_package(
     k8s: dagger.Container,
     package: str,
 ):
-    chart_names_dict = {
-        "lightcurve": "lightcurve",
-        "magstats": "lightcurve",
-        "object-details": "lightcurve",
-    }
-
-    package_chart = chart_names_dict[package] if package in chart_names_dict.keys() else package,
-
     helm_package_command = [
         "helm",
         "package",
-        f"/web-services/charts/{package_chart}/",
+        f"/web-services/charts/{package}/",
     ]
     k8s = k8s.with_exec(helm_package_command)
     return k8s
@@ -119,15 +104,6 @@ def helm_upgrade(
     dry_run: bool,
     from_repo: bool = False,
 ):
-    
-    chart_names_dict = {
-        "lightcurve": "lightcurve",
-        "magstats": "lightcurve",
-        "object-details": "lightcurve",
-    }
-
-    package_chart = chart_names_dict[package] if package in chart_names_dict.keys() else package,
-
     version = current_chart_version(package)
     helm_upgrade_command = [
         "helm",
@@ -138,10 +114,10 @@ def helm_upgrade(
         package,
     ]
     if from_repo:
-        helm_upgrade_command.append(f"web-services/{package_chart}")
+        helm_upgrade_command.append(f"web-services/{package}")
     else:
         helm_upgrade_command.append(
-            f"/web-services/ci/{package_chart}-{version}.tgz"
+            f"/web-services/ci/{package}-{version}.tgz"
         )
     if dry_run:
         helm_upgrade_command.append("--dry-run")
@@ -155,18 +131,10 @@ def helm_rollback(
     package: str,
     dry_run: bool,
 ):
-    chart_names_dict = {
-        "lightcurve": "lightcurve",
-        "magstats": "lightcurve",
-        "object-details": "lightcurve",
-    }
-
-    package_chart = chart_names_dict[package] if package in chart_names_dict.keys() else package,
-
     helm_rollback_command = [
         "helm",
         "rollback",
-        package_chart,
+        package,
         "0",
     ]
     if dry_run:
