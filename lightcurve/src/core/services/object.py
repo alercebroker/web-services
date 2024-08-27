@@ -22,7 +22,7 @@ from ..exceptions import (
     SurveyIdError,
     ParseError,
 )
-from .._models.object import (
+from ..models.object import (
     ObjectReduced as ObjectModel,
     MagStats as MagStatsModel,
     Probability as ProbabilityModel,
