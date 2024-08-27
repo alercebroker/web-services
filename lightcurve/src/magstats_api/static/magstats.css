@@ -161,8 +161,8 @@
 
 .tw-preflight :is(.tw-appearance-none) {
   -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .tw-preflight :is(.tw-grid-cols-10) {
@@ -861,6 +861,114 @@ Prevent resizing textareas horizontally by default.
 
 .tw-preflight input::-moz-placeholder,
 .tw-preflight textarea::-moz-placeholder {
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
+  /* 1 */
+  /* 2 */
   opacity: 1;
   /* 1 */
   color: #9ca3af;
@@ -1035,6 +1143,13 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-backdrop-opacity: ;
   --tw-backdrop-saturate: ;
   --tw-backdrop-sepia: ;
+}
+
+td, th {
+  padding: 0 7.5px;
+  height: 40px;
+  width: 70px;
+  text-align: left;
 }
 
 .tw-preflight :is(.hover\:tw-cursor-pointer:hover) {
