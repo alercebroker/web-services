@@ -8,6 +8,7 @@ packages = [
     { include = "core", from = "src" },
     { include = "config", from = "src" },
     { include = "lightcurve_api", from = "src" },
+    { include = "magstats_api", from = "src" },
     { include = "database", from = "src" },
 ]
 
@@ -57,4 +58,5 @@ line-length = 79
 
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
+magstats = "scripts.run_magstats_dev:run"
 tunnel = "scripts.sshproxy:run_tunnel"

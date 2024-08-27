@@ -1,0 +1,344 @@
+<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="{{API_URL}}/static/object.css">
+
+<div id="basicObject-app" class="tw-flex tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-relative tw-mt-3 tw-w-full tw-text-sm">
+        <table class="tw-preflight tw-overflow-auto tw-w-[95%] tw-mx-auto tw-table-full tw-justify-center tw-text-sm">
+            <colgroup class="tw-w-[95%] tw-mx-auto"><col class="tw-w-1/3"><col class="tw-w-1/3 tw-text-center"><col class="tw-w-1/3"></colgroup>
+            <tbody class="tw-w-[95%] tw-mx-auto">
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b-[1px] tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">Object</td>
+                    <td class="tw-text-center" id="object"></td>
+                    <td class=""></td>
+                </tr>
+
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">Corrected</td>
+                    <td class="tw-text-center" id="corrected"></td>
+                    <td class="tw-group tw-absolute tw--mx-[15px] tw-mt-[5px]">
+                        <div class="tw-absolute">
+                            <svg class="tw-h-6 tw-text-black dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path   path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                            </svg>
+                            
+                            <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
+                                <div class="tw-bg-gray-900 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-red-500 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                    There is a matching source in the reference image. The apparent magnitude combines the difference and reference fluxes. 
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">Stellar</td>
+                    <td class="tw-text-center" id="stellar"></td>
+                    <td class="tw-group tw-absolute tw--mx-[15px] tw-mt-[5px]">
+                        <div class="tw-absolute">
+                            <svg class="tw-h-6 tw-text-black dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path   path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                            </svg>
+                            <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
+                                <div class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                    There is a matching point-like source in the reference image.
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">Detections</td>
+                    <td class="tw-text-center" id=detections></td>
+                    <td class="end"></td>
+                </tr>
+
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">Discovery date</td>
+                    <td class="tw-text-wrap tw-text-center" id="discoveryDate"></td>
+                    <td class="tw-group tw-absolute tw--mx-[15px] tw-mt-[5px]">
+                        <div class="tw-absolute">
+                            <button class="tw-abosolute" id="changeDiscoveryValue">
+                                <svg class="tw-h-6 tw-text-black dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path shola alex, troke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"></path>
+                                </svg>
+                            </button>
+                            <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
+                                <div class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                    View MJD
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">Last detection</td>
+                    <td class="tw-text-wrap tw-text-center" id="lastDetection"></td>
+                    <td class="tw-absolute tw-group tw--mx-[15px] tw-mt-[5px]">
+                        <div class="tw-absolute">
+                            <button class="tw-abosolute" id="changeLastValue">
+                                <svg class="tw-h-6 tw-text-black dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z"></path>
+                                </svg>
+                            </button>
+                            <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
+                                <div class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                    View MJD
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">RA(J2000) Dec(J2000)</td>
+                    <td class="tw-text-wrap tw-text-center" id="raDec"></td>
+                    <td class="tw-absolute tw-group tw--mx-[15px] tw-mt-[5px]">
+                        <div class="tw-absolute">
+                            <button class="tw-absolute" id="changeRaDec">
+                                <svg class="tw-h-6 tw-text-black dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m6.115 5.19.319 1.913A6 6 0 0 0 8.11 10.36L9.75 12l-.387.775c-.217.433-.132.956.21 1.298l1.348 1.348c.21.21.329.497.329.795v1.089c0 .426.24.815.622 1.006l.153.076c.433.217.956.132 1.298-.21l.723-.723a8.7 8.7 0 0 0 2.288-4.042 1.087 1.087 0 0 0-.358-1.099l-1.33-1.108c-.251-.21-.582-.299-.905-.245l-1.17.195a1.125 1.125 0 0 1-.98-.314l-.295-.295a1.125 1.125 0 0 1 0-1.591l.13-.132a1.125 1.125 0 0 1 1.3-.21l.603.302a.809.809 0 0 0 1.086-1.086L14.25 7.5l1.256-.837a4.5 4.5 0 0 0 1.528-1.732l.146-.292M6.115 5.19A9 9 0 1 0 17.18 4.64M6.115 5.19A8.965 8.965 0 0 1 12 3c1.929 0 3.716.607 5.18 1.64"></path>
+                                </svg>
+                            </button>
+                            <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
+                                <div class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                    View H:M:S
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">Non Detections</td>
+                    <td class="tw-text-center" id="nonDetections"></td>
+                    <td class=""></td>
+                </tr>
+
+                
+            </tbody>
+        </table>
+
+    <div class="tw-flex tw-space-x-4 tw-w-[95%] tw-mx-auto tw-text-sm tw-justify-center">
+        <a id='find-button' target="_blank" class="tw-bg-cyan-700 tw-text-white tw-font-bold tw-py-1 tw-rounded tw-w-full tw-text-sm tw-text-center">
+            FINDING CHART
+        </a>
+        <a id="menu-button" class="tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-rounded tw-w-full tw-text-sm tw-text-center"">
+            OTHER ARCHIVES
+        </a>
+    </div>
+    
+    <div id="menu-box" class="tw-box-content tw-absolute tw-opacity-100 tw-w-[377px] tw-h-[500px] tw-rounded-[50px] tw-shadow-2xl tw-z-[9999] tw-ml-[50%]" style="display: none">
+        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id='desi-button'>
+            <div class="tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                DESI Legacy Survey DR10
+            </div>
+        </a>
+        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="ned-button">
+            <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                NED
+            </div>
+        </a>
+
+        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="pan-button">
+            <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                PanSTARRS
+            </div>
+        </a>
+
+        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="sdss-button">
+            <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                SDSS DR16
+            </div>
+        </a>
+
+        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="simbad-button">
+            <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                SIMBAD
+            </div>
+        </a>
+        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="tns-button">
+            <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                TNS
+            </div>
+        </a>
+        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="viz-button">
+            <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                Vizier
+            </div>
+        </a>
+        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="vsx-button">
+            <div class="tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                VSX
+            </div>
+        </a>
+    </div>
+
+    <div class="tw-w-full tw-table-full">
+        <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
+            <thead>
+                <th class="tw-text-center"> Type </th>
+                <th class="tw-text-center">Name</th>
+                <th class="tw-text-center">Redshift</th>
+            </thead>
+            <tbody class="tw-w-[95%] tw-mx-auto">
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-t tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td id="type" class="tw-text-center tw-max-w-[40%]"></td>
+                    <td id="name" class="tw-text-center"></td>
+                    <td id="redshift" class="tw-text-center"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h6 class="tw-inline tw-text-[#1e1e1e] dark:tw-text-white tw-absolute tw-right-0 tw-bottom-0 tw-h-auto tw-m-0 tw-text-[17px] tw-mt-20px">
+    Provided by <a id="tns-link" target="_blank" class=" tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer">TNS</a>  <img class="tw-inline" src="https://www.wis-tns.org/sites/default/files/favicon.png">
+    </h6>
+
+</div>
+
+<script type="module">
+
+        import {
+
+            changeDiscoveryValue,
+            changeLastValue,
+            changeRaDec,
+            convertToDate,
+            julianToGregorian,
+            transformRaDec,
+            setMenuUrl
+
+        } from "{{API_URL}}/static/basicInformation.js"
+
+        const object =  {{object | tojson}};
+        const corrected = {{corrected | tojson}} ;
+        const stellar = {{stellar | tojson}} ;
+        const detections = {{detections | tojson}}
+        let discoveryDateMJD = {{discoveryDateMJD | tojson}} ;
+        let lastDetectionMJD = {{lastDetectionMJD | tojson}} ;
+        const nonDetections = {{nonDetections | tojson}} ;
+        let ra = {{ra | tojson}} ;
+        let dec  = {{dec | tojson}};
+
+        let raDec = String(ra) + ' ' + String(dec);
+
+        let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
+        let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
+
+        let raTime = transformRaDec(ra);
+        let decTime = transformRaDec(dec);
+
+        let raDecTime = String(raTime) + ' ' + String(decTime);
+
+        setMenuUrl(ra,dec,object);
+
+        // En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
+        // Tambien, si se ocupa la variable binaria, declararla antes.
+        function display_menu(){
+
+            if (click === 0)  {
+                document.getElementById('menu-box').style.display = "block";
+                click = 1;
+            } else {
+                document.getElementById('menu-box').style.display = "none";
+                click = 0;
+            }
+
+        }
+
+        document.getElementById("object").innerHTML = object;
+        document.getElementById("corrected").innerHTML = corrected;
+        document.getElementById("stellar").innerHTML = stellar;
+        document.getElementById("detections").innerHTML = detections;
+        document.getElementById("nonDetections").innerHTML = nonDetections;
+        document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
+        document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
+        document.getElementById("raDec").innerHTML = raDec;
+
+        document.getElementById('changeDiscoveryValue').addEventListener('click', () => changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD));
+        document.getElementById('changeLastValue').addEventListener('click', () => changeLastValue(lastDetectionMGD, lastDetectionMJD));
+        document.getElementById('changeRaDec').addEventListener('click', () => changeRaDec(raDec, raDecTime));
+        let click = 0;
+        document.getElementById('menu-button').addEventListener('click', () => display_menu());
+
+
+        var obj;
+
+        function lastInformation(data) {
+
+            let type, name, tnsLink, redshift;
+
+            if (data.error) {
+                type = name = redshift = 'Error';
+                tnsLink = 'https://www.wis-tns.org/';
+            } else if (typeof data === 'object' && data !== null) {
+                if (Object.keys(Object.values(data)[0] || {}).length > 25) {
+                    type = Object.values(data)[2] || 'No disponible';
+                    name = Object.values(data)[1] || 'No disponible';
+                    tnsLink = `https://www.wis-tns.org/object/${Object.values(data)[1] || ''}`;
+                    redshift = Object.values(Object.values(data)[0])[21] || 'No disponible';
+                } else {
+                    type = name = redshift = 'No encontrado';
+                    tnsLink = 'https://www.wis-tns.org/';
+                }
+            } else {
+                type = name = redshift = 'Respuesta inesperada';
+                tnsLink = 'https://www.wis-tns.org/';
+            }
+
+            document.getElementById('type').innerHTML = type;
+            document.getElementById('name').innerHTML = name;
+            document.getElementById('tns-link').href = tnsLink;
+            document.getElementById('redshift').innerHTML = redshift;
+        }
+
+        const myClick = document.getElementById('menu-button');
+
+        function handleOutsideClick(event) {
+            if (!myClick.contains(event.target)) {
+                click = 1;
+                display_menu();
+            }
+        }
+        
+        document.addEventListener('click', handleOutsideClick);
+
+        fetch("https://tns.alerce.online/search", {
+            "headers": {
+                "accept": "application/json",
+                "cache-control": "no-cache",
+                "content-type": "application/json",
+            },
+            "body": "{\"ra\":" + String(ra) + ",\"dec\":" + String(dec)+ "}",
+            "method": "POST",
+            "mode": "cors",
+        })
+        .then(response => {
+            return response.text();
+        })
+        .then(text => {
+            if (text.includes("Error message")) {
+                throw new Error(text);
+            }
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                return text;
+            }
+        })
+        .then(data => {
+            lastInformation(data);
+        })
+        .catch(error => {
+            lastInformation({
+                error: true,
+                message: error.message
+            });
+        });
+
+
+
+    </script>
+
+{# </div> #}
+
