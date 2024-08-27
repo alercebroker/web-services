@@ -3,7 +3,7 @@
 
 
 <div class="tw-preflight">
-    <div id="tableContainer" class="tw-container tw-mx-auto tw-flex tw-justify-center dark:tw-text-white tw-text-black">
+    <div id="tableContainer" class="tw-container tw-mx-auto tw-flex tw-flex-col dark:tw-text-white tw-text-black">
         <table id="anomalyTable" class="tw-table-auto tw-border-collapse">
             <thead class="tw-border-0 tw-border-b tw-border-solid tw-border-black">
                 <tr>
@@ -17,7 +17,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                <tr hx-get="/detalles" hx-trigger="click" hx-target="#tableContainer" hx-swap="outerHTML" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
                     <td>snIa</td>
                     <td>snIa</td>
                     <td>snIa</td>
@@ -28,6 +28,16 @@
                     <td>snIa</td>
                 </tr>
 
+                <tr hx-get="/detalles" hx-trigger="click" hx-target="#tableContainer" hx-swap="outerHTML"class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                </tr>
                 <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
                     <td>snIa</td>
                     <td>snIa</td>
@@ -38,19 +48,55 @@
                     <td>snIa</td>
                     <td>snIa</td>
                 </tr>
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa2</td>
+                </tr>
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                </tr>
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa3</td>
+                </tr>
             </tbody>
         </table>
+        <div id="simplePagination" class="tw-self-end tw-m-4">
+            <button onclick="changePage(false)"><-</button>
+            <span id="numberPage"></span>
+            <button onclick="changePage(true)">-></button>
+        </div>
     </div>
-    <div id="paginationContainer"></div>
 </div>
 
 <script>
 
-    const table = document.getElementById("anomalyTable");
-    const items = Array.from(table.getElementsByTagName('tr')).slice(1);
-    const itemsPerPage = 5;
+    let table = document.getElementById("anomalyTable");
+    var pageNumber = document.getElementById("numberPage");
+    var items = Array.from(table.getElementsByTagName('tr')).slice(1);
+    var itemsPerPage = 2;
+    var totalPages = Math.ceil(items.length / itemsPerPage);
 
-    let currentPage = 0;
+    var currentPage = 0;
 
     function showPage(page){
         const startIndex = page * itemsPerPage;
@@ -58,25 +104,21 @@
         items.forEach((item, index) => {
             item.classList.toggle('tw-hidden', index < startIndex || index >= endIndex);
         });
-        updateActiveButtonStates();
     }
 
-    function createPageButtons() {
-        const totalPages = Math.ceil(items.length / itemsPerPage);
-        const paginationContainer = document.createElement('div');
-        const paginationDiv = document.body.appendChild(paginationContainer);
-        paginationContainer.classList.add('pagination');
-
-        for(let i = 0; i < totalPages; i++){
-            const pageButton = document.createElement('button');
-            pageButton.textContent = i + 1;
-            pageButton-addEventListener('click', () => {
-                currentPage = i;
+    function changePage(direction){
+        if(direction){
+            if(currentPage + 1 < totalPages){
+                currentPage = currentPage + 1;
+                pageNumber.textContent = currentPage;
                 showPage(currentPage);
-                updateActiveButtonStates();
-            })
-            table.appendChild(paginationContainer);
-            paginationDiv.appendChild(pageButton);
+            }
+        } else {
+            if(currentPage - 1 >= 0){
+                currentPage = currentPage - 1;
+                pageNumber.textContent = currentPage;
+                showPage(currentPage);
+            }
         }
     }
 
@@ -84,6 +126,6 @@
         console.log("hola")
     }
 
-    createPageButtons();
+    pageNumber.textContent = currentPage;
     showPage(currentPage);
 </script>

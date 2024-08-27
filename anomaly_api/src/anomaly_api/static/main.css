@@ -40,8 +40,16 @@
   grid-column: span 3 / span 3
 }
 
+.tw-preflight :is(.tw-col-span-4) {
+  grid-column: span 4 / span 4
+}
+
 .tw-preflight :is(.tw-col-span-6) {
   grid-column: span 6 / span 6
+}
+
+.tw-preflight :is(.tw-col-span-8) {
+  grid-column: span 8 / span 8
 }
 
 .tw-preflight :is(.tw-col-span-9) {
@@ -50,14 +58,6 @@
 
 .tw-preflight :is(.tw-col-span-full) {
   grid-column: 1 / -1
-}
-
-.tw-preflight :is(.tw-col-span-4) {
-  grid-column: span 4 / span 4
-}
-
-.tw-preflight :is(.tw-col-span-8) {
-  grid-column: span 8 / span 8
 }
 
 .tw-preflight :is(.tw-m-4) {
@@ -95,16 +95,12 @@
   display: none
 }
 
-.tw-preflight :is(.tw-h-32) {
-  height: 8rem
-}
-
-.tw-preflight :is(.tw-h-64) {
-  height: 16rem
-}
-
 .tw-preflight :is(.tw-h-60) {
   height: 15rem
+}
+
+.tw-preflight :is(.tw-w-1\/2) {
+  width: 50%
 }
 
 .tw-preflight :is(.tw-w-1\/6) {
@@ -123,47 +119,12 @@
   width: 100%
 }
 
-.tw-preflight :is(.tw-w-1\/2) {
-  width: 50%
-}
-
 .tw-preflight :is(.tw-table-auto) {
   table-layout: auto
 }
 
 .tw-preflight :is(.tw-border-collapse) {
   border-collapse: collapse
-}
-
-.tw-preflight :is(.tw-border-separate) {
-  border-collapse: separate
-}
-
-.tw-preflight :is(.tw-border-spacing-x-2) {
-  --tw-border-spacing-x: 0.5rem;
-  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y)
-}
-
-.tw-preflight :is(.tw-border-spacing-x-1) {
-  --tw-border-spacing-x: 0.25rem;
-  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y)
-}
-
-.tw-preflight :is(.tw-border-spacing-x-12) {
-  --tw-border-spacing-x: 3rem;
-  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y)
-}
-
-.tw-preflight :is(.tw-border-spacing-12) {
-  --tw-border-spacing-x: 3rem;
-  --tw-border-spacing-y: 3rem;
-  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y)
-}
-
-.tw-preflight :is(.tw-border-spacing-2) {
-  --tw-border-spacing-x: 0.5rem;
-  --tw-border-spacing-y: 0.5rem;
-  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y)
 }
 
 .tw-preflight :is(.tw-grid-cols-12) {
@@ -186,10 +147,6 @@
   justify-content: center
 }
 
-.tw-preflight :is(.tw-justify-items-center) {
-  justify-items: center
-}
-
 .tw-preflight :is(.tw-gap-4) {
   gap: 1rem
 }
@@ -198,16 +155,16 @@
   align-self: flex-end
 }
 
+.tw-preflight :is(.tw-self-center) {
+  align-self: center
+}
+
 .tw-preflight :is(.tw-justify-self-center) {
   justify-self: center
 }
 
 .tw-preflight :is(.tw-overflow-auto) {
   overflow: auto
-}
-
-.tw-preflight :is(.tw-overflow-scroll) {
-  overflow: scroll
 }
 
 .tw-preflight :is(.tw-overscroll-contain) {
@@ -230,20 +187,21 @@
   border-width: 0px
 }
 
-.tw-preflight :is(.tw-border-2) {
-  border-width: 2px
+.tw-preflight :is(.tw-border-b) {
+  border-bottom-width: 1px
 }
 
 .tw-preflight :is(.tw-border-b-2) {
   border-bottom-width: 2px
 }
 
-.tw-preflight :is(.tw-border-b) {
-  border-bottom-width: 1px
-}
-
 .tw-preflight :is(.tw-border-solid) {
   border-style: solid
+}
+
+.tw-preflight :is(.tw-border-black) {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity))
 }
 
 .tw-preflight :is(.tw-border-gray-500) {
@@ -255,23 +213,9 @@
   border-color: transparent
 }
 
-.tw-preflight :is(.tw-border-black) {
-  --tw-border-opacity: 1;
-  border-color: rgb(0 0 0 / var(--tw-border-opacity))
-}
-
-.tw-preflight :is(.tw-border-b-black) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity))
-}
-
 .tw-preflight :is(.tw-border-b-gray-500) {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(107 114 128 / var(--tw-border-opacity))
-}
-
-.tw-preflight :is(.tw-border-opacity-20) {
-  --tw-border-opacity: 0.2
 }
 
 .tw-preflight :is(.tw-bg-blue-500) {
@@ -303,16 +247,8 @@
   padding-bottom: 0.25rem
 }
 
-.tw-preflight :is(.tw-pl-4) {
-  padding-left: 1rem
-}
-
 .tw-preflight :is(.tw-pr-4) {
   padding-right: 1rem
-}
-
-.tw-preflight :is(.tw-text-left) {
-  text-align: left
 }
 
 .tw-preflight :is(.tw-text-center) {
@@ -355,15 +291,6 @@
 .tw-preflight :is(.hover\:tw-bg-blue-700:hover) {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity))
-}
-
-.tw-preflight :is(.tw-dark .dark\:tw-border-b-white) {
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity))
-}
-
-.tw-preflight :is(.tw-dark .dark\:tw-border-opacity-20) {
-  --tw-border-opacity: 0.2
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#1e1e1e\]) {

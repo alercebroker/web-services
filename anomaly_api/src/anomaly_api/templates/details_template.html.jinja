@@ -4,6 +4,9 @@
 
 <div class="tw-preflight">
     <div id="detailContainer" class="tw-container tw-mx-auto tw-grid tw-grid-cols-12 tw-gap-4 dark:tw-text-white tw-text-black">
+        <div class="tw-col-span-12">
+            <button hx-get="/tabla" hx-trigger="click" hx-target="#detailContainer" hx-swap="outerHTML"><-</button>
+        </div>
         <div id="basicInfoContainer" class="tw-col-span-4 tw-text-center tw-border tw-border-solid tw-border-black">
             Object Basic Info oid1
         </div>
@@ -70,10 +73,3 @@
         </div>
     </div>
 </div>
-
-<script>
-
-    function showDetails(){
-        console.log("hola")
-    }
-</script>

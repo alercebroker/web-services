@@ -31,10 +31,33 @@ def grafico(request: Request):
 
 @router.get("/tabla", response_class="HTMLResponse")
 def grafico(request: Request):
+
+    data =[
+        {
+            "oid": "example_oid_1",
+            "ndet": 1,
+            "firstMJD": 59123.1,
+            "lastMJD": 59124.1,
+            "score_transcient": 0.85,
+            "score_stochastic": 0.75,
+            "score_periodic": 0.65
+        },
+        {
+            "oid": "example_oid_2",
+            "ndet": 2,
+            "firstMJD": 59125.1,
+            "lastMJD": 59126.1,
+            "score_transcient": 0.88,
+            "score_stochastic": 0.78,
+            "score_periodic": 0.68
+        }
+    ]
+
     return templates.TemplateResponse(
         name="table_template.html.jinja",
         context={
             "request": request,
+            "data": data,
         },
     )
 
