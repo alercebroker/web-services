@@ -42,15 +42,19 @@ affinity:
               ## Override this value with the NodeGroup tag accordingly
               values: []
 
+nameOverride: ""
+
 configmap:
   port: ""
   apiUrl: ""
+  service: ""
 
 ingress:
   certificateArn: ""
   host: ""
   k8sGroupName: ""
   k8sTags: ""
+  path: "" # path without end /
 
 secrets:
   secretKey: ""
