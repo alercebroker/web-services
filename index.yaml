@@ -523,6 +523,16 @@ entries:
     - https://github.com/alercebroker/web-services/releases/download/astroobject-0.1.18/astroobject-0.1.18.tgz
     version: 0.1.18
   lightcurve:
+  - apiVersion: v1
+    appVersion: 24.8.1-rc114
+    created: "2024-08-28T16:48:49.828881326Z"
+    description: Lightcurve API for ALeRCE Clients
+    digest: 31544ac996910a4c0e094aa64da98ffe8ec208c111c4c7c4851eda21cfe8e675
+    name: lightcurve
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/lightcurve-24.8.147/lightcurve-24.8.147.tgz
+    version: 24.8.147
   - apiVersion: v2
     appVersion: 24.8.1-rc113
     created: "2024-08-27T14:28:43.958678722Z"
@@ -1894,4 +1904,4 @@ entries:
     urls:
     - https://github.com/alercebroker/web-services/releases/download/xmatch-service-24.4.8/xmatch-service-24.4.8.tgz
     version: 24.4.8
-generated: "2024-08-27T15:25:06.617415924Z"
+generated: "2024-08-28T16:48:49.829431404Z"
