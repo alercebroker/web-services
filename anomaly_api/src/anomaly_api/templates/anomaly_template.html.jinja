@@ -7,7 +7,7 @@
         {% import './score_component.html.jinja' as scoreComponent %}
         {% import './number_detections.html.jinja' as numberDectections %}
         {% import './percentil_component.html.jinja' as percentilComponent %}
-        <div id="filtersContainer" class="tw-container tw-my-4 tw-col-span-4 tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
+        <div id="filtersContainer" class="tw-container tw-my-4 lg:tw-col-span-4 sm:tw-col-span-12 tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
             <div id="oidSearchContainer" class="tw-mx-4 tw-my-4">
                 <div id="btnOidSearch" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] dark:tw-text-white tw-mb-4">
@@ -43,13 +43,13 @@
                             <div id="score" class=" tw-col-span-full">
                                 <label>score</label>
                                 <div class="tw-flex tw-gap-4">
-                                    {{ scoreComponent.parameter("minScore", "maxScore","minPercentil", "maxPercentil")}}
+                                    {{ scoreComponent.parameter("minScore", "maxScore","minPercentil", "maxPercentil", "Category")}}
                                 </div>
                             </div>
                             <div id="percentil" class="tw-col-span-full tw-my-4">
                                 <label>percentil</label>
                                 <div class="tw-flex tw-gap-4">
-                                    {{ percentilComponent.percentil("minPercentil", "maxPercentil", "minScore", "maxScore") }}
+                                    {{ percentilComponent.percentil("minPercentil", "maxPercentil", "minScore", "maxScore", "Category") }}
                                 </div>
                             </div>
                             <div id="graphic" class="tw-col-span-full tw-mb-4 tw-border tw-border-solid tw-border-gray-500">
@@ -204,8 +204,8 @@
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
                         <div class="tw-col-span-3">
-                            <label for="Category">Category:</label>
-                            <select id="Category" class="tw-w-full tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
+                            <label for="CategoryProbability">Category:</label>
+                            <select id="CategoryProbability" class="tw-w-full tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
                             <option value=""></option>
                             <option value="SNIa">SNIa</option>
                             <option value="QSO">QSO</option>
@@ -230,29 +230,13 @@
                             <div id="probabilityScore" class="tw-col-span-full tw-my-4">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                    
-                                    <div >
-                                        <label>max: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                     {{ scoreComponent.parameter("minProbabilityScore", "maxProbabilityScore","minProbabilityPercentil", "maxProbabilityPercentil", "CategoryProbability")}}
                                 </div>
                             </div>
                             <div id="probabilityPercentil" class="tw-col-span-full tw-mb-4">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                    
-                                    <div >
-                                        <label>max: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ percentilComponent.percentil("minProbabilityPercentil", "maxProbabilityPercentil", "minProbabilityScore", "maxProbabilityScore", "CategoryProbability") }}
                                 </div>
                             </div>
                             <div id="actions" class="tw-col-span-full tw-flex tw-justify-end tw-gap-4 tw-px-4 tw-mb-4">
@@ -266,7 +250,7 @@
 
         </div>
         
-        <div class="tw-col-span-8">
+        <div class="lg:tw-col-span-8 sm:tw-col-span-12">
             <div id="table" hx-get="/tabla" hx-trigger="load" hx-target="#table" hx-swap="outerHTML" ></div>
         </div>
     </div>
@@ -278,8 +262,6 @@
     const btnMultipleScore = document.getElementById("multipleScoreSearchBtn");
     const btnProbability = document.getElementById("probabilitySearchBtn");
 
-    const minId = document.getElementById("scoreMin");
-    const maxId = document.getElementById("scoreMax");
 
     btnOid.addEventListener("click", () => {
         handleVisibility("inputOidContainer");
@@ -309,23 +291,21 @@
 
 
 
-    function parse_percentil_to_score(percentil, target) {
-        let category_value = document.getElementById("Category").value
+    function parse_percentil_to_score(percentil, target, category_id) {
+        let category_value = document.getElementById(category_id).value
         if(category_value == ""){
             return false;
         } else {
-            console.log(target);
             document.getElementById(target).value = 10;
             return 10;
         }
     }
 
-    function parse_score_to_percentil(score, target) {
-        let category_value = document.getElementById("Category").value
+    function parse_score_to_percentil(score, target, category_id) {
+        let category_value = document.getElementById(category_id).value
         if(category_value == ""){
             return false;
         } else {
-            console.log(target);
             document.getElementById(target).value = 65;
             return 65;
         }
