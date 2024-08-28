@@ -5,7 +5,7 @@
 <div class="tw-preflight">
     <div id="tableContainer" class="tw-container tw-mx-auto tw-flex tw-flex-col dark:tw-text-white tw-text-black">
         <table id="anomalyTable" class="tw-table-auto tw-border-collapse">
-            <thead class="tw-border-0 tw-border-b tw-border-solid tw-border-black">
+            <thead class="tw-border-0 tw-border-b tw-border-solid tw-border-b-gray-500">
                 <tr>
                     <th>oid</th>
                     <th>ndet</th>
@@ -17,115 +17,33 @@
                 </tr>
             </thead>
             <tbody>
-                <tr hx-get="/detalles" hx-trigger="click" hx-target="#tableContainer" hx-swap="outerHTML" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
+                {% for x in data %}
+                <tr hx-get="/detalles" hx-trigger="click" hx-target="#tableContainer" hx-swap="outerHTML" class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-border-0 tw-border-b tw-border-solid tw-border-b-gray-500  hover:tw-bg-[#757575] hover:tw-cursor-pointer">
+                    <td>{{x.oid}}</td>
+                    <td>{{x.ndet}}</td>
+                    <td>{{x.firstMJD}}</td>
+                    <td>{{x.lastMJD}}</td>
+                    <td>{{x.score_transcient}}</td>
+                    <td>{{x.score_stochastic}}</td>
+                    <td>{{x.score_periodic}}</td>
                 </tr>
-
-                <tr hx-get="/detalles" hx-trigger="click" hx-target="#tableContainer" hx-swap="outerHTML"class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                </tr>
-                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                </tr>
-                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa2</td>
-                </tr>
-                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                </tr>
-                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa</td>
-                    <td>snIa3</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
         <div id="simplePagination" class="tw-self-end tw-m-4">
-            <button onclick="changePage(false)"><-</button>
-            <span id="numberPage"></span>
-            <button onclick="changePage(true)">-></button>
+            {% if (page + 1) <= total_pages and (page -1) > 0 %}
+                <button hx-get="/tabla?page={{page-1}}&per_page=10" hx-target="#tableContainer" hx-swap="outerHTML"><-</button>
+                <span id="numberPage">{{page}}</span>
+                <button hx-get="/tabla?page={{page+1}}&per_page=10" hx-target="#tableContainer" hx-swap="outerHTML">-></button>
+            {% elif page -1 <= 0 %}
+                <button disabled><-</button>
+                <span id="numberPage">{{page}}</span>
+                <button hx-get="/tabla?page={{page+1}}&per_page=10" hx-target="#tableContainer" hx-swap="outerHTML">-></button>
+            {% elif page+1 > total_pages %}
+                <button hx-get="/tabla?page={{page-1}}&per_page=10" hx-target="#tableContainer" hx-swap="outerHTML"><-</button>
+                <span id="numberPage">{{page}}</span>
+                <button disabled>-></button>
+            {% endif %}
         </div>
     </div>
 </div>
-
-<script>
-
-    let table = document.getElementById("anomalyTable");
-    var pageNumber = document.getElementById("numberPage");
-    var items = Array.from(table.getElementsByTagName('tr')).slice(1);
-    var itemsPerPage = 2;
-    var totalPages = Math.ceil(items.length / itemsPerPage);
-
-    var currentPage = 0;
-
-    function showPage(page){
-        const startIndex = page * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        items.forEach((item, index) => {
-            item.classList.toggle('tw-hidden', index < startIndex || index >= endIndex);
-        });
-    }
-
-    function changePage(direction){
-        if(direction){
-            if(currentPage + 1 < totalPages){
-                currentPage = currentPage + 1;
-                pageNumber.textContent = currentPage;
-                showPage(currentPage);
-            }
-        } else {
-            if(currentPage - 1 >= 0){
-                currentPage = currentPage - 1;
-                pageNumber.textContent = currentPage;
-                showPage(currentPage);
-            }
-        }
-    }
-
-    function showDetails(){
-        console.log("hola")
-    }
-
-    pageNumber.textContent = currentPage;
-    showPage(currentPage);
-</script>

@@ -251,6 +251,10 @@
   padding-right: 1rem
 }
 
+.tw-preflight :is(.tw-pb-4) {
+  padding-bottom: 1rem
+}
+
 .tw-preflight :is(.tw-text-center) {
   text-align: center
 }
@@ -291,6 +295,11 @@
 .tw-preflight :is(.hover\:tw-bg-blue-700:hover) {
   --tw-bg-opacity: 1;
   background-color: rgb(29 78 216 / var(--tw-bg-opacity))
+}
+
+.tw-preflight :is(.hover\:tw-bg-white:hover) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity))
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#1e1e1e\]) {

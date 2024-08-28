@@ -4,10 +4,10 @@
 
 <div class="tw-preflight">
     <div id="anomaly-app" class="tw-container tw-grid tw-grid-cols-12 tw-gap-4 tw-mx-auto">
-        {% import './parameter.html.jinja' as parameter %}
+        {% import './score_component.html.jinja' as scoreComponent %}
         {% import './number_detections.html.jinja' as numberDectections %}
         {% import './percentil_component.html.jinja' as percentilComponent %}
-        <div id="filtersContainer" class="tw-container tw-my-4 tw-col-span-12 tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
+        <div id="filtersContainer" class="tw-container tw-my-4 tw-col-span-4 tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
             <div id="oidSearchContainer" class="tw-mx-4 tw-my-4">
                 <div id="btnOidSearch" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] dark:tw-text-white tw-mb-4">
@@ -43,7 +43,7 @@
                             <div id="score" class=" tw-col-span-full">
                                 <label>score</label>
                                 <div class="tw-flex tw-gap-4">
-                                    {{ parameter.parameter("minScore", "maxScore","minPercentil", "maxPercentil")}}
+                                    {{ scoreComponent.parameter("minScore", "maxScore","minPercentil", "maxPercentil")}}
                                 </div>
                             </div>
                             <div id="percentil" class="tw-col-span-full tw-my-4">
@@ -92,30 +92,14 @@
                             <div class="tw-col-span-6">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                        
-                                    <div>
-                                        <label>max: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                     {{ scoreComponent.parameter("minTransientScoreMultiple", "maxTransientScoreMultiple","minTransientPercentilMultiple", "maxTransientPercentilMultiple")}}
                                 </div>
                             </div>
 
                             <div class="tw-col-span-6">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                        
-                                    <div >
-                                        <label>max: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ percentilComponent.percentil("minTransientPercentilMultiple", "maxTransientScoreMultiple", "minTransientScoreMultiple", "maxTransientScoreMultiple") }}
                                 </div>
                             </div>       
                         </div>
@@ -281,7 +265,10 @@
             </div>
 
         </div>
-
+        
+        <div class="tw-col-span-8">
+            <div id="table" hx-get="/tabla" hx-trigger="load" hx-target="#table" hx-swap="outerHTML" ></div>
+        </div>
     </div>
 </div>
 
@@ -328,13 +315,12 @@
             return false;
         } else {
             console.log(target);
-            document.getElementById(target).value = 10
+            document.getElementById(target).value = 10;
             return 10;
         }
     }
 
     function parse_score_to_percentil(score, target) {
-        // llamar a category
         let category_value = document.getElementById("Category").value
         if(category_value == ""){
             return false;
