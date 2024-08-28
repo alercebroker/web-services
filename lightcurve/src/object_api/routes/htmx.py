@@ -34,7 +34,7 @@ async def object_info_app(
                 'corrected': "Yes" if object.corrected else "No",
                 'stellar' : "Yes" if object.stellar else "No",
                 'detections' : object.ndet,
-                'nonDetections' : '8',
+                'nonDetections' : '0',
                 'discoveryDateMJD' : object.firstmjd,
                 'lastDetectionMJD' : object.lastmjd,
                 'ra' : object.meanra ,
