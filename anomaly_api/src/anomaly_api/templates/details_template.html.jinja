@@ -1,0 +1,75 @@
+<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
+<link rel="stylesheet" href="{{ API_URL }}/static/main.css">
+
+
+<div class="tw-preflight">
+    <div id="detailContainer" class="tw-container tw-mx-auto tw-grid tw-grid-cols-12 tw-gap-4 dark:tw-text-white tw-text-black">
+        <div class="tw-col-span-12">
+            <button hx-get="/tabla" hx-trigger="click" hx-target="#detailContainer" hx-swap="outerHTML"><-</button>
+        </div>
+        <div id="basicInfoContainer" class="tw-col-span-4 tw-text-center tw-border tw-border-solid tw-border-black">
+            Object Basic Info oid1
+        </div>
+        <div id="tableDetailsContainer" class="tw-col-span-8 tw-border tw-border-solid tw-border-black">
+            <div id="selectAnomaly" class="tw-w-1/2 tw-mx-auto">
+                <label for="Category">Category:</label>
+                <select id="Category" class="tw-w-full tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 dark:tw-text-white hover:tw-border-b-gray-300">
+                <option value=""></option>
+                <option value="anomalyDetector" class="dark:tw-text-black">Anomaly detector</option>
+                </select>
+            </div>
+
+            <div id="tableDynamic" class="tw-overflow-auto tw-h-60 tw-my-4 tw-px-4">
+                <table  class="tw-table-auto tw-border-collapse tw-overscroll-contain tw-w-full">
+                    <thead>
+                        <tr class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                            <th class="tw-pr-4">Category</th>
+                            <th class="tw-pr-4">Score</th>
+                            <th class="tw-pr-4">Percentil</th>
+                            <th class="tw-pr-4">Percentil cut</th>
+                            <th class="tw-pr-4">graphic</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>
+                                <img src="../static/grafico-torta-etiquetas.png" style="width:100px;height:100px;">
+                            </td>
+                        </tr>
+                        <tr class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>
+                                <img src="../static/grafico-torta-etiquetas.png" style="width:100px;height:100px;">
+                            </td>
+                        </tr>
+                        <tr class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>
+                                <img src="../static/grafico-torta-etiquetas.png" style="width:100px;height:100px;">
+                            </td>
+                        </tr>
+                        <tr class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>snIa</td>
+                            <td>
+                                <img src="../static/grafico-torta-etiquetas.png" style="width:100px;height:100px;">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

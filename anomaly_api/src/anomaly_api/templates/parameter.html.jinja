@@ -1,0 +1,11 @@
+{% macro parameter(min_id="", max_id="", min_target="", max_target="")%}
+    <div>
+        <label>min: </label>
+        <input id="{{min_id}}" type="number" onchange="parse_score_to_percentil(this.value, '{{min_target}}')" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
+    </div>
+                            
+    <div>
+        <label>max: </label>
+        <input id="{{max_id}}" type="number" onchange="parse_score_to_percentil(this.value, '{{max_target}}')" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
+    </div>
+{% endmacro %}

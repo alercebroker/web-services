@@ -1,0 +1,131 @@
+<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
+<link rel="stylesheet" href="{{ API_URL }}/static/main.css">
+
+
+<div class="tw-preflight">
+    <div id="tableContainer" class="tw-container tw-mx-auto tw-flex tw-flex-col dark:tw-text-white tw-text-black">
+        <table id="anomalyTable" class="tw-table-auto tw-border-collapse">
+            <thead class="tw-border-0 tw-border-b tw-border-solid tw-border-black">
+                <tr>
+                    <th>oid</th>
+                    <th>ndet</th>
+                    <th>firstMJD</th>
+                    <th>lastMJD</th>
+                    <th>score transcient</th>
+                    <th>score stochastic</th>
+                    <th>score periodic</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr hx-get="/detalles" hx-trigger="click" hx-target="#tableContainer" hx-swap="outerHTML" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                </tr>
+
+                <tr hx-get="/detalles" hx-trigger="click" hx-target="#tableContainer" hx-swap="outerHTML"class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                </tr>
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                </tr>
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa2</td>
+                </tr>
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                </tr>
+                <tr onclick="showDetails()" class="tw-border-0 tw-border-b tw-border-solid tw-border-black hover:tw-cursor-pointer">
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa</td>
+                    <td>snIa3</td>
+                </tr>
+            </tbody>
+        </table>
+        <div id="simplePagination" class="tw-self-end tw-m-4">
+            <button onclick="changePage(false)"><-</button>
+            <span id="numberPage"></span>
+            <button onclick="changePage(true)">-></button>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    let table = document.getElementById("anomalyTable");
+    var pageNumber = document.getElementById("numberPage");
+    var items = Array.from(table.getElementsByTagName('tr')).slice(1);
+    var itemsPerPage = 2;
+    var totalPages = Math.ceil(items.length / itemsPerPage);
+
+    var currentPage = 0;
+
+    function showPage(page){
+        const startIndex = page * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        items.forEach((item, index) => {
+            item.classList.toggle('tw-hidden', index < startIndex || index >= endIndex);
+        });
+    }
+
+    function changePage(direction){
+        if(direction){
+            if(currentPage + 1 < totalPages){
+                currentPage = currentPage + 1;
+                pageNumber.textContent = currentPage;
+                showPage(currentPage);
+            }
+        } else {
+            if(currentPage - 1 >= 0){
+                currentPage = currentPage - 1;
+                pageNumber.textContent = currentPage;
+                showPage(currentPage);
+            }
+        }
+    }
+
+    function showDetails(){
+        console.log("hola")
+    }
+
+    pageNumber.textContent = currentPage;
+    showPage(currentPage);
+</script>
