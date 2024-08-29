@@ -196,7 +196,7 @@
 
 </div>
 
-<script type="module">
+<script type="module" async>
 
         import {
 
@@ -303,7 +303,7 @@
         
         document.addEventListener('click', handleOutsideClick);
 
-        fetch("https://tns.alerce.online/search", {
+        await fetch("https://tns.alerce.online/search", {
             "headers": {
                 "accept": "application/json",
                 "cache-control": "no-cache",
