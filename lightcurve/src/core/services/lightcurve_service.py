@@ -867,7 +867,7 @@ def remove_duplicate_forced_photometry_by_pid(
     for i in range(size):
         try:
             dpid = detections[i]["pid"]
-            if not dpid in pids:
+            if dpid not in pids:
                 pids[dpid] = None
             else:
                 if pids[dpid] is not None:
@@ -876,7 +876,7 @@ def remove_duplicate_forced_photometry_by_pid(
             pass
         try:
             fpid = forced_photometry[i]["pid"]
-            if not fpid in pids:
+            if fpid not in pids:
                 pids[fpid] = i
                 new_forced_photometry.append(forced_photometry[i])
         except IndexError:
