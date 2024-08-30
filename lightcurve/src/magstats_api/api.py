@@ -25,7 +25,9 @@ app.add_middleware(
 app.include_router(rest.router)
 app.include_router(prefix="/htmx", router=htmx.router)
 
-app.mount("/static", StaticFiles(directory="src/magstats_api/static"), name="static")
+app.mount(
+    "/static", StaticFiles(directory="src/magstats_api/static"), name="static"
+)
 
 
 @app.get("/openapi.json")
