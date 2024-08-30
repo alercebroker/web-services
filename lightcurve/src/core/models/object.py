@@ -1,23 +1,21 @@
-from typing import Optional, Union, List
+from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+
 
 class ObjectReduced(BaseModel):
+    oid: str
+    corrected: bool
+    stellar: bool
+    ndet: int
+    meanra: float
+    meandec: float
+    firstmjd: float
+    lastmjd: float
 
-    oid :              str
-    corrected :        bool
-    stellar :          bool
-    ndet :             int
-    meanra :           float
-    meandec :          float
-    firstmjd :         float
-    lastmjd :          float
-
-    pass
 
 class MagStats(BaseModel):
-
-    stellar: bool  
+    stellar: bool
     corrected: bool
     ndet: int
     ndubious: int
@@ -33,41 +31,31 @@ class MagStats(BaseModel):
     step_id_corr: str
     fid: int
 
-    pass
 
 class Probability(BaseModel):
-
-    classifier_name: str 
+    classifier_name: str
     classifier_version: str
     class_name: str
     probability: float
     ranking: int
 
-    pass
 
 class Taxonomy(BaseModel):
-
     classes: list
     classifier_name: str
     classifier_version: str
 
-    pass
 
 class Score(BaseModel):
-
     detector_name: str
     detector_version: str
     category_name: str
     score: float
 
-    pass
 
 class Distribution(BaseModel):
-
     detector_name: str
     category_name: str
     distribution_name: str
     distribution_version: str
     distribution_value: float
-
-    pass
