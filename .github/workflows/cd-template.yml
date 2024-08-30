@@ -8,6 +8,9 @@ on:
       packages:
         required: true
         type: string
+      event:
+        required: true
+        type: string
     secrets:
         ADMIN_TOKEN:
           required: true
@@ -160,6 +163,7 @@ jobs:
           CR_TOKEN: "${{ secrets.ADMIN_TOKEN }}"
 
   deploy-production:
+    if: inputs.event == 'release'
     needs: release-chart
     runs-on: ubuntu-latest
     permissions:

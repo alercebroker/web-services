@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lightcurve"
-version = "24.8.1-rc106"
+version = "24.8.1-rc115"
 description = "Get lightcurve of objects from ZTF and ATLAS surveys"
 authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
@@ -8,6 +8,7 @@ packages = [
     { include = "core", from = "src" },
     { include = "config", from = "src" },
     { include = "lightcurve_api", from = "src" },
+    { include = "magstats_api", from = "src" },
     { include = "database", from = "src" },
 ]
 
@@ -22,7 +23,7 @@ ralidator-fastapi = { path = "../libs/ralidator-fastapi", develop = true }
 prometheus-fastapi-instrumentator = "^6.1.0"
 jinja2 = "^3.1.2"
 httpx = "^0.24.1"
-db-plugins = "^6.1.1a45"
+db-plugins = "^24.5.2a11"
 numpy = "^1.26.4"
 scipy = "^1.12.0"
 pandas = "^2.2.1"
@@ -57,5 +58,5 @@ line-length = 79
 
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
+magstats = "scripts.run_magstats_dev:run"
 tunnel = "scripts.sshproxy:run_tunnel"
-
