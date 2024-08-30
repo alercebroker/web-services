@@ -1,11 +1,11 @@
-{% macro percentil(min_id="", max_id="", minScore="", maxScore="", category_id="")%}
+{% macro input_component(min_id="", max_id="", category_id="")%}
     <div>
         <label>min: </label>
-        <input id="{{min_id}}" type="number" onchange="parse_percentil_to_score(this.value, '{{minScore}}', '{{category_id}}')" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
+        <input id="{{min_id}}" type="number" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
     </div>
                             
     <div>
         <label>max: </label>
-        <input id="{{max_id}}" type="number" onchange="parse_percentil_to_score(this.value, '{{maxScore}}', '{{category_id}}')" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
+        <input id="{{max_id}}" type="number" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
     </div>
 {% endmacro %}

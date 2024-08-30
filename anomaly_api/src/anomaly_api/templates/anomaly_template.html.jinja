@@ -4,11 +4,10 @@
 
 <div class="tw-preflight">
     <div id="anomaly-app" class="tw-container tw-grid tw-grid-cols-12 tw-gap-4 tw-mx-auto">
-        {% import './score_component.html.jinja' as scoreComponent %}
-        {% import './number_detections.html.jinja' as numberDectections %}
-        {% import './percentil_component.html.jinja' as percentilComponent %}
+        {% import './percentil_component.html.jinja' as inputComponent %}
         <div id="filtersContainer" class="tw-container tw-my-4 lg:tw-col-span-4 sm:tw-col-span-12 tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
+            <!--OID Search section-->
             <div id="oidSearchContainer" class="tw-mx-4 tw-my-4">
                 <div id="btnOidSearch" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] dark:tw-text-white tw-mb-4">
                     oid
@@ -20,7 +19,7 @@
                 </div>
             </div>
 
-
+            <!--Score Search section-->
             <div id="scoreSearchContainer" class="tw-m-4 tw-rounded-lg">
                 <div id="scoreSearchBtn" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] tw-mb-4">
                     score search
@@ -29,7 +28,7 @@
                     <div id="numberDectections" class="tw-my-4">
                         <p for="numberDetections">number of detections</p>
                         <div id="numberDetections" class="tw-flex tw-gap-4">
-                            {{ numberDectections.numberDectections("scoreMin", "scoreMax") }}
+                            {{ inputComponent.input_component("scoreMin", "scoreMax","")}}
                        </div>
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
@@ -46,13 +45,13 @@
                             <div id="score" class=" tw-col-span-full">
                                 <label>score</label>
                                 <div class="tw-flex tw-gap-4">
-                                    {{ scoreComponent.parameter("minScore", "maxScore","minPercentil", "maxPercentil", "Category")}}
+                                    {{ inputComponent.input_component("minScore", "maxScore", "Category")}}
                                 </div>
                             </div>
                             <div id="percentil" class="tw-col-span-full tw-my-4">
                                 <label>percentil</label>
                                 <div class="tw-flex tw-gap-4">
-                                    {{ percentilComponent.percentil("minPercentil", "maxPercentil", "minScore", "maxScore", "Category") }}
+                                    {{ inputComponent.input_component("minPercentil", "maxPercentil", "Category") }}
                                 </div>
                             </div>
                             <div id="graphic" class="tw-col-span-full tw-mb-4 tw-border tw-border-solid tw-border-gray-500">
@@ -67,7 +66,7 @@
                 </div>
             </div>
 
-
+            <!--Multiple Score Search section-->
             <div id="multipleScoreSearchContainer" class="tw-m-4 tw-rounded-lg">
                 <div id="multipleScoreSearchBtn" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] tw-mb-4">
                     multiple score search
@@ -76,17 +75,10 @@
                     <div id="multipleNumberDectections" class="tw-my-4">
                         <p>number of detections</p>
                         <div class="tw-flex tw-gap-4">
-                            <div>
-                                <label>min: </label>
-                                <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                            </div>
-                            
-                            <div >
-                                <label>max: </label>
-                                <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                            </div>
+                            {{ inputComponent.input_component("minMultipleDetections", "maxMultipleDetections","Category")}}
                         </div>
                     </div>
+                    <!--Transient input section-->
                     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
                         <div id="multipleTransient" class="tw-col-span-12 tw-mb-4 tw-grid tw-gap-4">
                             <div class="tw-col-span-12">
@@ -95,33 +87,18 @@
                             <div class="tw-col-span-6">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input id="minMultipleTransientScore" type="number" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                                            
-                                    <div>
-                                        <label>max: </label>
-                                        <input id="maxMultipleTransientScore" type="number" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ inputComponent.input_component("minMultipleTransientScore", "maxMultipleTransientScore", "transient") }}
                                 </div>
                             </div>
 
                             <div class="tw-col-span-6">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input id="minMultipleTransientPercentil" type="number" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                                            
-                                    <div>
-                                        <label>max: </label>
-                                        <input id="maxMultipleTransientPercentil" type="number" class="tw-w-3/6 dark:tw-text-white tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ inputComponent.input_component("minMultipleTransientPercentil", "maxMultipleTransientPercentil", "transient") }}
                                 </div>
                             </div>       
                         </div>
+                        <!--Stochastic input section-->
                         <div id="multipleStochastic" class="tw-col-span-12 tw-mb-4 tw-grid tw-gap-4">
                             <div class="tw-col-span-12">
                                 <label>Stochastic</label>
@@ -129,33 +106,18 @@
                             <div class="tw-col-span-6">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input id="minMultipleStochasticScore" type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                        
-                                    <div>
-                                        <label>max: </label>
-                                        <input id="maxMultipleStochasticScore" type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ inputComponent.input_component("minMultipleStochasticScore", "maxMultipleStochasticScore", "periodic") }}
                                 </div>
                             </div>
 
                             <div class="tw-col-span-6">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input id="minMultipleStochasticPercentil" type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                        
-                                    <div >
-                                        <label>max: </label>
-                                        <input id="maxMultipleStochasticPercentil" type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ inputComponent.input_component("minMultipleStochasticPercentil", "maxMultipleStochasticPercentil", "stochastic") }}
                                 </div>
                             </div>       
                         </div>
+                        <!--Periodic input section-->
                         <div id="multiplePeriodic" class="tw-col-span-12 tw-mb-4 tw-grid tw-gap-4">
                             <div class="tw-col-span-12">
                                 <label>Periodic</label>
@@ -163,33 +125,18 @@
                             <div class="tw-col-span-6">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input id="minMultiplePeriodicScore" type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                        
-                                    <div>
-                                        <label>max: </label>
-                                        <input id="maxMultiplePeriodicScore" type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ inputComponent.input_component("minMultiplePeriodicScore", "maxMultiplePeriodicScore", "periodic") }}
                                 </div>
                             </div>
 
                             <div class="tw-col-span-6">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input id="minMultiplePeriodicPercentil" type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                        
-                                    <div >
-                                        <label>max: </label>
-                                        <input id="maxMultiplePeriodicPercentil" type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ inputComponent.input_component("minMultiplePeriodicPercentil", "maxMultiplePeriodicPercentil", "periodic") }}
                                 </div>
                             </div>       
                         </div>
+                        <!--Graphic and actions section-->
                         <div id="multipleGraphic" class="tw-col-span-12 tw-mb-4 tw-flex tw-justify-center tw-border tw-border-solid tw-border-gray-500">
                             <img src="../static/grafico-torta-etiquetas.png" style="width:300px;height:100px;">
                         </div>
@@ -201,7 +148,7 @@
                 </div>
             </div>
 
-
+            <!--Probability Search section-->
             <div id="probabilitySearchContainer" class="tw-m-4  tw-rounded-lg">
                 <div id="probabilitySearchBtn" class="tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-bg-[#757575] tw-mb-4">
                     probability score search
@@ -210,15 +157,7 @@
                     <div id="numberDectections" class="tw-my-4">
                         <p>number of detections</p>
                         <div class="tw-flex tw-gap-4">
-                            <div>
-                                <label>min: </label>
-                                <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                            </div>
-                            
-                            <div >
-                                <label>max: </label>
-                                <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                            </div>
+                            {{ inputComponent.input_component("minProbabilityDetections", "maxProbabilityDetections","CategoryProbability")}}
                         </div>
                     </div>
                     <div class="tw-grid tw-grid-cols-12 tw-gap-4">
@@ -232,30 +171,25 @@
                             </select>
                         </div>
                         <div class="tw-col-span-9">
+                            <!--Probability input-->
                             <div id="probability" class="tw-col-span-full">
                                 <label class="">probability</label>
                                 <div class="tw-flex tw-gap-4">
-                                    <div>
-                                        <label>min: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
-                                    
-                                    <div >
-                                        <label>max: </label>
-                                        <input type="number" class="tw-w-3/6 tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 hover:tw-border-b-gray-300">
-                                    </div>
+                                    {{ inputComponent.input_component("minProbability", "maxProbability","CategoryProbability")}}
                                 </div>
                             </div>
+                            <!--Probability Score input-->
                             <div id="probabilityScore" class="tw-col-span-full tw-my-4">
                                 <label class="">score</label>
                                 <div class="tw-flex tw-gap-4">
-                                     {{ scoreComponent.parameter("minProbabilityScore", "maxProbabilityScore","minProbabilityPercentil", "maxProbabilityPercentil", "CategoryProbability")}}
+                                     {{ inputComponent.input_component("minProbabilityScore", "maxProbabilityScore","CategoryProbability")}}
                                 </div>
                             </div>
+                            <!--Probability percentil input-->
                             <div id="probabilityPercentil" class="tw-col-span-full tw-mb-4">
                                 <label class="">percentil</label>
                                 <div class="tw-flex tw-gap-4">
-                                    {{ percentilComponent.percentil("minProbabilityPercentil", "maxProbabilityPercentil", "minProbabilityScore", "maxProbabilityScore", "CategoryProbability") }}
+                                    {{ inputComponent.input_component("minProbabilityPercentil", "maxProbabilityPercentil", "CategoryProbability") }}
                                 </div>
                             </div>
                             <div id="actions" class="tw-col-span-full tw-flex tw-justify-end tw-gap-4 tw-px-4 tw-mb-4">
@@ -275,7 +209,7 @@
     </div>
 </div>
 
-<script>
+<script type="module">
 
     const buttonMappings = [
         { buttonId: "btnOidSearch", containerId: "inputOidContainer" },
@@ -284,110 +218,116 @@
         { buttonId: "probabilitySearchBtn", containerId: "probabilityFormContainer" }
     ];
 
+    const inputsMultipleMappings = [
+        { scoreId: "minMultipleTransientScore", percentilId: "minMultipleTransientPercentil", category: "transient" },
+        { scoreId: "maxMultipleTransientScore", percentilId: "maxMultipleTransientPercentil", category: "transient" },
+        { scoreId: "minMultipleStochasticScore", percentilId: "minMultipleStochasticPercentil", category: "stochastic" },
+        { scoreId: "maxMultipleStochasticScore", percentilId: "maxMultipleStochasticPercentil", category: "stochastic" },
+        { scoreId: "minMultiplePeriodicScore", percentilId: "minMultiplePeriodicPercentil", category: "periodic" },
+        { scoreId: "maxMultiplePeriodicScore", percentilId: "maxMultiplePeriodicPercentil", category: "periodic" },
+        { scoreId: "minScore", percentilId: "minPercentil", category: "Category"},
+        { scoreId: "maxScore", percentilId: "maxPercentil", category: "Category"},
+        { scoreId: "minProbabilityScore", percentilId: "minProbabilityPercentil", category: "CategoryProbability"},
+        { scoreId: "maxProbabilityScore", percentilId: "maxProbabilityPercentil", category: "CategoryProbability"},
+    ];
+
     buttonMappings.forEach((element) => {
         document.getElementById(element.buttonId).addEventListener("click", () =>  {
             handleVisibility(element.containerId);
         })
     })
 
-    const inputMulTransientMinScore = document.getElementById("minMultipleTransientScore");
-    const inputMulTransientMaxScore = document.getElementById("maxMultipleTransientScore");
-    const inputMulTransientMinPercentil = document.getElementById("minMultipleTransientPercentil");
-    const inputMulTransientMaxPercentil = document.getElementById("maxMultipleTransientPercentil");
+    inputsMultipleMappings.forEach(({scoreId, percentilId, category}) => {
+        let scoreInput = document.getElementById(scoreId);
+        let percentilInput = document.getElementById(percentilId);
 
-    //transient section
-    inputMulTransientMinScore.addEventListener("change", () => {
-        parse_score_to_percentil_multiple(inputMulTransientMinScore.value, "minMultipleTransientPercentil", "transient")
+        scoreInput.addEventListener("change", () => {
+            parse_score_to_percentil(scoreInput.value, percentilId, category)
+        });
+
+        percentilInput.addEventListener("change", () => {
+            parse_percentil_to_score(percentilInput.value, scoreId, category)
+        })
     })
 
-    inputMulTransientMaxScore.addEventListener("change", () => {
-        parse_score_to_percentil_multiple(inputMulTransientMaxScore.value, "maxMultipleTransientPercentil", "transient")
-    })
-
-    inputMulTransientMinPercentil.addEventListener("change", () => {
-        parse_percentil_to_score_multiple(inputMulTransientMinPercentil.value, "minMultipleTransientScore", "transient")
-    })
-
-    inputMulTransientMaxPercentil.addEventListener("change", () => {
-        parse_percentil_to_score_multiple(inputMulTransientMaxPercentil.value, "maxMultipleTransientScore", "transient")
-    })
-
-    // stochastic
-
-    const inputStochasticMinScore = document.getElementById("minMultipleStochasticScore");
-    const inputStochasticMaxScore = document.getElementById("maxMultipleStochasticScore");
-    const inputStochasticMinPercentil = document.getElementById("minMultipleStochasticPercentil");
-    const inputStochasticMaxPercentil = document.getElementById("maxMultipleStochasticPercentil");
-
-    inputStochasticMinScore.addEventListener("change", () => {
-        parse_score_to_percentil_multiple(inputStochasticMinScore.value, "minMultipleStochasticPercentil", "stochastic")
-    })
-
-    inputStochasticMaxScore.addEventListener("change", () => {
-        parse_score_to_percentil_multiple(inputStochasticMaxScore.value, "maxMultipleStochasticPercentil", "stochastic")
-    })
-
-    inputStochasticMinPercentil.addEventListener("change", () => {
-        parse_percentil_to_score_multiple(inputStochasticMinPercentil.value, "minMultipleStochasticScore", "stochastic")
-    })
-
-    inputStochasticMaxPercentil.addEventListener("change", () => {
-        parse_percentil_to_score_multiple(inputStochasticMaxPercentil.value, "maxMultipleStochasticScore", "stochastic")
-    })
-
-    // periodic
-
-    const inputPeriodicMinScore = document.getElementById("minMultiplePeriodicScore");
-    const inputPeriodicMaxScore = document.getElementById("maxMultiplePeriodicScore");
-    const inputPeriodicMinPercentil = document.getElementById("minMultiplePeriodicPercentil");
-    const inputPeriodicMaxPercentil = document.getElementById("maxMultiplePeriodicPercentil");
-
-    inputPeriodicMinScore.addEventListener("change", () => {
-        parse_score_to_percentil_multiple(inputPeriodicMinScore.value, "minMultiplePeriodicPercentil", "periodic")
-    })
-
-    inputPeriodicMaxScore.addEventListener("change", () => {
-        parse_score_to_percentil_multiple(inputPeriodicMaxScore.value, "maxMultiplePeriodicPercentil", "periodic")
-    })
-
-    inputPeriodicMinPercentil.addEventListener("change", () => {
-        parse_percentil_to_score_multiple(inputPeriodicMinPercentil.value, "minMultiplePeriodicScore", "periodic")
-    })
-
-    inputPeriodicMaxPercentil.addEventListener("change", () => {
-        parse_percentil_to_score_multiple(inputPeriodicMaxPercentil.value, "maxMultiplePeriodicScore", "periodic")
-    })
-
-    function handleVisibility(id){
-        let element = document.getElementById(id);
-        if(element.classList.contains("tw-hidden")) {
-            element.classList.remove("tw-hidden");
-        } else {
-            element.classList.add("tw-hidden");
-        }
-    }
-
+    // functions start
 
     function parse_percentil_to_score(percentil_id, target_id, category_id) {
-        let category_value = document.getElementById(category_id)
-
-        if(category_value == ""){
-            return false;
+        
+        if(checkSelectElement(category_id)){
+            let category = document.getElementById(category_id)
+            if(category.value == ""){
+                return false;
+            } else {
+                document.getElementById(target_id).value = 10;
+                return 10;
+            }
         } else {
-            document.getElementById(target_id).value = 10;
-            return 10;
+            if(category_id == "" || category_id == "Category" || category_id == "CategoryProbability"){
+                return false;
+            } else {
+                document.getElementById(target_id).value = 10;
+                return 10;
+            }
         }
     }
 
     function parse_score_to_percentil(score, target_id, category_id) {
-        let category_value = document.getElementById(category_id)
-        if(category_value == ""){
-            return false;
+        
+        if(checkSelectElement(category_id)){
+            let category = document.getElementById(category_id)
+            if(category.value == ""){
+                return false;
+            } else {
+                document.getElementById(target_id).value = 65;
+                return 65;
+            }
         } else {
-            document.getElementById(target_id).value = 65;
-            return 65;
+            if(category_id == "" || category_id == "Category" || category_id == "CategoryProbability"){
+                return false;
+            } else {
+                document.getElementById(target_id).value = 65;
+                return 65;
+            }
         }
     }
+
+    function checkSelectElement(element){
+        if(document.getElementById(element) != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function handleVisibility(id){
+        let element = document.getElementById(id);
+        element.classList.toggle("tw-hidden");
+    }
+
+
+    // multiple functions
+    /*
+
+    const inputsForm = [
+        { scoreId: "minScore", percentilId: "minPercentil", category_id: "Category"},
+        { scoreId: "maxScore", percentilId: "maxPercentil", category_id: "Category"},
+        { scoreId: "minProbabilityScore", percentilId: "minProbabilityPercentil", category_id: "CategoryProbability"},
+        { scoreId: "maxProbabilityScore", percentilId: "maxProbabilityPercentil", category_id: "CategoryProbability"},
+    ];
+
+    inputsForm.forEach(({scoreId, percentilId, category_id}) => {
+        let scoreInputForm = document.getElementById(scoreId);
+        let percentilInputForm = document.getElementById(percentilId);
+
+        scoreInputForm.addEventListener("change", () => {
+            parse_score_to_percentil(scoreInputForm.value, percentilId, category_id)
+        });
+
+        percentilInputForm.addEventListener("change", () => {
+            parse_percentil_to_score(percentilInputForm.value, scoreId, category_id)
+        })
+    })
 
     function parse_percentil_to_score_multiple(percentil_id, target_id, category_id) {
         if(category_id == ""){
@@ -406,4 +346,29 @@
             return 65;
         }
     }
+    */
+
+
+    /*
+    function parse_percentil_to_score(percentil_id, target_id, category_id) {
+        let category = document.getElementById(category_id)
+
+        if(category.value == ""){
+            return false;
+        } else {
+            document.getElementById(target_id).value = 10;
+            return 10;
+        }
+    }
+    
+    function parse_score_to_percentil(score, target_id, category_id) {
+        let category = document.getElementById(category_id)
+        if(category.value == ""){
+            return false;
+        } else {
+            document.getElementById(target_id).value = 65;
+            return 65;
+        }
+    }
+    */
 </script>
