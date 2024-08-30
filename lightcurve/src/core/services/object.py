@@ -54,11 +54,11 @@ def get_mag_stats(
             result = session.execute(stmt)
             first = result.all()
             mag_stats_objs = [row[0] for row in first]
+            if len(mag_stats_objs) == 0:
+                raise ObjectNotFound(oid)
             dict_list = []
             for mag in mag_stats_objs:
                 dict_list.append(MagStatsModel(**mag.__dict__))
-            if first is None:
-                raise ObjectNotFound(oid)
             return dict_list
     except ObjectNotFound:
         raise
