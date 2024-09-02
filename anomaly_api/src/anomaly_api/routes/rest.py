@@ -15,6 +15,18 @@ templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8000"
 )
 
+def filterArr(element, data):
+
+    #splitElements = [item.strip() for item in elements.split(",")]
+    #print(splitElements)
+    #print(element)
+    if element == "":
+        return data
+    else:
+        filtered_data = [item for item in data if item["oid"] == element]
+        return filtered_data
+
+
 
 @router.get("/")
 def root():
@@ -30,7 +42,11 @@ def grafico(request: Request):
     )
 
 @router.get("/tabla", response_class="HTMLResponse")
-def grafico(request: Request, page: int = 1, per_page: int = 10):
+def grafico(
+    request: Request,
+    objectId: str = "", 
+    page: int = 1, 
+    per_page: int = 10):
 
     data = [
         {
@@ -216,11 +232,13 @@ def grafico(request: Request, page: int = 1, per_page: int = 10):
     ]
 
     
+    filterData = filterArr(objectId, data)
+
     start = (page - 1) * per_page
     end = start + per_page
-    total_pages = len(data)/per_page
+    total_pages = len(filterData)/per_page
+    paginated_data = filterData[start:end]
 
-    paginated_data = data[start:end]
 
     return templates.TemplateResponse(
         name="table_template.html.jinja",
@@ -233,8 +251,6 @@ def grafico(request: Request, page: int = 1, per_page: int = 10):
             "total": len(data),
         },
     )
-
-
 
 @router.get("/detalles", response_class="HTMLResponse")
 def grafico(request: Request):
