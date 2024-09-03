@@ -61,7 +61,7 @@ line-length = 79
 
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
-lightcurve = "scripts.run_dev:run"
-magstats = "scripts.run_magstats_dev:run"
-object = "scripts.run_object_dev:run"
+lightcurve = "scripts.run_dev:run_lightcurve"
+magstats = "scripts.run_dev:run_magstats"
+object = "scripts.run_dev:run_object"
 tunnel = "scripts.sshproxy:run_tunnel"
