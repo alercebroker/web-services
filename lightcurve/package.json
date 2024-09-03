@@ -1,0 +1,13 @@
+{
+  "name": "web-services",
+  "version": "1.0.0",
+  "license": "ISC",
+  "dependencies": {
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.3.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.1",
+    "globals": "^15.9.0"
+  }
+}
