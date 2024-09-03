@@ -3,8 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from database.sql import connect as connect_sql
+from database.sql import session_wrapper
+
 from .routes import htmx, rest
-from database.sql import connect as connect_sql, session_wrapper
 
 app = FastAPI(openapi_url="/v2/object/openapi.json")
 app.state.mongo_db = None

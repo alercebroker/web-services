@@ -59,6 +59,10 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 79
 
+[tool.isort]
+profile = "black"
+line_length = 79
+
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
 lightcurve = "scripts.run_dev:run_lightcurve"

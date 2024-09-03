@@ -1,20 +1,21 @@
-import re
 import os
+import re
 from typing import Annotated
-from fastapi import Query
+
+from fastapi import APIRouter, HTTPException, Query, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from core.services.lightcurve_service import (
     get_data_release,
     get_detections,
+    get_forced_photometry,
     get_non_detections,
     get_period,
-    get_forced_photometry,
     query_psql_object,
     remove_duplicate_forced_photometry_by_pid,
 )
-from fastapi import APIRouter, Request, HTTPException
-from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+
 from ..result_handler import handle_error, handle_success
 
 router = APIRouter()

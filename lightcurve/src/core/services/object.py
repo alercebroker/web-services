@@ -1,26 +1,15 @@
 from contextlib import AbstractContextManager
 from typing import Callable
 
-
-from db_plugins.db.sql.models import (
-    Object,
-    MagStats,
-    Probability,
-    Taxonomy,
-)
+from db_plugins.db.sql.models import MagStats, Object, Probability, Taxonomy
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from ..exceptions import (
-    DatabaseError,
-    ObjectNotFound,
-)
-from ..models.object import (
-    ObjectReduced as ObjectModel,
-    MagStats as MagStatsModel,
-    Probability as ProbabilityModel,
-    Taxonomy as TaxonomyModel,
-)
+from ..exceptions import DatabaseError, ObjectNotFound
+from ..models.object import MagStats as MagStatsModel
+from ..models.object import ObjectReduced as ObjectModel
+from ..models.object import Probability as ProbabilityModel
+from ..models.object import Taxonomy as TaxonomyModel
 
 
 def get_object(
