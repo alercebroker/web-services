@@ -217,6 +217,7 @@
         let discoveryDateMJD = {{discoveryDateMJD | tojson}} ;
         let lastDetectionMJD = {{lastDetectionMJD | tojson}} ;
         const nonDetections = {{nonDetections | tojson}} ;
+        const candid = {{candid}}
         let ra = {{ra | tojson}} ;
         let dec  = {{dec | tojson}};
 
@@ -230,7 +231,7 @@
 
         let raDecTime = String(raTime) + ' ' + String(decTime);
 
-        setMenuUrl(ra,dec,object);
+        setMenuUrl(ra,dec,candid,object);
 
         // En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
         // Tambien, si se ocupa la variable binaria, declararla antes.
