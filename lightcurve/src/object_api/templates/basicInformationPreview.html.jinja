@@ -64,7 +64,7 @@
                                 </svg>
                             </button>
                             <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
-                                <div class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                <div id="textDiscoveryToolTip" class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
                                     View MJD
                                 </div>
                             </div>
@@ -83,12 +83,17 @@
                                 </svg>
                             </button>
                             <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
-                                <div class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                <div id="textLastDetectionToolTip" class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
                                     View MJD
                                 </div>
                             </div>
                         </div>
                     </td>
+                </tr>
+                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-w-[95%] tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                    <td class="tw-text-left tw-max-w-[40%]">Non Detections</td>
+                    <td class="tw-text-center" id="nonDetections"></td>
+                    <td class=""></td>
                 </tr>
                 <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
                     <td class="tw-text-left tw-max-w-[40%]">RA(J2000) Dec(J2000)</td>
@@ -101,24 +106,19 @@
                                 </svg>
                             </button>
                             <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999] group-hover:tw-opacity-60">
-                                <div class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                                <div id="textRaDecToolTip" class="tw-bg-gray-900 tw-text-red-500 dark:tw-bg-gray-900 dark:tw-text-gray-100 tw-text-xs tw-rounded tw-px-4 tw-py-2">
                                     View H:M:S
                                 </div>
                             </div>
                         </div>
                     </td>
                 </tr>
-                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-w-[95%] tw-mx-auto">
-                    <td class="tw-text-left tw-max-w-[40%]">Non Detections</td>
-                    <td class="tw-text-center" id="nonDetections"></td>
-                    <td class=""></td>
-                </tr>
 
                 
             </tbody>
         </table>
 
-    <div class="tw-flex tw-space-x-4 tw-w-[95%] tw-mx-auto tw-text-sm tw-justify-center">
+    <div class="tw-flex tw-space-x-4 tw-w-[95%] tw-mx-auto tw-my-4 tw-text-sm tw-justify-center">
         <a id='find-button' target="_blank" class="tw-bg-cyan-700 tw-text-white tw-font-bold tw-py-1 tw-rounded tw-w-full tw-text-sm tw-text-center">
             FINDING CHART
         </a>
@@ -255,9 +255,16 @@
         document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
         document.getElementById("raDec").innerHTML = raDec;
 
-        document.getElementById('changeDiscoveryValue').addEventListener('click', () => changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD));
-        document.getElementById('changeLastValue').addEventListener('click', () => changeLastValue(lastDetectionMGD, lastDetectionMJD));
-        document.getElementById('changeRaDec').addEventListener('click', () => changeRaDec(raDec, raDecTime));
+        document.getElementById('changeDiscoveryValue').addEventListener('click', () => {
+            changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD);
+           
+        });
+        document.getElementById('changeLastValue').addEventListener('click', () => {
+            changeLastValue(lastDetectionMGD, lastDetectionMJD);
+        });
+        document.getElementById('changeRaDec').addEventListener('click', () => {
+            changeRaDec(raDec, raDecTime)
+        });
         let click = 0;
         document.getElementById('menu-button').addEventListener('click', () => display_menu());
 
@@ -278,7 +285,7 @@
                     tnsLink = `https://www.wis-tns.org/object/${Object.values(data)[1] || ''}`;
                     redshift = Object.values(Object.values(data)[0])[21] || 'No disponible';
                 } else {
-                    type = name = redshift = 'No encontrado';
+                    type = name = redshift = '-';
                     tnsLink = 'https://www.wis-tns.org/';
                 }
             } else {
@@ -338,7 +345,7 @@
 
 
 
-    </script>
+</script>
 
 {# </div> #}
 

@@ -6,9 +6,11 @@ let binaryRaDec = 0;
 export function changeDiscoveryValue(discoveryDateMGD,discoveryDateMJD){
     if (binaryDisc === 1) {
         document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
+        document.getElementById("textDiscoveryToolTip").innerText = "View MJD"
         binaryDisc = 0;
     } else {
         document.getElementById("discoveryDate").innerHTML = discoveryDateMJD;
+        document.getElementById("textDiscoveryToolTip").innerText = "View date"
         binaryDisc = 1;
     }
 
@@ -17,9 +19,11 @@ export function changeDiscoveryValue(discoveryDateMGD,discoveryDateMJD){
 export function changeLastValue(lastDetectionMGD,lastDetectionMJD){
     if (binaryLast === 1) {
         document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
+        document.getElementById("textLastDetectionToolTip").innerHTML = "View MJD"
         binaryLast = 0;
     } else {
         document.getElementById("lastDetection").innerHTML = lastDetectionMJD;
+        document.getElementById("textLastDetectionToolTip").innerHTML = "View date"
         binaryLast = 1;
     }
 
@@ -28,9 +32,11 @@ export function changeLastValue(lastDetectionMGD,lastDetectionMJD){
 export function changeRaDec(raDec,raDecTime){
     if (binaryRaDec === 1){
         document.getElementById("raDec").innerHTML = raDec;
+        document.getElementById("textRaDecToolTip").innerHTML = "View H:M:S"
         binaryRaDec = 0;
     } else {
         document.getElementById("raDec").innerHTML = raDecTime;
+        document.getElementById("textRaDecToolTip").innerHTML = "View Degrees"
         binaryRaDec = 1;
     }
 };

@@ -25,12 +25,13 @@ async def object_info_app(
 ):
 
     object = get_object(oid,session_factory = request.app.state.psql_session)
+    
 
     return templates.TemplateResponse(
       name='basicInformationPreview.html.jinja',
       context={
                 'request': request,
-                 'object': object.oid,
+                'object': object.oid,
                 'corrected': "Yes" if object.corrected else "No",
                 'stellar' : "Yes" if object.stellar else "No",
                 'detections' : object.ndet,
