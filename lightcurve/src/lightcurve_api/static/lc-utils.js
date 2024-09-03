@@ -1,13 +1,7 @@
 import { jdToDate } from "./astro-dates.js";
 
 export class LightCurveOptions {
-  constructor(
-    detections = [],
-    nonDetections = [],
-    forcedPhotometry = [],
-    fontColor = "fff",
-    title = "Light Curve",
-  ) {
+  constructor(fontColor = "fff", title = "Light Curve") {
     this.bandMap = {
       1: { name: "g", color: "#56E03A" },
       2: { name: "r", color: "#D42F4B" },

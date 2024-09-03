@@ -61,7 +61,6 @@ export class PeriodogramOptions {
       },
       xAxis: {
         name: "Period",
-        type: "value",
         type: "log",
         nameLocation: "center",
         scale: true,

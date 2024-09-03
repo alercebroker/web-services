@@ -1,6 +1,6 @@
 import { PeriodogramOptions } from "./periodogram/chartOptions.js";
 import { linear_to_log, log_to_linear } from "./periodogram/utils.js";
-import "./echarts.min.js";
+import * as echarts from "./echarts.min.js";
 
 export class Periodogram {
   constructor(period, detections, elements, apiUrl, refreshLightcurvePlot) {

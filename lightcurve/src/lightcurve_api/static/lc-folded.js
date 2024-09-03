@@ -1,4 +1,5 @@
 import { LightCurveOptions } from "./lc-utils.js";
+import { jdToDate } from "./astro-dates.js";
 
 export class FoldedLightCurveOptions extends LightCurveOptions {
   constructor(detections, forcedPhotometry, fontColor, period, flux) {
