@@ -14,7 +14,7 @@ from db_plugins.db.sql.models import (
     Detection,
     NonDetection
 )
-from sqlalchemy import Row, select, text, func
+from sqlalchemy import Row, select, text, func, asc
 from sqlalchemy.orm import Session
 
 from ..exceptions import (
@@ -190,18 +190,17 @@ def get_first_det_candid(
     mongo_db: Database | None = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error
-    ) -> ObjectModel | None:
+    ) -> str | None:
 
     try:
         assert session_factory is not None
         with session_factory() as session:
-            stmt = select(Detection).where((Detection.oid == oid) & (Detection.mjd == first_mjd))
+            stmt = select(Detection).where((Detection.oid == oid) & (Detection.has_stamp == True)).order_by(asc(Detection.mjd))
             result = session.execute(stmt)
-            first = result.all()[0]
-            if first is None:
+            detection = result.first()[0].__dict__
+            if detection is None:
                 raise ObjectNotFound(oid)
-            print(f"debug first detection \n {first[0].__dict__}")
-            return ObjectModel(**first[0].__dict__)
+            return detection["candid"]
     except ObjectNotFound:
         raise
     except Exception as e:
@@ -213,7 +212,7 @@ def get_count_ndet(
     mongo_db: Database | None = None,
     handle_success: Callable[[Any], Any] = default_handle_success,
     handle_error: Callable[[BaseException], None] = default_handle_error
-    ) -> ObjectModel | None:
+    ) -> int | None:
 
 
     try:
@@ -221,11 +220,10 @@ def get_count_ndet(
         with session_factory() as session:
             stmt = select(func.count()).select_from(NonDetection).where(NonDetection.oid == oid)
             result = session.execute(stmt)
-            first = result.all()[0]
-            if first is None:
+            count = result.all()[0]
+            if count is None:
                 raise ObjectNotFound(oid)
-            print(f"debug non detections \n {first[0].__dict__}")
-            return ObjectModel(**first[0].__dict__)
+            return count[0]
     except ObjectNotFound:
         raise
     except Exception as e:
