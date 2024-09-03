@@ -53,6 +53,7 @@ async def run_service(service: str, port: int):
         reload_dirs=[".", "../libs"],
     )
     server = uvicorn.Server(server_config)
+    os.environ["API_URL"] = f"http://localhost:{port}"
     await server.serve()
 
 

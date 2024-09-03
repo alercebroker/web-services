@@ -12,7 +12,7 @@ templates = Jinja2Templates(
     directory="src/magstats_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8000"
+    "API_URL", "http://localhost:8002"
 )
 
 
