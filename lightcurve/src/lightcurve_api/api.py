@@ -5,10 +5,12 @@ from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 
+from config.config import app_config
+from database.sql import connect as connect_sql
+from database.sql import session_wrapper
+
 from .filters import get_filters_map
-from .routes import htmx, rest, period
-from config import app_config
-from database.sql import connect as connect_sql, session_wrapper
+from .routes import htmx, period, rest
 
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
 app.state.mongo_db = None

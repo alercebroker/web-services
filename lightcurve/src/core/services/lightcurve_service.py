@@ -1,37 +1,27 @@
+import math
 from contextlib import AbstractContextManager
 from typing import Any, Callable, Sequence, Tuple
 
 import httpx
-from db_plugins.db.sql.models import (
-    Detection,
-    Feature,
-    ForcedPhotometry,
-    NonDetection,
-    Object,
-)
-from pymongo.database import Database
+from db_plugins.db.sql.models import (Detection, Feature, ForcedPhotometry,
+                                      NonDetection, Object)
 from pymongo.cursor import Cursor
+from pymongo.database import Database
 from returns.pipeline import is_successful
 from returns.result import Failure, Result, Success
 from sqlalchemy import Row, select, text
 from sqlalchemy.orm import Session
 
-from ..exceptions import (
-    AtlasNonDetectionError,
-    DatabaseError,
-    ObjectNotFound,
-    SurveyIdError,
-    ParseError,
-)
-from ..models.lightcurve_model import (
-    DataReleaseDetection as DataReleaseDetectionModel,
-)
+from config.config import app_config
+
+from ..exceptions import (AtlasNonDetectionError, DatabaseError,
+                          ObjectNotFound, ParseError, SurveyIdError)
+from ..models.lightcurve_model import \
+    DataReleaseDetection as DataReleaseDetectionModel
 from ..models.lightcurve_model import Detection as DetectionModel
 from ..models.lightcurve_model import Feature as FeatureModel
 from ..models.lightcurve_model import ForcedPhotometry as ForcedPhotometryModel
 from ..models.lightcurve_model import NonDetection as NonDetectionModel
-from config import app_config
-import math
 
 
 def default_handle_success(result):
