@@ -2,9 +2,10 @@ import asyncio
 import copy
 import os
 import sys
+from typing import Any
 
 import uvicorn
-from uvicorn.config import LOGGING_CONFIG
+from uvicorn.config import LOGGING_CONFIG, LoopSetupType
 
 
 def run(services=["ALL"], port=8000):
@@ -45,18 +46,10 @@ async def run_services(services, port):
 
 
 async def run_service(service: str, port: int):
-    log_config = copy.deepcopy(LOGGING_CONFIG)
-    log_config["formatters"]["access"]["fmt"] = (
-        f"[{service}] " + log_config["formatters"]["access"]["fmt"]
-    )
-    log_config["formatters"]["default"]["fmt"] = (
-        f"[{service}] " + log_config["formatters"]["default"]["fmt"]
-    )
     server_config = uvicorn.Config(
         f"{service}.api:app",
         port=int(port),
         reload=True,
-        log_config=log_config,
         reload_dirs=[".", "../libs"],
     )
     server = uvicorn.Server(server_config)
