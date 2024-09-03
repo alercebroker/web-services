@@ -7,6 +7,8 @@ import {
   setMenuUrl,
 } from "./basicInformation.js";
 
+const FIXED_PRECISION = 7;
+
 const objectInfo = JSON.parse(document.getElementById("object-data").text);
 
 const object = objectInfo.object;
@@ -19,7 +21,7 @@ const nonDetections = objectInfo.nonDetections;
 let ra = objectInfo.ra;
 let dec = objectInfo.dec;
 
-let raDec = String(ra) + " " + String(dec);
+let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)} ${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
 
 let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
 let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
@@ -27,7 +29,7 @@ let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
 let raTime = transformRaDec(ra);
 let decTime = transformRaDec(dec);
 
-let raDecTime = String(raTime) + " " + String(decTime);
+let raDecTime = `${Number.parseFloat(raTime).toFixed(FIXED_PRECISION)} ${Number.parseFloat(decTime).toFixed(FIXED_PRECISION)}`;
 
 setMenuUrl(ra, dec, object);
 
