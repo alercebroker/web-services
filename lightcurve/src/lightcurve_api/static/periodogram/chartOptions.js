@@ -171,4 +171,3 @@ export class PeriodogramOptions {
     this.options.dataset[1].source = best_periods;
   }
 }
-
