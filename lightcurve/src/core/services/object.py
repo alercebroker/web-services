@@ -195,7 +195,7 @@ def get_first_det_candid(
     try:
         assert session_factory is not None
         with session_factory() as session:
-            stmt = select(Detection).where((Detection.oid == oid) & (Detection.has_stamp == True)).order_by(asc(Detection.mjd))
+            stmt = select(Detection).where(Detection.oid == oid).where(Detection.has_stamp == True).order_by(asc(Detection.mjd))
             result = session.execute(stmt)
             detection = result.first()[0].__dict__
             if detection is None:
