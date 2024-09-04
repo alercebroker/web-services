@@ -28,7 +28,6 @@ async def object_info_app(
     candid = get_first_det_candid(oid, object.firstmjd, session_factory = request.app.state.psql_session)
     count_ndet = get_count_ndet(oid,session_factory = request.app.state.psql_session)
     
-
     return templates.TemplateResponse(
       name='basicInformationPreview.html.jinja',
       context={

@@ -68,8 +68,18 @@ export function julianToGregorian(mjd) {
 }
 
 
-export function transformRaDec(degrees) {
-    
+export function transformDec(dec){
+    const sign = dec < 0 ? '-' : '+'
+    dec = Math.abs(dec)
+    const deg = Math.floor(dec)
+    const decM = Math.abs(Math.floor((dec - deg) * 60))
+    const decS = ((Math.abs((dec - deg) * 60) - decM) * 60).toFixed(2)
+    dec = `${sign}${deg}:${decM}:${decS}`
+
+    return dec
+}
+
+export function transformRa(degrees) {
     let degreesPerHour = 360 / 24;
     let hours = Math.floor(degrees / degreesPerHour);
     let minutes = Math.floor((degrees % degreesPerHour) * 60 / degreesPerHour);
