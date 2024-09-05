@@ -31,7 +31,7 @@ let raTime = transformRa(ra);
 let decTime = transformDec(dec);
 let raDecTime = `${Number.parseFloat(raTime).toFixed(FIXED_PRECISION)}\n${Number.parseFloat(decTime).toFixed(FIXED_PRECISION)}`;
 
-setMenuUrl(ra, dec, candid, object);
+setMenuUrl(ra, dec, candid, object, raTime, decTime);
 
 // En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
 // Tambien, si se ocupa la variable binaria, declararla antes.
