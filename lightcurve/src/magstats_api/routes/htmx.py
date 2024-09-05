@@ -27,11 +27,22 @@ async def object_mag_app(request: Request, oid: str):
 
     mag_stats_dict = {}
     for i, mag_stat in enumerate(mag_stats):
-        mag_stats_dict[
-            f"band_{i+1}"
-        ] = (
-            mag_stat.__dict__
-        )  ## Es necesario cambiar el nombre de las keys por los fid y trabajar con el conversor que esta en probability en alerts-api
+        mag_stats_dict[f"band_{i+1}"] = {
+            "stellar": mag_stat.stellar,
+            "corrected": mag_stat.corrected,
+            "ndet": mag_stat.ndet,
+            "ndubious": mag_stat.ndubious,
+            "magmean": mag_stat.magmean,
+            "magmax": mag_stat.magmax,
+            "magmin": mag_stat.magmin,
+            "magsigma": mag_stat.magsigma,
+            "maglast": mag_stat.maglast,
+            "magfirst": mag_stat.magfirst,
+            "firstmjd": mag_stat.firstmjd,
+            "lastmjd": mag_stat.lastmjd,
+            "step_id_corr": mag_stat.step_id_corr,
+            "fid": mag_stat.fid,
+        }
 
     return templates.TemplateResponse(
         name="magstatRebuild.html.jinja",

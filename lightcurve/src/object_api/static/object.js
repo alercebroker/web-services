@@ -3,12 +3,12 @@ import {
   changeLastValue,
   changeRaDec,
   julianToGregorian,
-  transformRaDec,
+  transformRa,
+  transformDec,
   setMenuUrl,
-} from "./basicInformation.js";
+} from "../static/basicInformation.js";
 
 const FIXED_PRECISION = 7;
-
 const objectInfo = JSON.parse(document.getElementById("object-data").text);
 
 const object = objectInfo.object;
@@ -20,18 +20,18 @@ let lastDetectionMJD = objectInfo.lastDetectionMJD;
 const nonDetections = objectInfo.nonDetections;
 let ra = objectInfo.ra;
 let dec = objectInfo.dec;
+let candid = objectInfo.candid;
 
-let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)} ${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
+let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}\n${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
 
 let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
 let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
 
-let raTime = transformRaDec(ra);
-let decTime = transformRaDec(dec);
+let raTime = transformRa(ra);
+let decTime = transformDec(dec);
+let raDecTime = `${Number.parseFloat(raTime).toFixed(FIXED_PRECISION)}\n${Number.parseFloat(decTime).toFixed(FIXED_PRECISION)}`;
 
-let raDecTime = `${Number.parseFloat(raTime).toFixed(FIXED_PRECISION)} ${Number.parseFloat(decTime).toFixed(FIXED_PRECISION)}`;
-
-setMenuUrl(ra, dec, object);
+setMenuUrl(ra, dec, candid, object);
 
 // En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
 // Tambien, si se ocupa la variable binaria, declararla antes.
@@ -56,17 +56,15 @@ document.getElementById("raDec").innerHTML = raDec;
 
 document
   .getElementById("changeDiscoveryValue")
-  .addEventListener("click", () =>
-    changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD),
-  );
-document
-  .getElementById("changeLastValue")
-  .addEventListener("click", () =>
-    changeLastValue(lastDetectionMGD, lastDetectionMJD),
-  );
-document
-  .getElementById("changeRaDec")
-  .addEventListener("click", () => changeRaDec(raDec, raDecTime));
+  .addEventListener("click", () => {
+    changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD);
+  });
+document.getElementById("changeLastValue").addEventListener("click", () => {
+  changeLastValue(lastDetectionMGD, lastDetectionMJD);
+});
+document.getElementById("changeRaDec").addEventListener("click", () => {
+  changeRaDec(raDec, raDecTime);
+});
 let click = 0;
 document
   .getElementById("menu-button")
@@ -82,12 +80,10 @@ function lastInformation(data) {
     if (Object.keys(Object.values(data)[0] || {}).length > 25) {
       type = Object.values(data)[2] || "No disponible";
       name = Object.values(data)[1] || "No disponible";
-      tnsLink = `https://www.wis-tns.org/object/${
-        Object.values(data)[1] || ""
-      }`;
+      tnsLink = `https://www.wis-tns.org/object/${Object.values(data)[1] || ""}`;
       redshift = Object.values(Object.values(data)[0])[21] || "No disponible";
     } else {
-      type = name = redshift = "No encontrado";
+      type = name = redshift = "-";
       tnsLink = "https://www.wis-tns.org/";
     }
   } else {
