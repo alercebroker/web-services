@@ -84,7 +84,7 @@ def get_probabilities(
 
 
 def get_taxonomies(
-    session_factory: Callable[..., AbstractContextManager[Session]]
+    session_factory: Callable[..., AbstractContextManager[Session]],
 ) -> list:
     try:
         assert session_factory is not None

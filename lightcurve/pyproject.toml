@@ -34,6 +34,7 @@ P4J = [
     { platform = "darwin", url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-macosx_14_0_x86_64.whl" },
 ]
 djlint = "^1.35.2"
+ruff = "^0.6.4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -48,9 +49,7 @@ memray = "^1.8.1"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.9.1"
 sshtunnel = "^0.4.0"
-ruff = "^0.6.3"
 isort = "^5.13.2"
 
 [build-system]
@@ -63,6 +62,9 @@ line-length = 79
 [tool.isort]
 profile = "black"
 line_length = 79
+
+[tool.ruff]
+line-length = 79
 
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
