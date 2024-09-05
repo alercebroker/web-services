@@ -77,6 +77,11 @@
   margin-right: auto;
 }
 
+.tw-preflight :is(.tw-my-4) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .tw-preflight :is(.tw-mb-\[20px\]) {
   margin-bottom: 20px;
 }
@@ -199,6 +204,22 @@
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%;
+}
+
+.tw-preflight :is(.tw-w-48) {
+  width: 12rem;
+}
+
+.tw-preflight :is(.tw-w-64) {
+  width: 16rem;
+}
+
+.tw-preflight :is(.tw-w-56) {
+  width: 14rem;
+}
+
+.tw-preflight :is(.tw-w-52) {
+  width: 13rem;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -453,6 +474,65 @@
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-bg-slate-100) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(241 245 249 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-slate-400) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(148 163 184 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-slate-900) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(15 23 42 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-zinc-100) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(244 244 245 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-zinc-200) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(228 228 231 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-zinc-900) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(24 24 27 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-zinc-500) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(113 113 122 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-zinc-300) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(212 212 216 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-gray-200) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-gray-400) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-gray-300) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-\[\#757575\]\/60) {
+  background-color: rgb(117 117 117 / 0.6);
+}
+
 .tw-preflight :is(.tw-p-2) {
   padding: 0.5rem;
 }
@@ -570,6 +650,11 @@
   color: rgb(37 99 235 / var(--tw-text-opacity));
 }
 
+.tw-preflight :is(.tw-text-gray-100) {
+  --tw-text-opacity: 1;
+  color: rgb(243 244 246 / var(--tw-text-opacity));
+}
+
 .tw-preflight :is(.tw-text-gray-400) {
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity));
@@ -588,6 +673,16 @@
 .tw-preflight :is(.tw-text-white) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-zinc-600) {
+  --tw-text-opacity: 1;
+  color: rgb(82 82 91 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-\[\#FAFAFA\]) {
+  --tw-text-opacity: 1;
+  color: rgb(250 250 250 / var(--tw-text-opacity));
 }
 
 .tw-preflight :is(.tw-underline) {
@@ -1309,9 +1404,39 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(37 37 37 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-dark .dark\:tw-bg-gray-900) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.tw-dark .dark\:tw-bg-green-700) {
   --tw-bg-opacity: 1;
   background-color: rgb(21 128 61 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-gray-200) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-gray-400) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-gray-600) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(75 85 99 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-gray-300) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 213 219 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-gray-700) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(55 65 81 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#757575\]) {
@@ -1319,9 +1444,33 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(117 117 117 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-dark .dark\:tw-bg-gray-900) {
+.tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#757575\]\/60) {
+  background-color: rgb(117 117 117 / 0.6);
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-gray-500) {
   --tw-bg-opacity: 1;
-  background-color: rgb(17 24 39 / var(--tw-bg-opacity));
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-zinc-700) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(63 63 70 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-zinc-500) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(113 113 122 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-bg-zinc-600) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(82 82 91 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-gray-100) {
+  --tw-text-opacity: 1;
+  color: rgb(243 244 246 / var(--tw-text-opacity));
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-text-white) {
@@ -1329,9 +1478,39 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.tw-preflight :is(.tw-dark .dark\:tw-text-gray-400) {
+.tw-preflight :is(.tw-dark .dark\:tw-text-gray-900) {
   --tw-text-opacity: 1;
-  color: rgb(156 163 175 / var(--tw-text-opacity));
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-gray-50) {
+  --tw-text-opacity: 1;
+  color: rgb(249 250 251 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-gray-300) {
+  --tw-text-opacity: 1;
+  color: rgb(209 213 219 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-\[\#EEEEEE\]) {
+  --tw-text-opacity: 1;
+  color: rgb(238 238 238 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-\[\#FAFAFA\]) {
+  --tw-text-opacity: 1;
+  color: rgb(250 250 250 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-gray-500) {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-zinc-50) {
+  --tw-text-opacity: 1;
+  color: rgb(250 250 250 / var(--tw-text-opacity));
 }
 
 .tw-preflight :is(.tw-dark .dark\:hover\:tw-bg-\[\#353535\]:hover) {

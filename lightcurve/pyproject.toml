@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lightcurve"
-version = "24.8.1-rc112"
+version = "24.9.1-rc117"
 description = "Get lightcurve of objects from ZTF and ATLAS surveys"
 authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
@@ -9,6 +9,7 @@ packages = [
     { include = "config", from = "src" },
     { include = "lightcurve_api", from = "src" },
     { include = "magstats_api", from = "src" },
+    { include = "object_api", from = "src" },
     { include = "database", from = "src" },
 ]
 
@@ -59,4 +60,5 @@ line-length = 79
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
 magstats = "scripts.run_magstats_dev:run"
+object_detail = "scripts.run_object_dev:run"
 tunnel = "scripts.sshproxy:run_tunnel"

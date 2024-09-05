@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import Query
 import json
 
-from core.services.object import get_object
+from core.services.object import get_object,get_first_det_candid, get_count_ndet
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -25,19 +25,22 @@ async def object_info_app(
 ):
 
     object = get_object(oid,session_factory = request.app.state.psql_session)
-
+    candid = get_first_det_candid(oid, object.firstmjd, session_factory = request.app.state.psql_session)
+    count_ndet = get_count_ndet(oid,session_factory = request.app.state.psql_session)
+    
     return templates.TemplateResponse(
       name='basicInformationPreview.html.jinja',
       context={
                 'request': request,
-                 'object': object.oid,
+                'object': object.oid,
                 'corrected': "Yes" if object.corrected else "No",
                 'stellar' : "Yes" if object.stellar else "No",
                 'detections' : object.ndet,
-                'nonDetections' : '8',
+                'nonDetections' : count_ndet,
                 'discoveryDateMJD' : object.firstmjd,
                 'lastDetectionMJD' : object.lastmjd,
                 'ra' : object.meanra ,
                 'dec': object.meandec,
+                'candid': candid
             },
   )

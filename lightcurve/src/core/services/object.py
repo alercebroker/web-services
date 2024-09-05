@@ -10,9 +10,11 @@ from db_plugins.db.sql.models import (
     Probability,
     Taxonomy,
     Score,
-    ScoreDistribution
+    ScoreDistribution,
+    Detection,
+    NonDetection
 )
-from sqlalchemy import Row, select, text
+from sqlalchemy import Row, select, text, func, asc
 from sqlalchemy.orm import Session
 
 from ..exceptions import (
@@ -175,6 +177,53 @@ def get_scores_distribution(
             for dist in get_distribution_data:
                 get_disribution_list.append(DistributionModel(**dist.__dict__))
             return get_disribution_list
+    except ObjectNotFound:
+        raise
+    except Exception as e:
+        raise DatabaseError(e, database="PSQL")
+    
+
+def get_first_det_candid( 
+    oid: str,
+    first_mjd: float,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
+    handle_success: Callable[[Any], Any] = default_handle_success,
+    handle_error: Callable[[BaseException], None] = default_handle_error
+    ) -> str | None:
+
+    try:
+        assert session_factory is not None
+        with session_factory() as session:
+            stmt = select(Detection).where(Detection.oid == oid).where(Detection.has_stamp == True).order_by(asc(Detection.mjd))
+            result = session.execute(stmt)
+            detection = result.first()[0].__dict__
+            if detection is None:
+                raise ObjectNotFound(oid)
+            return detection["candid"]
+    except ObjectNotFound:
+        raise
+    except Exception as e:
+        raise DatabaseError(e, database="PSQL")
+
+def get_count_ndet( 
+    oid: str,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    mongo_db: Database | None = None,
+    handle_success: Callable[[Any], Any] = default_handle_success,
+    handle_error: Callable[[BaseException], None] = default_handle_error
+    ) -> int | None:
+
+
+    try:
+        assert session_factory is not None
+        with session_factory() as session:
+            stmt = select(func.count()).select_from(NonDetection).where(NonDetection.oid == oid)
+            result = session.execute(stmt)
+            count = result.all()[0]
+            if count is None:
+                raise ObjectNotFound(oid)
+            return count[0]
     except ObjectNotFound:
         raise
     except Exception as e:
