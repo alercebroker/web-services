@@ -3,14 +3,15 @@
 <link rel="stylesheet" href="{{API_URL}}/static/magstats.css">
 
 
-    <div id='magstats-app' class="tw-flex tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-relative tw-mt-3 tw-w-full tw-text-sm tw-justify-center">
+<div id='magstats-app' class="tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-w-full tw-text-sm">
 
-        <div class="tw-inline tw-text-black dark:tw-text-white tw-flex tw-items-center">
-            <div class="tw-inline tw-text-black dark:tw-text-white">
-                <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px] tw-text-black dark:tw-text-white">Magnitude Statistics</h1>
+    <div class="tw-flex tw-flex-col tw-py-4">
+        <div class="tw-w-[95%] tw-mx-auto tw-text-black dark:tw-text-white tw-flex tw-items-center">
+            <div class="tw-text-black dark:tw-text-white">
+                <p class="tw-font-bold tw-text-black dark:tw-text-white">Magnitude Statistics</p>
             </div>
 
-            <div class="tw-inline tw-relative tw-ml-2 tw-mt-[10px] tw-group">
+            <div class="tw-group tw-relative tw-ml-2">
                 <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                     <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
                 </svg>
@@ -22,11 +23,11 @@
             </div>
         </div>
 
-        <div class="tw-preflight dark:tw-text-white tw-text-black" id="tableContainer">
+        <div class="tw-w-[95%] dark:tw-text-white tw-text-black tw-mx-auto" id="tableContainer">
             
         </div>
 
-        <div class="tw-w-[95%] tw-mx-auto tw-text-sm">
+        <div class="tw-w-[95%] tw-mx-auto tw-text-sm ">
             <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
                 <div class="tw-flex tw-items-center tw-space-x-2">
                     <label class="tw-text-black dark:tw-text-white">Rows per page:</label>
@@ -45,11 +46,13 @@
                 </div>
                 <div class="tw-text-sm">
                     <button class="tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
-                    <button class="tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button></div>
+                    <button class="tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+                </div>
             </div>
         </div>
-
     </div>
+
+</div>
 
 <script type="module">
 
@@ -135,7 +138,7 @@
 
         // Create the table element
         const table = document.createElement("table");
-        table.classList = 'tw-preflight tw-overflow-auto tw-w-[95%] tw-mx-auto tw-table-full tw-justify-center tw-text-sm';
+        table.classList = 'tw-overflow-auto tw-w-full tw-text-sm';
 
         //const colGroup = document.createElement('colgroup');
         //colGroup.classList = 'tw-w-[95%] tw-mx-auto';
