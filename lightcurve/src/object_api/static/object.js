@@ -22,14 +22,15 @@ let ra = objectInfo.ra;
 let dec = objectInfo.dec;
 let candid = objectInfo.candid;
 
-let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}\n${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
+let raDec = String(ra) + '<br>'+ String(dec);
 
 let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
 let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
 
 let raTime = transformRa(ra);
 let decTime = transformDec(dec);
-let raDecTime = `${Number.parseFloat(raTime).toFixed(FIXED_PRECISION)}\n${Number.parseFloat(decTime).toFixed(FIXED_PRECISION)}`;
+
+let raDecTime = String(raTime) + '<br>' + String(decTime);;
 
 setMenuUrl(ra, dec, candid, object, raTime, decTime);
 
