@@ -40,16 +40,8 @@
   grid-column: span 3 / span 3
 }
 
-.tw-preflight :is(.tw-col-span-4) {
-  grid-column: span 4 / span 4
-}
-
 .tw-preflight :is(.tw-col-span-6) {
   grid-column: span 6 / span 6
-}
-
-.tw-preflight :is(.tw-col-span-8) {
-  grid-column: span 8 / span 8
 }
 
 .tw-preflight :is(.tw-col-span-9) {
@@ -58,10 +50,6 @@
 
 .tw-preflight :is(.tw-col-span-full) {
   grid-column: 1 / -1
-}
-
-.tw-preflight :is(.tw-col-span-2) {
-  grid-column: span 2 / span 2
 }
 
 .tw-preflight :is(.tw-m-4) {
@@ -103,6 +91,10 @@
   height: 15rem
 }
 
+.tw-preflight :is(.tw-h-4\/5) {
+  height: 80%
+}
+
 .tw-preflight :is(.tw-w-1\/2) {
   width: 50%
 }
@@ -121,6 +113,18 @@
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%
+}
+
+.tw-preflight :is(.tw-w-2\/3) {
+  width: 66.666667%
+}
+
+.tw-preflight :is(.tw-w-3\/4) {
+  width: 75%
+}
+
+.tw-preflight :is(.tw-w-4\/5) {
+  width: 80%
 }
 
 .tw-preflight :is(.tw-table-auto) {
