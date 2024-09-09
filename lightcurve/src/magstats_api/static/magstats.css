@@ -993,8 +993,7 @@ Prevent resizing textareas horizontally by default.
   /* 2 */
 }
 
-.tw-preflight input::-moz-placeholder,
-.tw-preflight textarea::-moz-placeholder {
+.tw-preflight input::-moz-placeholder, .tw-preflight textarea::-moz-placeholder {
   opacity: 1;
   /* 1 */
   color: #9ca3af;

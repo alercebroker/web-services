@@ -70,7 +70,7 @@ function createTable() {
   // Create the table element
   const table = document.createElement("table");
   table.classList =
-    "tw-preflight tw-overflow-auto tw-w-[95%] tw-mx-auto tw-table-full tw-justify-center tw-text-sm";
+    "tw-overflow-auto tw-w-full tw-text-sm";
 
   //const colGroup = document.createElement('colgroup');
   //colGroup.classList = 'tw-w-[95%] tw-mx-auto';
