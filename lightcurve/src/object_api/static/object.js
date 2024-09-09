@@ -32,10 +32,73 @@ let decTime = transformDec(dec, 2);
 
 let raDecTime = `${raTime}<br>${decTime}`;
 
-setMenuUrl(ra, dec, candid, object, raTime, decTime);
+
+function init() {
+  document.getElementById("object").innerHTML = object;
+  document.getElementById("corrected").innerHTML = corrected;
+  document.getElementById("stellar").innerHTML = stellar;
+  document.getElementById("detections").innerHTML = detections;
+  document.getElementById("nonDetections").innerHTML = nonDetections;
+  document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
+  document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
+  document.getElementById("raDec").innerHTML = raDec;
+
+  document
+    .getElementById("changeDiscoveryValue")
+    .addEventListener("click", () => {
+      changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD);
+    });
+  document.getElementById("changeLastValue").addEventListener("click", () => {
+    changeLastValue(lastDetectionMGD, lastDetectionMJD);
+  });
+  document.getElementById("changeRaDec").addEventListener("click", () => {
+    changeRaDec(raDec, raDecTime);
+  });
+  document
+    .getElementById("menu-button")
+    .addEventListener("click", () => display_menu());
+
+  setMenuUrl(ra, dec, candid, object, raTime, decTime);
+
+  fetch("https://tns.alerce.online/search", {
+    headers: {
+      accept: "application/json",
+      "cache-control": "no-cache",
+      "content-type": "application/json",
+    },
+    body: '{"ra":' + String(ra) + ',"dec":' + String(dec) + "}",
+    method: "POST",
+    mode: "cors",
+  })
+    .then((response) => {
+      return response.text();
+    })
+    .then((text) => {
+      if (text.includes("Error message")) {
+        throw new Error(text);
+      }
+      try {
+        return JSON.parse(text);
+      } catch {
+        return text;
+      }
+    })
+    .then((data) => {
+      lastInformation(data);
+    })
+    .catch((error) => {
+      lastInformation({
+        error: true,
+        message: error.message,
+      });
+    });
+}
+
+htmx.on("htmx:load", init);
 
 // En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
 // Tambien, si se ocupa la variable binaria, declararla antes.
+let click = 0;
 function display_menu() {
   if (click === 0) {
     document.getElementById("menu-box").style.display = "block";
@@ -45,31 +108,6 @@ function display_menu() {
     click = 0;
   }
 }
-
-document.getElementById("object").innerHTML = object;
-document.getElementById("corrected").innerHTML = corrected;
-document.getElementById("stellar").innerHTML = stellar;
-document.getElementById("detections").innerHTML = detections;
-document.getElementById("nonDetections").innerHTML = nonDetections;
-document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
-document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
-document.getElementById("raDec").innerHTML = raDec;
-
-document
-  .getElementById("changeDiscoveryValue")
-  .addEventListener("click", () => {
-    changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD);
-  });
-document.getElementById("changeLastValue").addEventListener("click", () => {
-  changeLastValue(lastDetectionMGD, lastDetectionMJD);
-});
-document.getElementById("changeRaDec").addEventListener("click", () => {
-  changeRaDec(raDec, raDecTime);
-});
-let click = 0;
-document
-  .getElementById("menu-button")
-  .addEventListener("click", () => display_menu());
 
 function lastInformation(data) {
   let type, name, tnsLink, redshift;
@@ -98,9 +136,9 @@ function lastInformation(data) {
   document.getElementById("redshift").innerHTML = redshift;
 }
 
-const myClick = document.getElementById("menu-button");
 
 function handleOutsideClick(event) {
+  let myClick = document.getElementById("menu-button");
   if (!myClick.contains(event.target)) {
     click = 1;
     display_menu();
@@ -108,36 +146,3 @@ function handleOutsideClick(event) {
 }
 
 document.addEventListener("click", handleOutsideClick);
-
-await fetch("https://tns.alerce.online/search", {
-  headers: {
-    accept: "application/json",
-    "cache-control": "no-cache",
-    "content-type": "application/json",
-  },
-  body: '{"ra":' + String(ra) + ',"dec":' + String(dec) + "}",
-  method: "POST",
-  mode: "cors",
-})
-  .then((response) => {
-    return response.text();
-  })
-  .then((text) => {
-    if (text.includes("Error message")) {
-      throw new Error(text);
-    }
-    try {
-      return JSON.parse(text);
-    } catch {
-      return text;
-    }
-  })
-  .then((data) => {
-    lastInformation(data);
-  })
-  .catch((error) => {
-    lastInformation({
-      error: true,
-      message: error.message,
-    });
-  });
