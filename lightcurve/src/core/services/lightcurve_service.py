@@ -1,3 +1,4 @@
+import math
 from contextlib import AbstractContextManager
 from typing import Any, Callable, Sequence, Tuple
 
@@ -9,27 +10,29 @@ from db_plugins.db.sql.models import (
     NonDetection,
     Object,
 )
-from pymongo.database import Database
 from pymongo.cursor import Cursor
+from pymongo.database import Database
 from returns.pipeline import is_successful
 from returns.result import Failure, Result, Success
 from sqlalchemy import Row, select, text
 from sqlalchemy.orm import Session
 
+from config.config import app_config
+
 from ..exceptions import (
     AtlasNonDetectionError,
     DatabaseError,
     ObjectNotFound,
-    SurveyIdError,
     ParseError,
+    SurveyIdError,
 )
-from ..models.lightcurve_model import DataReleaseDetection as DataReleaseDetectionModel
+from ..models.lightcurve_model import (
+    DataReleaseDetection as DataReleaseDetectionModel,
+)
 from ..models.lightcurve_model import Detection as DetectionModel
 from ..models.lightcurve_model import Feature as FeatureModel
 from ..models.lightcurve_model import ForcedPhotometry as ForcedPhotometryModel
 from ..models.lightcurve_model import NonDetection as NonDetectionModel
-from config import app_config
-import math
 
 
 def default_handle_success(result):
@@ -618,7 +621,14 @@ def _get_period_sql(
             )
             result = session.execute(stmt)
             result = [FeatureModel(**res[0].__dict__) for res in result.all()]
-            result = list(filter(lambda x: "23." not in x.version and "25." not in x.version and x.value != None, result))
+            result = list(
+                filter(
+                    lambda x: "23." not in x.version
+                    and "25." not in x.version
+                    and x.value != None,
+                    result,
+                )
+            )
     except Exception as e:
         return Failure(DatabaseError(e, database="PSQL"))
     if len(result) == 0:
@@ -858,7 +868,7 @@ def remove_duplicate_forced_photometry_by_pid(
     for i in range(size):
         try:
             dpid = detections[i]["pid"]
-            if not dpid in pids:
+            if dpid not in pids:
                 pids[dpid] = None
             else:
                 if pids[dpid] is not None:
@@ -867,7 +877,7 @@ def remove_duplicate_forced_photometry_by_pid(
             pass
         try:
             fpid = forced_photometry[i]["pid"]
-            if not fpid in pids:
+            if fpid not in pids:
                 pids[fpid] = i
                 new_forced_photometry.append(forced_photometry[i])
         except IndexError:

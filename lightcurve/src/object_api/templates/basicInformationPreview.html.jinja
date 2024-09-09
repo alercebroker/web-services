@@ -1,5 +1,7 @@
 <script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<script type="module" async src="{{API_URL}}/static/object.js"></script>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
 <div id="basicObject-app" class="tw-preflight tw-flex tw-justify-center tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-mt-3 tw-w-full tw-text-sm">
@@ -137,54 +139,70 @@
     </table>
 
     <div class="tw-flex tw-space-x-4 tw-w-[95%] tw-mx-auto tw-my-4 tw-text-sm tw-justify-center">
-        <a id='find-button' target="_blank" class="tw-bg-cyan-700 tw-text-white tw-font-bold tw-py-1 tw-rounded tw-w-full tw-text-sm tw-text-center">
+        <a id="find-button"
+           target="_blank"
+           class="tw-bg-cyan-700 tw-text-white tw-font-bold tw-py-1 tw-rounded tw-w-full tw-text-sm tw-text-center">
             FINDING CHART
         </a>
         <a id="menu-button" class="tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-rounded tw-w-full tw-text-sm tw-text-center">
             OTHER ARCHIVES
         </a>
     </div>
-    
-    <div id="menu-box" class="tw-box-content tw-absolute tw-opacity-100 tw-w-52 tw-h-[500px] tw-rounded-[50px] tw-shadow-2xl tw-z-[9999] tw-ml-[50%]" style="display: none">
-        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id='desi-button'>
+    <div id="menu-box"
+         class="tw-box-content tw-absolute tw-opacity-100 tw-w-52 tw-h-[500px] tw-rounded-[50px] tw-shadow-2xl tw-z-[9999] tw-ml-[50%]"
+         style="display: none">
+        <a target="_blank"
+           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
+           id="desi-button">
             <div class="tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                 DESI Legacy Survey DR10
             </div>
         </a>
-        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="ned-button">
+        <a target="_blank"
+           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
+           id="ned-button">
             <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                 NED
             </div>
         </a>
-
-        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="pan-button">
+        <a target="_blank"
+           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
+           id="pan-button">
             <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                 PanSTARRS
             </div>
         </a>
-
-        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="sdss-button">
+        <a target="_blank"
+           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
+           id="sdss-button">
             <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
-                SDSS DR16
+                SDSS DR18
             </div>
         </a>
-
-        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="simbad-button">
+        <a target="_blank"
+           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
+           id="simbad-button">
             <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                 SIMBAD
             </div>
         </a>
-        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="tns-button">
+        <a target="_blank"
+           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
+           id="tns-button">
             <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                 TNS
             </div>
         </a>
-        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="viz-button">
+        <a target="_blank"
+           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
+           id="viz-button">
             <div class="tw-cursor-pointer tw-text-[#1e1e1e] tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                 Vizier
             </div>
         </a>
-        <a target="_blank" class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]" id="vsx-button">
+        <a target="_blank"
+           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
+           id="vsx-button">
             <div class="tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                 VSX
             </div>
@@ -194,7 +212,7 @@
     <div class="tw-w-full">
         <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
             <thead>
-                <th class="tw-text-center"> Type </th>
+                <th class="tw-text-center">Type</th>
                 <th class="tw-text-center">Name</th>
                 <th class="tw-text-center">Redshift</th>
             </thead>
@@ -215,158 +233,17 @@
     </div>
 
 </div>
-
-<script type="module" async>
-
-        import {
-
-            changeDiscoveryValue,
-            changeLastValue,
-            changeRaDec,
-            convertToDate,
-            julianToGregorian,
-            transformRa,
-            transformDec,
-            setMenuUrl
-
-        } from "{{API_URL}}/static/basicInformation.js"
-
-        const object =  {{object | tojson}};
-        const corrected = {{corrected | tojson}} ;
-        const stellar = {{stellar | tojson}} ;
-        const detections = {{detections | tojson}}
-        let discoveryDateMJD = {{discoveryDateMJD | tojson}} ;
-        let lastDetectionMJD = {{lastDetectionMJD | tojson}} ;
-        const nonDetections = {{nonDetections | tojson}} ;
-        const candid = {{candid}}
-        let ra = {{ra | tojson}} ;
-        let dec  = {{dec | tojson}};
-
-        let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}\n${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
-
-        let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
-        let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
-
-        let raTime = transformRa(ra);
-        let decTime = transformDec(dec);
-        let raDecTime = `${Number.parseFloat(raTime).toFixed(FIXED_PRECISION)}\n${Number.parseFloat(decTime).toFixed(FIXED_PRECISION)}`;
-
-        setMenuUrl(ra,dec,candid,object);
-
-        // En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
-        // Tambien, si se ocupa la variable binaria, declararla antes.
-        function display_menu(){
-
-            if (click === 0)  {
-                document.getElementById('menu-box').style.display = "block";
-                click = 1;
-            } else {
-                document.getElementById('menu-box').style.display = "none";
-                click = 0;
-            }
-
-        }
-
-        document.getElementById("object").innerHTML = object;
-        document.getElementById("corrected").innerHTML = corrected;
-        document.getElementById("stellar").innerHTML = stellar;
-        document.getElementById("detections").innerHTML = detections;
-        document.getElementById("nonDetections").innerHTML = nonDetections;
-        document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
-        document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
-        document.getElementById("raDec").innerHTML = raDec;
-
-        document.getElementById('changeDiscoveryValue').addEventListener('click', () => {
-            changeDiscoveryValue(discoveryDateMGD, discoveryDateMJD);
-           
-        });
-        document.getElementById('changeLastValue').addEventListener('click', () => {
-            changeLastValue(lastDetectionMGD, lastDetectionMJD);
-        });
-        document.getElementById('changeRaDec').addEventListener('click', () => {
-            changeRaDec(raDec, raDecTime)
-        });
-        let click = 0;
-        document.getElementById('menu-button').addEventListener('click', () => display_menu());
-
-
-        var obj;
-
-        function lastInformation(data) {
-
-            let type, name, tnsLink, redshift;
-
-            if (data.error) {
-                type = name = redshift = 'Error';
-                tnsLink = 'https://www.wis-tns.org/';
-            } else if (typeof data === 'object' && data !== null) {
-                if (Object.keys(Object.values(data)[0] || {}).length > 25) {
-                    type = Object.values(data)[2] || 'No disponible';
-                    name = Object.values(data)[1] || 'No disponible';
-                    tnsLink = `https://www.wis-tns.org/object/${Object.values(data)[1] || ''}`;
-                    redshift = Object.values(Object.values(data)[0])[21] || 'No disponible';
-                } else {
-                    type = name = redshift = '-';
-                    tnsLink = 'https://www.wis-tns.org/';
-                }
-            } else {
-                type = name = redshift = 'Respuesta inesperada';
-                tnsLink = 'https://www.wis-tns.org/';
-            }
-
-            document.getElementById('type').innerHTML = type;
-            document.getElementById('name').innerHTML = name;
-            document.getElementById('tns-link').href = tnsLink;
-            document.getElementById('redshift').innerHTML = redshift;
-        }
-
-        const myClick = document.getElementById('menu-button');
-
-        function handleOutsideClick(event) {
-            if (!myClick.contains(event.target)) {
-                click = 1;
-                display_menu();
-            }
-        }
-        
-        document.addEventListener('click', handleOutsideClick);
-
-        await fetch("https://tns.alerce.online/search", {
-            "headers": {
-                "accept": "application/json",
-                "cache-control": "no-cache",
-                "content-type": "application/json",
-            },
-            "body": "{\"ra\":" + String(ra) + ",\"dec\":" + String(dec)+ "}",
-            "method": "POST",
-            "mode": "cors",
-        })
-        .then(response => {
-            return response.text();
-        })
-        .then(text => {
-            if (text.includes("Error message")) {
-                throw new Error(text);
-            }
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                return text;
-            }
-        })
-        .then(data => {
-            lastInformation(data);
-        })
-        .catch(error => {
-            lastInformation({
-                error: true,
-                message: error.message
-            });
-        });
-
-
-
+<script id="object-data" type="application/json">
+{
+    "object": {{object | tojson}},
+    "corrected": {{corrected | tojson}},
+    "stellar": {{stellar | tojson}},
+    "detections": {{detections | tojson}},
+    "discoveryDateMJD": {{discoveryDateMJD | tojson}},
+    "lastDetectionMJD": {{lastDetectionMJD | tojson}},
+    "nonDetections": {{nonDetections | tojson}},
+    "ra": {{ra | tojson}},
+    "dec": {{dec | tojson}},
+    "candid": {{candid | tojson}}
+}
 </script>
-
-{# </div> #}
-

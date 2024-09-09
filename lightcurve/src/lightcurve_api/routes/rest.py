@@ -11,6 +11,7 @@ from core.services.lightcurve_service import (
     get_lightcurve,
     get_non_detections,
 )
+
 from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
