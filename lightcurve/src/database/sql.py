@@ -1,10 +1,10 @@
-from contextlib import contextmanager
 import logging
 import os
+from contextlib import contextmanager
 from typing import Generator
-from sqlalchemy.orm import scoped_session, sessionmaker, Session
-from sqlalchemy.engine import Engine, create_engine
 
+from sqlalchemy.engine import Engine, create_engine
+from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 logger = logging.getLogger(__name__)
 
