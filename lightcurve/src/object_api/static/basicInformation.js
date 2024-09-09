@@ -91,25 +91,25 @@ export function julianToGregorian(mjd) {
   );
 }
 
-export function transformDec(dec) {
+export function transformDec(dec, precision=2) {
   const sign = dec < 0 ? "-" : "+";
   dec = Math.abs(dec);
   const deg = Math.floor(dec);
   const decM = Math.abs(Math.floor((dec - deg) * 60));
-  const decS = ((Math.abs((dec - deg) * 60) - decM) * 60).toFixed(2);
+  const decS = ((Math.abs((dec - deg) * 60) - decM) * 60).toFixed(precision);
   dec = `${sign}${deg}:${decM}:${decS}`;
 
   return dec;
 }
 
-export function transformRa(degrees) {
+export function transformRa(degrees, precision=3) {
   let degreesPerHour = 360 / 24;
   let hours = Math.floor(degrees / degreesPerHour);
   let minutes = Math.floor(((degrees % degreesPerHour) * 60) / degreesPerHour);
   let seconds = (
     (((degrees % degreesPerHour) * 3600) / degreesPerHour) %
     60
-  ).toFixed(3);
+  ).toFixed(precision);
 
   let str = String(hours) + ":" + String(minutes) + ":" + String(seconds);
 
