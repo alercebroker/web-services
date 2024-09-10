@@ -53,4 +53,12 @@
         </div>
     </div>
 </div>
+<script type="module">
+import { initMagstats, elementReady } from "{{API_URL}}/static/magstats.js";
+
+
+elementReady("#magstats-app").then(() => {
+    initMagstats();
+});
+</script>
 <script id="magstats-data" type="application/json">{{stat_r | tojson}}</script>
