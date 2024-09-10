@@ -3,11 +3,114 @@ const bandMapping = {
   3: "i",
   1: "g",
 };
-let currentPage = 1;
 
-const rawDb = JSON.parse(document.getElementById("magstats-data").text);
-const db = [];
-parseStatR(rawDb);
+let db = [];
+let numColumns = 0; // Esto  es numero de bandas + 1
+let numRows = 0;
+let currentPage = 1;
+let numBands = [];
+let realBands = [];
+let boolColumns = 0;
+let rowsToShow = 5;
+
+const arrowUp = `<svg class="tw-h-5 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path stroke="none" d="M0 0h24v24H0z" />
+<line x1="12" y1="5" x2="12" y2="19" />
+<line x1="16" y1="9" x2="12" y2="5" />
+<line x1="8" y1="9" x2="12" y2="5" />
+</svg>`;
+
+const arrowDown = `<svg class="tw-h-6 tw-w-6"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="16" y1="15" x2="12" y2="19" />  <line x1="8" y1="15" x2="12" y2="19" /></svg>`;
+
+
+export function initMagstats() {
+  currentPage = 1;
+  numBands = [];
+  realBands = [];
+  boolColumns = 0;
+  rowsToShow = 5;
+  
+  const rawDb = JSON.parse(document.getElementById("magstats-data").text);
+  db = [];
+
+  parseStatR(rawDb);
+  
+  numColumns = db.length + 1; // Esto  es numero de bandas + 1
+  numRows = Object.keys(db[0]).length;
+  
+  for (let i = 0; i < db.length; i++) {
+    numBands.push(db[i]["fid"]);
+    delete db[i]["fid"];
+  }
+  
+  for (let i = 0; i < numBands.length; i++) {
+    realBands.push(bandMapping[numBands[i]]);
+  }
+  
+
+  // We call the function to create the html structure
+  createTable();
+
+  // We call the function to inject the data.
+  displayColumns();
+
+  document.getElementById("arrowButton").innerHTML = arrowUp;
+
+  // We add an event listener to detect if the user wants to change the order
+  document.getElementById("arrowButton").addEventListener("click", () => {
+    displayColumns();
+
+    if (boolColumns === 1) {
+      document.getElementById("arrowButton").innerHTML = arrowUp;
+    } else {
+      document.getElementById("arrowButton").innerHTML = arrowDown;
+    }
+  });
+
+  const dataTableBody = document.getElementById("dataTableBody");
+  const rowSelect = document.getElementById("rowSelect");
+
+  displayRows();
+
+  document.getElementById("total-number").innerHTML = dataTableBody.rows.length;
+  rowSelect.addEventListener("change", () => {
+    rowsToShow = parseInt(rowSelect.value);
+    currentPage = 1;
+    displayRows();
+  });
+
+
+  const btnLeft = document.getElementById("leftArrow");
+  const btnRight = document.getElementById("rightArrow");
+
+  btnLeft.addEventListener("click", () => {
+    navigateTable(-1);
+  });
+  btnRight.addEventListener("click", () => {
+    navigateTable(1);
+  });
+}
+
+export function elementReady(selector) {
+  return new Promise((resolve, reject) => {
+    const el = document.querySelector(selector);
+    if (el) {
+      resolve(el);
+    }
+
+    new MutationObserver((mutationRecords, observer) => {
+      Array.from(document.querySelectorAll(selector)).forEach(element => {
+        resolve(element);
+        observer.disconnect();
+      });
+    })
+    .observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  });
+}
+
 
 function parseStatR(dict) {
   Object.keys(dict).forEach((key) => {
@@ -32,31 +135,6 @@ function parseStatR(dict) {
   });
 }
 
-let numBands = [];
-
-for (let i = 0; i < db.length; i++) {
-  numBands.push(db[i]["fid"]);
-  delete db[i]["fid"];
-}
-
-let realBands = [];
-
-for (let i = 0; i < numBands.length; i++) {
-  realBands.push(bandMapping[numBands[i]]);
-}
-
-const numColumns = db.length + 1; // Esto  es numero de bandas + 1
-const numRows = Object.keys(db[0]).length;
-
-// function hasBodyClass(className) { const body = document.body;
-//   return body.classList.contains(className);
-// }
-// const isDarkMode = hasBodyClass("tw-dark");
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// Here is created the table dinamicly.
 
 // This function creates the entire html structure dinamicly.
 function createTable() {
@@ -71,9 +149,6 @@ function createTable() {
   const table = document.createElement("table");
   table.classList =
     "tw-overflow-auto tw-w-full tw-text-sm";
-
-  //const colGroup = document.createElement('colgroup');
-  //colGroup.classList = 'tw-w-[95%] tw-mx-auto';
 
   // Create the table header row
   const headerRow = document.createElement("tr");
@@ -152,43 +227,6 @@ function displayColumns() {
   }
 }
 
-// We call the function to create the html structure
-createTable();
-
-let boolColumns = 0;
-// We call the function to inject the data.
-displayColumns();
-
-//////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////
-
-// From here the code is only for the display of the rows per page, the buttons and the display menu to select that
-
-// We define the arrows to change the order of the rows display in the  table
-const arrowUp = `<svg class="tw-h-5 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" />
-                                    <line x1="12" y1="5" x2="12" y2="19" />
-                                    <line x1="16" y1="9" x2="12" y2="5" />
-                                    <line x1="8" y1="9" x2="12" y2="5" />
-                                </svg>`;
-
-const arrowDown = `<svg class="tw-h-6 tw-w-6"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="16" y1="15" x2="12" y2="19" />  <line x1="8" y1="15" x2="12" y2="19" /></svg>`;
-
-document.getElementById("arrowButton").innerHTML = arrowUp;
-
-// We add an event listener to detect if the user wants to change the order
-document.getElementById("arrowButton").addEventListener("click", () => {
-  displayColumns();
-
-  if (boolColumns === 1) {
-    document.getElementById("arrowButton").innerHTML = arrowUp;
-  } else {
-    document.getElementById("arrowButton").innerHTML = arrowDown;
-  }
-});
-
-const dataTableBody = document.getElementById("dataTableBody");
-const rowSelect = document.getElementById("rowSelect");
 
 // This function change the page of the table if there is less rows selected by the user to show
 function navigateTable(direction) {
@@ -246,22 +284,3 @@ function updateArrowColor(arrowElement, isDisabled) {
   }
 }
 
-let rowsToShow = 5;
-displayRows();
-
-document.getElementById("total-number").innerHTML = dataTableBody.rows.length;
-rowSelect.addEventListener("change", () => {
-  rowsToShow = parseInt(rowSelect.value);
-  currentPage = 1;
-  displayRows();
-});
-
-const btnLeft = document.getElementById("leftArrow");
-const btnRight = document.getElementById("rightArrow");
-
-btnLeft.addEventListener("click", () => {
-  navigateTable(-1);
-});
-btnRight.addEventListener("click", () => {
-  navigateTable(1);
-});

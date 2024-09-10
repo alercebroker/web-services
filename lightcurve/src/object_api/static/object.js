@@ -9,31 +9,33 @@ import {
 } from "../static/basicInformation.js";
 
 const FIXED_PRECISION = 7;
-const objectInfo = JSON.parse(document.getElementById("object-data").text);
-
-const object = objectInfo.object;
-const corrected = objectInfo.corrected;
-const stellar = objectInfo.stellar;
-const detections = objectInfo.detections;
-let discoveryDateMJD = objectInfo.discoveryDateMJD;
-let lastDetectionMJD = objectInfo.lastDetectionMJD;
-const nonDetections = objectInfo.nonDetections;
-let ra = objectInfo.ra;
-let dec = objectInfo.dec;
-let candid = objectInfo.candid;
-
-let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}<br>${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
-
-let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
-let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
-
-let raTime = transformRa(ra, 3);
-let decTime = transformDec(dec, 2);
-
-let raDecTime = `${raTime}<br>${decTime}`;
 
 
-function init() {
+export function init() {
+
+  const objectInfo = JSON.parse(document.getElementById("object-data").text);
+
+  const object = objectInfo.object;
+  const corrected = objectInfo.corrected;
+  const stellar = objectInfo.stellar;
+  const detections = objectInfo.detections;
+  let discoveryDateMJD = objectInfo.discoveryDateMJD;
+  let lastDetectionMJD = objectInfo.lastDetectionMJD;
+  const nonDetections = objectInfo.nonDetections;
+  let ra = objectInfo.ra;
+  let dec = objectInfo.dec;
+  let candid = objectInfo.candid;
+
+  let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}<br>${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
+
+  let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
+  let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
+
+  let raTime = transformRa(ra, 3);
+  let decTime = transformDec(dec, 2);
+
+  let raDecTime = `${raTime}<br>${decTime}`;
+
   document.getElementById("object").innerHTML = object;
   document.getElementById("corrected").innerHTML = corrected;
   document.getElementById("stellar").innerHTML = stellar;
@@ -94,7 +96,26 @@ function init() {
     });
 }
 
-htmx.on("htmx:load", init);
+
+export function elementReady(selector) {
+  return new Promise((resolve, reject) => {
+    const el = document.querySelector(selector);
+    if (el) {
+      resolve(el);
+    }
+
+    new MutationObserver((mutationRecords, observer) => {
+      Array.from(document.querySelectorAll(selector)).forEach(element => {
+        resolve(element);
+        observer.disconnect();
+      });
+    })
+    .observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  });
+}
 
 // En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
 // Tambien, si se ocupa la variable binaria, declararla antes.
@@ -108,29 +129,27 @@ function display_menu() {
     click = 0;
   }
 }
-
 function lastInformation(data) {
-  let type, name, tnsLink, redshift;
+  let typeInput, name, tnsLink, redshift;
 
   if (data.error) {
-    type = name = redshift = "Error";
+    typeInput = name = redshift = "Error";
     tnsLink = "https://www.wis-tns.org/";
   } else if (typeof data === "object" && data !== null) {
     if (Object.keys(Object.values(data)[0] || {}).length > 25) {
-      type = Object.values(data)[2] || "No disponible";
-      name = Object.values(data)[1] || "No disponible";
+      typeInput = Object.values(data)[2] || "Not available";
+      name = Object.values(data)[1] || "Not available";
       tnsLink = `https://www.wis-tns.org/object/${Object.values(data)[1] || ""}`;
-      redshift = Object.values(Object.values(data)[0])[21] || "No disponible";
+      redshift = Object.values(Object.values(data)[0])[21] || "Not available";
     } else {
-      type = name = redshift = "-";
+      typeInput = name = redshift = "-";
       tnsLink = "https://www.wis-tns.org/";
     }
   } else {
-    type = name = redshift = "Respuesta inesperada";
+    typeInput = name = redshift = "Unexpected response"
     tnsLink = "https://www.wis-tns.org/";
   }
-
-  document.getElementById("type").innerHTML = type;
+  document.getElementById("type").innerHTML = typeInput;
   document.getElementById("name").innerHTML = name;
   document.getElementById("tns-link").href = tnsLink;
   document.getElementById("redshift").innerHTML = redshift;
@@ -139,7 +158,7 @@ function lastInformation(data) {
 
 function handleOutsideClick(event) {
   let myClick = document.getElementById("menu-button");
-  if (!myClick.contains(event.target)) {
+  if (myClick && !myClick.contains(event.target)) {
     click = 1;
     display_menu();
   }
