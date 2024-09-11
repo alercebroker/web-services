@@ -34,7 +34,16 @@ export function init() {
   let raTime = transformRa(ra, 3);
   let decTime = transformDec(dec, 2);
 
+  let listRaTime = raTime.split(':');
+  let listDecTime = decTime.split(':');
+  
+  // Pasamos los dos puntos (:) a su version codificada de URL (%3A)
+  let newRaTime = listRaTime.join('%3A');
+  let newDecTime = listDecTime.join('%3A');
+  
   let raDecTime = `${raTime}<br>${decTime}`;
+  
+  setMenuUrl(ra, dec, candid, object, newRaTime, newDecTime);
 
   document.getElementById("object").innerHTML = object;
   document.getElementById("corrected").innerHTML = corrected;
