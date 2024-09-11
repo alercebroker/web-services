@@ -65,6 +65,9 @@ export function init() {
   document.getElementById("changeRaDec").addEventListener("click", () => {
     changeRaDec(raDec, raDecTime);
   });
+  document.getElementById("copyButton").addEventListener("click", ()=> {
+    copyFunction();
+  })
   document
     .getElementById("menu-button")
     .addEventListener("click", () => display_menu());
@@ -173,4 +176,20 @@ function handleOutsideClick(event) {
   }
 }
 
+function copyFunction() {
+  const element = document.getElementById('raDec');
+  console.log(element)
+  if (!element) {
+    console.error(`Element with id "${elementId}" not found`);
+    return false;
+  }
+
+  const text = element.innerText || element.textContent;
+  navigator.clipboard.writeText(text).then(
+    () => console.log('Text copied successfully'),
+    (err) => console.error('Failed to copy text:', err)
+  );
+
+  return true;
+}
 document.addEventListener("click", handleOutsideClick);
