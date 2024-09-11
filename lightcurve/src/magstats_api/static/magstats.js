@@ -114,7 +114,6 @@ export function elementReady(selector) {
 
 function parseStatR(dict) {
   Object.keys(dict).forEach((key) => {
-    console.log(dict[key]);
     let auxJson = {};
     auxJson = {
       stellar: dict[key]["stellar"],

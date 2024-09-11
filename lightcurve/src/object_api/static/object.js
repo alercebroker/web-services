@@ -13,6 +13,7 @@ const FIXED_PRECISION = 7;
 
 export function init() {
 
+
   const objectInfo = JSON.parse(document.getElementById("object-data").text);
 
   const object = objectInfo.object;
@@ -35,6 +36,12 @@ export function init() {
   let decTime = transformDec(dec, 2);
 
   let raDecTime = `${raTime}<br>${decTime}`;
+  
+  let typeInput = objectInfo.typeInput
+  let name = objectInfo.name
+  let redshift = objectInfo.redshift
+  let tnsLink = objectInfo.tnsLink
+  console.log(tnsLink)
 
   document.getElementById("object").innerHTML = object;
   document.getElementById("corrected").innerHTML = corrected;
@@ -44,6 +51,11 @@ export function init() {
   document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
   document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
   document.getElementById("raDec").innerHTML = raDec;
+
+  document.getElementById("type").innerHTML = typeInput;
+  document.getElementById("name").innerHTML = name;
+  document.getElementById("tns-link").href = tnsLink;
+  document.getElementById("redshift").innerHTML = redshift;
 
   document
     .getElementById("changeDiscoveryValue")
@@ -61,39 +73,6 @@ export function init() {
     .addEventListener("click", () => display_menu());
 
   setMenuUrl(ra, dec, candid, object, raTime, decTime);
-
-  fetch("https://tns.alerce.online/search", {
-    headers: {
-      accept: "application/json",
-      "cache-control": "no-cache",
-      "content-type": "application/json",
-    },
-    body: '{"ra":' + String(ra) + ',"dec":' + String(dec) + "}",
-    method: "POST",
-    mode: "cors",
-  })
-    .then((response) => {
-      return response.text();
-    })
-    .then((text) => {
-      if (text.includes("Error message")) {
-        throw new Error(text);
-      }
-      try {
-        return JSON.parse(text);
-      } catch {
-        return text;
-      }
-    })
-    .then((data) => {
-      lastInformation(data);
-    })
-    .catch((error) => {
-      lastInformation({
-        error: true,
-        message: error.message,
-      });
-    });
 }
 
 
@@ -128,31 +107,6 @@ function display_menu() {
     document.getElementById("menu-box").style.display = "none";
     click = 0;
   }
-}
-function lastInformation(data) {
-  let typeInput, name, tnsLink, redshift;
-
-  if (data.error) {
-    typeInput = name = redshift = "Error";
-    tnsLink = "https://www.wis-tns.org/";
-  } else if (typeof data === "object" && data !== null) {
-    if (Object.keys(Object.values(data)[0] || {}).length > 25) {
-      typeInput = Object.values(data)[2] || "Not available";
-      name = Object.values(data)[1] || "Not available";
-      tnsLink = `https://www.wis-tns.org/object/${Object.values(data)[1] || ""}`;
-      redshift = Object.values(Object.values(data)[0])[21] || "Not available";
-    } else {
-      typeInput = name = redshift = "-";
-      tnsLink = "https://www.wis-tns.org/";
-    }
-  } else {
-    typeInput = name = redshift = "Unexpected response"
-    tnsLink = "https://www.wis-tns.org/";
-  }
-  document.getElementById("type").innerHTML = typeInput;
-  document.getElementById("name").innerHTML = name;
-  document.getElementById("tns-link").href = tnsLink;
-  document.getElementById("redshift").innerHTML = redshift;
 }
 
 
