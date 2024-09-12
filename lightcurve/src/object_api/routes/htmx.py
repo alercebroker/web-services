@@ -111,11 +111,10 @@ async def object_info_app(request: Request, oid: str):
         },
     )
 
-@router.get("/tns/{oid}", response_class=HTMLResponse)
-async def tns_info(request: Request, oid: str):
+@router.get("/tns/", response_class=HTMLResponse)
+async def tns_info(request: Request, ra: float, dec:float):
     try:
-        object_data = get_object(oid, request.app.state.psql_session)
-        tns_data = get_tns(object_data.meanra, object_data.meandec)
+        tns_data = get_tns(ra, dec)
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 

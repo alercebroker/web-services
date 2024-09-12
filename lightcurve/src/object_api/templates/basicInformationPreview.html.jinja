@@ -210,7 +210,7 @@
         </a>
     </div>
 
-    <div hx-get="{{API_URL}}/htmx/tns/{{object}}" hx-trigger="load" class="tw-w-full">
+    <div hx-get="{{API_URL}}/htmx/tns/" hx-vals='{"ra": {{ra}}, "dec": {{dec}} }' hx-trigger="load" class="tw-w-full">
             <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
         <thead>
             <th class="tw-text-center">Type</th>
