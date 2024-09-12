@@ -210,29 +210,23 @@
         </a>
     </div>
 
-    <div class="tw-w-full">
-        <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
-            <thead>
-                <th class="tw-text-center">Type</th>
-                <th class="tw-text-center">Name</th>
-                <th class="tw-text-center">Redshift</th>
-            </thead>
-            <tbody class="tw-w-[95%] tw-mx-auto">
-                <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-t tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
-                    <td id="type" class="tw-text-center tw-max-w-[40%]"></td>
-                    <td id="name" class="tw-text-center"></td>
-                    <td id="redshift" class="tw-text-center"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <div hx-get="{{API_URL}}/htmx/tns/{{object}}" hx-trigger="load" class="tw-w-full">
+            <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
+        <thead>
+            <th class="tw-text-center">Type</th>
+            <th class="tw-text-center">Name</th>
+            <th class="tw-text-center">Redshift</th>
+        </thead>
+        <tbody class="tw-w-[95%] tw-mx-auto">
+            <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-t tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
+                <td id="type" class="tw-text-center tw-max-w-[40%]">-</td>
+                <td id="name" class="tw-text-center">-</td>
+                <td id="redshift" class="tw-text-center">-</td>
+            </tr>
+        </tbody>
+    </table>
 
-    <div class="tw-flex tw-justify-end">
-        <h6 class=" tw-text-[#1e1e1e] dark:tw-text-white tw-h-auto tw-text-[17px] tw-mt-4 tw-mr-4">
-        Provided by <a id="tns-link" target="_blank" class=" tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer">TNS</a>  <img class="tw-inline" src="https://www.wis-tns.org/sites/default/files/favicon.png">
-        </h6>
     </div>
-
 </div>
 <script type="module">
 import { init, elementReady } from "{{API_URL}}/static/object.js";
@@ -254,10 +248,6 @@ elementReady("#basicObject-app").then((el) => {
     "nonDetections": {{nonDetections | tojson}},
     "ra": {{ra | tojson}},
     "dec": {{dec | tojson}},
-    "candid": {{candid | tojson}},
-    "typeInput": {{typeInput | tojson}},
-    "name": {{name | tojson}},
-    "redshift": {{redshift | tojson}},
-    "tnsLink": {{tnsLink | tojson}}
+    "candid": {{candid | tojson}}
 }
 </script>

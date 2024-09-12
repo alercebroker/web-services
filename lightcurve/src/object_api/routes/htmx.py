@@ -1,7 +1,7 @@
-import os
-import requests
 import json
+import os
 
+import requests
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -93,7 +93,6 @@ async def object_info_app(request: Request, oid: str):
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 
-    tns_data = get_tns(object_data.meanra, object_data.meandec)
 
     return templates.TemplateResponse(
         name="basicInformationPreview.html.jinja",
@@ -109,9 +108,18 @@ async def object_info_app(request: Request, oid: str):
             "ra": object_data.meanra,
             "dec": object_data.meandec,
             "candid": candid,
-            "typeInput": tns_data["typeInput"],
-            "name": tns_data["name"],
-            "redshift": tns_data["redshift"],
-            "tnsLink": tns_data["tnsLink"]
         },
+    )
+
+@router.get("/tns/{oid}", response_class=HTMLResponse)
+async def tns_info(request: Request, oid: str):
+    try:
+        object_data = get_object(oid, request.app.state.psql_session)
+        tns_data = get_tns(object_data.meanra, object_data.meandec)
+    except ObjectNotFound:
+        raise HTTPException(status_code=404, detail="Object ID not found")
+
+    return templates.TemplateResponse(
+        name="tnsInformation.html.jinja",
+        context={"request": request}|tns_data
     )

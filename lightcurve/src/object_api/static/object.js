@@ -36,12 +36,6 @@ export function init() {
   let decTime = transformDec(dec, 2);
 
   let raDecTime = `${raTime}<br>${decTime}`;
-  
-  let typeInput = objectInfo.typeInput
-  let name = objectInfo.name
-  let redshift = objectInfo.redshift
-  let tnsLink = objectInfo.tnsLink
-  console.log(tnsLink)
 
   document.getElementById("object").innerHTML = object;
   document.getElementById("corrected").innerHTML = corrected;
@@ -51,11 +45,6 @@ export function init() {
   document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
   document.getElementById("lastDetection").innerHTML = lastDetectionMGD;
   document.getElementById("raDec").innerHTML = raDec;
-
-  document.getElementById("type").innerHTML = typeInput;
-  document.getElementById("name").innerHTML = name;
-  document.getElementById("tns-link").href = tnsLink;
-  document.getElementById("redshift").innerHTML = redshift;
 
   document
     .getElementById("changeDiscoveryValue")
