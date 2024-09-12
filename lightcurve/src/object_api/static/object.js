@@ -178,16 +178,26 @@ function handleOutsideClick(event) {
 
 function copyFunction() {
   const element = document.getElementById('raDec');
-  console.log(element)
   if (!element) {
-    console.error(`Element with id "${elementId}" not found`);
+    console.error('Element with id "raDec" not found');
     return false;
   }
 
-  const text = element.innerText || element.textContent;
+  let text = element.innerText || element.textContent;
+  text = text.replace(/\s+/g, ' ').trim();
+  text = text.replace(/(\d+\.\d+)(?:\s*)(\d+\.\d+)/, '$1 $2');
+
   navigator.clipboard.writeText(text).then(
-    () => console.log('Text copied successfully'),
-    (err) => console.error('Failed to copy text:', err)
+    () => {
+      document.getElementById('textCopyButton').innerHTML = 'Copied!';
+      setTimeout(() => {
+        document.getElementById('textCopyButton').innerHTML = 'Copy to clipboard';
+      }, 2000); 
+    },
+    (err) => {
+      console.error('Failed to copy text:', err);
+      document.getElementById('textCopyButton').innerHTML = 'Copy failed';
+    }
   );
 
   return true;
