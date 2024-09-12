@@ -66,8 +66,6 @@ def get_tns(ra, dec):
         text = response.text
 
         if "Error message" in text:
-            print(response)
-            print(response.text)
             raise requests.exceptions.RequestException("Error found in response: " + text)
         
         try:
