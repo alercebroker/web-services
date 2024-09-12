@@ -33,6 +33,7 @@ async def object_mag_app(request: Request, oid: str):
             "ndet": mag_stat.ndet,
             "ndubious": mag_stat.ndubious,
             "magmean": mag_stat.magmean,
+            "magmedian": mag_stat.magmedian,
             "magmax": mag_stat.magmax,
             "magmin": mag_stat.magmin,
             "magsigma": mag_stat.magsigma,

@@ -121,6 +121,7 @@ function parseStatR(dict) {
       ndet: dict[key]["ndet"],
       ndubious: dict[key]["ndubious"],
       magmean: dict[key]["magmean"],
+      magmedian: dict[key]["magmedian"],
       magmax: dict[key]["magmax"],
       magmin: dict[key]["magmin"],
       magsigma: dict[key]["magsigma"],
@@ -129,7 +130,6 @@ function parseStatR(dict) {
       firstmjd: dict[key]["firstmjd"],
       lastmjd: dict[key]["lastmjd"],
       step_id_corr: dict[key]["step_id_corr"],
-      fid: dict[key]["fid"],
     };
     db.push(auxJson);
   });
