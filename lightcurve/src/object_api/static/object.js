@@ -35,7 +35,16 @@ export function init() {
   let raTime = transformRa(ra, 3);
   let decTime = transformDec(dec, 2);
 
+  let listRaTime = raTime.split(':');
+  let listDecTime = decTime.split(':');
+  
+  // Pasamos los dos puntos (:) a su version codificada de URL (%3A)
+  let newRaTime = listRaTime.join('%3A');
+  let newDecTime = listDecTime.join('%3A');
+  
   let raDecTime = `${raTime}<br>${decTime}`;
+  
+  setMenuUrl(ra, dec, candid, object, newRaTime, newDecTime);
 
   document.getElementById("object").innerHTML = object;
   document.getElementById("corrected").innerHTML = corrected;
@@ -57,6 +66,9 @@ export function init() {
   document.getElementById("changeRaDec").addEventListener("click", () => {
     changeRaDec(raDec, raDecTime);
   });
+  document.getElementById("copyButton").addEventListener("click", ()=> {
+    copyFunction();
+  })
   document
     .getElementById("menu-button")
     .addEventListener("click", () => display_menu());
@@ -107,4 +119,30 @@ function handleOutsideClick(event) {
   }
 }
 
+function copyFunction() {
+  const element = document.getElementById('raDec');
+  if (!element) {
+    console.error('Element with id "raDec" not found');
+    return false;
+  }
+
+  let text = element.innerText || element.textContent;
+  text = text.replace(/\s+/g, ' ').trim();
+  text = text.replace(/(\d+\.\d+)(?:\s*)(\d+\.\d+)/, '$1 $2');
+
+  navigator.clipboard.writeText(text).then(
+    () => {
+      document.getElementById('textCopyButton').innerHTML = 'Copied!';
+      setTimeout(() => {
+        document.getElementById('textCopyButton').innerHTML = 'Copy to clipboard';
+      }, 2000); 
+    },
+    (err) => {
+      console.error('Failed to copy text:', err);
+      document.getElementById('textCopyButton').innerHTML = 'Copy failed';
+    }
+  );
+
+  return true;
+}
 document.addEventListener("click", handleOutsideClick);
