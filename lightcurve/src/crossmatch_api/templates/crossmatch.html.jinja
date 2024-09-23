@@ -278,7 +278,7 @@
 
         function hideButtonWithTables(val){   
             for (let i = 0; i < idButtons.length; i++){
-                if (parseFloat(document.getElementById(idButtons[i]).value) < val){
+                if (parseFloat(document.getElementById(idButtons[i]).value) >= val){
                     document.getElementById(idButtons[i]).style.display = 'none'; 
                 } else {
                     document.getElementById(idButtons[i]).style.display = 'block'; 

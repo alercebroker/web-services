@@ -50,6 +50,7 @@ def get_object(
     
     try:
         assert session_factory is not None
+        print(session_factory)
         with session_factory() as session:
             stmt = select(Object).where(Object.oid == oid)
             result = session.execute(stmt)
