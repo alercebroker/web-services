@@ -38,10 +38,6 @@ export function initMagstats() {
   numColumns = db.length + 1; // Esto  es numero de bandas + 1
   numRows = Object.keys(db[0]).length;
   
-  for (let i = 0; i < db.length; i++) {
-    numBands.push(db[i]["fid"]);
-    delete db[i]["fid"];
-  }
   
   for (let i = 0; i < numBands.length; i++) {
     realBands.push(bandMapping[numBands[i]]);
@@ -131,6 +127,7 @@ function parseStatR(dict) {
       lastmjd: dict[key]["lastmjd"],
       step_id_corr: dict[key]["step_id_corr"],
     };
+    numBands.push(dict[key]["fid"]);
     db.push(auxJson);
   });
 }
