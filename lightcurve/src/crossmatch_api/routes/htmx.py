@@ -16,7 +16,7 @@ templates = Jinja2Templates(
     directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8004"
+    "API_URL", "http://localhost:8005"
 )
 
 @router.get("/crossmatch/{oid}", response_class=HTMLResponse)
