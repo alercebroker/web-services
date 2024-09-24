@@ -52,3 +52,15 @@ services:
     environment:
       SERVICE: object_api
       API_URL: http://localhost:8002
+
+  crossmatch:
+    build:
+      context: ../
+      dockerfile: lightcurve/Dockerfile
+    ports:
+      - 8002:8000
+    env_file:
+      - variables.env
+    environment:
+      SERVICE: crossmatch_api
+      API_URL: http://localhost:8004
