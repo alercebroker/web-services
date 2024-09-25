@@ -1,0 +1,301 @@
+<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="{{API_URL}}/static/probability.css">
+
+    <div class="tw-preflight tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-box-content tw-p-[10px] tw-relative tw-mt-8 tw-ml-3" style="width: 100%;  min-width: 0; min-height: 380px;">
+        
+        <div class="tw-flex">
+            <div id='robot' class="tw-absolute tw-ml-[40px] tw-mt-[4px]">
+                <svg class="tw-h-[30px] tw-w-[30px]" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/></svg>
+            </div>
+            
+            <button id="display-button" class="tw-flex tw-items-center tw-text-left tw-ml-[80px] tw-w-[75%] tw-h-[30px] tw-border-b tw-text-black dark:tw-text-white">
+                <div id="display-button-text" class="tw-flex-grow"></div>
+                <div id='arrow-svg' class="tw-text-black dark:tw-text-white"></div>
+            </button>
+        </div>
+
+        <div id="mySelect" class="tw-hidden tw-ml-[30px] tw-box-content tw-absolute tw-opacity-100 tw-w-[90%] tw-h-[90%] tw-rounded-[50px] tw-shadow-2xl tw-z-[9999]">
+            
+        </div>
+
+        <div class="tw-flex tw-justify-center tw-max-w-[75%] tw-max-h-[75%] tw-translate-x-16">
+            <canvas id="myChart"></canvas>
+        </div>
+
+        <div id="myElement" class="tw-text-black dark:tw-text-white">
+        </div>
+
+    </div>
+
+    <script type="module">
+
+        import {
+                howManyGraphsFilter,
+                hasBodyClass,
+                uniqueValues,
+                generateDictionaries,
+                getData,
+                selector,
+                isDarkMode,
+                getTextColor,
+                handleDarkModeChange,
+                capitalize,
+                changeTitles,
+                getComputedColor,
+                onColorChange,
+                displayMenu
+            } from "{{API_URL}}/static/probability.js"
+        
+        const raw_db = {{prob_dict | tojson}};
+        const raw_tax = {{taxonomy_dict | tojson}};
+
+        const db = Object.values(raw_db);
+        const tax = Object.values(raw_tax);
+
+        console.log(db, tax)
+
+        const filterList = [['SNIa','Periodic-Other','CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
+                        ['QSO', 'YSO', 'CV/Nova', 'Blazar','AGN'],
+                        ['LPV', 'Periodic-Other', 'CEP', 'RRL', 'DSCT', 'E'],
+                        ['SN', 'bogus', 'asteroid', 'VS', 'AGN']];
+
+        const uniqueNameAux = howManyGraphsFilter(db);
+        
+        // nombre de los classifier
+        console.log(uniqueNameAux)
+        
+        const [principalDict,uniqueKeys] = getData(db, tax, uniqueNameAux);
+
+        console.log("get data result: ",principalDict, uniqueKeys)
+
+        const ctx = document.getElementById('myChart').getContext('2d');
+        let currentDict = selector(0, principalDict, uniqueKeys);
+
+        function orderedStrings(string1,string2){
+            let string1Aux = string1.slice();
+            let string2Aux = string2.slice();
+
+            return [string1Aux.sort(), string2Aux.sort()];
+        }
+        
+        function findMatchingFilter(dictKeys, filterLists){
+
+            for (const filterList of filterLists){
+                let [filterSort, dictKeysSort] = orderedStrings(filterList, dictKeys); 
+                if (JSON.stringify(filterSort) !== JSON.stringify(dictKeysSort)){
+                    continue;
+                } else {
+                    return filterList;
+                }
+            }
+
+            return null;
+        };
+
+        function processWithFilter(inputObj, filterLists){
+            const dictKeys = Object.keys(inputObj);
+            const matchingFilter = findMatchingFilter(dictKeys, filterLists);
+
+            if (!matchingFilter){
+                return [null,null];
+            };
+
+            return processDictInOrder(inputObj, matchingFilter);
+        };
+
+        function processDictInOrder(inputObj, orderList) {
+            const orderedKeys = [];
+            const orderedValues = [];
+            
+            for (const key of orderList) {
+                if (key in inputObj) {
+                    orderedKeys.push(key);
+                    orderedValues.push(inputObj[key]);
+                }
+            }
+            
+            return [orderedKeys, orderedValues];
+        }
+
+        // Data is a variable required in config, and config with ctx are the values required to generate de chart
+        
+        let [orderedKeys, orderedValues] = processWithFilter(currentDict, filterList);
+
+        let firstKeys;
+        let firstValues;
+
+        if (!orderedKeys){
+            firstKeys = Object.keys(currentDict);
+            firstValues = Object.values(currentDict);
+        } else{
+            firstKeys = orderedKeys;
+            firstValues = orderedValues;
+        };
+        const data = {
+            labels: firstKeys,
+            datasets: [{
+                label: 'Probabilities',
+                data: firstValues,
+                fill: true,
+                backgroundColor: 'rgba(255, 0, 54, 0.7)',
+                borderColor: 'rgb(255, 0, 54)',
+                pointBackgroundColor: 'rgb(255, 0, 54)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgb(255, 0, 54)',
+            }]
+            };
+
+        let gridColor; 
+
+        if (isDarkMode()){
+            gridColor = 'white';
+        } else {
+            gridColor = 'black';
+        }
+
+        const textColor = getTextColor();
+
+        const config = {
+        type: 'radar',
+        data: data,
+        options: {
+            animation: {
+            duration: 200
+            },
+            elements: {
+            line: {
+                borderWidth: 1,
+            },
+            },
+            scales: {
+            r: {
+                ticks: {
+                display: false,
+                maxTicksLimit: 5,
+                },
+                grid: {
+                color: textColor
+                },
+                angleLines: {
+                color: textColor
+                },
+                pointLabels: {
+                color: textColor
+                }
+            },
+            },
+            plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                intersect: false,
+                displayColors: false,
+                callbacks: {
+                title: function() {
+                    return 'Probabilities (Score)';
+                },
+                label: function(context) {
+                    let tooltipText = [];
+                    // Loop through all data points
+                    context.dataset.data.forEach((value, index) => {
+                    const label = context.chart.data.labels[index];
+                    tooltipText.push(`${label}: ${value}`);
+                    });
+
+
+                    return tooltipText;
+                }
+                }
+            },
+            },
+        },
+        };
+
+        let keysTitle = changeTitles(uniqueKeys)
+        document.getElementById('display-button-text').innerHTML = keysTitle[0]
+
+        const selectElement = document.getElementById('mySelect');
+
+        // The next for loop generates the menu of options and indexes the eventListener to every option in the menu to change the charts
+        for (let i = 0; i < uniqueKeys.length; i++) {
+            const newA = document.createElement('a');
+            newA.id = keysTitle[i];
+            newA.value = uniqueKeys[i];
+            newA.classList = 'tw-text-center tw-text-lg tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]';
+            newA.target = '_blank';
+
+            const newDiv = document.createElement('div');
+            newDiv.innerHTML = keysTitle[i];
+            newDiv.id = 'div' + keysTitle[i];
+
+            newDiv.classList = `tw-rounded-br-[10px] tw-rounded-bl-[10px] tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]`;
+            
+            const optionsHeight = String(100 / uniqueKeys.length);
+
+            selectElement.setAttribute('style',`height: ${400}px`)
+
+            newDiv.setAttribute('style', `height: ${optionsHeight}%`);
+
+            newA.appendChild(newDiv);
+            selectElement.appendChild(newA);
+
+            document.getElementById(keysTitle[i]).addEventListener('click', function() {
+                const arrowSvgElement = document.getElementById('arrow-svg');
+                const displayButtonTextElement = document.getElementById('display-button-text');
+
+                if (arrowSvgElement && displayButtonTextElement) {
+                displayButtonTextElement.innerHTML = keysTitle[i];
+
+                let currentDictChanged = selector(uniqueKeys.indexOf(this.value), principalDict, uniqueKeys);
+                
+                let [orderedKeys, orderedValues] = processWithFilter(currentDictChanged, filterList);
+
+                if (!orderedKeys){
+                    myChart.data.labels = Object.keys(currentDictChanged);
+                    myChart.data.datasets[0].data = Object.values(currentDictChanged);
+                } else{
+                    myChart.data.labels = orderedKeys;
+                    myChart.data.datasets[0].data = orderedValues;
+                }
+
+                myChart.update();
+
+                displayMenu();
+                }
+            });
+            }
+        // new Chart deploys the chart
+        let myChart = new Chart(ctx, config);
+
+        document.getElementById('display-button').addEventListener('click', () => {  
+            displayMenu()
+            });
+
+        const arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                                </svg>`
+
+        document.getElementById('arrow-svg').innerHTML = arrowDown;
+        const myClick = document.getElementById('display-button');
+
+        onColorChange((newColor) => {
+            myChart.options.scales.r.grid.color = newColor; 
+            myChart.options.scales.r.angleLines.color = newColor; 
+            myChart.options.scales.r.pointLabels.color = newColor; 
+            myChart.update();
+        });
+
+        let auxBool;
+        function handleOutsideClick(event) {
+            if (!myClick.contains(event.target)) {
+                auxBool = 1;
+                displayMenu(auxBool);
+            }
+        }
+
+        document.addEventListener('click',handleOutsideClick);
+
+    </script>

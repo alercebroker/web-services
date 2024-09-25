@@ -1,0 +1,124 @@
+<script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="{{API_URL}}/static/probability.css">
+
+<div class="tw-preflight">
+    <div class="tw-flex tw-flex-col tw-items-center tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px]" style="width: 100%;  min-width: 0; min-height: 380px;">
+        <div id="selectContainer" class="">
+            <select name="selectClassifier" id="selectClassifier">
+                <option value="lc_classifier">lc_classifier</option>
+                <option value="lc_classifier_top">lc_classifier_top</option>
+                <option value="stamp_classifier">stamp_classifier</option>
+            </select>
+        </div>
+
+        <div class="tw-max-w-[75%] tw-max-h-[75%] tw-translate-x-16">
+            <canvas id="myChart"></canvas>
+        </div>
+
+    </div>
+</div>
+
+<script type="module">
+    const raw_db = {{prob_dict | tojson}};
+    const raw_tax = {{taxonomy_dict | tojson}};
+    const raw_group_prob_dict = {{ group_prob_dict | tojson }}
+    const ctx = document.getElementById('myChart');
+
+    console.log(raw_group_prob_dict)
+
+    let select = document.getElementById('selectClassifier')
+    let probability_data_aux = []
+    let tag_aux = []
+
+    let tags_mapping = {
+        "lc_classifier": ['SNIa','Periodic-Other', 'CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
+        "lc_classifier_top": ['Transient','Periodic','Stochastic'],
+        "stamp_classifier": ['SN', 'bogus','asteroid','VS','AGN']
+    }
+
+    let data = {
+        labels: [],
+        datasets: [{
+            label: 'Probabilities',
+            data: [],
+            fill: true,
+            backgroundColor: 'rgba(255, 0, 54, 0.7)',
+            borderColor: 'rgb(255, 0, 54)',
+            pointBackgroundColor: 'rgb(255, 0, 54)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(255, 0, 54)',
+        }]
+    };
+
+
+    let config = {
+        type: 'radar',
+        data: data,
+        options: {
+            elements: {
+                line: {
+                    borderWidth: 1,
+                },
+            },
+            scales: {
+                r: {
+                    ticks: {
+                    display: false,
+                    maxTicksLimit: 5,
+                    },
+                },
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+            },
+        }
+    }
+
+    let mychart = new Chart(ctx, config);
+
+    select.addEventListener('change', (e) => {
+        updateMyChart(e.target.value)
+    })
+
+    function orderDataByTagNew(classifier_name, labels_tags){
+        probability_data_aux.length = 0
+        
+        labels_tags.forEach((e) => {
+            raw_group_prob_dict[classifier_name].forEach((element) => {
+                if(element.class_name == e){
+                    probability_data_aux.push(element.probability)
+                }
+            })
+        })
+    }
+
+    function updateMyChart(classifier_name){
+        if(classifier_name in tags_mapping) {
+            orderDataByTagNew(classifier_name, tags_mapping[classifier_name])
+
+            removeDataChart()
+            updateDataChart(tags_mapping[classifier_name])
+        }
+    }
+
+    function removeDataChart(){
+        mychart.data.labels.length=0;
+        mychart.data.datasets.forEach((dataset) => {
+            dataset.data.length=0;
+
+        });
+        mychart.update();
+    }
+
+    function updateDataChart(labels){
+        mychart.data.labels.push(...labels);
+        mychart.data.datasets.forEach((dataset) => {
+            dataset.data.push(...probability_data_aux);
+        });
+        mychart.update();
+    }
+</script>
