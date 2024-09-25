@@ -62,7 +62,6 @@ export function initCrossmatch(){
         const distanceParagraph = document.createElement('p');
         distanceParagraph.classList = 'tw-flex dark:tw-text-white tw-text-black tw-text-right tw-float-right';
 
-        // Esta es la clave para poder ocultar los botones dependiendo del input. Object.values(rawCross[i][String(crossKeys[i])].distance)[1].toFixed(3) es el value.
         const distanceCross = 'Distance: ' + String(Object.values(rawCross[i][String(crossKeys[i])].distance)[1].toFixed(3)) + '  ' + String(Object.values(rawCross[i][String(crossKeys[i])].distance)[0]);
 
         // We put the necesary text and appendchild the arrowdiv to the second paragraph
