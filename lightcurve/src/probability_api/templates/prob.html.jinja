@@ -2,17 +2,21 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/probability.css">
 
-<div class="tw-preflight">
-    <div class="tw-flex tw-flex-col tw-items-center tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px]" style="width: 100%;  min-width: 0; min-height: 380px;">
-        <div id="selectContainer" class="">
-            <select name="selectClassifier" id="selectClassifier">
-                <option value="lc_classifier">lc_classifier</option>
-                <option value="lc_classifier_top">lc_classifier_top</option>
-                <option value="stamp_classifier">stamp_classifier</option>
+<div id="probabilities-app" class="tw-preflight tw-w-full">
+    <div class="tw-flex tw-flex-col tw-items-center tw-bg-white tw-rounded-[6px] dark:tw-bg-[#1e1e1e]">
+
+        <div id="selectContainer" class="tw-flex tw-justify-center tw-my-4 tw-mx-auto tw-w-full">
+            <select name="selectClassifier" id="selectClassifier" class="tw-w-[50%] hover:tw-bg-[#757575] tw-bg-transparent tw-border-b tw-border-b-[#1e1e1e] dark:tw-border-b-white">
+                <optgroup class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
+                    <option value="#" class="tw-hidden"></option>
+                    <option value="lc_classifier">lc_classifier</option>
+                    <option value="lc_classifier_top">lc_classifier_top</option>
+                    <option value="stamp_classifier">stamp_classifier</option>
+                </optgroup>
             </select>
         </div>
 
-        <div class="tw-max-w-[75%] tw-max-h-[75%] tw-translate-x-16">
+        <div class="md:tw-w-[50%] md:tw-h-[50%] sm:tw-w-[10%] sm:tw-h-[10%] tw-mx-auto tw-relative">
             <canvas id="myChart"></canvas>
         </div>
 
@@ -24,8 +28,6 @@
     const raw_tax = {{taxonomy_dict | tojson}};
     const raw_group_prob_dict = {{ group_prob_dict | tojson }}
     const ctx = document.getElementById('myChart');
-
-    console.log(raw_group_prob_dict)
 
     let select = document.getElementById('selectClassifier')
     let probability_data_aux = []
@@ -57,23 +59,52 @@
         type: 'radar',
         data: data,
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
             elements: {
                 line: {
                     borderWidth: 1,
+                    fill: true,
                 },
             },
             scales: {
                 r: {
                     ticks: {
-                    display: false,
-                    maxTicksLimit: 5,
+                        display: false,
+                        maxTicksLimit: 5,
                     },
+                    angleLines: {
+                        color: '#ffffff'
+                    },
+                    grid: {
+                        color: '#ffffff'
+                    },
+                    pointLabels: {
+                        color: '#ffffff'
+                    }
                 },
             },
             plugins: {
                 legend: {
                     display: false
                 },
+                tooltip: {
+                    enabled: true,
+                    mode: 'dataset',
+                    position: 'nearest',
+                    callbacks: {
+                        title: function(){
+                            return "Probability"
+                        },
+                        label: function(context){
+                            let tooltipslabels = []
+                            let label = ""
+                            label = context.label + ": " + context.parsed.r
+                            tooltipslabels.push(label)
+                            return tooltipslabels
+                        }
+                    }
+                }
             },
         }
     }

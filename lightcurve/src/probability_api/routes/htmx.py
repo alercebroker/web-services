@@ -79,8 +79,6 @@ def group_data_by_classifier(prob_dict):
         group_data_dict[classifier] = aux_data_arr
         aux_data_arr = []
 
-    pprint.pprint(group_data_dict)
-
     return group_data_dict
 
 @router.get("/probabilities/{oid}", response_class=HTMLResponse)
