@@ -38,12 +38,17 @@
     <div class="">
         <table class="tw-w-full">
             {% for i in range(cross|length) %}
-                {% for key, values in cross[i].items()%}   
+                {% for key, values in cross[i].items() %}   
                     <div>
                         <tr>
-                            <td>               
-                                <button id="{{key}}" class="">{{key}} (Attributes {{values|length}})</button>
-                                <table>
+                            <td class="tw-w-full">               
+                                <button id="{{key}}" class="tw-w-full">
+                                    <div class="tw-float-left tw-flex tw-justify-normal">
+                                        <p class="tw-text-lg">{{key}}</p> 
+                                        <p class="tw-text-gray-600">(Attributes {{values|length}})</p>
+                                    </div>
+                                </button>
+                                <table class="tw-hidden">
                                     <colgroup> <col> <col> <col> </colgroup>
                                     <thead>
                                         <tr>
@@ -53,7 +58,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for key1, values1 in values.items()%}
+                                        {% for key1, values1 in values.items() %}
                                             <tr>
                                                 <td> {{ key1 }} </td>
                                                 <td> {{ (values1.values()|list)[1] }} </td>
