@@ -28,10 +28,9 @@ async def object_mag_app(
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
     cross = get_alerce_data(object.meanra, object.meandec, 50)
-  
 
     return templates.TemplateResponse(
-      name='crossmatch.html.jinja',
+      name='newCrossmatch.html.jinja',
       context={'request': request,
                'cross': cross
                },
