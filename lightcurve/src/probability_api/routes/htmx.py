@@ -19,6 +19,7 @@ templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8004"
 )
 
+
 def prob_filter(prob_list, taxonomy_list):
 
     prob_dict = {}
@@ -49,7 +50,7 @@ def filter_classifier_name_taxonomy(taxonomy_dict):
     return taxonomy_dict
 
 def eliminated_duplicates_by_higher_version(taxonomy_dict):
-    # format of dict: {classifier_name: key}
+    # format of seen_classifiers dict: {classifier_name: key}
     seen_classifiers = {}
     filtered_taxonomy = {}
     
@@ -68,18 +69,42 @@ def eliminated_duplicates_by_higher_version(taxonomy_dict):
     return filtered_taxonomy
 
 def group_data_by_classifier(prob_dict):
-    classifiers_names = ["lc_classifier", "lc_classifier_top", "stamp_classifier", "LC_classifier_BHRF_forced_phot(beta)", "LC_classifier_ATAT_forced_phot(beta)"]
-    group_data_dict = {}
-    aux_data_arr = []
+    group_data_dict_by_classifier = {}
 
-    for classifier in classifiers_names:
-        for key, value in prob_dict.items():
-            if value["classifier_name"] == classifier:
-                aux_data_arr.append(value)
-        group_data_dict[classifier] = aux_data_arr
-        aux_data_arr = []
+    for key, value in prob_dict.items():
+        classifier_name = value['classifier_name']
+        if classifier_name not in group_data_dict_by_classifier:
+            group_data_dict_by_classifier[classifier_name] = {}
+        group_data_dict_by_classifier[classifier_name][key] = value
 
-    return group_data_dict
+
+    return group_data_dict_by_classifier
+
+
+    
+def group_data_by_classifier_dict(prob_lis):
+    group_data_by_classifier = {}
+
+    for item in prob_lis:
+        aux_dict = {
+        'classifier_name': item.classifier_name,
+        'classifier_version': item.classifier_version,
+        'class_name': item.class_name,
+        'probability': item.probability,
+        'ranking': item.ranking,
+        }
+        classifier_name = item.classifier_name
+        classifier_version = item.classifier_version
+        if item.classifier_name not in group_data_by_classifier:
+            group_data_by_classifier[classifier_name] = {}
+        
+        if classifier_version not in group_data_by_classifier[classifier_name]:
+            group_data_by_classifier[classifier_name][classifier_version]= []
+
+        group_data_by_classifier[classifier_name][classifier_version].append(aux_dict)
+
+    pprint.pprint(group_data_by_classifier)
+    return group_data_by_classifier
 
 @router.get("/probabilities/{oid}", response_class=HTMLResponse)
 async def object_probability_app(
@@ -89,11 +114,16 @@ async def object_probability_app(
 
     prob_list = get_probabilities(oid,session_factory = request.app.state.psql_session)
     taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
+    
+    group_prob = group_data_by_classifier_dict(prob_list)
 
     taxonomy_dict, prob_dict = prob_filter(prob_list, taxonomy_list)
 
+    #filtered_taxonomy = filter_classifier_name_taxonomy(taxonomy_dict)
+    filtered_taxonomy = eliminated_duplicates_by_higher_version(taxonomy_dict)
+
     group_prob_dict = group_data_by_classifier(prob_dict)
-    filtered_taxonomy = filter_classifier_name_taxonomy(taxonomy_dict)
+    #group_data_by_version(group_prob_dict)
 
     return templates.TemplateResponse(
       name='prob.html.jinja',

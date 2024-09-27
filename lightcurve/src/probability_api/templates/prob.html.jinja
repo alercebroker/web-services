@@ -2,8 +2,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/probability.css">
 
-<div id="probabilities-app" class="tw-preflight tw-w-full">
-    <div class="tw-flex tw-flex-col tw-items-center tw-bg-white tw-rounded-[6px] dark:tw-bg-[#1e1e1e]">
+<div id="probabilities-app" class="tw-preflight tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e]">
+    <div class="tw-flex tw-flex-col tw-items-center tw-rounded-[6px]">
 
         <div id="selectContainer" class="tw-flex tw-justify-center tw-my-4 tw-mx-auto tw-w-full">
             <select name="selectClassifier" id="selectClassifier" class="tw-w-[50%] hover:tw-bg-[#757575] tw-bg-transparent tw-border-b tw-border-b-[#1e1e1e] dark:tw-border-b-white">
@@ -29,9 +29,10 @@
     const raw_group_prob_dict = {{ group_prob_dict | tojson }}
     const ctx = document.getElementById('myChart');
 
+
     let select = document.getElementById('selectClassifier')
-    let probability_data_aux = []
-    let tag_aux = []
+    let mychart
+    let probability_data_aux
 
     let tags_mapping = {
         "lc_classifier": ['SNIa','Periodic-Other', 'CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
@@ -69,18 +70,19 @@
             },
             scales: {
                 r: {
+                    backgroundColor: 'white',
                     ticks: {
                         display: false,
                         maxTicksLimit: 5,
                     },
                     angleLines: {
-                        color: '#ffffff'
+                        color: '#000000'
                     },
                     grid: {
-                        color: '#ffffff'
+                        color: '#000000',
                     },
                     pointLabels: {
-                        color: '#ffffff'
+                        color: '#000000'
                     }
                 },
             },
@@ -109,11 +111,17 @@
         }
     }
 
-    let mychart = new Chart(ctx, config);
+    init()
 
-    select.addEventListener('change', (e) => {
-        updateMyChart(e.target.value)
-    })
+    function init(){
+        probability_data_aux = []
+
+        mychart = new Chart(ctx, config);
+        console.log(raw_group_prob_dict)
+        select.addEventListener('change', (e) => {
+            updateMyChart(e.target.value)
+        })
+    }
 
     function orderDataByTagNew(classifier_name, labels_tags){
         probability_data_aux.length = 0
@@ -133,6 +141,7 @@
 
             removeDataChart()
             updateDataChart(tags_mapping[classifier_name])
+            isDark();
         }
     }
 
@@ -151,5 +160,16 @@
             dataset.data.push(...probability_data_aux);
         });
         mychart.update();
+    }
+
+    function isDark(){
+        if(document.getElementById("probabilities-app").classList.contains("tw-dark")){
+            mychart.config.options.scales.r.backgroundColor = '#BDBDBD'
+            mychart.config.options.scales.r.angleLines.color = '#EEEEEE'
+            mychart.config.options.scales.r.grid.color = '#EEEEEE'
+            mychart.config.options.scales.r.pointLabels.color = '#EEEEEE'
+            
+            mychart.update();
+        }
     }
 </script>
