@@ -9,11 +9,12 @@
             <select name="selectClassifier" id="selectClassifier" class="tw-w-[50%] hover:tw-bg-[#757575] tw-bg-transparent tw-border-b tw-border-b-[#1e1e1e] dark:tw-border-b-white">
                 <optgroup class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
                     <option value="#" class="tw-hidden"></option>
-                    <option value="lc_classifier">lc_classifier</option>
-                    <option value="lc_classifier_top">lc_classifier_top</option>
-                    <option value="stamp_classifier">stamp_classifier</option>
+                    {% for key, value in class_dict.items() %}
+                        <option value="{{key}}">{{value}}</option>
+                    {% endfor %}
                 </optgroup>
             </select>
+
         </div>
 
         <div class="md:tw-w-[50%] md:tw-h-[50%] sm:tw-w-[10%] sm:tw-h-[10%] tw-mx-auto tw-relative">
@@ -24,21 +25,15 @@
 </div>
 
 <script type="module">
-    const raw_db = {{prob_dict | tojson}};
     const raw_tax = {{taxonomy_dict | tojson}};
     const raw_group_prob_dict = {{ group_prob_dict | tojson }}
     const ctx = document.getElementById('myChart');
 
+    
 
     let select = document.getElementById('selectClassifier')
     let mychart
     let probability_data_aux
-
-    let tags_mapping = {
-        "lc_classifier": ['SNIa','Periodic-Other', 'CEP', 'RRL', 'DSCT', 'E', 'LPV', 'YSO', 'CV/Nova', 'Blazar', 'AGN', 'QSO', 'SLSN', 'SNII', 'SNIbc'],
-        "lc_classifier_top": ['Transient','Periodic','Stochastic'],
-        "stamp_classifier": ['SN', 'bogus','asteroid','VS','AGN']
-    }
 
     let data = {
         labels: [],
@@ -66,7 +61,7 @@
                 line: {
                     borderWidth: 1,
                     fill: true,
-                },
+                }
             },
             scales: {
                 r: {
@@ -83,7 +78,9 @@
                     },
                     pointLabels: {
                         color: '#000000'
-                    }
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 1
                 },
             },
             plugins: {
@@ -115,19 +112,50 @@
 
     function init(){
         probability_data_aux = []
+        reverseData()
 
         mychart = new Chart(ctx, config);
-        console.log(raw_group_prob_dict)
+
         select.addEventListener('change', (e) => {
             updateMyChart(e.target.value)
         })
     }
 
+
+    function groupBy(data, prop){
+        return data.reduce((groups, item) => {
+            const val = item[prop]
+            groups[val] = groups[val] || []
+            groups[val].push(item)
+            return groups
+        }, {})
+    }
+    
+
+
+
+
+    function reverseData(){
+        let aux_arr = []
+
+        Object.keys(raw_tax).forEach((key) => {
+            aux_arr= raw_tax[key].classes.map((item, idx) => {
+                if (idx == 0) {
+                    return item
+                } else {
+                    return raw_tax[key].classes[raw_tax[key].classes.length - idx]
+                }
+            })
+            raw_tax[key].classes = aux_arr
+        })
+    }
+
+
     function orderDataByTagNew(classifier_name, labels_tags){
         probability_data_aux.length = 0
-        
+
         labels_tags.forEach((e) => {
-            raw_group_prob_dict[classifier_name].forEach((element) => {
+            Object.values(raw_group_prob_dict[classifier_name])[0].forEach((element) => {
                 if(element.class_name == e){
                     probability_data_aux.push(element.probability)
                 }
@@ -135,14 +163,26 @@
         })
     }
 
-    function updateMyChart(classifier_name){
-        if(classifier_name in tags_mapping) {
-            orderDataByTagNew(classifier_name, tags_mapping[classifier_name])
+    function maxValue(classifier_name){
 
-            removeDataChart()
-            updateDataChart(tags_mapping[classifier_name])
-            isDark();
-        }
+        let maxVal = Math.max.apply(Math, Object.values(raw_group_prob_dict[classifier_name])[0].map((e) => e.probability))
+
+        return maxVal
+    }
+
+    function updateMyChart(classifier_name){
+        let max_value
+        let classes = raw_tax[classifier_name].classes
+
+        console.log(raw_group_prob_dict)
+        orderDataByTagNew(classifier_name, classes)
+
+        max_value = maxValue(classifier_name)
+
+        removeDataChart()
+        updateDataChart(classes, max_value)
+
+        isDark();
     }
 
     function removeDataChart(){
@@ -154,11 +194,14 @@
         mychart.update();
     }
 
-    function updateDataChart(labels){
+    function updateDataChart(labels, max_value){
         mychart.data.labels.push(...labels);
         mychart.data.datasets.forEach((dataset) => {
             dataset.data.push(...probability_data_aux);
         });
+
+        mychart.config.options.scales.r.suggestedMax = max_value
+
         mychart.update();
     }
 

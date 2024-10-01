@@ -20,66 +20,41 @@ templates.env.globals["API_URL"] = os.getenv(
 )
 
 
-def prob_filter(prob_list, taxonomy_list):
-
-    prob_dict = {}
+def taxonomy_data(taxonomy_list):
+    """
+        dict example: {classifier_name:{class_name:[],classifier_version:''}}
+    """
+    
     taxonomy_dict  = {}
 
     for n in range(len(taxonomy_list)):
-        taxonomy_dict[f'tax_{n+1}'] = taxonomy_list[n].__dict__
+        taxonomy_dict[taxonomy_list[n].classifier_name] = taxonomy_list[n].__dict__
 
-    for k in range(len(prob_list)):
-        prob_dict[f'prob_{k+1}'] = prob_list[k].__dict__
-
-    return taxonomy_dict, prob_dict
-
-def filter_classifier_name_taxonomy(taxonomy_dict):
-    filter = ["lc_classifier", "lc_classifier_top", "stamp_classifier", "LC_classifier_BHRF_forced_phot(beta)", "LC_classifier_ATAT_forced_phot(beta)"]
-    pop_keys = []
-    for value in taxonomy_dict.keys():
-        if(taxonomy_dict[value]["classifier_name"] in filter):
-           pass
-        else:
-            pop_keys.append(value)
-
-    for x in range(len(pop_keys)):
-        taxonomy_dict.pop(pop_keys[x])
-    
-    taxonomy_dict = eliminated_duplicates_by_higher_version(taxonomy_dict)
-    
     return taxonomy_dict
 
-def eliminated_duplicates_by_higher_version(taxonomy_dict):
-    # format of seen_classifiers dict: {classifier_name: key}
-    seen_classifiers = {}
-    filtered_taxonomy = {}
-    
-    for key, value in taxonomy_dict.items():
-        classifier_name = value["classifier_name"]
-        if classifier_name not in seen_classifiers:
-            filtered_taxonomy[key] = value
-            seen_classifiers[classifier_name] = key
-        else:
-            oldKey = seen_classifiers[classifier_name]
-            if value["classifier_version"] > taxonomy_dict[oldKey]["classifier_version"]:
-                filtered_taxonomy.pop(oldKey)
-                filtered_taxonomy[key] = value
-                seen_classifiers[classifier_name] = key
 
-    return filtered_taxonomy
+def filter_data_by_higher_version(prob_dict):
+    data_by_higher_version = {}
 
-def group_data_by_classifier(prob_dict):
-    group_data_dict_by_classifier = {}
+    """
+        Dictionary format:
+        {
+            'lc_classifier': {
+                                'hierarchical_rf_1.1.0: [{},{},{}]
+                                }
+        }
+    """
 
-    for key, value in prob_dict.items():
-        classifier_name = value['classifier_name']
-        if classifier_name not in group_data_dict_by_classifier:
-            group_data_dict_by_classifier[classifier_name] = {}
-        group_data_dict_by_classifier[classifier_name][key] = value
+    for itemKey, itemValue in prob_dict.items():
+        if len(itemValue) > 1 :
+            lastest_version = sorted(itemValue.keys())[-1]
+            if itemKey not in data_by_higher_version:
+                data_by_higher_version[itemKey] = {lastest_version: itemValue[lastest_version]}
+        else: 
+            if itemKey not in data_by_higher_version:
+                data_by_higher_version[itemKey] = itemValue
 
-
-    return group_data_dict_by_classifier
-
+    return data_by_higher_version
 
     
 def group_data_by_classifier_dict(prob_lis):
@@ -103,8 +78,21 @@ def group_data_by_classifier_dict(prob_lis):
 
         group_data_by_classifier[classifier_name][classifier_version].append(aux_dict)
 
-    pprint.pprint(group_data_by_classifier)
     return group_data_by_classifier
+
+def classifiers_options(prob_dict):
+    class_dict = {}
+
+    for key in prob_dict.keys():
+        if key not in class_dict:
+            class_dict[key] = format_classifiers_name(key)
+
+    return class_dict
+
+def format_classifiers_name(classifier_name):
+
+    return classifier_name.replace('_',' ').title()
+
 
 @router.get("/probabilities/{oid}", response_class=HTMLResponse)
 async def object_probability_app(
@@ -114,42 +102,19 @@ async def object_probability_app(
 
     prob_list = get_probabilities(oid,session_factory = request.app.state.psql_session)
     taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
-    
+
+    taxonomy_dict = taxonomy_data(taxonomy_list)
+
     group_prob = group_data_by_classifier_dict(prob_list)
+    group_prob_by_version = filter_data_by_higher_version(group_prob)
+    class_options = classifiers_options(group_prob_by_version)
 
-    taxonomy_dict, prob_dict = prob_filter(prob_list, taxonomy_list)
-
-    #filtered_taxonomy = filter_classifier_name_taxonomy(taxonomy_dict)
-    filtered_taxonomy = eliminated_duplicates_by_higher_version(taxonomy_dict)
-
-    group_prob_dict = group_data_by_classifier(prob_dict)
-    #group_data_by_version(group_prob_dict)
-
+    pprint.pprint(taxonomy_dict)
     return templates.TemplateResponse(
       name='prob.html.jinja',
       context={'request': request,
-               'prob_dict': prob_dict,
-               'taxonomy_dict': filtered_taxonomy,
-               'group_prob_dict': group_prob_dict,
-               },
-  )
-
-
-@router.get("/probabilities2/{oid}", response_class=HTMLResponse)
-async def object_probability_app(
-    request: Request,
-    oid: str,
-):
-
-    prob_list = get_probabilities(oid,session_factory = request.app.state.psql_session)
-    taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
-
-    taxonomy_dict, prob_dict = prob_filter(prob_list, taxonomy_list)
-
-    return templates.TemplateResponse(
-      name='probabilitiesCard.html.jinja',
-      context={'request': request,
-               'prob_dict': prob_dict,
                'taxonomy_dict': taxonomy_dict,
+               'group_prob_dict': group_prob_by_version,
+               'class_dict': class_options
                },
   )
