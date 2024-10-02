@@ -1,30 +1,48 @@
 <script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script  type="module" src="{{API_URL}}/static/probability.js"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/probability.css">
 
 <div id="probabilities-app" class="tw-preflight tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e]">
     <div class="tw-flex tw-flex-col tw-items-center tw-rounded-[6px]">
 
         <div id="selectContainer" class="tw-flex tw-justify-center tw-my-4 tw-mx-auto tw-w-full">
-            <select name="selectClassifier" id="selectClassifier" class="tw-w-[50%] hover:tw-bg-[#757575] tw-bg-transparent tw-border-b tw-border-b-[#1e1e1e] dark:tw-border-b-white">
+            <select name="selectClassifier" id="selectClassifier" class="tw-w-[80%] hover:tw-bg-[#757575] tw-bg-transparent tw-border-b tw-border-b-[#1e1e1e] dark:tw-border-b-white">
                 <optgroup class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
-                    <option value="#" class="tw-hidden"></option>
-                    {% for key, value in class_dict.items() %}
-                        <option value="{{key}}">{{value}}</option>
+                    <option value="#" class="tw-hidden">
+                    </option>
+                    {% for x in class_dict %}
+                         {% for key, value in x.items() %}
+                            <option value="{{key}}">{{value}}</option>
+                         {% endfor %}
                     {% endfor %}
                 </optgroup>
             </select>
 
         </div>
 
-        <div class="md:tw-w-[50%] md:tw-h-[50%] sm:tw-w-[10%] sm:tw-h-[10%] tw-mx-auto tw-relative">
+        <div class="md:tw-w-[80%] md:tw-h-[80%] sm:tw-w-[100%] sm:tw-h-[100%] tw-mx-auto tw-relative">
             <canvas id="myChart"></canvas>
         </div>
 
     </div>
 </div>
 
+
 <script type="module">
+import { init } from "{{API_URL}}/static/probability.js";
+  init();
+</script>
+
+<script id="probabilities-data" type="application/json">
+{ 
+   "taxonomy_dict": {{taxonomy_dict | tojson}},
+   "group_prob_dict": {{group_prob_dict | tojson}}
+}
+</script>
+
+<script type="module">
+/*
     const raw_tax = {{taxonomy_dict | tojson}};
     const raw_group_prob_dict = {{ group_prob_dict | tojson }}
     const ctx = document.getElementById('myChart');
@@ -68,7 +86,7 @@
                     backgroundColor: 'white',
                     ticks: {
                         display: false,
-                        maxTicksLimit: 5,
+                        stepSize: 0.33,
                     },
                     angleLines: {
                         color: '#000000'
@@ -79,8 +97,8 @@
                     pointLabels: {
                         color: '#000000'
                     },
-                    suggestedMin: 0,
-                    suggestedMax: 1
+                    beginAtZero: true,
+                    max: 1
                 },
             },
             plugins: {
@@ -112,6 +130,7 @@
 
     function init(){
         probability_data_aux = []
+
         reverseData()
 
         mychart = new Chart(ctx, config);
@@ -120,19 +139,6 @@
             updateMyChart(e.target.value)
         })
     }
-
-
-    function groupBy(data, prop){
-        return data.reduce((groups, item) => {
-            const val = item[prop]
-            groups[val] = groups[val] || []
-            groups[val].push(item)
-            return groups
-        }, {})
-    }
-    
-
-
 
 
     function reverseData(){
@@ -151,11 +157,11 @@
     }
 
 
-    function orderDataByTagNew(classifier_name, labels_tags){
+    function orderDataByTagNew(classifier_name, labels_tags, classifier_data){
         probability_data_aux.length = 0
 
         labels_tags.forEach((e) => {
-            Object.values(raw_group_prob_dict[classifier_name])[0].forEach((element) => {
+            classifier_data.forEach((element) => {
                 if(element.class_name == e){
                     probability_data_aux.push(element.probability)
                 }
@@ -163,34 +169,39 @@
         })
     }
 
-    function maxValue(classifier_name){
+    function maxValue(classifier_name, classifier_data){
 
-        let maxVal = Math.max.apply(Math, Object.values(raw_group_prob_dict[classifier_name])[0].map((e) => e.probability))
+        let maxVal = Math.max.apply(Math, classifier_data.map((e) => e.probability))
 
         return maxVal
     }
 
+    function getScale(max_value){
+        return (max_value/3)
+    }
+
     function updateMyChart(classifier_name){
         let max_value
-        let classes = raw_tax[classifier_name].classes
+        let classes_arr = raw_tax[classifier_name].classes
+        let classifier_data = Object.values(raw_group_prob_dict[classifier_name])[0]
 
-        console.log(raw_group_prob_dict)
-        orderDataByTagNew(classifier_name, classes)
+        orderDataByTagNew(classifier_name, classes_arr, classifier_data)
 
-        max_value = maxValue(classifier_name)
+        max_value = maxValue(classifier_name, classifier_data)
 
         removeDataChart()
-        updateDataChart(classes, max_value)
+        updateDataChart(classes_arr, max_value)
 
         isDark();
     }
 
     function removeDataChart(){
-        mychart.data.labels.length=0;
+        mychart.data.labels.length = 0;
         mychart.data.datasets.forEach((dataset) => {
-            dataset.data.length=0;
+            dataset.data.length = 0;
 
         });
+
         mychart.update();
     }
 
@@ -200,7 +211,8 @@
             dataset.data.push(...probability_data_aux);
         });
 
-        mychart.config.options.scales.r.suggestedMax = max_value
+        mychart.config.options.scales.r.ticks.stepSize = getScale(max_value)
+        mychart.config.options.scales.r.max = max_value
 
         mychart.update();
     }
@@ -215,4 +227,5 @@
             mychart.update();
         }
     }
+    */
 </script>

@@ -80,17 +80,26 @@ def group_data_by_classifier_dict(prob_lis):
 
     return group_data_by_classifier
 
-def classifiers_options(prob_dict):
-    class_dict = {}
+def classifiers_options(taxonomy_dict):
+    class_dict = [None for x in range(5)]
+    priorities = {
+    'lc_classifier': 0,
+    'lc_classifier_top': 1,
+    'stamp_classifier': 2,
+    'LC_classifier_ATAT_forced_phot(beta)': 3,
+    'LC_classifier_BHRF_forced_phot(beta)': 4,
+    }
 
-    for key in prob_dict.keys():
-        if key not in class_dict:
-            class_dict[key] = format_classifiers_name(key)
+    for key in taxonomy_dict.keys():
+        if key in priorities:
+            index = priorities[key]
+            class_dict[index] = { key : format_classifiers_name(key) }
+        else:
+            class_dict.append({ key : format_classifiers_name(key) })
 
     return class_dict
 
 def format_classifiers_name(classifier_name):
-
     return classifier_name.replace('_',' ').title()
 
 
@@ -104,12 +113,13 @@ async def object_probability_app(
     taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
 
     taxonomy_dict = taxonomy_data(taxonomy_list)
+    class_options = classifiers_options(taxonomy_dict)
+
 
     group_prob = group_data_by_classifier_dict(prob_list)
     group_prob_by_version = filter_data_by_higher_version(group_prob)
-    class_options = classifiers_options(group_prob_by_version)
+    
 
-    pprint.pprint(taxonomy_dict)
     return templates.TemplateResponse(
       name='prob.html.jinja',
       context={'request': request,
