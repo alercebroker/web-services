@@ -40,37 +40,44 @@
         <table class="tw-w-full">
             {% for i in range(cross|length) %}
                 {% for key, values in cross[i].items() %}   
-                    <div>
-                        <tr>
-                            <td class="tw-w-full">               
-                                <button id="{{key}}" class="tw-w-full show-table-btn" data-key="{{key}}">
-                                    <div class="tw-float-left tw-flex tw-justify-normal">
-                                        <p class="tw-text-lg">{{key}}</p> 
-                                        <p class="tw-text-gray-600">(Attributes {{values|length}})</p>
-                                    </div>
-                                </button>
-                                <table id="table-{{key}}" class="tw-hidden">
-                                    <colgroup> <col> <col> <col> </colgroup>
-                                    <thead>
-                                        <tr>
-                                            <th> Attribute </th>
-                                            <th> Value </th>
-                                            <th> Unit </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for key1, values1 in values.items() %}
+                    {% if values.distance.value <= 20 %}
+                        <div>
+                            <tr>
+                                <td class="tw-w-full">  
+                                    <button id="{{key}}" class="tw-w-full" data-key="{{key}}" arcsec-dist="{{values.distance.value}}">
+                                        <div class="tw-float-left tw-flex tw-justify-normal">
+                                            <p class="tw-text-lg">{{key}}</p> 
+                                            <p class="tw-text-gray-600 tw-ml-[5px]">(Attributes {{values|length}})</p>
+                                        </div>
+                                        <div class="tw-float-right">
+                                            <div class="tw-float-left">
+                                                <p class="tw-text-gray-700"> Distance: {{values.distance.value|round(3)}} arcsec </p>
+                                            </div>
+                                        </div>
+                                    </button>
+                                    <table id="table-{{key}}" style="display: none">
+                                        <colgroup> <col> <col> <col> </colgroup>
+                                        <thead>
                                             <tr>
-                                                <td> {{ key1 }} </td>
-                                                <td> {{ (values1.values()|list)[1] }} </td>
-                                                <td> {{ (values1.values()|list)[0] }} </td>
+                                                <th> Attribute </th>
+                                                <th> Value </th>
+                                                <th> Unit </th>
                                             </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </td>
-                        </tr>
-                    </div>
+                                        </thead>
+                                        <tbody>
+                                            {% for key1, values1 in values.items() %}
+                                                <tr>
+                                                    <td> {{ key1 }} </td>
+                                                    <td> {{ (values1.values()|list)[1] }} </td>
+                                                    <td> {{ (values1.values()|list)[0] }} </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             {% endfor %}
 
@@ -79,51 +86,12 @@
 
 </div>
 
-<script>
-//import { initCrossmatch, elementReady } from "{{API_URL}}/static/newCrossmatch.js";
+<script type="module">
+    import { initCrossmatch, elementReady } from "{{API_URL}}/static/newCrossmatch.js";
 
-function elementReady(selector) {
-    return new Promise((resolve, reject) => {
-      const el = document.querySelector(selector);
-      if (el) {
-        resolve(el);
-      }
-  
-      new MutationObserver((mutationRecords, observer) => {
-        Array.from(document.querySelectorAll(selector)).forEach(element => {
-          resolve(element);
-          observer.disconnect();
-        });
-      })
-      .observe(document.documentElement, {
-        childList: true,
-        subtree: true
-      });
+    elementReady("#crossmatch-app").then(() => {
+        initCrossmatch();
     });
-  }
-  
-function initCrossmatch() {
-    // Add event listeners to all buttons with the 'show-table-btn' class
-    document.querySelectorAll('.show-table-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const key = this.getAttribute('data-key');
-            showTable(key);
-        });
-    });
-
-
-}
-
-function showTable(key) {
-    const table = document.getElementById(`table-${key}`);
-    if (table) {
-        table.style.display = table.style.display === 'block' ? 'none' : 'block';
-    }
-}
-
-elementReady("#crossmatch-app").then(() => {
-    initCrossmatch();
-});
 
 </script>
 
