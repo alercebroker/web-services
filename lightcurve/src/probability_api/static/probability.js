@@ -43,7 +43,10 @@ let config = {
                     color: '#000000',
                 },
                 pointLabels: {
-                    color: '#000000'
+                    color: '#000000',
+                    font: {
+                        size: 14
+                    }
                 },
                 beginAtZero: true,
                 max: 1
@@ -57,16 +60,19 @@ let config = {
                 enabled: true,
                 mode: 'dataset',
                 position: 'nearest',
+                titleFont: {
+                    weight: 'bold'
+                },
                 callbacks: {
                     title: function(){
-                        return "Probability"
+                        return "Probabilities (score)"
                     },
                     label: function(context){
                         let tooltipslabels = []
                         let label = ""
                         label = context.label + ": " + context.parsed.r
                         tooltipslabels.push(label)
-                        return tooltipslabels
+                        return label
                     }
                 }
             }
@@ -81,17 +87,18 @@ export function init(){
     let ctx = document.getElementById('myChart');
     let select = document.getElementById('selectClassifier')
 
-    //checkear
     reverseData(raw_tax)
 
     probability_data_aux = []
     mychart = new Chart(ctx, config);
 
+    updateMyChart(select.value, raw_tax, raw_group_prob_dict)
+
+
     select.addEventListener('change', (e) => {
         updateMyChart(e.target.value, raw_tax, raw_group_prob_dict)
     })
 }
-
 
 function reverseData(raw_tax){
     let aux_arr = []
@@ -170,10 +177,10 @@ function updateDataChart(labels, max_value){
 
 function isDark(){
     if(document.getElementById("probabilities-app").classList.contains("tw-dark")){
-        mychart.config.options.scales.r.backgroundColor = '#BDBDBD'
-        mychart.config.options.scales.r.angleLines.color = '#EEEEEE'
-        mychart.config.options.scales.r.grid.color = '#EEEEEE'
-        mychart.config.options.scales.r.pointLabels.color = '#EEEEEE'
+        mychart.config.options.scales.r.backgroundColor = 'rgba(245, 245, 245, 0.2)'
+        mychart.config.options.scales.r.angleLines.color = '#F5F5F5'
+        mychart.config.options.scales.r.grid.color = '#F5F5F5'
+        mychart.config.options.scales.r.pointLabels.color = '#F5F5F5'
         
         mychart.update();
     }

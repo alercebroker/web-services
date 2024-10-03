@@ -4,13 +4,18 @@
 <link rel="stylesheet" href="{{API_URL}}/static/probability.css">
 
 <div id="probabilities-app" class="tw-preflight tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e]">
-    <div class="tw-flex tw-flex-col tw-items-center tw-rounded-[6px]">
+    <div class="tw-flex tw-flex-col tw-items-center">
 
         <div id="selectContainer" class="tw-flex tw-justify-center tw-my-4 tw-mx-auto tw-w-full">
-            <select name="selectClassifier" id="selectClassifier" class="tw-w-[80%] hover:tw-bg-[#757575] tw-bg-transparent tw-border-b tw-border-b-[#1e1e1e] dark:tw-border-b-white">
-                <optgroup class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
-                    <option value="#" class="tw-hidden">
-                    </option>
+            
+            <div id='robot' class="tw-ml-4">
+                <svg id="robotImg" class="tw-h-[30px] tw-w-[30px]" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/>
+                </svg>
+            </div>
+            
+            <select name="selectClassifier" id="selectClassifier" class="tw-w-[100%] tw-mx-4 tw-bg-transparent tw-border-0 tw-border-b tw-border-b-[#1e1e1e] hover:tw-border-b-white hover:tw-cursor-pointer dark:tw-border-b-white">
+                <optgroup class="tw-bg-white tw-text-black dark:tw-bg-[#1e1e1e] dark:tw-text-white">
                     {% for x in class_dict %}
                          {% for key, value in x.items() %}
                             <option value="{{key}}">{{value}}</option>
@@ -39,193 +44,4 @@ import { init } from "{{API_URL}}/static/probability.js";
    "taxonomy_dict": {{taxonomy_dict | tojson}},
    "group_prob_dict": {{group_prob_dict | tojson}}
 }
-</script>
-
-<script type="module">
-/*
-    const raw_tax = {{taxonomy_dict | tojson}};
-    const raw_group_prob_dict = {{ group_prob_dict | tojson }}
-    const ctx = document.getElementById('myChart');
-
-    
-
-    let select = document.getElementById('selectClassifier')
-    let mychart
-    let probability_data_aux
-
-    let data = {
-        labels: [],
-        datasets: [{
-            label: 'Probabilities',
-            data: [],
-            fill: true,
-            backgroundColor: 'rgba(255, 0, 54, 0.7)',
-            borderColor: 'rgb(255, 0, 54)',
-            pointBackgroundColor: 'rgb(255, 0, 54)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgb(255, 0, 54)',
-        }]
-    };
-
-
-    let config = {
-        type: 'radar',
-        data: data,
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            elements: {
-                line: {
-                    borderWidth: 1,
-                    fill: true,
-                }
-            },
-            scales: {
-                r: {
-                    backgroundColor: 'white',
-                    ticks: {
-                        display: false,
-                        stepSize: 0.33,
-                    },
-                    angleLines: {
-                        color: '#000000'
-                    },
-                    grid: {
-                        color: '#000000',
-                    },
-                    pointLabels: {
-                        color: '#000000'
-                    },
-                    beginAtZero: true,
-                    max: 1
-                },
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    enabled: true,
-                    mode: 'dataset',
-                    position: 'nearest',
-                    callbacks: {
-                        title: function(){
-                            return "Probability"
-                        },
-                        label: function(context){
-                            let tooltipslabels = []
-                            let label = ""
-                            label = context.label + ": " + context.parsed.r
-                            tooltipslabels.push(label)
-                            return tooltipslabels
-                        }
-                    }
-                }
-            },
-        }
-    }
-
-    init()
-
-    function init(){
-        probability_data_aux = []
-
-        reverseData()
-
-        mychart = new Chart(ctx, config);
-
-        select.addEventListener('change', (e) => {
-            updateMyChart(e.target.value)
-        })
-    }
-
-
-    function reverseData(){
-        let aux_arr = []
-
-        Object.keys(raw_tax).forEach((key) => {
-            aux_arr= raw_tax[key].classes.map((item, idx) => {
-                if (idx == 0) {
-                    return item
-                } else {
-                    return raw_tax[key].classes[raw_tax[key].classes.length - idx]
-                }
-            })
-            raw_tax[key].classes = aux_arr
-        })
-    }
-
-
-    function orderDataByTagNew(classifier_name, labels_tags, classifier_data){
-        probability_data_aux.length = 0
-
-        labels_tags.forEach((e) => {
-            classifier_data.forEach((element) => {
-                if(element.class_name == e){
-                    probability_data_aux.push(element.probability)
-                }
-            })
-        })
-    }
-
-    function maxValue(classifier_name, classifier_data){
-
-        let maxVal = Math.max.apply(Math, classifier_data.map((e) => e.probability))
-
-        return maxVal
-    }
-
-    function getScale(max_value){
-        return (max_value/3)
-    }
-
-    function updateMyChart(classifier_name){
-        let max_value
-        let classes_arr = raw_tax[classifier_name].classes
-        let classifier_data = Object.values(raw_group_prob_dict[classifier_name])[0]
-
-        orderDataByTagNew(classifier_name, classes_arr, classifier_data)
-
-        max_value = maxValue(classifier_name, classifier_data)
-
-        removeDataChart()
-        updateDataChart(classes_arr, max_value)
-
-        isDark();
-    }
-
-    function removeDataChart(){
-        mychart.data.labels.length = 0;
-        mychart.data.datasets.forEach((dataset) => {
-            dataset.data.length = 0;
-
-        });
-
-        mychart.update();
-    }
-
-    function updateDataChart(labels, max_value){
-        mychart.data.labels.push(...labels);
-        mychart.data.datasets.forEach((dataset) => {
-            dataset.data.push(...probability_data_aux);
-        });
-
-        mychart.config.options.scales.r.ticks.stepSize = getScale(max_value)
-        mychart.config.options.scales.r.max = max_value
-
-        mychart.update();
-    }
-
-    function isDark(){
-        if(document.getElementById("probabilities-app").classList.contains("tw-dark")){
-            mychart.config.options.scales.r.backgroundColor = '#BDBDBD'
-            mychart.config.options.scales.r.angleLines.color = '#EEEEEE'
-            mychart.config.options.scales.r.grid.color = '#EEEEEE'
-            mychart.config.options.scales.r.pointLabels.color = '#EEEEEE'
-            
-            mychart.update();
-        }
-    }
-    */
 </script>
