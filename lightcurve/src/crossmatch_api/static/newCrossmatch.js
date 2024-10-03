@@ -119,7 +119,7 @@ const throttledShowTable = throttle(function(key) {
     if (table) {
         table.style.display = table.style.display === 'block' ? 'none' : 'block';
     }
-}, 200);
+}, 50);
 
 function showTable(key) {
     throttledShowTable(key);
