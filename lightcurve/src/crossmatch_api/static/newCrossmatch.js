@@ -128,7 +128,7 @@ const throttledShowTable = throttle(function(key) {
     const table = document.getElementById(`table-${key}`);
     const arrow = document.getElementById(`arrows-${key}`);
     if (table) {
-        table.style.display = table.style.display === 'block' ? 'none' : 'block';
+        table.style.display = table.style.display === 'table' ? 'none' : 'table';
         arrow.innerHTML = isArrowDown ? arrowUp : arrowDown;
         isArrowDown = !isArrowDown;
     }
