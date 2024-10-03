@@ -34,13 +34,14 @@ export function initCrossmatch() {
         inspectButtons(this.value);
     });
 
+    // Prevent line breaks on the input
     customInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
             e.preventDefault();
             return false; 
         }
     });
-
+    // Event listener of the input where only is allowed to put float number between 0-20
     customInput.addEventListener('input', function() {
         // Remove any line breaks
         this.textContent = this.textContent.replace(/\n/g, '');
@@ -98,34 +99,45 @@ export function elementReady(selector) {
     });
 }
 
-let boolTable = 1;
+//throttleTimer is a variable that calls a functions to prevent multiple calls to the functions
+let throttleTimer;
+
+function throttle(func, delay) {
+    return function() {
+        if (throttleTimer) return;
+        const context = this;
+        const args = arguments;
+        func.apply(context, args);
+        throttleTimer = setTimeout(() => {
+            throttleTimer = null;
+        }, delay);
+    };
+}
+// This part prevents to the function being called multiple times, just every 0.2s 
+const throttledShowTable = throttle(function(key) {
+    const table = document.getElementById(`table-${key}`);
+    if (table) {
+        table.style.display = table.style.display === 'block' ? 'none' : 'block';
+    }
+}, 200);
 
 function showTable(key) {
-    const table = document.getElementById(`table-${key}`);
-    // if (boolTable === 0){
-    //     table.style.display = 'none';
-    //     boolTable = 1;
-    // } else if(boolTable === 1) {
-    //     table.style.display = 'block';
-    //     boolTable = 0;
-    // };
+    throttledShowTable(key);
+}
 
-    // console.log(boolTable)
-    table.style.display = 'block';
-    console.log('hola mundo')
-};
-
+// Function to visit every button and call the hideButtons function
 function inspectButtons(sliderValue){
     for (let i = 0; i < crossKeys.length; i++) {
-            const element = document.getElementById(crossKeys[i]);
-            if (element) {
-                const arcsecDistance = element.getAttribute('arcsec-dist');
-                const key = element.getAttribute('data-key');
-                hideButtons(arcsecDistance, key, sliderValue);
-            };
+        const element = document.getElementById(crossKeys[i]);
+        if (element) {
+            const arcsecDistance = element.getAttribute('arcsec-dist');
+            const key = element.getAttribute('data-key');
+            hideButtons(arcsecDistance, key, sliderValue);
         };
+    };
 };
 
+// this functions will hide the button if the slider value is lower than the object arcsed distance associated to the button
 function hideButtons(arcsecDistance, key, sliderValue){
 
     const button = document.getElementById(`${key}`);
