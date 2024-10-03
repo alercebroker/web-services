@@ -2,6 +2,15 @@
 var crossKeysRaw = [];
 var crossKeys = [];
 
+let arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>`;
+
+let arrowUp = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
+            </svg>`   
+let isArrowDown = true;
+
 export function initCrossmatch() {
     // Getting data
     const rawCross = JSON.parse(document.getElementById("crossmatch-data").text);
@@ -19,10 +28,11 @@ export function initCrossmatch() {
     };
     // Adding event listeners to the buttons to show or hide the tables
     for (let j = 0; j < crossKeys.length; j++){
-        console.log(crossKeys[j])
         document.getElementById(crossKeys[j]).addEventListener('click', function() {
             showTable(crossKeys[j]);
         });
+
+        document.getElementById(`arrows-${crossKeys[j]}`).innerHTML = arrowDown;
     };
 
     const customInput = document.getElementById('customInput');
@@ -116,8 +126,11 @@ function throttle(func, delay) {
 // This part prevents to the function being called multiple times, just every 0.2s 
 const throttledShowTable = throttle(function(key) {
     const table = document.getElementById(`table-${key}`);
+    const arrow = document.getElementById(`arrows-${key}`);
     if (table) {
         table.style.display = table.style.display === 'block' ? 'none' : 'block';
+        arrow.innerHTML = isArrowDown ? arrowUp : arrowDown;
+        isArrowDown = !isArrowDown;
     }
 }, 50);
 
