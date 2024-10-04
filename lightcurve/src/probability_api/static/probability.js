@@ -58,7 +58,7 @@ let config = {
             },
             tooltip: {
                 enabled: true,
-                mode: 'dataset',
+                mode: 'index',
                 position: 'nearest',
                 titleFont: {
                     weight: 'bold'
@@ -68,15 +68,23 @@ let config = {
                         return "Probabilities (score)"
                     },
                     label: function(context){
-                        let tooltipslabels = []
-                        let label = ""
-                        label = context.label + ": " + context.parsed.r
-                        tooltipslabels.push(label)
-                        return label
+                        let tooltipText = [];
+                        let length = context.dataset.data.length - 1
+                        let data = context.dataset.data
+                        let labels = context.chart.data.labels
+                        
+                        tooltipText.push(`${labels[0]}: ${data[0]}`)
+
+                        for (let index = length; index >= 1; index--){
+                            tooltipText.push(`${labels[index]}: ${data[index]}`)
+                        }
+
+                        return tooltipText
                     }
                 }
             }
         },
+
     }
 }
 
