@@ -1,6 +1,7 @@
 
 var crossKeysRaw = [];
 var crossKeys = [];
+var currentOpenTable = null; 
 
 let arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -127,10 +128,23 @@ function throttle(func, delay) {
 const throttledShowTable = throttle(function(key) {
     const table = document.getElementById(`table-${key}`);
     const arrow = document.getElementById(`arrows-${key}`);
-    if (table) {
-        table.style.display = table.style.display === 'table' ? 'none' : 'table';
-        arrow.innerHTML = isArrowDown ? arrowUp : arrowDown;
-        isArrowDown = !isArrowDown;
+    if (currentOpenTable && currentOpenTable !== table) {
+        // Close the currently open table
+        currentOpenTable.style.display = 'none';
+        const currentOpenArrow = document.getElementById(`arrows-${currentOpenTable.id.replace('table-', '')}`);
+        currentOpenArrow.innerHTML = arrowDown;
+    }
+
+    if (table.style.display === 'none' || table.style.display === '') {
+        // Open the clicked table
+        table.style.display = 'table';
+        arrow.innerHTML = arrowUp;
+        currentOpenTable = table;
+    } else {
+        // Close the clicked table if it's already open
+        table.style.display = 'none';
+        arrow.innerHTML = arrowDown;
+        currentOpenTable = null;
     }
 }, 50);
 
