@@ -153,11 +153,11 @@ function inspectButtons(sliderValue){
 // this functions will hide the button if the slider value is lower than the object arcsed distance associated to the button
 function hideButtons(arcsecDistance, key, sliderValue){
 
-    const button = document.getElementById(`${key}`);
+    const button = document.getElementById(`row-${key}`);
     if (parseFloat(arcsecDistance) >= parseFloat(sliderValue)){
         button.style.display = 'none'; 
     } else {
-        button.style.display = 'block'; 
+        button.style.display = 'table-row'; 
     };
 
 };
