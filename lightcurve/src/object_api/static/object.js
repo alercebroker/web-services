@@ -57,9 +57,8 @@ export function init() {
   document.getElementById("changeRaDec").addEventListener("click", () => {
     changeRaDec(raDec, raDecTime);
   });
-  document
-    .getElementById("menu-button")
-    .addEventListener("click", () => display_menu());
+  document.getElementById("menu-button-object").addEventListener("click", () => display_menu());
+  document.getElementById("menu-box-object").addEventListener("click", () => display_menu());
 
   setMenuUrl(ra, dec, candid, object, raTime, decTime);
 }
@@ -85,26 +84,21 @@ export function elementReady(selector) {
   });
 }
 
-// En vez de usar variables binarias, podemos preguntar si es que esta en block o none y cambiar por el contrario.
-// Tambien, si se ocupa la variable binaria, declararla antes.
-let click = 0;
+let click = 0
 function display_menu() {
-  if (click === 0) {
-    document.getElementById("menu-box").style.display = "block";
-    click = 1;
+  let menu = document.getElementById("menu-box-object")
+  if(menu.classList.contains("tw-hidden")){
+    menu.classList.remove("tw-hidden")
   } else {
-    document.getElementById("menu-box").style.display = "none";
-    click = 0;
+    menu.classList.add("tw-hidden")
   }
 }
 
 
 function handleOutsideClick(event) {
-  let myClick = document.getElementById("menu-button");
+  let myClick = document.getElementById("menu-button-object");
   if (myClick && !myClick.contains(event.target)) {
     click = 1;
     display_menu();
   }
 }
-
-document.addEventListener("click", handleOutsideClick);

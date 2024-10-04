@@ -193,20 +193,16 @@
   width: 400px;
 }
 
+.tw-preflight :is(.tw-w-\[50\%\]) {
+  width: 50%;
+}
+
 .tw-preflight :is(.tw-w-\[95\%\]) {
   width: 95%;
 }
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%;
-}
-
-.tw-preflight :is(.tw-w-\[50\%\]) {
-  width: 50%;
-}
-
-.tw-preflight :is(.tw-w-\[1\%\]) {
-  width: 1%;
 }
 
 .tw-preflight :is(.tw-min-w-full) {
@@ -473,6 +469,10 @@
   padding: 0.5rem;
 }
 
+.tw-preflight :is(.tw-p-\[100px\]) {
+  padding: 100px;
+}
+
 .tw-preflight :is(.tw-px-2) {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -496,6 +496,16 @@
 .tw-preflight :is(.tw-py-4) {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.tw-preflight :is(.tw-px-\[100px\]) {
+  padding-left: 100px;
+  padding-right: 100px;
+}
+
+.tw-preflight :is(.tw-px-\[100\%\]) {
+  padding-left: 100%;
+  padding-right: 100%;
 }
 
 .tw-preflight :is(.tw-pl-\[10px\]) {
@@ -601,6 +611,26 @@
 .tw-preflight :is(.tw-text-white) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-cyan-300) {
+  --tw-text-opacity: 1;
+  color: rgb(103 232 249 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-cyan-100) {
+  --tw-text-opacity: 1;
+  color: rgb(207 250 254 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-cyan-50) {
+  --tw-text-opacity: 1;
+  color: rgb(236 254 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-blue-50) {
+  --tw-text-opacity: 1;
+  color: rgb(239 246 255 / var(--tw-text-opacity));
 }
 
 .tw-preflight :is(.tw-underline) {
