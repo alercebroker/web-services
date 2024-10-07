@@ -92,20 +92,39 @@ export function init(){
     let raw_data = JSON.parse(document.getElementById("probabilities-data").text);
     let raw_tax = raw_data.taxonomy_dict
     let raw_group_prob_dict = raw_data.group_prob_dict
+
     let ctx = document.getElementById('myChart');
     let select = document.getElementById('selectClassifier')
+    let custom_select = document.querySelector(".select-wrapper")
+    let initial_value = document.querySelector('.custom-option.selected').getAttribute("data-value")
 
     reverseData(raw_tax)
 
     probability_data_aux = []
     mychart = new Chart(ctx, config);
 
-    updateMyChart(select.value, raw_tax, raw_group_prob_dict)
+    updateMyChart(initial_value, raw_tax, raw_group_prob_dict)
 
-
+    /*
     select.addEventListener('change', (e) => {
         updateMyChart(e.target.value, raw_tax, raw_group_prob_dict)
     })
+    */
+    custom_select.addEventListener('click', () => {
+        custom_select.querySelector('.select').classList.toggle('open');
+    })
+
+    for(const option of document.querySelectorAll(".custom-option")){
+        option.addEventListener('click', () => {
+            if(!option.classList.contains('selected')){
+                option.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+                option.classList.add('selected');
+                option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
+
+                updateMyChart(option.getAttribute("data-value"), raw_tax, raw_group_prob_dict)
+            }
+        })
+    }
 }
 
 function reverseData(raw_tax){

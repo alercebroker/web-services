@@ -2,6 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script  type="module" src="{{API_URL}}/static/probability.js"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/probability.css">
+<link rel="stylesheet" href="{{API_URL}}/static/select.css">
 
 <div id="probabilities-app" class="tw-preflight tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e]">
     <div class="tw-flex tw-flex-col tw-items-center">
@@ -14,6 +15,7 @@
                 </svg>
             </div>
             
+            <!--
             <select name="selectClassifier" id="selectClassifier" class="tw-w-[100%] tw-mx-4 tw-bg-transparent tw-border-0 tw-border-b tw-border-b-[#1e1e1e] hover:tw-border-b-white hover:tw-cursor-pointer dark:tw-border-b-white">
                 <optgroup class="tw-bg-white tw-text-black dark:tw-bg-[#1e1e1e] dark:tw-text-white">
                     {% for x in class_dict %}
@@ -23,13 +25,33 @@
                     {% endfor %}
                 </optgroup>
             </select>
+            -->
+            <div class="select-wrapper">
+                <div class="select">
+                    <div class="select__trigger">
+                        {% for value in class_dict[0].values()%}
+                            <span>{{value}}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="custom-options">
+                        {% for y in class_dict %}
+                            {% for key, value in y.items() %}
+                                    {% if key == "lc_classifier" %}
+                                        <span class="custom-option selected" data-value="{{key}}"> {{value}}</span>
+                                    {% else %}
+                                        <span class="custom-option" data-value="{{key}}"> {{value}}</span>
+                                    {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
 
         </div>
 
         <div class="md:tw-w-[80%] md:tw-h-[80%] sm:tw-w-[100%] sm:tw-h-[100%] tw-mx-auto tw-relative">
             <canvas id="myChart"></canvas>
         </div>
-
     </div>
 </div>
 
