@@ -10,7 +10,6 @@ let arrowDown = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" f
 let arrowUp = `<svg class='tw-h-6 tw-w-6' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" />
             </svg>`   
-let isArrowDown = true;
 
 export function initCrossmatch() {
     // Getting data
@@ -20,7 +19,7 @@ export function initCrossmatch() {
     for (let i = 0; i < Object.values(rawCross).length; i++){
         crossKeysRaw.push(Object.keys(Object.values(rawCross)[i])[0])
     };
-    // Filter all the objects with distance more than 20 arcsed
+    // Filter all the objects with distance more than 20 arcsec
     crossKeys = [];
     for (let i = 0; i < crossKeysRaw.length; i++){
         if (rawCross[i][crossKeysRaw[i]]['distance']['value'] <= 20){
@@ -124,7 +123,7 @@ function throttle(func, delay) {
         }, delay);
     };
 }
-// This part prevents to the function being called multiple times, just every 0.2s 
+// This part prevents to the function being called multiple times, just every 0.05s 
 const throttledShowTable = throttle(function(key) {
     const table = document.getElementById(`table-${key}`);
     const arrow = document.getElementById(`arrows-${key}`);
