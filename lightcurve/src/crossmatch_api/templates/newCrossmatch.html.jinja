@@ -7,7 +7,7 @@
 <div id='crossmatch-app' class="tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-w-full tw-text-sm">
 
     <div class="tw-inline tw-mb-[5px]">
-            <h1 class="tw-font-bold tw-text-2xl tw-pt-[30px] tw-pl-[5px] tw-mb-[20px] dark:tw-text-white tw-text-black"> Crossmatch</h1>
+            <h1 class="tw-font-semibold tw-text-2xl tw-pt-[30px] tw-pl-[10px] tw-mb-[20px] dark:tw-text-white tw-text-black"> Crossmatch</h1>
     </div>
 
     <div class="tw-flex tw-items-center tw-mb-[10px] tw-max-w-[95%] tw-m-auto">
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <div class="tw-h-fit">
+    <div class="tw-h-fit tw-w-[98%] tw-m-auto">
         <table class="tw-w-full">
             {% for i in range(cross|length) %}
                 {% for key, values in cross[i].items() %}   
@@ -47,7 +47,7 @@
                                     <button id="{{key}}" class="tw-w-full tw-h-[64px] tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-gray-600" data-key="{{key}}" arcsec-dist="{{values.distance.value}}">
                                         <div class="tw-flex tw-justify-center tw-float-left tw-items-center">
                                             <p class="tw-text-xl tw-font-bold">{{key}}</p> 
-                                            <p class="tw-text-gray-300 tw-ml-2 tw-text-sm">(Attributes {{values|length}})</p>
+                                            <p class="tw-text-gray-300 tw-ml-2 tw-text-sm">({{values|length}} attributes )</p>
                                         </div>
                                         <div class="tw-flex tw-justify-center tw-float-right tw-items-center">
                                             <p class="tw-text-black dark:tw-text-white"> Distance: {{values.distance.value|round(3)}} arcsec </p>
