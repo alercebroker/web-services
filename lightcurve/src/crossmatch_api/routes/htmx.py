@@ -30,7 +30,7 @@ async def object_mag_app(
     cross = get_alerce_data(object.meanra, object.meandec, 50)
 
     return templates.TemplateResponse(
-      name='newCrossmatch.html.jinja',
+      name='crossmatch.html.jinja',
       context={'request': request,
                'cross': cross
                },
