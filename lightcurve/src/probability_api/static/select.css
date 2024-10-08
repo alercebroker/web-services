@@ -1,5 +1,5 @@
 /*Inicio custom select*/
-
+/*
 .select-wrapper {
     position: relative;
     user-select: none;
@@ -7,6 +7,8 @@
     height: 40px;
     margin: 0px 16px;
   }
+  */
+  /*
   .select {
     position: relative;
     display: flex;
@@ -15,6 +17,8 @@
     border-bottom-style: solid;
     border-color: white;
   }
+  */
+  /*
   .select__trigger {
     position: relative;
     display: flex;
@@ -28,6 +32,8 @@
     background: transparent;
     cursor: pointer;
   }
+    */
+    /*
   .custom-options {
     position: absolute;
     display: block;
@@ -43,11 +49,14 @@
     pointer-events: none;
     z-index: 2;
   }
+    */
+  /*
   .select.open .custom-options {
     opacity: 1;
     visibility: visible;
     pointer-events: all;
-  }
+  }*/
+  /*
   .custom-option {
     position: relative;
     display: block;
@@ -57,14 +66,18 @@
     line-height: 36px;
     cursor: pointer;
     transition: all 0.5s;
-  }
+  }*/
+  /*
   .custom-option:hover {
     cursor: pointer;
     background-color: #b2b2b2;
   }
+    */
+    /*
   .custom-option.selected {
     color: #1976D2;
     background: rgba(25, 118, 210, 0.3);
   }
+    */
   /*fin custom select*/
   

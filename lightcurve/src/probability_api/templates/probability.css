@@ -1,6 +1,39 @@
 @tailwind components;
 @tailwind utilities;
 
+/*inicio custom select*/
+@layer components {
+  
+  .select-wrapper{
+    @apply tw-relative tw-w-full tw-h-[40px] tw-mx-4 tw-select-none;
+  }
+
+  .select{
+    @apply tw-relative tw-flex tw-flex-col tw-border tw-border-solid tw-border-indigo-600
+  }
+  .select__trigger{
+    @apply tw-relative tw-flex tw-items-center tw-justify-between tw-px-4 tw-leading-9 tw-bg-transparent tw-cursor-pointer dark:tw-text-[#EEEEEE]
+  }
+
+  .custom-options{
+    @apply tw-absolute tw-block tw-top-[100%] tw-left-0 tw-right-0 tw-bg-white tw-transition-all tw-pointer-events-none tw-z-[2] tw-opacity-0 tw-invisible dark:tw-bg-[#1e1e1e]
+  }
+
+  .select.open .custom-options{
+    @apply tw-opacity-100 tw-visible tw-pointer-events-auto
+  }
+
+  .custom-option{
+    @apply tw-relative tw-block tw-px-4 tw-leading-9 tw-text-black tw-cursor-pointer tw-transition-all dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]
+  }
+
+  .custom-option.selected{
+    @apply tw-text-[#1976D2] tw-bg-[#1976D2]/30
+  }
+}
+/*fin custom select*/
+
+
 .disabled\:bg-transparent {
     background-color: transparent;
   }

@@ -94,7 +94,6 @@ export function init(){
     let raw_group_prob_dict = raw_data.group_prob_dict
 
     let ctx = document.getElementById('myChart');
-    let select = document.getElementById('selectClassifier')
     let custom_select = document.querySelector(".select-wrapper")
     let initial_value = document.querySelector('.custom-option.selected').getAttribute("data-value")
 
@@ -105,11 +104,6 @@ export function init(){
 
     updateMyChart(initial_value, raw_tax, raw_group_prob_dict)
 
-    /*
-    select.addEventListener('change', (e) => {
-        updateMyChart(e.target.value, raw_tax, raw_group_prob_dict)
-    })
-    */
     custom_select.addEventListener('click', () => {
         custom_select.querySelector('.select').classList.toggle('open');
     })
