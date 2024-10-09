@@ -13,19 +13,7 @@ let arrowUp = `<svg class='tw-h-5 tw-w-5' xmlns="http://www.w3.org/2000/svg" fil
 
 export function initCrossmatch() {
     // Getting data
-    let rawCross = JSON.parse(document.getElementById("crossmatch-data").text);
-    // Get all keys of the dict
-    crossKeysRaw = [];
-    for (let i = 0; i < Object.values(rawCross).length; i++){
-        crossKeysRaw.push(Object.keys(Object.values(rawCross)[i])[0])
-    };
-    // Filter all the objects with distance more than 20 arcsec
-    crossKeys = [];
-    for (let i = 0; i < crossKeysRaw.length; i++){
-        if (rawCross[i][crossKeysRaw[i]]['distance']['value'] <= 20){
-            crossKeys.push(crossKeysRaw[i])
-        }
-    };
+    let crossKeys = JSON.parse(document.getElementById("crossmatch-data-keys").text);
     // Adding event listeners to the buttons to show or hide the tables
     for (let j = 0; j < crossKeys.length; j++){
         document.getElementById(crossKeys[j]).addEventListener('click', function() {
@@ -109,46 +97,31 @@ export function elementReady(selector) {
     });
 }
 
-//throttleTimer is a letiable that calls a functions to prevent multiple calls to the functions
-let throttleTimer;
-
-function throttle(func, delay) {
-    return function() {
-        if (throttleTimer) return;
-        let context = this;
-        let args = arguments;
-        func.apply(context, args);
-        throttleTimer = setTimeout(() => {
-            throttleTimer = null;
-        }, delay);
-    };
-}
-// This part prevents to the function being called multiple times, just every 0.05s 
-let throttledShowTable = throttle(function(key) {
+function showTable(key) {
+    console.log('hola mundoooooooooooooooooooooooo')
     let table = document.getElementById(`table-${key}`);
     let arrow = document.getElementById(`arrows-${key}`);
     if (currentOpenTable && currentOpenTable !== table) {
         // Close the currently open table
-        currentOpenTable.style.display = 'none';
+        currentOpenTable.classList.add('tw-hidden');
+        currentOpenTable.classList.remove('tw-table');
         let currentOpenArrow = document.getElementById(`arrows-${currentOpenTable.id.replace('table-', '')}`);
         currentOpenArrow.innerHTML = arrowDown;
     }
 
-    if (table.style.display === 'none' || table.style.display === '') {
+    if (table.classList.contains('tw-hidden') || !table.classList.contains('tw-table')) {
         // Open the clicked table
-        table.style.display = 'table';
+        table.classList.remove('tw-hidden');
+        table.classList.add('tw-table');
         arrow.innerHTML = arrowUp;
         currentOpenTable = table;
     } else {
         // Close the clicked table if it's already open
-        table.style.display = 'none';
+        table.classList.add('tw-hidden');
+        table.classList.remove('tw-table');
         arrow.innerHTML = arrowDown;
         currentOpenTable = null;
     }
-}, 50);
-
-function showTable(key) {
-    throttledShowTable(key);
 }
 
 // Function to visit every button and call the hideButtons function
@@ -167,6 +140,9 @@ function inspectButtons(sliderValue){
 function hideButtons(arcsecDistance, key, sliderValue){
 
     let button = document.getElementById(`row-${key}`);
+    console.log(arcsecDistance)
+    console.log(sliderValue)
+
     if (parseFloat(arcsecDistance) >= parseFloat(sliderValue)){
         button.style.display = 'none'; 
     } else {

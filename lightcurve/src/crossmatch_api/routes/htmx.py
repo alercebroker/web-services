@@ -16,7 +16,7 @@ templates = Jinja2Templates(
     directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8005"
+    "API_URL", "http://localhost:8000"
 )
 
 @router.get("/crossmatch/{oid}", response_class=HTMLResponse)
@@ -28,10 +28,20 @@ async def object_mag_app(
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
     cross = get_alerce_data(object.meanra, object.meandec, 50)
+    
+    cross_keys_raw = []
+    for i in range(len(cross)):
+        cross_keys_raw.append(list(cross[i].keys())[0])
+
+    cross_keys = []
+    for i in range(len(cross)):
+        if list(cross[i].values())[0]['distance']['value'] <= 20:
+            cross_keys.append(list(cross[i].keys())[0])
 
     return templates.TemplateResponse(
       name='crossmatch.html.jinja',
       context={'request': request,
-               'cross': cross
+               'cross': cross,
+               'crossKeys': cross_keys
                },
   )

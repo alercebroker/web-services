@@ -41,7 +41,6 @@
             {% for i in range(cross|length) %}
                 {% for key, values in cross[i].items() %}   
                     {% if values.distance.value <= 20 %}
-                        <div>
                             <tr id="row-{{key}}">
                                 <td class="tw-w-full">  
                                     <button id="{{key}}" class="tw-w-full tw-h-[64px] tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-gray-600" data-key="{{key}}" arcsec-dist="{{values.distance.value}}">
@@ -54,7 +53,7 @@
                                             <div id="arrows-{{key}}"></div>
                                         </div>
                                     </button>
-                                    <table id="table-{{key}}" class="tw-w-full" style="display: none;">
+                                    <table id="table-{{key}}" class="tw-w-full tw-hidden" >
                                         <thead class="tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-gray-600">
                                             <tr class="">
                                                 <th class="tw-w-1/3 tw-p-2 tw-text-left"> Attribute </th>
@@ -74,7 +73,6 @@
                                     </table>
                                 </td>
                             </tr>
-                        </div>
                     {% endif %}
                 {% endfor %}
             {% endfor %}
@@ -94,3 +92,4 @@
 </script>
 
 <script id="crossmatch-data" type="application/json">{{cross | tojson}}</script>
+<script id="crossmatch-data-keys" type="application/json">{{crossKeys | tojson}}</script>
