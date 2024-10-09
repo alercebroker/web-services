@@ -29,7 +29,7 @@ export function initCrossmatch() {
     // Event listener of the slider
     slider.addEventListener('input', function() {
         customInput.innerHTML = this.value;
-        inspectButtons(this.value);
+        inspectButtons(this.value, crossKeys);
     });
 
     // Prevent line breaks on the input
@@ -71,7 +71,7 @@ export function initCrossmatch() {
         }
 
         slider.value = filteredValue;
-        inspectButtons(filteredValue);
+        inspectButtons(filteredValue, crossKeys);
     });
 
 };
@@ -98,7 +98,6 @@ export function elementReady(selector) {
 }
 
 function showTable(key) {
-    console.log('hola mundoooooooooooooooooooooooo')
     let table = document.getElementById(`table-${key}`);
     let arrow = document.getElementById(`arrows-${key}`);
     if (currentOpenTable && currentOpenTable !== table) {
@@ -125,7 +124,7 @@ function showTable(key) {
 }
 
 // Function to visit every button and call the hideButtons function
-function inspectButtons(sliderValue){
+function inspectButtons(sliderValue, crossKeys){
     for (let i = 0; i < crossKeys.length; i++) {
         let element = document.getElementById(crossKeys[i]);
         if (element) {
@@ -137,16 +136,14 @@ function inspectButtons(sliderValue){
 };
 
 // this functions will hide the button if the slider value is lower than the object arcsed distance associated to the button
-function hideButtons(arcsecDistance, key, sliderValue){
-
+function hideButtons(arcsecDistance, key, sliderValue) {
     let button = document.getElementById(`row-${key}`);
-    console.log(arcsecDistance)
-    console.log(sliderValue)
 
-    if (parseFloat(arcsecDistance) >= parseFloat(sliderValue)){
-        button.style.display = 'none'; 
+    if (parseFloat(arcsecDistance) >= parseFloat(sliderValue)) {
+        button.classList.add('tw-hidden');
+        button.classList.remove('tw-table-row');
     } else {
-        button.style.display = 'table-row'; 
-    };
-
-};
+        button.classList.remove('tw-hidden');
+        button.classList.add('tw-table-row');
+    }
+}
