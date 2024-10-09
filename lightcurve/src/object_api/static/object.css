@@ -1,3 +1,11 @@
+.loader {
+  opacity: 0;
+}
+
+.loader.htmx-request {
+  opacity: 1;
+}
+
 .tw-preflight :is(.tw-pointer-events-none) {
   pointer-events: none;
 }
@@ -81,10 +89,6 @@
   margin-left: 0.5rem;
 }
 
-.tw-preflight :is(.tw-ml-\[50\%\]) {
-  margin-left: 50%;
-}
-
 .tw-preflight :is(.tw-mr-4) {
   margin-right: 1rem;
 }
@@ -99,14 +103,6 @@
 
 .tw-preflight :is(.tw-mt-4) {
   margin-top: 1rem;
-}
-
-.tw-preflight :is(.tw-mt-\[30px\]) {
-  margin-top: 30px;
-}
-
-.tw-preflight :is(.tw-box-content) {
-  box-sizing: content-box;
 }
 
 .tw-preflight :is(.tw-inline) {
@@ -141,18 +137,6 @@
   height: 2rem;
 }
 
-.tw-preflight :is(.tw-h-\[100\%\]) {
-  height: 100%;
-}
-
-.tw-preflight :is(.tw-h-\[12\.5\%\]) {
-  height: 12.5%;
-}
-
-.tw-preflight :is(.tw-h-\[500px\]) {
-  height: 500px;
-}
-
 .tw-preflight :is(.tw-h-auto) {
   height: auto;
 }
@@ -177,16 +161,8 @@
   width: 1.25rem;
 }
 
-.tw-preflight :is(.tw-w-52) {
-  width: 13rem;
-}
-
 .tw-preflight :is(.tw-w-6) {
   width: 1.5rem;
-}
-
-.tw-preflight :is(.tw-w-\[100\%\]) {
-  width: 100%;
 }
 
 .tw-preflight :is(.tw-w-\[400px\]) {
@@ -225,6 +201,16 @@
 
 .tw-preflight :is(.tw-transform) {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+@keyframes tw-pulse {
+  50% {
+    opacity: .5;
+  }
+}
+
+.tw-preflight :is(.tw-animate-pulse) {
+  animation: tw-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 @keyframes tw-spin {
@@ -338,10 +324,6 @@
   border-radius: 0.25rem;
 }
 
-.tw-preflight :is(.tw-rounded-\[50px\]) {
-  border-radius: 50px;
-}
-
 .tw-preflight :is(.tw-rounded-\[6px\]) {
   border-radius: 6px;
 }
@@ -352,22 +334,6 @@
 
 .tw-preflight :is(.tw-rounded-md) {
   border-radius: 0.375rem;
-}
-
-.tw-preflight :is(.tw-rounded-bl-\[10px\]) {
-  border-bottom-left-radius: 10px;
-}
-
-.tw-preflight :is(.tw-rounded-br-\[10px\]) {
-  border-bottom-right-radius: 10px;
-}
-
-.tw-preflight :is(.tw-rounded-tl-\[10px\]) {
-  border-top-left-radius: 10px;
-}
-
-.tw-preflight :is(.tw-rounded-tr-\[10px\]) {
-  border-top-right-radius: 10px;
 }
 
 .tw-preflight :is(.tw-border) {
@@ -469,10 +435,6 @@
   padding: 0.5rem;
 }
 
-.tw-preflight :is(.tw-p-\[100px\]) {
-  padding: 100px;
-}
-
 .tw-preflight :is(.tw-px-2) {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -496,16 +458,6 @@
 .tw-preflight :is(.tw-py-4) {
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-
-.tw-preflight :is(.tw-px-\[100px\]) {
-  padding-left: 100px;
-  padding-right: 100px;
-}
-
-.tw-preflight :is(.tw-px-\[100\%\]) {
-  padding-left: 100%;
-  padding-right: 100%;
 }
 
 .tw-preflight :is(.tw-pl-\[10px\]) {
@@ -588,9 +540,19 @@
   color: rgb(0 0 0 / var(--tw-text-opacity));
 }
 
+.tw-preflight :is(.tw-text-blue-50) {
+  --tw-text-opacity: 1;
+  color: rgb(239 246 255 / var(--tw-text-opacity));
+}
+
 .tw-preflight :is(.tw-text-blue-600) {
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-cyan-50) {
+  --tw-text-opacity: 1;
+  color: rgb(236 254 255 / var(--tw-text-opacity));
 }
 
 .tw-preflight :is(.tw-text-gray-400) {
@@ -613,32 +575,8 @@
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
-.tw-preflight :is(.tw-text-cyan-300) {
-  --tw-text-opacity: 1;
-  color: rgb(103 232 249 / var(--tw-text-opacity));
-}
-
-.tw-preflight :is(.tw-text-cyan-100) {
-  --tw-text-opacity: 1;
-  color: rgb(207 250 254 / var(--tw-text-opacity));
-}
-
-.tw-preflight :is(.tw-text-cyan-50) {
-  --tw-text-opacity: 1;
-  color: rgb(236 254 255 / var(--tw-text-opacity));
-}
-
-.tw-preflight :is(.tw-text-blue-50) {
-  --tw-text-opacity: 1;
-  color: rgb(239 246 255 / var(--tw-text-opacity));
-}
-
 .tw-preflight :is(.tw-underline) {
   text-decoration-line: underline;
-}
-
-.tw-preflight :is(.tw-opacity-100) {
-  opacity: 1;
 }
 
 .tw-preflight :is(.tw-opacity-50) {
@@ -654,6 +592,8 @@
 .tw-preflight :is(.tw-duration-200) {
   transition-duration: 200ms;
 }
+
+/*loader*/
 
 .disabled\:bg-transparent {
   background-color: transparent;

@@ -163,37 +163,16 @@
             </div>
         </div>
     </div>
-    <!--
 
-    <div id="menu-box-2"
-         class="tw-box-content tw-absolute tw-opacity-100 tw-w-52 tw-h-[500px] tw-rounded-[50px] tw-shadow-2xl tw-z-[9999] tw-ml-[50%]"
-         style="display: none">
-        <a target="_blank"
-           class="tw-text-center tw-text-lg  tw-text-white tw-h-[100%] tw-w-[100%] tw-mt-[30px]"
-           id="desi-button">
-            <div class="tw-rounded-tr-[10px] tw-rounded-tl-[10px] tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white dark:tw-bg-[#1e1e1e] tw-w-[100%] tw-h-[12.5%] tw-grid tw-justify-center tw-items-center hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
-                DESI Legacy Survey DR10
-            </div>
-        </a>
-    </div>
-    -->
-
-    <div hx-get="{{API_URL}}/htmx/tns/" hx-vals='{"ra": {{ra}}, "dec": {{dec}} }' hx-trigger="load" class="tw-w-full">
-            <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
-        <thead>
-            <th class="tw-text-center">Type</th>
-            <th class="tw-text-center">Name</th>
-            <th class="tw-text-center">Redshift</th>
-        </thead>
-        <tbody class="tw-w-[95%] tw-mx-auto">
-            <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-t tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
-                <td id="type" class="tw-text-center tw-max-w-[40%]">-</td>
-                <td id="name" class="tw-text-center">-</td>
-                <td id="redshift" class="tw-text-center">-</td>
-            </tr>
-        </tbody>
-    </table>
-
+    <div hx-get="{{API_URL}}/htmx/tns/" hx-vals='{"ra": {{ra}}, "dec": {{dec}} }' hx-trigger="load" hx-indicator="#loader" class="tw-w-full">
+        <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
+            <thead class="tw-border-b tw-border-[#1e1e1e]">
+                <th class="tw-text-center">Type</th>
+                <th class="tw-text-center">Name</th>
+                <th class="tw-text-center">Redshift</th>
+            </thead>
+        </table>
+        <div id="loader" class="htmx-indicator tw-animate-pulse tw-text-center tw-my-4 tw-w-full">Loading...</div>
     </div>
 </div>
 <script type="module">

@@ -5,7 +5,7 @@ import requests
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-
+from pprint import pprint 
 from core.exceptions import ObjectNotFound
 from core.services.object import (
     get_count_ndet,
@@ -29,24 +29,22 @@ def last_information(data):
         "redshift": "",
         "tnsLink": "https://www.wis-tns.org/"
     }
-    
-    if data == True:
+
+    if(data == "Error"):
         informationDict["typeInput"] = "-"
         informationDict["name"] = "-"
         informationDict["redshift"] = "-"
-    elif isinstance(data, dict) and data:
-        if len(data["object_data"]) > 25:
-            informationDict["typeInput"] = data["object_type"]
-            informationDict["name"] = data["object_name"]
-            informationDict["redshift"] = data["object_data"]["redshift"]
-        else:
-            informationDict["typeInput"] = "-"
-            informationDict["name"] = "-"
-            informationDict["redshift"] = "-"
+
+        return informationDict
+    
+    if(len(data["object_data"]) > 25):
+        informationDict["typeInput"] = data["object_type"]
+        informationDict["name"] = data["object_name"]
+        informationDict["redshift"] = data["object_data"]["redshift"]
     else:
-        informationDict["typeInput"] = "Unexpected response"
-        informationDict["name"] = "Unexpected response"
-        informationDict["redshift"] = "Unexpected response"
+        informationDict["typeInput"] = "-"
+        informationDict["name"] = "-"
+        informationDict["redshift"] = "-"
         
     return informationDict
 
@@ -63,22 +61,14 @@ def get_tns(ra, dec):
 
         response = requests.post("https://tns.alerce.online/search", data=payload_dump, headers=headersSend)
 
-        text = response.text
-
-        if "Error message" in text:
-            raise requests.exceptions.RequestException("Error found in response: " + text)
-        
-        try:
-            data = response.json()
-        except ValueError:
-            raise requests.exceptions.RequestException("Error found in response: " + text)
+        data = response.json()
 
         tns_data = last_information(data)
 
         return tns_data
         
     except requests.exceptions.RequestException as error:
-        tns_data = last_information(True)
+        tns_data = last_information("Error")
 
         return tns_data
 
