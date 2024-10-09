@@ -1,6 +1,4 @@
 
-let crossKeysRaw = [];
-let crossKeys = [];
 let currentOpenTable = null; 
 
 let arrowDown = `<svg class='tw-h-5 tw-w-5' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -98,6 +96,7 @@ export function elementReady(selector) {
 }
 
 function showTable(key) {
+    console.log('hola mundo')
     let table = document.getElementById(`table-${key}`);
     let arrow = document.getElementById(`arrows-${key}`);
     if (currentOpenTable && currentOpenTable !== table) {
