@@ -13,10 +13,23 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  border-width: 1px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-top-width: 0px;
+  border-bottom-width: 1px;
   border-style: solid;
   --tw-border-opacity: 1;
-  border-color: rgb(79 70 229 / var(--tw-border-opacity));
+  border-bottom-color: rgb(30 30 30 / var(--tw-border-opacity));
+}
+
+.select:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(178 178 178 / var(--tw-bg-opacity));
+}
+
+:is(.tw-dark .select) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .select__trigger {
@@ -515,6 +528,16 @@
   border-width: 8px;
 }
 
+.tw-preflight :is(.tw-border-x-0) {
+  border-left-width: 0px;
+  border-right-width: 0px;
+}
+
+.tw-preflight :is(.tw-border-y-0) {
+  border-top-width: 0px;
+  border-bottom-width: 0px;
+}
+
 .tw-preflight :is(.tw-border-b) {
   border-bottom-width: 1px;
 }
@@ -525,10 +548,6 @@
 
 .tw-preflight :is(.tw-border-t) {
   border-top-width: 1px;
-}
-
-.tw-preflight :is(.tw-border-b-2) {
-  border-bottom-width: 2px;
 }
 
 .tw-preflight :is(.tw-border-solid) {
@@ -550,14 +569,9 @@
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
 }
 
-.tw-preflight :is(.tw-border-indigo-600) {
+.tw-preflight :is(.tw-border-b-\[\#1e1e1e\]) {
   --tw-border-opacity: 1;
-  border-color: rgb(79 70 229 / var(--tw-border-opacity));
-}
-
-.tw-preflight :is(.tw-border-black) {
-  --tw-border-opacity: 1;
-  border-color: rgb(0 0 0 / var(--tw-border-opacity));
+  border-bottom-color: rgb(30 30 30 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.tw-border-b-black) {
@@ -852,13 +866,16 @@
 ::after {
   box-sizing: border-box;
   /* 1 */
-  border-width: 0;
-  /* 2 */
-  border-style: solid;
-  /* 2 */
-  border-color: #e5e7eb;
-  /* 2 */
 }
+
+/*
+  border-width: 0;
+    2
+  border-style: solid;
+   2 
+  border-color: #e5e7eb;
+   2 
+*/
 
 .tw-preflight ::before,
 .tw-preflight ::after {
@@ -1460,6 +1477,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.tw-dark .dark\:tw-border-white) {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-border-b-white) {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-border-opacity-20) {

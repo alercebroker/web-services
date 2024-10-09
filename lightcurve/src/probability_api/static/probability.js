@@ -63,6 +63,7 @@ let config = {
                 titleFont: {
                     weight: 'bold'
                 },
+                displayColors: false,
                 callbacks: {
                     title: function(){
                         return "Probabilities (score)"
