@@ -10,7 +10,7 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from ..result_handler import handle_error, handle_success
-from ..api_cross import get_alerce_data
+from ..get_crossmatch_data import get_alerce_data
 router = APIRouter()
 templates = Jinja2Templates(
     directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True
