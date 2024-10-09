@@ -1,7 +1,7 @@
 
-var crossKeysRaw = [];
-var crossKeys = [];
-var currentOpenTable = null; 
+let crossKeysRaw = [];
+let crossKeys = [];
+let currentOpenTable = null; 
 
 let arrowDown = `<svg class='tw-h-5 tw-w-5' xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -13,7 +13,7 @@ let arrowUp = `<svg class='tw-h-5 tw-w-5' xmlns="http://www.w3.org/2000/svg" fil
 
 export function initCrossmatch() {
     // Getting data
-    const rawCross = JSON.parse(document.getElementById("crossmatch-data").text);
+    let rawCross = JSON.parse(document.getElementById("crossmatch-data").text);
     // Get all keys of the dict
     crossKeysRaw = [];
     for (let i = 0; i < Object.values(rawCross).length; i++){
@@ -35,8 +35,8 @@ export function initCrossmatch() {
         document.getElementById(`arrows-${crossKeys[j]}`).innerHTML = arrowDown;
     };
 
-    const customInput = document.getElementById('customInput');
-    const slider = document.getElementById('slider');
+    let customInput = document.getElementById('customInput');
+    let slider = document.getElementById('slider');
 
     // Event listener of the slider
     slider.addEventListener('input', function() {
@@ -91,7 +91,7 @@ export function initCrossmatch() {
 
 export function elementReady(selector) {
     return new Promise((resolve, reject) => {
-    const el = document.querySelector(selector);
+    let el = document.querySelector(selector);
     if (el) {
         resolve(el);
     }
@@ -109,14 +109,14 @@ export function elementReady(selector) {
     });
 }
 
-//throttleTimer is a variable that calls a functions to prevent multiple calls to the functions
+//throttleTimer is a letiable that calls a functions to prevent multiple calls to the functions
 let throttleTimer;
 
 function throttle(func, delay) {
     return function() {
         if (throttleTimer) return;
-        const context = this;
-        const args = arguments;
+        let context = this;
+        let args = arguments;
         func.apply(context, args);
         throttleTimer = setTimeout(() => {
             throttleTimer = null;
@@ -124,13 +124,13 @@ function throttle(func, delay) {
     };
 }
 // This part prevents to the function being called multiple times, just every 0.05s 
-const throttledShowTable = throttle(function(key) {
-    const table = document.getElementById(`table-${key}`);
-    const arrow = document.getElementById(`arrows-${key}`);
+let throttledShowTable = throttle(function(key) {
+    let table = document.getElementById(`table-${key}`);
+    let arrow = document.getElementById(`arrows-${key}`);
     if (currentOpenTable && currentOpenTable !== table) {
         // Close the currently open table
         currentOpenTable.style.display = 'none';
-        const currentOpenArrow = document.getElementById(`arrows-${currentOpenTable.id.replace('table-', '')}`);
+        let currentOpenArrow = document.getElementById(`arrows-${currentOpenTable.id.replace('table-', '')}`);
         currentOpenArrow.innerHTML = arrowDown;
     }
 
@@ -154,10 +154,10 @@ function showTable(key) {
 // Function to visit every button and call the hideButtons function
 function inspectButtons(sliderValue){
     for (let i = 0; i < crossKeys.length; i++) {
-        const element = document.getElementById(crossKeys[i]);
+        let element = document.getElementById(crossKeys[i]);
         if (element) {
-            const arcsecDistance = element.getAttribute('arcsec-dist');
-            const key = element.getAttribute('data-key');
+            let arcsecDistance = element.getAttribute('arcsec-dist');
+            let key = element.getAttribute('data-key');
             hideButtons(arcsecDistance, key, sliderValue);
         };
     };
@@ -166,7 +166,7 @@ function inspectButtons(sliderValue){
 // this functions will hide the button if the slider value is lower than the object arcsed distance associated to the button
 function hideButtons(arcsecDistance, key, sliderValue){
 
-    const button = document.getElementById(`row-${key}`);
+    let button = document.getElementById(`row-${key}`);
     if (parseFloat(arcsecDistance) >= parseFloat(sliderValue)){
         button.style.display = 'none'; 
     } else {
