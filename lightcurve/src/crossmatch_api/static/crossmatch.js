@@ -10,17 +10,6 @@ let arrowUp = `<svg class='tw-h-5 tw-w-5' xmlns="http://www.w3.org/2000/svg" fil
             </svg>`   
 
 export function initCrossmatch() {
-
-    console.log(`Script execution started at ${new Date().toISOString()}`);
-
-    window.addEventListener('DOMContentLoaded', (event) => {
-        console.log(`DOM fully loaded and parsed at ${new Date().toISOString()}`);
-    });
-
-    window.addEventListener('load', (event) => {
-        console.log(`Page fully loaded at ${new Date().toISOString()}`);
-    });
-
     // Getting data
     let crossKeys = JSON.parse(document.getElementById("crossmatch-data-keys").text);
     // Adding event listeners to the buttons to show or hide the tables
