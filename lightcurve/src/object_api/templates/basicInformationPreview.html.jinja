@@ -139,11 +139,11 @@
         </tbody>
     </table>
 
-    <div class="tw-flex tw-space-x-4 tw-w-[95%] tw-mx-auto tw-my-4 tw-justify-center">
+    <div class="tw-flex tw-space-x-4 tw-w-[95%] tw-mx-auto tw-my-1 tw-justify-center">
         <a
         id="find-button-object"
         target="_blank"
-        class="tw-bg-cyan-700 tw-text-cyan-50 tw-w-[50%] tw-text-center tw-cursor-pointer">
+        class="tw-inline-block tw-bg-cyan-700 tw-text-cyan-50 tw-w-[50%] tw-text-center tw-cursor-pointer">
             FINDING CHART
         </a>
     
@@ -152,12 +152,10 @@
             OTHER ARCHIVES
             </button>
 
-            <div id="menu-box-object" class="tw-absolute tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e] tw-shadow-2xl tw-hidden">
+            <div id="menu-box-object" class="tw-absolute tw-z-[10] tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e] tw-shadow-2xl tw-hidden">
                 {% for option in otherArchives %}
-                    <a target="_blank" id="{{option}}" class="tw-text-center tw-text-lg tw-w-full">
-                        <div class=" tw-py-1 tw-cursor-pointer tw-text-[#1e1e1e] dark:tw-text-white hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
-                            {{option}}
-                        </div>
+                    <a target="_blank" id="{{option}}" class="tw-inline-block tw-px-4 tw-py-3 tw-w-full tw-cursor-pointer tw-text-[#1e1e1e] tw-font-light dark:tw-text-white hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
+                        {{option}}
                     </a>
                 {% endfor %}
             </div>
@@ -166,10 +164,10 @@
 
     <div hx-get="{{API_URL}}/htmx/tns/" hx-vals='{"ra": {{ra}}, "dec": {{dec}} }' hx-trigger="load" hx-indicator="#loader" class="tw-w-full">
         <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
-            <thead class="tw-border-b tw-border-[#1e1e1e]">
-                <th class="tw-text-center">Type</th>
-                <th class="tw-text-center">Name</th>
-                <th class="tw-text-center">Redshift</th>
+            <thead class="tw-text-[#BDBDBD]">
+                <td class="tw-text-center">Type</td>
+                <td class="tw-text-center">Name</td>
+                <td class="tw-text-center">Redshift</td>
             </thead>
         </table>
         <div id="loader" class="htmx-indicator tw-animate-pulse tw-text-center tw-my-4 tw-w-full">Loading...</div>
