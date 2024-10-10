@@ -26,6 +26,16 @@
   position: relative;
 }
 
+.tw-preflight :is(.tw-inset-x-0) {
+  left: 0px;
+  right: 0px;
+}
+
+.tw-preflight :is(.tw-inset-x-\[-16px\]) {
+  left: -16px;
+  right: -16px;
+}
+
 .tw-preflight :is(.tw-left-10) {
   left: 2.5rem;
 }
@@ -42,12 +52,44 @@
   top: 50%;
 }
 
+.tw-preflight :is(.tw-bottom-0) {
+  bottom: 0px;
+}
+
+.tw-preflight :is(.tw-bottom-9) {
+  bottom: 2.25rem;
+}
+
+.tw-preflight :is(.tw-bottom-\[-16px\]) {
+  bottom: -16px;
+}
+
+.tw-preflight :is(.tw-bottom-\[-20px\]) {
+  bottom: -20px;
+}
+
+.tw-preflight :is(.tw-bottom-\[-24px\]) {
+  bottom: -24px;
+}
+
+.tw-preflight :is(.tw-bottom-\[-28px\]) {
+  bottom: -28px;
+}
+
 .tw-preflight :is(.tw-z-\[10\]) {
   z-index: 10;
 }
 
 .tw-preflight :is(.tw-z-\[9999\]) {
   z-index: 9999;
+}
+
+.tw-preflight :is(.tw-z-\[2\]) {
+  z-index: 2;
+}
+
+.tw-preflight :is(.tw-z-10) {
+  z-index: 10;
 }
 
 .tw-preflight :is(.tw-col-span-1) {
@@ -84,14 +126,14 @@
   margin-right: auto;
 }
 
-.tw-preflight :is(.tw-my-4) {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
 .tw-preflight :is(.tw-my-1) {
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
+}
+
+.tw-preflight :is(.tw-my-4) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .tw-preflight :is(.tw-me-2) {
@@ -116,6 +158,10 @@
 
 .tw-preflight :is(.tw-mt-4) {
   margin-top: 1rem;
+}
+
+.tw-preflight :is(.tw-block) {
+  display: block;
 }
 
 .tw-preflight :is(.tw-inline-block) {
@@ -198,6 +244,14 @@
   width: 100%;
 }
 
+.tw-preflight :is(.tw-w-\[25\%\]) {
+  width: 25%;
+}
+
+.tw-preflight :is(.tw-w-80) {
+  width: 20rem;
+}
+
 .tw-preflight :is(.tw-min-w-full) {
   min-width: 100%;
 }
@@ -272,10 +326,6 @@
 
 .tw-preflight :is(.tw-items-center) {
   align-items: center;
-}
-
-.tw-preflight :is(.tw-justify-end) {
-  justify-content: flex-end;
 }
 
 .tw-preflight :is(.tw-justify-center) {
@@ -452,6 +502,10 @@
   padding: 0.5rem;
 }
 
+.tw-preflight :is(.tw-p-4) {
+  padding: 1rem;
+}
+
 .tw-preflight :is(.tw-px-2) {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -472,24 +526,14 @@
   padding-bottom: 0.5rem;
 }
 
-.tw-preflight :is(.tw-py-4) {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-.tw-preflight :is(.tw-py-12) {
-  padding-top: 3rem;
-  padding-bottom: 3rem;
-}
-
-.tw-preflight :is(.tw-py-6) {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-}
-
 .tw-preflight :is(.tw-py-3) {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
+}
+
+.tw-preflight :is(.tw-py-4) {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .tw-preflight :is(.tw-pl-\[10px\]) {
@@ -545,10 +589,6 @@
 
 .tw-preflight :is(.tw-font-bold) {
   font-weight: 700;
-}
-
-.tw-preflight :is(.tw-font-normal) {
-  font-weight: 400;
 }
 
 .tw-preflight :is(.tw-font-light) {
@@ -621,6 +661,10 @@
 
 .tw-preflight :is(.tw-opacity-50) {
   opacity: 0.5;
+}
+
+.tw-preflight :is(.tw-opacity-0) {
+  opacity: 0;
 }
 
 .tw-preflight :is(.tw-shadow-2xl) {
@@ -1297,8 +1341,24 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   outline-style: solid;
 }
 
+.tw-preflight :is(.tw-group:hover .group-hover\:tw-z-\[10\]) {
+  z-index: 10;
+}
+
+.tw-preflight :is(.tw-group:hover .group-hover\:tw-block) {
+  display: block;
+}
+
 .tw-preflight :is(.tw-group:hover .group-hover\:tw-flex) {
   display: flex;
+}
+
+.tw-preflight :is(.tw-group:hover .group-hover\:tw-flex-col) {
+  flex-direction: column;
+}
+
+.tw-preflight :is(.tw-group:hover .group-hover\:tw-opacity-100) {
+  opacity: 1;
 }
 
 .tw-preflight :is(:is(.tw-dark .dark\:tw-divide-\[\#404040\]) > :not([hidden]) ~ :not([hidden])) {

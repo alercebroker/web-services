@@ -11,16 +11,29 @@
         </thead>
         <tbody class="tw-w-[95%] tw-mx-auto">
             <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-t tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto">
-                <td id="type" class="tw-text-center tw-max-w-[40%]">{{typeInput}}</td>
-                <td id="name" class="tw-text-center">{{name}}</td>
+                <td id="type" class="tw-text-center tw-max-w-[40%]">{{object_type}}</td>
+                <td id="name" class="tw-text-center">{{object_name}}</td>
                 <td id="redshift" class="tw-text-center">{{redshift}}</td>
             </tr>
         </tbody>
     </table>
-</div>
-<div class="tw-flex tw-justify-end">
-    <h6 class=" tw-text-[#1e1e1e] dark:tw-text-white tw-h-auto tw-text-[17px] tw-mt-4 tw-mr-4">
-    Provided by
-        <a id="tns-link" target="_blank" href="{{tnsLink}}" class=" tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer">TNS</a>  <img class="tw-inline" src="https://www.wis-tns.org/sites/default/files/favicon.png">
-    </h6>
+    <div class="tw-flex tw-justify-between tw-w-[95%] tw-mx-auto">
+        <div class="tw-w-[50%] tw-text-xs">
+            <p>Discovered by {{discovery_data_source["group_name"]}}</p>
+
+            {% if "reporter" in tns_data["object_data"] and tns_data["object_data"]["reporter"] == "ALeRCE"%}
+            <div class="tw-flex tw-relative">
+                <span>Reported by ALeRCE</span>
+                <div class="tw-relative tw-mx-2 tw-group group-hover:tw-flex group-hover:tw-flex-col">
+                    <img class="tw-h-4" src="https://alerce-static.s3.amazonaws.com/logos/footerAlerceWhite.png">
+                    <p class="tw-absolute tw-z-10 tw-p-4 tw-hidden tw-w-80 tw-bg-[#757575]/60 tw-text-[#FAFAFA] tw-text-left tw-text-normal tw-rounded dark:tw-bg-[#757575]/60 dark:tw-text-[#FAFAFA] group-hover:tw-block">{{discoverer}}</p>
+                </div>
+            </div>
+            {% endif %}                        
+        </div>
+        <p class="tw-text-[#1e1e1e] dark:tw-text-white tw-h-auto tw-text-xs">
+        Provided by
+            <a id="tns-link" target="_blank" href="{{tnsLink}}" class=" tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer">TNS</a>  <img class="tw-inline" src="https://www.wis-tns.org/sites/default/files/favicon.png">
+        </p>
+    </div>
 </div>
