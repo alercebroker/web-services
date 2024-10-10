@@ -14,11 +14,15 @@ export function initCrossmatch() {
     let crossKeys = JSON.parse(document.getElementById("crossmatch-data-keys").text);
     // Adding event listeners to the buttons to show or hide the tables
     for (let j = 0; j < crossKeys.length; j++){
-        document.getElementById(crossKeys[j]).addEventListener('click', function() {
-            showTable(crossKeys[j]);
-        });
+        let button = document.getElementById(crossKeys[j])
+        if (button){
 
-        document.getElementById(`arrows-${crossKeys[j]}`).innerHTML = arrowDown;
+            button.addEventListener('click', function() {
+                showTable(crossKeys[j]);
+            });
+            
+            document.getElementById(`arrows-${crossKeys[j]}`).innerHTML = arrowDown;
+        }
     };
 
     let customInput = document.getElementById('customInput');
@@ -96,29 +100,33 @@ export function elementReady(selector) {
 }
 
 function showTable(key) {
-    console.log('hola mundo')
+    console.log(`ShowTable called at ${new Date().toISOString()} with key:`, key);
+    console.trace()
     let table = document.getElementById(`table-${key}`);
     let arrow = document.getElementById(`arrows-${key}`);
-    if (currentOpenTable && currentOpenTable !== table) {
-        // Close the currently open table
-        currentOpenTable.classList.add('tw-hidden');
-        currentOpenTable.classList.remove('tw-table');
-        let currentOpenArrow = document.getElementById(`arrows-${currentOpenTable.id.replace('table-', '')}`);
-        currentOpenArrow.innerHTML = arrowDown;
-    }
+    if (table){
 
-    if (table.classList.contains('tw-hidden') || !table.classList.contains('tw-table')) {
-        // Open the clicked table
-        table.classList.remove('tw-hidden');
-        table.classList.add('tw-table');
-        arrow.innerHTML = arrowUp;
-        currentOpenTable = table;
-    } else {
-        // Close the clicked table if it's already open
-        table.classList.add('tw-hidden');
-        table.classList.remove('tw-table');
-        arrow.innerHTML = arrowDown;
-        currentOpenTable = null;
+        if (currentOpenTable && currentOpenTable !== table) {
+            // Close the currently open table
+            currentOpenTable.classList.add('tw-hidden');
+            currentOpenTable.classList.remove('tw-table');
+            let currentOpenArrow = document.getElementById(`arrows-${currentOpenTable.id.replace('table-', '')}`);
+            currentOpenArrow.innerHTML = arrowDown;
+        }
+        
+        if (table.classList.contains('tw-hidden') || !table.classList.contains('tw-table')) {
+            // Open the clicked table
+            table.classList.remove('tw-hidden');
+            table.classList.add('tw-table');
+            arrow.innerHTML = arrowUp;
+            currentOpenTable = table;
+        } else {
+            // Close the clicked table if it's already open
+            table.classList.add('tw-hidden');
+            table.classList.remove('tw-table');
+            arrow.innerHTML = arrowDown;
+            currentOpenTable = null;
+        }
     }
 }
 
