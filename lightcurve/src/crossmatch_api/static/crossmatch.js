@@ -10,6 +10,17 @@ let arrowUp = `<svg class='tw-h-5 tw-w-5' xmlns="http://www.w3.org/2000/svg" fil
             </svg>`   
 
 export function initCrossmatch() {
+
+    console.log(`Script execution started at ${new Date().toISOString()}`);
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+        console.log(`DOM fully loaded and parsed at ${new Date().toISOString()}`);
+    });
+
+    window.addEventListener('load', (event) => {
+        console.log(`Page fully loaded at ${new Date().toISOString()}`);
+    });
+
     // Getting data
     let crossKeys = JSON.parse(document.getElementById("crossmatch-data-keys").text);
     // Adding event listeners to the buttons to show or hide the tables
@@ -80,28 +91,26 @@ export function initCrossmatch() {
 
 
 export function elementReady(selector) {
-    return new Promise((resolve, reject) => {
-    let el = document.querySelector(selector);
+  return new Promise((resolve, reject) => {
+    const el = document.querySelector(selector);
     if (el) {
-        resolve(el);
+      resolve(el);
     }
 
     new MutationObserver((mutationRecords, observer) => {
-        Array.from(document.querySelectorAll(selector)).forEach(element => {
+      Array.from(document.querySelectorAll(selector)).forEach(element => {
         resolve(element);
         observer.disconnect();
-        });
+      });
     })
     .observe(document.documentElement, {
-        childList: true,
-        subtree: true
+      childList: true,
+      subtree: true
     });
-    });
+  });
 }
 
 function showTable(key) {
-    console.log(`ShowTable called at ${new Date().toISOString()} with key:`, key);
-    console.trace()
     let table = document.getElementById(`table-${key}`);
     let arrow = document.getElementById(`arrows-${key}`);
     if (table){
