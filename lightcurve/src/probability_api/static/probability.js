@@ -96,6 +96,7 @@ export function init(){
 
     let ctx = document.getElementById('myChart');
     let custom_select = document.querySelector(".select-wrapper")
+    console.log(document.querySelector('.custom-option.selected'))
     let initial_value = document.querySelector('.custom-option.selected').getAttribute("data-value")
 
     reverseData(raw_tax)

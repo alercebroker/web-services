@@ -23,13 +23,15 @@
                     </div>
                     <div class="custom-options">
                         {% for y in class_dict %}
-                            {% for key, value in y.items() %}
-                                    {% if key == "lc_classifier" %}
-                                        <span class="custom-option selected" data-value="{{key}}"> {{value}}</span>
-                                    {% else %}
-                                        <span class="custom-option" data-value="{{key}}"> {{value}}</span>
-                                    {% endif %}
-                            {% endfor %}
+                            {% if loop.first %}
+                                {% for key, value in y.items() %}
+                                    <span class="custom-option selected" data-value="{{key}}"> {{value}}</span>
+                                {% endfor %}
+                            {% else %}
+                                {% for key, value in y.items() %}
+                                    <span class="custom-option" data-value="{{key}}"> {{value}}</span>
+                                {% endfor %}
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

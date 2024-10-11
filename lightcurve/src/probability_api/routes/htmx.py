@@ -70,6 +70,7 @@ def group_data_by_classifier_dict(prob_lis):
         }
         classifier_name = item.classifier_name
         classifier_version = item.classifier_version
+
         if item.classifier_name not in group_data_by_classifier:
             group_data_by_classifier[classifier_name] = {}
         
@@ -80,9 +81,8 @@ def group_data_by_classifier_dict(prob_lis):
 
     return group_data_by_classifier
 
-def classifiers_options(taxonomy_dict, group_prob_by_version):
+def classifiers_options(group_prob_by_version):
     class_dict = []
-    priorities_arr = []
     non_priotities_arr = []
     priorities = {
     'lc_classifier': 0,
@@ -123,7 +123,7 @@ async def object_probability_app(
     group_prob = group_data_by_classifier_dict(prob_list)
     group_prob_by_version = filter_data_by_higher_version(group_prob)
     
-    class_options = classifiers_options(taxonomy_dict, group_prob_by_version)
+    class_options = classifiers_options(group_prob_by_version)
 
     return templates.TemplateResponse(
       name='prob.html.jinja',
