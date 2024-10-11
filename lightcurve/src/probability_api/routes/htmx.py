@@ -83,7 +83,6 @@ def group_data_by_classifier_dict(prob_lis):
 
 def classifiers_options(group_prob_by_version):
     class_dict = []
-    non_priotities_arr = []
     priorities = {
     'lc_classifier': 0,
     'lc_classifier_top': 1,
@@ -95,13 +94,6 @@ def classifiers_options(group_prob_by_version):
     for key, value in priorities.items():
         if key in group_prob_by_version:
             class_dict.append({ key : format_classifiers_name(key) })
-
-
-    for key in group_prob_by_version.keys():
-        if key not in priorities:
-            non_priotities_arr.append({ key : format_classifiers_name(key) })
-
-    class_dict = class_dict + non_priotities_arr
 
     return class_dict
 
