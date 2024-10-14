@@ -21,51 +21,41 @@ templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8001"
 )
 
-
-def last_information(data):
-    informationDict = {
-        "typeInput": "-",
-        "name": "-",
-        "redshift": "-",
-        "discoverer": "-",
-        "discovery_data_source": "-",
-        "tnsLink": "https://www.wis-tns.org/"
-    }
-
-    if(data == "Error"):
-        return informationDict
-    
-    if(len(data["object_data"]) > 25):
-        informationDict["typeInput"] = data["object_type"]
-        informationDict["name"] = data["object_name"]
-        informationDict["redshift"] = data["object_data"]["redshift"]
-        informationDict["discoverer"] = data["object_data"]["discoverer"]
-        informationDict["discovery_data_source"] = data["object_data"]["discovery_data_source"]
-
-    return informationDict
-
 def check_data(data):
     
-    if "object_data" in data:
-        pass
+    if "object_data" in data and len(data["object_data"]) > 25:
+        if data["object_data"]["redshift"] == None:
+            data["object_data"]["redshift"] = '-'
     else:
         raise ValueError("Data does not meet the required condition")
 
     if "object_name" in data:
-        pass
+        if data["object_name"] == None:
+            data["object_name"] = '-'
     else:
         raise ValueError("Data does not meet the required condition")
     
     if "object_type" in data:
-        pass
+        if data["object_type"] == None:
+            data["object_type"] = '-'
     else:
         raise ValueError("Data does not meet the required condition")
     
-    if(len(data["object_data"]) > 25):
-        return data
-    else:
-        raise ValueError("Data does not meet the required condition")
+    return data
+
+def error_data():
+    tns_data = {
+        "object_data": {
+            "discoverer": "-",
+            "discovery_data_source": { "group_name": "-"},
+            "redshift": "-",
+        },
+        "object_name": "-",
+        "object_type": "-"
+    }
     
+    return tns_data
+
 
 def get_tns(ra, dec):
     try:
@@ -87,33 +77,14 @@ def get_tns(ra, dec):
         
     except requests.exceptions.RequestException as error:
         print(f"Error: {error}")
-
-        tns_data = {
-        "object_data": {
-            "discoverer": "-",
-            "discovery_data_source": { "group_name": "-"},
-            "redshift": "-",
-        },
-        "object_name": "-",
-        "object_type": "-"
-        }
-
-        return tns_data
+        tns = error_data()
+        return tns
     
     except ValueError as e:
         print(f"Error: {e}")
 
-        tns_data = {
-        "object_data": {
-            "discoverer": "-",
-            "discovery_data_source": { "group_name": "-"},
-            "redshift": "-",
-        },
-        "object_name": "-",
-        "object_type": "-"
-        }
-
-        return tns_data
+        tns = error_data()
+        return tns
 
 @router.get("/object/{oid}", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str):

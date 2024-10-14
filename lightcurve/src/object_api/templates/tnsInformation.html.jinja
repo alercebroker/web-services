@@ -19,13 +19,13 @@
     </table>
     <div class="tw-flex tw-justify-between tw-w-[95%] tw-mx-auto">
         <div class="tw-w-[50%] tw-text-xs">
+            {% if "reporter" in tns_data["object_data"] and tns_data["object_data"]["reporter"] == "ALeRCE"%}
             <p>Discovered by {{discovery_data_source["group_name"]}}</p>
 
-            {% if "reporter" in tns_data["object_data"] and tns_data["object_data"]["reporter"] == "ALeRCE"%}
             <div class="tw-flex tw-relative">
                 <span>Reported by ALeRCE</span>
                 <div class="tw-relative tw-mx-2 tw-group group-hover:tw-flex group-hover:tw-flex-col">
-                    <img class="tw-h-4" src="https://alerce-static.s3.amazonaws.com/logos/footerAlerceWhite.png">
+                    <img class="" src="https://alerce-static.s3.amazonaws.com/logos/footerAlerceWhite.png" width="20" height="20">
                     <p class="tw-absolute tw-z-10 tw-p-4 tw-hidden tw-w-80 tw-bg-[#757575]/60 tw-text-[#FAFAFA] tw-text-left tw-text-normal tw-rounded dark:tw-bg-[#757575]/60 dark:tw-text-[#FAFAFA] group-hover:tw-block">{{discoverer}}</p>
                 </div>
             </div>
