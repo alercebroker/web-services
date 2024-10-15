@@ -12,6 +12,7 @@ export class LightCurveOptions {
       4: { name: "c", color: "#00FFFF" },
       5: { name: "o", color: "#FFA500" },
     };
+
     this.fontColor = fontColor;
     this.options = {
       grid: {
