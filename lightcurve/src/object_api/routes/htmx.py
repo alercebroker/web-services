@@ -5,7 +5,6 @@ import requests
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pprint import pprint 
 from core.exceptions import ObjectNotFound
 from core.services.object import (
     get_count_ndet,
@@ -121,7 +120,7 @@ async def object_info_app(request: Request, oid: str):
             "lastDetectionMJD": object_data.lastmjd,
             "ra": object_data.meanra,
             "dec": object_data.meandec,
-            "candid": candid,
+            "candid": str(candid),
             "otherArchives": other_archives,
         },
     )
@@ -131,7 +130,6 @@ async def tns_info(request: Request, ra: float, dec:float):
     try:
         tns_data, tns_link = get_tns(ra, dec)
 
-        print(tns_link)
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 

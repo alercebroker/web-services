@@ -14,18 +14,20 @@ const FIXED_PRECISION = 7;
 export function init() {
 
 
-  const objectInfo = JSON.parse(document.getElementById("object-data").text);
+  let objectInfo = JSON.parse(document.getElementById("object-data").text);
 
-  const object = objectInfo.object;
-  const corrected = objectInfo.corrected;
-  const stellar = objectInfo.stellar;
-  const detections = objectInfo.detections;
+  let object = objectInfo.object;
+  let corrected = objectInfo.corrected;
+  let stellar = objectInfo.stellar;
+  let detections = objectInfo.detections;
   let discoveryDateMJD = objectInfo.discoveryDateMJD;
   let lastDetectionMJD = objectInfo.lastDetectionMJD;
-  const nonDetections = objectInfo.nonDetections;
+  let nonDetections = objectInfo.nonDetections;
   let ra = objectInfo.ra;
   let dec = objectInfo.dec;
   let candid = objectInfo.candid;
+
+  console.log("candid en init es: ", candid)
 
   let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}<br>${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
 

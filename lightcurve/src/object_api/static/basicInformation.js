@@ -117,6 +117,8 @@ export function transformRa(degrees, precision=3) {
 }
 
 export function setMenuUrl(ra, dec, candid, object, raTime, decTime) {
+
+  console.log("el candid es: ", candid)
   const urlDict = {
     "DESI Legacy Survey DR10": `https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=${ra}&dec=${dec}&layer=ls-dr10&pixscale=0.1&bands=grz`,
 
