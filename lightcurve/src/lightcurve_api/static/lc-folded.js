@@ -3,7 +3,7 @@ import { jdToDate } from "./astro-dates.js";
 
 export class FoldedLightCurveOptions extends LightCurveOptions {
   constructor(detections, forcedPhotometry, fontColor, period, flux) {
-    super(detections, [], forcedPhotometry, fontColor, "Folded Light Curve");
+    super(fontColor, "Folded Light Curve");
     this.detections = detections;
     this.forcedPhotometry = forcedPhotometry;
     this.period = period;

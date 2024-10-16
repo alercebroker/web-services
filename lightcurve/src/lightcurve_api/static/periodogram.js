@@ -51,8 +51,11 @@ export class Periodogram {
       legend: { textStyle: { color } },
     };
 
-    if (this.isPeriodogramBuilt) this.periodogram_plot.setOption(options);
-    else this.chartOptions = new PeriodogramOptions(color);
+    if (this.isPeriodogramBuilt){
+      this.periodogram_plot.setOption(options);
+    } else {
+      this.chartOptions = new PeriodogramOptions(color);
+    } 
   }
 
   load() {

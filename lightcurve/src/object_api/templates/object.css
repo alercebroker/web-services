@@ -1,6 +1,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/*loader*/
+
+@layer components{
+  .htmx-indicator{
+    @apply tw-opacity-0;
+  }
+  
+  .htmx-request .htmx-indicator{
+    @apply tw-opacity-100;
+  }
+
+  .htmx-request.htmx-indicator{
+    @apply tw-opacity-100;
+  }
+}
+
 .disabled\:bg-transparent {
   background-color: transparent;
 }

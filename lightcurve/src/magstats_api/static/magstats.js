@@ -38,10 +38,6 @@ export function initMagstats() {
   numColumns = db.length + 1; // Esto  es numero de bandas + 1
   numRows = Object.keys(db[0]).length;
   
-  for (let i = 0; i < db.length; i++) {
-    numBands.push(db[i]["fid"]);
-    delete db[i]["fid"];
-  }
   
   for (let i = 0; i < numBands.length; i++) {
     realBands.push(bandMapping[numBands[i]]);
@@ -120,17 +116,18 @@ function parseStatR(dict) {
       corrected: dict[key]["corrected"],
       ndet: dict[key]["ndet"],
       ndubious: dict[key]["ndubious"],
-      magmean: dict[key]["magmean"],
-      magmedian: dict[key]["magmedian"],
-      magmax: dict[key]["magmax"],
-      magmin: dict[key]["magmin"],
-      magsigma: dict[key]["magsigma"],
-      maglast: dict[key]["maglast"],
-      magfirst: dict[key]["magfirst"],
-      firstmjd: dict[key]["firstmjd"],
-      lastmjd: dict[key]["lastmjd"],
+      magmean: dict[key]["magmean"].toFixed(3),
+      magmedian: dict[key]["magmedian"].toFixed(3),
+      magmax: dict[key]["magmax"].toFixed(3),
+      magmin: dict[key]["magmin"].toFixed(3),
+      magsigma: dict[key]["magsigma"].toFixed(3),
+      maglast: dict[key]["maglast"].toFixed(3),
+      magfirst: dict[key]["magfirst"].toFixed(3),
+      firstmjd: dict[key]["firstmjd"].toFixed(3),
+      lastmjd: dict[key]["lastmjd"].toFixed(3),
       step_id_corr: dict[key]["step_id_corr"],
     };
+    numBands.push(dict[key]["fid"]);
     db.push(auxJson);
   });
 }

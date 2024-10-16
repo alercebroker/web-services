@@ -3,7 +3,7 @@ import { LightCurveOptions } from "./lc-utils.js";
 
 export class ApparentLightCurveOptions extends LightCurveOptions {
   constructor(detections, forcedPhotometry, fontColor, flux = false) {
-    super(detections, [], forcedPhotometry, fontColor, "Apparent Magnitude");
+    super(fontColor, "Apparent Magnitude");
     this.detections = detections;
     this.forcedPhotometry = forcedPhotometry;
     this.getSeries(flux);
