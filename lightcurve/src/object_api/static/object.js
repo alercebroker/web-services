@@ -27,8 +27,6 @@ export function init() {
   let dec = objectInfo.dec;
   let candid = objectInfo.candid;
 
-  console.log("candid en init es: ", candid)
-
   let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}<br>${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
 
   let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
