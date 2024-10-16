@@ -21,6 +21,13 @@ templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8001"
 )
 
+def add_tns_link(data):
+    
+    if data["object_name"] != '-': 
+       return 'https://www.wis-tns.org/object/' + data["object_name"]
+    else:
+        return 'https://www.wis-tns.org/'
+
 def check_data(data):
     
     if "object_data" in data and len(data["object_data"]) > 25:
@@ -53,8 +60,9 @@ def error_data():
         "object_name": "-",
         "object_type": "-"
     }
-    
-    return tns_data
+    tns_link = 'https://www.wis-tns.org/'
+
+    return tns_data, tns_link
 
 
 def get_tns(ra, dec):
@@ -72,8 +80,9 @@ def get_tns(ra, dec):
         data = response.json()
 
         check_data(data)
+        tns_link = add_tns_link(data)
 
-        return data
+        return data, tns_link
         
     except requests.exceptions.RequestException as error:
         print(f"Error: {error}")
@@ -120,7 +129,9 @@ async def object_info_app(request: Request, oid: str):
 @router.get("/tns/", response_class=HTMLResponse)
 async def tns_info(request: Request, ra: float, dec:float):
     try:
-        tns_data = get_tns(ra, dec)
+        tns_data, tns_link = get_tns(ra, dec)
+
+        print(tns_link)
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 
@@ -129,6 +140,7 @@ async def tns_info(request: Request, ra: float, dec:float):
         context={
             "request": request,
             "tns_data": tns_data,
+            "tns_link": tns_link,
             "object_name": tns_data["object_name"],
             "object_type": tns_data["object_type"],
             "redshift": tns_data["object_data"]["redshift"],
