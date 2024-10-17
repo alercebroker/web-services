@@ -145,7 +145,7 @@ function createTable() {
   // Create the table element
   const table = document.createElement("table");
   table.classList =
-    "tw-overflow-auto tw-w-full tw-text-sm";
+    "tw-overflow-auto tw-w-full tw-text-sm tw-font-roboto ";
 
   // Create the table header row
   const headerRow = document.createElement("tr");
@@ -170,7 +170,7 @@ function createTable() {
   for (let i = 0; i < numRows; i++) {
     const dataRow = document.createElement("tr");
     dataRow.classList =
-      "tw-w-full tw-preflight hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20 dark:tw-border-opacity-20";
+      "tw-w-full hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20 dark:tw-border-opacity-20";
 
     for (let j = 0; j < numColumns; j++) {
       const td = document.createElement("td");
