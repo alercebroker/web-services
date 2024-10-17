@@ -117,10 +117,6 @@ export function transformRa(degrees, precision=3) {
 }
 
 export function setMenuUrl(ra, dec, candid, object, raTime, decTime) {
-  /*
-  let raNed = Math.round(ra * 1000) / 1000
-  let decNed = Math.round(dec * 1000) / 1000 
-  */
 
   let raNed = encodeCoordinates(raTime)
   let decNed = encodeCoordinates(decTime)
