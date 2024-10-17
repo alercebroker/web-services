@@ -30,7 +30,7 @@ export function initMagstats() {
   boolColumns = 0;
   rowsToShow = 5;
   
-  const rawDb = JSON.parse(document.getElementById("magstats-data").text);
+  let rawDb = JSON.parse(document.getElementById("magstats-data").text);
   db = [];
 
   parseStatR(rawDb);
@@ -112,20 +112,20 @@ function parseStatR(dict) {
   Object.keys(dict).forEach((key) => {
     let auxJson = {};
     auxJson = {
-      stellar: dict[key]["stellar"],
-      corrected: dict[key]["corrected"],
-      ndet: dict[key]["ndet"],
-      ndubious: dict[key]["ndubious"],
-      magmean: dict[key]["magmean"].toFixed(3),
-      magmedian: dict[key]["magmedian"].toFixed(3),
-      magmax: dict[key]["magmax"].toFixed(3),
-      magmin: dict[key]["magmin"].toFixed(3),
-      magsigma: dict[key]["magsigma"].toFixed(3),
-      maglast: dict[key]["maglast"].toFixed(3),
-      magfirst: dict[key]["magfirst"].toFixed(3),
-      firstmjd: dict[key]["firstmjd"].toFixed(3),
-      lastmjd: dict[key]["lastmjd"].toFixed(3),
-      step_id_corr: dict[key]["step_id_corr"],
+      stellar: dict[key]["stellar"] != null ? dict[key]["stellar"] : "-",
+      corrected: dict[key]["corrected"] != null ? dict[key]["corrected"] : "-",
+      ndet: dict[key]["ndet"] != null ?  dict[key]["ndet"]: "-",
+      ndubious: dict[key]["ndubious"] != null ? dict[key]["ndubious"] : "-",
+      magmean: dict[key]["magmean"] != null ? dict[key]["magmean"].toFixed(3) : "-" ,
+      magmedian: dict[key]["magmedian"] != null ? dict[key]["magmedian"].toFixed(3) : "-",
+      magmax: dict[key]["magmax"] != null ? dict[key]["magmax"].toFixed(3) : "-" ,
+      magmin: dict[key]["magmin"] != null ? dict[key]["magmin"].toFixed(3) : "-" ,
+      magsigma: dict[key]["magsigma"] != null ? dict[key]["magsigma"].toFixed(3) : "-" ,
+      maglast: dict[key]["maglast"] != null ? dict[key]["maglast"].toFixed(3) : "-" ,
+      magfirst: dict[key]["magfirst"] != null ? dict[key]["magfirst"].toFixed(3) : "-" ,
+      firstmjd: dict[key]["firstmjd"] != null ? dict[key]["firstmjd"].toFixed(3) : "-" ,
+      lastmjd: dict[key]["lastmjd"] != null ? dict[key]["lastmjd"].toFixed(3) : "-" ,
+      step_id_corr: dict[key]["step_id_corr"] != null ? dict[key]["step_id_corr"] : "-",
     };
     numBands.push(dict[key]["fid"]);
     db.push(auxJson);
