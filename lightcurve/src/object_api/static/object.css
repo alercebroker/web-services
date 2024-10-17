@@ -78,6 +78,11 @@
   margin: auto;
 }
 
+.tw-preflight :is(.tw-mx-0) {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
 .tw-preflight :is(.tw-mx-2) {
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -114,6 +119,10 @@
   margin-top: 0.75rem;
 }
 
+.tw-preflight :is(.tw-block) {
+  display: block;
+}
+
 .tw-preflight :is(.tw-inline-block) {
   display: inline-block;
 }
@@ -136,10 +145,6 @@
 
 .tw-preflight :is(.tw-h-32) {
   height: 8rem;
-}
-
-.tw-preflight :is(.tw-h-4) {
-  height: 1rem;
 }
 
 .tw-preflight :is(.tw-h-5) {
@@ -405,6 +410,16 @@
   --tw-border-opacity: 0.2;
 }
 
+.tw-preflight :is(.tw-bg-\[\#0097A7\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 151 167 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-\[\#2196f3\]) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(33 150 243 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.tw-bg-\[\#757575\]\/60) {
   background-color: rgb(117 117 117 / 0.6);
 }
@@ -412,16 +427,6 @@
 .tw-preflight :is(.tw-bg-blue-500) {
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-blue-700) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(29 78 216 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-cyan-700) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(14 116 144 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-bg-gray-100) {
@@ -466,6 +471,11 @@
   padding-right: 1rem;
 }
 
+.tw-preflight :is(.tw-px-\[8px\]) {
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
 .tw-preflight :is(.tw-py-1) {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -484,6 +494,11 @@
 .tw-preflight :is(.tw-py-4) {
   padding-top: 1rem;
   padding-bottom: 1rem;
+}
+
+.tw-preflight :is(.tw-py-\[2px\]) {
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 
 .tw-preflight :is(.tw-pl-\[10px\]) {
@@ -518,6 +533,10 @@
   text-align: right;
 }
 
+.tw-preflight :is(.tw-font-roboto) {
+  font-family: Roboto, sans-serif;
+}
+
 .tw-preflight :is(.tw-text-2xl) {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -539,6 +558,10 @@
 
 .tw-preflight :is(.tw-font-light) {
   font-weight: 300;
+}
+
+.tw-preflight :is(.tw-font-medium) {
+  font-weight: 500;
 }
 
 .tw-preflight :is(.tw-ordinal) {
@@ -605,6 +628,10 @@
   text-decoration-line: underline;
 }
 
+.tw-preflight :is(.tw-opacity-100) {
+  opacity: 1;
+}
+
 .tw-preflight :is(.tw-opacity-50) {
   opacity: 0.5;
 }
@@ -618,6 +645,8 @@
 .tw-preflight :is(.tw-duration-200) {
   transition-duration: 200ms;
 }
+
+/* roboto font */
 
 /*loader*/
 

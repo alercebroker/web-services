@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
 <div id="basicObject-app" class="tw-preflight tw-flex tw-justify-center tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-mt-3 tw-w-full tw-text-sm">
-    <table class="tw-overflow-auto tw-w-[95%] tw-mx-auto tw-text-sm">
+    <table class="tw-overflow-auto tw-w-[95%] tw-font-roboto tw-mx-auto tw-text-sm">
         <colgroup class="tw-w-[95%] tw-mx-auto"><col class="tw-w-1/3"><col class="tw-w-1/3 tw-text-center"><col class="tw-w-1/3"></colgroup>
         <tbody class="tw-w-[95%] tw-mx-auto">
                 <!--Object row-->
@@ -139,16 +139,16 @@
         </tbody>
     </table>
 
-    <div class="tw-flex tw-space-x-4 tw-w-[95%] tw-mx-auto tw-my-1 tw-justify-center">
+    <div class="tw-flex tw-font-roboto  tw-space-x-4 tw-w-[95%] tw-mx-auto tw-my-1 tw-justify-center">
         <a
         id="find-button-object"
         target="_blank"
-        class="tw-inline-block tw-bg-cyan-700 tw-text-cyan-50 tw-w-[50%] tw-text-center tw-cursor-pointer">
+        class="tw-inline-block tw-bg-[#0097A7] tw-text-cyan-50 tw-w-[50%] tw-text-center tw-h-5 tw-text-xs tw-font-medium tw-px-[8px] tw-py-[2px] tw-cursor-pointer">
             FINDING CHART
         </a>
     
         <div class="tw-w-[50%] tw-relative">
-            <button id="menu-button-object" class="tw-bg-blue-700 tw-text-blue-50 tw-w-full tw-text-center ">
+            <button id="menu-button-object" class="tw-block tw-mx-0 tw-bg-[#2196f3] tw-text-blue-50 tw-w-full tw-text-center tw-h-5 tw-text-xs tw-font-medium tw-px-[8px] tw-py-[2px]">
             OTHER ARCHIVES
             </button>
 
@@ -163,7 +163,7 @@
     </div>
 
     <div hx-get="{{API_URL}}/htmx/tns/" hx-vals='{"ra": {{ra}}, "dec": {{dec}} }' hx-trigger="load" hx-indicator="#loader" class="tw-w-full">
-        <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
+        <table bordeer=1 frame=void rules=rows class="tw-truncate tw-w-[400px] tw-font-roboto tw-m-0 tw-w-[95%] tw-mx-auto"><colgroup><col><col><col></colgroup>
             <thead class="tw-text-[#BDBDBD]">
                 <td class="tw-text-center">Type</td>
                 <td class="tw-text-center">Name</td>
