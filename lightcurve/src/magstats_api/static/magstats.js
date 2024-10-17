@@ -32,7 +32,7 @@ export function initMagstats() {
   
   let rawDb = JSON.parse(document.getElementById("magstats-data").text);
   db = [];
-  console.log("hola rawdb es: ", rawDb)
+
   parseStatR(rawDb);
   
   numColumns = db.length + 1; // Esto  es numero de bandas + 1
