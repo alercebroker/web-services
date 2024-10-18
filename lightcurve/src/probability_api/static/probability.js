@@ -23,6 +23,7 @@ let config = {
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        pointRadius: 5,
         elements: {
             line: {
                 borderWidth: 1,
