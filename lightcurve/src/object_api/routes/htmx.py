@@ -5,7 +5,6 @@ import requests
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-
 from core.exceptions import ObjectNotFound
 from core.services.object import (
     get_count_ndet,
@@ -21,34 +20,48 @@ templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8001"
 )
 
-
-def last_information(data):
-    informationDict = {
-        "typeInput": "",
-        "name": "",
-        "redshift": "",
-        "tnsLink": "https://www.wis-tns.org/"
-    }
+def add_tns_link(data):
     
-    if data == True:
-        informationDict["typeInput"] = "-"
-        informationDict["name"] = "-"
-        informationDict["redshift"] = "-"
-    elif isinstance(data, dict) and data:
-        if len(data["object_data"]) > 25:
-            informationDict["typeInput"] = data["object_type"]
-            informationDict["name"] = data["object_name"]
-            informationDict["redshift"] = data["object_data"]["redshift"]
-        else:
-            informationDict["typeInput"] = "-"
-            informationDict["name"] = "-"
-            informationDict["redshift"] = "-"
+    if data["object_name"] != '-': 
+       return 'https://www.wis-tns.org/object/' + data["object_name"]
     else:
-        informationDict["typeInput"] = "Unexpected response"
-        informationDict["name"] = "Unexpected response"
-        informationDict["redshift"] = "Unexpected response"
-        
-    return informationDict
+        return 'https://www.wis-tns.org/'
+
+def check_data(data):
+    
+    if "object_data" in data and len(data["object_data"]) > 25:
+        if data["object_data"]["redshift"] == None:
+            data["object_data"]["redshift"] = '-'
+    else:
+        raise ValueError("Data does not meet the required condition")
+
+    if "object_name" in data:
+        if data["object_name"] == None:
+            data["object_name"] = '-'
+    else:
+        raise ValueError("Data does not meet the required condition")
+    
+    if "object_type" in data:
+        if data["object_type"] == None:
+            data["object_type"] = '-'
+    else:
+        raise ValueError("Data does not meet the required condition")
+    
+    return data
+
+def error_data():
+    tns_data = {
+        "object_data": {
+            "discoverer": "-",
+            "discovery_data_source": { "group_name": "-"},
+            "redshift": "-",
+        },
+        "object_name": "-",
+        "object_type": "-"
+    }
+    tns_link = 'https://www.wis-tns.org/'
+
+    return tns_data, tns_link
 
 
 def get_tns(ra, dec):
@@ -63,24 +76,23 @@ def get_tns(ra, dec):
 
         response = requests.post("https://tns.alerce.online/search", data=payload_dump, headers=headersSend)
 
-        text = response.text
+        data = response.json()
 
-        if "Error message" in text:
-            raise requests.exceptions.RequestException("Error found in response: " + text)
-        
-        try:
-            data = response.json()
-        except ValueError:
-            raise requests.exceptions.RequestException("Error found in response: " + text)
+        check_data(data)
+        tns_link = add_tns_link(data)
 
-        tns_data = last_information(data)
-
-        return tns_data
+        return data, tns_link
         
     except requests.exceptions.RequestException as error:
-        tns_data = last_information(True)
+        print(f"Error: {error}")
+        tns = error_data()
+        return tns
+    
+    except ValueError as e:
+        print(f"Error: {e}")
 
-        return tns_data
+        tns = error_data()
+        return tns
 
 @router.get("/object/{oid}", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str):
@@ -88,6 +100,9 @@ async def object_info_app(request: Request, oid: str):
         object_data = get_object(oid, request.app.state.psql_session)
         candid = get_first_det_candid(oid, request.app.state.psql_session)
         count_ndet = get_count_ndet(oid, request.app.state.psql_session)
+
+        other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
+
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 
@@ -105,18 +120,29 @@ async def object_info_app(request: Request, oid: str):
             "lastDetectionMJD": object_data.lastmjd,
             "ra": object_data.meanra,
             "dec": object_data.meandec,
-            "candid": candid,
+            "candid": str(candid),
+            "otherArchives": other_archives,
         },
     )
 
 @router.get("/tns/", response_class=HTMLResponse)
 async def tns_info(request: Request, ra: float, dec:float):
     try:
-        tns_data = get_tns(ra, dec)
+        tns_data, tns_link = get_tns(ra, dec)
+
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 
     return templates.TemplateResponse(
         name="tnsInformation.html.jinja",
-        context={"request": request}|tns_data
+        context={
+            "request": request,
+            "tns_data": tns_data,
+            "tns_link": tns_link,
+            "object_name": tns_data["object_name"],
+            "object_type": tns_data["object_type"],
+            "redshift": tns_data["object_data"]["redshift"],
+            "discoverer": tns_data["object_data"]["discoverer"],
+            "discovery_data_source": tns_data["object_data"]["discovery_data_source"]
+        }
     )

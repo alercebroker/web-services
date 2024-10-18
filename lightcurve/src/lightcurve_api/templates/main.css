@@ -1,6 +1,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components{
+  .indicator{
+    @apply tw-opacity-0;
+  }
+  
+  .htmx-request.indicator{
+    @apply tw-opacity-100 tw-animate-pulse;
+  }
+}
+
 .disabled\:bg-transparent {
   background-color: transparent;
 }
