@@ -34,16 +34,11 @@ def taxonomy_data(taxonomy_list):
 
 
 def filter_data_by_higher_version(prob_dict):
-    data_by_higher_version = {}
 
     """
-        Dictionary format:
-        {
-            'lc_classifier': {
-                                'hierarchical_rf_1.1.0: [{},{},{}]
-                                }
-        }
+        Dictionary format: {'classifier_name': {'classifier_version: [{},{},{}]}}
     """
+    data_by_higher_version = {}
 
     for itemKey, itemValue in prob_dict.items():
         if len(itemValue) > 1 :
