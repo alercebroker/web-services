@@ -33,6 +33,9 @@ def run_object():
     port = int(os.getenv("PORT", default=8000))
     asyncio.run(run_service("object_api", port))
 
+def run_probability():
+    port = int(os.getenv("PORT", default=8000))
+    asyncio.run(run_service("probability_api", port))
 
 async def run_services(services, port):
     tasks = []

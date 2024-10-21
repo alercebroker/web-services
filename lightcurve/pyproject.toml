@@ -10,6 +10,7 @@ packages = [
     { include = "lightcurve_api", from = "src" },
     { include = "magstats_api", from = "src" },
     { include = "object_api", from = "src" },
+    { include = "probability_api", from = "src" },
     { include = "database", from = "src" },
 ]
 
@@ -71,4 +72,5 @@ dev = "scripts.run_dev:run"
 lightcurve = "scripts.run_dev:run_lightcurve"
 magstats = "scripts.run_dev:run_magstats"
 object = "scripts.run_dev:run_object"
+probability = "scripts.run_dev:run_probability"
 tunnel = "scripts.sshproxy:run_tunnel"
