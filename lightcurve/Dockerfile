@@ -21,22 +21,34 @@ RUN poetry install --no-root --without=test
 FROM node:22-alpine as tailwindcss_lightcurve
 COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
-RUN npx tailwindcss -i /lightcurve/src/lightcurve_api/templates/main.css -o /compiled/main.css
+RUN \
+  wget -nc https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.14/tailwindcss-linux-x64 -O tailwindcss && \
+  chmod +x tailwindcss && \
+  ./tailwindcss -i /lightcurve/src/lightcurve_api/templates/main.css -o /compiled/main.css
 
 FROM node:22-alpine as tailwindcss_object
 COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
-RUN npx tailwindcss -i /lightcurve/src/object_api/templates/object.css -o /compiled/object.css
+RUN \
+  wget -nc https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.13/tailwindcss-linux-x64 -O tailwindcss && \
+  chmod +x tailwindcss && \
+  ./tailwindcss -i /lightcurve/src/object_api/templates/object.css -o /compiled/object.css
 
 FROM node:22-alpine as tailwindcss_magstats
 COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
-RUN npx tailwindcss -i /lightcurve/src/magstats_api/templates/magstats.css -o /compiled/magstats.css
+RUN \
+  wget -nc https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.13/tailwindcss-linux-x64 -O tailwindcss && \
+  chmod +x tailwindcss && \
+  ./tailwindcss -i /lightcurve/src/magstats_api/templates/magstats.css -o /compiled/magstats.css
 
 FROM node:22-alpine as tailwindcss_probability
 COPY ./lightcurve/ /lightcurve/
 WORKDIR /lightcurve
-RUN npx tailwindcss -i /lightcurve/src/probability_api/templates/probability.css -o /compiled/probability.css
+RUN \
+  wget -nc https://github.com/tailwindlabs/tailwindcss/releases/download/v3.4.13/tailwindcss-linux-x64 -O tailwindcss && \
+  chmod +x tailwindcss && \
+  ./tailwindcss -i /lightcurve/src/probability_api/templates/probability.css -o /compiled/probability.css
 
 FROM python:3.11-slim as production
 RUN pip install poetry
