@@ -1,15 +1,11 @@
-import re
 import os
-import json
 import pprint
-from typing import Annotated
 from fastapi import FastAPI, Request, Query
 
 from core.services.object import get_probabilities,get_taxonomies
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
-from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
 templates = Jinja2Templates(
@@ -42,7 +38,7 @@ def filter_data_by_higher_version(prob_dict):
 
     for itemKey, itemValue in prob_dict.items():
         if len(itemValue) > 1 :
-            lastest_version = sorted(itemValue.keys())[-1]
+            lastest_version = max(itemValue.keys())
             if itemKey not in data_by_higher_version:
                 data_by_higher_version[itemKey] = {lastest_version: itemValue[lastest_version]}
         else: 
