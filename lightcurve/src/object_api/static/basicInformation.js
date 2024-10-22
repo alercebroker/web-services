@@ -117,19 +117,37 @@ export function transformRa(degrees, precision=3) {
 }
 
 export function setMenuUrl(ra, dec, candid, object, raTime, decTime) {
+
+  let raNed = encodeCoordinates(raTime)
+  let decNed = encodeCoordinates(decTime)
+
   const urlDict = {
-    "desi-button": `https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=${ra}&dec=${dec}&layer=ls-dr10&pixscale=0.1&bands=grz`,
-    "ned-button": `https://ned.ipac.caltech.edu/conesearch?search_type=Near+Position+Search&iau_style=liberal&objname=&coordinates=${raTime}d,${decTime}d&iau_name=&radius=0.17&in_csys=Equatorial&in_equinox=J2000&in_csys_IAU=Equatorial&in_equinox_IAU=B1950&z_constraint=Unconstrained&z_value1=&z_value2=&z_unit=z&ot_include=ANY&nmp_op=ANY&hconst=67.8&omegam=0.308&omegav=0.692&wmap=4&corr_z=1&out_csys=Same+as+Input&out_equinox=Same+as+Input&obj_sort=Distance+to+search+center&op=Go&form_build_id=form-a28snc2SSIQl3faGUe4otq7_NcjnMwxxxPoVxw5LHzg&form_id=conesearch`,
-    "pan-button": `https://ps1images.stsci.edu/cgi-bin/ps1cutouts?pos=${ra}+${dec}&filter=color`,
-    "sdss-button": `https://skyserver.sdss.org/dr18/en/tools/chart/navi.aspx?ra=${ra}8&dec=${dec}`,
-    "simbad-button": `https://simbad.u-strasbg.fr/simbad/sim-coo?Coord=${ra}%20${dec}&Radius.unit=arcsec&Radius=10`,
-    "tns-button": `https://www.wis-tns.org/search?ra=${ra}&decl=${dec}&radius=10&coords_unit=arcsec`,
-    "viz-button": `https://vizier.cds.unistra.fr/viz-bin/VizieR-4?-c=${ra}+${dec}&-c.rs=10&-out.add=_r&-sort=_r&-out.max=$4`,
-    "vsx-button": `https://www.aavso.org/vsx/index.php?view=results.get&coords=${ra}+${dec}&format=d&size=10&geom=r&unit=3&order=9`,
-    "find-button": `https://findingchart.alerce.online/get_chart?oid=${object}&candid=${candid}`,
+    "DESI Legacy Survey DR10": `https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=${ra}&dec=${dec}&layer=ls-dr10&pixscale=0.1&bands=grz`,
+
+    "NED": `https://ned.ipac.caltech.edu/conesearch?search_type=Near%20Position%20Search&in_csys=Equatorial&in_equinox=J2000&ra=${raNed}&dec=${decNed}&radius=0.17`,
+
+    "PanSTARRS": `https://ps1images.stsci.edu/cgi-bin/ps1cutouts?pos=${ra}+${dec}&filter=color`,
+
+    "SDSS DR18": `https://skyserver.sdss.org/dr18/en/tools/chart/navi.aspx?ra=${ra}8&dec=${dec}`,
+
+    "SIMBAD": `https://simbad.u-strasbg.fr/simbad/sim-coo?Coord=${ra}%20${dec}&Radius.unit=arcsec&Radius=10`,
+
+    "TNS": `https://www.wis-tns.org/search?ra=${ra}&decl=${dec}&radius=10&coords_unit=arcsec`,
+
+    "Vizier": `https://vizier.cds.unistra.fr/viz-bin/VizieR-4?-c=${ra}+${dec}&-c.rs=10&-out.add=_r&-sort=_r&-out.max=$4`,
+
+    "VSX": `https://www.aavso.org/vsx/index.php?view=results.get&coords=${ra}+${dec}&format=d&size=10&geom=r&unit=3&order=9`,
+    
+    "find-button-object": `https://findingchart.alerce.online/get_chart?oid=${object}&candid=${candid}`,
   };
+
 
   for (let button in urlDict) {
     document.getElementById(button).href = urlDict[button];
   }
+}
+
+
+function encodeCoordinates(coordinate){
+  return coordinate.replaceAll(":", "%3A")
 }

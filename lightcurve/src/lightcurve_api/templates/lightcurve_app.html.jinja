@@ -20,7 +20,7 @@
      class="tw-preflight tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white"
      style="height: 100%">
     <div id="lc-main" style="width: 100%;  min-width: 0; min-height: 380px;"></div>
-    <p id="plot-indicator" class="htmx-indicator">Loading...</p>
+    <p id="spot-loader" class="indicator tw-text-center tw-w-full">Loading...</p>
     <div class="tw-grid tw-grid-cols-10 tw-gap-1 tw-px-4 tw-py-4">
         <div class="tw-col-span-4">
             {% import 'radio_button.html.jinja' as radio %}
@@ -51,7 +51,7 @@
                         hx-trigger="click"
                         hx-target="#lightcurve-app"
                         hx-swap="outerHTML"
-                        hx-indicator="#plot-indicator">
+                        hx-indicator="#spot-loader">
                     <i class="fa fa-eye tw-me-2"></i>
                     Filter DR
                 </button>
@@ -86,14 +86,13 @@
         let current_plot = "{{ plot_type }}";
         let period = {{ period | float }};
         const apiUrl = "{{ API_URL }}"
-
+        
         const setPlot = () => {
             let flux = document.getElementById("lc-check-flux").checked;
             const all_detections = getDetectionsWithDR();
 
             const periodogram = document.getElementById("lc-periodogram");
             const periodogram_check = document.getElementById("lc-check-row-periodogram");
-
             const diffOptions = new DifferenceLightCurveOptions(
                 JSON.parse(JSON.stringify(detections)),
                 non_detections,
@@ -262,6 +261,7 @@
                 updateRadioButtons();
             });
         });
+
         let check_dr = document.getElementById("lc-check-dr");
         {% if show_dr %}
         check_dr.checked = true;
@@ -294,6 +294,7 @@
             period = newPeriod;
             setPlot();
         };
+
 
         // Update color scheme
         function setColorSchemeWrapper(container) {

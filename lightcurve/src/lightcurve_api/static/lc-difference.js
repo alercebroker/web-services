@@ -10,9 +10,6 @@ export class DifferenceLightCurveOptions extends LightCurveOptions {
     flux = false,
   ) {
     super(
-      detections,
-      nonDetections,
-      forcedPhotometry,
       fontColor,
       "Difference Magnitude",
     );

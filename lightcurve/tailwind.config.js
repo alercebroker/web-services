@@ -8,9 +8,15 @@ module.exports = {
     "./src/magstats_api/templates//*.{html.jinja,html,css}",
     "./src/object_api/templates//*.{html.jinja,html,css}",
     "./src/crossmatch_api/templates//*.{html.jinja,html,css}",
+    "./src/probability_api/templates//*.{html.jinja,html,css}",
+
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        roboto: ['Roboto', 'sans-serif'],
+      }
+    },
   },
   plugins: [],
   corePlugins: {

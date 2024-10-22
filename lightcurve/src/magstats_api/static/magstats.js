@@ -30,7 +30,7 @@ export function initMagstats() {
   boolColumns = 0;
   rowsToShow = 5;
   
-  const rawDb = JSON.parse(document.getElementById("magstats-data").text);
+  let rawDb = JSON.parse(document.getElementById("magstats-data").text);
   db = [];
 
   parseStatR(rawDb);
@@ -38,10 +38,6 @@ export function initMagstats() {
   numColumns = db.length + 1; // Esto  es numero de bandas + 1
   numRows = Object.keys(db[0]).length;
   
-  for (let i = 0; i < db.length; i++) {
-    numBands.push(db[i]["fid"]);
-    delete db[i]["fid"];
-  }
   
   for (let i = 0; i < numBands.length; i++) {
     realBands.push(bandMapping[numBands[i]]);
@@ -116,21 +112,22 @@ function parseStatR(dict) {
   Object.keys(dict).forEach((key) => {
     let auxJson = {};
     auxJson = {
-      stellar: dict[key]["stellar"],
-      corrected: dict[key]["corrected"],
-      ndet: dict[key]["ndet"],
-      ndubious: dict[key]["ndubious"],
-      magmean: dict[key]["magmean"],
-      magmedian: dict[key]["magmedian"],
-      magmax: dict[key]["magmax"],
-      magmin: dict[key]["magmin"],
-      magsigma: dict[key]["magsigma"],
-      maglast: dict[key]["maglast"],
-      magfirst: dict[key]["magfirst"],
-      firstmjd: dict[key]["firstmjd"],
-      lastmjd: dict[key]["lastmjd"],
-      step_id_corr: dict[key]["step_id_corr"],
+      stellar: dict[key]["stellar"] != null ? dict[key]["stellar"] : "-",
+      corrected: dict[key]["corrected"] != null ? dict[key]["corrected"] : "-",
+      ndet: dict[key]["ndet"] != null ?  dict[key]["ndet"]: "-",
+      ndubious: dict[key]["ndubious"] != null ? dict[key]["ndubious"] : "-",
+      magmean: dict[key]["magmean"] != null ? dict[key]["magmean"].toFixed(3) : "-" ,
+      magmedian: dict[key]["magmedian"] != null ? dict[key]["magmedian"].toFixed(3) : "-",
+      magmax: dict[key]["magmax"] != null ? dict[key]["magmax"].toFixed(3) : "-" ,
+      magmin: dict[key]["magmin"] != null ? dict[key]["magmin"].toFixed(3) : "-" ,
+      magsigma: dict[key]["magsigma"] != null ? dict[key]["magsigma"].toFixed(3) : "-" ,
+      maglast: dict[key]["maglast"] != null ? dict[key]["maglast"].toFixed(3) : "-" ,
+      magfirst: dict[key]["magfirst"] != null ? dict[key]["magfirst"].toFixed(3) : "-" ,
+      firstmjd: dict[key]["firstmjd"] != null ? dict[key]["firstmjd"].toFixed(3) : "-" ,
+      lastmjd: dict[key]["lastmjd"] != null ? dict[key]["lastmjd"].toFixed(3) : "-" ,
+      step_id_corr: dict[key]["step_id_corr"] != null ? dict[key]["step_id_corr"] : "-",
     };
+    numBands.push(dict[key]["fid"]);
     db.push(auxJson);
   });
 }
@@ -148,7 +145,7 @@ function createTable() {
   // Create the table element
   const table = document.createElement("table");
   table.classList =
-    "tw-overflow-auto tw-w-full tw-text-sm";
+    "tw-overflow-auto tw-w-full tw-text-sm tw-font-roboto ";
 
   // Create the table header row
   const headerRow = document.createElement("tr");
@@ -173,7 +170,7 @@ function createTable() {
   for (let i = 0; i < numRows; i++) {
     const dataRow = document.createElement("tr");
     dataRow.classList =
-      "tw-w-full tw-preflight hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20 dark:tw-border-opacity-20";
+      "tw-w-full hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20 dark:tw-border-opacity-20";
 
     for (let j = 0; j < numColumns; j++) {
       const td = document.createElement("td");
