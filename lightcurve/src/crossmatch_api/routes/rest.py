@@ -1,30 +1,22 @@
-import re
-import os
-from typing import Annotated
-from fastapi import Query
-import json
-
-#from core.services.object import get_mag_stats
-
-from core.services.object import get_object
-from fastapi import APIRouter, Request, HTTPException
-from fastapi.templating import Jinja2Templates
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
-from ..result_handler import handle_error, handle_success
+from fastapi.templating import Jinja2Templates
+
+from core.exceptions import ObjectNotFound
+from core.services.object import get_object
 from ..get_crossmatch_data import get_alerce_data
+
+
 router = APIRouter()
 templates = Jinja2Templates(
     directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True
 )
 
-@router.get("/crossmatch/{oid}", response_class=HTMLResponse)
-async def object_mag_app(
-    request: Request,
-    oid: str,
-):
-    
-    object = get_object(oid,session_factory = request.app.state.psql_session)
+@router.get("/")
+def root():
+    return "this is the crossmatch module"
 
-    cross = get_alerce_data(object.meanra, object.meandec, 50)
-  
-    return {'request': request, 'cross': cross}
+
+@router.get("/healthcheck")
+def healthcheck():
+    return "OK"
