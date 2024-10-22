@@ -31,12 +31,12 @@ async def object_mag_app(
     
     cross_keys_raw = []
     for i in range(len(cross)):
-        cross_keys_raw.append(list(cross[i].keys())[0])
+        cross_keys_raw.append(next(iter(cross[i].keys())))
 
     cross_keys = []
     for i in range(len(cross)):
-        if list(cross[i].values())[0]['distance']['value'] <= 20:
-            cross_keys.append(list(cross[i].keys())[0])
+        if next(iter(cross[i].values()))['distance']['value'] <= 20:
+            cross_keys.append(next(iter(cross[i].keys())))
 
     return templates.TemplateResponse(
       name='crossmatch.html.jinja',
