@@ -1,12 +1,11 @@
-db.createUser(
+// eslint-disable-next-line no-undef
+db.createUser({
+  user: "mongo",
+  pwd: "mongo",
+  roles: [
     {
-        user: "mongo",
-        pwd: "mongo",
-        roles: [
-            {
-                role: "dbOwner",
-                db: "database"
-            }
-        ]
-    }
-);
+      role: "dbOwner",
+      db: "database",
+    },
+  ],
+});

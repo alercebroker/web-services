@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
+from database.sql import connect as connect_sql
+from database.sql import session_wrapper
+
 from .routes import htmx, rest
-from database.mongo import connect as connect_mongo
-from database.sql import connect as connect_sql, session_wrapper
 
 app = FastAPI(openapi_url="/v2/object/openapi.json")
 app.state.mongo_db = None
@@ -25,7 +26,9 @@ app.add_middleware(
 app.include_router(rest.router)
 app.include_router(prefix="/htmx", router=htmx.router)
 
-app.mount("/static", StaticFiles(directory="src/magstats_api/static"), name="static")
+app.mount(
+    "/static", StaticFiles(directory="src/magstats_api/static"), name="static"
+)
 
 
 @app.get("/openapi.json")

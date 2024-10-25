@@ -1,5 +1,5 @@
-import traceback
 import logging
+import traceback
 
 from fastapi import HTTPException
 

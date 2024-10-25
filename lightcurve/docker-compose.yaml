@@ -28,6 +28,18 @@ services:
     environment:
       SERVICE: lightcurve_api
       API_URL: http://localhost:8001
+
+  object:
+    build:
+      context: ../
+      dockerfile: lightcurve/Dockerfile
+    ports:
+      - 8002:8000
+    env_file:
+      - variables.env
+    environment:
+      SERVICE: object_api
+      API_URL: http://localhost:8002
     
   magstats:
     build:
@@ -40,15 +52,27 @@ services:
     environment:
       SERVICE: magstats_api
       API_URL: http://localhost:8003
-      
-  object:
+
+  probability:
     build:
       context: ../
       dockerfile: lightcurve/Dockerfile
     ports:
-      - 8002:8000
+      - 8004:8000
     env_file:
       - variables.env
     environment:
-      SERVICE: object_api
-      API_URL: http://localhost:8002
+      SERVICE: probability_api
+      API_URL: http://localhost:8004      
+
+  crossmatch:
+    build:
+      context: ../
+      dockerfile: lightcurve/Dockerfile
+    ports:
+      - 8005:8000
+    env_file:
+      - variables.env
+    environment:
+      SERVICE: crossmatch_api
+      API_URL: http://localhost:8005

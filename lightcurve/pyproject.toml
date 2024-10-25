@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lightcurve"
-version = "24.8.1-rc115"
+version = "24.10.1-rc130"
 description = "Get lightcurve of objects from ZTF and ATLAS surveys"
 authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
@@ -9,6 +9,8 @@ packages = [
     { include = "config", from = "src" },
     { include = "lightcurve_api", from = "src" },
     { include = "magstats_api", from = "src" },
+    { include = "object_api", from = "src" },
+    { include = "probability_api", from = "src" },
     { include = "database", from = "src" },
 ]
 
@@ -30,8 +32,10 @@ pandas = "^2.2.1"
 cython = "^3.0.9"
 P4J = [
     { platform = "linux", url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-linux_x86_64.whl" },
-    { platform = "darwin", url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-macosx_14_0_x86_64.whl" }
+    { platform = "darwin", url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-macosx_14_0_x86_64.whl" },
 ]
+djlint = "^1.35.2"
+ruff = "^0.6.4"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -46,8 +50,8 @@ memray = "^1.8.1"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^23.9.1"
 sshtunnel = "^0.4.0"
+isort = "^5.13.2"
 
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel", "Cython==0.29.36", "numpy"]
@@ -56,7 +60,17 @@ build-backend = "poetry.core.masonry.api"
 [tool.black]
 line-length = 79
 
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[tool.ruff]
+line-length = 79
+
 [tool.poetry.scripts]
 dev = "scripts.run_dev:run"
-magstats = "scripts.run_magstats_dev:run"
+lightcurve = "scripts.run_dev:run_lightcurve"
+magstats = "scripts.run_dev:run_magstats"
+object = "scripts.run_dev:run_object"
+probability = "scripts.run_dev:run_probability"
 tunnel = "scripts.sshproxy:run_tunnel"

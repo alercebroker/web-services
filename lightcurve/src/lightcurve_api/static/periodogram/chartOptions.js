@@ -61,7 +61,6 @@ export class PeriodogramOptions {
       },
       xAxis: {
         name: "Period",
-        type: "value",
         type: "log",
         nameLocation: "center",
         scale: true,
@@ -171,4 +170,3 @@ export class PeriodogramOptions {
     this.options.dataset[1].source = best_periods;
   }
 }
-

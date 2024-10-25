@@ -1,6 +1,6 @@
 import { PeriodogramOptions } from "./periodogram/chartOptions.js";
 import { linear_to_log, log_to_linear } from "./periodogram/utils.js";
-import "./echarts.min.js";
+import * as echarts from "./echarts.min.js";
 
 export class Periodogram {
   constructor(period, detections, elements, apiUrl, refreshLightcurvePlot) {
@@ -51,8 +51,11 @@ export class Periodogram {
       legend: { textStyle: { color } },
     };
 
-    if (this.isPeriodogramBuilt) this.periodogram_plot.setOption(options);
-    else this.chartOptions = new PeriodogramOptions(color);
+    if (this.isPeriodogramBuilt){
+      this.periodogram_plot.setOption(options);
+    } else {
+      this.chartOptions = new PeriodogramOptions(color);
+    } 
   }
 
   load() {
