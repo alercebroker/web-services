@@ -1,0 +1,1 @@
+{"lightcurve": {"chart": "test1", "values": "lightcurve-helm-values", "chart-folder": "lightcurve_step"}, "magstats": {"chart": "test2", "values": "test-helm", "chart-folder": "test1"}}

@@ -34,14 +34,20 @@ async def _rollback_package_task(
     await k8s
 
 
-async def deploy_stage(packages: list, stage: str, dry_run: bool):
+async def deploy_stage(packages: dict, stage: str, dry_run: bool):
+    print(f"Hola desde deploy_stage {packages} {stage} {dry_run}")
     async with dagger.Connection(dagger_config) as client:
         async with anyio.create_task_group() as tg:
+            """
             for package in packages:
                 tg.start_soon(
                     _deploy_package_task, client, package, stage, dry_run
                 )
-
+            """
+            for key, value in packages.items():
+                if value:
+                    print(f"{key} {value}")
+    
 
 async def rollback_stage(packages: list, stage: str, dry_run: bool):
     async with dagger.Connection(dagger_config) as client:
