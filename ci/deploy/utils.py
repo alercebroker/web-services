@@ -21,8 +21,9 @@ def get_configure_aws_command(cluster_name, cluster_alias):
 
 
 def prepare_k8s_container(
-    client: dagger.Client, cluster_name: str, cluster_alias: str, package: str
+    client: dagger.Client, cluster_name: str, cluster_alias: str, package: dict
 ) -> dagger.Container:
+    print(package["packageName"])
     k8s_container = (
         client.container()
         .from_("alpine/k8s:1.27.5")
@@ -53,13 +54,12 @@ def prepare_k8s_container(
             get_values(
                 client,
                 str(pathlib.Path().cwd().parent.absolute()),
-                f"{package}-service-helm-values",
+                f"{package['values']}",
             )
         )
     )
     return k8s_container
-
-
+    
 def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
     def get_values_inner(ctr: dagger.Container):
         ctr = (
@@ -87,12 +87,13 @@ def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
 
 def helm_package(
     k8s: dagger.Container,
-    package: str,
+    package: dict,
 ):
+
     helm_package_command = [
         "helm",
         "package",
-        f"/web-services/charts/{package}/",
+        f"/web-services/charts/{package['chartFolder']}/",
     ]
     k8s = k8s.with_exec(helm_package_command)
     return k8s
@@ -100,24 +101,25 @@ def helm_package(
 
 def helm_upgrade(
     k8s: dagger.Container,
-    package: str,
+    package: dict,
     dry_run: bool,
     from_repo: bool = False,
 ):
-    version = current_chart_version(package)
+
+    version = current_chart_version(package['packageName'])
     helm_upgrade_command = [
         "helm",
         "upgrade",
         "-i",
         "-f",
         "values.yaml",
-        package,
+        package['packageName'],
     ]
     if from_repo:
-        helm_upgrade_command.append(f"web-services/{package}")
+        helm_upgrade_command.append(f"web-services/{package['packageName']}")
     else:
         helm_upgrade_command.append(
-            f"/web-services/ci/{package}-{version}.tgz"
+            f"/web-services/ci/{package['packageName']}-{version}.tgz"
         )
     if dry_run:
         helm_upgrade_command.append("--dry-run")

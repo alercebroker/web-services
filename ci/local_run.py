@@ -9,10 +9,9 @@ def run_commands(commands):
 
 # List of Linux commands to execute
 commands = [
-    "poetry run python main.py prepare",
-    "poetry run python main.py add-package lightcurve --chart-folder=lightcurve_step --values=lightcurve-helm-values --chart=test1",
-    "poetry run python main.py add-package magstats --chart-folder=test1 --values=test-helm --chart=test2",
-    "poetry run python main.py execute deploy staging --dry-run"
+    "poetry run python main.py deploy prepare",
+    "poetry run python main.py deploy add-package lightcurve --chart-folder=lightcurve_step2 --values=lightcurve-services-helm-values",
+    "poetry run python main.py deploy execute staging --dry-run"
 ]
 
 # Execute the commands

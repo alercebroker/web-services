@@ -15,13 +15,19 @@ logger = logging.getLogger(__name__)
 
 
 async def _deploy_package_task(
-    client, package: str, stage: str, dry_run: bool
+    client, package: dict, stage: str, dry_run: bool
 ):
     logger.info(f"Deploy {package} in {stage}")
-    k8s = prepare_k8s_container(client, stage, stage, package)
-    k8s = helm_package(k8s, package)
-    k8s = helm_upgrade(k8s, package, dry_run)
-    await k8s
+
+    for key in package.keys():
+        try:
+            k8s = prepare_k8s_container(client, stage, stage, package[key])
+            k8s = helm_package(k8s, package[key])
+            k8s = helm_upgrade(k8s, package[key], dry_run)
+            await k8s
+            print(k8s)
+        except Exception as e:
+            print(f"Error in task: {e}")
 
 
 async def _rollback_package_task(
@@ -35,7 +41,6 @@ async def _rollback_package_task(
 
 
 async def deploy_stage(packages: dict, stage: str, dry_run: bool):
-    print(f"Hola desde deploy_stage {packages} {stage} {dry_run}")
     async with dagger.Connection(dagger_config) as client:
         async with anyio.create_task_group() as tg:
             """
@@ -44,9 +49,10 @@ async def deploy_stage(packages: dict, stage: str, dry_run: bool):
                     _deploy_package_task, client, package, stage, dry_run
                 )
             """
-            for key, value in packages.items():
-                if value:
-                    print(f"{key} {value}")
+            tg.start_soon(
+                _deploy_package_task, client, packages, stage, dry_run
+            )
+
     
 
 async def rollback_stage(packages: list, stage: str, dry_run: bool):
