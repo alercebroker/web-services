@@ -1,1 +1,1 @@
-{"lightcurve": {"packageName": "lightcurve", "values": "lightcurve-services-helm-values", "chartFolder": "lightcurve_step2"}}
+{"lightcurve": {"packageName": "lightcurve", "values": "lightcurve-services-helm-values", "chartFolder": "lightcurve"}}

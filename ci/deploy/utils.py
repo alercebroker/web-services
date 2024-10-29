@@ -106,20 +106,20 @@ def helm_upgrade(
     from_repo: bool = False,
 ):
 
-    version = current_chart_version(package['packageName'])
+    version = current_chart_version(package['chartFolder'])
     helm_upgrade_command = [
         "helm",
         "upgrade",
         "-i",
         "-f",
         "values.yaml",
-        package['packageName'],
+        package['chartFolder'],
     ]
     if from_repo:
-        helm_upgrade_command.append(f"web-services/{package['packageName']}")
+        helm_upgrade_command.append(f"web-services/{package['chartFolder']}")
     else:
         helm_upgrade_command.append(
-            f"/web-services/ci/{package['packageName']}-{version}.tgz"
+            f"/web-services/ci/{package['chartFolder']}-{version}.tgz"
         )
     if dry_run:
         helm_upgrade_command.append("--dry-run")
