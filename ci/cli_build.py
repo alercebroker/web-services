@@ -1,11 +1,12 @@
 import typer
 import json
 import anyio
-from deploy.deploy_stage import deploy_stage
+import pprint
+from build.build_stage import build_stage
 
 app = typer.Typer()
 
-state_file_name = ".deploy_state.json"
+state_file_name = ".build_state.json"
 
 @app.command()
 def prepare():
@@ -17,8 +18,9 @@ def prepare():
 @app.command()
 def add_package(
     package: str,
+    package_folder: str,
     chart_folder: str = None,
-    values: str = None,
+    chart_name: str = None,
 ):
     file = open(state_file_name, '+r')
     packages_dict = json.load(file)
@@ -26,7 +28,8 @@ def add_package(
 
     packages_dict[package] = {
         "packageName": package,
-        "values": values if values is None else values,
+        "packageFolder": package_folder,
+        "chartName": chart_name if chart_name is None else chart_name,
         "chartFolder": chart_folder if chart_folder is None else chart_folder,
     }
 
@@ -41,13 +44,21 @@ def execute(
 ):
     file = open(state_file_name, 'r+')
     packages_dict = json.load(file)
-
-    if stage not in ["staging", "production"]:
+    print(packages_dict)
+    if stage == "staging":
+        version = "prerelease"
+    elif stage == "production":
+        version = "release"
+    else:
         raise ValueError(
             f'Invalid stage "{stage}". Valid stages are: staging, production'
         )
-    anyio.run(deploy_stage, packages_dict, stage, dry_run)
-
-
+    
+    
+    try:
+        anyio.run(build_stage, packages_dict, version, dry_run)
+    except Exception as e:
+        print(f"Error response: {e}")
+    
 if __name__ == "__main__":
     app()

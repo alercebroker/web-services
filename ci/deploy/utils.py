@@ -23,7 +23,6 @@ def get_configure_aws_command(cluster_name, cluster_alias):
 def prepare_k8s_container(
     client: dagger.Client, cluster_name: str, cluster_alias: str, package: dict
 ) -> dagger.Container:
-    print(package["packageName"])
     k8s_container = (
         client.container()
         .from_("alpine/k8s:1.27.5")

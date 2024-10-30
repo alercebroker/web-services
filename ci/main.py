@@ -2,6 +2,7 @@ import sys
 import anyio
 import typer
 import cli_deploy
+import cli_build
 from build.build_stage import build_stage
 from deploy.deploy_stage import deploy_stage, rollback_stage
 from test.test_stage import test_stage
@@ -45,6 +46,7 @@ def rollback(packages: list, stage: str = True, dry_run: bool = True) -> None:
 
 app = typer.Typer()
 app.add_typer(cli_deploy.app, name = "deploy")
+app.add_typer(cli_build.app, name = "build")
 
 if __name__ == "__main__":
     app()

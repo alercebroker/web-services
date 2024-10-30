@@ -66,41 +66,42 @@ async def git_push(dry_run: bool):
             await container
 
 
-async def update_version(package_dir: str, version: str, dry_run: bool):
+async def update_version(packages:dict, version: str, dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
         path = pathlib.Path().cwd().parent.absolute()
         # get build context directory
-        source = (
-            client.container()
-            .from_("python:3.11-slim")
-            .with_exec(["apt", "update"])
-            .with_exec(["apt", "install", "git", "-y"])
-            .with_exec(["pip", "install", "poetry"])
-            .with_directory(
-                "/web-services",
-                client.host().directory(
-                    str(path), exclude=[".venv/", "**/.venv/"]
-                ),
+        for key in packages.keys():
+            source = (
+                client.container()
+                .from_("python:3.11-slim")
+                .with_exec(["apt", "update"])
+                .with_exec(["apt", "install", "git", "-y"])
+                .with_exec(["pip", "install", "poetry"])
+                .with_directory(
+                    "/web-services",
+                    client.host().directory(
+                        str(path), exclude=[".venv/", "**/.venv/"]
+                    ),
+                )
             )
-        )
-        current_version = await (
-            source.with_workdir(f"/web-services/{package_dir}")
-            .with_exec(["poetry", "version", "--short"])
-            .stdout()
-        )
-        new_version = _get_calver(current_version, version)
-        update_version_command = ["poetry", "version", new_version]
-        if dry_run:
-            update_version_command.append("--dry-run")
+            current_version = await (
+                source.with_workdir(f"/web-services/{packages[key]['packageFolder']}")
+                .with_exec(["poetry", "version", "--short"])
+                .stdout()
+            )
+            new_version = _get_calver(current_version, version)
+            update_version_command = ["poetry", "version", new_version]
+            if dry_run:
+                update_version_command.append("--dry-run")
 
-        await (
-            source.with_workdir(f"/web-services/{package_dir}")
-            .with_exec(update_version_command)
-            .directory(".")
-            .export(str(path / package_dir))
-        )
+            await (
+                source.with_workdir(f"/web-services/{packages[key]['packageFolder']}")
+                .with_exec(update_version_command)
+                .directory(".")
+                .export(str(path / packages[key]['packageFolder']))
+            )
 
 
 async def build(package_dir: str, tags: list, dry_run: bool):
@@ -125,32 +126,32 @@ async def build(package_dir: str, tags: list, dry_run: bool):
             await _publish_container(image_ref, package_dir, tags, secret)
 
 
-async def update_chart(chart_name: str, dry_run: bool):
+async def update_chart(packages:dict, dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
     async with dagger.Connection(config) as client:
         path = pathlib.Path().cwd().parent.absolute()
-
-        script = [
-            "poetry",
-            "run",
-            "python",
-            "build/chart_script.py",
-            chart_name,
-        ]
-        if dry_run:
-            script.append("--dry-run")
-        await (
-            client.container()
-            .from_("python:3.11-slim")
-            .with_exec(["pip", "install", "poetry"])
-            .with_directory(
-                "/web-services",
-                client.host().directory(
-                    str(path), exclude=[".venv/", "**/.venv/"]
-                ),
+        for key in packages.keys():
+            script = [
+                "poetry",
+                "run",
+                "python",
+                "build/chart_script.py",
+                packages[key]['chartName'],
+            ]
+            if dry_run:
+                script.append("--dry-run")
+            await (
+                client.container()
+                .from_("python:3.11-slim")
+                .with_exec(["pip", "install", "poetry"])
+                .with_directory(
+                    "/web-services",
+                    client.host().directory(
+                        str(path), exclude=[".venv/", "**/.venv/"]
+                    ),
+                )
+                .with_workdir("/web-services/ci")
+                .with_exec(script)
+                .directory("/web-services/charts")
+                .export(str(path / "charts"))
             )
-            .with_workdir("/web-services/ci")
-            .with_exec(script)
-            .directory("/web-services/charts")
-            .export(str(path / "charts"))
-        )

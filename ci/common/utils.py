@@ -18,29 +18,30 @@ def current_chart_version(package: str, version: str = ""):
     return version
 
 
-async def get_poetry_version(package_dir: str) -> list:
+async def get_poetry_version(packages:dir, package_dir: str) -> list:
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
         path = pathlib.Path().cwd().parent.absolute()
-        # get build context directory
-        source = (
-            client.container()
-            .from_("python:3.11-slim")
-            .with_exec(["pip", "install", "poetry"])
-            .with_directory(
-                "/web-services",
-                client.host().directory(
-                    str(path), exclude=[".venv/", "**/.venv/"]
-                ),
+        for key in packages.key():
+            # get build context directory
+            source = (
+                client.container()
+                .from_("python:3.11-slim")
+                .with_exec(["pip", "install", "poetry"])
+                .with_directory(
+                    "/web-services",
+                    client.host().directory(
+                        str(path), exclude=[".venv/", "**/.venv/"]
+                    ),
+                )
             )
-        )
 
-        runner = source.with_workdir(f"/web-services/{package_dir}").with_exec(
-            ["poetry", "version", "--short"]
-        )
+            runner = source.with_workdir(f"/web-services/{packages[key]['packageFolder']}").with_exec(
+                ["poetry", "version", "--short"]
+            )
 
-        out = await runner.stdout()
+            out = await runner.stdout()
 
     return ["rc", out.strip("\n")]
 

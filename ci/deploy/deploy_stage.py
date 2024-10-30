@@ -25,7 +25,6 @@ async def _deploy_package_task(
             k8s = helm_package(k8s, package[key])
             k8s = helm_upgrade(k8s, package[key], dry_run)
             await k8s
-            print(k8s)
         except Exception as e:
             print(f"Error in task: {e}")
 
@@ -43,12 +42,6 @@ async def _rollback_package_task(
 async def deploy_stage(packages: dict, stage: str, dry_run: bool):
     async with dagger.Connection(dagger_config) as client:
         async with anyio.create_task_group() as tg:
-            """
-            for package in packages:
-                tg.start_soon(
-                    _deploy_package_task, client, package, stage, dry_run
-                )
-            """
             tg.start_soon(
                 _deploy_package_task, client, packages, stage, dry_run
             )

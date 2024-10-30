@@ -5,7 +5,6 @@ import sys
 def main(parameter_name: str):
     try:
         client = boto3.client("ssm")
-        print("hola", parameter_name)
         response = client.get_parameter(Name=parameter_name)
 
         with open("values.yaml", "w") as f:
