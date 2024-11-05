@@ -104,26 +104,30 @@ async def update_version(packages:dict, version: str, dry_run: bool):
             )
 
 
-async def build(package_dir: str, tags: list, dry_run: bool):
+async def build(packages:dict, tags: list, dry_run: bool):
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
         path = pathlib.Path().cwd().parent.absolute()
-        # get build context directory
-        context_dir = client.host().directory(
-            str(path), exclude=[".venv/", "**/.venv/"]
-        )
-        # build using Dockerfile
-        image_ref = await client.container().build(
-            context=context_dir, dockerfile=f"{package_dir}/Dockerfile"
-        )
-        print(f"Built image with tag: {tags}")
+        for key in packages.keys():
+            # get build context directory
+            context_dir = client.host().directory(
+                str(path), exclude=[".venv/", "**/.venv/"]
+            )
+            # build using Dockerfile
+            try:
+                image_ref = await client.container().build(
+                    context=context_dir, dockerfile=f"{packages[key]['package_folder']}/Dockerfile"
+                )
+            except Exception as e:
+                print(f"Error response: {e}")
+            print(f"Built image with tag: {tags}")
 
-        if not dry_run:
-            print("Publishing image")
-            # publish the resulting container to a registry
-            secret = _get_publish_secret(client)
-            await _publish_container(image_ref, package_dir, tags, secret)
+            if not dry_run:
+                print("Publishing image")
+                # publish the resulting container to a registry
+                secret = _get_publish_secret(client)
+                await _publish_container(image_ref, packages[key]['package_folder'], tags, secret)
 
 
 async def update_chart(packages:dict, dry_run: bool):

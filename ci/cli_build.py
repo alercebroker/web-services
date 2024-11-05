@@ -44,7 +44,6 @@ def execute(
 ):
     file = open(state_file_name, 'r+')
     packages_dict = json.load(file)
-    print(packages_dict)
     if stage == "staging":
         version = "prerelease"
     elif stage == "production":

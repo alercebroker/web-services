@@ -18,12 +18,12 @@ def current_chart_version(package: str, version: str = ""):
     return version
 
 
-async def get_poetry_version(packages:dir, package_dir: str) -> list:
+async def get_poetry_version(packages:dict) -> dict:
     config = dagger.Config(log_output=sys.stdout)
 
     async with dagger.Connection(config) as client:
         path = pathlib.Path().cwd().parent.absolute()
-        for key in packages.key():
+        for key in packages.keys():
             # get build context directory
             source = (
                 client.container()

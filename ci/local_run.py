@@ -11,6 +11,7 @@ def run_commands(commands):
 commands = [
     "poetry run python main.py deploy prepare",
     "poetry run python main.py deploy add-package lightcurve --chart-folder=lightcurve --values=lightcurve-service-helm-values",
+    "poetry run python main.py deploy add-package ws-magstats --chart-folder=ws-magstats --values=magstats-service-helm-values",
     "poetry run python main.py deploy execute staging --dry-run"
 ]
 
@@ -21,4 +22,4 @@ commands_build = [
 ]
 
 # Execute the commands
-run_commands(commands_build)
+run_commands(commands)

@@ -1,1 +1,1 @@
-{"lightcurve": {"packageName": "lightcurve", "values": "lightcurve-service-helm-values", "chartFolder": "lightcurve"}}
+{"lightcurve": {"packageName": "lightcurve", "values": "lightcurve-service-helm-values", "chartFolder": "lightcurve"}, "ws-magstats": {"packageName": "ws-magstats", "values": "magstats-service-helm-values", "chartFolder": "ws-magstats"}}

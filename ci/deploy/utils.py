@@ -87,8 +87,7 @@ def get_values(client: dagger.Client, path: str, ssm_parameter_name: str):
 def helm_package(
     k8s: dagger.Container,
     package: dict,
-):
-
+):  
     helm_package_command = [
         "helm",
         "package",
@@ -104,7 +103,6 @@ def helm_upgrade(
     dry_run: bool,
     from_repo: bool = False,
 ):
-
     version = current_chart_version(package['chartFolder'])
     helm_upgrade_command = [
         "helm",
@@ -112,13 +110,13 @@ def helm_upgrade(
         "-i",
         "-f",
         "values.yaml",
-        package['chartFolder'],
+        package['packageName'],
     ]
     if from_repo:
-        helm_upgrade_command.append(f"web-services/{package['chartFolder']}")
+        helm_upgrade_command.append(f"web-services/{package['packageName']}")
     else:
         helm_upgrade_command.append(
-            f"/web-services/ci/{package['chartFolder']}-{version}.tgz"
+            f"/web-services/ci/{package['packageName']}-{version}.tgz"
         )
     if dry_run:
         helm_upgrade_command.append("--dry-run")
