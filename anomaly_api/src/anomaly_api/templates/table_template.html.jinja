@@ -11,6 +11,9 @@
                     <th>ndet</th>
                     <th>firstMJD</th>
                     <th>lastMJD</th>
+                    {% if prob_class %}
+                    <th>{{prob_class}}</th>
+                    {% endif %}
                     <th>score transcient</th>
                     <th>score stochastic</th>
                     <th>score periodic</th>
@@ -18,14 +21,18 @@
             </thead>
             <tbody>
                 {% for x in data %}
-                <tr hx-get="/detalles" hx-trigger="click" hx-target="#tableContainer" hx-swap="outerHTML" class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-text-center tw-border-0 tw-border-b tw-border-solid tw-border-b-gray-500  hover:tw-bg-[#757575] hover:tw-cursor-pointer">
+                <!-- for demo propuses the onclick send you to the explorer -->
+                <tr onclick="window.open('https://alerce.online/object/{{x.oid}}' ,'_blank')" class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-text-center tw-border-0 tw-border-b tw-border-solid tw-border-b-gray-500  hover:tw-bg-[#757575] hover:tw-cursor-pointer">
                     <td>{{x.oid}}</td>
                     <td>{{x.ndet}}</td>
-                    <td>{{x.firstMJD}}</td>
-                    <td>{{x.lastMJD}}</td>
-                    <td>{{x.score_transcient}}</td>
-                    <td>{{x.score_stochastic}}</td>
-                    <td>{{x.score_periodic}}</td>
+                    <td>{{x.firstmjd}}</td>
+                    <td>{{x.lastmjd}}</td>
+                    {% if prob_class %}
+                    <td>{{x.probability}}</th>
+                    {% endif %}
+                    <td>{{x.Transient}}</td>
+                    <td>{{x.Stochastic}}</td>
+                    <td>{{x.Periodic}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

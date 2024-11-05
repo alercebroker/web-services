@@ -1,7 +1,13 @@
 import os
-from fastapi import APIRouter, Request
+from typing import Annotated
+
+from fastapi import APIRouter, Request, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+
+import pandas as pd
+from anomaly_api.database.score_queries import get_objects_by_score, get_scores_by_oid, get_scores_list
+from anomaly_api.database.alerts_queries import ProbabilityFilter, get_object_list, get_objects_by_oid
 
 router = APIRouter()
 
@@ -44,196 +50,103 @@ def grafico(request: Request):
 @router.get("/tabla", response_class="HTMLResponse")
 def grafico(
     request: Request,
-    objectId: str = "", 
+    objectId: Annotated[list[str] | None, Query()] = None,
+    min_dets: int = None,
+    max_dets: int = None,
+    classifier_name: str = None,
+    class_name: str = None,
+    min_probability: float = None,
+    max_probability: float = None,
+    score_query: Annotated[list[str] | None, Query()] = None,
     page: int = 1, 
-    per_page: int = 10):
+    per_page: int = 10
+):
+    """
+    score_quert=(category_name, min_value | None, max_value | None)
+    """
 
-    data = [
-        {
-            "oid": "oid_001",
-            "ndet": 10,
-            "firstMJD": 59100.5,
-            "lastMJD": 59130.5,
-            "score_transcient": 0.85,
-            "score_stochastic": 0.70,
-            "score_periodic": 0.65
-        },
-        {
-            "oid": "oid_002",
-            "ndet": 15,
-            "firstMJD": 59105.7,
-            "lastMJD": 59135.8,
-            "score_transcient": 0.75,
-            "score_stochastic": 0.80,
-            "score_periodic": 0.60
-        },
-        {
-            "oid": "oid_003",
-            "ndet": 8,
-            "firstMJD": 59110.0,
-            "lastMJD": 59125.9,
-            "score_transcient": 0.90,
-            "score_stochastic": 0.65,
-            "score_periodic": 0.70
-        },
-        {
-            "oid": "oid_004",
-            "ndet": 12,
-            "firstMJD": 59120.4,
-            "lastMJD": 59140.6,
-            "score_transcient": 0.88,
-            "score_stochastic": 0.72,
-            "score_periodic": 0.75
-        },
-        {
-            "oid": "oid_005",
-            "ndet": 9,
-            "firstMJD": 59122.5,
-            "lastMJD": 59132.1,
-            "score_transcient": 0.80,
-            "score_stochastic": 0.78,
-            "score_periodic": 0.68
-        },
-        {
-            "oid": "oid_006",
-            "ndet": 14,
-            "firstMJD": 59118.3,
-            "lastMJD": 59138.2,
-            "score_transcient": 0.92,
-            "score_stochastic": 0.68,
-            "score_periodic": 0.63
-        },
-        {
-            "oid": "oid_007",
-            "ndet": 11,
-            "firstMJD": 59113.6,
-            "lastMJD": 59133.4,
-            "score_transcient": 0.77,
-            "score_stochastic": 0.75,
-            "score_periodic": 0.70
-        },
-        {
-            "oid": "oid_008",
-            "ndet": 13,
-            "firstMJD": 59126.0,
-            "lastMJD": 59146.7,
-            "score_transcient": 0.85,
-            "score_stochastic": 0.70,
-            "score_periodic": 0.66
-        },
-        {
-            "oid": "oid_009",
-            "ndet": 10,
-            "firstMJD": 59115.8,
-            "lastMJD": 59136.3,
-            "score_transcient": 0.89,
-            "score_stochastic": 0.73,
-            "score_periodic": 0.65
-        },
-        {
-            "oid": "oid_010",
-            "ndet": 16,
-            "firstMJD": 59109.2,
-            "lastMJD": 59129.1,
-            "score_transcient": 0.82,
-            "score_stochastic": 0.77,
-            "score_periodic": 0.62
-        },
-        {
-            "oid": "oid_011",
-            "ndet": 7,
-            "firstMJD": 59124.4,
-            "lastMJD": 59144.5,
-            "score_transcient": 0.87,
-            "score_stochastic": 0.79,
-            "score_periodic": 0.67
-        },
-        {
-            "oid": "oid_012",
-            "ndet": 14,
-            "firstMJD": 59117.1,
-            "lastMJD": 59137.6,
-            "score_transcient": 0.83,
-            "score_stochastic": 0.74,
-            "score_periodic": 0.71
-        },
-        {
-            "oid": "oid_013",
-            "ndet": 9,
-            "firstMJD": 59116.2,
-            "lastMJD": 59136.9,
-            "score_transcient": 0.81,
-            "score_stochastic": 0.70,
-            "score_periodic": 0.64
-        },
-        {
-            "oid": "oid_014",
-            "ndet": 12,
-            "firstMJD": 59119.9,
-            "lastMJD": 59139.7,
-            "score_transcient": 0.78,
-            "score_stochastic": 0.76,
-            "score_periodic": 0.68
-        },
-        {
-            "oid": "oid_015",
-            "ndet": 10,
-            "firstMJD": 59114.3,
-            "lastMJD": 59134.2,
-            "score_transcient": 0.88,
-            "score_stochastic": 0.72,
-            "score_periodic": 0.73
-        },
-        {
-            "oid": "oid_016",
-            "ndet": 11,
-            "firstMJD": 59121.8,
-            "lastMJD": 59141.4,
-            "score_transcient": 0.86,
-            "score_stochastic": 0.78,
-            "score_periodic": 0.69
-        },
-        {
-            "oid": "oid_017",
-            "ndet": 8,
-            "firstMJD": 59111.7,
-            "lastMJD": 59131.9,
-            "score_transcient": 0.80,
-            "score_stochastic": 0.74,
-            "score_periodic": 0.70
-        },
-        {
-            "oid": "oid_018",
-            "ndet": 13,
-            "firstMJD": 59123.5,
-            "lastMJD": 59143.3,
-            "score_transcient": 0.84,
-            "score_stochastic": 0.71,
-            "score_periodic": 0.66
-        },
-        {
-            "oid": "oid_019",
-            "ndet": 9,
-            "firstMJD": 59112.9,
-            "lastMJD": 59132.6,
-            "score_transcient": 0.79,
-            "score_stochastic": 0.75,
-            "score_periodic": 0.65
-        },
-        {
-            "oid": "oid_020",
-            "ndet": 15,
-            "firstMJD": 59108.5,
-            "lastMJD": 59128.7,
-            "score_transcient": 0.82,
-            "score_stochastic": 0.77,
-            "score_periodic": 0.62
-        }
-    ]
+    print(f"Object Ids : {objectId} \n")
+    print(f" min dets = {min_dets}, max_det = {max_dets}\n")
+    print(f"Probability filter\n classifier_name = {classifier_name} class name = {class_name}")
+    print(f"min proba = {min_probability}   max probability = {max_probability}")
+
+    prob_filter = None
+    prob_class = None
+    if not (
+        classifier_name == None or
+        class_name == None or
+        (min_probability == None and max_probability == None)
+    ):
+        print("Con filtro de probability")
+        prob_filter = ProbabilityFilter(classifier_name, class_name, min_probability, max_probability)
+        prob_class = class_name
+    else:
+        print("Sin filtro de probability")
+    
+    score_query_list = None
+    if not score_query == None:
+        print(score_query)
+        score_query_list = []
+        for sq in score_query:
+            score_stmt_args = sq[1:-1].split(",")
+            if len(score_stmt_args) == 3:
+                score_query_list.append({
+                    "category": score_stmt_args[0],
+                    "min_score": None if score_stmt_args[1] == 'None' else score_stmt_args[1],
+                    "max_score": None if score_stmt_args[2] == 'None' else  score_stmt_args[2],
+                })
+            else:
+                print("Bad score query")
+        
+        print(f"Score querys\n {score_query_list}")
 
     
-    filterData = filterArr(objectId, data)
 
+
+    # ---------------------------------------------------------------
+    # idea?
+    # separar en 3 branches
+    # solos oids
+    # filtros ndets y scores
+    # filtros prob, ndet y scores
+    
+    #if prob_filter == None and score_query_list == None:
+    #    print("solo oids")
+        
+    # if prob_filter == None and not score_query_list == None:
+    #     print("query con ndet y score")
+
+    # if not (prob_filter == None and score_query_list == None): 
+    #     print("query con prob")
+    # ---------------------------------------------------------------
+        
+
+
+    
+    # pedir objectos por oid, pedir scores por oids, merge
+        
+    scores_result = get_scores_list(objectId, score_query_list)
+    scores_dicts = [s_r.model_dump() for s_r in scores_result]
+    scores_df = pd.DataFrame(scores_dicts)
+    scores_df.set_index("oid")
+    print(f"----\n scores data\n{scores_df}")
+
+    filtered_oids = scores_df["oid"].to_list()
+    print(f"-----\n filtered oifs : {filtered_oids}")
+
+
+    objects_result = get_object_list(filtered_oids, min_dets, max_dets,prob_filter)
+    objects_dicts = [o_r.model_dump() for o_r in objects_result]
+    objects_df = pd.DataFrame(objects_dicts)
+    objects_df.set_index("oid")
+    print(f"-------\nalerts_data\n{objects_df}")
+
+
+    merged_df = pd.merge(scores_df, objects_df, on="oid")
+    print(f"----\nmerged data\n{merged_df.to_dict('records')}")
+
+    filterData = merged_df.to_dict('records')
+    
     start = (page - 1) * per_page
     end = start + per_page
     total_pages = len(filterData)/per_page
@@ -245,10 +158,11 @@ def grafico(
         context={
             "request": request,
             "data": paginated_data,
+            "prob_class": prob_class,
             "page": page,
             "per_page": per_page,
             "total_pages": total_pages,
-            "total": len(data),
+            "total": len(filterData),
         },
     )
 
