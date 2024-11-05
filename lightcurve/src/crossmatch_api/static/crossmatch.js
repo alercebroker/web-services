@@ -28,6 +28,8 @@ export function initCrossmatch() {
     let customInput = document.getElementById('customInput');
     let slider = document.getElementById('slider');
 
+    customInput.innerHTML = customInput.getAttribute('value');
+
     // Event listener of the slider
     slider.addEventListener('input', function() {
         customInput.innerHTML = this.value;
