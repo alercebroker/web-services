@@ -117,7 +117,7 @@ async def build(packages:dict, tags: list, dry_run: bool):
             # build using Dockerfile
             try:
                 image_ref = await client.container().build(
-                    context=context_dir, dockerfile=f"{packages[key]['package_folder']}/Dockerfile"
+                    context=context_dir, dockerfile=f"{packages[key]['packageFolder']}/Dockerfile"
                 )
             except Exception as e:
                 print(f"Error response: {e}")
@@ -127,7 +127,7 @@ async def build(packages:dict, tags: list, dry_run: bool):
                 print("Publishing image")
                 # publish the resulting container to a registry
                 secret = _get_publish_secret(client)
-                await _publish_container(image_ref, packages[key]['package_folder'], tags, secret)
+                await _publish_container(image_ref, packages[key]['packageFolder'], tags, secret)
 
 
 async def update_chart(packages:dict, dry_run: bool):

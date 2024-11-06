@@ -113,10 +113,10 @@ def helm_upgrade(
         package['packageName'],
     ]
     if from_repo:
-        helm_upgrade_command.append(f"web-services/{package['packageName']}")
+        helm_upgrade_command.append(f"web-services/{package['chartFolder']}")
     else:
         helm_upgrade_command.append(
-            f"/web-services/ci/{package['packageName']}-{version}.tgz"
+            f"/web-services/ci/{package['chartFolder']}-{version}.tgz"
         )
     if dry_run:
         helm_upgrade_command.append("--dry-run")
@@ -127,13 +127,13 @@ def helm_upgrade(
 
 def helm_rollback(
     k8s: dagger.Container,
-    package: str,
+    package: dict,
     dry_run: bool,
 ):
     helm_rollback_command = [
         "helm",
         "rollback",
-        package,
+        package['packageName'],
         "0",
     ]
     if dry_run:
