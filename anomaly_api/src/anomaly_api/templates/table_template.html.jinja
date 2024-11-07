@@ -3,7 +3,8 @@
 
 
 <div class="tw-preflight">
-    <div id="tableContainer" class="tw-container tw-mx-auto tw-my-4 tw-flex tw-flex-col dark:tw-text-white tw-text-black">
+    <div id="tableContainer"
+        class="tw-container tw-mx-auto tw-my-4 tw-flex tw-flex-col dark:tw-text-white tw-text-black">
         <table id="anomalyTable" class="tw-table-auto tw-border-collapse">
             <thead class="tw-border-0 tw-border-b tw-border-solid tw-border-b-gray-500">
                 <tr>
@@ -22,14 +23,15 @@
             <tbody>
                 {% for x in data %}
                 <!-- for demo propuses the onclick send you to the explorer -->
-                <tr onclick="window.open('https://alerce.online/object/{{x.oid}}' ,'_blank')" class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-text-center tw-border-0 tw-border-b tw-border-solid tw-border-b-gray-500  hover:tw-bg-[#757575] hover:tw-cursor-pointer">
+                <tr onclick="window.open('https://alerce.online/object/{{x.oid}}' ,'_blank')"
+                    class="tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white tw-text-center tw-border-0 tw-border-b tw-border-solid tw-border-b-gray-500  hover:tw-bg-[#757575] hover:tw-cursor-pointer">
                     <td>{{x.oid}}</td>
                     <td>{{x.ndet}}</td>
                     <td>{{x.firstmjd}}</td>
                     <td>{{x.lastmjd}}</td>
                     {% if prob_class %}
                     <td>{{x.probability}}</th>
-                    {% endif %}
+                        {% endif %}
                     <td>{{x.Transient}}</td>
                     <td>{{x.Stochastic}}</td>
                     <td>{{x.Periodic}}</td>
@@ -38,15 +40,17 @@
             </tbody>
         </table>
         <div id="simplePagination" class="tw-self-end tw-m-4">
-            <button id="btnLeft" hx-get="/tabla?page={{page-1}}&per_page=10" hx-target="#tableContainer" hx-swap="outerHTML"><-</button>
+            <button id="btnLeft" hx-get="/tabla?page={{page-1}}&per_page=10" hx-target="#tableContainer"
+                hx-swap="outerHTML">&larr;</button>
             <span id="numberPage">{{page}}</span>
-            <button id="btnRight" hx-get="/tabla?page={{page+1}}&per_page=10" hx-target="#tableContainer" hx-swap="outerHTML">-></button>
+            <button id="btnRight" hx-get="/tabla?page={{page+1}}&per_page=10" hx-target="#tableContainer"
+                hx-swap="outerHTML">&rarr;</button>
         </div>
     </div>
 </div>
 
 <script type="module">
-
+    import {buildTableUrl} from "{{ API_URL }}/static/anomaly.js"
     const page = {{page}}
     const per_page = {{per_page}}
     const total_pages = {{total_pages}}
@@ -55,12 +59,15 @@
     const btnLeft = document.getElementById("btnLeft")
     const btnRight = document.getElementById("btnRight")
 
-    if(total_pages < 1){
+    btnLeft.setAttribute("hx-get", buildTableUrl(page - 1, per_page))
+    btnRight.setAttribute("hx-get", buildTableUrl(page + 1, per_page))
+
+    if (total_pages < 1) {
         btnLeft.disabled = true;
         btnRight.disabled = true;
-    } else if ((page - 1) <= 0){
+    } else if ((page - 1) <= 0) {
         btnLeft.disabled = true;
-    } else if((page +1) > total_pages){
+    } else if ((page + 1) > total_pages) {
         btnRight.disabled = true;
     }
 </script>

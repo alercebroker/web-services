@@ -4,10 +4,10 @@ version = "0.1.0"
 description = ""
 authors = ["Demurest <eric.apolonio@hotmail.com>"]
 readme = "README.md"
-packages = [{include = "anomaly_api", from = "src"}]
+packages = [{ include = "anomaly_api", from = "src" }]
 
 [tool.poetry.dependencies]
-python = ">=3.11,<3.12"     
+python = ">=3.11,<3.12"
 psycopg2-binary = "^2.9.6"
 sqlalchemy = { extras = ["asyncio"], version = "^2.0.19" }
 db-plugins = "^24.5.2a11"
@@ -19,6 +19,14 @@ pydantic = "^2.9.2"
 fastapi = "^0.115.4"
 uvicorn = "^0.32.0"
 
+[tool.poetry.scripts]
+anomaly = "scripts.run_anomaly:run"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.7.2"
+
+[tool.pyright]
+typeCheckingMode = "standard"
 
 [build-system]
 requires = ["poetry-core"]
