@@ -1,6 +1,80 @@
 <script id="htmx-script" src="https://unpkg.com/htmx.org@1.9.11"></script>
 <link rel="stylesheet" href="{{ API_URL }}/static/main.css">
 
+<script>
+    // Get form vals code 
+
+    function get_score_search_vals() {
+        min_dets = document.getElementById("scoreMin").value
+        max_dets = document.getElementById("scoreMax").value
+        category = document.getElementById("Category").value
+        min_score = document.getElementById("minScore").value
+        max_score = document.getElementById("maxScore").value
+        min_score_parsed = min_score == '' ? 'None' : min_score
+        max_score_parsed = max_score == '' ? 'None' : max_score
+
+        score_query = `(${category},${min_score_parsed},${max_score_parsed})`
+
+        return_dict = {
+            "min_dets": min_dets == '' ? null : min_dets,
+            "max_dets": max_dets == '' ? null : max_dets,
+            "score_query": score_query
+        }
+        console.log("return dict", return_dict)
+        return return_dict
+    }
+
+    function get_multiple_score_search_vals() {
+        min_t_s = document.getElementById("minMultipleTransientScore").value
+        max_t_s = document.getElementById("maxMultipleTransientScore").value
+        min_s_s = document.getElementById("minMultipleStochasticScore").value
+        max_s_s = document.getElementById("maxMultipleStochasticScore").value
+        min_p_s = document.getElementById("minMultiplePeriodicScore").value
+        max_p_s = document.getElementById("maxMultiplePeriodicScore").value
+
+        min_t_s_parsed = min_t_s == '' ? 'None' : min_t_s
+        max_t_s_parsed = max_t_s == '' ? 'None' : max_t_s
+        min_s_s_parsed = min_s_s == '' ? 'None' : min_s_s
+        max_s_s_parsed = max_s_s == '' ? 'None' : max_s_s
+        min_p_s_parsed = min_p_s == '' ? 'None' : min_p_s
+        max_p_s_parsed = max_p_s == '' ? 'None' : max_p_s
+
+        transient_score_query = `(Transient,${min_t_s},${max_t_s})`
+        stochastic_score_query = `(Stochastic,${min_s_s},${max_s_s})`
+        periodic_score_query = `(Periodic,${min_p_s},${max_p_s})`
+
+        return_dict = {
+            "score_query": `${transient_score_query}:${stochastic_score_query}:${periodic_score_query}`
+        }
+        console.log("return dict", return_dict)
+        return return_dict
+    }
+
+    function get_probability_score_search_vals() {
+        class_name = document.getElementById("CategoryProbability").value
+        min_prob = document.getElementById("minProbability").value
+        max_prob = document.getElementById("maxProbability").value
+        min_score = document.getElementById("minProbabilityScore").value
+        max_score = document.getElementById("maxProbabilityScore").value
+
+        min_prob_parsed = min_prob == '' ? 'None' : min_prob
+        max_prob_parsed = max_prob == '' ? 'None' : max_prob
+        min_score_parsed = min_score == '' ? 'None' : min_score
+        max_score_parsed = max_score == '' ? 'None' : max_score
+
+        score_query = `(${class_name},${min_score_parsed},${max_score_parsed})`
+
+        return_dict = {
+            "classifier_name": "lc_classifier_top",
+            "class_name": class_name,
+            "min_probability": min_prob_parsed,
+            "max_probability": max_prob_parsed,
+            "score_query": score_query
+        }
+        console.log("return dict", return_dict)
+        return return_dict
+    }
+</script>
 
 <div class="tw-preflight">
     <div id="anomaly-app" class="tw-container tw-grid tw-grid-cols-12 tw-gap-4 tw-mx-auto">
@@ -36,9 +110,9 @@
                             <label for="Category">Category:</label>
                             <select id="Category" class="tw-w-full tw-border-0 tw-border-b-2 tw-border-solid tw-border-b-gray-500 dark:tw-text-white hover:tw-border-b-gray-300">
                             <option value=""></option>
-                            <option value="transient" class="dark:tw-text-black">Transient</option>
-                            <option value="stochastic" class="dark:tw-text-black">Stochastic</option>
-                            <option value="periodic" class="dark:tw-text-black">Periodic</option>
+                            <option value="Transient" class="dark:tw-text-black">Transient</option>
+                            <option value="Stochastic" class="dark:tw-text-black">Stochastic</option>
+                            <option value="Periodic" class="dark:tw-text-black">Periodic</option>
                             </select>
                         </div>
                         <div class="tw-col-span-9 tw-justify-self-center">
@@ -58,7 +132,9 @@
                                 <img src="../static/grafico-torta-etiquetas.png" style="width:300px;height:100px;">
                             </div>
                             <div id="actions" class="tw-col-span-full tw-flex tw-justify-end tw-gap-4 tw-px-4 tw-mb-4">
-                                <button class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">search</button>
+                                <button hx-get="/tabla" hx-trigger="click" hx-swap="innerHTML" hx-target="#tableContainer" hx-vals="js:{...get_score_search_vals()}" class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">
+                                    search
+                                </button>
                                 <button class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">clear</button>
                             </div>
                         </div>
@@ -150,7 +226,9 @@
                             </div>
                         </div>
                         <div id="multipleActions" class="tw-col-span-full tw-flex tw-justify-end tw-gap-4 tw-px-4 tw-mb-4">
-                            <button class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">search</button>
+                            <button hx-get="/tabla" hx-trigger="click" hx-swap="innerHTML" hx-target="#tableContainer" hx-vals="js:{...get_multiple_score_search_vals()}" class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">
+                                search
+                            </button>
                             <button class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">clear</button>
                         </div>
                     </div>
@@ -203,7 +281,9 @@
                                 </div>
                             </div>
                             <div id="actions" class="tw-col-span-full tw-flex tw-justify-end tw-gap-4 tw-px-4 tw-mb-4">
-                                <button class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">search</button>
+                                <button hx-get="/tabla" hx-trigger="click" hx-swap="innerHTML" hx-target="#tableContainer" hx-vals="js:{...get_probability_score_search_vals()}" class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">
+                                    search
+                                </button>
                                 <button class="tw-text-xs tw-bg-blue-500 tw-border-transparent hover:tw-bg-blue-700 tw-text-white tw-font-bold tw-py-1 tw-px-2 tw-rounded tw-self-end">clear</button>
                             </div>
                         </div>

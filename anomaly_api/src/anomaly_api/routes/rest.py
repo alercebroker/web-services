@@ -65,7 +65,40 @@ def grafico(
     score_quert=(category_name, min_value | None, max_value | None)
     """
 
-    print(f"Object Ids : {objectId} \n")
+
+
+    # early exit
+    if (
+        objectId == None and
+        min_dets == None and
+        max_dets == None and
+        classifier_name == None and
+        class_name == None and
+        min_probability == None and
+        max_probability == None and
+        score_query == None
+    ):
+        return templates.TemplateResponse(
+            name="table_template.html.jinja",
+            context={
+                "request": request,
+                "data": [],
+                "prob_class": None,
+                "page": 1,
+                "per_page": 0,
+                "total_pages": 0,
+                "total": 0,
+            },
+        )
+
+    # parse objectID
+
+    objectId_list = []
+    if objectId:
+        for o_i in objectId:
+            objectId_list += o_i.split(",")
+
+    print(f"Object Ids : {objectId} parsed - {objectId_list}\n")
     print(f" min dets = {min_dets}, max_det = {max_dets}\n")
     print(f"Probability filter\n classifier_name = {classifier_name} class name = {class_name}")
     print(f"min proba = {min_probability}   max probability = {max_probability}")
@@ -83,11 +116,15 @@ def grafico(
     else:
         print("Sin filtro de probability")
     
+    score_query_parsed = []
     score_query_list = None
     if not score_query == None:
+        for sq in score_query:
+            score_query_parsed += sq.split(":")
+        
         print(score_query)
         score_query_list = []
-        for sq in score_query:
+        for sq in score_query_parsed:
             score_stmt_args = sq[1:-1].split(",")
             if len(score_stmt_args) == 3:
                 score_query_list.append({
@@ -125,7 +162,7 @@ def grafico(
     
     # pedir objectos por oid, pedir scores por oids, merge
         
-    scores_result = get_scores_list(objectId, score_query_list)
+    scores_result = get_scores_list(objectId_list, score_query_list)
     scores_dicts = [s_r.model_dump() for s_r in scores_result]
     scores_df = pd.DataFrame(scores_dicts)
     scores_df.set_index("oid")
