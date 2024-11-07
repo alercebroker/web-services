@@ -30,5 +30,13 @@ commands_rollback = [
     "poetry run python main.py rollback execute staging --dry-run"
 ]
 
+commands_test = [
+    "poetry run python main.py rollback prepare",
+    "poetry run python main.py rollback add-package lightcurve --chart-folder=lightcurve --values=lightcurve-service-helm-values",
+    "poetry run python main.py rollback add-package ws-magstats --chart-folder=lightcurve --values=magstats-service-helm-values",
+    "poetry run python main.py rollback add-package ws-object-details --chart-folder=lightcurve --values=object-details-service-helm-values",
+    "poetry run python main.py rollback execute staging --dry-run"
+]
+
 # Execute the commands
 run_commands(commands_build)

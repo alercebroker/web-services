@@ -15,6 +15,7 @@ jobs:
     with:
       packages: 'lightcurve' # comma separated list of packages
       event: ${{ github.event_name }} 
+      deploy: 'test1'
     secrets:
       ADMIN_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
       AWS_ROLE_STAGING: '${{ secrets.AWS_ROLE_STAGING }}'
