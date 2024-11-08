@@ -1,3 +1,5 @@
+import { customToolTip } from "./customToolTip.js"
+
 let probability_data_aux
 
 let data = {
@@ -57,10 +59,11 @@ let config = {
                 display: false
             },
             tooltip: {
-                enabled: true,
-                mode: 'index',
+                enabled: false,
+                mode: 'dataset',
                 position: 'nearest',
-                titleFont: {
+                external: customToolTip,
+                /*titleFont: {
                     weight: 'bold'
                 },
                 displayColors: false,
@@ -82,7 +85,7 @@ let config = {
 
                         return tooltipText
                     }
-                }
+                }*/
             }
         },
 
