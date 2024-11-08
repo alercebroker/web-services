@@ -63,29 +63,6 @@ let config = {
                 mode: 'dataset',
                 position: 'nearest',
                 external: customToolTip,
-                /*titleFont: {
-                    weight: 'bold'
-                },
-                displayColors: false,
-                callbacks: {
-                    title: function(){
-                        return "Probabilities (score)"
-                    },
-                    label: function(context){
-                        let tooltipText = [];
-                        let length = context.dataset.data.length - 1
-                        let data = context.dataset.data
-                        let labels = context.chart.data.labels
-                        
-                        tooltipText.push(`${labels[0]}: ${data[0]}`)
-
-                        for (let index = length; index >= 1; index--){
-                            tooltipText.push(`${labels[index]}: ${data[index]}`)
-                        }
-
-                        return tooltipText
-                    }
-                }*/
             }
         },
 

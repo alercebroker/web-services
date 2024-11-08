@@ -58,7 +58,6 @@ export function customToolTip(context) {
 
     let position = context.chart.canvas.getBoundingClientRect();
     let bodyFont = Chart.helpers.toFont(tooltipModel.options.bodyFont);
-    console.log(bodyFont)
 
     // Display, position, and set styles for font
     tooltipEl.style.opacity = 1;
