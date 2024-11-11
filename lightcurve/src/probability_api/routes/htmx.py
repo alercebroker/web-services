@@ -1,5 +1,4 @@
 import os
-import pprint
 from fastapi import FastAPI, Request, Query
 
 from core.services.object import get_probabilities,get_taxonomies
@@ -89,8 +88,14 @@ def classifiers_options(group_prob_by_version):
     return class_dict
 
 def format_classifiers_name(classifier_name):
-    return classifier_name.replace('_',' ').title()
+    classifier_name = classifier_name.replace('_',' ').title()
 
+    if classifier_name.find('Atat') != -1:
+        classifier_name = classifier_name.replace("Atat", "ATAT")
+    if classifier_name.find('Bhrf') != -1:
+        classifier_name = classifier_name.replace("Bhrf", "BHRF")
+
+    return classifier_name
 
 @router.get("/probabilities/{oid}", response_class=HTMLResponse)
 async def object_probability_app(
@@ -107,6 +112,7 @@ async def object_probability_app(
     group_prob_by_version = filter_data_by_higher_version(group_prob)
     
     class_options = classifiers_options(group_prob_by_version)
+
 
     return templates.TemplateResponse(
       name='prob.html.jinja',
