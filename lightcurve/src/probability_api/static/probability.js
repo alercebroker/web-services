@@ -1,5 +1,6 @@
+import { customToolTip } from "./customToolTip.js"
+
 let probability_data_aux
-let mychart
 
 let data = {
     labels: [],
@@ -58,32 +59,10 @@ let config = {
                 display: false
             },
             tooltip: {
-                enabled: true,
-                mode: 'index',
+                enabled: false,
+                mode: 'dataset',
                 position: 'nearest',
-                titleFont: {
-                    weight: 'bold'
-                },
-                displayColors: false,
-                callbacks: {
-                    title: function(){
-                        return "Probabilities (score)"
-                    },
-                    label: function(context){
-                        let tooltipText = [];
-                        let length = context.dataset.data.length - 1
-                        let data = context.dataset.data
-                        let labels = context.chart.data.labels
-                        
-                        tooltipText.push(`${labels[0]}: ${data[0]}`)
-
-                        for (let index = length; index >= 1; index--){
-                            tooltipText.push(`${labels[index]}: ${data[index]}`)
-                        }
-
-                        return tooltipText
-                    }
-                }
+                external: customToolTip,
             }
         },
 
@@ -101,10 +80,11 @@ export function init(){
 
     reverseData(raw_tax)
 
-    probability_data_aux = []
-    mychart = new Chart(ctx, config);
 
-    updateMyChart(initial_value, raw_tax, raw_group_prob_dict)
+    let mychart = new Chart(ctx, config);
+    probability_data_aux = []
+
+    updateMyChart(mychart, initial_value, raw_tax, raw_group_prob_dict)
 
     custom_select.addEventListener('click', () => {
         custom_select.querySelector('.select').classList.toggle('open');
@@ -117,7 +97,7 @@ export function init(){
                 option.classList.add('selected');
                 option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
 
-                updateMyChart(option.getAttribute("data-value"), raw_tax, raw_group_prob_dict)
+                updateMyChart(mychart, option.getAttribute("data-value"), raw_tax, raw_group_prob_dict)
             }
         })
     }
@@ -161,7 +141,7 @@ function getScale(max_value){
     return (max_value/3)
 }
 
-function updateMyChart(classifier_name, raw_tax, raw_group_prob_dict){
+function updateMyChart(mychart, classifier_name, raw_tax, raw_group_prob_dict){
     let max_value
     let classes_arr = raw_tax[classifier_name].classes
     let classifier_data = Object.values(raw_group_prob_dict[classifier_name])[0]
@@ -170,13 +150,13 @@ function updateMyChart(classifier_name, raw_tax, raw_group_prob_dict){
 
     max_value = maxValue(classifier_data)
 
-    removeDataChart()
-    updateDataChart(classes_arr, max_value)
+    removeDataChart(mychart)
+    updateDataChart(mychart, classes_arr, max_value)
 
-    isDark();
+    isDark(mychart);
 }
 
-function removeDataChart(){
+function removeDataChart(mychart){
     mychart.data.labels.length = 0;
     mychart.data.datasets.forEach((dataset) => {
         dataset.data.length = 0;
@@ -186,7 +166,7 @@ function removeDataChart(){
     mychart.update();
 }
 
-function updateDataChart(labels, max_value){
+function updateDataChart(mychart, labels, max_value){
     mychart.data.labels.push(...labels);
     mychart.data.datasets.forEach((dataset) => {
         dataset.data.push(...probability_data_aux);
@@ -198,7 +178,7 @@ function updateDataChart(labels, max_value){
     mychart.update();
 }
 
-function isDark(){
+function isDark(mychart){
     if(document.getElementById("probabilities-app").classList.contains("tw-dark")){
         mychart.config.options.scales.r.backgroundColor = 'rgba(245, 245, 245, 0.2)'
         mychart.config.options.scales.r.angleLines.color = '#F5F5F5'
@@ -208,3 +188,23 @@ function isDark(){
         mychart.update();
     }
 }
+
+export function elementReady(selector) {
+    return new Promise((resolve, reject) => {
+      const el = document.querySelector(selector);
+      if (el) {
+        resolve(el);
+      }
+  
+      new MutationObserver((mutationRecords, observer) => {
+        Array.from(document.querySelectorAll(selector)).forEach(element => {
+          resolve(element);
+          observer.disconnect();
+        });
+      })
+      .observe(document.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    });
+  }
