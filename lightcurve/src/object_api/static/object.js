@@ -2,7 +2,7 @@ import {
   changeDiscoveryValue,
   changeLastValue,
   changeRaDec,
-  julianToGregorian,
+  jdToDate,
   transformRa,
   transformDec,
   setMenuUrl,
@@ -29,8 +29,8 @@ export function init() {
 
   let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}<br>${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
 
-  let discoveryDateMGD = julianToGregorian(discoveryDateMJD);
-  let lastDetectionMGD = julianToGregorian(lastDetectionMJD);
+  let discoveryDateMGD = formatDate(discoveryDateMJD);
+  let lastDetectionMGD = formatDate(lastDetectionMJD);
 
   let raTime = transformRa(ra, 3);
   let decTime = transformDec(dec, 2);
@@ -82,6 +82,10 @@ export function elementReady(selector) {
       subtree: true
     });
   });
+}
+
+function formatDate(val){
+  return jdToDate(val)
 }
 
 let click = 0

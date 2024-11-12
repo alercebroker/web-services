@@ -1,3 +1,21 @@
+const months = [
+  "",
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+
 let binaryDisc = 0;
 let binaryLast = 0;
 let binaryRaDec = 0;
@@ -38,58 +56,24 @@ export function changeRaDec(raDec, raDecTime) {
   }
 }
 
-export function convertToDate(julian) {
-  return new Date((Number(julian) - 2440587.5) * 86400000);
-}
-
-export function julianToGregorian(mjd) {
-  if (mjd === undefined || mjd === null) {
-    return null;
+export function jdToDate(mjd) {
+  if (mjd === undefined || mjd === null || mjd === '') {
+    return null
   }
+  let date = (mjd - 40587) * 86400000
+  date = new Date(date)
 
-  const jd = Number(mjd) + 2400000;
-  const date = convertToDate(jd);
-  const year = date.getUTCFullYear();
-  let month = date.getUTCMonth();
-  const day = date.getUTCDate();
-  const hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes();
-  const seconds = date.getUTCSeconds();
-  const dayName = date.getUTCDay();
+  let year = date.getUTCFullYear();
+  let month = String(date.getUTCMonth() + 1);
+  let day = String(date.getUTCDate()).padStart(2, '0');
+  let hours = String(date.getUTCHours()).padStart(2, '0');
+  let minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  let seconds = String(date.getUTCSeconds()).padStart(2, '0');
+  let dayName = date.getUTCDay();
 
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-  return (
-    days[dayName] +
-    ", " +
-    day +
-    " " +
-    months[month] +
-    " " +
-    year +
-    " " +
-    hours +
-    ":" +
-    minutes +
-    ":" +
-    seconds +
-    " UTC"
-  );
+  return `${days[dayName]}, ${day} ${months[month]} ${year} ${hours}:${minutes}:${seconds} UTC`;
 }
+
 
 export function transformDec(dec, precision=2) {
   const sign = dec < 0 ? "-" : "+";
