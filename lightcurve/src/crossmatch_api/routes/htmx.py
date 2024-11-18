@@ -27,16 +27,21 @@ async def object_mag_app(
     
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
-    cross = get_alerce_data(object.meanra, object.meandec, 50)
-    
-    cross_keys_raw = []
-    for i in range(len(cross)):
-        cross_keys_raw.append(next(iter(cross[i].keys())))
+    cross = get_alerce_data(object.meanra, object.meandec, 20)
+
+    '''
+        get_alerce_data returns a list with several dictionaries. The dict format is one key and then a value that is another dictionary.
+        Something like:
+
+                    [{'name1': {key1: info1, key2: info2, key3: info3, ...}}, 'name2' : {key4: info4, key5: info5, key6: info7, ...}, ...]
+
+        In the next iteration we want to fill cross_keys with 'name1', 'name2', ... ,i.e., we want to fill cross_keys with the first (and only) key in every dict
+        so the approach is to take every dict in the list and then take the first key (and only) in the dictionary with next(iter(...))
+    '''
 
     cross_keys = []
     for i in range(len(cross)):
-        if next(iter(cross[i].values()))['distance']['value'] <= 20:
-            cross_keys.append(next(iter(cross[i].keys())))
+        cross_keys.append(next(iter(cross[i].keys())))
 
     return templates.TemplateResponse(
       name='crossmatch.html.jinja',
