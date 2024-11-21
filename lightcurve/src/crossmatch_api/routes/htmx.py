@@ -24,7 +24,7 @@ async def object_mag_app(
     request: Request,
     oid: str,
 ):
-    
+
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
     cross = get_alerce_data(object.meanra, object.meandec, 20)
@@ -47,6 +47,6 @@ async def object_mag_app(
       name='crossmatch.html.jinja',
       context={'request': request,
                'cross': cross,
-               'crossKeys': cross_keys
+               'crossKeys': cross_keys,
                },
   )
