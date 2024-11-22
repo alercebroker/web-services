@@ -26,10 +26,7 @@ def get_alerce_data(ra, dec, radius):
         "radius": radius
     }
     
-    try:
-        # Make the GET request
-        response = requests.get(base_url, params=params)
-        return response.json()  # Return the JSON response
+    # Make the GET request
+    response = requests.get(base_url, params=params)
+    return response.json()  # Return the JSON response
     
-    except requests.RequestException as e:
-        return f"Error: {str(e)}"

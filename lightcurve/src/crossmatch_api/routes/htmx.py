@@ -4,11 +4,12 @@ import os
 from typing import Annotated
 from fastapi import Query
 import json
+import requests
 
 from core.services.object import get_object
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, HTMLError
 from ..result_handler import handle_error, handle_success
 from ..get_crossmatch_data import get_alerce_data
 router = APIRouter()
@@ -20,14 +21,17 @@ templates.env.globals["API_URL"] = os.getenv(
 )
 
 @router.get("/crossmatch/{oid}", response_class=HTMLResponse)
-async def object_mag_app(
+async def object_xmatch_app(
     request: Request,
     oid: str,
 ):
 
     object = get_object(oid,session_factory = request.app.state.psql_session)
 
-    cross = get_alerce_data(object.meanra, object.meandec, 20)
+    try:
+        cross = get_alerce_data(object.meanra, object.meandec, 20)
+    except  requests.RequestException as e:
+        return HTMLError(e)
 
     '''
         get_alerce_data returns a list with several dictionaries. The dict format is one key and then a value that is another dictionary.
@@ -42,7 +46,7 @@ async def object_mag_app(
     cross_keys = []
     for i in range(len(cross)):
         cross_keys.append(next(iter(cross[i].keys())))
-
+    
     return templates.TemplateResponse(
       name='crossmatch.html.jinja',
       context={'request': request,
