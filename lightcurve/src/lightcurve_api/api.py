@@ -47,6 +47,9 @@ app.mount(
     name="static",
 )
 
+app.mount(
+    "/htmx", StaticFiles(directory="src/htmx"), name="htmx"
+)
 
 @app.get("/openapi.json")
 def custom_swagger_route():

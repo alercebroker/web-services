@@ -27,7 +27,9 @@ app.include_router(rest.router)
 app.include_router(prefix="/htmx", router=htmx.router)
 
 app.mount("/static", StaticFiles(directory="src/probability_api/static"), name="static")
-
+app.mount(
+    "/htmx", StaticFiles(directory="src/htmx"), name="htmx"
+)
 
 @app.get("/openapi.json")
 def custom_swagger_route():
