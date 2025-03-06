@@ -57,27 +57,27 @@ spec:
                 configMapKeyRef:
                   name: {{ include "alerts-api.fullname" . }}
                   key: log-level
-            - name: PSQL_HOST
+            - name: DB_HOST
               valueFrom:
                 secretKeyRef:
                   name: database-auth
                   key: sql-host
-            - name: PSQL_DATABASE
+            - name: DB_DATABASE
               valueFrom:
                 secretKeyRef:
                   name: database-auth
                   key: sql-database
-            - name: PSQL_USER
+            - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: database-auth
                   key: sql-user
-            - name: PSQL_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: database-auth
                   key: sql-password
-            - name: PSQL_PORT
+            - name: DB_PORT
               valueFrom:
                 secretKeyRef:
                   name: database-auth
