@@ -6,11 +6,10 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from core.exceptions import ObjectNotFound
-from core.services.object import (
-    get_count_ndet,
-    get_first_det_candid,
-    get_object,
-)
+from ..services.object_service import(
+    get_object, 
+    get_count_ndet, 
+    get_first_det_candid)
 
 router = APIRouter()
 templates = Jinja2Templates(

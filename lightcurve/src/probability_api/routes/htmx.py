@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI, Request, Query
 
-from core.services.object import get_probabilities,get_taxonomies
+from ..services.probability_service import get_probabilities,get_taxonomies
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse

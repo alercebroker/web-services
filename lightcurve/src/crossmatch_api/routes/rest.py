@@ -3,8 +3,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from core.exceptions import ObjectNotFound
-from core.services.object import get_object
-from ..get_crossmatch_data import get_alerce_data
 
 
 router = APIRouter()

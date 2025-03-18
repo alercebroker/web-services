@@ -26,7 +26,7 @@ from ..exceptions import (
     ParseError,
     SurveyIdError,
 )
-from core.repository.models.lightcurve_model import (
+from lightcurve_api.models.lightcurve_model import (
     DataReleaseDetection as DataReleaseDetectionModel,
 )
 

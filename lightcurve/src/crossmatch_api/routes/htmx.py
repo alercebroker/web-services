@@ -5,12 +5,13 @@ from typing import Annotated
 from fastapi import Query
 import json
 
-from core.services.object import get_object
+from object_api.services.object_service import get_object
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from ..result_handler import handle_error, handle_success
-from ..get_crossmatch_data import get_alerce_data
+from ..services.crossmatch_service import get_alerce_data
+
+
 router = APIRouter()
 templates = Jinja2Templates(
     directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True
