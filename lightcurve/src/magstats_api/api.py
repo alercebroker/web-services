@@ -31,7 +31,7 @@ app.mount(
 )
 
 app.mount(
-    "/htmx", StaticFiles(directory="src/htmx"), name="htmx"
+    "/htmx", StaticFiles(directory="src/core/static/htmx"), name="htmx"
 )
 
 @app.get("/openapi.json")

@@ -6,10 +6,11 @@ authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
 packages = [
     { include = "core", from = "src" },
-    { include = "config", from = "src" },
+    { include = "config", from = "src/core" },
     { include = "lightcurve_api", from = "src" },
     { include = "magstats_api", from = "src" },
     { include = "object_api", from = "src" },
+    { include = "crossmatch_api", from = "src" },
     { include = "probability_api", from = "src" },
     { include = "database", from = "src" },
 ]
@@ -73,4 +74,5 @@ lightcurve = "scripts.run_dev:run_lightcurve"
 magstats = "scripts.run_dev:run_magstats"
 object = "scripts.run_dev:run_object"
 probability = "scripts.run_dev:run_probability"
+xmatch = "scripts.run_dev:run_crossmatch"
 tunnel = "scripts.sshproxy:run_tunnel"

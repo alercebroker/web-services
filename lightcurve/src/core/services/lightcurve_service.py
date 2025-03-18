@@ -17,7 +17,7 @@ from returns.result import Failure, Result, Success
 from sqlalchemy import Row, select, text
 from sqlalchemy.orm import Session
 
-from config.config import app_config
+from core.config.config import app_config
 
 from ..exceptions import (
     AtlasNonDetectionError,

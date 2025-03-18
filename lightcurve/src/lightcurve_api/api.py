@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 from ralidator_fastapi.ralidator_fastapi import RalidatorStarlette
 
-from config.config import app_config
+from core.config.config import app_config
 from database.sql import connect as connect_sql
 from database.sql import session_wrapper
 
@@ -48,7 +48,7 @@ app.mount(
 )
 
 app.mount(
-    "/htmx", StaticFiles(directory="src/htmx"), name="htmx"
+    "/htmx", StaticFiles(directory="src/core/static/htmx"), name="htmx"
 )
 
 @app.get("/openapi.json")
