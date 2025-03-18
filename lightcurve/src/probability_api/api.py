@@ -5,8 +5,8 @@ from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from .routes import htmx, rest
-from database.mongo import connect as connect_mongo
-from database.sql import connect as connect_sql, session_wrapper
+from core.repository.connection import connect as connect_sql
+from core.repository.connection import session_wrapper
 
 app = FastAPI(openapi_url="/v2/object/openapi.json")
 app.state.mongo_db = None

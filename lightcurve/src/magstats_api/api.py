@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from database.sql import connect as connect_sql
-from database.sql import session_wrapper
+from core.repository.connection import connect as connect_sql
+from core.repository.connection import session_wrapper
 
 from .routes import htmx, rest
 
