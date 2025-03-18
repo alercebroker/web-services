@@ -26,13 +26,14 @@ from ..exceptions import (
     ParseError,
     SurveyIdError,
 )
-from ..models.lightcurve_model import (
+from core.repository.models.lightcurve_model import (
     DataReleaseDetection as DataReleaseDetectionModel,
 )
-from ..models.lightcurve_model import Detection as DetectionModel
-from ..models.lightcurve_model import Feature as FeatureModel
-from ..models.lightcurve_model import ForcedPhotometry as ForcedPhotometryModel
-from ..models.lightcurve_model import NonDetection as NonDetectionModel
+
+from core.repository.models.detection import Detection as DetectionModel
+from core.repository.models.feature import Feature as FeatureModel
+from core.repository.models.forcephotometry import ForcedPhotometry as ForcedPhotometryModel
+from core.repository.models.nondetection import NonDetection as NonDetectionModel
 
 
 def default_handle_success(result):

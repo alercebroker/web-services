@@ -14,10 +14,10 @@ from sqlalchemy import asc, func, select
 from sqlalchemy.orm import Session
 
 from ..exceptions import DatabaseError, ObjectNotFound
-from ..models.object import MagStats as MagStatsModel
-from ..models.object import ObjectReduced as ObjectModel
-from ..models.object import Probability as ProbabilityModel
-from ..models.object import Taxonomy as TaxonomyModel
+from ..repository.models.object import ObjectReduced as ObjectModel
+from ..repository.models.magstats import MagStats as MagStatsModel
+from ..repository.models.probability import Probability as ProbabilityModel
+from ..repository.models.taxonomy import Taxonomy as TaxonomyModel
 
 
 def get_object(
