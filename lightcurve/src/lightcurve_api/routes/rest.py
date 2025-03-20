@@ -5,11 +5,12 @@ from ralidator_fastapi.decorators import (
     set_permissions_decorator,
 )
 
-from core.services.lightcurve_service import (
+
+from ..services.lightcurve_service import (
     get_detections,
+    get_non_detections,
     get_forced_photometry,
     get_lightcurve,
-    get_non_detections,
 )
 
 from ..result_handler import handle_error, handle_success
