@@ -5,7 +5,6 @@ from fastapi import Query
 
 from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
-from ..result_handler import handle_error, handle_success
 
 router = APIRouter()
 templates = Jinja2Templates(
