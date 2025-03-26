@@ -1,7 +1,5 @@
-import json
-import os
 
-import requests
+import os
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -9,7 +7,9 @@ from core.exceptions import ObjectNotFound
 from ..services.object_service import(
     get_object, 
     get_count_ndet, 
-    get_first_det_candid)
+    get_first_det_candid,
+    get_tns
+    )
 
 router = APIRouter()
 templates = Jinja2Templates(
@@ -19,79 +19,6 @@ templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8001"
 )
 
-def add_tns_link(data):
-    
-    if data["object_name"] != '-': 
-       return 'https://www.wis-tns.org/object/' + data["object_name"]
-    else:
-        return 'https://www.wis-tns.org/'
-
-def check_data(data):
-    
-    if "object_data" in data and len(data["object_data"]) > 25:
-        if data["object_data"]["redshift"] == None:
-            data["object_data"]["redshift"] = '-'
-    else:
-        raise ValueError("Data does not meet the required condition")
-
-    if "object_name" in data:
-        if data["object_name"] == None:
-            data["object_name"] = '-'
-    else:
-        raise ValueError("Data does not meet the required condition")
-    
-    if "object_type" in data:
-        if data["object_type"] == None:
-            data["object_type"] = '-'
-    else:
-        raise ValueError("Data does not meet the required condition")
-    
-    return data
-
-def error_data():
-    tns_data = {
-        "object_data": {
-            "discoverer": "-",
-            "discovery_data_source": { "group_name": "-"},
-            "redshift": "-",
-        },
-        "object_name": "-",
-        "object_type": "-"
-    }
-    tns_link = 'https://www.wis-tns.org/'
-
-    return tns_data, tns_link
-
-
-def get_tns(ra, dec):
-    try:
-        headersSend = {
-        "accept": "application/json",
-        "cache-control": "no-cache",
-        "content-type": "application/json"
-        }
-        payload = {"ra": ra, "dec": dec}
-        payload_dump = json.dumps(payload)
-
-        response = requests.post("https://tns.alerce.online/search", data=payload_dump, headers=headersSend)
-
-        data = response.json()
-
-        check_data(data)
-        tns_link = add_tns_link(data)
-
-        return data, tns_link
-        
-    except requests.exceptions.RequestException as error:
-        print(f"Error: {error}")
-        tns = error_data()
-        return tns
-    
-    except ValueError as e:
-        print(f"Error: {e}")
-
-        tns = error_data()
-        return tns
 
 @router.get("/object/{oid}", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str):
