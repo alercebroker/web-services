@@ -16,8 +16,8 @@ def _convert_filters_to_sqlalchemy_statement(args):
     ) = (True, True, True, True, True, True, True, True, True)
     if args["classifier"]:
         classifier = Probability.classifier_name == args["classifier"]
-    if args["class"]:
-        class_ = Probability.class_name == args["class"]
+    if args["class_name"]:
+        class_ = Probability.class_name == args["class_name"]
     if args["ndet"]:
         ndet = DBPObject.ndet >= args["ndet"][0]
         if len(args["ndet"]) > 1:

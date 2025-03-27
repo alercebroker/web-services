@@ -17,7 +17,6 @@ def get_object_list(
         default_version: str, 
         default_ranking: int
     ):
-    try:
 
         default = use_default(filter_args)
         filters = _convert_filters_to_sqlalchemy_statement(filter_args)
@@ -54,9 +53,6 @@ def get_object_list(
         response = jsonable_encoder(response, sqlalchemy_safe=True)
         
         return response
-    except Exception as e:
-        print({str(e)})
-        raise Exception(f"Error fetching object list")
     
 
 def _convert_conesearch_args(args):
@@ -91,6 +87,6 @@ def use_default(filter_args):
         or (filter_args.get("classifier_version") is not None)
         or (filter_args.get("ranking") is not None)
         or (filter_args.get("probability") is not None)
-        or (filter_args.get("class") is not None)
+        or (filter_args.get("class_name") is not None)
         else True
     )
