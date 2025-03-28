@@ -1,8 +1,9 @@
 import traceback
+import pprint
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from ..models.info import filters_model, conesearch_model, pagination_model, order_model
-from ..services.object_service_rest import (get_object_list)
+from ..services.object_service_rest import (get_object_list, get_unique_object_rest, get_limit_values_rest)
 
 router = APIRouter()
 
@@ -50,6 +51,35 @@ def list_object(
 
 
         return JSONResponse(object_list)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An error occurred")
+    
+
+@router.get("/get_object/{id}")
+def get_object(
+    request: Request, 
+    id: str
+    ):
+    try:
+        session = request.app.state.psql_session
+        object_info = get_unique_object_rest(id, session)
+
+        return JSONResponse(object_info)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An error occurred")
+    
+
+@router.get("/limit_values")
+def get_object(
+    request: Request, 
+    ):
+    try:
+        session = request.app.state.psql_session
+        response = get_limit_values_rest(session)
+
+        return JSONResponse(response)
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred")

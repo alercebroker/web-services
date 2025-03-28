@@ -1,13 +1,12 @@
+from sqlalchemy.sql.expression import TextClause
+from sqlalchemy import select, text, func
+from sqlalchemy.orm import Session, aliased
 from contextlib import AbstractContextManager
 from typing import Callable, Union
 from db_plugins.db.sql.models import (
     Object,
     Probability
 )
-
-from sqlalchemy.sql.expression import TextClause
-from sqlalchemy import select, text
-from sqlalchemy.orm import Session, aliased
 from ...exceptions import (
     DatabaseError,
     ObjectNotFound,
@@ -33,6 +32,21 @@ def query_psql_object(
         raise
     except Exception as e:
         raise DatabaseError(e, database="PSQL")
+    
+
+def query_psql_limit_values(
+    session_factory: Callable[..., AbstractContextManager[Session]],
+):
+    """Gets min and max values for objects number of detections and detection dates"""
+    with session_factory() as session:
+        query = session.query(
+            func.min(Object.ndet).label("min_ndet"),
+            func.max(Object.ndet).label("max_ndet"),
+            func.min(Object.firstmjd).label("min_firstmjd"),
+            func.max(Object.firstmjd).label("max_firstmjd"),
+        )
+        values = query.first()
+        return values
     
 
 def query_psql_object_list(

@@ -1,10 +1,13 @@
+import pprint
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
 from typing import Callable
 from contextlib import AbstractContextManager
-from core.repository.queries.object import query_psql_object_list
+from core.repository.queries.object import query_psql_object_list, query_psql_object, query_psql_limit_values
 from .object_parser import serialize_items, _convert_filters_to_sqlalchemy_statement
-from fastapi.encoders import jsonable_encoder
+from ..models.object import ObjectReducedRest
+from ..models.info import limit_values
 
 
 def get_object_list(
@@ -53,7 +56,30 @@ def get_object_list(
         response = jsonable_encoder(response, sqlalchemy_safe=True)
         
         return response
-    
+
+
+def get_unique_object_rest(
+    oid: str,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+):
+
+    result = query_psql_object(oid, session_factory)
+    result = jsonable_encoder(result, sqlalchemy_safe=True)
+    result = ObjectReducedRest(**result).model_dump(mode="json")
+
+    return result
+
+
+def get_limit_values_rest(
+    session_factory: Callable[..., AbstractContextManager[Session]]
+):
+
+    result = query_psql_limit_values(session_factory)
+    result = jsonable_encoder(result, sqlalchemy_safe=True)
+    result = limit_values(**result).model_dump(mode="json")
+
+    return result
+
 
 def _convert_conesearch_args(args):
     try:

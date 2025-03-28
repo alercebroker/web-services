@@ -35,3 +35,8 @@ class order_model(BaseModel):
         return v
 
   
+class limit_values(BaseModel):
+    min_ndet: int
+    max_ndet: int
+    min_firstmjd: float
+    max_firstmjd: float
