@@ -1,4 +1,3 @@
-import pprint
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
@@ -75,8 +74,12 @@ def get_limit_values_rest(
 ):
 
     result = query_psql_limit_values(session_factory)
-    result = jsonable_encoder(result, sqlalchemy_safe=True)
-    result = limit_values(**result).model_dump(mode="json")
+    result = limit_values(
+        min_ndet = result[0],
+        max_ndet = result[1],
+        min_firstmjd = result[2],
+        max_firstmjd = result[3]
+    ).model_dump(mode="json")
 
     return result
 

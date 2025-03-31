@@ -1,5 +1,4 @@
 import traceback
-import pprint
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from ..models.info import filters_model, conesearch_model, pagination_model, order_model
