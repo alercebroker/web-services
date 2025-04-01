@@ -5,8 +5,8 @@ from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from .routes import htmx, rest
-from database.mongo import connect as connect_mongo
-from database.sql import connect as connect_sql, session_wrapper
+from core.repository.connection import connect as connect_sql
+from core.repository.connection import session_wrapper
 
 app = FastAPI(openapi_url="/v2/object/openapi.json")
 app.state.mongo_db = None
@@ -28,7 +28,7 @@ app.include_router(prefix="/htmx", router=htmx.router)
 
 app.mount("/static", StaticFiles(directory="src/probability_api/static"), name="static")
 app.mount(
-    "/htmx", StaticFiles(directory="src/htmx"), name="htmx"
+    "/htmx", StaticFiles(directory="src/core/static/htmx"), name="htmx"
 )
 
 @app.get("/openapi.json")

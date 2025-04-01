@@ -1,11 +1,10 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from database.sql import connect as connect_sql
-from database.sql import session_wrapper
-
+from core.repository.connection import connect as connect_sql
+from core.repository.connection import session_wrapper
 from .routes import htmx, rest
 
 app = FastAPI(openapi_url="/v2/object/openapi.json")
@@ -31,8 +30,9 @@ app.mount(
 )
 
 app.mount(
-    "/htmx", StaticFiles(directory="src/htmx"), name="htmx"
+    "/htmx", StaticFiles(directory="src/core/static/htmx"), name="htmx"
 )
+
 
 @app.get("/openapi.json")
 def custom_swagger_route():

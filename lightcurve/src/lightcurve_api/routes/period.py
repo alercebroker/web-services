@@ -1,9 +1,10 @@
 import pandas as pd
 from fastapi import APIRouter
 
-from core.compute_periodogram import PeriodogramComputer
-from core.harmonics import compute_chi_squared
-from core.models.lightcurve_model import LightcurveModel, LightcurveWithPeriod
+from ..services.compute_periodogram import PeriodogramComputer
+from ..services.harmonics import compute_chi_squared
+from ..models.lightcurve_model import LightcurveModel, LightcurveWithPeriod
+
 
 periodogram_computer = PeriodogramComputer()
 

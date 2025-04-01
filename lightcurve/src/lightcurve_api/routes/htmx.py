@@ -6,15 +6,16 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from core.services.lightcurve_service import (
-    get_data_release,
+from ..services.lightcurve_service import (
     get_detections,
-    get_forced_photometry,
     get_non_detections,
+    get_forced_photometry,
     get_period,
-    query_psql_object,
+    get_data_release,
     remove_duplicate_forced_photometry_by_pid,
 )
+
+from core.repository.queries.object import query_psql_object
 
 from ..result_handler import handle_error, handle_success
 

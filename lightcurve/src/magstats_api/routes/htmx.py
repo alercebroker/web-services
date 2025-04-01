@@ -5,7 +5,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from core.exceptions import ObjectNotFound
-from core.services.object import get_mag_stats
+from ..services.magstats_service import get_mag_stats
 
 router = APIRouter()
 templates = Jinja2Templates(
