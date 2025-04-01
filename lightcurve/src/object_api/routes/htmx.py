@@ -72,3 +72,14 @@ async def tns_info(request: Request, ra: float, dec:float):
             "discovery_data_source": tns_data["object_data"]["discovery_data_source"]
         }
     )
+
+@router.get("/form/", response_class=HTMLResponse)
+async def tns_info(request: Request):
+
+
+    return templates.TemplateResponse(
+        name="form.html.jinja",
+        context={
+            "request": request
+        }
+    )

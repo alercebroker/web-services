@@ -1,0 +1,98 @@
+<meta name="htmx-config" content='{"selfRequestsOnly": false}'>
+<script src="{{API_URL}}/htmx/htmx.min.js"></script>
+<link rel="stylesheet" href="{{API_URL}}/static/object.css">
+
+<div id="form-search" class="tw-preflight">
+    <div id="form-container" class="tw-container tw-mx-auto tw-p-4 tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 lg:tw-w-3/12 md:tw-w-3/12 sm:tw-w-full">
+        <!--Search filters-->
+        <div class="tw-w-full">Search filters</div>
+        
+        <!--general filters-->
+        <div class="tw-w-full tw-border tw-border-black">
+            <p id="general_filters">General filters</p>
+            <div id="general_filters_container" class="tw-hidden tw-grid tw-grid-cols-12 tw-gap-4">
+                
+                <div id="objectId" class="tw-col-span-12">
+                    <input type="text" placeholder="ObjectId" class="tw-w-full">
+                </div>
+                
+                <select id="classifier" class="tw-inline-block tw-col-span-6"></select>
+                
+                <select id="class" class="tw-inline-block tw-col-span-6"></select>
+                
+                <div id="probability"class="tw-col-span-12">
+                    <label>Probability ≥</label>
+                    <label> #number</label>
+                    <input type="range">
+                </div>
+
+                <div id="detections range" class="tw-col-span-12 tw-grid tw-grid-cols-12">
+                    <p class="tw-col-span-12">Number of detections range</p>
+                    <input type="number" placeholder="Min" class="tw-col-span-3">
+                    <input type="range" class="tw-col-span-6">
+                    <input type="number" placeholder="Max" class="tw-col-span-3">
+                </div>
+            </div>
+        </div>
+
+        <!--Discovery date filters-->
+        <div class="tw-w-full tw-border tw-border-black">
+            <p id="discovery_date_filters">Discovery date filters</p>
+            
+            <div id="discovery_date_filters_container" class="tw-hidden tw-grid tw-grid-cols-12 tw-gap-4">
+                <!--min mjd and date greg-->
+                <input id="min_mjd" type="number" placeholder="min mjd" class="tw-inline-block lg:tw-col-span-6 md:tw-col-span-6">
+                <input id="date_min_first" type="date" placeholder="min first greg date" class="tw-inline-block  lg:tw-col-span-6 md:tw-col-span-6">
+
+                <!--max mjd and date greg-->
+                <input id="max_mjd" type="number" placeholder="max mjd" class="tw-inline-block lg:tw-col-span-6 md:tw-col-span-6">
+                <input id="date_max_first" type="date" placeholder="max first greg date" class="tw-inline-block  lg:tw-col-span-6 md:tw-col-span-6">
+            </div>
+        </div>
+
+        <!--Conesearch filters-->
+        <div class="tw-w-full tw-border tw-border-black">
+            <p id="conesearch_filters">Conesearch</p>
+
+            <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-gap-4">
+                
+                <input id="target_name" type="text" class="tw-inline-block lg:tw-col-span-5 sm:tw-col-span-11" placeholder="targer_name">
+                
+                <div class="lg:tw-col-span-7 sm:tw-col-span-12">
+                    <button type="button">resolve</button>
+                    <label>provided by sesame</label>
+                </div>
+
+                <div class="lg:tw-col-span-6 sm:tw-col-span-12">
+                    <input type="radio" id="degrees" name="consearch_radio" value="degrees" >
+                    <label>degrees</label>
+                </div>
+
+                <div class="lg:tw-col-span-6 sm:tw-col-span-12">
+                    <input type="radio" id="HMS/DMS" name="consearch_radio" value="HMS/DMS">
+                    <label>HMS/DMS</label>
+                </div>
+
+                <input id="Ra" type="number" class="tw-inline-block lg:tw-col-span-6 sm:tw-col-span-11" placeholder="Ra (Deg)">
+                <input id="Dec" type="number" class="tw-inline-block lg:tw-col-span-6 sm:tw-col-span-11" placeholder="Dec(deg)">
+                <input id="Radius" type="number" class="tw-inline-block tw-col-span-11" placeholder="Radius(arcsec)">
+            </div>
+        </div>
+
+         <!--Buttons-->
+        <div class="tw-w-full tw-grid tw-grid-cols-12 tw-gap-4">
+            <button class="tw-bg-blue-500 tw-text-blue-50 tw-rounded lg:tw-col-span-7 md:tw-col-span-12">SEARCH</button>
+            
+            <button class="tw-bg-[#424242] tw-text-white tw-rounded lg:tw-col-span-4 md:tw-col-span-12">CLEAR</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import {init, elementReady} from "{{API_URL}}/static/formSearch.js"
+
+
+elementReady("#form-search").then((el) => {
+  init();
+});
+</script>
