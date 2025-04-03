@@ -6,7 +6,6 @@
     <div id="form-container" class="tw-container tw-mx-auto tw-p-4 tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 lg:tw-w-3/12 md:tw-w-3/12 sm:tw-w-full">
         <!--Search filters-->
         <div class="tw-w-full">Search filters</div>
-        
         <!--general filters-->
         <div class="tw-w-full tw-border tw-border-black">
             <p id="general_filters">General filters</p>
@@ -16,21 +15,33 @@
                     <input type="text" placeholder="ObjectId" class="tw-w-full">
                 </div>
                 
-                <select id="classifier" class="tw-inline-block tw-col-span-6"></select>
-                
-                <select id="class" class="tw-inline-block tw-col-span-6"></select>
+                <select 
+                id="classifier" 
+                class="tw-inline-block tw-col-span-6"
+                hx-get="{{API_URL}}/htmx/select/"
+                hx-target="#class"
+                hx-swap="outerHTML"
+                hx-vals='js:{...calculateClass()}'>
+                    <option value=""></option>
+                    {% for value in classifiers %}
+                        <option 
+                        value="{{value}}"
+                        >{{value.classifier_name}}</option>
+                    {% endfor %}
+                </select>
+                <select id="class" name="className" class="tw-inline-block tw-col-span-6"></select>
                 
                 <div id="probability"class="tw-col-span-12">
                     <label>Probability ≥</label>
-                    <label> #number</label>
-                    <input type="range">
+                    <label id="prob_number" class="tw-inline-block tw-w-[36px]"> 0.00</label>
+                    <input id="prob_range" type="range" step="0.01" max="1" value="0.00">
                 </div>
 
                 <div id="detections range" class="tw-col-span-12 tw-grid tw-grid-cols-12">
                     <p class="tw-col-span-12">Number of detections range</p>
                     <input type="number" placeholder="Min" class="tw-col-span-3">
-                    <input type="range" class="tw-col-span-6">
-                    <input type="number" placeholder="Max" class="tw-col-span-3">
+                    <input id="detections_range" type="range" step="1" min="1" max="30000" class="tw-col-span-6">
+                    <input id="max_detections" type="number" placeholder="Max" class="tw-col-span-3">
                 </div>
             </div>
         </div>
@@ -58,8 +69,8 @@
                 
                 <input id="target_name" type="text" class="tw-inline-block lg:tw-col-span-5 sm:tw-col-span-11" placeholder="targer_name">
                 
-                <div class="lg:tw-col-span-7 sm:tw-col-span-12">
-                    <button type="button">resolve</button>
+                <div class="tw-flex tw-flex-col tw-items-end lg:tw-col-span-7 sm:tw-col-span-12">
+                    <button class="tw-w-[95%] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">resolve</button>
                     <label>provided by sesame</label>
                 </div>
 
@@ -81,11 +92,19 @@
 
          <!--Buttons-->
         <div class="tw-w-full tw-grid tw-grid-cols-12 tw-gap-4">
-            <button class="tw-bg-blue-500 tw-text-blue-50 tw-rounded lg:tw-col-span-7 md:tw-col-span-12">SEARCH</button>
+            <button 
+            hx-get="{{API_URL}}/list_object"
+            hx-trigger="click"
+            hx-swap="innerHTML"
+            hx-target="#test"
+            hx-vals='js:{...searchParams()}'
+            class="tw-bg-blue-500 tw-text-blue-50 tw-rounded lg:tw-col-span-7 md:tw-col-span-12">SEARCH</button>
             
-            <button class="tw-bg-[#424242] tw-text-white tw-rounded lg:tw-col-span-4 md:tw-col-span-12">CLEAR</button>
+            <button class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded lg:tw-col-span-4 md:tw-col-span-12">CLEAR</button>
         </div>
     </div>
+
+    <div id="test">test</div>
 </div>
 
 <script type="module">
@@ -95,4 +114,10 @@ import {init, elementReady} from "{{API_URL}}/static/formSearch.js"
 elementReady("#form-search").then((el) => {
   init();
 });
+</script>
+
+<script id="form-data" type="application/json">
+{
+    "classifiers": {{classifiers | tojson}}
+}
 </script>

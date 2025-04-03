@@ -2,7 +2,12 @@ import traceback
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from ..models.info import filters_model, conesearch_model, pagination_model, order_model
-from ..services.object_service_rest import (get_object_list, get_unique_object_rest, get_limit_values_rest)
+from ..services.object_service_rest import (
+    get_object_list, 
+    get_unique_object_rest, 
+    get_limit_values_rest,
+)
+from ..services.object_service import get_classifiers, get_classifier_classes
 
 router = APIRouter()
 
@@ -77,6 +82,39 @@ def get_object(
     try:
         session = request.app.state.psql_session
         response = get_limit_values_rest(session)
+
+        return JSONResponse(response)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An error occurred")
+    
+
+@router.get("/classifier")
+def get_object(
+    request: Request, 
+    ):
+    try:
+        session = request.app.state.psql_session
+        response = get_classifiers(session)
+
+        return JSONResponse(response)
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An error occurred")
+    
+
+@router.get("/classifier/{classifier_name}/{classifier_version}/classes/")
+def get_object(
+    request: Request,
+    classifier_name: str,
+    classifier_version: str
+    ):
+    try:
+        session = request.app.state.psql_session
+        response = get_classifier_classes(
+            session_factory=session,
+            classifier_name=classifier_name, 
+            classifier_version=classifier_version)
 
         return JSONResponse(response)
     except Exception as e:

@@ -9,8 +9,11 @@ from core.exceptions import  ObjectNotFound
 from core.repository.queries.object import query_psql_object
 from core.repository.queries.non_detections import _query_count_non_detections_sql
 from core.repository.queries.detections import _query_first_det_candid_sql
+from core.repository.queries.taxonomy import _query_taxonomies_sql, _query_taxonomie_class
 
 from ..models.object import ObjectReduced as ObjectModel
+from ..models.classifiers import ClassifierModel
+
 
 def get_object(
     oid: str, 
@@ -52,6 +55,29 @@ def get_first_det_candid(
         return detection["candid"]
     except ObjectNotFound:
         raise
+
+
+def get_classifiers(
+   session_factory: Callable[..., AbstractContextManager[Session]]     
+):
+    classifier_dict = []
+    result = _query_taxonomies_sql(session_factory)
+    result_without_tuples = [row[0] for row in result]
+
+    for classifier in result_without_tuples:
+        classifier_dict.append(ClassifierModel(**classifier.__dict__).model_dump(mode="json"))
+
+    return classifier_dict
+
+
+def get_classifier_classes(
+    session_factory: Callable[..., AbstractContextManager[Session]],
+    classifier_name: str,
+    classifier_version: str
+): 
+    result = _query_taxonomie_class(session_factory, classifier_name, classifier_version)
+    
+    return result
 
 
 def add_tns_link(data):

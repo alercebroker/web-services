@@ -1,4 +1,4 @@
-
+import traceback
 import os
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
@@ -8,7 +8,9 @@ from ..services.object_service import(
     get_object, 
     get_count_ndet, 
     get_first_det_candid,
-    get_tns
+    get_tns,
+    get_classifiers,
+    get_classifier_classes
     )
 
 router = APIRouter()
@@ -76,10 +78,43 @@ async def tns_info(request: Request, ra: float, dec:float):
 @router.get("/form/", response_class=HTMLResponse)
 async def tns_info(request: Request):
 
+    try:
+        session = request.app.state.psql_session
+        classifiers = get_classifiers(session)
 
-    return templates.TemplateResponse(
+        return templates.TemplateResponse(
         name="form.html.jinja",
         context={
-            "request": request
+            "request": request,
+            "classifiers": classifiers
         }
     )
+
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An error occurred")
+    
+
+
+@router.get("/select/", response_class=HTMLResponse)
+async def tns_info(
+    request: Request,
+    classifier_name: str,
+    classifier_version: str
+    ):
+
+    try:
+        session = request.app.state.psql_session
+        classes = get_classifier_classes(session, classifier_name, classifier_version)
+
+        return templates.TemplateResponse(
+        name="dependentSelect.html.jinja",
+        context={
+            "request": request,
+            "classes": classes
+        }
+    )
+
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"An error occurred")

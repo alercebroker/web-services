@@ -1,12 +1,19 @@
+import pprint
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
 from typing import Callable
 from contextlib import AbstractContextManager
-from core.repository.queries.object import query_psql_object_list, query_psql_object, query_psql_limit_values
+from core.repository.queries.object import (
+    query_psql_object_list, 
+    query_psql_object, 
+    query_psql_limit_values
+)
+from core.repository.queries.taxonomy import _query_taxonomie_class
 from .object_parser import serialize_items, _convert_filters_to_sqlalchemy_statement
 from ..models.object import ObjectReducedRest
 from ..models.info import limit_values
+from ..models.classifiers import ClassifierModel
 
 
 def get_object_list(

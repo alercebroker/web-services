@@ -1,0 +1,8 @@
+<select id="class" name="className" class="tw-inline-block tw-col-span-6">
+    <option value=""></option>
+    {% for value in classes %}
+        <option 
+        value="{{value.name}}"
+        >{{value.name}}</option>
+    {% endfor %}
+</select>
