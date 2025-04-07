@@ -14,18 +14,27 @@ from .object_parser import serialize_items, _convert_filters_to_sqlalchemy_state
 from ..models.object import ObjectReducedRest
 from ..models.info import limit_values
 from ..models.classifiers import ClassifierModel
+from ..models.info import filters_model, conesearch_model, pagination_model, order_model
 
 
 def get_object_list(
         session_factory: Callable[..., AbstractContextManager[Session]],
-        filter_args: dict, 
-        pagination_args: dict, 
-        order_args: dict, 
-        conesearch_args: dict, 
+        filter_args: filters_model, 
+        pagination_args: pagination_model, 
+        order_args: order_model, 
+        conesearch_args: conesearch_model, 
         default_classifier: str, 
         default_version: str, 
         default_ranking: int
     ):
+
+        filter_args = filter_args.dict()
+        pagination_args = pagination_args.dict()
+        order_args = order_args.dict()
+        conesearch_args = conesearch_args.dict()
+
+        pprint.pprint(filter_args)
+        pprint.pprint(order_args)
 
         default = use_default(filter_args)
         filters = _convert_filters_to_sqlalchemy_statement(filter_args)

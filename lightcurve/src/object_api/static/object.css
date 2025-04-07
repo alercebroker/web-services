@@ -144,6 +144,26 @@
   grid-column: span 6 / span 6;
 }
 
+.tw-preflight :is(.tw-col-start-9) {
+  grid-column-start: 9;
+}
+
+.tw-preflight :is(.tw-col-start-3) {
+  grid-column-start: 3;
+}
+
+.tw-preflight :is(.tw-col-end-11) {
+  grid-column-end: 11;
+}
+
+.tw-preflight :is(.tw-col-end-3) {
+  grid-column-end: 3;
+}
+
+.tw-preflight :is(.tw-col-end-2) {
+  grid-column-end: 2;
+}
+
 .tw-preflight :is(.tw-float-right) {
   float: right;
 }
@@ -353,10 +373,6 @@
 
 .tw-preflight :is(.tw-w-full) {
   width: 100%;
-}
-
-.tw-preflight :is(.tw-w-\[6px\]) {
-  width: 6px;
 }
 
 .tw-preflight :is(.tw-min-w-full) {

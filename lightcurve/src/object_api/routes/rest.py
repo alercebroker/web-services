@@ -33,11 +33,6 @@ def list_object(
     try:
         session = request.app.state.psql_session
 
-        filter_args = filter_args.dict()
-        conesearch_args = conesearch_args.dict()
-        pagination_args = pagination_args.dict()
-        order_args = order_args.dict()
-
         default_classifier = "lc_classifier"
         default_version =  "hierarchical_random_forest_1.1.0"
         default_ranking =  1

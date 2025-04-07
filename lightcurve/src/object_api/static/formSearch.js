@@ -8,7 +8,8 @@ export function init(){
   let discovery_date_filters = document.getElementById("discovery_date_filters")
   let conesearch_filters = document.getElementById("conesearch_filters")
   let prob_range = document.getElementById("prob_range")
-  let detections_range = document.getElementById("detections_range")
+  let min_detections = document.getElementById("min_detections")
+  let max_detections = document.getElementById("max_detections")
 
   general_filters.addEventListener("click", () =>{
       item_name = general_filters.id + "_container"
@@ -30,8 +31,8 @@ export function init(){
     document.getElementById("prob_number").innerHTML = prob_range.value
   })
 
-  detections_range.addEventListener("input", () =>{
-    document.getElementById("max_detections").value = detections_range.value
+  min_detections.addEventListener("change", () =>{
+    max_detections.removeAttribute("disabled")
   })
 
   window.calculateClass = calculateClass
@@ -87,41 +88,54 @@ function calculateClass(){
 
 function searchParams(){
   let classifier_select = calculateClass()
+  let ndet_arr = []
+  let detections = ["min_detections", "max_detections"]
+  let probValue = parseFloat(document.getElementById("prob_range").value);
 
-  let filter_args_object = {
-    oid: "",
+  for(let detection of detections){
+    if(document.getElementById(detection).value != ""){
+      ndet_arr.push(document.getElementById(detection).value)
+    }
+  }
+
+
+  let response = {
     classifier: classifier_select.classifier_name,
-    classifier_version: classifier_select.classifier_version,
     class_name: document.getElementById("class").value,
-    ranking: "",
-    ndet: document.getElementById("detections_range").value,
-    probability: document.getElementById("prob_range").value,
-    firstmjd: "",
-    lastmjd: "",
-  }
-
-  let conesearch_args_object = {
-    dec: "",
-    ra: "",
-    radius: "",
-  }
-
-  let pagination_args_object = {
+    probability: probValue > 0 ? probValue : null,
+    ndet: ndet_arr.length > 0 ? ndet_arr : null,
     page: 1,
     page_size: 20,
     count: false,
   }
 
-  let order_args_object = {
-    order_by: "",
-    order_mode: ""
+  for (let key in response) {
+    if (response[key] === null) {
+      delete response[key];
+    }
   }
+  
 
-  console.log(filter_args_object)
-  return {
-    filter_args: JSON.stringify(filter_args_object),
-    conesearch_args: JSON.stringify(conesearch_args_object),
-    pagination_args: JSON.stringify(pagination_args_object),
-    order_args: JSON.stringify(order_args_object),
-  }
+
+  return response
+
+  // return {
+  //   oid: "",
+  //   classifier: classifier_select.classifier_name,
+  //   classifier_version: classifier_select.classifier_version,
+  //   class_name: document.getElementById("class").value,
+  //   ranking: null,
+  //   ndet: document.getElementById("detections_range").value,
+  //   probability: document.getElementById("prob_range").value,
+  //   firstmjd: null,
+  //   lastmjd: null,
+  //   dec: null,
+  //   ra: null,
+  //   radius: null,
+  //   page: 1,
+  //   page_size: 10,
+  //   count: false,
+  //   order_by: null,
+  //   order_mode: null
+  // }
 }

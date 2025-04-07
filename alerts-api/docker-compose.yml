@@ -10,8 +10,10 @@ services:
       - .env
     environment:
       - APP_WORKERS=1
-      - APP_THREADS=1
+      - THREADS=1
       - prometheus_multiproc_dir=/tmp
-      - LOG_LEVEL=INFO
+      - LOG_LEVEL=DEBUG
+      - PYTHONUNBUFFERED=1
+
     ports:
     - 5000:5000
