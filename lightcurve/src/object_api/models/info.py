@@ -1,14 +1,16 @@
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, validator
+from typing import Annotated
+from fastapi import Query
 
 class filters_model(BaseModel):
-    oid: str | None = None
+    oid: Annotated[list[str] | None, Query()] = None
     classifier: str | None = None
     classifier_version: str | None = None
     class_name: str | None = None
     ranking: int | None = None
     ndet: list[int] | None = None
     probability: float | None = None
-    firstmjd: float | None = None
+    firstmjd: list[float] | None = None
     lastmjd: float | None = None
     
 

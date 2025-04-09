@@ -1,11 +1,9 @@
 import traceback
 import os
 from typing import Annotated
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
-from pydantic import Field
-from fastapi import Query
 from core.exceptions import ObjectNotFound
 from ..models.info import filters_model, conesearch_model, pagination_model, order_model
 from ..services.object_service import(
@@ -65,13 +63,13 @@ async def object_info_app(request: Request, oid: str):
 def list_object(
     request: Request,
     class_name: str,
-    oid: str | None = None,
+    oid: Annotated[list[str] | None, Query()] = None,
     classifier: str | None = None,
     classifier_version: str | None = None,
     ranking: int | None = 1,
-    ndet: Annotated[list[str] | None, Query()] = None,
+    ndet: Annotated[list[int] | None, Query()] = None,
     probability: float | None = None,
-    firstmjd: float | None = None,
+    firstmjd: Annotated[list[float] | None, Query()] = None,
     lastmjd: float | None = None,
     dec: float | None = None,
     ra: float | None = None,

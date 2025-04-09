@@ -1,5 +1,5 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
-<script src="{{API_URL}}/htmx/htmx.min.js"></script>
+<script src="{{API_URL}}/core_static/htmx/htmx.min.js"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
 <div id="form-search" class="tw-preflight">
@@ -11,8 +11,8 @@
             <p id="general_filters">General filters</p>
             <div id="general_filters_container" class="tw-hidden tw-grid tw-grid-cols-12 tw-gap-4">
                 
-                <div id="objectId" class="tw-col-span-12">
-                    <input type="text" placeholder="ObjectId" class="tw-w-full">
+                <div class="tw-col-span-12">
+                    <input id="objectId" type="text" placeholder="ObjectId" class="tw-w-full">
                 </div>
                 
                 <select 
@@ -51,12 +51,27 @@
             
             <div id="discovery_date_filters_container" class="tw-hidden tw-grid tw-grid-cols-12 tw-gap-4">
                 <!--min mjd and date greg-->
-                <input id="min_mjd" type="number" placeholder="min mjd" class="tw-inline-block lg:tw-col-span-6 md:tw-col-span-6">
-                <input id="date_min_first" type="date" placeholder="min first greg date" class="tw-inline-block  lg:tw-col-span-6 md:tw-col-span-6">
+                <input id="min_mjd" type="number" placeholder="min mjd" min="0" step="0.01" size="text" class="tw-inline-block lg:tw-col-span-6 md:tw-col-span-6">
+                <div class="tw-container tw-col-span-6">
+                    <p id="min_date_time_text" class="">min first greg date</p>
+                    <div id="min_date_time_text_container" class="tw-container tw-flex tw-flex-col tw-hidden">
+                        <input id="date_min" type="date" class="tw-w-full">
+                        <input id="time_min" type="time" class=" tw-w-full">
+                        <button id="save_date" class="tw-bg-blue-500 tw-text-blue-50 tw-rounded tw-w-1/4 tw-self-end">Save</button>
+                    </div>
+                </div>
+
 
                 <!--max mjd and date greg-->
                 <input id="max_mjd" type="number" placeholder="max mjd" class="tw-inline-block lg:tw-col-span-6 md:tw-col-span-6">
-                <input id="date_max_first" type="date" placeholder="max first greg date" class="tw-inline-block  lg:tw-col-span-6 md:tw-col-span-6">
+                <div class="tw-container tw-col-span-6">
+                    <p id="max_date_time_text" class="">max first greg date</p>
+                    <div id="max_date_time_text_container" class="tw-container tw-flex tw-flex-col tw-hidden">
+                        <input id="date_max" type="date" class="tw-w-full">
+                        <input id="time_max" type="time" class=" tw-w-full">
+                        <button id="save_date_max" class="tw-bg-blue-500 tw-text-blue-50 tw-rounded tw-w-1/4 tw-self-end">Save</button>
+                     </div>
+                </div>
             </div>
         </div>
 

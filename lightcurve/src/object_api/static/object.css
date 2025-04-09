@@ -148,20 +148,12 @@
   grid-column-start: 9;
 }
 
-.tw-preflight :is(.tw-col-start-3) {
-  grid-column-start: 3;
-}
-
 .tw-preflight :is(.tw-col-end-11) {
   grid-column-end: 11;
 }
 
 .tw-preflight :is(.tw-col-end-3) {
   grid-column-end: 3;
-}
-
-.tw-preflight :is(.tw-col-end-2) {
-  grid-column-end: 2;
 }
 
 .tw-preflight :is(.tw-float-right) {
@@ -375,6 +367,10 @@
   width: 100%;
 }
 
+.tw-preflight :is(.tw-w-1\/4) {
+  width: 25%;
+}
+
 .tw-preflight :is(.tw-min-w-full) {
   min-width: 100%;
 }
@@ -518,6 +514,10 @@
 
 .tw-preflight :is(.tw-place-self-center) {
   place-self: center;
+}
+
+.tw-preflight :is(.tw-self-end) {
+  align-self: flex-end;
 }
 
 .tw-preflight :is(.tw-overflow-auto) {
@@ -1055,6 +1055,7 @@
   margin: 0;
 }
 
+/*
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -1064,6 +1065,7 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+*/
 
 /*
 1. Add the correct height in Firefox.

@@ -30,7 +30,7 @@ app.mount(
 )
 
 app.mount(
-    "/htmx", StaticFiles(directory="src/core/static/htmx"), name="htmx"
+    "/core_static", StaticFiles(directory="src/core/static"), name="core_static"
 )
 
 
