@@ -6,6 +6,7 @@
 
 /*loader*/
 
+/* inicio custom components*/
 @layer components{
   .htmx-indicator{
     @apply tw-opacity-0;
@@ -18,8 +19,42 @@
   .htmx-request.htmx-indicator{
     @apply tw-opacity-100;
   }
+
+  .select-wrapper{
+    @apply tw-relative tw-w-full tw-select-none tw-break-all;
+  }
+
+  .select{
+    @apply tw-relative tw-flex tw-flex-col dark:tw-border-b-white hover:tw-bg-[#b2b2b2]
+  }
+  .select__trigger{
+    @apply tw-relative tw-flex tw-items-center tw-justify-between tw-px-4 tw-leading-9 tw-bg-transparent tw-cursor-pointer dark:tw-text-[#EEEEEE]
+  }
+
+  .custom-options{
+    @apply tw-absolute tw-block tw-top-[100%] tw-left-0 tw-right-0 tw-bg-[#1e1e1e] tw-transition-all tw-pointer-events-none tw-z-[2] tw-opacity-0 tw-invisible dark:tw-bg-[#1e1e1e]
+  }
+
+  .select.open .custom-options{
+    @apply tw-opacity-100 tw-visible tw-pointer-events-auto
+  }
+
+  .custom-option{
+    @apply tw-relative tw-block tw-px-4 tw-leading-9 tw-text-[#EEEEEE] tw-cursor-pointer tw-transition-all dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]
+  }
+
+  .custom-option.selected{
+    @apply tw-text-[#1976D2] tw-bg-[#1976D2]/30
+  }
+
+  /*
+  .obj-input{
+    @apply tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white
+  }*/
+
 }
 
+/* fin custom components*/
 .disabled\:bg-transparent {
   background-color: transparent;
 }

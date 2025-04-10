@@ -3,16 +3,16 @@
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
 <div id="form-search" class="tw-preflight">
-    <div id="form-container" class="tw-container tw-mx-auto tw-p-4 tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 lg:tw-w-3/12 md:tw-w-3/12 sm:tw-w-full">
+    <div id="form-container" class="tw-container tw-mx-auto tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 lg:tw-w-3/12 md:tw-w-3/12 sm:tw-w-full">
         <!--Search filters-->
         <div class="tw-w-full">Search filters</div>
         <!--general filters-->
-        <div class="tw-w-full tw-border tw-border-black">
-            <p id="general_filters">General filters</p>
-            <div id="general_filters_container" class="tw-hidden tw-grid tw-grid-cols-12 tw-gap-4">
+        <div class="tw-w-full">
+            <p id="general_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">General filters</p>
+            <div id="general_filters_container" class="tw-hidden tw-m-4 tw-grid tw-grid-cols-12 tw-gap-4">
                 
                 <div class="tw-col-span-12">
-                    <input id="objectId" type="text" placeholder="ObjectId" class="tw-w-full">
+                    <input id="objectId" type="text" placeholder="ObjectId" class="tw-w-full tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">
                 </div>
                 
                 <select 
@@ -34,41 +34,50 @@
                 <div id="probability"class="tw-col-span-12">
                     <label>Probability ≥</label>
                     <label id="prob_number" class="tw-inline-block tw-w-[36px]"> 0.00</label>
-                    <input id="prob_range" type="range" step="0.01" max="1" value="0.00">
+                    <input id="prob_range" class="" type="range" step="0.01" max="1" value="0.00">
                 </div>
 
                 <div id="detections range" class="tw-col-span-12 tw-grid tw-grid-cols-12">
                     <p class="tw-col-span-12">Number of detections range</p>
-                    <input id="min_detections" type="number" placeholder="Min" class="tw-col-start-0 tw-col-end-3 tw-col-span-3">
-                    <input id="max_detections" type="number" placeholder="Max" class="tw-col-start-9 tw-col-end-11 tw-col-span-3" disabled>
+                    <div class="tw-col-span-12 tw-flex tw-justify-between">
+                        <input id="min_detections" type="number" placeholder="Min" class="tw-w-1/3 tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">
+                        <input id="max_detections" type="number" placeholder="Max" class="tw-w-1/3 tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white" disabled>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!--Discovery date filters-->
-        <div class="tw-w-full tw-border tw-border-black">
-            <p id="discovery_date_filters">Discovery date filters</p>
+        <div class="tw-w-full">
+            <p id="discovery_date_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">Discovery date filters</p>
             
-            <div id="discovery_date_filters_container" class="tw-hidden tw-grid tw-grid-cols-12 tw-gap-4">
+            <div id="discovery_date_filters_container" class="tw-hidden tw-m-4 tw-grid tw-grid-cols-12 tw-gap-4">
                 <!--min mjd and date greg-->
-                <input id="min_mjd" type="number" placeholder="min mjd" min="0" step="0.01" size="text" class="tw-inline-block lg:tw-col-span-6 md:tw-col-span-6">
-                <div class="tw-container tw-col-span-6">
-                    <p id="min_date_time_text" class="">min first greg date</p>
-                    <div id="min_date_time_text_container" class="tw-container tw-flex tw-flex-col tw-hidden">
-                        <input id="date_min" type="date" class="tw-w-full">
-                        <input id="time_min" type="time" class=" tw-w-full">
-                        <button id="save_date" class="tw-bg-blue-500 tw-text-blue-50 tw-rounded tw-w-1/4 tw-self-end">Save</button>
+                <input id="min_mjd" type="number" placeholder="min mjd" min="0" step="0.01" size="text" class="tw-inline-block tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white lg:tw-col-span-6 md:tw-col-span-6">
+
+                <div class="tw-container tw-col-span-6 tw-relative tw-z-[10]">
+                    <p id="min_date_time_text" class="tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">min first greg date</p>
+
+                    <div id="min_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
+                        <input id="date_min" type="date" style="color-scheme: dark;" class="tw-w-[90%]  tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">
+
+                        <input id="time_min" type="time" style="color-scheme: dark;" class="tw-w-[90%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">
+
+                        <div class="tw-container tw-flex tw-justify-end tw-gap-4">
+                            <button id="save_date" class="tw-bg-blue-500 tw-text-blue-50 tw-rounded tw-w-[30%] tw-self-end">Save</button>
+                        </div>
                     </div>
                 </div>
 
 
                 <!--max mjd and date greg-->
-                <input id="max_mjd" type="number" placeholder="max mjd" class="tw-inline-block lg:tw-col-span-6 md:tw-col-span-6">
-                <div class="tw-container tw-col-span-6">
-                    <p id="max_date_time_text" class="">max first greg date</p>
-                    <div id="max_date_time_text_container" class="tw-container tw-flex tw-flex-col tw-hidden">
-                        <input id="date_max" type="date" class="tw-w-full">
-                        <input id="time_max" type="time" class=" tw-w-full">
+                <input id="max_mjd" type="number" placeholder="max mjd" class="tw-inline-block tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white lg:tw-col-span-6 md:tw-col-span-6">
+                <div class="tw-container tw-col-span-6 tw-relative">
+                    <p id="max_date_time_text" class="tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">max first greg date</p>
+
+                    <div id="max_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
+                        <input id="date_max" type="date" style="color-scheme: dark;" class="tw-w-[90%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">
+                        <input id="time_max" type="time" style="color-scheme: dark;" class="tw-w-[90%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">
                         <button id="save_date_max" class="tw-bg-blue-500 tw-text-blue-50 tw-rounded tw-w-1/4 tw-self-end">Save</button>
                      </div>
                 </div>
@@ -76,21 +85,24 @@
         </div>
 
         <!--Conesearch filters-->
-        <div class="tw-w-full tw-border tw-border-black">
-            <p id="conesearch_filters">Conesearch</p>
+        <div class="tw-w-full">
+            <p id="conesearch_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">Conesearch</p>
 
-            <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-gap-4">
+            <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-my-4 tw-mx-auto tw-gap-4">
                 
-                <input id="target_name" type="text" class="tw-inline-block lg:tw-col-span-5 sm:tw-col-span-11" placeholder="targer_name">
+                <div class="lg:tw-col-span-5 sm:tw-col-span-11">
+                    <input id="target_name" type="text" class="tw-w-full tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white" placeholder="target name">
                 
-                <div class="tw-flex tw-flex-col tw-items-end lg:tw-col-span-7 sm:tw-col-span-12">
+                </div>
+
+                <div class="tw-px-4 tw-flex tw-flex-col tw-items-end lg:tw-col-span-7 sm:tw-col-span-12">
                     <button class="tw-w-[95%] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">resolve</button>
-                    <label>provided by sesame</label>
+                    <label class="tw-text-sm">provided by sesame</label>
                 </div>
 
                 <div class="lg:tw-col-span-6 sm:tw-col-span-12">
                     <input type="radio" id="degrees" name="consearch_radio" value="degrees" >
-                    <label>degrees</label>
+                    <label>Degrees</label>
                 </div>
 
                 <div class="lg:tw-col-span-6 sm:tw-col-span-12">
@@ -98,9 +110,9 @@
                     <label>HMS/DMS</label>
                 </div>
 
-                <input id="Ra" type="number" class="tw-inline-block lg:tw-col-span-6 sm:tw-col-span-11" placeholder="Ra (Deg)">
-                <input id="Dec" type="number" class="tw-inline-block lg:tw-col-span-6 sm:tw-col-span-11" placeholder="Dec(deg)">
-                <input id="Radius" type="number" class="tw-inline-block tw-col-span-11" placeholder="Radius(arcsec)">
+                <input id="Ra" type="number" class="tw-inline-block tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white lg:tw-col-span-6 sm:tw-col-span-11" placeholder="Ra (Deg)">
+                <input id="Dec" type="number" class="tw-inline-block tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white lg:tw-col-span-6 sm:tw-col-span-11" placeholder="Dec(deg)">
+                <input id="Radius" type="number" class="tw-inline-block tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white tw-col-span-12" placeholder="Radius(arcsec)">
             </div>
         </div>
 

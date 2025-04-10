@@ -12,6 +12,9 @@ export function init(){
   let minDatetime = ""
   let dateUTC = ""
 
+
+  let custom_select = document.querySelector(".select-wrapper")
+  let initial_value = document.querySelector('.custom-option.selected').getAttribute("data-value")
   let general_filters = document.getElementById("general_filters")
   let discovery_date_filters = document.getElementById("discovery_date_filters")
   let conesearch_filters = document.getElementById("conesearch_filters")
@@ -29,8 +32,26 @@ export function init(){
   let max_date_time_text = document.getElementById("max_date_time_text")
   let date_max = document.getElementById("date_max")
   let time_max = document.getElementById("time_max")
-  let save_data_max = document.getElementById("save_data_max")
+  let save_date_max = document.getElementById("save_date_max")
 
+
+  custom_select.addEventListener('click', () => {
+    custom_select.querySelector('.select').classList.toggle('open');
+  })
+
+
+  for(const option of document.querySelectorAll(".custom-option")){
+    option.addEventListener('click', () => {
+        if(!option.classList.contains('selected')){
+            option.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+            option.classList.add('selected');
+            option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
+            option.closest('.select').querySelector('.select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
+
+            document.getElementById("classifier").dispatchEvent(new Event("change"))
+        }
+    })
+}
 
   general_filters.addEventListener("click", () =>{
     item_name = general_filters.id + "_container"
@@ -63,6 +84,8 @@ export function init(){
 
     min_mjd.value = dateUTC
     min_mjd.dispatchEvent(new Event('input'))
+
+    display("min_date_time_text_container")
   })
 
   save_date_max.addEventListener("click", () => {
@@ -71,6 +94,8 @@ export function init(){
 
     max_mjd.value = dateUTC
     max_mjd.dispatchEvent(new Event('input'))
+
+    display("max_date_time_text_container")
   })
 
   prob_range.addEventListener("input", () => {
@@ -142,8 +167,9 @@ function display(item){
 
 
 function calculateClass(){
-  let value_select = document.getElementById("classifier").value;
+  let value_select = document.getElementById("classifier").getAttribute("data-value");
   
+  console.log(value_select)
   value_select = value_select.replace(/'/g, '"');
   value_select = JSON.parse(value_select);
   
