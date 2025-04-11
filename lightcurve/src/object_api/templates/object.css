@@ -25,10 +25,10 @@
   }
 
   .select{
-    @apply tw-relative tw-flex tw-flex-col dark:tw-border-b-white hover:tw-bg-[#b2b2b2]
+    @apply tw-relative tw-flex tw-flex-col dark:tw-border-b-white
   }
   .select__trigger{
-    @apply tw-relative tw-flex tw-items-center tw-justify-between tw-px-4 tw-leading-9 tw-bg-transparent tw-cursor-pointer dark:tw-text-[#EEEEEE]
+    @apply tw-relative tw-flex tw-items-center tw-justify-between tw-leading-9 tw-bg-transparent tw-cursor-pointer dark:tw-text-[#EEEEEE]
   }
 
   .custom-options{

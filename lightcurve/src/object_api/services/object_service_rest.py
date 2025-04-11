@@ -33,9 +33,6 @@ def get_object_list(
         order_args = order_args.dict()
         conesearch_args = conesearch_args.dict()
 
-        pprint.pprint(filter_args)
-        pprint.pprint(order_args)
-
         default = use_default(filter_args)
         filters = _convert_filters_to_sqlalchemy_statement(filter_args)
         conesearch_args = _convert_conesearch_args(conesearch_args)

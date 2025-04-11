@@ -35,9 +35,11 @@ export function init(){
   let save_date_max = document.getElementById("save_date_max")
 
 
-  custom_select.addEventListener('click', () => {
-    custom_select.querySelector('.select').classList.toggle('open');
-  })
+  for (const dropdown of document.querySelectorAll(".select-wrapper")) {
+    dropdown.addEventListener('click', function() {
+        this.querySelector('.select').classList.toggle('open');
+    })
+  }
 
 
   for(const option of document.querySelectorAll(".custom-option")){
@@ -48,7 +50,9 @@ export function init(){
             option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
             option.closest('.select').querySelector('.select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
 
-            document.getElementById("classifier").dispatchEvent(new Event("change"))
+            if(option.closest('.select').querySelector('.select__trigger span').id == "classifier"){
+              document.getElementById("classifier").dispatchEvent(new Event("change"))
+            }
         }
     })
 }
@@ -223,6 +227,7 @@ function convertToDate(date, time) {
 
 function searchParams(){
   let classifier_select = calculateClass()
+  let class_selected = document.getElementById("class").getAttribute("data-value")
   let ndet_arr = []
   let first_mjd_arr = []
   let detections = ["min_detections", "max_detections"]
@@ -246,7 +251,7 @@ function searchParams(){
   let response = {
     oid: list_oids,
     classifier: classifier_select.classifier_name,
-    class_name: document.getElementById("class").value,
+    class_name: class_selected,
     probability: probValue > 0 ? probValue : null,
     ndet: ndet_arr.length > 0 ? ndet_arr : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,

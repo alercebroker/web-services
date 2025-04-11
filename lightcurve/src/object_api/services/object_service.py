@@ -61,11 +61,14 @@ def get_classifiers(
    session_factory: Callable[..., AbstractContextManager[Session]]     
 ):
     classifier_dict = []
+    classifiers_filter = ["lc_classifier", "lc_classifier_top", "stamp_classifier", "LC_classifier_ATAT_forced_phot(beta)", "LC_classifier_BHRF_forced_phot(beta)"]
     result = _query_taxonomies_sql(session_factory)
     result_without_tuples = [row[0] for row in result]
 
     for classifier in result_without_tuples:
-        classifier_dict.append(ClassifierModel(**classifier.__dict__).model_dump(mode="json"))
+        aux_model = ClassifierModel(**classifier.__dict__)
+        if aux_model.classifier_name in classifiers_filter:
+            classifier_dict.append(aux_model.model_dump(mode="json"))
 
     return classifier_dict
 

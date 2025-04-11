@@ -1,8 +1,19 @@
-<select id="class" name="className" class="tw-inline-block tw-col-span-6">
-    <option value=""></option>
-    {% for value in classes %}
-        <option 
-        value="{{value.name}}"
-        >{{value.name}}</option>
+<div id="classes_options" class="custom-options tw-overflow-auto tw-max-h-[304px]">
+    <span class="custom-option selected" data-value=""></span>
+    {% for value in classes%}
+        <span class="custom-option" data-value="{{value.name}}"> {{value.name}}</span>
     {% endfor %}
-</select>
+</div>
+
+<script type="module">
+    for(const option of document.querySelectorAll(".custom-option")){
+    option.addEventListener('click', () => {
+        if(!option.classList.contains('selected')){
+            option.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+            option.classList.add('selected');
+            option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
+            option.closest('.select').querySelector('.select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
+        }
+    })
+}
+</script>

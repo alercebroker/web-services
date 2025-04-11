@@ -1,0 +1,3 @@
+{% macro input(id, type, placeholder, disabled="", width="tw-w-full") %}
+    <input id="{{ id }}" type="{{ type }}" placeholder="{{ placeholder }}" class="{{width}} tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white" {{disabled}}>
+{% endmacro %}
