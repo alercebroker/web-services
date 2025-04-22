@@ -32,7 +32,7 @@
   }
 
   .custom-options{
-    @apply tw-absolute tw-block tw-top-[100%] tw-left-0 tw-right-0 tw-bg-[#1e1e1e] tw-transition-all tw-pointer-events-none tw-z-[2] tw-opacity-0 tw-invisible dark:tw-bg-[#1e1e1e]
+    @apply tw-absolute tw-block tw-top-[100%] tw-left-0 tw-right-0 tw-bg-[#1e1e1e] tw-transition-all tw-pointer-events-none tw-z-[20] tw-opacity-0 tw-invisible dark:tw-bg-[#1e1e1e]
   }
 
   .select.open .custom-options{
@@ -47,11 +47,31 @@
     @apply tw-text-[#1976D2] tw-bg-[#1976D2]/30
   }
 
-  /*
-  .obj-input{
-    @apply tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white
-  }*/
 
+}
+
+.custom-oid{
+  background-color: rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1em;
+  padding:0px 8px;
+  border-radius: 4px;
+  max-width: 12rem;
+}
+
+.custom-span{
+  display: inline-block;
+}
+
+.custom-close-id{
+  display: inline-block;
+  cursor: pointer;
+}
+
+.custom-close-id:hover svg path{
+  fill: rgba(255, 255, 255, 0.2);
 }
 
 /* fin custom components*/

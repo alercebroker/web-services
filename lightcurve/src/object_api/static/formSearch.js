@@ -1,5 +1,5 @@
 import { jdToDate, gregorianToJd } from "../core_static/utils/AstroDates.js"
-import moment from 'https://cdn.skypack.dev/moment'
+import { getUTCDate, extractDate, extractTime, convertToDate, formatDate} from "./time.js"
 
 let oids_arr = []
 
@@ -7,21 +7,21 @@ export function init(){
     
   let info = JSON.parse(document.getElementById("form-data").text);
   let item_name = ""
-  let mjd_jd = 0
   let minDate = ""
   let minDatetime = ""
   let dateUTC = ""
 
-
-  let custom_select = document.querySelector(".select-wrapper")
-  let initial_value = document.querySelector('.custom-option.selected').getAttribute("data-value")
   let general_filters = document.getElementById("general_filters")
   let discovery_date_filters = document.getElementById("discovery_date_filters")
   let conesearch_filters = document.getElementById("conesearch_filters")
+
+  let clear_oids = document.getElementById("clear_oids_btn")
+  let oids_container = document.getElementById("oids_container")
   let prob_range = document.getElementById("prob_range")
   let min_detections = document.getElementById("min_detections")
   let max_detections = document.getElementById("max_detections")
   let input_ids = document.getElementById("objectId")
+
   let min_mjd = document.getElementById("min_mjd")
   let min_date_time_text = document.getElementById("min_date_time_text")
   let date_min = document.getElementById("date_min")
@@ -55,8 +55,9 @@ export function init(){
             }
         }
     })
-}
+  }
 
+  // clicks events
   general_filters.addEventListener("click", () =>{
     item_name = general_filters.id + "_container"
     display(item_name)
@@ -102,13 +103,24 @@ export function init(){
     display("max_date_time_text_container")
   })
 
+  clear_oids.addEventListener("click", () =>{
+    oids_arr = []
+
+    while(oids_container.firstChild){
+      oids_container.removeChild(oids_container.firstChild)
+    }
+
+    clear_oids.classList.add("tw-hidden")
+  })
+
+  // inputs events
   prob_range.addEventListener("input", () => {
     document.getElementById("prob_number").innerHTML = prob_range.value
   })
 
   min_mjd.addEventListener("input", () => {
     minDate = jdToDate(min_mjd.value)
-    min_date_time_text.innerHTML = moment.utc(minDate).format()
+    min_date_time_text.innerHTML = formatDate(minDate)
 
     minDatetime = getUTCDate(minDate)
     date_min.value = extractDate(minDatetime)
@@ -117,16 +129,20 @@ export function init(){
 
   max_mjd.addEventListener("input", () => {
     let maxDate = jdToDate(max_mjd.value)
-    max_date_time_text.innerHTML = moment.utc(maxDate).format()
+    max_date_time_text.innerHTML = formatDate(maxDate)
 
     let maxDatetime = getUTCDate(maxDate)
     date_max.value = extractDate(maxDatetime)
     time_max.value = extractTime(maxDatetime)
   })
 
+  // changes events
   input_ids.addEventListener("change", () => {
     oids_arr = splitOids(input_ids.value)
+    drawOidsTags()
+    clear_oids.classList.remove("tw-hidden")
 
+    input_ids.value = ""
   })
 
   min_detections.addEventListener("change", () =>{
@@ -173,7 +189,6 @@ function display(item){
 function calculateClass(){
   let value_select = document.getElementById("classifier").getAttribute("data-value");
   
-  console.log(value_select)
   value_select = value_select.replace(/'/g, '"');
   value_select = JSON.parse(value_select);
   
@@ -198,32 +213,41 @@ function formatOids(listOfOids) {
   return oids
 }
 
-function getUTCDate(date) {
-  if (!date) return null
-  const dateStr = date.toUTCString()
-  return moment.utc(dateStr).toDate()
-}
+function drawOidsTags(){
+  let container = document.getElementById("oids_container")
 
-function extractDate(datetime) {
-  if (!datetime) return null
-  return moment.utc(datetime).format('YYYY-MM-DD')
-}
+  for(let oid of oids_arr){
+    let newDiv = document.createElement("div")
+    let newSpan = document.createElement("span")
+    let newBtn = document.createElement("div")
 
-function extractTime(datetime) {
-  if (!datetime) return null
-  return moment.utc(datetime).format('HH:mm')
-}
+    newDiv.id = oid
+    newSpan.innerHTML = oid
+    newBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#FFFFFF"><path d="m330-288 150-150 150 150 42-42-150-150 150-150-42-42-150 150-150-150-42 42 150 150-150 150 42 42ZM480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Z"/></svg>'
 
-function convertToDate(date, time) {
-  let strDate = date + '-' + time
-  if (date && !time) {
-    strDate = date + '-' + '00:00'
+    newBtn.addEventListener("click", () =>{
+      oids_arr = oids_arr.filter((element) => {
+        if (element != newDiv.id){
+          return element
+        }
+      })
+
+      container.removeChild(newDiv)
+    }, { once: true});
+
+
+    newDiv.classList.add( "custom-oid")
+    newSpan.classList.add("custom-span")
+    newBtn.classList.add("custom-close-id")
+
+    newDiv.appendChild(newSpan)
+    newDiv.appendChild(newBtn)
+    container.appendChild(newDiv)
   }
-  if (!date) {
-    return null
-  }
-  return moment.utc(strDate, 'YYYY-MM-DD-HH:mm').toDate()
+  
+  container.classList.remove("tw-hidden")
 }
+
 
 function searchParams(){
   let classifier_select = calculateClass()
