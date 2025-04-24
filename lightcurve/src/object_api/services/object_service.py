@@ -1,5 +1,7 @@
 import json
 import requests
+import re
+import pprint
 from contextlib import AbstractContextManager
 from typing import Callable
 
@@ -62,13 +64,22 @@ def get_classifiers(
 ):
     classifier_dict = []
     classifiers_filter = ["lc_classifier", "lc_classifier_top", "stamp_classifier", "LC_classifier_ATAT_forced_phot(beta)", "LC_classifier_BHRF_forced_phot(beta)"]
+
     result = _query_taxonomies_sql(session_factory)
     result_without_tuples = [row[0] for row in result]
 
+    # guardar dicts dentro de un arr
     for classifier in result_without_tuples:
         aux_model = ClassifierModel(**classifier.__dict__)
         if aux_model.classifier_name in classifiers_filter:
             classifier_dict.append(aux_model.model_dump(mode="json"))
+
+    # formatear nombre de clasificadores
+    for classifier in classifier_dict:
+        classifier['formated_name_classifier'] = format_classifier_name(classifier['classifier_name'])
+
+    classifier_dict = sort_classifiers(classifier_dict)
+
 
     return classifier_dict
 
@@ -156,3 +167,29 @@ def get_tns(ra, dec):
 
         tns = error_data()
         return tns
+    
+def format_classifier_name(name):
+    # Replace special characters with spaces
+    name = re.sub(r'[$-/:-?{-~!"^_`]', ' ', name)
+    # Capitalize the first letter of each word
+    name = name.title()
+    return name
+
+def sort_classifiers(classifiers):
+
+    sort_arr_classifiers = [None] * 5
+
+    priorities = {
+    "lc_classifier": 0,
+    "lc_classifier_top": 1,
+    "stamp_classifier": 2,
+    "LC_classifier_ATAT_forced_phot(beta)": 3,
+    "LC_classifier_BHRF_forced_phot(beta)": 4
+    }
+    
+    # insertar por prioridad
+    for classifier in classifiers:
+        index = priorities[classifier['classifier_name']]
+        sort_arr_classifiers[index] = classifier
+    
+    return sort_arr_classifiers

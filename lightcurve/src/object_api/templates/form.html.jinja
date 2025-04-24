@@ -22,23 +22,23 @@
                 </div>
 
                 <!--select classifiers-->
-                <div class="select-wrapper lg:tw-col-span-6 md:tw-col-span-12">
-                    <div class="select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
+                <div class="select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
+                    <div class="select tw-w-full tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
                         <div class="select__trigger">
                             <span
                             id="classifier"
-                            class="tw-inline-block tw-text-[#a9a9a9] tw-text-left tw-col-span-6"
+                            class="tw-inline-block tw-text-[#a9a9a9] tw-text-left"
                             data-value=""
                             hx-get="{{API_URL}}/htmx/select/"
                             hx-trigger="change"
                             hx-target="#classes_options"
                             hx-swap="outerHTML"
-                            hx-vals='js:{...calculateClass()}'>classifier</span>
+                            hx-vals='js:{...prepareParameters()}'>classifier</span>
                         </div>
                         <div class="custom-options">
                             <span class="custom-option selected" data-value=""></span>
                             {% for value in classifiers%}
-                                <span class="custom-option" data-value="{{value}}"> {{value.classifier_name}}</span>
+                                <span class="custom-option" data-value='{{value|tojson}}'> {{value.formated_name_classifier}}</span>
                             {% endfor %}
                         </div>
                     </div>

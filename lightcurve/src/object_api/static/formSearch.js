@@ -34,25 +34,30 @@ export function init(){
   let time_max = document.getElementById("time_max")
   let save_date_max = document.getElementById("save_date_max")
 
-
+  // se seleccionan todos los dropdowns
   for (const dropdown of document.querySelectorAll(".select-wrapper")) {
     dropdown.addEventListener('click', function() {
-        this.querySelector('.select').classList.toggle('open');
+      this.querySelector('.select').classList.toggle('open');
     })
   }
 
-
+  // Se incorporan funcionalidad a las opciones de los dropdowns
   for(const option of document.querySelectorAll(".custom-option")){
     option.addEventListener('click', () => {
         if(!option.classList.contains('selected')){
-            option.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
-            option.classList.add('selected');
-            option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
-            option.closest('.select').querySelector('.select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
+            
+          option.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+          
+          option.classList.add('selected');
+          
+          option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
 
-            if(option.closest('.select').querySelector('.select__trigger span').id == "classifier"){
-              document.getElementById("classifier").dispatchEvent(new Event("change"))
-            }
+          option.closest('.select').querySelector('.select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
+
+
+          if(option.closest('.select').querySelector('.select__trigger span').id == "classifier"){
+            document.getElementById("classifier").dispatchEvent(new Event("change"))
+          }
         }
     })
   }
@@ -149,8 +154,8 @@ export function init(){
     max_detections.removeAttribute("disabled")
   })
 
-
-  window.calculateClass = calculateClass
+  /**funciones publicas para usarlas con HTMX */
+  window.prepareParameters = prepareParameters
   window.searchParams = searchParams
 }
 
@@ -179,29 +184,15 @@ export function elementReady(selector) {
 function display(item){
     item = document.getElementById(item)
     if(item.classList.contains("tw-hidden")){
-        item.classList.remove("tw-hidden")
+      item.classList.remove("tw-hidden")
     } else {
-        item.classList.add("tw-hidden")
+      item.classList.add("tw-hidden")
     }
 }
 
-
-function calculateClass(){
-  let value_select = document.getElementById("classifier").getAttribute("data-value");
-  
-  value_select = value_select.replace(/'/g, '"');
-  value_select = JSON.parse(value_select);
-  
-  
-  return {
-    classifier_name: value_select.classifier_name,
-    classifier_version: value_select.classifier_version
-
-  }
-}
-
 function splitOids(oids_values){
-  return oids_values.split(/[,;]*\s|\s|\n/g)
+  let regExp = /[,;]*\s/
+  return oids_values.split(regExp)
 }
 
 function formatOids(listOfOids) {
@@ -248,15 +239,25 @@ function drawOidsTags(){
   container.classList.remove("tw-hidden")
 }
 
+function prepareParameters(){
+  let value_selected = document.getElementById("classifier").getAttribute("data-value");
+  let value_parsed = JSON.parse(value_selected);
+  
+  return {
+    classifier_name: value_parsed.classifier_name,
+    classifier_version: value_parsed.classifier_version
+  }
+}
+
 
 function searchParams(){
-  let classifier_select = calculateClass()
-  let class_selected = document.getElementById("class").getAttribute("data-value")
   let ndet_arr = []
   let first_mjd_arr = []
   let detections = ["min_detections", "max_detections"]
   let first_mjd = ["min_mjd", "max_mjd"]
   let probValue = parseFloat(document.getElementById("prob_range").value);
+  let class_selected = document.getElementById("class").getAttribute("data-value")
+  let classifier_selected = prepareParameters()
   let list_oids = formatOids(oids_arr)
 
   for(let detection of detections){
@@ -274,7 +275,7 @@ function searchParams(){
 
   let response = {
     oid: list_oids,
-    classifier: classifier_select.classifier_name,
+    classifier: classifier_selected.classifier_name,
     class_name: class_selected,
     probability: probValue > 0 ? probValue : null,
     ndet: ndet_arr.length > 0 ? ndet_arr : null,

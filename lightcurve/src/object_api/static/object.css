@@ -34,23 +34,26 @@
 
 .htmx-indicator{
   opacity: 0;
+  /* @apply tw-opacity-0; */
 }
 
 .htmx-request .htmx-indicator{
   opacity: 1;
+  /* @apply tw-opacity-100; */
 }
 
 .htmx-request.htmx-indicator{
   opacity: 1;
+  /* @apply tw-opacity-100; */
 }
 
 .select-wrapper{
   position: relative;
-  width: 100%;
   -webkit-user-select: none;
      -moz-user-select: none;
           user-select: none;
-  word-break: break-all;
+  word-break: break-all
+  /* @apply tw-relative tw-w-full tw-select-none tw-break-all; */
 }
 
 .select{
@@ -135,6 +138,30 @@
   background-color: rgb(25 118 210 / 0.3);
   --tw-text-opacity: 1;
   color: rgb(25 118 210 / var(--tw-text-opacity));
+}
+
+.custom-oid{
+  background-color: rgba(255, 255, 255, 0.2);
+  display: inline-flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 1em;
+  padding:0px 8px;
+  border-radius: 4px;
+  max-width: 12rem;
+}
+
+.custom-span{
+  display: inline-block;
+}
+
+.custom-close-id{
+  display: inline-block;
+  cursor: pointer;
+}
+
+.custom-close-id:hover svg path{
+  fill: rgba(255, 255, 255, 0.2);
 }
 
 .tw-preflight :is(.tw-pointer-events-none){
@@ -233,14 +260,6 @@
   grid-column: span 6 / span 6;
 }
 
-.tw-preflight :is(.tw-col-span-11){
-  grid-column: span 11 / span 11;
-}
-
-.tw-preflight :is(.tw-col-span-10){
-  grid-column: span 10 / span 10;
-}
-
 .tw-preflight :is(.tw-float-right){
   float: right;
 }
@@ -285,11 +304,6 @@
 .tw-preflight :is(.tw-my-4){
   margin-top: 1rem;
   margin-bottom: 1rem;
-}
-
-.tw-preflight :is(.tw-my-2){
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
 }
 
 .tw-preflight :is(.tw-mb-\[10px\]){
@@ -889,6 +903,10 @@
   padding-bottom: 2px;
 }
 
+.tw-preflight :is(.tw-pb-2){
+  padding-bottom: 0.5rem;
+}
+
 .tw-preflight :is(.tw-pl-\[10px\]){
   padding-left: 10px;
 }
@@ -915,14 +933,6 @@
 
 .tw-preflight :is(.tw-pt-\[30px\]){
   padding-top: 30px;
-}
-
-.tw-preflight :is(.tw-pb-4){
-  padding-bottom: 1rem;
-}
-
-.tw-preflight :is(.tw-pb-2){
-  padding-bottom: 0.5rem;
 }
 
 .tw-preflight :is(.tw-text-left){
@@ -1108,30 +1118,6 @@
 /*loader*/
 
 /* inicio custom components*/
-
-.custom-oid{
-  background-color: rgba(255, 255, 255, 0.2);
-  display: inline-flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 1em;
-  padding:0px 8px;
-  border-radius: 4px;
-  max-width: 12rem;
-}
-
-.custom-span{
-  display: inline-block;
-}
-
-.custom-close-id{
-  display: inline-block;
-  cursor: pointer;
-}
-
-.custom-close-id:hover svg path{
-  fill: rgba(255, 255, 255, 0.2);
-}
 
 /* fin custom components*/
 

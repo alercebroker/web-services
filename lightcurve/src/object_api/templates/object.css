@@ -9,19 +9,25 @@
 /* inicio custom components*/
 @layer components{
   .htmx-indicator{
-    @apply tw-opacity-0;
+    opacity: 0;
+    /* @apply tw-opacity-0; */
   }
   
   .htmx-request .htmx-indicator{
-    @apply tw-opacity-100;
+    opacity: 1;
+    /* @apply tw-opacity-100; */
   }
 
   .htmx-request.htmx-indicator{
-    @apply tw-opacity-100;
+    opacity: 1;
+    /* @apply tw-opacity-100; */
   }
 
   .select-wrapper{
-    @apply tw-relative tw-w-full tw-select-none tw-break-all;
+    position: relative;
+    user-select: none;
+    word-break: break-all
+    /* @apply tw-relative tw-w-full tw-select-none tw-break-all; */
   }
 
   .select{
@@ -46,32 +52,31 @@
   .custom-option.selected{
     @apply tw-text-[#1976D2] tw-bg-[#1976D2]/30
   }
+  .custom-oid{
+    background-color: rgba(255, 255, 255, 0.2);
+    display: inline-flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1em;
+    padding:0px 8px;
+    border-radius: 4px;
+    max-width: 12rem;
+  }
+  
 
+  .custom-span{
+    display: inline-block;
+  }
+  
+  .custom-close-id{
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+  .custom-close-id:hover svg path{
+    fill: rgba(255, 255, 255, 0.2);
+  }
 
-}
-
-.custom-oid{
-  background-color: rgba(255, 255, 255, 0.2);
-  display: inline-flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 1em;
-  padding:0px 8px;
-  border-radius: 4px;
-  max-width: 12rem;
-}
-
-.custom-span{
-  display: inline-block;
-}
-
-.custom-close-id{
-  display: inline-block;
-  cursor: pointer;
-}
-
-.custom-close-id:hover svg path{
-  fill: rgba(255, 255, 255, 0.2);
 }
 
 /* fin custom components*/
