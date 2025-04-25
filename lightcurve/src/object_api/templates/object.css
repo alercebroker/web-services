@@ -4,53 +4,73 @@
 /* roboto font */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-/*loader*/
-
 /* inicio custom components*/
 @layer components{
   .htmx-indicator{
     opacity: 0;
-    /* @apply tw-opacity-0; */
   }
   
   .htmx-request .htmx-indicator{
     opacity: 1;
-    /* @apply tw-opacity-100; */
   }
 
   .htmx-request.htmx-indicator{
     opacity: 1;
-    /* @apply tw-opacity-100; */
   }
 
-  .select-wrapper{
+  .obj-select-wrapper{
     position: relative;
     user-select: none;
     word-break: break-all
-    /* @apply tw-relative tw-w-full tw-select-none tw-break-all; */
   }
 
-  .select{
-    @apply tw-relative tw-flex tw-flex-col dark:tw-border-b-white
+  .obj-select{
+    position: relative;
+    display: flex;
+    flex-direction: column;
   }
-  .select__trigger{
-    @apply tw-relative tw-flex tw-items-center tw-justify-between tw-leading-9 tw-bg-transparent tw-cursor-pointer dark:tw-text-[#EEEEEE]
-  }
-
-  .custom-options{
-    @apply tw-absolute tw-block tw-top-[100%] tw-left-0 tw-right-0 tw-bg-[#1e1e1e] tw-transition-all tw-pointer-events-none tw-z-[20] tw-opacity-0 tw-invisible dark:tw-bg-[#1e1e1e]
-  }
-
-  .select.open .custom-options{
-    @apply tw-opacity-100 tw-visible tw-pointer-events-auto
-  }
-
-  .custom-option{
-    @apply tw-relative tw-block tw-px-4 tw-leading-9 tw-text-[#EEEEEE] tw-cursor-pointer tw-transition-all dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]
+  .obj-select__trigger{
+    position: relative;
+    display: inline-block;
+    text-align: left;
+    line-height: 2rem;
+    background: transparent;
+    cursor: pointer;
   }
 
-  .custom-option.selected{
-    @apply tw-text-[#1976D2] tw-bg-[#1976D2]/30
+  .obj-custom-options{
+    position: absolute;
+    display: block;
+    top: 100%;
+    left: 0;
+    right: 0;
+    transition: all;
+    pointer-events: none;
+    z-index: 20;
+    visibility: hidden;
+    opacity: 0;
+    background: #1e1e1e;
+  }
+
+  .obj-select.open .obj-custom-options{
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .obj-custom-option{
+    position: relative;
+    display: block;
+    padding: 0px 16px;
+    line-height: 2.25rem;
+    color: #EEEEEE;
+    cursor: pointer;
+    transition: all;
+  }
+
+  .obj-custom-option.obj-selected{
+    color: #1976D2;
+    background-color: rgba(25, 118, 210, 0.3);
   }
   .custom-oid{
     background-color: rgba(255, 255, 255, 0.2);

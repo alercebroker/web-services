@@ -35,32 +35,33 @@ export function init(){
   let save_date_max = document.getElementById("save_date_max")
 
   // se seleccionan todos los dropdowns
-  for (const dropdown of document.querySelectorAll(".select-wrapper")) {
+  for (const dropdown of document.querySelectorAll(".obj-select-wrapper")) {
     dropdown.addEventListener('click', function() {
-      this.querySelector('.select').classList.toggle('open');
+      this.querySelector('.obj-select').classList.toggle('open');
     })
   }
 
   // Se incorporan funcionalidad a las opciones de los dropdowns
-  for(const option of document.querySelectorAll(".custom-option")){
+  for(const option of document.querySelectorAll(".obj-custom-option")){
     option.addEventListener('click', () => {
-        if(!option.classList.contains('selected')){
+        if(!option.classList.contains('obj-selected')){
             
-          option.parentNode.querySelector('.custom-option.selected').classList.remove('selected');
+          option.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
           
-          option.classList.add('selected');
+          option.classList.add('obj-selected');
           
-          option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
+          option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
 
-          option.closest('.select').querySelector('.select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
+          option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
 
 
-          if(option.closest('.select').querySelector('.select__trigger span').id == "classifier"){
+          if(option.closest('.obj-select').querySelector('.obj-select__trigger span').id == "classifier"){
             document.getElementById("classifier").dispatchEvent(new Event("change"))
           }
         }
     })
   }
+
 
   // clicks events
   general_filters.addEventListener("click", () =>{
@@ -89,22 +90,10 @@ export function init(){
   })
 
   save_date.addEventListener("click", () => {
-    dateUTC = convertToDate(date_min.value, time_min.value)
-    dateUTC = gregorianToJd(dateUTC)
-
-    min_mjd.value = dateUTC
-    min_mjd.dispatchEvent(new Event('input'))
-
     display("min_date_time_text_container")
   })
 
   save_date_max.addEventListener("click", () => {
-    dateUTC = convertToDate(date_max.value, time_max.value)
-    dateUTC = gregorianToJd(dateUTC)
-
-    max_mjd.value = dateUTC
-    max_mjd.dispatchEvent(new Event('input'))
-
     display("max_date_time_text_container")
   })
 
@@ -117,6 +106,23 @@ export function init(){
 
     clear_oids.classList.add("tw-hidden")
   })
+
+  date_min.addEventListener("click", () => {
+    date_min.showPicker()
+  })
+
+  time_min.addEventListener("click", () => {
+    time_min.showPicker()
+  })
+
+  date_max.addEventListener("click", () => {
+    date_max.showPicker()
+  })
+
+  time_max.addEventListener("click", () => {
+    time_max.showPicker()
+  })
+
 
   // inputs events
   prob_range.addEventListener("input", () => {
@@ -141,6 +147,7 @@ export function init(){
     time_max.value = extractTime(maxDatetime)
   })
 
+
   // changes events
   input_ids.addEventListener("change", () => {
     oids_arr = splitOids(input_ids.value)
@@ -153,6 +160,39 @@ export function init(){
   min_detections.addEventListener("change", () =>{
     max_detections.removeAttribute("disabled")
   })
+
+  date_min.addEventListener("change", () => {
+    dateUTC = convertToDate(date_min.value, time_min.value)
+    dateUTC = gregorianToJd(dateUTC)
+
+    min_mjd.value = dateUTC
+    min_mjd.dispatchEvent(new Event('input'))
+  })
+
+  time_min.addEventListener("change", () => {
+    dateUTC = convertToDate(date_min.value, time_min.value)
+    dateUTC = gregorianToJd(dateUTC)
+
+    min_mjd.value = dateUTC
+    min_mjd.dispatchEvent(new Event('input'))
+  })
+
+  date_max.addEventListener("change", () => {
+    dateUTC = convertToDate(date_max.value, time_max.value)
+    dateUTC = gregorianToJd(dateUTC)
+
+    max_mjd.value = dateUTC
+    max_mjd.dispatchEvent(new Event('input'))
+  })
+
+  time_max.addEventListener("change", () => {
+    dateUTC = convertToDate(date_max.value, time_max.value)
+    dateUTC = gregorianToJd(dateUTC)
+
+    max_mjd.value = dateUTC
+    max_mjd.dispatchEvent(new Event('input'))
+  })
+
 
   /**funciones publicas para usarlas con HTMX */
   window.prepareParameters = prepareParameters
@@ -227,7 +267,7 @@ function drawOidsTags(){
     }, { once: true});
 
 
-    newDiv.classList.add( "custom-oid")
+    newDiv.classList.add("custom-oid")
     newSpan.classList.add("custom-span")
     newBtn.classList.add("custom-close-id")
 
