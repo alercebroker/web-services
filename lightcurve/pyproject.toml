@@ -12,6 +12,7 @@ packages = [
     { include = "object_api", from = "src" },
     { include = "probability_api", from = "src" },
     { include = "database", from = "src" },
+    { include = "tns_api", from = "src" }
 ]
 
 [tool.poetry.dependencies]
@@ -73,4 +74,5 @@ lightcurve = "scripts.run_dev:run_lightcurve"
 magstats = "scripts.run_dev:run_magstats"
 object = "scripts.run_dev:run_object"
 probability = "scripts.run_dev:run_probability"
+tns = "scripts.run_dev:run_tns"
 tunnel = "scripts.sshproxy:run_tunnel"
