@@ -1,0 +1,41 @@
+[tool.poetry]
+name = "tns_api"
+version = "0.1.0"
+description = ""
+authors = ["hectorxh <hectorplj@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.100.0"
+numpy = "^1.26.4"
+pandas = "^2.2.1"
+fastparquet = "^2024.11.0"
+ruff = "^0.6.4"
+requests = "^2.32.3"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+pytest-docker = "^3.0.0"
+pytest-cov = "^4.1.0"
+
+[tool.poetry.group.dev.dependencies]
+sshtunnel = "^0.4.0"
+isort = "^5.13.2"
+
+[tool.poetry.group.production.dependencies]
+uvicorn = { extras = ["standard"], version = "^0.23.1" }
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+line_length = 79
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+build_parquet = "scripts.build_tns_parquet:build"
