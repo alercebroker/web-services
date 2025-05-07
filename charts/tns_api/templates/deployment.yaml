@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "service.name" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "service.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "service.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tns-data-read
+              mountPath: {{ .Values.configmap.data_path }}
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.name" . }}
+                  key: port
+            - name: API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.name" . }}
+                  key: api-url
+            - name: ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.name" . }}
+                  key: env
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.name" . }}
+                  key: log-level
+            - name: DATA_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.name" . }}
+                  key: data-path
+            - name: TNS_WIS_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.name" . }}
+                  key: tns-wis-base-url
+
+            - name: TNS_BOT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: tns-bot
+                  key: id
+            - name: TNS_BOT_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: tns-bot
+                  key: name
+            - name: TNS_BOT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tns-bot
+                  key: api-key
+        - name: nginx-sidecar
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          resources:
+            requests:
+              memory: 64M
+              cpu: 50m  
+      volumes:
+        - name: tns-data-read
+          persistentVolumeClaim:
+            claimName: "{{ include "service.name" . }}-read"
+        - name: nginx-conf
+          configMap:
+            name: {{ include "service.name" . }}-nginx-conf
+            items:
+              - key: "default.conf"
+                path: "default.conf"
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
