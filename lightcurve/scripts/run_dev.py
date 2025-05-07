@@ -44,11 +44,6 @@ def run_probability():
     asyncio.run(run_service("probability_api", port))
 
 
-def run_tns():
-    port = int(os.getenv("PORT", default=8000))
-    asyncio.run(run_service("tns_api", port))
-
-
 async def run_services(services, port):
     tasks = []
     for i, service in enumerate(services):
