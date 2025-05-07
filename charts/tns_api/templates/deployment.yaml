@@ -32,8 +32,8 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-            - name: tns-data
-              mountPath: /tns_data
+            - name: tns-data-read
+              mountPath: {{ .Values.configmap.data_path }}
           env:
             - name: PORT
               valueFrom:
@@ -94,6 +94,9 @@ spec:
               memory: 64M
               cpu: 50m  
       volumes:
+        - name: tns-data-read
+          persistentVolumeClaim:
+            claimName: "{{ include "service.name" . }}-read"
         - name: nginx-conf
           configMap:
             name: {{ include "service.name" . }}-nginx-conf

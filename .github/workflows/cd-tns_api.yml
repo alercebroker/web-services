@@ -1,0 +1,50 @@
+name: CD tns_api
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'tns_api/**'
+  #     - '!tns_api/README.md'
+  #     - '!tns_api/.gitignore'
+  #     - 'charts/tns_api/**'
+  #     - '!charts/tns_api/.helmignore'
+
+# jobs:
+#   cd_lightcurve:
+#     uses: ./.github/workflows/cd-template.yml
+#     with:
+#       packages: 'tns_api' # comma separated list of packages
+#       event: ${{ github.event_name }} 
+#     secrets:
+#       ADMIN_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+#       AWS_ROLE_STAGING: '${{ secrets.AWS_ROLE_STAGING }}'
+#       AWS_ROLE_PRODUCTION: '${{ secrets.AWS_ROLE_PRODUCTION }}'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GHCR_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ci
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python main.py build tns_api staging
