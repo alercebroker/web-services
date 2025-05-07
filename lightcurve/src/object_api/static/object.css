@@ -126,6 +126,16 @@
   fill: rgba(255, 255, 255, 0.2);
 }
 
+.custom-error{
+  display: flex;
+  justify-content: space-between;
+  color: #C62828;
+  text-align: left;
+  font-size: 12px;
+  line-height: 12px;
+  margin-top: 8px;
+}
+
 .tw-preflight :is(.tw-pointer-events-none){
   pointer-events: none;
 }
@@ -373,14 +383,6 @@
   max-height: 304px;
 }
 
-.tw-preflight :is(.tw-max-h-\[579px\]){
-  max-height: 579px;
-}
-
-.tw-preflight :is(.tw-max-h-\[1000px\]){
-  max-height: 1000px;
-}
-
 .tw-preflight :is(.tw-w-1\/2){
   width: 50%;
 }
@@ -465,24 +467,20 @@
   min-width: 100%;
 }
 
+.tw-preflight :is(.tw-max-w-\[1422px\]){
+  max-width: 1422px;
+}
+
 .tw-preflight :is(.tw-max-w-\[40\%\]){
   max-width: 40%;
-}
-
-.tw-preflight :is(.tw-max-w-\[95\%\]){
-  max-width: 95%;
-}
-
-.tw-preflight :is(.tw-max-w-\[258px\]){
-  max-width: 258px;
 }
 
 .tw-preflight :is(.tw-max-w-\[458px\]){
   max-width: 458px;
 }
 
-.tw-preflight :is(.tw-max-w-\[1422px\]){
-  max-width: 1422px;
+.tw-preflight :is(.tw-max-w-\[95\%\]){
+  max-width: 95%;
 }
 
 .tw-preflight :is(.tw-grow){
@@ -1924,10 +1922,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
     height: 250px;
   }
 
-  .tw-preflight :is(.md\:tw-w-3\/12){
-    width: 25%;
-  }
-
   .tw-preflight :is(.md\:tw-w-\[365px\]){
     width: 365px;
   }
@@ -1948,9 +1942,5 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
   .tw-preflight :is(.lg\:tw-col-span-7){
     grid-column: span 7 / span 7;
-  }
-
-  .tw-preflight :is(.lg\:tw-w-3\/12){
-    width: 25%;
   }
 }

@@ -1,5 +1,7 @@
 import { jdToDate, gregorianToJd } from "../core_static/utils/AstroDates.js"
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate} from "./time.js"
+import { handle_error } from "./error_handler.js";
+import {draw_oids_tags} from "./draw_elements.js";
 
 let oids_arr = []
 
@@ -20,7 +22,7 @@ export function init(){
   let prob_range = document.getElementById("prob_range")
   let min_detections = document.getElementById("min_detections")
   let max_detections = document.getElementById("max_detections")
-  let input_ids = document.getElementById("objectId")
+  let input_ids = document.getElementById("objectIds")
 
   let min_mjd = document.getElementById("min_mjd")
   let min_date_time_text = document.getElementById("min_date_time_text")
@@ -61,6 +63,9 @@ export function init(){
         }
     })
   }
+
+  // handle errors
+  handle_error()
 
 
   // clicks events
@@ -151,7 +156,7 @@ export function init(){
   // changes events
   input_ids.addEventListener("change", () => {
     oids_arr = splitOids(input_ids.value)
-    drawOidsTags()
+    draw_oids_tags(oids_arr)
     clear_oids.classList.remove("tw-hidden")
 
     input_ids.value = ""
@@ -244,40 +249,6 @@ function formatOids(listOfOids) {
   return oids
 }
 
-function drawOidsTags(){
-  let container = document.getElementById("oids_container")
-
-  for(let oid of oids_arr){
-    let newDiv = document.createElement("div")
-    let newSpan = document.createElement("span")
-    let newBtn = document.createElement("div")
-
-    newDiv.id = oid
-    newSpan.innerHTML = oid
-    newBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#FFFFFF"><path d="m330-288 150-150 150 150 42-42-150-150 150-150-42-42-150 150-150-150-42 42 150 150-150 150 42 42ZM480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Z"/></svg>'
-
-    newBtn.addEventListener("click", () =>{
-      oids_arr = oids_arr.filter((element) => {
-        if (element != newDiv.id){
-          return element
-        }
-      })
-
-      container.removeChild(newDiv)
-    }, { once: true});
-
-
-    newDiv.classList.add("custom-oid")
-    newSpan.classList.add("custom-span")
-    newBtn.classList.add("custom-close-id")
-
-    newDiv.appendChild(newSpan)
-    newDiv.appendChild(newBtn)
-    container.appendChild(newDiv)
-  }
-  
-  container.classList.remove("tw-hidden")
-}
 
 function prepareParameters(){
   let value_selected = document.getElementById("classifier").getAttribute("data-value");
@@ -334,24 +305,4 @@ function searchParams(){
 
 
   return response
-
-  // return {
-  //   oid: "",
-  //   classifier: classifier_select.classifier_name,
-  //   classifier_version: classifier_select.classifier_version,
-  //   class_name: document.getElementById("class").value,
-  //   ranking: null,
-  //   ndet: document.getElementById("detections_range").value,
-  //   probability: document.getElementById("prob_range").value,
-  //   firstmjd: null,
-  //   lastmjd: null,
-  //   dec: null,
-  //   ra: null,
-  //   radius: null,
-  //   page: 1,
-  //   page_size: 10,
-  //   count: false,
-  //   order_by: null,
-  //   order_mode: null
-  // }
 }

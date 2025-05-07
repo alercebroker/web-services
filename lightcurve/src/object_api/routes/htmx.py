@@ -17,6 +17,14 @@ from ..services.object_service import(
 from ..services.object_service_rest import (
     get_object_list, 
 )
+from ..services.validations_service import (
+    oids_format_validation,
+    ndets_validation,
+    classifier_validation,
+    oids_length_validation,
+    probability_validation,
+    # ndets_length_validation
+)
 
 router = APIRouter()
 templates = Jinja2Templates(
@@ -66,9 +74,9 @@ def list_object(
     oid: Annotated[list[str] | None, Query()] = None,
     classifier: str | None = None,
     classifier_version: str | None = None,
-    ranking: int | None = 1,
+    ranking: int | None = Query(default=1),
     ndet: Annotated[list[int] | None, Query()] = None,
-    probability: float | None = None,
+    probability: float | None = Query(default=0),
     firstmjd: Annotated[list[float] | None, Query()] = None,
     lastmjd: float | None = None,
     dec: float | None = None,
@@ -83,6 +91,13 @@ def list_object(
     
     try:
         session = request.app.state.psql_session
+
+        oids_format_validation(oid)
+        # ndets_length_validation(ndet)
+        ndets_validation(ndet)
+        classifier_validation(classifier, class_name)
+        oids_length_validation(oid)
+        probability_validation(probability)
 
         filters = filters_model(
             oid = oid,
@@ -113,9 +128,6 @@ def list_object(
             order_mode = order_mode
         )
 
-        default_classifier = "lc_classifier"
-        default_version =  "hierarchical_random_forest_1.1.0"
-        default_ranking =  1
 
         object_list = get_object_list(
             session_factory=session,
@@ -123,13 +135,17 @@ def list_object(
             conesearch_args=conesearch,
             pagination_args=pagination,
             order_args=order,
-            default_classifier=default_classifier,
-            default_version=default_version,
-            default_ranking=default_ranking
+            default_classifier="lc_classifier",
+            default_version="hierarchical_random_forest_1.1.0",
+            default_ranking=1
         )
 
 
         return JSONResponse(object_list)
+    except HTTPException as e:
+        
+        html_snippet = f'<div class="custom-error">Error: {e.detail}</div>'
+        return JSONResponse(content=e.detail, status_code=422)
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred")
