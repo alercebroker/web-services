@@ -1,6 +1,9 @@
 import os
 import shelve
 import zipfile
+import json
+import astropy.units as u
+from astropy.coordinates import SkyCoord
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urljoin
 
@@ -24,23 +27,40 @@ TNS_WIS_PUBLIC_OBJECTS_URL = urljoin(
 
 
 def get_object_tns(ra: float, dec: float):
-    headers_send = {
-        "accept": "application/json",
-        "cache-control": "no-cache",
-        "content-type": "application/json",
-    }
+    
+    csv_path = os.path.join(TNS_DATA_PATH, "tns.parquet")
+    df = pd.read_parquet(csv_path)
 
-    payload = {"ra": ra, "dec": dec}
+    closest_object_coordinates = get_closest_object(ra, dec, df)
 
-    response = requests.post(
-        "https://tns.alerce.online/search", data=payload, headers=headers_send
-    )
+    object_result = query_df_object(df, closest_object_coordinates)
 
-    if response.status_code == 200:
-        return payload
-    else:
-        raise Exception(f"Request failed with status {response.status_code}")
+    object_dict = object_result.to_dict(orient="index")
 
+    print(object_dict)
+
+    return json.dumps(object_dict, allow_nan=True)
+
+
+def get_closest_object(ra, dec, df):
+
+    ra_numpy_array = df.ra.to_numpy()
+    dec_numpy_array = df.declination.to_numpy()
+
+    parquet_catalog_coordinates = SkyCoord(ra=ra_numpy_array*u.deg, dec=dec_numpy_array*u.deg, frame="icrs", unit="deg") 
+    incoming_coordinates = SkyCoord(ra=ra*u.deg, dec=dec*u.deg, frame="icrs", unit="deg")
+
+    idx, d2d, d3d = incoming_coordinates.match_to_catalog_3d(parquet_catalog_coordinates)
+
+    closest_object_coordinates = parquet_catalog_coordinates[idx.item(0)]
+
+    return closest_object_coordinates
+
+def query_df_object(df, object):
+    query = f"ra == {object.ra.value} and declination == {object.dec.value}"
+    result = df.query(query)
+
+    return result
 
 def download_tns_base_csv():
     ut_timezone = timezone(-timedelta(hours=6))
