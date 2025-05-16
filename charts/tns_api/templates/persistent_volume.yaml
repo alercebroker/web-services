@@ -11,6 +11,8 @@ spec:
   volumeMode: Filesystem
   accessModes:
     - ReadWriteOnce
-    - ReadOnlyMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
+  storageClassName: gp2
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: {{ .Values.volume_id }}

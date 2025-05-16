@@ -7,18 +7,14 @@ metadata:
     {{- include "service.labels" . | nindent 4 }}
 spec:
   schedule: "0 * * * *"
-  concurrency: Replace
+  concurrencyPolicy: Replace
   jobTemplate:
     spec:
       template:
-        metadata:
-          name: {{ include "service.name" . }}
-          labels:
-            {{- include "service.labels" . | nindent 8 }}
         spec:
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
-            {{- toYaml . | nindent 8 }}
+            {{- toYaml . | nindent 10 }}
           {{- end }}
           restartPolicy: Never
           containers:
@@ -27,10 +23,10 @@ spec:
             imagePullPolicy: {{ .Values.image.pullPolicy }}
             command: ["poetry", "run", "build_parquet"]
             volumeMounts:
-              - name: tns-data-write
+              - name: tns-data
                 mountPath: {{ .Values.configmap.data_path }}
             resources:
-              {{- toYaml .Values.resources | nindent 12 }}
+              {{- toYaml .Values.resources | nindent 14 }}
             env:
               - name: PORT
                 valueFrom:
@@ -68,6 +64,6 @@ spec:
                     name: tns-bot
                     key: api-key
           volumes:
-            - name: tns-data-write
+            - name: tns-data
               persistentVolumeClaim:
-                claimName: "{{ include "service.name" . }}-write"
+                claimName: "{{ include "service.name" . }}"
