@@ -4,7 +4,7 @@
 
 replicaCount: 1
 
-namespace: tns_api
+namespace: tns_api_ws
 
 image:
   repository: ghcr.io/alercebroker/tns_api
@@ -44,6 +44,8 @@ affinity:
 
 nameOverride: ""
 
+volume_id: ""
+
 configmap:
   port: ""
   apiUrl: ""
@@ -51,7 +53,6 @@ configmap:
   log_level: ""
   data_path: ""
   tns_wis_base_url: ""
-
 
 ingress:
   certificateArn: ""
