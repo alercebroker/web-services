@@ -24,6 +24,7 @@ pytest-cov = "^4.1.0"
 [tool.poetry.group.dev.dependencies]
 sshtunnel = "^0.4.0"
 isort = "^5.13.2"
+ipython = "^9.2.0"
 
 [tool.poetry.group.production.dependencies]
 uvicorn = { extras = ["standard"], version = "^0.23.1" }
