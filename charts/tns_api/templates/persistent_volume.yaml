@@ -10,7 +10,7 @@ spec:
     storage: 2Gi
   volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   storageClassName: gp2
   awsElasticBlockStore:

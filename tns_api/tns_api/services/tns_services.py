@@ -28,7 +28,7 @@ TNS_WIS_PUBLIC_OBJECTS_URL = urljoin(
 
 def get_object_tns(ra: float, dec: float):
     
-    csv_path = os.path.join(TNS_DATA_PATH, "tns.parquet")
+    csv_path = os.path.join(DATA_PATH, "tns.parquet")
     df = pd.read_parquet(csv_path)
 
     closest_object_coordinates = get_closest_object(ra, dec, df)
@@ -37,7 +37,6 @@ def get_object_tns(ra: float, dec: float):
 
     object_dict = object_result.to_dict(orient="index")
 
-    print(object_dict)
 
     return json.dumps(object_dict, allow_nan=True)
 
@@ -54,11 +53,14 @@ def get_closest_object(ra, dec, df):
 
     closest_object_coordinates = parquet_catalog_coordinates[idx.item(0)]
 
+
     return closest_object_coordinates
 
 def query_df_object(df, object):
     query = f"ra == {object.ra.value} and declination == {object.dec.value}"
     result = df.query(query)
+    result.index = ['object_type']
+
 
     return result
 

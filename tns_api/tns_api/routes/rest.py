@@ -24,5 +24,3 @@ async def search(ra: Annotated[float, Body()], dec: Annotated[float, Body()]):
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred")
-
-    return JSONResponse(content=response)
