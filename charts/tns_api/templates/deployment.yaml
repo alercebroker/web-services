@@ -40,6 +40,11 @@ spec:
                 configMapKeyRef:
                   name: {{ include "service.name" . }}
                   key: port
+            - name: ROOT_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.name" . }}
+                  key: root-path
             - name: API_URL
               valueFrom:
                 configMapKeyRef:

@@ -19,7 +19,7 @@ def healthcheck():
     return "OK"
 
 
-@router.post("/search/")
+@router.post("/search")
 async def search(ra: Annotated[float, Body()], dec: Annotated[float, Body()]):
     try:
         response = get_object_tns(ra, dec)

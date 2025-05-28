@@ -48,6 +48,7 @@ volume_id: ""
 
 configmap:
   port: ""
+  root_path: ""
   apiUrl: ""
   env: ""
   log_level: ""
