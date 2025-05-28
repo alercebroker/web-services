@@ -1,6 +1,6 @@
-appVersion: 25.5.1-rc140
+appVersion: 25.5.1-rc141
 description: TNS api API for ALeRCE Clients
 name: tns-api
 type: application
-version: 25.5.173
+version: 25.5.174
 
