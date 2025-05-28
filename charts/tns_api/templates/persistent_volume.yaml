@@ -10,7 +10,9 @@ spec:
     storage: 2Gi
   volumeMode: Filesystem
   accessModes:
-    - ReadWriteOnce
-    - ReadOnlyMany
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-storage
+  storageClassName: efs-sc
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: {{ .Values.volume_handle }}

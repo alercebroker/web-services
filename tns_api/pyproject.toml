@@ -13,6 +13,8 @@ pandas = "^2.2.1"
 fastparquet = "^2024.11.0"
 ruff = "^0.6.4"
 requests = "^2.32.3"
+astroquery = "^0.4.10"
+scipy = "^1.15.3"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -22,6 +24,7 @@ pytest-cov = "^4.1.0"
 [tool.poetry.group.dev.dependencies]
 sshtunnel = "^0.4.0"
 isort = "^5.13.2"
+ipython = "^9.2.0"
 
 [tool.poetry.group.production.dependencies]
 uvicorn = { extras = ["standard"], version = "^0.23.1" }
@@ -39,3 +42,4 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 build_parquet = "scripts.build_tns_parquet:build"
+tns = "scripts.run_tns:run"
