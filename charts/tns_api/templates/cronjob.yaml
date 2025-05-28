@@ -28,21 +28,6 @@ spec:
               resources:
                 {{- toYaml .Values.resources | nindent 16 }}
               env:
-                - name: PORT
-                  valueFrom:
-                    configMapKeyRef:
-                      name: {{ include "service.name" . }}
-                      key: port
-                - name: ROOT_PATH
-                  valueFrom:
-                    configMapKeyRef:
-                      name: {{ include "service.name" . }}
-                      key: root_path
-                - name: API_URL
-                  valueFrom:
-                    configMapKeyRef:
-                      name: {{ include "service.name" . }}
-                      key: api-url
                 - name: ENV
                   valueFrom:
                     configMapKeyRef:
@@ -53,6 +38,16 @@ spec:
                     configMapKeyRef:
                       name: {{ include "service.name" . }}
                       key: log-level
+                - name: TNS_WIS_BASE_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "service.name" . }}
+                      key: tns-wis-base-url
+                - name: DATA_PATH
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "service.name" . }}
+                      key: data-path
                 - name: TNS_BOT_ID
                   valueFrom:
                     secretKeyRef:
