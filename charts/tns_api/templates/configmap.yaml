@@ -6,6 +6,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 data:
   port: '{{ .Values.configmap.port }}'
+  root_path: '{{ .Values.configmap.root_path }}'
   api-url: '{{ .Values.configmap.apiUrl }}'
   env: '{{ .Values.configmap.env }}'
   log-level: '{{ .Values.configmap.log_level }}'
