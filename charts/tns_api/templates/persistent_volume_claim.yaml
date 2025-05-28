@@ -4,8 +4,9 @@ metadata:
   name: "{{ include "service.name" . }}"
   namespace: {{ .Values.namespace }}
 spec:
-  storageClassName: gp2
+  storageClassName: efs-sc
   volumeMode: Filesystem
+  volumeName: "{{ include "service.name" .}}"
   accessModes: 
   - ReadWriteMany
   resources:
