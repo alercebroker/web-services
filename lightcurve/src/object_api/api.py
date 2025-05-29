@@ -1,3 +1,4 @@
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -13,6 +14,7 @@ app.state.mongo_db = None
 psql_engine = connect_sql()
 app.state.psql_session = session_wrapper(psql_engine)
 instrumentator = Instrumentator().instrument(app).expose(app)
+
 
 app.add_middleware(
     CORSMiddleware,

@@ -42,6 +42,11 @@ spec:
                 configMapKeyRef:
                   name: {{ include "service.name" . }}
                   key: api-url
+            - name: TNS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "service.name" . }}
+                  key: tns-url
             - name: SERVICE
               valueFrom:
                 configMapKeyRef:
