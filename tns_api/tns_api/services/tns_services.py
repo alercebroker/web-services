@@ -2,12 +2,12 @@ import json
 import os
 import shelve
 import zipfile
-from datetime import datetime, timedelta, timezone
-from urllib.parse import urljoin
-
 import astropy.units as u
 import pandas as pd
 import requests
+import numpy as np
+from datetime import datetime, timedelta, timezone
+from urllib.parse import urljoin
 from astropy.coordinates import SkyCoord
 
 DATA_PATH = os.path.abspath(os.environ["DATA_PATH"])
@@ -39,6 +39,8 @@ def get_object_tns(ra: float, dec: float):
     closest_object_coordinates = get_closest_object(ra, dec, df_tns)
 
     object_result = query_df_object(df_tns, closest_object_coordinates)
+
+    object_result = replace_NaN_values(object_result)
 
     object_dict = object_result.to_dict(orient="index")
 
@@ -78,10 +80,15 @@ def get_closest_object(ra, dec, df):
 def query_df_object(df, object):
     query = f"ra == {object.ra.value} and declination == {object.dec.value}"
     result = df.query(query)
-    result.index = ['object_type']
-
+    result.index = ['object_data']
 
     return result
+
+
+def replace_NaN_values(df):
+    df = df.replace(np.nan, "empty")
+
+    return df
 
 
 def download_tns_base_csv():
