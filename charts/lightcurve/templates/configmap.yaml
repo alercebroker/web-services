@@ -7,7 +7,6 @@ metadata:
 data:
   port: '{{ .Values.configmap.port }}'
   api-url: '{{ .Values.configmap.apiUrl }}'
-  tns-url: '{{ .Values.configmap.tnsUrl}}'
   service:  '{{ .Values.configmap.service }}'
 ---
 apiVersion: v1
