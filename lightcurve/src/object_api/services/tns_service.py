@@ -1,6 +1,5 @@
 import json
 import requests
-from ..parameters import TNS_URL
 
 def get_tns(ra, dec):
     data = send_request_tns(ra, dec)
@@ -21,7 +20,7 @@ def send_request_tns(ra, dec):
     payload = {"ra": ra, "dec": dec}
     payload_dump = json.dumps(payload)
 
-    url = TNS_URL + "/search"
+    url = "https://api.staging.alerce.online/v2/tns_api/search"
 
     response = requests.post(url, data=payload_dump, headers=headersSend)
     
