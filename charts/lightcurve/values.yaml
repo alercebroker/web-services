@@ -47,7 +47,7 @@ nameOverride: ""
 configmap:
   port: ""
   apiUrl: ""
-  tnsUrl:""
+  tnsUrl: ""
   service: ""
 
 ingress:
