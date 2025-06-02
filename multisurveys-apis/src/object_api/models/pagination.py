@@ -1,4 +1,6 @@
-from pydantic import BaseModel, validator
+from enum import Enum
+
+from pydantic import BaseModel
 
 
 class Pagination(BaseModel):
@@ -7,12 +9,11 @@ class Pagination(BaseModel):
     count: bool
 
 
+class OrderMode(str, Enum):
+    asc = "ASC"
+    desc = "DESC"
+
+
 class Order(BaseModel):
     order_by: str | None = "probability"
-    order_mode: str
-
-    @validator('order_mode')
-    def c_match(cls, v):
-        if not v in ['ASC', 'DESC']:
-            return "DESC"
-        return v
+    order_mode: OrderMode = OrderMode.desc

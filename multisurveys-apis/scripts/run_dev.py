@@ -1,11 +1,8 @@
 import asyncio
-import copy
 import os
 import sys
-from typing import Any
 
 import uvicorn
-from uvicorn.config import LOGGING_CONFIG, LoopSetupType
 
 
 def run(services=["ALL"], port=8000):
@@ -21,7 +18,11 @@ def run(services=["ALL"], port=8000):
 
 def run_object():
     port = int(os.getenv("PORT", default=8000))
-    asyncio.run(run_service("object_api", port))
+    root_path = os.getenv("ROOT_PATH", default="")
+    env = os.getenv("ENV", default="dev").lower()
+    reload = "developement".startswith(env)
+
+    asyncio.run(run_service("object_api", port, root_path, reload))
 
 
 async def run_services(services, port):
@@ -35,12 +36,15 @@ async def run_services(services, port):
         task.cancel("Shutting down")
 
 
-async def run_service(service: str, port: int):
+async def run_service(
+    service: str, port: int, root_path: str = "/", reload: bool = True
+):
     server_config = uvicorn.Config(
         f"{service}.api:app",
         port=int(port),
-        reload=True,
+        reload=reload,
         reload_dirs=[".", "../libs"],
+        root_path=root_path,
     )
     server = uvicorn.Server(server_config)
     os.environ["API_URL"] = f"http://localhost:{port}"
