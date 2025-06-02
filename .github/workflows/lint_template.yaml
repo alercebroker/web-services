@@ -47,6 +47,10 @@ jobs:
           git config --global url."https://${{secrets.GH_TOKEN}}@github.com/".insteadOf "https://github.com/"
           poetry install ${{ inputs.poetry-install }}
       - name: Run Ruff formatter
-        run: poetry run ruff format --diff
+        run: |
+          cd ${{ inputs.base-folder }}
+          poetry run ruff format --diff
       - name: Run Ruff lint
-        run: poetry run ruff check --diff
+        run:
+          cd ${{ inputs.base-folder }}
+          poetry run ruff check --diff
