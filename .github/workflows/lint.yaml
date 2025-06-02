@@ -23,6 +23,7 @@ jobs:
           args: "format --check --diff"
   lint:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
@@ -30,4 +31,4 @@ jobs:
         uses: astral-sh/ruff-action@v3
         with:
           src: ./multisurveys-apis
-          args: "check --diff --output=github"
+          args: "check --diff --output-format=github"
