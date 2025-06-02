@@ -576,20 +576,22 @@ files = [
 
 [[package]]
 name = "db-plugins"
-version = "24.5.2a21"
+version = "27.4.1a3"
 description = "ALeRCE database plugins."
 optional = false
-python-versions = "<3.12,>=3.7"
-files = [
-    {file = "db_plugins-24.5.2a21-py3-none-any.whl", hash = "sha256:84533d244bbd51694bcf1c802fa82f98b50cae99edec5fb190a96d16524fe05a"},
-    {file = "db_plugins-24.5.2a21.tar.gz", hash = "sha256:b5e219070213a6274279a7dd92fd386385d4eec6e7cb06c5dcdd5d947d8942b3"},
-]
+python-versions = ">=3.10, <3.12"
+files = []
+develop = false
 
 [package.dependencies]
 alembic = "1.8.1"
 click = "8.1.3"
 pymongo = "4.4.1"
 SQLAlchemy = "2.0.19"
+
+[package.source]
+type = "directory"
+url = "../../pipeline/libs/db-plugins-multisurvey"
 
 [[package]]
 name = "djlint"
@@ -2736,4 +2738,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.12"
-content-hash = "d66cbff473389e6429c0c958e4c2aae7987a7c895485a05c5fd79bc150aa297a"
+content-hash = "59f02e02a31da922323fb446bc90d45546e8704aee668b551799ad47f147f202"

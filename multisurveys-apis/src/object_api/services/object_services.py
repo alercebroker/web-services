@@ -19,7 +19,8 @@ def parse_params(search_params):
 
     response = {
         "consearch_args":consearch_parse, 
-        "consearch_statement":consearch_statement
+        "consearch_statement":consearch_statement,
+        "filters_sqlalchemy_statement": filters_sqlalchemy_statement
     }
 
     return response

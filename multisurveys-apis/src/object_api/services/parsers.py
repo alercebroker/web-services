@@ -1,5 +1,5 @@
 from sqlalchemy import text
-from core.repository.models.object import Object
+from db_plugins.db.sql.models import Object
 
 
 def convert_conesearch_args(args):
@@ -45,26 +45,27 @@ def convert_filters_to_sqlalchemy_statement(args):
         if len(args["ndet"]) > 1:
             ndet = ndet & (Object.n_det <= args["ndet"][1])
 
-    print(ndet)
 
-    # if args["firstmjd"]:
-    #     firstmjd = DBPObject.firstmjd >= args["firstmjd"][0]
-    #     if len(args["firstmjd"]) > 1:
-    #         firstmjd = firstmjd & (
-    #             DBPObject.firstmjd <= args["firstmjd"][1]
-    #         )
+    if args["firstmjd"]:
+        firstmjd = Object.firstmjd >= args["firstmjd"][0]
+        if len(args["firstmjd"]) > 1:
+            firstmjd = firstmjd & (
+                Object.firstmjd <= args["firstmjd"][1]
+            )
 
-    # if args["lastmjd"]:
-    #     lastmjd = DBPObject.lastmjd >= args["lastmjd"][0]
-    #     if len(args["lastmjd"]) > 1:
-    #         lastmjd = lastmjd & (DBPObject.lastmjd <= args["lastmjd"][1])
+    if args["lastmjd"]:
+        lastmjd = Object.lastmjd >= args["lastmjd"][0]
+        if len(args["lastmjd"]) > 1:
+            lastmjd = lastmjd & (Object.lastmjd <= args["lastmjd"][1])
 
-    # if args["oid"]:
-    #     if len(args["oid"]) == 1:
-    #         filtered_oid = args["oid"][0].replace("*", "%")
-    #         oids = DBPObject.oid.like(filtered_oid)
-    #     else:
-    #         oids = DBPObject.oid.in_(args["oid"])
+    if args["oids"]:
+        if len(args["oids"]) == 1:
+            filtered_oid = args["oids"][0].replace("*", "%")
+            oids = Object.oid.like(filtered_oid)
+        else:
+            oids = Object.oid.in_(args["oids"])
+
+    print(oids)
 
     return (
         classifier,

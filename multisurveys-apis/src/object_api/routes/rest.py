@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request, Query
 from ..models.filters import Filters, Consearch, SearchParams
 from ..models.pagination import Pagination, Order
 from ..services.object_services import get_objects_list
+from ..services.validations import ndets_validation
 
 router = APIRouter()
 
@@ -40,9 +41,12 @@ def list_objects(
     ):
     try:
         session = request.app.state.psql_session
+        print(session)
+
+        ndets_validation(ndet)
 
         filters = Filters(
-            oid=oid,
+            oids=oid,
             classifier=classifier,
             classifier_version=classifier_version,
             class_name=class_name,
@@ -84,6 +88,9 @@ def list_objects(
 
 
         return object_list
+    except HTTPException as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred")

@@ -4,7 +4,7 @@ from fastapi import Query
 from .pagination import Pagination, Order
 
 class Filters(BaseModel):
-    oid: Annotated[list[str] | None, Query()] = None
+    oids: Annotated[list[str] | None, Query()] = None
     classifier: str | None = None
     classifier_version: str | None = None
     class_name: str | None = None

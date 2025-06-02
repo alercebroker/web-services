@@ -10,7 +10,8 @@ from .routes import rest
 app = FastAPI()
 
 psql_engine = connect_sql()
-app.state.psql_session = session_wrapper(psql_engine)
+psql_entity = session_wrapper(psql_engine)
+app.state.psql_session = psql_entity.session()
 instrumentator = Instrumentator().instrument(app).expose(app)
 
 app.add_middleware(
