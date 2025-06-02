@@ -19,6 +19,7 @@ jobs:
       - name: Lint with ruff
         uses: astral-sh/ruff-action@v3
         with:
+          src: ./multisurveys-apis
           args: "format --check --diff"
   lint:
     runs-on: ubuntu-latest
@@ -28,4 +29,5 @@ jobs:
       - name: Lint with ruff
         uses: astral-sh/ruff-action@v3
         with:
+          src: ./multisurveys-apis
           args: "check --check --diff --output=github"
