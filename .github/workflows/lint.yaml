@@ -11,6 +11,7 @@ on:
 
 jobs:
   format:
+    runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - name: Checkout repository code
@@ -20,6 +21,7 @@ jobs:
         with:
           args: "format --check --diff"
   lint:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
