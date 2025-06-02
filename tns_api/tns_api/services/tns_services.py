@@ -80,7 +80,8 @@ def get_closest_object(ra, dec, df):
 
 def query_df_object(df, object):
     query = f"ra == {object.ra.value} and declination == {object.dec.value}"
-    result = df.query(query)
+    result = df.query(query).copy()
+    result['objid'] = result.index
     result.index = ['object_data']
 
     return result
@@ -159,6 +160,8 @@ def build_tns_parquet():
         csv_path = os.path.join(DATA_PATH, "tns_public_objects.csv.zip")
         zip_file = zipfile.ZipFile(csv_path)
         df = pd.read_csv(zip_file.open("tns_public_objects.csv"), skiprows=1)
+        df = df.set_index("objid", drop=True)
+
         parquet_path = os.path.join(DATA_PATH, "tns.parquet")
         df.to_parquet(parquet_path)
 
@@ -171,6 +174,7 @@ def build_tns_parquet():
 
     updated = False
     t: datetime = info["last_archive"] + timedelta(hours=1)
+
     while t < now:
         t += timedelta(hours=1)
         t_str = t.strftime("%H")
@@ -186,6 +190,7 @@ def build_tns_parquet():
             df_update = pd.read_csv(
                 zip_file.open(f"tns_public_objects_{t_str}.csv"), skiprows=1
             )
+            df_update = df_update.set_index("objid", drop=True)
         except pd.errors.EmptyDataError:
             print("No data to update on CSV")
             continue
