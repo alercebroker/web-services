@@ -4,6 +4,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 from core.config.connection import connect as connect_sql
 from core.config.connection import session_wrapper
+
 from .routes import rest
 
 app = FastAPI()

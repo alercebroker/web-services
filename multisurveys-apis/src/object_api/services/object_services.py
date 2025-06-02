@@ -1,10 +1,10 @@
-import pprint
+from core.repository.queries.objects import query_get_objects
+
 from .parsers import (
     convert_conesearch_args,
-    create_conesearch_statement,
     convert_filters_to_sqlalchemy_statement,
+    create_conesearch_statement,
 )
-from core.repository.queries.objects import query_get_objects
 
 
 def get_objects_list(session_factory, search_params):

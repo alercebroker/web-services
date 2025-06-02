@@ -2,6 +2,7 @@ import logging
 import os
 from contextlib import contextmanager
 from typing import Generator
+
 from db_plugins.db.sql._connection import PsqlDatabase
 from sqlalchemy.engine import Engine, create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker

@@ -1,6 +1,7 @@
 from typing import Callable
+
 from db_plugins.db.sql.models import Object, ZtfObject
-from sqlalchemy.orm import aliased, Session
+from sqlalchemy.orm import Session, aliased
 
 
 def query_get_objects(session_factory, search_params, parsed_params):

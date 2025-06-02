@@ -1,5 +1,5 @@
-from sqlalchemy import text
 from db_plugins.db.sql.models import Object
+from sqlalchemy import text
 
 
 def convert_conesearch_args(args):
