@@ -30,4 +30,4 @@ jobs:
         uses: astral-sh/ruff-action@v3
         with:
           src: ./multisurveys-apis
-          args: "check --check --diff --output=github"
+          args: "check --diff --output=github"
