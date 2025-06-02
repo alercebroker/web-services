@@ -11,9 +11,17 @@ on:
 
 jobs:
   run_ruff:
-    uses: ./.github/workflows/lint_template.yaml
-    with:
-      python-version: '3.11'
-      base-folder: 'multisurveys-apis'
-    secrets:
-      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+    format:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      - name: Lint with ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: "format --check --diff"
+    lint:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+      - name: Lint with ruff
+        uses: astral-sh/ruff-action@v3
+        with:
+          args: "check --check --diff --output=github"
