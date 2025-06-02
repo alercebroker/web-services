@@ -1,0 +1,21 @@
+name: CD Multisurvey
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+    paths:
+      - 'multisurveys-apis/**'
+      - '!multisurveys-apis/README.md'
+      - '!multisurveys-apis/.gitignore'
+      - 'charts/multisurvey/**'
+      - '!charts/multisurvey/.helmignore'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build_template_ms.yaml
+    with:
+      packages: 'multisurveys-apis'
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'

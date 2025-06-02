@@ -1,0 +1,19 @@
+name: Test build multisurvey
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+    paths:
+      - "multisurveys-apis/**"
+      - "!multisurveys-apis/README.md"
+      - "!multisurveys-apis/.gitignore"
+
+jobs:
+  ms_test_build:
+    uses: ./.github/workflows/lint_template.yaml
+    with:
+      python-version: '3.11'
+      base-folder: 'multisurveys-apis'
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'

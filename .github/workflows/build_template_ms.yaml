@@ -1,0 +1,43 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      packages:
+        required: true
+        type: string
+      build_flags:
+        required: false
+        type: string
+        default: ""
+    secrets:
+        GH_TOKEN:
+          required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+    env:
+      GHCR_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: Install poetry
+        run: pipx install poetry
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        run: |
+          cd ci_new
+          poetry install
+      - name: Run dagger pipeline
+        run: |
+          cd ci
+          poetry run python build direct ${{ inputs.packages }} ${{ inputs.build_flags }}

@@ -1,18 +1,19 @@
-name: CD Astroobject
+name: CD Lightcurve
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'astroobject/**'
-      - '!astroobject/README.md'
+      - 'xmatch-service/**'
+      - '!xmatch-service/README.md'
+      - 'charts/xmatch-service/**'
 
 jobs:
-  cd_astroobject:
-    uses: ./.github/workflows/cd-template.yml
+  cd_xmatch:
+    uses: ./.github/workflows/cd-template.yaml
     with:
-      packages: 'astroobject' # comma separated list of packages
+      packages: 'xmatch-service' # comma separated list of packages
       event: ${{ github.event_name }} 
     secrets:
       ADMIN_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
