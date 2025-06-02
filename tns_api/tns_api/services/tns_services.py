@@ -36,9 +36,11 @@ def get_object_tns(ra: float, dec: float):
     if not last_updated or now - last_updated > timedelta(hours=1):
         update_parquet()
 
-    closest_object_coordinates = get_closest_object(ra, dec, df_tns)
+    objects_in_radius = search_objects_by_radius(ra, dec, df_tns)
 
-    object_result = query_df_object(df_tns, closest_object_coordinates)
+    closest_object = get_closest_object(objects_in_radius)
+
+    object_result = query_df_object(df_tns, closest_object)
 
     object_result = replace_NaN_values(object_result)
 
@@ -58,23 +60,44 @@ def update_parquet():
         last_updated = info["last_archive"]
 
 
-def get_closest_object(ra, dec, df):
+def search_objects_by_radius(ra, dec, df):
 
     ra_numpy_array = df.ra.to_numpy()
     dec_numpy_array = df.declination.to_numpy()
 
-    parquet_catalog_coordinates = SkyCoord(
+    catalog_objects = SkyCoord(
         ra=ra_numpy_array * u.deg, dec=dec_numpy_array * u.deg, frame="icrs", unit="deg"
     )
-    incoming_coordinates = SkyCoord(
+    incoming_object = SkyCoord(
         ra=[ra] * u.deg, dec=[dec] * u.deg, frame="icrs", unit="deg"
     )
 
-    idxc, idxcatalog, d2d, d3d = parquet_catalog_coordinates.search_around_sky(incoming_coordinates, 5*u.deg)
+    idxc, idxcatalog, d2d, d3d = catalog_objects.search_around_sky(incoming_object, 5*u.deg)
 
-    closest_object_coordinates = parquet_catalog_coordinates[idxcatalog[0]]
+    objects_in_radius = {
+        "objects_catalog": catalog_objects,
+        "idxcatalog": idxcatalog, 
+        "d2d":d2d, 
+        "d3d":d3d
+    }
 
-    return closest_object_coordinates
+    return objects_in_radius
+
+
+def get_closest_object(closest_objects):
+
+    d2d = closest_objects["d2d"]
+    objects_catalog = closest_objects["objects_catalog"]
+    idxcatalog = closest_objects["idxcatalog"]
+
+    if len(d2d) > 0:
+        i = d2d.argmin()
+        closest_object = objects_catalog[idxcatalog[i]]
+    else:
+        closest_object = "empty"  # No match found
+
+
+    return closest_object
 
 
 
@@ -174,6 +197,7 @@ def build_tns_parquet():
 
     updated = False
     t: datetime = info["last_archive"] + timedelta(hours=1)
+    
 
     while t < now:
         t += timedelta(hours=1)
