@@ -59,6 +59,7 @@ def update_parquet():
 
 
 def get_closest_object(ra, dec, df):
+
     ra_numpy_array = df.ra.to_numpy()
     dec_numpy_array = df.declination.to_numpy()
 
@@ -66,15 +67,15 @@ def get_closest_object(ra, dec, df):
         ra=ra_numpy_array * u.deg, dec=dec_numpy_array * u.deg, frame="icrs", unit="deg"
     )
     incoming_coordinates = SkyCoord(
-        ra=ra * u.deg, dec=dec * u.deg, frame="icrs", unit="deg"
+        ra=[ra] * u.deg, dec=[dec] * u.deg, frame="icrs", unit="deg"
     )
 
-    idx, _, _ = incoming_coordinates.match_to_catalog_3d(parquet_catalog_coordinates)
+    idxc, idxcatalog, d2d, d3d = parquet_catalog_coordinates.search_around_sky(incoming_coordinates, 5*u.deg)
 
-    closest_object_coordinates = parquet_catalog_coordinates[idx.item(0)]
-
+    closest_object_coordinates = parquet_catalog_coordinates[idxcatalog[0]]
 
     return closest_object_coordinates
+
 
 
 def query_df_object(df, object):
