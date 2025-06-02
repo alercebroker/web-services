@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import Query
 from .pagination import Pagination, Order
 
+
 class Filters(BaseModel):
     oids: Annotated[list[str] | None, Query()] = None
     classifier: str | None = None
@@ -13,7 +14,7 @@ class Filters(BaseModel):
     probability: float | None = None
     firstmjd: list[float] | None = None
     lastmjd: float | None = None
-    
+
 
 class Consearch(BaseModel):
     dec: float | None = None

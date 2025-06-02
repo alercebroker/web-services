@@ -2,11 +2,8 @@ from typing import Callable
 from db_plugins.db.sql.models import Object, ZtfObject
 from sqlalchemy.orm import aliased, Session
 
-def query_get_objects(
-        session_factory, 
-        search_params, 
-        parsed_params
-    ):
+
+def query_get_objects(session_factory, search_params, parsed_params):
     print(session_factory)
 
     classifer_name = search_params.filter_args.classifier
@@ -21,12 +18,12 @@ def query_get_objects(
     consearch_args = parsed_params["consearch_args"]
 
     filters = parsed_params["filters_sqlalchemy_statement"]
-    
-    with session_factory as session:
 
+    with session_factory as session:
         all_objects = (
             session.query(Object)
-            .join(ZtfObject, Object.oid==ZtfObject.oid).all()
+            .join(ZtfObject, Object.oid == ZtfObject.oid)
+            .all()
         )
 
         # join_table = (
@@ -47,7 +44,9 @@ def query_get_objects(
         #     .params(**consearch_args)
         # )
 
-        order_statement = create_order_statement(all_objects, oids, order_by, order_mode)
+        order_statement = create_order_statement(
+            all_objects, oids, order_by, order_mode
+        )
 
     pass
 

@@ -25,7 +25,7 @@ def create_conesearch_statement(args):
         return text("q3c_radial_query(meanra, meandec,:ra, :dec, :radius)")
     else:
         return True
-    
+
 
 def convert_filters_to_sqlalchemy_statement(args):
     (
@@ -45,13 +45,10 @@ def convert_filters_to_sqlalchemy_statement(args):
         if len(args["ndet"]) > 1:
             ndet = ndet & (Object.n_det <= args["ndet"][1])
 
-
     if args["firstmjd"]:
         firstmjd = Object.firstmjd >= args["firstmjd"][0]
         if len(args["firstmjd"]) > 1:
-            firstmjd = firstmjd & (
-                Object.firstmjd <= args["firstmjd"][1]
-            )
+            firstmjd = firstmjd & (Object.firstmjd <= args["firstmjd"][1])
 
     if args["lastmjd"]:
         lastmjd = Object.lastmjd >= args["lastmjd"][0]

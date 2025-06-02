@@ -17,17 +17,19 @@ db = os.getenv("PSQL_DATABASE")
 db_url = f"postgresql://{user}:{pwd}@{host}:{port}/{db}"
 
 
-db_config= {
+db_config = {
     "USER": os.getenv("PSQL_USER"),
-    "PASSWORD":os.getenv("PSQL_PASSWORD"),
-    "DB_NAME":os.getenv("PSQL_DATABASE"),
-    "HOST":os.getenv("PSQL_HOST"),
-    "PORT":os.getenv("PSQL_PORT"),
-    "SCHEMA":"multisurvey",
+    "PASSWORD": os.getenv("PSQL_PASSWORD"),
+    "DB_NAME": os.getenv("PSQL_DATABASE"),
+    "HOST": os.getenv("PSQL_HOST"),
+    "PORT": os.getenv("PSQL_PORT"),
+    "SCHEMA": "multisurvey",
 }
+
 
 def psql_class():
     return
+
 
 def connect() -> Engine:
     engine: Engine = create_engine(db_url, echo=False)
@@ -38,8 +40,8 @@ def session_wrapper(engine: Engine):
     connection_ms = PsqlDatabase(db_config)
 
     print(connection_ms.session())
-    def _session() -> Generator[Session, None, None]:
 
+    def _session() -> Generator[Session, None, None]:
         return True
 
         # session_factory = scoped_session(
