@@ -35,7 +35,7 @@ uvicorn = { extras = ["standard"], version = "^0.23.1" }
 memray = "^1.8.1"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.6.4"
+ruff = "^0.11.12"
 
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel", "Cython==0.29.36", "numpy"]
