@@ -10,14 +10,17 @@ on:
 
 jobs:
   lightcurve_tests:
-    uses: ./.github/workflows/test_template.yaml
-    with:
-        python-version: '3.11'
-        sources-folder: 'src'
-        test-folder: 'tests'
-        base-folder: 'lightcurve'
-    secrets:
-      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test unit lightcurve
+        uses: ./.github/workflows/test_template.yaml
+        with:
+            python-version: '3.11'
+            sources-folder: 'src'
+            test-folder: 'tests'
+            base-folder: 'lightcurve'
+        secrets:
+          GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
 
 ---
 name: Tests astroobject
@@ -32,24 +35,30 @@ on:
 
 jobs:
   astroobject_unittests:
-    uses: ./.github/workflows/test_template.yaml
-    with:
-        python-version: '3.11'
-        sources-folder: 'astroobject'
-        test-folder: 'tests/unittests'
-        base-folder: 'astroobject'
-    secrets:
-      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test unit astroobject
+        uses: ./.github/workflows/test_template.yaml
+        with:
+            python-version: '3.11'
+            sources-folder: 'astroobject'
+            test-folder: 'tests/unittests'
+            base-folder: 'astroobject'
+        secrets:
+          GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
   astroobject_integration_tests:
-    uses: ./.github/workflows/test_template.yaml
-    with:
-        python-version: '3.11'
-        sources-folder: 'astroobject'
-        test-folder: 'tests/integration'
-        base-folder: 'astroobject'
-        codecov-flags: ""
-    secrets:
-      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test integration astroobject
+        uses: ./.github/workflows/test_template.yaml
+        with:
+            python-version: '3.11'
+            sources-folder: 'astroobject'
+            test-folder: 'tests/integration'
+            base-folder: 'astroobject'
+            codecov-flags: ""
+        secrets:
+          GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
 
 ---
 name: Tests xmatch
@@ -65,14 +74,17 @@ on:
 
 jobs:
   xmatch_tests:
-    uses: ./.github/workflows/test_template.yaml
-    with:
-      python-version: '3.11'
-      sources-folder: 'src'
-      test-folder: 'tests'
-      base-folder: 'xmatch-service'
-    secrets:
-      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test xmatch
+        uses: ./.github/workflows/test_template.yaml
+        with:
+          python-version: '3.11'
+          sources-folder: 'src'
+          test-folder: 'tests'
+          base-folder: 'xmatch-service'
+        secrets:
+          GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
 
 ---
 name: Test multisurvey object
@@ -91,14 +103,17 @@ on:
 
 jobs:
   ms_object_tests:
-    uses: ./.github/workflows/test_template.yaml
-    with:
-      python-version: '3.11'
-      sources-folder: 'src'
-      test-folder: 'tests/object_api'
-      base-folder: 'multisurveys-apis'
-    secrets:
-      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test multisutvey object
+        uses: ./.github/workflows/test_template.yaml
+        with:
+          python-version: '3.11'
+          sources-folder: 'src'
+          test-folder: 'tests/object_api'
+          base-folder: 'multisurveys-apis'
+        secrets:
+          GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
 
 ---
 name: Test multisurvey test
@@ -117,14 +132,17 @@ on:
 
 jobs:
   ms_object_tests:
-    uses: ./.github/workflows/test_template.yaml
-    with:
-      python-version: '3.11'
-      sources-folder: 'src'
-      test-folder: 'tests/test_api'
-      base-folder: 'multisurveys-apis'
-    secrets:
-      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test multisutvey test
+        uses: ./.github/workflows/test_template.yaml
+        with:
+          python-version: '3.11'
+          sources-folder: 'src'
+          test-folder: 'tests/test_api'
+          base-folder: 'multisurveys-apis'
+        secrets:
+          GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
 ---
 name: Test build multisurvey
 on:
@@ -139,9 +157,12 @@ on:
 
 jobs:
   ms_test_build:
-    uses: ./.github/workflows/build_template_ms.yaml
-    with:
-      packages: 'multisurveys-apis'
-      build_flags: '--dry-run'
-    secrets:
-      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: build
+        uses: ./.github/workflows/build_template_ms.yaml
+        with:
+          packages: 'multisurveys-apis'
+          build_flags: '--dry-run'
+        secrets:
+          GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
