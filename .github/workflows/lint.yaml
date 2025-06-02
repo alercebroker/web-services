@@ -1,4 +1,4 @@
-name: Test build multisurvey
+name: Lint multisurvey
 on:
   pull_request:
     branches:
@@ -10,7 +10,7 @@ on:
       - "!multisurveys-apis/.gitignore"
 
 jobs:
-  ms_test_build:
+  run_ruff:
     uses: ./.github/workflows/lint_template.yaml
     with:
       python-version: '3.11'
