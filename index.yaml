@@ -524,6 +524,16 @@ entries:
     version: 0.1.18
   lightcurve:
   - apiVersion: v1
+    appVersion: 25.6.1-rc144
+    created: "2025-06-03T15:07:29.445531014Z"
+    description: Lightcurve API for ALeRCE Clients
+    digest: 47c460e94aef5933b5b551f2d56c018b05e32ce2d991841e6139ebd7e817d9a7
+    name: lightcurve
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/lightcurve-25.6.177/lightcurve-25.6.177.tgz
+    version: 25.6.177
+  - apiVersion: v1
     appVersion: 25.5.1-rc143
     created: "2025-05-29T20:40:32.578735888Z"
     description: Lightcurve API for ALeRCE Clients
@@ -2175,6 +2185,16 @@ entries:
     version: 0.2.1
   tns-api:
   - apiVersion: v1
+    appVersion: 25.6.1-rc147
+    created: "2025-06-03T15:07:29.603681428Z"
+    description: TNS api API for ALeRCE Clients
+    digest: 2e84e5eb90b39283e199348acafd9b1e0d5dc20c57f4af3b6ffb75428002afa9
+    name: tns-api
+    type: application
+    urls:
+    - https://github.com/alercebroker/web-services/releases/download/tns-api-25.6.180/tns-api-25.6.180.tgz
+    version: 25.6.180
+  - apiVersion: v1
     appVersion: 25.5.1-rc145
     created: "2025-05-29T19:38:18.64308497Z"
     description: TNS api API for ALeRCE Clients
@@ -2206,4 +2226,4 @@ entries:
     urls:
     - https://github.com/alercebroker/web-services/releases/download/xmatch-service-24.4.8/xmatch-service-24.4.8.tgz
     version: 24.4.8
-generated: "2025-05-29T20:40:32.579533493Z"
+generated: "2025-06-03T15:07:29.604578765Z"
