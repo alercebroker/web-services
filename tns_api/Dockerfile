@@ -36,4 +36,4 @@ COPY tns_api/README.md \
 WORKDIR /app
 RUN poetry install --only-root;
 
-CMD ["poetry", "run", "build_parquet"]
+CMD ["poetry", "run", "api"]

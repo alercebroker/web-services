@@ -1,4 +1,5 @@
 import os
+import pprint
 from fastapi import FastAPI, Request, Query
 
 from core.services.object import get_probabilities,get_taxonomies
@@ -76,9 +77,11 @@ def classifiers_options(group_prob_by_version):
     priorities = {
     'lc_classifier': 0,
     'lc_classifier_top': 1,
-    'stamp_classifier': 2,
-    'LC_classifier_ATAT_forced_phot(beta)': 3,
-    'LC_classifier_BHRF_forced_phot(beta)': 4,
+    'lc_classifier_BHRF_forced_phot': 2,
+    'stamp_classifier': 3,
+    'LC_classifier_ATAT_forced_phot(beta)': 4,
+    'LC_classifier_BHRF_forced_phot(beta)': 5,
+    'stamp_classifier_2025_beta': 6,
     }
 
     for key, value in priorities.items():

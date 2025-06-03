@@ -7,67 +7,63 @@ metadata:
     {{- include "service.labels" . | nindent 4 }}
 spec:
   schedule: "0 * * * *"
-  concurrency: Replace
+  concurrencyPolicy: Replace
   jobTemplate:
     spec:
       template:
-        metadata:
-          name: {{ include "service.name" . }}
-          labels:
-            {{- include "service.labels" . | nindent 8 }}
         spec:
           {{- with .Values.imagePullSecrets }}
           imagePullSecrets:
-            {{- toYaml . | nindent 8 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           restartPolicy: Never
           containers:
-          - name: {{ .Chart.Name }}
-            image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-            imagePullPolicy: {{ .Values.image.pullPolicy }}
-            command: ["poetry", "run", "build_parquet"]
-            volumeMounts:
-              - name: tns-data-write
-                mountPath: {{ .Values.configmap.data_path }}
-            resources:
-              {{- toYaml .Values.resources | nindent 12 }}
-            env:
-              - name: PORT
-                valueFrom:
-                  configMapKeyRef:
-                    name: {{ include "service.name" . }}
-                    key: port
-              - name: API_URL
-                valueFrom:
-                  configMapKeyRef:
-                    name: {{ include "service.name" . }}
-                    key: api-url
-              - name: ENV
-                valueFrom:
-                  configMapKeyRef:
-                    name: {{ include "service.name" . }}
-                    key: env
-              - name: LOG_LEVEL
-                valueFrom:
-                  configMapKeyRef:
-                    name: {{ include "service.name" . }}
-                    key: log-level
-              - name: TNS_BOT_ID
-                valueFrom:
-                  secretKeyRef:
-                    name: tns-bot
-                    key: id
-              - name: TNS_BOT_NAME
-                valueFrom:
-                  secretKeyRef:
-                    name: tns-bot
-                    key: name
-              - name: TNS_BOT_API_KEY
-                valueFrom:
-                  secretKeyRef:
-                    name: tns-bot
-                    key: api-key
+            - name: {{ .Chart.Name }}
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: ["poetry", "run", "build_parquet"]
+              volumeMounts:
+                - name: tns-data
+                  mountPath: {{ .Values.configmap.data_path }}
+              resources:
+                {{- toYaml .Values.resources | nindent 16 }}
+              env:
+                - name: ENV
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "service.name" . }}
+                      key: env
+                - name: LOG_LEVEL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "service.name" . }}
+                      key: log-level
+                - name: TNS_WIS_BASE_URL
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "service.name" . }}
+                      key: tns-wis-base-url
+                - name: DATA_PATH
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ include "service.name" . }}
+                      key: data-path
+                - name: TNS_BOT_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: tns-bot
+                      key: id
+                - name: TNS_BOT_NAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: tns-bot
+                      key: name
+                - name: TNS_BOT_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: tns-bot
+                      key: api-key
           volumes:
-            - name: tns-data-write
+            - name: tns-data
               persistentVolumeClaim:
-                claimName: "{{ include "service.name" . }}-write"
+                claimName: "{{ include "service.name" . }}"
