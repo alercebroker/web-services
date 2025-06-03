@@ -36,9 +36,11 @@ def get_object_tns(ra: float, dec: float):
     if not last_updated or now - last_updated > timedelta(hours=1):
         update_parquet()
 
-    closest_object_coordinates = get_closest_object(ra, dec, df_tns)
+    objects_in_radius = search_objects_by_radius(ra, dec, df_tns)
 
-    object_result = query_df_object(df_tns, closest_object_coordinates)
+    closest_object = get_closest_object(objects_in_radius)
+
+    object_result = query_df_object(df_tns, closest_object)
 
     object_result = replace_NaN_values(object_result)
 
@@ -58,28 +60,51 @@ def update_parquet():
         last_updated = info["last_archive"]
 
 
-def get_closest_object(ra, dec, df):
+def search_objects_by_radius(ra, dec, df):
+
     ra_numpy_array = df.ra.to_numpy()
     dec_numpy_array = df.declination.to_numpy()
 
-    parquet_catalog_coordinates = SkyCoord(
+    catalog_objects = SkyCoord(
         ra=ra_numpy_array * u.deg, dec=dec_numpy_array * u.deg, frame="icrs", unit="deg"
     )
-    incoming_coordinates = SkyCoord(
-        ra=ra * u.deg, dec=dec * u.deg, frame="icrs", unit="deg"
+    incoming_object = SkyCoord(
+        ra=[ra] * u.deg, dec=[dec] * u.deg, frame="icrs", unit="deg"
     )
 
-    idx, _, _ = incoming_coordinates.match_to_catalog_3d(parquet_catalog_coordinates)
+    idxc, idxcatalog, d2d, d3d = catalog_objects.search_around_sky(incoming_object, 5*u.deg)
 
-    closest_object_coordinates = parquet_catalog_coordinates[idx.item(0)]
+    objects_in_radius = {
+        "objects_catalog": catalog_objects,
+        "idxcatalog": idxcatalog, 
+        "d2d":d2d, 
+        "d3d":d3d
+    }
+
+    return objects_in_radius
 
 
-    return closest_object_coordinates
+def get_closest_object(closest_objects):
+
+    d2d = closest_objects["d2d"]
+    objects_catalog = closest_objects["objects_catalog"]
+    idxcatalog = closest_objects["idxcatalog"]
+
+    if len(d2d) > 0:
+        i = d2d.argmin()
+        closest_object = objects_catalog[idxcatalog[i]]
+    else:
+        closest_object = "empty"  # No match found
+
+
+    return closest_object
+
 
 
 def query_df_object(df, object):
     query = f"ra == {object.ra.value} and declination == {object.dec.value}"
-    result = df.query(query)
+    result = df.query(query).copy()
+    result['objid'] = result.index
     result.index = ['object_data']
 
     return result
@@ -158,6 +183,8 @@ def build_tns_parquet():
         csv_path = os.path.join(DATA_PATH, "tns_public_objects.csv.zip")
         zip_file = zipfile.ZipFile(csv_path)
         df = pd.read_csv(zip_file.open("tns_public_objects.csv"), skiprows=1)
+        df = df.set_index("objid", drop=True)
+
         parquet_path = os.path.join(DATA_PATH, "tns.parquet")
         df.to_parquet(parquet_path)
 
@@ -170,6 +197,8 @@ def build_tns_parquet():
 
     updated = False
     t: datetime = info["last_archive"] + timedelta(hours=1)
+    
+
     while t < now:
         t += timedelta(hours=1)
         t_str = t.strftime("%H")
@@ -185,6 +214,7 @@ def build_tns_parquet():
             df_update = pd.read_csv(
                 zip_file.open(f"tns_public_objects_{t_str}.csv"), skiprows=1
             )
+            df_update = df_update.set_index("objid", drop=True)
         except pd.errors.EmptyDataError:
             print("No data to update on CSV")
             continue
