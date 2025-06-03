@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "lightcurve"
-version = "25.6.1-rc144"
+version = "25.6.1-rc145"
 description = "Get lightcurve of objects from ZTF and ATLAS surveys"
 authors = ["Diego Rodriguez Mancini"]
 readme = "README.md"
