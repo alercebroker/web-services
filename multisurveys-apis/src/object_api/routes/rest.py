@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query, Request
 
 from ..models.filters import Consearch, Filters, SearchParams
-from ..models.pagination import Order, OrderMode, Pagination
-from ..services.object_services import get_objects_list
+from ..models.pagination import Order, OrderMode, PaginationArgs
+from ..services.object_services import get_objects_list, get_object_by_id
 from ..services.validations import ndets_validation
 
 router = APIRouter()
@@ -46,8 +46,7 @@ def list_objects(
 ):
     try:
         session = request.app.state.psql_session
-        print(session)
-
+        
         ndets_validation(ndet)
 
         filters = Filters(
@@ -64,7 +63,7 @@ def list_objects(
 
         conesearch = Consearch(dec=dec, ra=ra, radius=radius)
 
-        pagination = Pagination(page=page, page_size=page_size, count=count)
+        pagination = PaginationArgs(page=page, page_size=page_size, count=count)
 
         order = Order(order_by=order_by, order_mode=order_mode)
 
@@ -76,7 +75,7 @@ def list_objects(
         )
 
         object_list = get_objects_list(
-            session_factory=session, search_params=search_params
+            session_ms=session, search_params=search_params
         )
 
         return object_list
@@ -88,41 +87,14 @@ def list_objects(
         raise HTTPException(status_code=500, detail="An error occurred")
 
 
-@router.get("/{id}")
+@router.get("/object")
 def get_object(request: Request, id: str):
     try:
         session = request.app.state.psql_session
 
-        filters = Filters(
-            oid=id,
-            classifier="lc_classifier",
-            classifier_version="hierarchical_random_forest_1.1.0",
-            class_name=None,
-            ranking=1,
-            ndet=None,
-            probability=0,
-            firstmjd=None,
-            lastmjd=None,
-        )
+        response = get_object_by_id(session, id)
 
-        conesearch = Consearch(dec=None, ra=None, radius=None)
-
-        pagination = Pagination(page=1, page_size=10, count=False)
-
-        order = Order(order_by="probability", order_mode="DESC")
-
-        search_params = SearchParams(
-            filter_args=filters,
-            conesearch_args=conesearch,
-            pagination_args=pagination,
-            order_args=order,
-        )
-
-        object_info = get_objects_list(
-            session_factory=session, search_params=search_params
-        )
-
-        return object_info
+        return response
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")

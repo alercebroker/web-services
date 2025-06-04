@@ -1,33 +1,26 @@
-from core.repository.queries.objects import query_get_objects
-
+import pprint
+from fastapi.encoders import jsonable_encoder
+from core.repository.queries.objects import query_get_objects, query_object_by_id
 from .parsers import (
-    convert_conesearch_args,
-    convert_filters_to_sqlalchemy_statement,
-    create_conesearch_statement,
+    parse_params,
+    parse_objects_list_output,
 )
 
 
-def get_objects_list(session_factory, search_params):
+def get_object_by_id(session_ms, id):
+
+    object_entity, ztf_object = query_object_by_id(session_ms, id)
+    result = jsonable_encoder(ztf_object, sqlalchemy_safe=True)
+
+    return result
+
+
+def get_objects_list(session_ms, search_params):
     parsed_params = parse_params(search_params)
 
-    result = query_get_objects(session_factory, search_params, parsed_params)
+    result = query_get_objects(session_ms, search_params, parsed_params)
+    result = parse_objects_list_output(result)
 
-    pass
+    return result
 
 
-def parse_params(search_params):
-    consearch_parse = convert_conesearch_args(
-        search_params.conesearch_args.__dict__
-    )
-    consearch_statement = create_conesearch_statement(consearch_parse)
-    filters_sqlalchemy_statement = convert_filters_to_sqlalchemy_statement(
-        search_params.filter_args.__dict__
-    )
-
-    response = {
-        "consearch_args": consearch_parse,
-        "consearch_statement": consearch_statement,
-        "filters_sqlalchemy_statement": filters_sqlalchemy_statement,
-    }
-
-    return response

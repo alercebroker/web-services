@@ -24,12 +24,14 @@ db_config = {
     "DB_NAME": os.getenv("PSQL_DATABASE"),
     "HOST": os.getenv("PSQL_HOST"),
     "PORT": os.getenv("PSQL_PORT"),
-    "SCHEMA": "multisurvey",
+    "SCHEMA": os.getenv("SCHEMA"),
 }
 
 
-def psql_class():
-    return
+def psql_entity():
+    ms_entity_psql = PsqlDatabase(db_config)
+
+    return ms_entity_psql
 
 
 def connect() -> Engine:
@@ -38,25 +40,21 @@ def connect() -> Engine:
 
 
 def session_wrapper(engine: Engine):
-    connection_ms = PsqlDatabase(db_config)
-
-    print(connection_ms.session())
 
     def _session() -> Generator[Session, None, None]:
-        return True
+        
+        session_factory = scoped_session(
+            sessionmaker(autocommit=False, autoflush=False, bind=engine)
+        )
+        session: Session = session_factory()
+        try:
+            yield session
+        except Exception:
+            logger.debug("Connecting databases")
+            logger.exception("Session rollback because of exception")
+            session.rollback()
+            raise
+        finally:
+            session.close()
 
-        # session_factory = scoped_session(
-        #     sessionmaker(autocommit=False, autoflush=False, bind=engine)
-        # )
-        # session: Session = session_factory()
-        # try:
-        #     yield session
-        # except Exception:
-        #     logger.debug("Connecting databases")
-        #     logger.exception("Session rollback because of exception")
-        #     session.rollback()
-        #     raise
-        # finally:
-        #     session.close()
-
-    return connection_ms
+    return _session

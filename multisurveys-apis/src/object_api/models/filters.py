@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from typing import Annotated
 from fastapi import Query
-from .pagination import Pagination, Order
+from .pagination import PaginationArgs, Order
 
 
 class Filters(BaseModel):
@@ -25,5 +25,5 @@ class Consearch(BaseModel):
 class SearchParams(BaseModel):
     filter_args: Filters
     conesearch_args: Consearch
-    pagination_args: Pagination
+    pagination_args: PaginationArgs
     order_args: Order
