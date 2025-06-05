@@ -4,15 +4,18 @@ from core.repository.queries.objects import query_get_objects, query_object_by_i
 from .parsers import (
     parse_params,
     parse_objects_list_output,
+    parse_result_query
 )
 
 
 def get_object_by_id(session_ms, id):
 
-    object_entity, ztf_object = query_object_by_id(session_ms, id)
-    result = jsonable_encoder(ztf_object, sqlalchemy_safe=True)
+    query_response = query_object_by_id(session_ms, id)
 
-    return result
+    response = parse_result_query(query_response)
+
+
+    return response
 
 
 def get_objects_list(session_ms, search_params):
@@ -22,5 +25,3 @@ def get_objects_list(session_ms, search_params):
     result = parse_objects_list_output(result)
 
     return result
-
-

@@ -1,24 +1,24 @@
-from typing import Callable
 from db_plugins.db.sql.models import Object, ZtfObject
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Bundle
 from sqlalchemy import select
 from object_api.services.statements_sql import create_order_statement
 from object_api.models.pagination import Pagination
+from fastapi.encoders import jsonable_encoder
 
 
 def query_object_by_id(session_ms, id):
     
     with session_ms() as session:
-        object, ztf_object = (
-            session
-            .query(Object)
+        stmt = (
+            select(Object, ZtfObject)
             .join(ZtfObject, Object.oid==ZtfObject.oid)
-            .add_entity(ZtfObject)
-            .filter(Object.oid == id)
-            .one()
+            .where(Object.oid==id)
         )
+        
+        
+        object = session.execute(stmt).one()
 
-        return object, ztf_object
+        return object
 
 
 
@@ -35,7 +35,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
     with session_ms() as session:
         all_objects = (
-            session.query(Object)
+            session.query(Object, ZtfObject)
             .join(ZtfObject, Object.oid == ZtfObject.oid)
         )
 

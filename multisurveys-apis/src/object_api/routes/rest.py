@@ -99,16 +99,3 @@ def get_object(request: Request, id: str):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
 
-
-# @router.get("/limit_values")
-# def get_object(
-#     request: Request,
-#     ):
-#     try:
-#         session = request.app.state.psql_session
-#         response = get_limit_values_rest(session)
-
-#         return JSONResponse(response)
-#     except Exception as e:
-#         traceback.print_exc()
-#         raise HTTPException(status_code=500, detail=f"An error occurred")

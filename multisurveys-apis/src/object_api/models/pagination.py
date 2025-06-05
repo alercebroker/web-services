@@ -30,6 +30,8 @@ class Pagination:
         self.total = total
         self.items = items
 
+
+
     @property
     def pages(self):
         """Get total number of pages."""
