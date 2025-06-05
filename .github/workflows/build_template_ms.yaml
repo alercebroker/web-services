@@ -27,8 +27,8 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: main
+          token: ${{secrets.GH_TOKEN}}
+          submodules: 'recursive'
       - name: Check for changed files
         id: changed-files
         uses: tj-actions/changed-files@v46
@@ -51,5 +51,5 @@ jobs:
       - name: Run dagger pipeline
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: |
-          cd ci
+          cd ci_new
           poetry run python build direct ${{ inputs.packages }} ${{ inputs.build_flags }}
