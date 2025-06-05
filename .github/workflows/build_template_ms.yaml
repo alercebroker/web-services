@@ -10,9 +10,13 @@ on:
         required: false
         type: string
         default: ""
+      files:
+        required: false
+        type: string
+        default: "**"
     secrets:
-        GH_TOKEN:
-          required: true
+      GH_TOKEN:
+        required: true
 
 jobs:
   build:
@@ -25,18 +29,27 @@ jobs:
         with:
           fetch-depth: 0
           ref: main
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v46
+        with:
+          files: ${{ inputs.files }}
       - name: Install poetry
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: pipx install poetry
       - name: Set up Python
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         uses: actions/setup-python@v4
         with:
           python-version: 3.11
           cache: 'poetry'
       - name: Install dependencies
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: |
           cd ci_new
           poetry install
       - name: Run dagger pipeline
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: |
           cd ci
           poetry run python build direct ${{ inputs.packages }} ${{ inputs.build_flags }}

@@ -1,69 +1,51 @@
-name: Tests lightcurve
+name: Tests
 on:
   pull_request:
     branches:
       - main
       - staging
-    paths:
-      - 'lightcurve/**'
-      - '!lightcurve/README.md'
 
 jobs:
   lightcurve_tests:
     uses: ./.github/workflows/test_template.yaml
     with:
-        python-version: '3.11'
-        sources-folder: 'src'
-        test-folder: 'tests'
-        base-folder: 'lightcurve'
+      python-version: '3.11'
+      sources-folder: 'src'
+      test-folder: 'tests'
+      base-folder: 'lightcurve'
+      files: |
+        lightcurve/**
+        !lightcurve/README.md
+        !lightcurve/.gitignore
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
-
----
-name: Tests astroobject
-on:
-  pull_request:
-    branches:
-      - main
-      - staging
-    paths:
-      - 'astroobject/**'
-      - '!astroobject/README.md'
-
-jobs:
   astroobject_unittests:
     uses: ./.github/workflows/test_template.yaml
     with:
-        python-version: '3.11'
-        sources-folder: 'astroobject'
-        test-folder: 'tests/unittests'
-        base-folder: 'astroobject'
+      python-version: '3.11'
+      sources-folder: 'astroobject'
+      test-folder: 'tests/unittests'
+      base-folder: 'astroobject'
+      files: |
+        astroobject/**
+        !astroobject/README.md
+        !astroobject/.gitignore
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
   astroobject_integration_tests:
     uses: ./.github/workflows/test_template.yaml
     with:
-        python-version: '3.11'
-        sources-folder: 'astroobject'
-        test-folder: 'tests/integration'
-        base-folder: 'astroobject'
-        codecov-flags: ""
+      python-version: '3.11'
+      sources-folder: 'astroobject'
+      test-folder: 'tests/integration'
+      base-folder: 'astroobject'
+      codecov-flags: ""
+      files: |
+        astroobject/**
+        !astroobject/README.md
+        !astroobject/.gitignore
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
-
----
-name: Tests xmatch
-on:
-  pull_request:
-    branches:
-      - main
-      - staging
-    paths:
-      - 'xmatch-service/**'
-      - '!xmatch-service/README.md'
-      - 'charts/xmatch-service/**'
-
-jobs:
   xmatch_tests:
     uses: ./.github/workflows/test_template.yaml
     with:
@@ -71,25 +53,12 @@ jobs:
       sources-folder: 'src'
       test-folder: 'tests'
       base-folder: 'xmatch-service'
+      files: |
+        xmatch/**
+        !xmatch/README.md
+        !xmatch/.gitignore
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
-
----
-name: Test multisurvey object
-on:
-  pull_request:
-    branches:
-      - main
-      - staging
-    paths:
-      - "multisurveys-apis/pyproject.toml"
-      - "multisurveys-apis/poetry.lock"
-      - "multisurveys-apis/src/core/**"
-      - "multisurveys-apis/src/object_api/**"
-      - "multisurveys-apis/tests/core/**"
-      - "multisurveys-apis/tests/object_api/**"
-
-jobs:
   ms_object_tests:
     uses: ./.github/workflows/test_template.yaml
     with:
@@ -97,51 +66,39 @@ jobs:
       sources-folder: 'src'
       test-folder: 'tests/object_api'
       base-folder: 'multisurveys-apis'
+      files: |
+        multisurveys-apis/src/core/**
+        multisurveys-apis/src/object_api/**
+        multisurveys-apis/tests/core/**
+        multisurveys-apis/tests/object_api/**
+        multisurveys-apis/pyproject.toml
+        multisurveys-apis/poetry.lock
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
-
----
-name: Test multisurvey test
-on:
-  pull_request:
-    branches:
-      - main
-      - staging
-    paths:
-      - "multisurveys-apis/pyproject.toml"
-      - "multisurveys-apis/poetry.lock"
-      - "multisurveys-apis/src/core/**"
-      - "multisurveys-apis/src/tests_api/**"
-      - "multisurveys-apis/tests/core/**"
-      - "multisurveys-apis/tests/tests_api/**"
-
-jobs:
-  ms_object_tests:
+  ms_test_tests:
     uses: ./.github/workflows/test_template.yaml
     with:
       python-version: '3.11'
       sources-folder: 'src'
       test-folder: 'tests/test_api'
       base-folder: 'multisurveys-apis'
+      files: |
+        multisurveys-apis/src/core/**
+        multisurveys-apis/src/test_api/**
+        multisurveys-apis/tests/core/**
+        multisurveys-apis/tests/test_api/**
+        multisurveys-apis/pyproject.toml
+        multisurveys-apis/poetry.lock
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
----
-name: Test build multisurvey
-on:
-  pull_request:
-    branches:
-      - main
-      - staging
-    paths:
-      - "multisurveys-apis/**"
-      - "!multisurveys-apis/README.md"
-      - "!multisurveys-apis/.gitignore"
-
-jobs:
-  ms_test_build:
+  ms_build_test:
     uses: ./.github/workflows/build_template_ms.yaml
     with:
       packages: 'multisurveys-apis'
       build_flags: '--dry-run'
+      files: |
+        multisurveys-apis/**
+        !multisurveys-apis/README.md
+        !multisurveys-apis/.gitignore
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'

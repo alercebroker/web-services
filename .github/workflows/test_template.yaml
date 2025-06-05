@@ -2,6 +2,9 @@ name: Test with Poetry
 on:
   workflow_call:
     inputs:
+      files:
+        required: true
+        type: string
       python-version:
         required: false
         type: string
@@ -45,24 +48,33 @@ jobs:
         with:
           token: ${{secrets.GH_TOKEN}}
           submodules: 'recursive'
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v46
+        with:
+          files: ${{ inputs.files }}
       - name: Install poetry
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: pipx install poetry==${{ inputs.poetry-version }}
       - name: Set up Python
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ inputs.python-version }}
           cache: 'poetry'
       - name: Install dependencies
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: |
           cd ${{ inputs.base-folder }}
           git config --global url."https://${{secrets.GH_TOKEN}}@github.com/".insteadOf "https://github.com/"
           poetry install ${{ inputs.poetry-install }}
       - name: Tests with pytest
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: |
           cd ${{ inputs.base-folder }}
           poetry run pytest -x ${{ inputs.test-folder }} --cov ${{ inputs.sources-folder }} --cov-report xml
       - name: Upload test coverage to Codecov
-        if: ${{ inputs.codecov-flags != '' }}
+        if: ${{ inputs.codecov-flags != '' && steps.changed-files.outputs.any_changed == 'true' }}
         uses: codecov/codecov-action@v3
         with:
           files: ${{ inputs.base-folder }}/coverage.xml
