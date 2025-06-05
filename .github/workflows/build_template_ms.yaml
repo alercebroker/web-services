@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  workflow_call:
+    inputs:
+      packages:
+        required: true
+        type: string
+      build_flags:
+        required: false
+        type: string
+        default: ""
+      files:
+        required: false
+        type: string
+        default: "**"
+    secrets:
+      GH_TOKEN:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GHCR_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          token: ${{secrets.GH_TOKEN}}
+          submodules: 'recursive'
+      - name: Check for changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v46
+        with:
+          files: ${{ inputs.files }}
+      - name: Install poetry
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
+        run: pipx install poetry
+      - name: Set up Python
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+          cache: 'poetry'
+      - name: Install dependencies
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
+        run: |
+          cd ci_new
+          poetry install
+      - name: Run dagger pipeline
+        if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
+        run: |
+          cd ci_new
+          poetry run build direct ${{ inputs.packages }} ${{ inputs.build_flags }}
