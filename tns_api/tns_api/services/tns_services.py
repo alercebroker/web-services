@@ -102,7 +102,6 @@ def get_closest_object(closest_objects):
 def query_df_object(df, object):
     query = f"ra == {object.ra.value} and declination == {object.dec.value}"
     result = df.query(query).copy()
-    result["objid"] = result.index
     result.index = ["object_data"]
 
     return result
