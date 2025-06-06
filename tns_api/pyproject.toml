@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tns_api"
-version = "25.6.1-rc147"
+version = "25.6.1-rc148"
 description = ""
 authors = ["hectorxh <hectorplj@gmail.com>"]
 readme = "README.md"
