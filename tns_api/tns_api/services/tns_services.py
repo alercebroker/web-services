@@ -72,7 +72,7 @@ def search_objects_by_radius(ra, dec, df):
     )
 
     idxc, idxcatalog, d2d, d3d = catalog_objects.search_around_sky(
-        incoming_object, 5 * u.deg
+        incoming_object, (5/3600) * u.deg
     )
 
     objects_in_radius = {
