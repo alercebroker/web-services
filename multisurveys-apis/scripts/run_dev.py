@@ -25,6 +25,15 @@ def run_object():
     asyncio.run(run_service("object_api", port, root_path, reload))
 
 
+def run_lightcurve():
+    port = int(os.getenv("PORT", default=8000))
+    root_path = os.getenv("ROOT_PATH", default="")
+    env = os.getenv("ENV", default="dev").lower()
+    reload = "developement".startswith(env)
+
+    asyncio.run(run_service("lightcurve_api", port, root_path, reload))
+
+
 async def run_services(services, port):
     tasks = []
     for i, service in enumerate(services):
