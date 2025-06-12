@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 
 class ztfDetection(BaseModel):
     oid: int
+    survey_id: str
     measurement_id: int
     pid: int
     diffmaglim: float

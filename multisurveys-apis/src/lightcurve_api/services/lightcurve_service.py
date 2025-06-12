@@ -20,9 +20,7 @@ def get_detections(
         oid, survey_id, session_factory=session_factory
     )
 
-    result = parse_sql_detection(result)
-
-    result = detections_to_multistream(result)
+    result = parse_sql_detection(result, survey_id)
 
     return result
 
@@ -44,9 +42,8 @@ def get_non_detections(
 
     result_parsed = parse_sql_non_detections(non_detections_result, survey_id)
 
-    result_multistream = non_detections_to_multistream(result_parsed)
 
-    return result_multistream
+    return result_parsed
 
 
 def get_forced_photometry(
@@ -66,3 +63,32 @@ def get_forced_photometry(
     result_parsed = parse_forced_photometry(forced_photometry, survey_id)
 
     return result_parsed
+
+
+def get_lightcurve(
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., AbstractContextManager[Session]]
+    | None = None,
+):
+    """
+    Retrieves both unique detections and non detections for a given object in
+    a given survey.
+    """
+
+    detections = get_detections(
+        oid, survey_id, session_factory=session_factory
+    )
+    non_detections = get_non_detections(
+        oid, survey_id, session_factory=session_factory
+    )
+    forced_photometry = get_forced_photometry(
+        oid, survey_id, session_factory
+    )
+
+
+    return {
+        "detections": detections,
+        "non_detections": non_detections,
+        "forced_photometry": forced_photometry,
+    }

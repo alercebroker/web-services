@@ -16,7 +16,7 @@ def get_all_unique_non_detections_sql(
             select(NonDetection)
             .where(*filters.values())
             .order_by(NonDetection.mjd.desc())
-            .limit(5)
+            .limit(10)
         )
 
         result = session.execute(stmt).all()

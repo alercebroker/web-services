@@ -4,12 +4,12 @@ from ..models.non_detections import NonDetections
 from ..models.force_photometry import ZtfForcedPhotometry
 from ..models.detections import ztfDetection
 
-def parse_sql_detection(sql_response):
+def parse_sql_detection(sql_response, survey_id):
 
     data_parsed = []
     for row in sql_response:
         model_dict = row[0].__dict__.copy()
-        model_parsed = ztfDetection(**model_dict)
+        model_parsed = ztfDetection(**model_dict, survey_id=survey_id)
         data_parsed.append(model_parsed)
 
     
@@ -26,15 +26,6 @@ def parse_sql_non_detections(sql_response, survey_id):
 
     return response_arr
 
-
-def parse_survey_id(survey_id):
-
-    if survey_id == "ztf":
-        return 1
-    elif survey_id == "lsst":
-        return 0
-
-    return 'empty'
 
 
 def parse_forced_photometry(sql_response, survey_id):

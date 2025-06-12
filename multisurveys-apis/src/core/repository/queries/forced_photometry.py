@@ -28,6 +28,7 @@ def build_query(oid, survey_id):
         stmt = (
             select(ZtfForcedPhotometry)
             .where(ZtfForcedPhotometry.oid == oid)
+            .limit(10)
         )
 
 
