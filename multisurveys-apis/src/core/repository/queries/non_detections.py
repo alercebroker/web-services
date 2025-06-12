@@ -13,10 +13,12 @@ def get_all_unique_non_detections_sql(
     with session_factory() as session:
 
         stmt = (
-            select(Object, NonDetection)
-            .join(NonDetection, NonDetection.oid == Object.oid)
+            select(NonDetection)
             .where(*filters.values())
+            .order_by(NonDetection.mjd.desc())
+            .limit(5)
         )
+
         result = session.execute(stmt).all()
 
         return result

@@ -1,7 +1,11 @@
 import traceback
 from fastapi import APIRouter, Request
 from fastapi import APIRouter, HTTPException, Request
-from ..services.lightcurve_service import get_detections, get_non_detections
+from ..services.lightcurve_service import (
+    get_detections, 
+    get_non_detections, 
+    get_forced_photometry
+)
 from ..services.validations import *
 
 router = APIRouter()
@@ -66,6 +70,32 @@ def non_detections(
 
         return response
     
+    except ValueError as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="An error occurred")
+    
+
+@router.get("/forced-photometry")
+def forced_photometry(oid: str, request: Request, survey_id: str = "all"):
+    try:
+        survey_validate(survey_id)
+
+        session = request.app.state.psql_session
+
+        forced_photometry_data = get_forced_photometry(
+            oid=oid,
+            survey_id=survey_id,
+            session_factory=session,
+        )
+
+        return forced_photometry_data
+    
+    except HTTPException as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
     except ValueError as e:
         traceback.print_exc()
         raise HTTPException(status_code=400, detail=str(e))
