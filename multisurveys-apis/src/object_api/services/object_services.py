@@ -4,7 +4,7 @@ from core.repository.queries.objects import query_get_objects, query_object_by_i
 from .parsers import (
     parse_params,
     parse_objects_list_output,
-    parse_result_query
+    parse_unique_object_query
 )
 
 
@@ -12,8 +12,7 @@ def get_object_by_id(session_ms, id):
 
     query_response = query_object_by_id(session_ms, id)
 
-    response = parse_result_query(query_response)
-
+    response = parse_unique_object_query(query_response)
 
     return response
 

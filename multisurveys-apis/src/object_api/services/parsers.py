@@ -5,6 +5,7 @@ from .statements_sql import (
     create_conesearch_statement,
 )
 from fastapi.encoders import jsonable_encoder
+from ..models.object import ZtfObject
 
 def parse_params(search_params):
     consearch_parse = convert_conesearch_args(
@@ -24,11 +25,12 @@ def parse_params(search_params):
     return response
 
 
-def parse_result_query(sql_response):
+def parse_unique_object_query(sql_response):
     parsed_dict = {}
-    for row in sql_response:
-        row_parsed = jsonable_encoder(row, sqlalchemy_safe=True)
-        parsed_dict.update(row_parsed)
+    for model in sql_response:
+        model_dict = model.__dict__.copy()
+        model_parsed = ZtfObject(**model_dict)
+        parsed_dict.update(model_parsed)
 
     return parsed_dict
 

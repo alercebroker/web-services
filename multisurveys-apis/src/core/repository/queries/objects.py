@@ -8,9 +8,8 @@ def query_object_by_id(session_ms, id):
     
     with session_ms() as session:
         stmt = (
-            select(Object, ZtfObject)
-            .join(ZtfObject, Object.oid==ZtfObject.oid)
-            .where(Object.oid==id)
+            select(ZtfObject)
+            .where(ZtfObject.oid==id)
         )
         
         

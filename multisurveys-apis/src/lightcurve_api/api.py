@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
-from core.config.connection import connect as connect_sql
-from core.config.connection import session_wrapper, psql_entity
+from core.config.connection import psql_entity
 from .routes import rest
 
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
@@ -23,7 +22,7 @@ app.add_middleware(
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-app.include_router(rest.router)
+app.include_router(rest.router, prefix="/multisurvey")
 
 app.mount(
     "/static",

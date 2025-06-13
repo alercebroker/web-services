@@ -6,7 +6,6 @@ from core.repository.queries.non_detections import get_all_unique_non_detections
 from core.repository.queries.forced_photometry import get_unique_forced_photometry_sql
 from .parsers import parse_sql_detection, parse_sql_non_detections, parse_forced_photometry
 from .statements import convert_filters_non_detections_sql_alchemy
-from .multistream import *
 
 
 def get_detections(
