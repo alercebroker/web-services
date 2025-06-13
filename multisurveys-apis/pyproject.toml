@@ -1,0 +1,51 @@
+[tool.poetry]
+name = "multisurveys-apis"
+version = "0.1.0"
+description = ""
+authors = ["Demurest <eric.apolonio@hotmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "core", from = "src" },
+    { include = "object_api", from = "src" },
+    { include = "lightcurve_api", from = "src" },
+    { include = "test_api", from = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+sqlalchemy = { extras = ["asyncio"], version = "^2.0.19" }
+returns = "^0.21.0"
+psycopg2-binary = "^2.9.6"
+prometheus-fastapi-instrumentator = "^6.1.0"
+jinja2 = "^3.1.2"
+httpx = "^0.24.1"
+db-plugins = {path = "/home/eric/Desktop/Alerce/Poetry/p11/repos/pipeline/libs/db-plugins-multisurvey"}
+# db-plugins = "^24.5.2a11"
+djlint = "^1.35.2"
+fastapi = "^0.115.12"
+
+[tool.poetry.group.test.dependencies]
+pytest = "^7.4.0"
+pytest-docker = "^3.0.0"
+pytest-cov = "^4.1.0"
+
+[tool.poetry.group.production.dependencies]
+uvicorn = { extras = ["standard"], version = "^0.23.1" }
+
+[tool.poetry.group.profiling.dependencies]
+memray = "^1.8.1"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.11.12"
+
+[build-system]
+requires = ["poetry-core", "setuptools", "wheel", "Cython==0.29.36", "numpy"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 79
+
+[tool.poetry.scripts]
+dev = "scripts.run_dev:run"
+object = "scripts.run_object_dev:run"
+lightcurve = "scripts.run_lightcurve_dev:run"

@@ -1,0 +1,104 @@
+name: Tests
+on:
+  pull_request:
+    branches:
+      - main
+      - staging
+
+jobs:
+  lightcurve_tests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+      python-version: '3.11'
+      sources-folder: 'src'
+      test-folder: 'tests'
+      base-folder: 'lightcurve'
+      files: |
+        lightcurve/**
+        !lightcurve/README.md
+        !lightcurve/.gitignore
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+  astroobject_unittests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+      python-version: '3.11'
+      sources-folder: 'astroobject'
+      test-folder: 'tests/unittests'
+      base-folder: 'astroobject'
+      files: |
+        astroobject/**
+        !astroobject/README.md
+        !astroobject/.gitignore
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+  astroobject_integration_tests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+      python-version: '3.11'
+      sources-folder: 'astroobject'
+      test-folder: 'tests/integration'
+      base-folder: 'astroobject'
+      codecov-flags: ""
+      files: |
+        astroobject/**
+        !astroobject/README.md
+        !astroobject/.gitignore
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+  xmatch_tests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+      python-version: '3.11'
+      sources-folder: 'src'
+      test-folder: 'tests'
+      base-folder: 'xmatch-service'
+      files: |
+        xmatch/**
+        !xmatch/README.md
+        !xmatch/.gitignore
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+  ms_object_tests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+      python-version: '3.11'
+      sources-folder: 'src'
+      test-folder: 'tests/object_api'
+      base-folder: 'multisurveys-apis'
+      files: |
+        multisurveys-apis/src/core/**
+        multisurveys-apis/src/object_api/**
+        multisurveys-apis/tests/core/**
+        multisurveys-apis/tests/object_api/**
+        multisurveys-apis/pyproject.toml
+        multisurveys-apis/poetry.lock
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+  ms_test_tests:
+    uses: ./.github/workflows/test_template.yaml
+    with:
+      python-version: '3.11'
+      sources-folder: 'src'
+      test-folder: 'tests/test_api'
+      base-folder: 'multisurveys-apis'
+      files: |
+        multisurveys-apis/src/core/**
+        multisurveys-apis/src/test_api/**
+        multisurveys-apis/tests/core/**
+        multisurveys-apis/tests/test_api/**
+        multisurveys-apis/pyproject.toml
+        multisurveys-apis/poetry.lock
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
+  ms_build_test:
+    uses: ./.github/workflows/build_template_ms.yaml
+    with:
+      packages: 'multisurveys-apis'
+      build_flags: '--dry-run'
+      files: |
+        multisurveys-apis/**
+        !multisurveys-apis/README.md
+        !multisurveys-apis/.gitignore
+    secrets:
+      GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
