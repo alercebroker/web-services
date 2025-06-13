@@ -10,7 +10,7 @@ from core.services.object import (
     get_first_det_candid,
     get_object,
 )
-from ..services.tns_service import get_tns
+from ..services.old_tns_service import get_tns
 
 router = APIRouter()
 templates = Jinja2Templates(
@@ -53,26 +53,53 @@ async def object_info_app(request: Request, oid: str):
         },
     )
 
+
 @router.get("/tns/", response_class=HTMLResponse)
 async def tns_info(request: Request, ra: float, dec:float):
     try:
         tns_data, tns_link = get_tns(ra, dec)
+
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
-    except requests.exceptions.HTTPError as error:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
 
     return templates.TemplateResponse(
-        name="tnsInformation.html.jinja",
+        name="oldTnsInformation.html.jinja",
         context={
             "request": request,
+            "tns_data": tns_data,
             "tns_link": tns_link,
-            "object_name": tns_data["object_data"]["name"],
-            "object_type": tns_data["object_data"]["type"],
+            "object_name": tns_data["object_name"],
+            "object_type": tns_data["object_type"],
             "redshift": tns_data["object_data"]["redshift"],
-            "reporting_group": tns_data["object_data"]["reporting_group"],
-            "discoverer": tns_data["object_data"]["reporters"],
-            "discovery_data_source": tns_data["object_data"]["source_group"],
+            "discoverer": tns_data["object_data"]["discoverer"],
+            "discovery_data_source": tns_data["object_data"]["discovery_data_source"]
         }
     )
+
+
+"""
+New route for the new API TNS
+"""
+# @router.get("/tns/", response_class=HTMLResponse)
+# async def tns_info(request: Request, ra: float, dec:float):
+#     try:
+#         tns_data, tns_link = get_tns(ra, dec)
+#     except ObjectNotFound:
+#         raise HTTPException(status_code=404, detail="Object ID not found")
+#     except requests.exceptions.HTTPError as error:
+#         traceback.print_exc()
+#         raise HTTPException(status_code=500, detail="An error occurred")
+
+#     return templates.TemplateResponse(
+#         name="tnsInformation.html.jinja",
+#         context={
+#             "request": request,
+#             "tns_link": tns_link,
+#             "object_name": tns_data["object_data"]["name"],
+#             "object_type": tns_data["object_data"]["type"],
+#             "redshift": tns_data["object_data"]["redshift"],
+#             "reporting_group": tns_data["object_data"]["reporting_group"],
+#             "discoverer": tns_data["object_data"]["reporters"],
+#             "discovery_data_source": tns_data["object_data"]["source_group"],
+#         }
+#     )
