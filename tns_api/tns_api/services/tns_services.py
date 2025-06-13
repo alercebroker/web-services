@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import requests
 from astropy.coordinates import SkyCoord
+from .handle_errors import ObjectNotFound
 
 DATA_PATH = os.path.abspath(os.environ["DATA_PATH"])
 
@@ -71,9 +72,7 @@ def search_objects_by_radius(ra, dec, df):
         ra=[ra] * u.deg, dec=[dec] * u.deg, frame="icrs", unit="deg"
     )
 
-    idxc, idxcatalog, d2d, d3d = catalog_objects.search_around_sky(
-        incoming_object, 5 * u.deg
-    )
+    idxc, idxcatalog, d2d, d3d = catalog_objects.search_around_sky(incoming_object, (5/3600)*u.deg)
 
     objects_in_radius = {
         "objects_catalog": catalog_objects,
@@ -94,12 +93,13 @@ def get_closest_object(closest_objects):
         i = d2d.argmin()
         closest_object = objects_catalog[idxcatalog[i]]
     else:
-        closest_object = "empty"  # No match found
+        raise ObjectNotFound()
 
     return closest_object
 
 
 def query_df_object(df, object):
+
     query = f"ra == {object.ra.value} and declination == {object.dec.value}"
     result = df.query(query).copy()
     result.index = ["object_data"]
@@ -111,6 +111,38 @@ def replace_NaN_values(df):
     df = df.replace(np.nan, "empty")
 
     return df
+
+
+def empty_object_dict():
+    empty_object_data = {
+        "object_data":{ 
+        "name_prefix": "empty",
+        "name": "empty",
+        "ra": "empty",
+        "declination": "empty",
+        "redshift": "empty",
+        "typeid": "empty",
+        "type": "empty",
+        "reporting_groupid": "empty",
+        "reporting_group": "empty",
+        "source_groupid": "empty",
+        "source_group": "empty",
+        "discoverydate": "empty",
+        "discoverymag": "empty",
+        "discmagfilter": "empty",
+        "filter": "empty",
+        "reporters": "empty",
+        "time_received": "empty",
+        "internal_names": "empty",
+        "Discovery_ADS_bibcode": "empty",
+        "Class_ADS_bibcodes": "empty",
+        "creationdate": "empty",
+        "lastmodified": "empty",
+        "objid": "empty"
+        }
+    }
+
+    return json.dumps(empty_object_data, allow_nan=True)
 
 
 def download_tns_base_csv():
