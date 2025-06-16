@@ -16,3 +16,11 @@ class nonDectectionMultistream(BaseModel):
     oid: int | None = None
     sid: int | None = None
     diffmaglim: float | None = None
+
+
+class LsstNonDetection(BaseModel):
+    oid: int
+    ccd_visit_id: int
+    band: int
+    mjd: float
+    noise: float

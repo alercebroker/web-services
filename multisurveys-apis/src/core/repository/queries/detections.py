@@ -1,6 +1,6 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import Object, ZtfDetection, Detection
+from db_plugins.db.sql.models import Object, ZtfDetection, Detection, LsstDetection
 from sqlalchemy.orm import Session
 from sqlalchemy import select, text
 
@@ -29,7 +29,12 @@ def build_statement(survey_id, oid):
             .limit(10)
         )
     elif survey_id == "lsst":
-        pass
+        stmt = (
+            select(LsstDetection)
+            .where(LsstDetection.oid == oid)
+            .order_by(LsstDetection.psf_flux.desc())
+            .limit(10)
+        )
     else:
         stmt = text("")
 

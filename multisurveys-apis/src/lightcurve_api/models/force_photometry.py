@@ -74,4 +74,12 @@ class ZtfForcedPhotometry(BaseModel):
     sigmagnr: float
     chinr: float
     sharpnr: float
-    
+
+
+class LsstForcedPhotometry(BaseModel):
+    oid: int
+    measurement_id: int
+    visit_id: int
+    detector_id: int
+    psf_flux: float
+    psf_flux_err: float

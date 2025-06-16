@@ -30,6 +30,15 @@ class ztfDetection(BaseModel):
     has_stamp: bool
 
 
+class LsstDetection(BaseModel):
+    oid: int
+    measurement_id: int
+    mjd: float
+    ra: float
+    dec: float
+    band: int
+
+
 class DetectionMultistream(BaseModel):
     candid: str
     tid: str

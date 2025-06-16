@@ -35,9 +35,9 @@ def get_non_detections(
     """
 
 
-    filters = convert_filters_non_detections_sql_alchemy(oid, survey_id)
+    filters = convert_filters_non_detections_sql_alchemy(oid)
 
-    non_detections_result = get_all_unique_non_detections_sql(filters, session_factory)
+    non_detections_result = get_all_unique_non_detections_sql(filters, survey_id, session_factory)
 
     result_parsed = parse_sql_non_detections(non_detections_result, survey_id)
 

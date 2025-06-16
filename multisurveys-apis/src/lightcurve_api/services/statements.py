@@ -1,7 +1,7 @@
 from db_plugins.db.sql.models import NonDetection, Object, ZtfForcedPhotometry
 
 
-def convert_filters_non_detections_sql_alchemy(oid, survey_id):
+def convert_filters_non_detections_sql_alchemy(oid):
 
     filters = {}
 
