@@ -16,11 +16,11 @@ class ztfDetection(BaseModel):
     distnr: float
     rb: float
     rbversion: str
-    drb: float
-    drbversion: str
+    drb: float | None = None
+    drbversion: str | None = None
     magapbig: float
     sigmagapbig: float
-    rfid: int
+    rfid: int | None = None
     magpsf_corr: float
     sigmapsf_corr: float
     sigmapsf_corr_ext: float

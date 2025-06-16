@@ -25,6 +25,7 @@ def build_statement(survey_id, oid):
         stmt = (
             select(ZtfDetection)
             .where(ZtfDetection.oid == oid)
+            .order_by(ZtfDetection.diffmaglim.desc())
             .limit(10)
         )
     elif survey_id == "lsst":
