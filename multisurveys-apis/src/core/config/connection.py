@@ -10,12 +10,12 @@ from sqlalchemy.orm import Session, scoped_session, sessionmaker
 logger = logging.getLogger(__name__)
 
 
-user = os.getenv("PSQL_USER")
-pwd = os.getenv("PSQL_PASSWORD")
-host = os.getenv("PSQL_HOST")
-port = os.getenv("PSQL_PORT")
-db = os.getenv("PSQL_DATABASE")
-db_url = f"postgresql://{user}:{pwd}@{host}:{port}/{db}"
+# user = os.getenv("PSQL_USER")
+# pwd = os.getenv("PSQL_PASSWORD")
+# host = os.getenv("PSQL_HOST")
+# port = os.getenv("PSQL_PORT")
+# db = os.getenv("PSQL_DATABASE")
+# db_url = f"postgresql://{user}:{pwd}@{host}:{port}/{db}"
 
 
 db_config = {

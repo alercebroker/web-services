@@ -1,5 +1,4 @@
-import pprint
-from fastapi.encoders import jsonable_encoder
+
 from core.repository.queries.objects import query_get_objects, query_object_by_id
 from .parsers import (
     parse_params,
@@ -8,7 +7,9 @@ from .parsers import (
 )
 
 
-def get_object_by_id(session_ms, id):
+def get_object_by_id(session_ms, id, survey_id):
+
+    decode_id(id, survey_id)
 
     query_response = query_object_by_id(session_ms, id)
 
@@ -24,3 +25,5 @@ def get_objects_list(session_ms, search_params):
     result = parse_objects_list_output(result)
 
     return result
+
+

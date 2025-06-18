@@ -2,7 +2,7 @@ from typing import Callable
 from contextlib import AbstractContextManager
 from db_plugins.db.sql.models import Object, ZtfDetection, Detection, LsstDetection
 from sqlalchemy.orm import Session
-from sqlalchemy import select, text
+from sqlalchemy import select, text, and_
 
 
 def get_all_unique_detections_sql(
@@ -12,30 +12,29 @@ def get_all_unique_detections_sql(
     | None = None,
 ):
     with session_factory() as session:
-        stmt = build_statement(survey_id, oid)
+
+        if survey_id == "ztf":
+            stmt = build_statement(ZtfDetection, oid)
+        elif survey_id == "lsst":
+            stmt = build_statement(LsstDetection, oid)
+        else:
+            stmt = text('')
 
         return session.execute(stmt).all()
 
     
 
-def build_statement(survey_id, oid):
+def build_statement(model_id, oid):
 
-
-    if survey_id == "ztf":
-        stmt = (
-            select(ZtfDetection)
-            .where(ZtfDetection.oid == oid)
-            .order_by(ZtfDetection.diffmaglim.desc())
-            .limit(10)
-        )
-    elif survey_id == "lsst":
-        stmt = (
-            select(LsstDetection)
-            .where(LsstDetection.oid == oid)
-            .order_by(LsstDetection.psf_flux.desc())
-            .limit(10)
-        )
-    else:
-        stmt = text("")
+    stmt = (
+        select(model_id, Detection)
+        .join(
+            Detection, and_(
+            Detection.oid == model_id.oid,
+            Detection.measurement_id == model_id.measurement_id
+        ))
+        .where(model_id.oid == oid)
+        .limit(10)
+    )
 
     return stmt

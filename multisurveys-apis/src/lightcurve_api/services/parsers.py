@@ -1,3 +1,4 @@
+import pprint
 from ..models.non_detections import NonDetections
 from ..models.force_photometry import ZtfForcedPhotometry, LsstForcedPhotometry
 from ..models.detections import ztfDetection, LsstDetection
@@ -25,8 +26,7 @@ def parse_sql_non_detections(sql_response, survey_id):
 
 
 def parse_forced_photometry(sql_response, survey_id):
-
-
+    
     if survey_id == "ztf":
         forced_photometry_data = ModelsParser(ZtfForcedPhotometry, sql_response, survey_id)
     if survey_id == "lsst":
@@ -46,8 +46,18 @@ class ModelsParser():
     def parse_data_arr(self):
         data_parsed = []
         for row in self.sql_response:
-            model_dict = row[0].__dict__
+            model_dict = self.transform_models_to_dict(row)
             model_parsed = self.output_model(**model_dict, survey_id=self.survey_id)
             data_parsed.append(model_parsed)
         
         return data_parsed
+    
+
+    def transform_models_to_dict(self, models):
+        model_dict = {}
+        for model in models:
+            model_dict.update(model.__dict__.copy())
+
+        return model_dict
+
+
