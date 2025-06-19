@@ -2,12 +2,13 @@ import json
 import os
 import shelve
 import zipfile
-import astropy.units as u
-import pandas as pd
-import requests
-import numpy as np
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urljoin
+
+import astropy.units as u
+import numpy as np
+import pandas as pd
+import requests
 from astropy.coordinates import SkyCoord
 
 DATA_PATH = os.path.abspath(os.environ["DATA_PATH"])
@@ -46,7 +47,6 @@ def get_object_tns(ra: float, dec: float):
 
     object_dict = object_result.to_dict(orient="index")
 
-
     return json.dumps(object_dict, allow_nan=True)
 
 
@@ -61,7 +61,6 @@ def update_parquet():
 
 
 def search_objects_by_radius(ra, dec, df):
-
     ra_numpy_array = df.ra.to_numpy()
     dec_numpy_array = df.declination.to_numpy()
 
@@ -72,20 +71,21 @@ def search_objects_by_radius(ra, dec, df):
         ra=[ra] * u.deg, dec=[dec] * u.deg, frame="icrs", unit="deg"
     )
 
-    idxc, idxcatalog, d2d, d3d = catalog_objects.search_around_sky(incoming_object, 5*u.deg)
+    idxc, idxcatalog, d2d, d3d = catalog_objects.search_around_sky(
+        incoming_object, 5 * u.deg
+    )
 
     objects_in_radius = {
         "objects_catalog": catalog_objects,
-        "idxcatalog": idxcatalog, 
-        "d2d":d2d, 
-        "d3d":d3d
+        "idxcatalog": idxcatalog,
+        "d2d": d2d,
+        "d3d": d3d,
     }
 
     return objects_in_radius
 
 
 def get_closest_object(closest_objects):
-
     d2d = closest_objects["d2d"]
     objects_catalog = closest_objects["objects_catalog"]
     idxcatalog = closest_objects["idxcatalog"]
@@ -96,16 +96,13 @@ def get_closest_object(closest_objects):
     else:
         closest_object = "empty"  # No match found
 
-
     return closest_object
-
 
 
 def query_df_object(df, object):
     query = f"ra == {object.ra.value} and declination == {object.dec.value}"
     result = df.query(query).copy()
-    result['objid'] = result.index
-    result.index = ['object_data']
+    result.index = ["object_data"]
 
     return result
 
@@ -183,7 +180,6 @@ def build_tns_parquet():
         csv_path = os.path.join(DATA_PATH, "tns_public_objects.csv.zip")
         zip_file = zipfile.ZipFile(csv_path)
         df = pd.read_csv(zip_file.open("tns_public_objects.csv"), skiprows=1)
-        df = df.set_index("objid", drop=True)
 
         parquet_path = os.path.join(DATA_PATH, "tns.parquet")
         df.to_parquet(parquet_path)
@@ -196,8 +192,7 @@ def build_tns_parquet():
     df_tns = pd.read_parquet(parquet_path)
 
     updated = False
-    t: datetime = info["last_archive"] + timedelta(hours=1)
-    
+    t: datetime = info["last_archive"]
 
     while t < now:
         t += timedelta(hours=1)
@@ -214,13 +209,13 @@ def build_tns_parquet():
             df_update = pd.read_csv(
                 zip_file.open(f"tns_public_objects_{t_str}.csv"), skiprows=1
             )
-            df_update = df_update.set_index("objid", drop=True)
         except pd.errors.EmptyDataError:
             print("No data to update on CSV")
             continue
 
         print("Updating for hour", t_str)
-        df_tns.update(df_update)
+        df_tns = pd.concat([df_tns, df_update])
+        df_tns = df_tns.drop_duplicates(subset="objid", keep="last")
         updated = True
 
     if updated:

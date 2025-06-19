@@ -20,8 +20,8 @@
     </table>
     <div class="tw-flex tw-justify-between tw-w-[95%] tw-mx-auto tw-font-roboto">
         <div class="tw-w-[50%] tw-text-xs">
-            {% if reporting_group == "ALeRCE" %}
-            <p>Discovered by {{discovery_data_source}}</p>
+            {% if "reporter" in tns_data["object_data"] and tns_data["object_data"]["reporter"] == "ALeRCE"%}
+            <p>Discovered by {{discovery_data_source["group_name"]}}</p>
 
             <div class="tw-flex tw-relative">
                 <span>Reported by ALeRCE</span>
