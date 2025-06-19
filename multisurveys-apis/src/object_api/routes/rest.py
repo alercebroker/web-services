@@ -88,11 +88,11 @@ def list_objects(
 
 
 @router.get("/object")
-def get_object(request: Request, id: str, survey_id: str):
+def get_object(request: Request, oid: str, survey_id: str):
     try:
         session = request.app.state.psql_session
 
-        response = get_object_by_id(session, id, survey_id)
+        response = get_object_by_id(session, oid, survey_id)
 
         return response
     except ValueError as e:

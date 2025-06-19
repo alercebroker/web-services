@@ -7,13 +7,10 @@ from .parsers import (
 )
 
 
-def get_object_by_id(session_ms, id, survey_id):
+def get_object_by_id(session_ms, oid, survey_id):
 
-    decode_id(id, survey_id)
-
-    query_response = query_object_by_id(session_ms, id)
-
-    response = parse_unique_object_query(query_response)
+    object_model = query_object_by_id(session_ms, oid, survey_id)
+    response = parse_unique_object_query(object_model)
 
     return response
 

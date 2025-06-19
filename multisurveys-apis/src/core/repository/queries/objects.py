@@ -4,19 +4,22 @@ from object_api.services.statements_sql import create_order_statement
 from object_api.models.pagination import Pagination
 
 
-def query_object_by_id(session_ms, id):
+def query_object_by_id(session_ms, oid, survey_id):
     
     with session_ms() as session:
-        stmt = (
-            select(ZtfObject)
-            .where(ZtfObject.oid==id)
-        )
-        
+
+        if survey_id == "ztf":
+            stmt = build_statement_object(ZtfObject, oid)
         
         object = session.execute(stmt).one()
 
         return object
 
+
+def build_statement_object(model_id, oid):
+    stmt = select(model_id).where(model_id.oid==oid)
+    
+    return stmt
 
 
 def query_get_objects(session_ms, search_params, parsed_params):
