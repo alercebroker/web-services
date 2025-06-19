@@ -1,5 +1,4 @@
-import pprint
-from ..models.non_detections import NonDetections
+from ..models.non_detections import NonDetections, LsstNonDetection
 from ..models.force_photometry import ZtfForcedPhotometry, LsstForcedPhotometry
 from ..models.detections import ztfDetection, LsstDetection
 
@@ -20,7 +19,10 @@ def parse_sql_detection(sql_response, survey_id):
 
 def parse_sql_non_detections(sql_response, survey_id):
 
-    non_detections = ModelsParser(NonDetections, sql_response, survey_id)
+    if survey_id == "lsst":
+        non_detections = ModelsParser(LsstNonDetection, sql_response, survey_id)
+    else:
+        non_detections = ModelsParser(NonDetections, sql_response, "")
 
     return non_detections.parse_data_arr()
 

@@ -5,7 +5,6 @@ from core.repository.queries.detections import get_all_unique_detections_sql
 from core.repository.queries.non_detections import get_all_unique_non_detections_sql
 from core.repository.queries.forced_photometry import get_unique_forced_photometry_sql
 from .parsers import parse_sql_detection, parse_sql_non_detections, parse_forced_photometry
-from .statements import convert_filters_non_detections_sql_alchemy
 
 
 def get_detections(
@@ -34,10 +33,7 @@ def get_non_detections(
     object in a given survey.
     """
 
-
-    filters = convert_filters_non_detections_sql_alchemy(oid)
-
-    non_detections_result = get_all_unique_non_detections_sql(filters, survey_id, session_factory)
+    non_detections_result = get_all_unique_non_detections_sql(oid, survey_id, session_factory)
 
     result_parsed = parse_sql_non_detections(non_detections_result, survey_id)
 

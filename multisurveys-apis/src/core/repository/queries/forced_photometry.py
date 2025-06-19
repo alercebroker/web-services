@@ -1,8 +1,8 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import ZtfForcedPhotometry, LsstForcedPhotometry, ForcedPhotometry, Object
+from db_plugins.db.sql.models import ZtfForcedPhotometry, LsstForcedPhotometry, ForcedPhotometry
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, and_
 
 
 def get_unique_forced_photometry_sql(
@@ -28,7 +28,13 @@ def build_query(model_id, oid):
 
     stmt = (
         select(model_id, ForcedPhotometry)
-        .join(model_id, model_id.oid==ForcedPhotometry.oid)
+        .join(
+            ForcedPhotometry, 
+            and_(
+                model_id.oid==ForcedPhotometry.oid,
+                model_id.measurement_id==ForcedPhotometry.measurement_id
+            )
+        )
         .where(model_id.oid == oid)
         .limit(10)
     )
