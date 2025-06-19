@@ -11,7 +11,7 @@ on:
 
 jobs:
   cd_lightcurve:
-    uses: ./.github/workflows/cd-template.yml
+    uses: ./.github/workflows/cd-template.yaml
     with:
       packages: 'lightcurve' # comma separated list of packages
       event: ${{ github.event_name }} 

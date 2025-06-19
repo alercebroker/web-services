@@ -2,19 +2,19 @@ name: CD tns_api
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - 'tns_api/**'
-  #     - '!tns_api/README.md'
-  #     - '!tns_api/.gitignore'
-  #     - 'charts/tns_api/**'
-  #     - '!charts/tns_api/.helmignore'
+  push:
+    branches:
+      - main
+    paths:
+      - 'tns_api/**'
+      - '!tns_api/README.md'
+      - '!tns_api/.gitignore'
+      - 'charts/tns_api/**'
+      - '!charts/tns_api/.helmignore'
 
 # jobs:
 #   cd_lightcurve:
-#     uses: ./.github/workflows/cd-template.yml
+#     uses: ./.github/workflows/cd-template.yaml
 #     with:
 #       packages: 'tns_api' # comma separated list of packages
 #       event: ${{ github.event_name }} 
