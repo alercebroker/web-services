@@ -9,22 +9,16 @@ class PaginationArgs(BaseModel):
     count: bool
 
 
-class OrderMode(str, Enum):
-    asc = "ASC"
-    desc = "DESC"
-
-
 class Order(BaseModel):
     order_by: str | None = "probability"
-    order_mode: OrderMode = OrderMode.desc
+    order_mode: str
 
 
 class Pagination:
     """Paginate responses from the database."""
 
-    def __init__(self, query, page, per_page, total, items):
+    def __init__(self, page, per_page, total, items):
         """Set attributes from args."""
-        self.query = query
         self.page = page
         self.per_page = per_page
         self.total = total
@@ -41,13 +35,6 @@ class Pagination:
             pages = int(ceil(self.total / float(self.per_page)))
         return pages
 
-    def prev(self):
-        """Return a :class:`Pagination` object for the previous page."""
-        assert (
-            self.query is not None
-        ), "a query object is required for this method to work"
-        return self.query.paginate(self.page - 1, self.per_page)
-
     @property
     def prev_num(self):
         """Get number of the previous page."""
@@ -59,13 +46,6 @@ class Pagination:
     def has_prev(self):
         """Check if a previous page exists."""
         return self.page > 1
-
-    def next(self):
-        """Return a :class:`Pagination` object for the next page."""
-        assert (
-            self.query is not None
-        ), "a query object is required for this method to work"
-        return self.query.paginate(self.page + 1, self.per_page)
 
     @property
     def has_next(self):

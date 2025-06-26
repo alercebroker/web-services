@@ -6,11 +6,12 @@ from .pagination import PaginationArgs, Order
 
 class Filters(BaseModel):
     oids: Annotated[list[str] | None, Query()] = None
+    survey: str | None = None
     classifier: str | None = None
     classifier_version: str | None = None
     class_name: str | None = None
     ranking: int | None = None
-    ndet: list[int] | None = None
+    n_det: list[int] | None = None
     probability: float | None = None
     firstmjd: list[float] | None = None
     lastmjd: float | None = None

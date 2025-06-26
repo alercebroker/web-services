@@ -17,7 +17,6 @@ def get_object_by_id(session_ms, oid, survey_id):
 
 def get_objects_list(session_ms, search_params):
     parsed_params = parse_params(search_params)
-
     result = query_get_objects(session_ms, search_params, parsed_params)
     result = parse_objects_list_output(result)
 

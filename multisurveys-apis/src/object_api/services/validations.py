@@ -11,3 +11,15 @@ def ndets_validation(ndets: list[int]):
                         "detections_container": "Min value can't be greater than max"
                     },
                 )
+
+
+def order_mode_validation(order: str):
+    available_orders = ['DESC', 'ASC']
+    
+    if order not in available_orders:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "order_mode": "Order can be only DESC or ASC"
+            },
+        )
