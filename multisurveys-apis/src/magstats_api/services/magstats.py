@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from core.repository.queries.magstats import get_magstats_by_oid
 from .parsers import parse_magstats
 
-def get_magstats_by_oid(
+def get_magstats(
         oid,
         session_factory: Callable[..., AbstractContextManager[Session]]
         | None = None,

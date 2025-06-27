@@ -1,7 +1,7 @@
 import traceback
 from fastapi import APIRouter, Request
 from fastapi import APIRouter, HTTPException, Request
-from ..services.magstats import get_magstats_by_oid
+from ..services.magstats import get_magstats
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ async def ping(
     request: Request,
     oid: str,
 ):
-    magstats = get_magstats_by_oid(oid, session_factory=request.app.state.psql_session)
+    magstats = get_magstats(oid, session_factory=request.app.state.psql_session)
     
     if not magstats:
         raise HTTPException(status_code=404, detail="Magstats not found for the given OID") 
