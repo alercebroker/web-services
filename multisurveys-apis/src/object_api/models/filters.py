@@ -14,7 +14,7 @@ class Filters(BaseModel):
     n_det: list[int] | None = None
     probability: float | None = None
     firstmjd: list[float] | None = None
-    lastmjd: float | None = None
+    lastmjd: list[float] | None = None
 
 
 class Consearch(BaseModel):

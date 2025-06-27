@@ -35,7 +35,7 @@ def list_objects(
     n_det: Annotated[list[int] | None, Query()] = None,
     probability: float | None = Query(default=0),
     firstmjd: Annotated[list[float] | None, Query()] = None,
-    lastmjd: float | None = None,
+    lastmjd: Annotated[list[float] | None, Query()] = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,

@@ -27,13 +27,13 @@ def create_conesearch_statement(args):
         return True
     
 
-def create_order_statement(query, oids, order_args):
+def create_order_statement(query, order_args):
     statement = None
     cols = query.column_descriptions
 
     for col in cols:
         model = col["type"]
-        attr = getattr(model, "meanra", None)
+        attr = getattr(model, order_args.order_by, None)
         if attr:
             statement = attr
             break
@@ -117,3 +117,9 @@ def probability_filters(args):
 
     return filters_prob_dict
 
+
+def add_limits_statements(stmt, pagination_args):
+
+    stmt = stmt.limit(pagination_args.page_size).offset((pagination_args.page-1) * pagination_args.page_size)
+
+    return stmt

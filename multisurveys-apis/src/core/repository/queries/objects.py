@@ -1,9 +1,49 @@
 from db_plugins.db.sql.models import Object, ZtfObject, LsstSsObject
-from sqlalchemy import select
-from object_api.services.statements_sql import create_order_statement
+from sqlalchemy.orm import aliased
+from sqlalchemy import select, text
+from object_api.services.statements_sql import create_order_statement, add_limits_statements
 from object_api.models.pagination import Pagination
 from core.repository.models.probability import Probability
 
+
+class subquery_objects():
+
+    def __init__(self, survey, filters, parsed_params):
+        self.survey = survey
+        self.filters = filters
+        self.consearch = parsed_params["consearch_statement"]
+        self.consearch_args = parsed_params["consearch_args"]
+        
+    def build_subquery_object(self):
+        model_id = objects_models(self.survey).get_model_id()
+
+        print(self.consearch, self.consearch_args)
+
+        stmt = (
+            select(Object, model_id)
+            .join(model_id, model_id.oid == Object.oid)
+            .where(*self.filters)
+            .where(self.consearch)
+            .params(**self.consearch_args)
+            .subquery()
+        )
+        
+        object_alias = aliased(Object, stmt)
+        dinamic_model_alias = aliased(model_id, stmt)
+
+        return object_alias, dinamic_model_alias
+
+
+class objects_models():
+    def __init__(self, survey):
+        self.survey = survey
+
+    def get_model_id(self):
+        if self.survey == "ztf":
+            return ZtfObject
+        if self.survey == "lsst":
+            return LsstSsObject 
+        
 
 def query_object_by_id(session_ms, oid, survey_id):
     
@@ -27,23 +67,19 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
     filter_args = search_params.filter_args
     order_args = search_params.order_args
-    print(order_args)
     pagination_args = check_pagination_args(search_params.pagination_args)
-
-    consearch = parsed_params["consearch_statement"]
-    consearch_args = parsed_params["consearch_args"]
 
     filters_statements = parsed_params["filters_sqlalchemy_statement"]
 
     with session_ms() as session:
 
-        if filter_args.survey == "ztf":
-            subquery_stmt = build_subquery_object(ZtfObject, filters_statements["objects"])
-        elif filter_args.survey == "lsst":
-            subquery_stmt = build_subquery_object(LsstSsObject, filters_statements["objects"])
+        object_alias, dinamic_model_alias = subquery_objects(filter_args.survey, filters_statements["objects"], parsed_params).build_subquery_object()
 
-        
-        stmt = select(Probability).join(subquery_stmt, subquery_stmt.c.oid == Probability.oid).where(*filters_statements["probability"]).where(consearch).params(**consearch_args)
+        stmt = select(Probability, object_alias, dinamic_model_alias).join(dinamic_model_alias, dinamic_model_alias.oid == Probability.oid).where(*filters_statements["probability"])
+
+        order_statement = create_order_statement(stmt, order_args)
+
+        stmt = stmt.order_by(order_statement)
 
         total = calculate_total_items(stmt, pagination_args)
 
@@ -51,52 +87,21 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         items = session.execute(stmt).all()
 
+
+        print(items)
         return Pagination(pagination_args.page, pagination_args.page_size, total, items)
 
-        # all_objects = (
-        #     session.query(Object, ZtfObject)
-        #     .join(ZtfObject, Object.oid == ZtfObject.oid)
-        # )
-         
-        # join_table = (
-        #     session.query(models.Probability)
-        #     .filter(models.Probability.classifier_name == filter_args.classifer_name)
-        #     .filter(models.Probability.classifier_version == filter_args.classifier_version)
-        #     .filter(models.Probability.ranking == filter_args.ranking)
-        #     .subquery("probability")
-        # )
 
-        # join_table = aliased(models.Probability, join_table)
+# def build_subquery_object(model_id, filters):
 
-        # query = (
-        #     session.query(all_objects, join_table)
-        #     .outerjoin(join_table)
-        #     .filter(consearch)
-        #     .filter(*filters_statements)
-        #     .params(**consearch_args)
-        # )
-
-        # order_statement = create_order_statement(
-        #     all_objects, filter_args.oids, order_args
-        # )
-
-        # q = all_objects.order_by(order_statement)
-
-        # pagination = paginate(q, pagination_args)
-
-        # return pagination
-
-
-def build_subquery_object(model_id, filters):
-
-    stmt = (
-        select(Object, model_id)
-        .join(model_id, model_id.oid == Object.oid)
-        .where(*filters)
-        .subquery()
-    )
+#     stmt = (
+#         select(Object, model_id)
+#         .join(model_id, model_id.oid == Object.oid)
+#         .where(*filters)
+#         .subquery()
+#     )
     
-    return stmt
+#     return stmt
 
 
 def check_pagination_args(pagination_args):
@@ -106,13 +111,6 @@ def check_pagination_args(pagination_args):
         pagination_args.page_size = 10
     
     return pagination_args
-
-
-def add_limits_statements(stmt, pagination_args):
-
-    stmt = stmt.limit(pagination_args.page_size).offset((pagination_args.page-1) * pagination_args.page_size)
-
-    return stmt
 
 
 def calculate_total_items(stmt, pagination_args, max_results=50000):
