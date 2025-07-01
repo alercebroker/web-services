@@ -19,7 +19,7 @@ psycopg2-binary = "^2.9.6"
 prometheus-fastapi-instrumentator = "^6.1.0"
 jinja2 = "^3.1.2"
 httpx = "^0.24.1"
-db-plugins = {path = "/home/eric/Desktop/Alerce/Poetry/p11/repos/pipeline/libs/db-plugins-multisurvey"}
+db-plugins = {path = "db-plugins-multisurvey"}
 # db-plugins = "^24.5.2a11"
 djlint = "^1.35.2"
 fastapi = "^0.115.12"
