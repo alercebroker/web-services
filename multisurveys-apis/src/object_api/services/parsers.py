@@ -1,11 +1,25 @@
-import pprint
 from .statements_sql import (
     convert_conesearch_args,
     convert_filters_to_sqlalchemy_statement,
     create_conesearch_statement,
 )
 from fastapi.encoders import jsonable_encoder
-from ..models.object import ZtfObject
+from ..models.object import ObjectOutputModels
+import pprint
+
+class ModelParserOutput():
+
+    def __init__(self, survey: str, input_data: dict, probability: bool = False):
+        self.survey = survey
+        self.input_data = input_data
+        self.probability = probability
+
+    def parse_data(self):
+        output_model = ObjectOutputModels(self.survey, self.probability).get_model_by_survey()
+        model_parsed = output_model(**self.input_data)
+
+        return model_parsed
+    
 
 def parse_params(search_params):
     consearch_parse = convert_conesearch_args(
@@ -25,17 +39,18 @@ def parse_params(search_params):
     return response
 
 
-def parse_unique_object_query(sql_response):
+def parse_unique_object_query(sql_response, survey):
     parsed_dict = {}
     for model in sql_response:
         model_dict = model.__dict__.copy()
-        model_parsed = ZtfObject(**model_dict)
+        model_parsed = ModelParserOutput(survey, model_dict).parse_data()
         parsed_dict.update(model_parsed)
 
     return parsed_dict
 
 
-def parse_objects_list_output(result):
+
+def parse_objects_list_output(result, survey):
 
     return {
         "total": result.total,
@@ -43,18 +58,19 @@ def parse_objects_list_output(result):
         "has_next": result.has_next,
         "prev": result.prev_num,
         "has_prev": result.has_prev,
-        "items": serialize_items(result.items),
+        "items": serialize_items(result.items, survey),
     }
 
 
-def serialize_items(data):
+def serialize_items(data, survey):
     ret = []
     for sql_row in data:
         item_dict = {}
         for sql_model in sql_row:
-            model_dict = jsonable_encoder(sql_model, sqlalchemy_safe=True)
-            item_dict.update(model_dict)
+            model_data = sql_model.__dict__.copy()
+            item_dict.update(model_data)
 
-        ret.append(item_dict)
+        model_output = ModelParserOutput(survey, item_dict, True).parse_data()
+        ret.append(model_output)
 
     return ret

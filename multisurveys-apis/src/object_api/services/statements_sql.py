@@ -1,6 +1,5 @@
-from db_plugins.db.sql.models import Object
+from db_plugins.db.sql.models import Object, Probability
 from sqlalchemy import text
-from core.repository.models.probability import Probability
 
 def convert_conesearch_args(args):
     try:
