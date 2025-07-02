@@ -4,9 +4,9 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query, Request
 
 from ..models.filters import Consearch, Filters, SearchParams
-from ..models.pagination import Order, OrderMode, PaginationArgs
+from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_objects_list, get_object_by_id
-from ..services.validations import ndets_validation
+from ..services.validations import ndets_validation, order_mode_validation
 
 router = APIRouter()
 
@@ -26,15 +26,16 @@ def list_objects(
     request: Request,
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
+    survey: str | None = None,
     classifier: str | None = Query(default="lc_classifier"),
     classifier_version: str | None = Query(
         default="hierarchical_random_forest_1.1.0"
     ),
     ranking: int | None = Query(default=1),
-    ndet: Annotated[list[int] | None, Query()] = None,
+    n_det: Annotated[list[int] | None, Query()] = None,
     probability: float | None = Query(default=0),
     firstmjd: Annotated[list[float] | None, Query()] = None,
-    lastmjd: float | None = None,
+    lastmjd: Annotated[list[float] | None, Query()] = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
@@ -42,20 +43,22 @@ def list_objects(
     page_size: int | None = 10,
     count: bool | None = False,
     order_by: str | None = Query(default="probability"),
-    order_mode: OrderMode = OrderMode.desc,
+    order_mode: str | None = Query(default="DESC"),
 ):
     try:
         session = request.app.state.psql_session
         
-        ndets_validation(ndet)
+        ndets_validation(n_det)
+        order_mode_validation(order_mode)
 
         filters = Filters(
             oids=oid,
+            survey = survey,
             classifier=classifier,
             classifier_version=classifier_version,
             class_name=class_name,
             ranking=ranking,
-            ndet=ndet,
+            n_det=n_det,
             probability=probability,
             firstmjd=firstmjd,
             lastmjd=lastmjd,

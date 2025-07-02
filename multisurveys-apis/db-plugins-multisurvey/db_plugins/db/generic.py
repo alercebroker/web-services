@@ -1,30 +1,16 @@
-from enum import Enum
 from math import ceil
-from pydantic import BaseModel
-
-
-class PaginationArgs(BaseModel):
-    page: int
-    page_size: int
-    count: bool
-
-
-class Order(BaseModel):
-    order_by: str | None = "probability"
-    order_mode: str
 
 
 class Pagination:
     """Paginate responses from the database."""
 
-    def __init__(self, page, per_page, total, items):
+    def __init__(self, query, page, per_page, total, items):
         """Set attributes from args."""
+        self.query = query
         self.page = page
         self.per_page = per_page
         self.total = total
         self.items = items
-
-
 
     @property
     def pages(self):
@@ -34,6 +20,13 @@ class Pagination:
         else:
             pages = int(ceil(self.total / float(self.per_page)))
         return pages
+
+    def prev(self):
+        """Return a :class:`Pagination` object for the previous page."""
+        assert (
+            self.query is not None
+        ), "a query object is required for this method to work"
+        return self.query.paginate(self.page - 1, self.per_page)
 
     @property
     def prev_num(self):
@@ -47,6 +40,13 @@ class Pagination:
         """Check if a previous page exists."""
         return self.page > 1
 
+    def next(self):
+        """Return a :class:`Pagination` object for the next page."""
+        assert (
+            self.query is not None
+        ), "a query object is required for this method to work"
+        return self.query.paginate(self.page + 1, self.per_page)
+
     @property
     def has_next(self):
         """Check if a next page exists."""
@@ -58,3 +58,14 @@ class Pagination:
         if not self.has_next:
             return None
         return self.page + 1
+
+
+class PaginationNoCount(Pagination):
+    def __init__(self, query, page, per_page, items, has_next):
+        super().__init__(query, page, per_page, None, items)
+        self._has_next = has_next
+
+    @property
+    def has_next(self):
+        """Check if a previous page exists."""
+        return self._has_next
