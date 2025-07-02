@@ -6,14 +6,26 @@ import uvicorn
 
 
 def run(services=["ALL"], port=8000):
-    port = int(os.getenv("PORT", default=port))
-    all_services = filter(lambda dir: dir.endswith("_api"), os.listdir("src"))
-    if services == ["ALL"]:
-        services = all_services
-    else:
-        services = filter(lambda service: service in services, all_services)
+    
+    service = os.getenv("SERVICE", default="ALL").split(",")
 
-    asyncio.run(run_services(services, port))
+    if service[0] == "lightcurve_api":
+        print("running lightcurve")
+        run_lightcurve()
+    elif service[0] == "object_api":
+        print("object lightcurve")
+        run_object()
+    else:
+        print(f"Error service not found for : {service}")
+
+    # port = int(os.getenv("PORT", default=port))
+    # all_services = filter(lambda dir: dir.endswith("_api"), os.listdir("src"))
+    # if services == ["ALL"]:
+    #     services = all_services
+    # else:
+    #     services = filter(lambda service: service in services, all_services)
+
+    # asyncio.run(run_services(services, port))
 
 
 def run_object():
@@ -70,9 +82,5 @@ if __name__ == "__main__":
         services = sys.argv[2:]
     else:
         services = os.getenv("SERVICE", default="ALL").split(",")
-
-    services = filter(
-        lambda dir: dir.endswith("_api") and dir in services, os.listdir("src")
-    )
 
     run(services, port)
