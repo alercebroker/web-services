@@ -23,6 +23,7 @@ db-plugins = {path = "db-plugins-multisurvey"}
 # db-plugins = "^24.5.2a11"
 djlint = "^1.35.2"
 fastapi = "^0.115.12"
+pydantic-settings = "^2.10.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -46,6 +47,6 @@ build-backend = "poetry.core.masonry.api"
 line-length = 79
 
 [tool.poetry.scripts]
-dev = "scripts.run_dev:run"
-object = "scripts.run_object_dev:run"
-lightcurve = "scripts.run_lightcurve_dev:run"
+all = "scripts.run_api:run"
+object = "scripts.run_api:run_object"
+lightcurve = "scripts.run_api:run_lightcurve"

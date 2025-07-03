@@ -20,6 +20,7 @@ RUN pip install poetry;
 
 COPY multisurveys-apis/pyproject.toml /app/
 COPY multisurveys-apis/db-plugins-multisurvey /app/db-plugins-multisurvey
+COPY multisurveys-apis/config.yaml /app/
 
 WORKDIR /app
 RUN poetry install --no-root --without=dev --without=test;
@@ -37,4 +38,4 @@ COPY multisurveys-apis/README.md /app/
 WORKDIR /app
 RUN poetry install --only-root;
 
-CMD ["poetry", "run", "dev"]
+CMD ["poetry", "run", "run_all"]
