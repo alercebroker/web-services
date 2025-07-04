@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    TIMESTAMP,
     VARCHAR,
     BigInteger,
     Boolean,
@@ -420,7 +421,6 @@ class ztf_reference(Base):
         PrimaryKeyConstraint("oid", "rfid", name="pk_ztfreference_oid_rfid"),
         Index("ix_ztf_reference_oid", "oid", postgresql_using="btree"),
     )
-
 
 class Probability(Base):
     __tablename__ = "probability"

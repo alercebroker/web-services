@@ -18,10 +18,12 @@ RUN apt-get update && \
 
 RUN pip install poetry;
 
-COPY multisurveys-apis/poetry.lock multisurveys-apis/pyproject.toml /app/
+COPY multisurveys-apis/pyproject.toml multisurveys-apis/poetry.lock /app/
+COPY multisurveys-apis/db-plugins-multisurvey /app/db-plugins-multisurvey
 
 WORKDIR /app
 RUN poetry install --no-root --without=dev --without=test;
+
 
 FROM python:3.11-slim AS production
 RUN pip install poetry;
@@ -35,4 +37,4 @@ COPY multisurveys-apis/README.md /app/
 WORKDIR /app
 RUN poetry install --only-root;
 
-CMD ["poetry", "run", "object"]
+CMD ["poetry", "run", "all"]
