@@ -30,3 +30,5 @@ values.*.override.yaml
 **/flake.lock
 **/.envrc
 **/.direnv
+
+**/config.yaml
