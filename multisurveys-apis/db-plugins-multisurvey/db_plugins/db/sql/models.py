@@ -1,5 +1,8 @@
 from sqlalchemy import (
+<<<<<<< HEAD
     TIMESTAMP,
+=======
+>>>>>>> 9d86f124fa86e9daa7a63f5353e6ef96c9b21986
     VARCHAR,
     BigInteger,
     Boolean,
@@ -9,6 +12,9 @@ from sqlalchemy import (
     Integer,
     PrimaryKeyConstraint,
     SmallInteger,
+    String,
+    Float,
+    ForeignKey
 )
 from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION, REAL
 from sqlalchemy.orm import DeclarativeBase
@@ -144,12 +150,12 @@ class LsstDetection(Base):
     measurement_id = Column(BigInteger, nullable=False)  # int8,
     parentDiaSourceId = Column(BigInteger)
 
-    psfFlux = Column(REAL)
-    psfFluxErr = Column(REAL)
+    psfFlux = Column(REAL, nullable=False)
+    psfFluxErr = Column(REAL, nullable=False)
 
-    psfFlux_flag = Column(Boolean)
-    psfFlux_flag_edge = Column(Boolean)
-    psfFlux_flag_noGoodPixels = Column(Boolean)
+    psfFlux_flag = Column(Boolean, nullable=False)
+    psfFlux_flag_edge = Column(Boolean, nullable=False)
+    psfFlux_flag_noGoodPixels = Column(Boolean, nullable=False)
 
     __table_args__ = (
         PrimaryKeyConstraint(
@@ -466,3 +472,23 @@ class LsstIdMapper(Base):
         PrimaryKeyConstraint("lsst_id_serial", name="pk_lsst_idmapper_serial"),
     )
 
+class Probability(Base):
+    __tablename__ = "probability"
+    oid = Column(Integer, ForeignKey(Object.oid), primary_key=True)
+    class_name = Column(String, primary_key=True)
+    classifier_name = Column(String, primary_key=True)
+    classifier_version = Column(String, primary_key=True)
+    probability = Column(Float, nullable=False)
+    ranking = Column(Integer, nullable=False)
+
+    __table_args__ = (
+        Index("ix_probabilities_oid", "oid", postgresql_using="hash"),
+        Index("ix_probabilities_probability", "probability", postgresql_using="btree"),
+        Index("ix_probabilities_ranking", "ranking", postgresql_using="btree"),
+        Index(
+            "ix_classification_rank1",
+            "ranking",
+            postgresql_where=ranking == 1,
+            postgresql_using="btree",
+        ),
+    )
