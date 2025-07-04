@@ -8,8 +8,7 @@ from .routes import rest
 
 app = FastAPI()
 
-engine = connect()
-psql = psql_entity(engine)
+psql = psql_entity()
 app.state.psql_session = psql.session
 instrumentator = Instrumentator().instrument(app).expose(app)
 

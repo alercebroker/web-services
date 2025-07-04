@@ -15,7 +15,7 @@ db_config = {
 }
 
 
-def psql_entity(engine):
-    ms_entity_psql = PsqlDatabase(db_config, engine)
+def psql_entity():
+    ms_entity_psql = PsqlDatabase(db_config)
 
     return ms_entity_psql

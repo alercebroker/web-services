@@ -18,7 +18,7 @@ RUN apt-get update && \
 
 RUN pip install poetry;
 
-COPY multisurveys-apis/pyproject.toml /app/
+COPY multisurveys-apis/pyproject.toml multisurveys-apis/poetry.lock /app/
 COPY multisurveys-apis/db-plugins-multisurvey /app/db-plugins-multisurvey
 
 WORKDIR /app

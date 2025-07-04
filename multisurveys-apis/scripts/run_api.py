@@ -29,10 +29,7 @@ def config_from_yaml():
 ###
 
 def run_object():
-    config_dict = config_from_yaml()
-    import pprint
-    pprint.pprint(config_dict)
-    
+    config_dict = config_from_yaml()    
     service_config = config_dict["services"]["object_api"]
     print(f"Running service: object_api with config: {service_config}")
     asyncio.run(run_service(service_config))
@@ -95,6 +92,6 @@ async def run_service(
     os.environ["PSQL_DATABASE"] = db_config["psql_database"]
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
-    os.environ["PSQL_SCHEMA"] = db_config["psql_schema"]
+    os.environ["SCHEMA"] = db_config["psql_schema"]
     
     await server.serve()

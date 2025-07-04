@@ -7,8 +7,7 @@ from core.config.connection import psql_entity
 from .routes import rest
 
 app = FastAPI(openapi_url="/v2/lightcurve/openapi.json")
-engine = connect()
-psql = psql_entity(engine)
+psql = psql_entity()
 app.state.psql_session = psql.session
 instrumentator = Instrumentator().instrument(app).expose(app)
 
