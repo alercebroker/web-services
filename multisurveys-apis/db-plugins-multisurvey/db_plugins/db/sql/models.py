@@ -10,7 +10,8 @@ from sqlalchemy import (
     SmallInteger,
     String,
     Float,
-    ForeignKey
+    ForeignKey,
+    Array
 )
 from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION, REAL
 from sqlalchemy.orm import DeclarativeBase
@@ -422,6 +423,15 @@ class ztf_reference(Base):
     )
 
 
+class Taxonomy(Base):
+    __tablename__ = "taxonomy"
+    class_id = Column(Integer, primary_key=True)
+    class_name = Column(String)
+    order = Column(Integer)
+    classifier_name = Column(String)
+    classifier_id = Column(Integer)
+
+
 class Probability(Base):
     __tablename__ = "probability"
     oid = Column(Integer, ForeignKey(Object.oid), primary_key=True)
@@ -442,3 +452,13 @@ class Probability(Base):
             postgresql_using="btree",
         ),
     )
+
+
+class Probability_ms(Base):
+    __tablename__ = "probability_ms"
+    oid = Column(Integer, primary_key=True)
+    classifier_id = Column(SmallInteger, ForeignKey(Taxonomy.classifier_id))
+    classifier_version = Column(Array, SmallInteger)
+    class_id = Column(SmallInteger, ForeignKey(Taxonomy.class_id))
+    probability = Column(Float, nullable=False)
+    ranking = Column(SmallInteger, nullable=False)
