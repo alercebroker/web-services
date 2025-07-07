@@ -41,6 +41,12 @@ def run_lightcurve():
     print(f"Running service: lightcurve_api with config: {service_config}")
     asyncio.run(run_service(service_config))
 
+def run_magstat():
+    config_dict = config_from_yaml()
+    service_config = config_dict["services"]["magstat_api"]
+    print(f"Running service: magstat_api with config: {service_config}")
+    asyncio.run(run_service(service_config))
+
 ###
 ### A function to run all the services configured in the yaml file
 ###

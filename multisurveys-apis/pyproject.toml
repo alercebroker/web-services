@@ -8,6 +8,7 @@ packages = [
     { include = "core", from = "src" },
     { include = "object_api", from = "src" },
     { include = "lightcurve_api", from = "src" },
+    { include = "magstat_api", from = "src" },
     { include = "test_api", from = "src" },
 ]
 
@@ -24,6 +25,7 @@ db-plugins = {path = "db-plugins-multisurvey"}
 djlint = "^1.35.2"
 fastapi = "^0.115.12"
 pydantic-settings = "^2.10.1"
+pyyaml = "^6.0.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -50,3 +52,4 @@ line-length = 79
 all = "scripts.run_api:run"
 object = "scripts.run_api:run_object"
 lightcurve = "scripts.run_api:run_lightcurve"
+magstat = "scripts.run_api:run_magstat"
