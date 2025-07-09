@@ -24,6 +24,9 @@ db-plugins = {path = "db-plugins-multisurvey"}
 djlint = "^1.35.2"
 fastapi = "^0.115.12"
 pydantic-settings = "^2.10.1"
+polars = "^1.31.0"
+pyarrow = "^20.0.0"
+pandas = "^2.3.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"

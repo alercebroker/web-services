@@ -3,22 +3,22 @@ from .statements_sql import (
     convert_filters_to_sqlalchemy_statement,
     create_conesearch_statement,
 )
-from ..models.object import ObjectOutputModels
+from ..models.object import ExportModel
 
 
-class ModelParserOutput():
+class ModelDataParser():
 
-    def __init__(self, survey: str, input_data: dict, probability: bool = False):
+    def __init__(self, survey: str, input_data: dict, model_variant: str = "basic"):
         self.survey = survey
         self.input_data = input_data
-        self.probability = probability
+        self.model_variant = model_variant
 
     def parse_data(self):
-        output_model = ObjectOutputModels(self.survey, self.probability).get_model_by_survey()
+        output_model = ExportModel(self.survey, self.model_variant).get_model()
         model_parsed = output_model(**self.input_data)
 
         return model_parsed
-    
+
 
 def parse_params(search_params):
     consearch_parse = convert_conesearch_args(
@@ -42,7 +42,7 @@ def parse_unique_object_query(sql_response, survey):
     parsed_dict = {}
     for model in sql_response:
         model_dict = model.__dict__.copy()
-        model_parsed = ModelParserOutput(survey, model_dict).parse_data()
+        model_parsed = ModelDataParser(survey, model_dict).parse_data()
         parsed_dict.update(model_parsed)
 
     return parsed_dict
@@ -69,7 +69,7 @@ def serialize_items(data, survey):
             model_data = sql_model.__dict__.copy()
             item_dict.update(model_data)
 
-        model_output = ModelParserOutput(survey, item_dict, True).parse_data()
+        model_output = ModelDataParser(survey, item_dict, "probability").parse_data()
         ret.append(model_output)
 
     return ret
