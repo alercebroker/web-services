@@ -63,13 +63,13 @@ class LsstObjectProbability(BaseModel):
     ranking: int | None = None
 
 
-class ObjectOutputModels():
-    def __init__(self, survey: str, probability: bool = False):
+class ExportModel():
+    def __init__(self, survey: str, model_variant: str = "basic"):
         self.survey = survey
-        self.probability = probability
+        self.model_variant = model_variant
 
-    def get_model_by_survey(self):
-        if self.probability:
+    def get_model(self):
+        if self.model_variant == "probability":
             if self.survey == "ztf":
                 return ZtfObjectProbability
             if self.survey == "lsst":
@@ -79,4 +79,3 @@ class ObjectOutputModels():
                 return ZtfObject
             elif self.survey == "lsst":
                 return LsstObject
-            

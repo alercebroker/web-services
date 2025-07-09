@@ -11,9 +11,9 @@ from sqlalchemy import (
     SmallInteger,
     String,
     Float,
-    ForeignKey
+    ForeignKey,
 )
-from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION, REAL
+from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION, REAL, ARRAY
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -422,6 +422,22 @@ class ztf_reference(Base):
         Index("ix_ztf_reference_oid", "oid", postgresql_using="btree"),
     )
 
+
+class classifier_ms(Base):
+    __tablename__ = "classifier_ms"
+    classifier_id = Column(Integer, primary_key=True)
+    classifier_name = Column(String)
+    classifier_version = Column(ARRAY(SmallInteger))
+
+class Taxonomy_ms(Base):
+    __tablename__ = "taxonomy_ms"
+    class_id = Column(Integer, primary_key=True)
+    class_name = Column(String)
+    order = Column(Integer)
+    classifier_name = Column(String)
+    classifier_id = Column(ARRAY(SmallInteger))
+
+
 class Probability(Base):
     __tablename__ = "probability"
     oid = Column(Integer, ForeignKey(Object.oid), primary_key=True)
@@ -442,6 +458,15 @@ class Probability(Base):
             postgresql_using="btree",
         ),
     )
+
+class Probability_ms(Base):
+    __tablename__ = "probability_ms"
+    oid = Column(Integer, primary_key=True)
+    classifier_id = Column(SmallInteger, primary_key=True)
+    classifier_version = Column(ARRAY(SmallInteger))
+    class_id = Column(SmallInteger, primary_key=True)
+    probability = Column(Float, nullable=False)
+    ranking = Column(SmallInteger, nullable=False)
 
 class MagStat(Base):
     __tablename__ = "magstat"

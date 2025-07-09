@@ -14,7 +14,7 @@ tests/profiling/memray*
 .projectile
 .venv
 .editorconfig
-
+multisurveys-apis/dummy_data/*
 #packaged charts
 *.tgz
 values.override*.yaml
