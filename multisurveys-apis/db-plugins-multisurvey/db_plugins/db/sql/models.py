@@ -12,9 +12,8 @@ from sqlalchemy import (
     String,
     Float,
     ForeignKey,
-    Array
 )
-from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION, REAL
+from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION, REAL, ARRAY
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -424,13 +423,19 @@ class ztf_reference(Base):
     )
 
 
-class Taxonomy(Base):
-    __tablename__ = "taxonomy"
+class classifier_ms(Base):
+    __tablename__ = "classifier_ms"
+    classifier_id = Column(Integer, primary_key=True)
+    classifier_name = Column(String)
+    classifier_version = Column(ARRAY(SmallInteger))
+
+class Taxonomy_ms(Base):
+    __tablename__ = "taxonomy_ms"
     class_id = Column(Integer, primary_key=True)
     class_name = Column(String)
     order = Column(Integer)
     classifier_name = Column(String)
-    classifier_id = Column(Integer)
+    classifier_id = Column(ARRAY(SmallInteger))
 
 
 class Probability(Base):
@@ -458,8 +463,8 @@ class Probability(Base):
 class Probability_ms(Base):
     __tablename__ = "probability_ms"
     oid = Column(Integer, primary_key=True)
-    classifier_id = Column(SmallInteger, ForeignKey(Taxonomy.classifier_id))
-    classifier_version = Column(Array, SmallInteger)
-    class_id = Column(SmallInteger, ForeignKey(Taxonomy.class_id))
+    classifier_id = Column(SmallInteger, primary_key=True)
+    classifier_version = Column(ARRAY(SmallInteger))
+    class_id = Column(SmallInteger, primary_key=True)
     probability = Column(Float, nullable=False)
     ranking = Column(SmallInteger, nullable=False)
