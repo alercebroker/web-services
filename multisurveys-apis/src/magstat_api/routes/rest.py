@@ -10,7 +10,7 @@ async def ping():
     return "This is the magstats API"
 
 @router.get("/magstats")
-async def ping(
+async def magstats(
     request: Request,
     oid: str,
 ):
