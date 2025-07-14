@@ -10,6 +10,7 @@ packages = [
     { include = "lightcurve_api", from = "src" },
     { include = "magstat_api", from = "src" },
     { include = "classifier_api", from = "src" },
+    { include = "probability_api", from = "src" },
     { include = "test_api", from = "src" },
 ]
 
@@ -58,3 +59,4 @@ object = "scripts.run_api:run_object"
 lightcurve = "scripts.run_api:run_lightcurve"
 magstat = "scripts.run_api:run_magstat"
 classifier = "scripts.run_api:run_classifier"
+probability = "scripts.run_api:run_probability"
