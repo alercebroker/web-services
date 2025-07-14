@@ -12,9 +12,6 @@ def parse_probability(probability_data, classifiers):
     """
     parsed_probability = []
 
-    print(f"DATA!! \n\n\n{probability_data}\n\n\n------")
-    print(f"DATA!! \n\n\n{classifiers}\n\n\n------")
-    
     for row in probability_data:
         probability_dict = row[0].__dict__.copy()
         taxonomy_list = row[1].__dict__.copy()

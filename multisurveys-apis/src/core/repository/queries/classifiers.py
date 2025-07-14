@@ -28,7 +28,6 @@ def get_classifier_by_name(
             .order_by(Taxonomy_ms.order.asc())
         )
         result = session.execute(stmt).all()
-        print(result)
         return result
     
 def get_all_classifiers(
