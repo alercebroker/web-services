@@ -1,4 +1,4 @@
-from db_plugins.db.sql.models import Object, Probability
+from db_plugins.db.sql.models import Object, Probability_ms
 from sqlalchemy import text
 
 def convert_conesearch_args(args):
@@ -31,7 +31,7 @@ def create_order_statement(query, order_args):
     cols = query.column_descriptions
 
     for col in cols:
-        model = col["type"]
+        model = col["entity"]
         attr = getattr(model, order_args.order_by, None)
         if attr:
             statement = attr
@@ -90,28 +90,28 @@ def probability_filters(args):
     filters_prob_dict = []
 
     if args["classifier"]:
-        classifier = Probability.classifier_name == args["classifier"]
+        classifier = Probability_ms.classifier_id == args["classifier"]
         filters_prob_dict.append(classifier)
         
     if args["classifier_version"]:
         classifier_version = (
-            Probability.classifier_version == args["classifier_version"]
+            Probability_ms.classifier_version == args["classifier_version"]
         )
         filters_prob_dict.append(classifier_version)
     if args["class_name"]:
-        class_ = Probability.class_name == args["class_name"]
+        class_ = Probability_ms.class_id == args["class_name"]
         filters_prob_dict.append(class_)
     if args["probability"]:
-        probability = Probability.probability >= args["probability"]
+        probability = Probability_ms.probability >= args["probability"]
         filters_prob_dict.append(probability)
     if args["ranking"]:
-        ranking = Probability.ranking == args["ranking"]
+        ranking = Probability_ms.ranking == args["ranking"]
         filters_prob_dict.append(ranking)
     elif not args["ranking"] and (
         args["classifier"] or args["class"] or args["classifier_version"]
     ):
         # Default ranking 1
-        ranking = Probability.ranking == 1
+        ranking = Probability_ms.ranking == 1
         filters_prob_dict.append(ranking)
 
     return filters_prob_dict
