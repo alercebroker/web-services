@@ -14,10 +14,10 @@ if environment == "production":  # pragma: no cover
 
     if is_gunicorn:
         prometheus_metrics = (
-            GunicornInternalPrometheusMetrics.for_app_factory()
+            GunicornInternalPrometheusMetrics.for_app_factory(group_by='endpoint')
         )
     else:
-        prometheus_metrics = PrometheusMetrics.for_app_factory()
+        prometheus_metrics = PrometheusMetrics.for_app_factory(group_by='endpoint')
 else:
 
     class Mock:

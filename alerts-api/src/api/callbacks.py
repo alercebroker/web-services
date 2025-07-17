@@ -1,4 +1,3 @@
-from asyncio import current_task
 from flask import request, g
 from time import time
 import traceback
