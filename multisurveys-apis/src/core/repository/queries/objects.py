@@ -1,4 +1,4 @@
-from db_plugins.db.sql.models import Object, ZtfObject, LsstSsObject, Probability
+from db_plugins.db.sql.models import Object, ZtfObject, LsstSsObject, Probability_ms
 from sqlalchemy.orm import aliased
 from sqlalchemy import select, text
 from object_api.services.statements_sql import create_order_statement, add_limits_statements
@@ -44,7 +44,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         object_alias, dinamic_model_alias = build_subquery_object(filter_args.survey, filters_statements["objects"], parsed_params)
 
-        stmt = select(Probability, object_alias, dinamic_model_alias).join(dinamic_model_alias, dinamic_model_alias.oid == Probability.oid).where(*filters_statements["probability"])
+        stmt = select(Probability_ms, object_alias, dinamic_model_alias).join(dinamic_model_alias, dinamic_model_alias.oid == Probability_ms.oid).where(*filters_statements["probability"])
 
         order_statement = create_order_statement(stmt, search_params.order_args)
 

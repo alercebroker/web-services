@@ -1,3 +1,5 @@
+import pprint
+from fastapi.encoders import jsonable_encoder
 from .statements_sql import (
     convert_conesearch_args,
     convert_filters_to_sqlalchemy_statement,
@@ -49,7 +51,11 @@ def parse_unique_object_query(sql_response, survey):
 
 
 
-def parse_objects_list_output(result, survey):
+def parse_objects_list_output(result, survey, classes_list):
+
+    items = serialize_items(result.items)
+    items_updated = match_and_update_item_class(items, classes_list)
+    items_output = parse_items_probabilities(items_updated, survey)
 
     return {
         "total": result.total,
@@ -57,19 +63,51 @@ def parse_objects_list_output(result, survey):
         "has_next": result.has_next,
         "prev": result.prev_num,
         "has_prev": result.has_prev,
-        "items": serialize_items(result.items, survey),
+        "items": items_output,
     }
 
 
-def serialize_items(data, survey):
+def serialize_items(data):
     ret = []
     for sql_row in data:
         item_dict = {}
         for sql_model in sql_row:
             model_data = sql_model.__dict__.copy()
             item_dict.update(model_data)
+        
+        ret.append(item_dict)
 
-        model_output = ModelDataParser(survey, item_dict, "probability").parse_data()
+    return ret
+
+
+def match_and_update_item_class(items, classes_list):
+    for item in items:
+        for class_data in classes_list:
+            if item["class_id"] == class_data["class_id"]:
+                item["class_name"] = class_data["class_name"]
+                item["classifier_name"] = class_data["classifier_name"]
+                break
+
+    
+    return items
+    
+
+def parse_items_probabilities(items, survey):
+    ret = []
+    for item in items:
+        model_output = ModelDataParser(survey, item, "probability").parse_data()
         ret.append(model_output)
 
     return ret
+
+
+def parse_classifiers(classes_list):
+    res = []
+    for class_name in classes_list:
+        classifier_ms = jsonable_encoder(class_name[0], exclude={"_sa_instance_state"})
+        taxonomy_ms = jsonable_encoder(class_name[1], exclude={"_sa_instance_state"})
+        merged_dict = {**classifier_ms, **taxonomy_ms}
+
+        res.append(merged_dict)
+    
+    return res
