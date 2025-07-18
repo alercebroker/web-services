@@ -1,10 +1,10 @@
-import pprint
 from fastapi.encoders import jsonable_encoder
 from .statements_sql import (
     convert_conesearch_args,
     convert_filters_to_sqlalchemy_statement,
     create_conesearch_statement,
 )
+from .classifier_data_matcher import match_and_update_item_class
 from ..models.object import ExportModel
 
 
@@ -78,18 +78,6 @@ def serialize_items(data):
         ret.append(item_dict)
 
     return ret
-
-
-def match_and_update_item_class(items, classes_list):
-    for item in items:
-        for class_data in classes_list:
-            if item["class_id"] == class_data["class_id"]:
-                item["class_name"] = class_data["class_name"]
-                item["classifier_name"] = class_data["classifier_name"]
-                break
-
-    
-    return items
     
 
 def parse_items_probabilities(items, survey):

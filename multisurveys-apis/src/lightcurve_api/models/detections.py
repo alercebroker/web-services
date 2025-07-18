@@ -40,9 +40,9 @@ class LsstDetection(BaseModel):
     parentDiaSourceId: int
     psfFlux: float
     psfFluxErr: float
-    psfFlux_flag: bool
-    psfFlux_flag_edge: bool
-    psfFlux_flag_noGoodPixels: bool
+    psfFlux_flag: int
+    psfFlux_flag_edge: int
+    psfFlux_flag_noGoodPixels: int
     mjd: float
     ra: float
     dec: float

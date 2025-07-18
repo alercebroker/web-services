@@ -15,3 +15,15 @@ def update_filters(search_params, classes_list):
         search_params.filter_args.class_name = class_name
         
     return search_params
+
+
+def match_and_update_item_class(items, classes_list):
+    for item in items:
+        for class_data in classes_list:
+            if item["class_id"] == class_data["class_id"]:
+                item["class_name"] = class_data["class_name"]
+                item["classifier_name"] = class_data["classifier_name"]
+                break
+
+    
+    return items
