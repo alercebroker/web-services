@@ -22,7 +22,7 @@ app.add_middleware(
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-app.include_router(rest.router, prefix="/multisurvey")
+app.include_router(rest.router)
 
 app.mount(
     "/static",
