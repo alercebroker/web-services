@@ -31,8 +31,8 @@ spec:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
             - name: api-config
-              mountPath: /app
-              subPath: default.conf
+              mountPath: /app/config.yaml
+              subPath: config.yaml
         - name: nginx-sidecar
           image: nginx
           ports:
