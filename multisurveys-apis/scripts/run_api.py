@@ -101,7 +101,6 @@ async def run_service(
         port=config_dict["port"],
         reload=config_dict.get("reload", True),
         reload_dirs=[".", "../libs"],
-        root_path=config_dict["root_path"],
     )
     server = uvicorn.Server(server_config)
     os.environ["API_URL"] = config_dict["url"]

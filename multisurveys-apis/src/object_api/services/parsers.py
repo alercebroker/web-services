@@ -5,6 +5,7 @@ from .statements_sql import (
     create_conesearch_statement,
 )
 from .classifier_data_matcher import match_and_update_item_class
+from .classifiers_utils import format_classifier_name
 from ..models.object import ExportModel
 
 
@@ -98,4 +99,15 @@ def parse_classifiers(classes_list):
 
         res.append(merged_dict)
     
+    return res
+
+import pprint
+
+def parse_to_json_classifiers(classifiers):
+    res = []
+    for classifier in classifiers:
+        item = jsonable_encoder(classifier)
+        item['formated_name'] = format_classifier_name(item['classifier_name'])
+        res.append(item)
+
     return res
