@@ -2,6 +2,7 @@ import { jdToDate, gregorianToJd } from "./AstroDates.js"
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate} from "./time.js"
 import { handle_error } from "./error_handler.js";
 import {draw_oids_tags} from "./draw_elements.js";
+import { display, split_oids, format_oids, survey_emphasize }  from "./ui_helpers.js";
 
 let oids_arr = []
 
@@ -12,6 +13,9 @@ export function init(){
   let minDate = ""
   let minDatetime = ""
   let dateUTC = ""
+
+  let ztf_btn = document.getElementById("ztf_btn")
+  let lsst_btn = document.getElementById("lsst_btn")
 
   let general_filters = document.getElementById("general_filters")
   let discovery_date_filters = document.getElementById("discovery_date_filters")
@@ -54,7 +58,10 @@ export function init(){
           
           option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
 
-          option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
+          option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classes",  option.getAttribute("data-classes"));
+          option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classifier",  option.getAttribute("data-classifier"));
+          option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-version",  option.getAttribute("data-version"));
+
 
 
           if(option.closest('.obj-select').querySelector('.obj-select__trigger span').id == "classifier"){
@@ -128,6 +135,13 @@ export function init(){
     time_max.showPicker()
   })
 
+  ztf_btn.addEventListener("click", () => {
+    survey_emphasize(ztf_btn)
+  })
+
+  lsst_btn.addEventListener("click", () => {
+    survey_emphasize(lsst_btn)
+  })
 
   // inputs events
   prob_range.addEventListener("input", () => {
@@ -155,7 +169,7 @@ export function init(){
 
   // changes events
   input_ids.addEventListener("change", () => {
-    oids_arr = splitOids(input_ids.value)
+    oids_arr = split_oids(input_ids.value)
     draw_oids_tags(oids_arr)
     clear_oids.classList.remove("tw-hidden")
 
@@ -200,8 +214,8 @@ export function init(){
 
 
   /**funciones publicas para usarlas con HTMX */
-  window.prepareParameters = prepareParameters
-  window.searchParams = searchParams
+  window.send_classes_data = send_classes_data
+  window.send_form_Data = send_form_Data
 }
 
 
@@ -226,50 +240,25 @@ export function elementReady(selector) {
 }
 
 
-function display(item){
-    item = document.getElementById(item)
-    if(item.classList.contains("tw-hidden")){
-      item.classList.remove("tw-hidden")
-    } else {
-      item.classList.add("tw-hidden")
-    }
-}
-
-function splitOids(oids_values){
-  let regExp = /[,;]*\s/
-  return oids_values.split(regExp)
-}
-
-function formatOids(listOfOids) {
-  const reducer = (accumulator, current) =>
-    accumulator.concat(current.split(/[,;]*\s|\s|\n/g))
-  let oids = listOfOids.reduce(reducer, [])
-  oids = oids.map((x) => x.trim())
-  oids = Array.from(new Set(oids))
-  return oids
-}
-
-
-function prepareParameters(){
-  let value_selected = document.getElementById("classifier").getAttribute("data-value");
-  let value_parsed = JSON.parse(value_selected);
+function send_classes_data(){
+  let value_selected = document.getElementById("classifier").dataset.classes;
+  let jsonString = value_selected.replace(/'/g, '"');
+  let classes_array = JSON.parse(jsonString);
   
-  return {
-    classifier_name: value_parsed.classifier_name,
-    classifier_version: value_parsed.classifier_version
-  }
+  return { classifier_classes: classes_array }
 }
 
 
-function searchParams(){
+function send_form_Data(){
   let ndet_arr = []
   let first_mjd_arr = []
   let detections = ["min_detections", "max_detections"]
   let first_mjd = ["min_mjd", "max_mjd"]
-  let probValue = parseFloat(document.getElementById("prob_range").value);
+  let probability_value = parseFloat(document.getElementById("prob_range").value);
   let class_selected = document.getElementById("class").getAttribute("data-value")
-  let classifier_selected = prepareParameters()
-  let list_oids = formatOids(oids_arr)
+  let classifier_selected = document.getElementById("classifier")
+  let survey_id = document.getElementById('survey')
+  let list_oids = format_oids(oids_arr)
 
   for(let detection of detections){
     if(document.getElementById(detection).value != ""){
@@ -286,9 +275,10 @@ function searchParams(){
 
   let response = {
     oid: list_oids,
-    classifier: classifier_selected.classifier_name,
+    classifier: classifier_selected.dataset.classifier,
     class_name: class_selected,
-    probability: probValue > 0 ? probValue : null,
+    survey: survey_id.dataset.survey,
+    probability: probability_value > 0 ? probability_value : null,
     ndet: ndet_arr.length > 0 ? ndet_arr : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
     page: 1,
@@ -302,7 +292,7 @@ function searchParams(){
     }
   }
   
-
+  console.log(response)
 
   return response
 }

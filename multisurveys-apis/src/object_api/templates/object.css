@@ -4,22 +4,116 @@
 /* roboto font */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
-/*loader*/
-
+/* inicio custom components*/
 @layer components{
   .htmx-indicator{
-    @apply tw-opacity-0;
+    opacity: 0;
   }
   
   .htmx-request .htmx-indicator{
-    @apply tw-opacity-100;
+    opacity: 1;
   }
 
   .htmx-request.htmx-indicator{
-    @apply tw-opacity-100;
+    opacity: 1;
   }
+
+  .obj-survey-selected{
+    background-color: #424242;
+  }
+
+  .obj-select-wrapper{
+    position: relative;
+    user-select: none;
+    word-break: break-all
+  }
+
+  .obj-select{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .obj-select__trigger{
+    position: relative;
+    display: inline-block;
+    text-align: left;
+    line-height: 2rem;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .obj-custom-options{
+    position: absolute;
+    display: block;
+    top: 100%;
+    left: 0;
+    right: 0;
+    transition: all;
+    pointer-events: none;
+    z-index: 20;
+    visibility: hidden;
+    opacity: 0;
+    background: #1e1e1e;
+  }
+
+  .obj-select.open .obj-custom-options{
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .obj-custom-option{
+    position: relative;
+    display: block;
+    padding: 0px 16px;
+    line-height: 2.25rem;
+    color: #EEEEEE;
+    cursor: pointer;
+    transition: all;
+  }
+
+  .obj-custom-option.obj-selected{
+    color: #1976D2;
+    background-color: rgba(25, 118, 210, 0.3);
+  }
+  .custom-oid{
+    background-color: rgba(255, 255, 255, 0.2);
+    display: inline-flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1em;
+    padding:0px 8px;
+    border-radius: 4px;
+    max-width: 12rem;
+  }
+  
+
+  .custom-span{
+    display: inline-block;
+  }
+  
+  .custom-close-id{
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+  .custom-close-id:hover svg path{
+    fill: rgba(255, 255, 255, 0.2);
+  }
+
+  .custom-error{
+    display: flex;
+    justify-content: space-between;
+    color: #C62828;
+    text-align: left;
+    font-size: 12px;
+    line-height: 12px;
+    margin-top: 8px;
+  }
+
 }
 
+/* fin custom components*/
 .disabled\:bg-transparent {
   background-color: transparent;
 }
@@ -124,7 +218,7 @@
   /* 6 */
   margin: 0;
 }
-
+/*
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -134,7 +228,7 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
-
+*/
 /*
 1. Add the correct height in Firefox.
 2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)

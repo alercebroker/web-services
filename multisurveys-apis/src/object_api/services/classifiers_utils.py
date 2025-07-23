@@ -9,14 +9,15 @@ def format_classifier_name(name):
 
 def sort_classifiers(classifiers):
 
-    sort_arr_classifiers = [None] * 5
+    sort_arr_classifiers = [None] * 6
 
     priorities = {
     "lc_classifier": 0,
     "lc_classifier_top": 1,
     "stamp_classifier": 2,
     "LC_classifier_ATAT_forced_phot": 3,
-    "LC_classifier_BHRF_forced_phot": 4
+    "LC_classifier_BHRF_forced_phot": 4,
+    "lc_classifier_lsst": 5,
     }
     
     # insertar por prioridad

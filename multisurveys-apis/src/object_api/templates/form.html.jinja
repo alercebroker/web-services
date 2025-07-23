@@ -11,6 +11,16 @@
 
         <div class="tw-w-full">Search filters</div>
 
+        <!--Survey filters-->
+        <div id="survey_container" class="tw-w-full">
+            <p>Surveys</p>
+
+            <div id="survey" data-survey="ztf" class="tw-w-full tw-my-4 tw-flex tw-justify-start tw-gap-4">
+                <span id="ztf_btn" class="obj-survey-selected tw-text-center tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ztf</span>
+                <span id="lsst_btn" class="tw-w-1/4 tw-text-center hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">lsst</span>
+            </div>
+        </div>
+
         <!--general filters-->
         <div class="tw-w-full">
             <p id="general_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">General filters</p>
@@ -31,17 +41,24 @@
                             <span
                             id="classifier"
                             class="tw-text-[#a9a9a9] dark:tw-text-[#EEEEEE]"
-                            data-value=""
-                            hx-get="{{API_URL}}/htmx/select/"
+                            data-classes=""
+                            data-classifier=''
+                            hx-get="{{API_URL}}/select"
                             hx-trigger="change"
                             hx-target="#classes_options"
                             hx-swap="outerHTML"
-                            hx-vals='js:{...prepareParameters()}'>Classifier</span>
+                            hx-vals='js:{...send_classes_data()}'>Classifier</span>
                         </div>
                         <div class="obj-custom-options dark:tw-bg-[#1e1e1e]">
                             <span class="obj-custom-option obj-selected" data-value=""></span>
                             {% for value in classifiers%}
-                                <span class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" data-value='{{value|tojson}}'> {{value.formated_name}}</span>
+                                <span 
+                                class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" 
+                                data-classes='{{value.classes}}'
+                                data-classifier='{{value.classifier_name}}'
+                                >
+                                {{value.formated_name}}
+                                </span>
                             {% endfor %}
                         </div>
                     </div>
@@ -159,11 +176,11 @@
         <!--Buttons-->
         <div class="tw-w-full tw-flex tw-justify-start tw-gap-4">
             <button 
-            hx-get="{{API_URL}}/htmx/list_object"
+            hx-get="{{API_URL}}/list_objects"
             hx-trigger="click"
             hx-swap="innerHTML"
             hx-target="#test"
-            hx-vals='js:{...searchParams()}'
+            hx-vals='js:{...send_form_Data()}'
             class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/2">SEARCH</button>
             
             <button class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded tw-w-1/4">CLEAR</button>
@@ -174,7 +191,7 @@
 </div>
 
 <script type="module">
-import {init, elementReady} from "{{API_URL}}/static/formSearch.js"
+import {init, elementReady} from "{{API_URL}}/static/form_search.js"
 
 
 elementReady("#form-search").then((el) => {

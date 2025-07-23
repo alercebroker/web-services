@@ -1,7 +1,8 @@
-import traceback
 import os
 import pprint
-from fastapi import APIRouter, HTTPException, Request
+import traceback
+from typing import Annotated
+from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from ..services.object_services import get_tidy_classifiers
@@ -17,7 +18,7 @@ templates.env.globals["API_URL"] = os.getenv(
 
 
 @router.get("/form/", response_class=HTMLResponse)
-async def tns_info(request: Request):
+async def objects_form(request: Request):
 
     try:
         session = request.app.state.psql_session
@@ -36,25 +37,22 @@ async def tns_info(request: Request):
     
 
 
-@router.get("/select/", response_class=HTMLResponse)
-async def tns_info(
+@router.get("/select", response_class=HTMLResponse)
+async def select_classes_classifier(
     request: Request,
-    classifier_name: str,
-    classifier_version: str
+    classifier_classes: list[str] = Query(...)
     ):
 
     try:
-        session = request.app.state.psql_session
-        classes = get_classifier_classes(session, classifier_name, classifier_version)
+        classes = classifier_classes
 
         return templates.TemplateResponse(
-        name="dependentSelect.html.jinja",
+        name="dependent_select.html.jinja",
         context={
             "request": request,
             "classes": classes
         }
     )
-
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An error occurred")

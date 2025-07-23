@@ -92,12 +92,6 @@ def probability_filters(args):
     if args["classifier"]:
         classifier = Probability_ms.classifier_id == args["classifier"]
         filters_prob_dict.append(classifier)
-        
-    if args["classifier_version"]:
-        classifier_version = (
-            Probability_ms.classifier_version == args["classifier_version"]
-        )
-        filters_prob_dict.append(classifier_version)
     if args["class_name"]:
         class_ = Probability_ms.class_id == args["class_name"]
         filters_prob_dict.append(class_)
