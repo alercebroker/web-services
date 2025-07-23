@@ -1,0 +1,59 @@
+# Default values for step_starter.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+namespace: multisurvey-api
+
+image: {}
+  # repository: ghcr.io/alercebroker/multisurvey_api
+  # pullPolicy: IfNotPresent
+  #   Overrides the image tag whose default is the chart appVersion.
+  # tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+          - matchExpressions:
+            - key: eks.amazonaws.com/nodegroup
+              operator: In
+              ## Override this value with the NodeGroup tag accordingly
+              values: []
+
+nameOverride: ""
+
+service:
+  type: ClusterIP
+  port: 8000
+
+configYaml:
+  services: {}  # important, api port must be 8000.
+
+ingress:
+  certificateArn: ""
+  host: ""
+  k8sGroupName: ""
+  k8sTags: ""
+  path: "" # path without end /
+
+imageCredentials:
+  registry: ""
+  username: ""
+  password: ""
+  email: ""
