@@ -22,7 +22,6 @@ def config_from_yaml():
 
     return config
 
-
 ###
 ### Define a single entry point for running the API services
 ### For each api service in the src folder.
@@ -32,32 +31,33 @@ def run_object():
     config_dict = config_from_yaml()    
     service_config = config_dict["services"]["object_api"]
     print(f"Running service: object_api with config: {service_config}")
-    asyncio.run(run_service(service_config))
+    # Use the sync version of run_service to run the FastAPI app
+    run_service(service_config)
 
 
 def run_lightcurve():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["lightcurve_api"]
     print(f"Running service: lightcurve_api with config: {service_config}")
-    asyncio.run(run_service(service_config))
+    run_service(service_config)
 
 def run_magstat():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["magstat_api"]
     print(f"Running service: magstat_api with config: {service_config}")
-    asyncio.run(run_service(service_config))
+    run_service(service_config)
 
 def run_classifier():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["classifier_api"]
     print(f"Running service: classifier_api with config: {service_config}")
-    asyncio.run(run_service(service_config))
+    run_service(service_config)
 
 def run_probability():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["probability_api"]
     print(f"Running service: probability_api with config: {service_config}")
-    asyncio.run(run_service(service_config))
+    run_service(service_config)
 
 
 ###
@@ -80,8 +80,8 @@ async def run_async():
 
     for service in config_dict["services"].keys():
         service_config = config_dict["services"][service]
-        print(f"Creating task for service: {service} with config: {service_config}")
-        tasks.append(asyncio.create_task(run_service(service_config)))
+        print(f"Creating task for service: {service}")
+        tasks.append(asyncio.create_task(async_run_service(service_config)))
 
     first = asyncio.as_completed(tasks).__next__()
     await first
@@ -89,7 +89,7 @@ async def run_async():
         task.cancel("Shutting down")
 
 
-async def run_service(
+async def async_run_service(
     config_dict: dict = None,
 ):  
     
@@ -101,7 +101,6 @@ async def run_service(
         port=config_dict["port"],
         reload=config_dict.get("reload", True),
         reload_dirs=[".", "../libs"],
-        root_path=config_dict["root_path"],
     )
     server = uvicorn.Server(server_config)
     os.environ["API_URL"] = config_dict["url"]
@@ -114,3 +113,28 @@ async def run_service(
     os.environ["SCHEMA"] = db_config["psql_schema"]
     
     await server.serve()
+
+def run_service(
+    config_dict: dict = None,
+):  
+    """
+    Synchronous version of run_service.
+    This is useful for running the service in a synchronous context.
+    """
+    db_config = config_dict.get("db_config")
+
+    os.environ["API_URL"] = config_dict["url"]
+    # export db secrets
+    os.environ["PSQL_USER"] = db_config["psql_user"]
+    os.environ["PSQL_PASSWORD"] = db_config["psql_password"]
+    os.environ["PSQL_DATABASE"] = db_config["psql_database"]
+    os.environ["PSQL_HOST"] = db_config["psql_host"]
+    os.environ["PSQL_PORT"] = str(db_config["psql_port"])
+    os.environ["SCHEMA"] = db_config["psql_schema"]
+
+    uvicorn.run(
+        f"src.{config_dict['source_folder']}.api:app",
+        port=config_dict["port"],
+        reload=config_dict.get("reload", True),
+        reload_dirs=[".", "../libs"]
+    )
