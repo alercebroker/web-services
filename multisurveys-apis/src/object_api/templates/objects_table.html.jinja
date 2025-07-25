@@ -1,0 +1,32 @@
+<div id="objects_table" class="tw-border-collapse">
+    <table class="tw-table-auto tw-bg-[#1e1e1e] tw-text-left">
+        <thead>
+            <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
+                <th class="tw-px-4">Object ID</th>
+                <th class="tw-px-4">Number of detections</th>
+                <th class="tw-px-4">FirstMJD</th>
+                <th class="tw-px-4">LastMJD</th>
+                <th class="tw-px-4">RA/DEC(degrees)</th>
+                <th class="tw-px-4">Highest Probability Class</th>
+                <th class="tw-px-4">Highest Probability</th>
+                <th class="tw-px-4">DeltaMJD (days)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in objects_list['items']%}
+                <tr class="tw-border-2 tw-border-y-[#757575]/70 tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
+                    <td class="tw-px-4">{{item['oid']}}</td>
+                    <td class="tw-px-4">{{item['n_det']}}</td>
+                    <td class="tw-px-4">{{item['firstmjd'] | truncate(3)}}</td>
+                    <td class="tw-px-4">{{item['lastmjd'] | truncate(3)}}</td>
+                    <td class="tw-px-4">
+                    {{ item['meanra'] | truncate(3) }}, {{ item['meandec'] | truncate(3) }}
+                    </td>
+                    <td class="tw-px-4">{{item['class_name']}}</td>
+                    <td class="tw-px-4">{{item['ranking']}}</td>
+                    <td class="tw-px-4">{{item['deltamjd']}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

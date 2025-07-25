@@ -19,8 +19,9 @@ class ModelDataParser():
     def parse_data(self):
         output_model = ExportModel(self.survey, self.model_variant).get_model()
         model_parsed = output_model(**self.input_data)
+        json_model = jsonable_encoder(model_parsed)
 
-        return model_parsed
+        return json_model
 
 
 def parse_params(search_params):
@@ -101,7 +102,6 @@ def parse_classifiers(classes_list):
     
     return res
 
-import pprint
 
 def parse_to_json_classifiers(classifiers):
     res = []

@@ -5,7 +5,9 @@
 
 <div id="form-search" hx-ext="response-targets" class="tw-preflight">
     {% from "input.html.jinja" import input as customInput %}
-    <div id="form-container" class="tw-container tw-mx-auto tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 tw-max-w-[458px] sm:tw-w-full">
+
+    <div class="tw-flex">
+        <div id="form-container" class="tw-container tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 tw-max-w-[458px] sm:tw-w-full">
 
         <!--Search filters-->
 
@@ -17,7 +19,7 @@
 
             <div id="survey" data-survey="ztf" class="tw-w-full tw-my-4 tw-flex tw-justify-start tw-gap-4">
                 <span id="ztf_btn" class="obj-survey-selected tw-text-center tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ztf</span>
-                <span id="lsst_btn" class="tw-w-1/4 tw-text-center hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">lsst</span>
+                <span id="lsst_btn" class="obj-surveys-unselect tw-w-1/4 tw-text-center hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">lsst</span>
             </div>
         </div>
 
@@ -176,18 +178,20 @@
         <!--Buttons-->
         <div class="tw-w-full tw-flex tw-justify-start tw-gap-4">
             <button 
-            hx-get="{{API_URL}}/list_objects"
+            hx-get="{{API_URL}}/table"
             hx-trigger="click"
-            hx-swap="innerHTML"
-            hx-target="#test"
+            hx-swap="outerHTML"
+            hx-target="#objects_table"
             hx-vals='js:{...send_form_Data()}'
             class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/2">SEARCH</button>
             
             <button class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded tw-w-1/4">CLEAR</button>
         </div>
+        </div>
+
+        <div id="objects_table" class="tw-max-w-[1422px]">test</div>
     </div>
 
-    <div id="test" class="tw-max-w-[1422px]">test</div>
 </div>
 
 <script type="module">

@@ -48,6 +48,10 @@
   background-color: #424242;
 }
 
+.obj-surveys-unselect{
+  opacity: 0.75;
+}
+
 .obj-select-wrapper{
   position: relative;
   -webkit-user-select: none;
@@ -178,12 +182,24 @@
   display: flex;
 }
 
+.tw-preflight :is(.tw-table){
+  display: table;
+}
+
 .tw-preflight :is(.tw-grid){
   display: grid;
 }
 
 .tw-preflight :is(.tw-hidden){
   display: none;
+}
+
+.tw-preflight :is(.tw-h-\[32px\]){
+  height: 32px;
+}
+
+.tw-preflight :is(.tw-h-\[34px\]){
+  height: 34px;
 }
 
 .tw-preflight :is(.tw-max-h-\[304px\]){
@@ -232,6 +248,14 @@
 
 .tw-preflight :is(.tw-max-w-\[458px\]){
   max-width: 458px;
+}
+
+.tw-preflight :is(.tw-table-auto){
+  table-layout: auto;
+}
+
+.tw-preflight :is(.tw-border-collapse){
+  border-collapse: collapse;
 }
 
 .tw-preflight :is(.tw-cursor-pointer){
@@ -302,6 +326,10 @@
   border-width: 1px;
 }
 
+.tw-preflight :is(.tw-border-2){
+  border-width: 2px;
+}
+
 .tw-preflight :is(.tw-border-black){
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity));
@@ -309,6 +337,28 @@
 
 .tw-preflight :is(.tw-border-transparent){
   border-color: transparent;
+}
+
+.tw-preflight :is(.tw-border-y-indigo-500){
+  --tw-border-opacity: 1;
+  border-top-color: rgb(99 102 241 / var(--tw-border-opacity));
+  border-bottom-color: rgb(99 102 241 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-border-y-\[\#1e1e1e\]\/70){
+  border-top-color: rgb(30 30 30 / 0.7);
+  border-bottom-color: rgb(30 30 30 / 0.7);
+}
+
+.tw-preflight :is(.tw-border-y-\[\#757575\]\/70){
+  border-top-color: rgb(117 117 117 / 0.7);
+  border-bottom-color: rgb(117 117 117 / 0.7);
+}
+
+.tw-preflight :is(.tw-border-y-\[\#757575\]){
+  --tw-border-opacity: 1;
+  border-top-color: rgb(117 117 117 / var(--tw-border-opacity));
+  border-bottom-color: rgb(117 117 117 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.tw-border-b-\[\#757575\]){
@@ -348,6 +398,10 @@
   padding-bottom: 0.5rem;
 }
 
+.tw-preflight :is(.tw-text-left){
+  text-align: left;
+}
+
 .tw-preflight :is(.tw-text-center){
   text-align: center;
 }
@@ -355,6 +409,18 @@
 .tw-preflight :is(.tw-text-sm){
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.tw-preflight :is(.tw-text-\[\.875rem\]){
+  font-size: .875rem;
+}
+
+.tw-preflight :is(.tw-text-\[0\.875rem\]){
+  font-size: 0.875rem;
+}
+
+.tw-preflight :is(.tw-text-\[0\.75rem\]){
+  font-size: 0.75rem;
 }
 
 .tw-preflight :is(.tw-ordinal){
@@ -380,6 +446,28 @@
 .tw-preflight :is(.tw-text-blue-50){
   --tw-text-opacity: 1;
   color: rgb(239 246 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-gray-50){
+  --tw-text-opacity: 1;
+  color: rgb(249 250 251 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-white){
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-white\/\[70\%\]){
+  color: rgb(255 255 255 / 70%);
+}
+
+.tw-preflight :is(.tw-text-white\/70){
+  color: rgb(255 255 255 / 0.7);
+}
+
+.tw-preflight :is(.tw-opacity-75){
+  opacity: 0.75;
 }
 
 /* roboto font */
@@ -1013,6 +1101,14 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.hover\:tw-bg-\[\#b2b2b2\]:hover){
   --tw-bg-opacity: 1;
   background-color: rgb(178 178 178 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.hover\:tw-bg-\[\#b2b2b2\]\/70:hover){
+  background-color: rgb(178 178 178 / 0.7);
+}
+
+.tw-preflight :is(.hover\:tw-bg-\[\#b2b2b2\]\/50:hover){
+  background-color: rgb(178 178 178 / 0.5);
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-border-b-\[\#757575\]){

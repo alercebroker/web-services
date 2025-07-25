@@ -282,7 +282,7 @@ function send_form_Data(){
     ndet: ndet_arr.length > 0 ? ndet_arr : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
     page: 1,
-    page_size: 20,
+    page_size: 10,
     count: false,
   }
 

@@ -11,8 +11,20 @@ function display(item){
 function survey_emphasize(btn){
   document.getElementById("survey").dataset.survey = btn.textContent
   document.querySelector('.obj-survey-selected').classList.remove('obj-survey-selected')
-
   btn.classList.add('obj-survey-selected')
+  btn.classList.remove('obj-surveys-unselect')
+
+  surveys_blur_items()
+}
+
+function surveys_blur_items(){
+  let surveys_items = [...document.querySelectorAll('#survey span')]
+
+  surveys_items.forEach((e) => {
+    if(!e.classList.contains('obj-survey-selected') && !e.classList.contains('obj-surveys-unselect')){
+      e.classList.add('obj-surveys-unselect')
+    }
+  })
 }
 
 
