@@ -216,6 +216,7 @@ export function init(){
   /**funciones publicas para usarlas con HTMX */
   window.send_classes_data = send_classes_data
   window.send_form_Data = send_form_Data
+  window.send_pagination_data = send_pagination_data
 }
 
 
@@ -246,6 +247,22 @@ function send_classes_data(){
   let classes_array = JSON.parse(jsonString);
   
   return { classifier_classes: classes_array }
+}
+
+function send_pagination_data(calling_page = 1){
+  if(!document.getElementById("pagination")){
+    return {
+      page: 1,
+      page_size: 20,
+      count: false,
+    }
+  }
+
+  return {
+    page: calling_page,
+    page_size: 20,
+    count: false,
+  }
 }
 
 
@@ -281,9 +298,6 @@ function send_form_Data(){
     probability: probability_value > 0 ? probability_value : null,
     ndet: ndet_arr.length > 0 ? ndet_arr : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
-    page: 1,
-    page_size: 10,
-    count: false,
   }
 
   for (let key in response) {

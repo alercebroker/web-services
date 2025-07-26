@@ -55,16 +55,18 @@ def parse_unique_object_query(sql_response, survey):
 
 def parse_objects_list_output(result, survey, classes_list):
 
-    items = serialize_items(result.items)
+    items = serialize_items(result.items_page)
     items_updated = match_and_update_item_class(items, classes_list)
     items_output = parse_items_probabilities(items_updated, survey)
 
+
     return {
-        "total": result.total,
+        "total": result.total_items,
         "next": result.next_num,
         "has_next": result.has_next,
         "prev": result.prev_num,
         "has_prev": result.has_prev,
+        "current_page": result.page,
         "items": items_output,
     }
 

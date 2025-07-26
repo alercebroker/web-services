@@ -126,7 +126,11 @@ def objects_table(
             name="objects_table.html.jinja",
             context={
                 "request": request,
-                "objects_list": object_list
+                "objects_list": object_list,
+                "next": object_list['next'],
+                "has_next": object_list['has_next'],
+                "prev": object_list['prev'],
+                "has_prev": object_list['has_prev'],
             }
         )
     except HTTPException as e:

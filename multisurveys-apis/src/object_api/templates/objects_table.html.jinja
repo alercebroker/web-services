@@ -1,4 +1,42 @@
-<div id="objects_table" class="tw-border-collapse">
+<div id="objects_table" class="tw-border-collapse ">
+
+    <div id="pagination" class="tw-flex tw-justify-end tw-items-center tw-text-base tw-bg-[#1e1e1e]/95 tw-h-[48px]">
+        {% if has_prev %}
+            <span 
+            id="prev_page"
+            data-next="{{prev}}"
+            hx-get="{{API_URL}}/table"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            hx-target="#objects_table"
+            hx-vals='js:{...send_form_Data(), ...send_pagination_data({{prev}}) }'
+            class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
+            <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/>
+            </svg>
+            </span>
+        {% endif %}
+        <span class="tw-inline-block tw-text-white tw-text-lg tw-text-center tw-h-[28px] tw-w-[48px]">{{objects_list['current_page']}}
+        </span>
+        
+        {% if has_next %}
+            <span 
+            id="next_page"
+            data-next="{{next}}"
+            hx-get="{{API_URL}}/table"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            hx-target="#objects_table"
+            hx-vals='js:{...send_form_Data(), ...send_pagination_data({{next}}) }'
+            class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
+            <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/>
+            </svg>
+            </span>
+        {%endif%}
+    </div>
     <table class="tw-table-auto tw-bg-[#1e1e1e] tw-text-left">
         <thead>
             <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
