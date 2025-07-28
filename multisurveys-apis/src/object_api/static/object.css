@@ -144,10 +144,6 @@
   margin-top: 8px;
 }
 
-.tw-preflight :is(.tw-static){
-  position: static;
-}
-
 .tw-preflight :is(.tw-absolute){
   position: absolute;
 }
@@ -162,6 +158,10 @@
 
 .tw-preflight :is(.tw-col-span-12){
   grid-column: span 12 / span 12;
+}
+
+.tw-preflight :is(.tw-float-left){
+  float: left;
 }
 
 .tw-preflight :is(.tw-mx-auto){
@@ -194,8 +194,8 @@
   display: none;
 }
 
-.tw-preflight :is(.tw-h-\[16px\]){
-  height: 16px;
+.tw-preflight :is(.tw-h-\[28px\]){
+  height: 28px;
 }
 
 .tw-preflight :is(.tw-h-\[34px\]){
@@ -206,20 +206,20 @@
   height: 48px;
 }
 
-.tw-preflight :is(.tw-h-\[28px\]){
-  height: 28px;
-}
-
-.tw-preflight :is(.tw-h-\[1422px\]){
-  height: 1422px;
-}
-
 .tw-preflight :is(.tw-max-h-\[304px\]){
   max-height: 304px;
 }
 
-.tw-preflight :is(.tw-max-h-\[1422px\]){
-  max-height: 1422px;
+.tw-preflight :is(.tw-max-h-full){
+  max-height: 100%;
+}
+
+.tw-preflight :is(.tw-max-h-80){
+  max-height: 20rem;
+}
+
+.tw-preflight :is(.tw-max-h-24){
+  max-height: 6rem;
 }
 
 .tw-preflight :is(.tw-w-1\/2){
@@ -294,10 +294,6 @@
   flex-wrap: wrap;
 }
 
-.tw-preflight :is(.tw-flex-nowrap){
-  flex-wrap: nowrap;
-}
-
 .tw-preflight :is(.tw-content-center){
   align-content: center;
 }
@@ -338,16 +334,8 @@
   align-self: flex-end;
 }
 
-.tw-preflight :is(.tw-self-center){
-  align-self: center;
-}
-
 .tw-preflight :is(.tw-overflow-auto){
   overflow: auto;
-}
-
-.tw-preflight :is(.tw-overflow-visible){
-  overflow: visible;
 }
 
 .tw-preflight :is(.tw-rounded){
@@ -425,18 +413,6 @@
   text-align: center;
 }
 
-.tw-preflight :is(.tw-align-top){
-  vertical-align: top;
-}
-
-.tw-preflight :is(.tw-align-middle){
-  vertical-align: middle;
-}
-
-.tw-preflight :is(.tw-align-text-top){
-  vertical-align: text-top;
-}
-
 .tw-preflight :is(.tw-text-\[0\.875rem\]){
   font-size: 0.875rem;
 }
@@ -446,19 +422,14 @@
   line-height: 1.5rem;
 }
 
-.tw-preflight :is(.tw-text-sm){
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.tw-preflight :is(.tw-text-xl){
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
 .tw-preflight :is(.tw-text-lg){
   font-size: 1.125rem;
   line-height: 1.75rem;
+}
+
+.tw-preflight :is(.tw-text-sm){
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .tw-preflight :is(.tw-ordinal){

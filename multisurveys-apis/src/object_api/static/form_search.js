@@ -217,6 +217,7 @@ export function init(){
   window.send_classes_data = send_classes_data
   window.send_form_Data = send_form_Data
   window.send_pagination_data = send_pagination_data
+  window.send_order_data = send_order_data
 }
 
 
@@ -266,6 +267,27 @@ function send_pagination_data(calling_page = 1){
 }
 
 
+function send_order_data(column_name, previus_order_mode, actual_order_by,next_page = "false"){
+  let new_order_mode = ""
+
+  if(column_name != actual_order_by){
+    new_order_mode = "DESC"
+  }else{
+    if(previus_order_mode == "DESC" && next_page != "true"){
+      new_order_mode = "ASC"
+    }else if(previus_order_mode == "ASC" && next_page != "true"){
+      new_order_mode = "DESC"
+    }
+  }
+  
+
+  return {
+    order_by: column_name,
+    order_mode: new_order_mode == "" ? previus_order_mode : new_order_mode
+  }
+}
+
+
 function send_form_Data(){
   let ndet_arr = []
   let first_mjd_arr = []
@@ -306,7 +328,6 @@ function send_form_Data(){
     }
   }
   
-  console.log(response)
 
   return response
 }

@@ -131,6 +131,8 @@ def objects_table(
                 "has_next": object_list['has_next'],
                 "prev": object_list['prev'],
                 "has_prev": object_list['has_prev'],
+                "actual_order_by": order_by,
+                "actual_order_mode": order_mode
             }
         )
     except HTTPException as e:

@@ -9,7 +9,10 @@
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#objects_table"
-            hx-vals='js:{...send_form_Data(), ...send_pagination_data({{prev}}) }'
+            hx-vals='js:{
+            ...send_form_Data(), 
+            ...send_pagination_data({{prev}}),
+            ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}", "{{actual_order_by}}","true")}'
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
@@ -28,7 +31,10 @@
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#objects_table"
-            hx-vals='js:{...send_form_Data(), ...send_pagination_data({{next}}) }'
+            hx-vals='js:{
+            ...send_form_Data(), 
+            ...send_pagination_data({{next}}),
+            ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}", "{{actual_order_by}}","true") }'
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
@@ -41,12 +47,56 @@
         <thead>
             <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
                 <th class="tw-px-4">Object ID</th>
-                <th class="tw-px-4">Number of detections</th>
-                <th class="tw-px-4">FirstMJD</th>
-                <th class="tw-px-4">LastMJD</th>
+                <th
+                id="n_det_column"
+                class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                hx-get="{{API_URL}}/table"
+                hx-trigger="click"
+                hx-swap="outerHTML"
+                hx-target="#objects_table"
+                hx-vals='js:{
+                ...send_form_Data(), 
+                ...send_pagination_data(), 
+                ...send_order_data("n_det", "{{actual_order_mode}}", "{{actual_order_by}}")}'
+                >Number of detections</th>
+                <th 
+                id="firstmjd_column"
+                class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                hx-get="{{API_URL}}/table"
+                hx-trigger="click"
+                hx-swap="outerHTML"
+                hx-target="#objects_table"
+                hx-vals='js:{
+                ...send_form_Data(), 
+                ...send_pagination_data(), 
+                ...send_order_data("firstmjd", "{{actual_order_mode}}", "{{actual_order_by}}")}'
+                >FirstMJD</th>
+                <th
+                id="lastmjd_column"
+                class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                hx-get="{{API_URL}}/table"
+                hx-trigger="click"
+                hx-swap="outerHTML"
+                hx-target="#objects_table"
+                hx-vals='js:{
+                ...send_form_Data(), 
+                ...send_pagination_data(), 
+                ...send_order_data("lastmjd", "{{actual_order_mode}}", "{{actual_order_by}}")}'
+                >LastMJD</th>
                 <th class="tw-px-4">RA/DEC(degrees)</th>
                 <th class="tw-px-4">Highest Probability Class</th>
-                <th class="tw-px-4">Highest Probability</th>
+                <th 
+                id="probability_column"
+                class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                hx-get="{{API_URL}}/table"
+                hx-trigger="click"
+                hx-swap="outerHTML"
+                hx-target="#objects_table"
+                hx-vals='js:{
+                ...send_form_Data(), 
+                ...send_pagination_data(), 
+                ...send_order_data("probability", "{{actual_order_mode}}", "{{actual_order_by}}")}'
+                >Highest Probability</th>
                 <th class="tw-px-4">DeltaMJD (days)</th>
             </tr>
         </thead>
@@ -68,3 +118,16 @@
         </tbody>
     </table>
 </div>
+
+
+<script type="module">
+
+    const recived_order_by = '{{actual_order_by}}_column'
+    let new_element = document.createElement('span')
+    new_element.textContent = ' {{actual_order_mode}}'
+
+    document.getElementById(recived_order_by).appendChild(new_element)
+
+    console.log(new_element.parentNode.id)
+
+</script>
