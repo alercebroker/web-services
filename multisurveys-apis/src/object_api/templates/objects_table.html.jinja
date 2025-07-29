@@ -12,7 +12,7 @@
             hx-vals='js:{
             ...send_form_Data(), 
             ...send_pagination_data({{prev}}),
-            ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}", "{{actual_order_by}}","true")}'
+            ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}","{{has_prev}}")}'
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
@@ -34,7 +34,7 @@
             hx-vals='js:{
             ...send_form_Data(), 
             ...send_pagination_data({{next}}),
-            ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}", "{{actual_order_by}}","true") }'
+            ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}", "{{has_next}}") }'
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
@@ -49,6 +49,7 @@
                 <th class="tw-px-4">Object ID</th>
                 <th
                 id="n_det_column"
+                data-column = "n_det"
                 class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                 hx-get="{{API_URL}}/table"
                 hx-trigger="click"
@@ -57,10 +58,11 @@
                 hx-vals='js:{
                 ...send_form_Data(), 
                 ...send_pagination_data(), 
-                ...send_order_data("n_det", "{{actual_order_mode}}", "{{actual_order_by}}")}'
+                ...send_order_data("n_det", "{{actual_order_mode}}")}'
                 >Number of detections</th>
                 <th 
                 id="firstmjd_column"
+                data-column = "firstmjd"
                 class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                 hx-get="{{API_URL}}/table"
                 hx-trigger="click"
@@ -69,10 +71,11 @@
                 hx-vals='js:{
                 ...send_form_Data(), 
                 ...send_pagination_data(), 
-                ...send_order_data("firstmjd", "{{actual_order_mode}}", "{{actual_order_by}}")}'
+                ...send_order_data("firstmjd", "{{actual_order_mode}}")}'
                 >FirstMJD</th>
                 <th
                 id="lastmjd_column"
+                data-column = "lastmjd"
                 class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                 hx-get="{{API_URL}}/table"
                 hx-trigger="click"
@@ -81,12 +84,13 @@
                 hx-vals='js:{
                 ...send_form_Data(), 
                 ...send_pagination_data(), 
-                ...send_order_data("lastmjd", "{{actual_order_mode}}", "{{actual_order_by}}")}'
+                ...send_order_data("lastmjd", "{{actual_order_mode}}")}'
                 >LastMJD</th>
                 <th class="tw-px-4">RA/DEC(degrees)</th>
                 <th class="tw-px-4">Highest Probability Class</th>
                 <th 
                 id="probability_column"
+                data-column = "probability"
                 class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                 hx-get="{{API_URL}}/table"
                 hx-trigger="click"
@@ -95,7 +99,7 @@
                 hx-vals='js:{
                 ...send_form_Data(), 
                 ...send_pagination_data(), 
-                ...send_order_data("probability", "{{actual_order_mode}}", "{{actual_order_by}}")}'
+                ...send_order_data("probability", "{{actual_order_mode}}")}'
                 >Highest Probability</th>
                 <th class="tw-px-4">DeltaMJD (days)</th>
             </tr>
@@ -121,13 +125,14 @@
 
 
 <script type="module">
+    import {draw_arrow_order_table} from "{{API_URL}}/static//draw_elements.js";
 
-    const recived_order_by = '{{actual_order_by}}_column'
-    let new_element = document.createElement('span')
-    new_element.textContent = ' {{actual_order_mode}}'
+    let recived_order_by = '{{actual_order_by}}_column'
+    let recived_order_mode = '{{actual_order_mode}}'
 
-    document.getElementById(recived_order_by).appendChild(new_element)
+    let icon = draw_arrow_order_table(recived_order_mode)
 
-    console.log(new_element.parentNode.id)
+    document.getElementById(recived_order_by).appendChild(icon)
+    document.getElementById(recived_order_by).classList.add("tw-flex", "tw-items-center", "tw-text-white")
 
 </script>

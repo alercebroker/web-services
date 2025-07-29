@@ -267,23 +267,28 @@ function send_pagination_data(calling_page = 1){
 }
 
 
-function send_order_data(column_name, previus_order_mode, actual_order_by,next_page = "false"){
-  let new_order_mode = ""
+function send_order_data(column_name, current_order_mode, next_page = false){
+  let selected_order_column = document.getElementById("selected_order_table").parentNode.dataset.column
 
-  if(column_name != actual_order_by){
-    new_order_mode = "DESC"
-  }else{
-    if(previus_order_mode == "DESC" && next_page != "true"){
-      new_order_mode = "ASC"
-    }else if(previus_order_mode == "ASC" && next_page != "true"){
-      new_order_mode = "DESC"
+  next_page = Boolean(next_page)
+
+  if(column_name != selected_order_column){
+    return {
+      order_by: column_name,
+      order_mode: "DESC"
     }
   }
   
+  if(next_page){
+    return {
+      order_by: column_name,
+      order_mode: current_order_mode
+    }
+  }
 
   return {
     order_by: column_name,
-    order_mode: new_order_mode == "" ? previus_order_mode : new_order_mode
+    order_mode: current_order_mode == "DESC" ? "ASC" : "DESC"
   }
 }
 

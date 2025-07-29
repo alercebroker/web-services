@@ -160,10 +160,6 @@
   grid-column: span 12 / span 12;
 }
 
-.tw-preflight :is(.tw-float-left){
-  float: left;
-}
-
 .tw-preflight :is(.tw-mx-auto){
   margin-left: auto;
   margin-right: auto;
@@ -208,18 +204,6 @@
 
 .tw-preflight :is(.tw-max-h-\[304px\]){
   max-height: 304px;
-}
-
-.tw-preflight :is(.tw-max-h-full){
-  max-height: 100%;
-}
-
-.tw-preflight :is(.tw-max-h-80){
-  max-height: 20rem;
-}
-
-.tw-preflight :is(.tw-max-h-24){
-  max-height: 6rem;
 }
 
 .tw-preflight :is(.tw-w-1\/2){
@@ -296,6 +280,10 @@
 
 .tw-preflight :is(.tw-content-center){
   align-content: center;
+}
+
+.tw-preflight :is(.tw-items-start){
+  align-items: flex-start;
 }
 
 .tw-preflight :is(.tw-items-end){
