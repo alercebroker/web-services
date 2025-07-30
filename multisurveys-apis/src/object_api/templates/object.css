@@ -29,7 +29,7 @@
   .obj-select-wrapper{
     position: relative;
     user-select: none;
-    word-break: break-all
+    word-break: break-all;
   }
 
   .obj-select{
@@ -110,8 +110,10 @@
     justify-content: space-between;
     color: #C62828;
     text-align: left;
-    font-size: 12px;
-    line-height: 12px;
+    text-wrap: wrap;
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 2;
     margin-top: 8px;
   }
 

@@ -4,9 +4,11 @@ export function handle_error(){
     document.addEventListener('htmx:responseError', evt =>{
 
         const xhr = evt.detail.xhr
-    
+
         if(xhr.status == 422) {
-          const errors = JSON.parse(xhr.responseText)
+          const form = evt.detail.elt
+          const errors_parsed = JSON.parse(xhr.responseText)
+          const errors = errors_parsed.detail
 
           for (const name of Object.keys(errors)) {
             const field = document.getElementById(name)
@@ -27,6 +29,7 @@ function draw_error_message(message){
     const new_Btn = draw_close_button(new_Div)
 
     new_content.innerHTML = message
+    new_content.classList.add("tw-inline-block", "tw-w-full")
 
     new_Div.appendChild(new_content)
     new_Div.appendChild(new_Btn)
@@ -40,9 +43,9 @@ function draw_close_button(element){
     const btn = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     btn.id = "error_message"
     btn.classList.add("tw-cursor-pointer", "tw-inline-block")
-    btn.setAttribute('height', '18px');
+    btn.setAttribute('height', '24px');
     btn.setAttribute('viewBox', '0 -960 960 960');
-    btn.setAttribute('width', '18px');
+    btn.setAttribute('width', '30px');
     btn.setAttribute('fill', '#C62828');
 
     

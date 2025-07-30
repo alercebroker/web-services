@@ -299,10 +299,15 @@ function send_form_Data(){
   let detections = ["min_detections", "max_detections"]
   let first_mjd = ["min_mjd", "max_mjd"]
   let probability_value = parseFloat(document.getElementById("prob_range").value);
-  let class_selected = document.getElementById("class").getAttribute("data-value")
+  let class_selected = document.getElementById("class")
   let classifier_selected = document.getElementById("classifier")
   let survey_id = document.getElementById('survey')
   let list_oids = format_oids(oids_arr)
+  let ra_consearch = document.getElementById('ra_consearch')
+  let dec_consearch = document.getElementById('dec_consearch')
+  let radius_consearch = document.getElementById('radius_consearch')
+
+  console.log(parseFloat(radius_consearch.value) )
 
   for(let detection of detections){
     if(document.getElementById(detection).value != ""){
@@ -320,11 +325,14 @@ function send_form_Data(){
   let response = {
     oid: list_oids,
     classifier: classifier_selected.dataset.classifier,
-    class_name: class_selected,
+    class_name: class_selected.dataset.value,
     survey: survey_id.dataset.survey,
     probability: probability_value > 0 ? probability_value : null,
     ndet: ndet_arr.length > 0 ? ndet_arr : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
+    ra: !isNaN(parseFloat(ra_consearch.value)) ? ra_consearch.value : null,
+    dec: !isNaN(parseFloat(dec_consearch.value)) ? dec_consearch.value : null,
+    radius: !isNaN(parseFloat(radius_consearch.value)) ? radius_consearch.value: null,
   }
 
   for (let key in response) {

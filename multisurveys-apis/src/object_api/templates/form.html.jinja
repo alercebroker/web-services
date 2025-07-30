@@ -37,8 +37,8 @@
                     </div>
 
                     <!--select classifiers-->
-                    <div class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        <div class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
+                    <div id="classifiers_wrapper" class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
+                        <div id="classifiers_container" class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
                             <div class="obj-select__trigger">
                                 <span
                                 id="classifier"
@@ -68,7 +68,7 @@
 
                     <!--select classes-->
                     <div class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        <div id="class_classifier" class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
+                        <div id="classes_container" class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
                             <div class="obj-select__trigger">
                                 <span
                                 id="class"
@@ -164,12 +164,12 @@
                         <label>HMS/DMS</label>
                     </div>
 
-                    {{customInput(id="Ra", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Ra (Deg)")}}
+                    {{customInput(id="ra_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Ra (Deg)", step="0.00001")}}
 
 
-                    {{customInput(id="Dec", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Dec (deg)")}}
+                    {{customInput(id="dec_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Dec (deg)", step="0.00001")}}
 
-                    {{customInput(id="Radius", type="number", width="tw-col-span-12", placeholder="Radius (arcsec)")}}
+                    {{customInput(id="radius_consearch", type="number", width="tw-col-span-12", placeholder="Radius (arcsec)", step="0.00001")}}
 
 
                 </div>

@@ -113,7 +113,6 @@ def probability_filters(args):
 
 def add_limits_statements(stmt, pagination_args):
     row_index = (pagination_args.page-1) * pagination_args.page_size
-    print(row_index)
     stmt = stmt.limit(pagination_args.page_size + 1).offset(row_index)
 
     return stmt
