@@ -27,8 +27,8 @@ def order_mode_validation(order: str):
         )
     
 
-def classifier_validation(classifier: str, class_name: str):
-    if class_name == None or class_name == "":
+def class_validation(classifier: str, class_name: str):
+    if class_name == "" and type(class_name) != str:
         raise HTTPException(
             status_code=422, 
             detail={

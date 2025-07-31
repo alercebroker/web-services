@@ -9,7 +9,7 @@ from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_objects_list
-from ..services.validations import ndets_validation, order_mode_validation, classifier_validation, consearch_validation, oids_format_validation, oid_lenght_validation, date_validation
+from ..services.validations import ndets_validation, order_mode_validation, class_validation, consearch_validation, oids_format_validation, oid_lenght_validation, date_validation
 from ..services.jinja_tools import truncate_float
 
 
@@ -92,11 +92,13 @@ def objects_table(
         
         ndets_validation(n_det)
         order_mode_validation(order_mode)
-        classifier_validation(classifier, class_name)
+        class_validation(classifier, class_name)
         consearch_validation(ra,dec,radius)
-        oids_format_validation(oid)
+        # oids_format_validation(oid)
         oid_lenght_validation(oid)
         date_validation(firstmjd, lastmjd)
+
+        print(classifier)
 
         filters = Filters(
             oids=oid,

@@ -1,4 +1,4 @@
-import { jdToDate, gregorianToJd } from "./AstroDates.js"
+import { jdToDate, gregorianToJd, raDectoHMS} from "./AstroDates.js"
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate} from "./time.js"
 import { handle_error } from "./error_handler.js";
 import {draw_oids_tags} from "./draw_elements.js";
@@ -39,6 +39,8 @@ export function init(){
   let date_max = document.getElementById("date_max")
   let time_max = document.getElementById("time_max")
   let save_date_max = document.getElementById("save_date_max")
+
+  let radio_HMS = document.getElementById("HMS/DMS" )
 
   // se seleccionan todos los dropdowns
   for (const dropdown of document.querySelectorAll(".obj-select-wrapper")) {
@@ -141,6 +143,16 @@ export function init(){
 
   lsst_btn.addEventListener("click", () => {
     survey_emphasize(lsst_btn)
+  })
+
+  radio_HMS.addEventListener("click", () => {
+    let [ra_consearch_value, dec_consearch_value] = raDectoHMS(document.getElementById("ra_consearch").value, document.getElementById("dec_consearch").value).split(" ")
+
+    document.getElementById("ra_consearch").type = "text" 
+    document.getElementById("ra_consearch").value = ra_consearch_value
+    document.getElementById("dec_consearch").type = "text"
+    document.getElementById("dec_consearch").value = dec_consearch_value
+    
   })
 
   // inputs events
@@ -322,8 +334,8 @@ function send_form_Data(){
 
   let response = {
     oid: list_oids,
-    classifier: classifier_selected.dataset.classifier,
-    class_name: class_selected.dataset.value,
+    classifier: classifier_selected.dataset.classifier == "" ? null : classifier_selected.dataset.classifier,
+    class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value ,
     survey: survey_id.dataset.survey,
     probability: probability_value > 0 ? probability_value : null,
     ndet: ndet_arr.length > 0 ? ndet_arr : null,
