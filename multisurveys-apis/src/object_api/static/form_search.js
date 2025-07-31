@@ -307,8 +307,6 @@ function send_form_Data(){
   let dec_consearch = document.getElementById('dec_consearch')
   let radius_consearch = document.getElementById('radius_consearch')
 
-  console.log(parseFloat(radius_consearch.value) )
-
   for(let detection of detections){
     if(document.getElementById(detection).value != ""){
       ndet_arr.push(document.getElementById(detection).value)
