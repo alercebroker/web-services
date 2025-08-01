@@ -1,4 +1,8 @@
-<div id="objects_table" class="tw-border-collapse ">
+<meta name="htmx-config" content='{"selfRequestsOnly": false}'>
+<link rel="stylesheet" href="{{API_URL}}/static/object.css">
+
+
+<div id="objects_table" class="tw-preflight">
 
     <div id="pagination" class="tw-flex tw-justify-end tw-items-center tw-text-base tw-bg-[#1e1e1e]/95 tw-h-[48px]">
         {% if has_prev %}
@@ -43,7 +47,7 @@
             </span>
         {%endif%}
     </div>
-    <table class="tw-table-auto tw-bg-[#1e1e1e] tw-text-left">
+    <table class="tw-table-auto tw-border-collapse tw-bg-[#1e1e1e] tw-text-left tw-w-full">
         <thead>
             <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
                 <th class="tw-px-4">Object ID</th>
@@ -106,7 +110,7 @@
         </thead>
         <tbody>
             {% for item in objects_list['items']%}
-                <tr class="tw-border-2 tw-border-y-[#757575]/70 tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
+                <tr class="tw-border-y-2 tw-border-[#757575]/70 tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
                     <td class="tw-px-4">{{item['oid']}}</td>
                     <td class="tw-px-4">{{item['n_det']}}</td>
                     <td class="tw-px-4">{{item['firstmjd'] | truncate(3)}}</td>

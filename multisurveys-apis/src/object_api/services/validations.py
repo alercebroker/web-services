@@ -82,13 +82,14 @@ def oids_format_validation(oids):
             
 
 def oid_lenght_validation(oids):
-    if oids != None and len(oids) > 200:
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "objectIds": "You can only query for 200 object ids."
-            }
-        )
+    if oids != None:
+        if len(oids) > 200:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "objectIds": "You can only query for 200 object ids."
+                }
+            )
 
 
 def probability_validation(probability):
@@ -110,11 +111,13 @@ def date_validation(firstmjd, lastmjd):
                     "discovery_date_filters_container": "To filter by date, there must be a maximum of two dates."
                 }
             )
+        
 
-        if firstmjd[0] >= firstmjd[1]:
-            raise HTTPException(
-                status_code=422,
-                detail={
-                    "discovery_date_filters_container": "Min MJD must be lower than max MJD."
-                }
-            )
+        if len(firstmjd) == 2:
+            if firstmjd[0] >= firstmjd[1]:
+                raise HTTPException(
+                    status_code=422,
+                    detail={
+                        "discovery_date_filters_container": "Min MJD must be lower than max MJD."
+                    }
+                )

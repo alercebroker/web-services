@@ -71,7 +71,7 @@ def objects_table(
     request: Request,
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
-    survey: str | None = None,
+    survey: str | None = 'ztf',
     classifier: str | None = Query(default="lc_classifier"),
     ranking: int | None = Query(default=1),
     n_det: Annotated[list[int] | None, Query()] = None,
@@ -98,7 +98,7 @@ def objects_table(
         oid_lenght_validation(oid)
         date_validation(firstmjd, lastmjd)
 
-        print(classifier)
+
 
         filters = Filters(
             oids=oid,

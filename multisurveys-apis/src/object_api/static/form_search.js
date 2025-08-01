@@ -8,7 +8,6 @@ let oids_arr = []
 
 export function init(){
     
-  let info = JSON.parse(document.getElementById("form-data").text);
   let item_name = ""
   let minDate = ""
   let minDatetime = ""
@@ -41,6 +40,11 @@ export function init(){
   let save_date_max = document.getElementById("save_date_max")
 
   let radio_HMS = document.getElementById("HMS/DMS" )
+  let radio_degress = document.getElementById("degrees")
+  let ra_consearch_store
+  let dec_consearch_store 
+
+  let clear_btn_form = document.getElementById("clear_form")
 
   // se seleccionan todos los dropdowns
   for (const dropdown of document.querySelectorAll(".obj-select-wrapper")) {
@@ -59,6 +63,11 @@ export function init(){
           option.classList.add('obj-selected');
           
           option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
+
+          if(!option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.contains('dark:tw-text-[#EEEEEE]')){
+            option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.add('dark:tw-text-[#EEEEEE]')
+          }
+
 
           option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classes",  option.getAttribute("data-classes"));
           option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classifier",  option.getAttribute("data-classifier"));
@@ -146,13 +155,27 @@ export function init(){
   })
 
   radio_HMS.addEventListener("click", () => {
+
+    ra_consearch_store = document.getElementById("ra_consearch").value
+    dec_consearch_store = document.getElementById("dec_consearch").value
+
     let [ra_consearch_value, dec_consearch_value] = raDectoHMS(document.getElementById("ra_consearch").value, document.getElementById("dec_consearch").value).split(" ")
 
     document.getElementById("ra_consearch").type = "text" 
     document.getElementById("ra_consearch").value = ra_consearch_value
     document.getElementById("dec_consearch").type = "text"
     document.getElementById("dec_consearch").value = dec_consearch_value
-    
+  })
+
+  radio_degress.addEventListener("click", () => {
+    document.getElementById("ra_consearch").type = "number" 
+    document.getElementById("ra_consearch").value = ra_consearch_store
+    document.getElementById("dec_consearch").type = "number"
+    document.getElementById("dec_consearch").value = dec_consearch_store
+  })
+
+  clear_btn_form.addEventListener("click", () => {
+    reset_values()
   })
 
   // inputs events
@@ -353,4 +376,9 @@ function send_form_Data(){
   
 
   return response
+}
+
+function reset_values(){
+  document.getElementById("clear_oids_btn").click()
+
 }

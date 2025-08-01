@@ -42,7 +42,7 @@
                             <div class="obj-select__trigger">
                                 <span
                                 id="classifier"
-                                class="tw-text-[#a9a9a9] dark:tw-text-[#EEEEEE]"
+                                class="tw-text-[#a9a9a9]"
                                 data-classes=""
                                 data-classifier=''
                                 hx-get="{{API_URL}}/select"
@@ -52,7 +52,7 @@
                                 hx-vals='js:{...send_classes_data()}'>Classifier</span>
                             </div>
                             <div class="obj-custom-options dark:tw-bg-[#1e1e1e]">
-                                <span class="obj-custom-option obj-selected" data-value=""></span>
+                                <span class="obj-custom-option obj-selected  dark:tw-text-[#EEEEEE]"  data-value=""></span>
                                 {% for value in classifiers%}
                                     <span 
                                     class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" 
@@ -185,11 +185,18 @@
                 hx-vals='js:{...send_form_Data(), ...send_pagination_data()}'
                 class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/2">SEARCH</button>
                 
-                <button class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded tw-w-1/4">CLEAR</button>
+                <button 
+                id="clear_form" 
+                class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded tw-w-1/4"
+                hx-get="{{API_URL}}/form"
+                hx-trigger="click"
+                hx-swap="outerHTML"
+                hx-target="#form-search"
+                >CLEAR</button>
             </div>
         </div>
 
-        <div id="objects_table" class="tw-max-w-[1422px]">test</div>
+        {# <div id="objects_table" class="tw-max-w-[1422px]">test</div> #}
     </div>
 
 </div>

@@ -332,8 +332,13 @@
   border-width: 1px;
 }
 
-.tw-preflight :is(.tw-border-2){
-  border-width: 2px;
+.tw-preflight :is(.tw-border-y-2){
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+}
+
+.tw-preflight :is(.tw-border-\[\#757575\]\/70){
+  border-color: rgb(117 117 117 / 0.7);
 }
 
 .tw-preflight :is(.tw-border-black){
@@ -343,11 +348,6 @@
 
 .tw-preflight :is(.tw-border-transparent){
   border-color: transparent;
-}
-
-.tw-preflight :is(.tw-border-y-\[\#757575\]\/70){
-  border-top-color: rgb(117 117 117 / 0.7);
-  border-bottom-color: rgb(117 117 117 / 0.7);
 }
 
 .tw-preflight :is(.tw-border-b-\[\#757575\]){
