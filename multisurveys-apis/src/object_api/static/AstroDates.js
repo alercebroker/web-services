@@ -63,4 +63,32 @@ function raDectoHMS(ra, dec) {
   return `${ra} ${dec}`
 }
 
-export { gregorianToJd, jdToGregorian, jdToDate, raDectoHMS }
+
+function HMStoRa(ra){
+  let filters_regex = /[+\-*/]/g
+  let ra_regex = ra.replace(filters_regex, "")
+  let ra_hms_array = ra_regex.split(":")
+
+  let ra_hour = ra_hms_array[0]
+  let ra_minutes = ra_hms_array[1]
+  let ra_seconds = ra_hms_array[2]
+
+
+  ra = ra_hour * 15 + ra_minutes * (15/60) + ra_seconds * (15/3600)
+
+  return ra
+}
+
+function DMStoDec(dec){
+  let dec_dms_array = document.getElementById("dec_consearch").value.split(":")
+
+  let deg = dec_dms_array[0]
+  let dec_minutes = dec_dms_array[1]
+  let dec_seconds = dec_dms_array[2]
+
+  dec = parseFloat(deg) + dec_minutes/20 + dec_seconds/3600
+  
+  return dec
+}
+
+export { gregorianToJd, jdToGregorian, jdToDate, raDectoHMS, HMStoRa, DMStoDec }

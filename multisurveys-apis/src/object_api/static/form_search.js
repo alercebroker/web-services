@@ -1,4 +1,4 @@
-import { jdToDate, gregorianToJd, raDectoHMS} from "./AstroDates.js"
+import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec} from "./AstroDates.js"
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate} from "./time.js"
 import { handle_error } from "./error_handler.js";
 import {draw_oids_tags} from "./draw_elements.js";
@@ -155,23 +155,25 @@ export function init(){
   })
 
   radio_HMS.addEventListener("click", () => {
-
-    ra_consearch_store = document.getElementById("ra_consearch").value
-    dec_consearch_store = document.getElementById("dec_consearch").value
-
-    let [ra_consearch_value, dec_consearch_value] = raDectoHMS(document.getElementById("ra_consearch").value, document.getElementById("dec_consearch").value).split(" ")
+    let [ra_hms, dec_dms] = raDectoHMS(document.getElementById("ra_consearch").value, document.getElementById("dec_consearch").value).split(" ")
 
     document.getElementById("ra_consearch").type = "text" 
-    document.getElementById("ra_consearch").value = ra_consearch_value
+    document.getElementById("ra_consearch").value = ra_hms
+
     document.getElementById("dec_consearch").type = "text"
-    document.getElementById("dec_consearch").value = dec_consearch_value
+    document.getElementById("dec_consearch").value = dec_dms
   })
 
   radio_degress.addEventListener("click", () => {
+
+    let ra_degree = HMStoRa(document.getElementById("ra_consearch").value)
+    let dec_degree = DMStoDec(document.getElementById("dec_consearch").value)
+
     document.getElementById("ra_consearch").type = "number" 
-    document.getElementById("ra_consearch").value = ra_consearch_store
+    document.getElementById("ra_consearch").value = ra_degree
+
     document.getElementById("dec_consearch").type = "number"
-    document.getElementById("dec_consearch").value = dec_consearch_store
+    document.getElementById("dec_consearch").value = dec_degree
   })
 
   clear_btn_form.addEventListener("click", () => {
@@ -286,14 +288,6 @@ function send_classes_data(){
 }
 
 function send_pagination_data(calling_page = 1){
-  if(!document.getElementById("pagination")){
-    return {
-      page: 1,
-      page_size: 20,
-      count: false,
-    }
-  }
-
   return {
     page: calling_page,
     page_size: 20,
@@ -328,31 +322,52 @@ function send_order_data(column_name, current_order_mode, next_page = false){
 }
 
 
+function get_values_array_fields(fields){
+
+  let response_array = []
+  for(let field of fields){
+    if(document.getElementById(field).value != ""){
+      response_array.push(document.getElementById(field).value)
+    }
+  }
+
+  return response_array
+}
+
+
+function check_radio_consearch(ra_consearch, dec_consearch){
+  if(!document.getElementById('degrees').checked){
+    ra_consearch = HMStoRa(ra_consearch)
+    dec_consearch = DMStoDec(dec_consearch)
+  }
+
+  return [ra_consearch, dec_consearch]
+}
+
+
+function clean_nulls_form(form_response){
+  for (let key in form_response) {
+    if (form_response[key] === null) {
+      delete form_response[key];
+    }
+  }
+
+  return form_response
+}
+
 function send_form_Data(){
-  let ndet_arr = []
-  let first_mjd_arr = []
-  let detections = ["min_detections", "max_detections"]
-  let first_mjd = ["min_mjd", "max_mjd"]
+  let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
+  let first_mjd_arr = get_values_array_fields(["min_mjd", "max_mjd"])
   let probability_value = parseFloat(document.getElementById("prob_range").value);
   let class_selected = document.getElementById("class")
   let classifier_selected = document.getElementById("classifier")
   let survey_id = document.getElementById('survey')
   let list_oids = format_oids(oids_arr)
-  let ra_consearch = document.getElementById('ra_consearch')
-  let dec_consearch = document.getElementById('dec_consearch')
-  let radius_consearch = document.getElementById('radius_consearch')
-
-  for(let detection of detections){
-    if(document.getElementById(detection).value != ""){
-      ndet_arr.push(document.getElementById(detection).value)
-    }
-  }
-
-  for(let mjd of first_mjd){
-    if(document.getElementById(mjd).value != ""){
-      first_mjd_arr.push(document.getElementById(mjd).value)
-    }
-  }
+  let [ra_consearch, dec_consearch] = check_radio_consearch(
+    document.getElementById('ra_consearch').value, 
+    document.getElementById('dec_consearch').value
+  )
+  let radius_consearch = document.getElementById('radius_consearch').value
 
 
   let response = {
@@ -363,17 +378,12 @@ function send_form_Data(){
     probability: probability_value > 0 ? probability_value : null,
     ndet: ndet_arr.length > 0 ? ndet_arr : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
-    ra: !isNaN(parseFloat(ra_consearch.value)) ? ra_consearch.value : null,
-    dec: !isNaN(parseFloat(dec_consearch.value)) ? dec_consearch.value : null,
-    radius: !isNaN(parseFloat(radius_consearch.value)) ? radius_consearch.value: null,
+    ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
+    dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
+    radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch: null,
   }
 
-  for (let key in response) {
-    if (response[key] === null) {
-      delete response[key];
-    }
-  }
-  
+  response = clean_nulls_form(response)
 
   return response
 }

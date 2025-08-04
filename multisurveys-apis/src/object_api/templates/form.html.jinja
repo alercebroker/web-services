@@ -157,17 +157,17 @@
                     </div>
 
                     <div class="tw-col-span-12 lg:tw-col-span-12 sm:tw-col-span-12">
-                        <input type="radio" id="degrees" name="consearch_radio" value="degrees" >
+                        <input type="radio" id="degrees" name="consearch_radio" value="degrees" checked>
                         <label>Degrees</label>
 
                         <input type="radio" id="HMS/DMS" name="consearch_radio" value="HMS/DMS">
                         <label>HMS/DMS</label>
                     </div>
 
-                    {{customInput(id="ra_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Ra (Deg)", step="0.00001")}}
+                    {{customInput(id="ra_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Ra (Deg)", step="1")}}
 
 
-                    {{customInput(id="dec_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Dec (deg)", step="0.00001")}}
+                    {{customInput(id="dec_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Dec (deg)", step="1")}}
 
                     {{customInput(id="radius_consearch", type="number", width="tw-col-span-12", placeholder="Radius (arcsec)", step="0.00001")}}
 
@@ -196,7 +196,7 @@
             </div>
         </div>
 
-        {# <div id="objects_table" class="tw-max-w-[1422px]">test</div> #}
+        <div id="objects_table" class="tw-max-w-[1422px]">test</div>
     </div>
 
 </div>
