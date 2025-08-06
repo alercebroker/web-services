@@ -1,3 +1,5 @@
+import { raDectoHMS, HMStoRa, DMStoDec } from "./AstroDates.js"
+
 function display(item){
     item = document.getElementById(item)
     if(item.classList.contains("tw-hidden")){
@@ -44,4 +46,16 @@ function format_oids(listOfOids) {
 }
 
 
-export {display, split_oids, format_oids, survey_emphasize}
+function check_radio_consearch(ra_consearch, dec_consearch){
+  if(!document.getElementById('degrees').checked && typeof(ra_consearch) === 'string' && typeof(dec_consearch) === 'string'){
+    ra_consearch = HMStoRa(ra_consearch)
+    dec_consearch = DMStoDec(dec_consearch)
+
+  } else if(!document.getElementById('degrees').checked){
+    [ra_consearch, dec_consearch] = raDectoHMS(ra_consearch, dec_consearch).split(" ")
+  }
+
+  return [ra_consearch, dec_consearch]
+}
+
+export {display, split_oids, format_oids, survey_emphasize, check_radio_consearch}

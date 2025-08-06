@@ -115,6 +115,11 @@
     font-size: 0.9rem;
     line-height: 2;
     margin-top: 8px;
+    padding: 16px
+  }
+
+  .custom-bg-error{
+    background-color: rgb(190 40 40 / 0.2);
   }
 
 }

@@ -5,14 +5,13 @@ from fastapi import HTTPException
 
 def ndets_validation(ndets: list[int]):
     if ndets != None and len(ndets) == 2:
-        if ndets[0] != None or ndets[1] != None:
-            if ndets[0] > ndets[1]:
-                raise HTTPException(
-                    status_code=422,
-                    detail={
-                        "detections_container": "Min value can't be greater than max."
-                    },
-                )
+        if ndets[0] > ndets[1]:
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "detections_container": "Min value can't be greater than max."
+                },
+            )
 
 
 def order_mode_validation(order: str):
@@ -22,13 +21,13 @@ def order_mode_validation(order: str):
         raise HTTPException(
             status_code=422,
             detail={
-                "order_mode": "Order can be only DESC or ASC."
+                "search_filters": "Order can be only DESC or ASC."
             },
         )
     
 
 def class_validation(classifier: str, class_name: str):
-    if class_name == "" and type(class_name) != str:
+    if class_name == None or classifier == None:
         raise HTTPException(
             status_code=422, 
             detail={
@@ -92,17 +91,26 @@ def oid_lenght_validation(oids):
             )
 
 
-def probability_validation(probability):
+def probability_validation(probability, classifier, class_name):
     if probability < 0:
         raise HTTPException(
             status_code=422,
             detail={
-                "probability": "Probability must be greater than 0."
+                "prob_range": "Probability must be greater than 0."
             }
         )
     
+    if probability > 0:
+        if class_name == None:
+            raise HTTPException(
+                status_code=422, 
+                detail={
+                    "prob_range":"Select a class if you want to filter by classifier."
+                }
+            )
 
-def date_validation(firstmjd, lastmjd):
+
+def date_validation(firstmjd):
     if firstmjd != None:
         if len(firstmjd) > 2:
             raise HTTPException(

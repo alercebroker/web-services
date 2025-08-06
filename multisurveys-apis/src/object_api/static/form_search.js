@@ -2,7 +2,9 @@ import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec} from "./AstroDa
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate} from "./time.js"
 import { handle_error } from "./error_handler.js";
 import {draw_oids_tags} from "./draw_elements.js";
-import { display, split_oids, format_oids, survey_emphasize }  from "./ui_helpers.js";
+import { display, split_oids, format_oids, survey_emphasize, check_radio_consearch }  from "./ui_helpers.js";
+import {get_sesame_object} from "./sesame.js"
+import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
 
 let oids_arr = []
 
@@ -39,11 +41,9 @@ export function init(){
   let time_max = document.getElementById("time_max")
   let save_date_max = document.getElementById("save_date_max")
 
+  let resolve_btn = document.getElementById("resolve_btn")
   let radio_HMS = document.getElementById("HMS/DMS" )
   let radio_degress = document.getElementById("degrees")
-  let ra_consearch_store
-  let dec_consearch_store 
-
   let clear_btn_form = document.getElementById("clear_form")
 
   // se seleccionan todos los dropdowns
@@ -165,7 +165,6 @@ export function init(){
   })
 
   radio_degress.addEventListener("click", () => {
-
     let ra_degree = HMStoRa(document.getElementById("ra_consearch").value)
     let dec_degree = DMStoDec(document.getElementById("dec_consearch").value)
 
@@ -174,6 +173,10 @@ export function init(){
 
     document.getElementById("dec_consearch").type = "number"
     document.getElementById("dec_consearch").value = dec_degree
+  })
+
+  resolve_btn.addEventListener("click", () => {
+    get_sesame_object(document.getElementById("target_name").value)
   })
 
   clear_btn_form.addEventListener("click", () => {
@@ -279,81 +282,10 @@ export function elementReady(selector) {
 }
 
 
-function send_classes_data(){
-  let value_selected = document.getElementById("classifier").dataset.classes;
-  let jsonString = value_selected.replace(/'/g, '"');
-  let classes_array = JSON.parse(jsonString);
-  
-  return { classifier_classes: classes_array }
+function reset_values(){
+  document.getElementById("clear_oids_btn").click()
 }
 
-function send_pagination_data(calling_page = 1){
-  return {
-    page: calling_page,
-    page_size: 20,
-    count: false,
-  }
-}
-
-
-function send_order_data(column_name, current_order_mode, next_page = false){
-  let selected_order_column = document.getElementById("selected_order_table").parentNode.dataset.column
-
-  next_page = Boolean(next_page)
-
-  if(column_name != selected_order_column){
-    return {
-      order_by: column_name,
-      order_mode: "DESC"
-    }
-  }
-  
-  if(next_page){
-    return {
-      order_by: column_name,
-      order_mode: current_order_mode
-    }
-  }
-
-  return {
-    order_by: column_name,
-    order_mode: current_order_mode == "DESC" ? "ASC" : "DESC"
-  }
-}
-
-
-function get_values_array_fields(fields){
-
-  let response_array = []
-  for(let field of fields){
-    if(document.getElementById(field).value != ""){
-      response_array.push(document.getElementById(field).value)
-    }
-  }
-
-  return response_array
-}
-
-
-function check_radio_consearch(ra_consearch, dec_consearch){
-  if(!document.getElementById('degrees').checked){
-    ra_consearch = HMStoRa(ra_consearch)
-    dec_consearch = DMStoDec(dec_consearch)
-  }
-
-  return [ra_consearch, dec_consearch]
-}
-
-
-function clean_nulls_form(form_response){
-  for (let key in form_response) {
-    if (form_response[key] === null) {
-      delete form_response[key];
-    }
-  }
-
-  return form_response
-}
 
 function send_form_Data(){
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
@@ -376,7 +308,7 @@ function send_form_Data(){
     class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value ,
     survey: survey_id.dataset.survey,
     probability: probability_value > 0 ? probability_value : null,
-    ndet: ndet_arr.length > 0 ? ndet_arr : null,
+    n_det: ndet_arr.length > 0 ? ndet_arr : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
     dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
@@ -386,9 +318,4 @@ function send_form_Data(){
   response = clean_nulls_form(response)
 
   return response
-}
-
-function reset_values(){
-  document.getElementById("clear_oids_btn").click()
-
 }

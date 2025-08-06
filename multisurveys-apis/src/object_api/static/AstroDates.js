@@ -86,7 +86,7 @@ function DMStoDec(dec){
   let dec_minutes = dec_dms_array[1]
   let dec_seconds = dec_dms_array[2]
 
-  dec = parseFloat(deg) + dec_minutes/20 + dec_seconds/3600
+  dec = parseFloat(deg) + dec_minutes/60 + dec_seconds/3600
   
   return dec
 }

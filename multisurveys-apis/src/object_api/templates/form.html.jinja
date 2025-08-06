@@ -11,7 +11,7 @@
 
             <!--Search filters-->
 
-            <div class="tw-w-full">Search filters</div>
+            <div id="search_filters" class="tw-w-full">Search filters</div>
 
             <!--Survey filters-->
             <div id="survey_container" class="tw-w-full">
@@ -81,7 +81,7 @@
                         </div>
                     </div>
                     
-                    <div id="probability"class="tw-col-span-12">
+                    <div id="probability_container"class="tw-col-span-12">
                         <label>Probability ≥</label>
                         <label id="prob_number" class="tw-inline-block tw-w-[36px]"> 0.00</label>
                         <input id="prob_range" class="" type="range" step="0.01" max="1" value="0.00">
@@ -152,7 +152,7 @@
                     </div>
 
                     <div class="tw-px-4 tw-flex tw-flex-col tw-items-end tw-col-span-12 lg:tw-col-span-7 sm:tw-col-span-12">
-                        <button class="tw-w-[95%] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">resolve</button>
+                        <button id="resolve_btn" class="tw-w-[95%] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">resolve</button>
                         <label class="tw-text-sm tw-mt-1">provided by sesame</label>
                     </div>
 
