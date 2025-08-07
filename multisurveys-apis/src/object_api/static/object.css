@@ -181,6 +181,10 @@
   margin-top: 0.25rem;
 }
 
+.tw-preflight :is(.tw-block){
+  display: block;
+}
+
 .tw-preflight :is(.tw-inline-block){
   display: inline-block;
 }
@@ -305,6 +309,10 @@
   justify-content: flex-end;
 }
 
+.tw-preflight :is(.tw-justify-center){
+  justify-content: center;
+}
+
 .tw-preflight :is(.tw-justify-between){
   justify-content: space-between;
 }
@@ -339,6 +347,14 @@
 
 .tw-preflight :is(.tw-border-y-2){
   border-top-width: 2px;
+  border-bottom-width: 2px;
+}
+
+.tw-preflight :is(.tw-border-t-2){
+  border-top-width: 2px;
+}
+
+.tw-preflight :is(.tw-border-b-2){
   border-bottom-width: 2px;
 }
 
@@ -390,6 +406,16 @@
 .tw-preflight :is(.tw-px-4){
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.tw-preflight :is(.tw-py-4){
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.tw-preflight :is(.tw-py-2){
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .tw-preflight :is(.tw-pb-2){

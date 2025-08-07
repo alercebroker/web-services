@@ -47,6 +47,7 @@
             </span>
         {%endif%}
     </div>
+    {% if objects_list['items']|length > 0 %}
     <table class="tw-table-auto tw-border-collapse tw-bg-[#1e1e1e] tw-text-left tw-w-full">
         <thead>
             <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
@@ -125,6 +126,20 @@
             {% endfor %}
         </tbody>
     </table>
+    {% else %}
+     {% from "objects_table_default.html.jinja" import default_table as defaultTable %}
+        <div class="tw-flex tw-flex-col tw-justify-center tw-content-center">
+            {{defaultTable()}}
+
+            {% if objects_list['info_message'] %}
+                <span class="tw-block tw-mx-auto tw-text-white/70 tw-py-2">
+                    {{objects_list['info_message'] }}
+                </span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+
 </div>
 
 

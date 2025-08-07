@@ -5,7 +5,7 @@ from .pagination import PaginationArgs, Order
 
 
 class Filters(BaseModel):
-    oids: list[str] | None= None
+    oids: list[int] | None= None
     survey: str | None = None
     classifier: str | None = None
     class_name: str | None = None

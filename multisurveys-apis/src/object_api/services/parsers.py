@@ -7,6 +7,7 @@ from .statements_sql import (
 from .classifier_data_matcher import match_and_update_item_class
 from .classifiers_utils import format_classifier_name
 from ..models.object import ExportModel
+from .information_messages import get_info_message
 
 
 class ModelDataParser():
@@ -58,7 +59,7 @@ def parse_objects_list_output(result, survey, classes_list):
     items = serialize_items(result.items_page)
     items_updated = match_and_update_item_class(items, classes_list)
     items_output = parse_items_probabilities(items_updated, survey)
-
+    info_message = get_info_message(items_output)
 
     return {
         "total": result.total_items,
@@ -68,6 +69,7 @@ def parse_objects_list_output(result, survey, classes_list):
         "has_prev": result.has_prev,
         "current_page": result.page,
         "items": items_output,
+        "info_message": info_message
     }
 
 

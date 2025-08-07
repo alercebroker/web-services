@@ -9,7 +9,8 @@ from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_objects_list
-from ..services.validations import ndets_validation, order_mode_validation, class_validation, consearch_validation, oids_format_validation, oid_lenght_validation, date_validation, probability_validation
+from ..services.validations import ndets_validation, order_mode_validation, class_validation, consearch_validation, oids_format_validation, oid_lenght_validation, date_validation, probability_validation, classifier_validation
+from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 
 
@@ -71,11 +72,11 @@ def objects_table(
     request: Request,
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
-    survey: str | None = 'ztf',
-    classifier: str | None = Query(default="lc_classifier"),
+    survey: str | None = None,
+    classifier: str | None = None,
     ranking: int | None = Query(default=1),
     n_det: Annotated[list[int] | None, Query()] = None,
-    probability: float | None = Query(default=0),
+    probability: float | None = None,
     firstmjd: Annotated[list[float] | None, Query()] = None,
     lastmjd: Annotated[list[float] | None, Query()] = None,
     dec: float | None = None,
@@ -88,48 +89,61 @@ def objects_table(
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
-        session = request.app.state.psql_session
-        
-        ndets_validation(n_det)
-        order_mode_validation(order_mode)
-        # class_validation(classifier, class_name)
-        consearch_validation(ra,dec,radius)
-        oids_format_validation(oid)
-        oid_lenght_validation(oid)
-        probability_validation(probability, classifier, class_name)
-        date_validation(firstmjd)
+        if survey != None:
+            session = request.app.state.psql_session
+            
+            ndets_validation(n_det)
+            order_mode_validation(order_mode)
+            # class_validation(classifier, class_name)
+            # classifier_validation(classifier)
+            consearch_validation(ra,dec,radius)
+            oids_format_validation(oid)
+            oid_lenght_validation(oid)
+            probability_validation(probability, classifier, class_name)
+            date_validation(firstmjd)
 
+            if oid != None:
+                oid = encode_ids(survey, oid)
 
+            filters = Filters(
+                oids=oid,
+                survey = survey,
+                classifier=classifier,
+                class_name=class_name,
+                ranking=ranking,
+                n_det=n_det,
+                probability=probability,
+                firstmjd=firstmjd,
+                lastmjd=lastmjd,
+            )
 
-        filters = Filters(
-            oids=oid,
-            survey = survey,
-            classifier=classifier,
-            class_name=class_name,
-            ranking=ranking,
-            n_det=n_det,
-            probability=probability,
-            firstmjd=firstmjd,
-            lastmjd=lastmjd,
-        )
+            conesearch = Consearch(dec=dec, ra=ra, radius=radius)
 
-        conesearch = Consearch(dec=dec, ra=ra, radius=radius)
+            pagination = PaginationArgs(page=page, page_size=page_size, count=count)
 
-        pagination = PaginationArgs(page=page, page_size=page_size, count=count)
+            order = Order(order_by=order_by, order_mode=order_mode)
 
-        order = Order(order_by=order_by, order_mode=order_mode)
+            search_params = SearchParams(
+                filter_args=filters,
+                conesearch_args=conesearch,
+                pagination_args=pagination,
+                order_args=order,
+            )
 
-        search_params = SearchParams(
-            filter_args=filters,
-            conesearch_args=conesearch,
-            pagination_args=pagination,
-            order_args=order,
-        )
+            object_list = get_objects_list(
+                session_ms=session, search_params=search_params
+            )
+        else:
+            object_list = {
+                'next': False,
+                "has_next": False,
+                "prev": False,
+                "has_prev": False,
+                "items": [],
+                "info_message": "Results will appear here"
+            }
 
-        object_list = get_objects_list(
-            session_ms=session, search_params=search_params
-        )
-
+            
         return templates.TemplateResponse(
             name="objects_table.html.jinja",
             context={
@@ -140,7 +154,7 @@ def objects_table(
                 "prev": object_list['prev'],
                 "has_prev": object_list['has_prev'],
                 "actual_order_by": order_by,
-                "actual_order_mode": order_mode
+                "actual_order_mode": order_mode,
             }
         )
     except HTTPException as e:

@@ -22,7 +22,6 @@ export function handle_error(){
       let field = document.getElementById("search_filters")
       let message = draw_error_message("Error 500: Internal Server Error")
       message.classList.add('custom-bg-error')
-      console.log(message)
       field.after(message)
     }
 

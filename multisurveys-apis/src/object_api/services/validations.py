@@ -35,6 +35,15 @@ def class_validation(classifier: str, class_name: str):
             }
         )
     
+def classifier_validation(classifier: str):
+    if classifier == None:
+        raise HTTPException(
+            status_code=422, 
+            detail={
+                "classifiers_container":"Select a classifier if you want to filter objects."
+            }
+        )
+    
 
 def consearch_validation(ra, dec, radius):
     nan_validation(ra, "ra")
@@ -92,22 +101,23 @@ def oid_lenght_validation(oids):
 
 
 def probability_validation(probability, classifier, class_name):
-    if probability < 0:
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "prob_range": "Probability must be greater than 0."
-            }
-        )
-    
-    if probability > 0:
-        if class_name == None:
+    if probability != None:
+        if probability < 0:
             raise HTTPException(
-                status_code=422, 
+                status_code=422,
                 detail={
-                    "prob_range":"Select a class if you want to filter by classifier."
+                    "prob_range": "Probability must be greater than 0."
                 }
             )
+        
+        if probability > 0:
+            if class_name == None:
+                raise HTTPException(
+                    status_code=422, 
+                    detail={
+                        "prob_range":"Select a class if you want to filter by classifier."
+                    }
+                )
 
 
 def date_validation(firstmjd):
