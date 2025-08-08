@@ -151,7 +151,9 @@
 
     let icon = draw_arrow_order_table(recived_order_mode)
 
-    document.getElementById(recived_order_by).appendChild(icon)
-    document.getElementById(recived_order_by).classList.add("tw-flex", "tw-items-center", "tw-text-white")
+    if(document.getElementById(recived_order_by)){
+        document.getElementById(recived_order_by).appendChild(icon)
+        document.getElementById(recived_order_by).classList.add("tw-flex", "tw-items-center", "tw-text-white")
+    }
 
 </script>

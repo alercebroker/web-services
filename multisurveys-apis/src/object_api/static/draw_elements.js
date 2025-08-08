@@ -67,6 +67,7 @@ export function draw_arrow_order_table(order_mode){
       path.setAttribute("d", "M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z");
   }
 
+  svg.classList.add("tw-inline-block")
   svg.appendChild(path)
 
   return svg

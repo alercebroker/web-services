@@ -1,0 +1,80 @@
+<meta name="htmx-config" content='{"selfRequestsOnly": false}'>
+<link rel="stylesheet" href="{{API_URL}}/static/object.css">
+<script src="{{API_URL}}/htmx/htmx.min.js"></script>
+
+
+{% if objects_list['items']|length > 0 %}
+<div id="oids_table" class="tw-preflight">
+
+    <table class="tw-table-auto tw-border-collapse tw-bg-[#757575] tw-text-left tw-w-full">
+        <thead>
+            <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
+                <th class="tw-px-4 tw-text-white">Object List</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in objects_list['items']%}
+                <tr class="tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
+                    <td class="tw-px-4">{{item['oid']}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div id="" class="tw-flex tw-justify-end tw-items-center tw-text-base tw-bg-[#757575] tw-h-[48px]">
+        {% if has_prev %}
+            <span 
+            id="prev_page"
+            data-next="{{prev}}"
+            hx-get="{{API_URL}}/oid_table"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            hx-target="#oids_table"
+            hx-vals='js:{...request_data({{prev}}) }'
+            hx-replace-url="true"
+            class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
+            <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/>
+            </svg>
+            </span>
+        {% endif %}
+        <span class="tw-inline-block tw-text-white tw-text-lg tw-text-center tw-h-[28px] tw-w-[48px]">{{objects_list['current_page']}}
+        </span>
+        
+        {% if has_next %}
+            <span 
+            id="next_page"
+            data-next="{{next}}"
+            hx-get="{{API_URL}}/oid_table"
+            hx-trigger="click"
+            hx-swap="outerHTML"
+            hx-target="#oids_table"
+            hx-vals='js:{...request_data({{next}})}'
+            hx-replace-url="true"
+            class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
+            <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/>
+            </svg>
+            </span>
+        {%endif%}
+    </div>
+</div>
+
+{% else %}
+    {% if objects_list['info_message'] %}
+        <span class="tw-block tw-mx-auto tw-text-white/70 tw-py-2">
+            {{objects_list['info_message'] }}
+        </span>
+    {% endif %}
+{% endif %}
+
+<script type="module">
+    import {init, elementReady} from "{{API_URL}}/static/oids_table.js"
+
+
+    elementReady("#oids_table").then((el) => {
+        init();
+    });
+</script>
