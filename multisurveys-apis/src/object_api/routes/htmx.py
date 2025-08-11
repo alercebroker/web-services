@@ -165,11 +165,12 @@ def objects_table(
         raise HTTPException(status_code=500, detail="An error occurred")
 
 
-@router.get("/oid_table", response_class=HTMLResponse)
+@router.get("/sidebar", response_class=HTMLResponse)
 def objects_table(
     request: Request,
     survey: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
+    selected_oid: str | None = None,
     classifier: str | None = None,
     class_name: str | None = None,
     ranking: int | None = Query(default=1),
@@ -227,19 +228,20 @@ def objects_table(
             object_list = get_objects_list(
                 session_ms=session, search_params=search_params
             )
+
         else:
             object_list = {
                 'next': False,
                 "has_next": False,
                 "prev": False,
                 "has_prev": False,
-                "items": ["oid_1"],
+                "items": [],
                 "info_message": "Results will appear here"
             }
 
             
         return templates.TemplateResponse(
-            name="oids_table.html.jinja",
+            name="sidebar.html.jinja",
             context={
                 "request": request,
                 "objects_list": object_list,
@@ -249,6 +251,7 @@ def objects_table(
                 "has_prev": object_list['has_prev'],
                 "actual_order_by": order_by,
                 "actual_order_mode": order_mode,
+                "selected_oid": selected_oid
             }
         )
     except HTTPException as e:

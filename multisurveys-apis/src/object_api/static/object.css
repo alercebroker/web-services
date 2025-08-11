@@ -367,11 +367,6 @@
   border-color: transparent;
 }
 
-.tw-preflight :is(.tw-border-\[\#757575\]){
-  --tw-border-opacity: 1;
-  border-color: rgb(117 117 117 / var(--tw-border-opacity));
-}
-
 .tw-preflight :is(.tw-border-b-\[\#757575\]){
   --tw-border-opacity: 1;
   border-bottom-color: rgb(117 117 117 / var(--tw-border-opacity));
@@ -387,10 +382,6 @@
   background-color: rgb(30 30 30 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/70){
-  background-color: rgb(30 30 30 / 0.7);
-}
-
 .tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/95){
   background-color: rgb(30 30 30 / 0.95);
 }
@@ -400,40 +391,35 @@
   background-color: rgb(66 66 66 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-bg-\[\#757575\]){
+  --tw-bg-opacity: 1;
+  background-color: rgb(117 117 117 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-bg-sky-500){
+  --tw-bg-opacity: 1;
+  background-color: rgb(14 165 233 / var(--tw-bg-opacity));
+}
+
 .tw-preflight :is(.tw-bg-transparent){
   background-color: transparent;
 }
 
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/50){
-  background-color: rgb(30 30 30 / 0.5);
+.tw-preflight :is(.tw-bg-\[\#1976D2\]){
+  --tw-bg-opacity: 1;
+  background-color: rgb(25 118 210 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/90){
-  background-color: rgb(30 30 30 / 0.9);
+.tw-preflight :is(.tw-bg-\[\#1976D2\]\/50){
+  background-color: rgb(25 118 210 / 0.5);
 }
 
-.tw-preflight :is(.tw-bg-\[\#b2b2b2\]\/95){
-  background-color: rgb(178 178 178 / 0.95);
+.tw-preflight :is(.tw-bg-\[\#1976D2\]\/20){
+  background-color: rgb(25 118 210 / 0.2);
 }
 
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/80){
-  background-color: rgb(30 30 30 / 0.8);
-}
-
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/60){
-  background-color: rgb(30 30 30 / 0.6);
-}
-
-.tw-preflight :is(.tw-bg-\[\#121212\]\/60){
-  background-color: rgb(18 18 18 / 0.6);
-}
-
-.tw-preflight :is(.tw-bg-\[\#121212\]\/70){
-  background-color: rgb(18 18 18 / 0.7);
-}
-
-.tw-preflight :is(.tw-bg-\[\#121212\]\/80){
-  background-color: rgb(18 18 18 / 0.8);
+.tw-preflight :is(.tw-bg-\[\#1976D2\]\/10){
+  background-color: rgb(25 118 210 / 0.1);
 }
 
 .tw-preflight :is(.tw-bg-\[\#121212\]){
@@ -441,162 +427,13 @@
   background-color: rgb(18 18 18 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-\[\#121212\]\/20){
-  background-color: rgb(18 18 18 / 0.2);
-}
-
-.tw-preflight :is(.tw-bg-\[\#121212\]\/30){
-  background-color: rgb(18 18 18 / 0.3);
-}
-
-.tw-preflight :is(.tw-bg-\[\#121212\]\/40){
-  background-color: rgb(18 18 18 / 0.4);
-}
-
-.tw-preflight :is(.tw-bg-\[\#121212\]\/25){
-  background-color: rgb(18 18 18 / 0.25);
-}
-
-.tw-preflight :is(.tw-bg-\[\#121212\]\/35){
-  background-color: rgb(18 18 18 / 0.35);
-}
-
-.tw-preflight :is(.tw-bg-\[\#121212\]\/45){
-  background-color: rgb(18 18 18 / 0.45);
-}
-
-.tw-preflight :is(.tw-bg-\[\#BDBDBD\]\/45){
-  background-color: rgb(189 189 189 / 0.45);
-}
-
-.tw-preflight :is(.tw-bg-\[\#BDBDBD\]){
+.tw-preflight :is(.tw-bg-\[\#212121\]){
   --tw-bg-opacity: 1;
-  background-color: rgb(189 189 189 / var(--tw-bg-opacity));
+  background-color: rgb(33 33 33 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-\[\#757575\]){
-  --tw-bg-opacity: 1;
-  background-color: rgb(117 117 117 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/80){
-  background-color: rgb(117 117 117 / 0.8);
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/70){
-  background-color: rgb(117 117 117 / 0.7);
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/50){
-  background-color: rgb(117 117 117 / 0.5);
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/60){
-  background-color: rgb(117 117 117 / 0.6);
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/65){
-  background-color: rgb(117 117 117 / 0.65);
-}
-
-.tw-preflight :is(.tw-bg-\[\#424242\]\/50){
-  background-color: rgb(66 66 66 / 0.5);
-}
-
-.tw-preflight :is(.tw-bg-\[\#424242\]\/60){
-  background-color: rgb(66 66 66 / 0.6);
-}
-
-.tw-preflight :is(.tw-bg-\[\#424242\]\/70){
-  background-color: rgb(66 66 66 / 0.7);
-}
-
-.tw-preflight :is(.tw-bg-\[\#424242\]\/20){
-  background-color: rgb(66 66 66 / 0.2);
-}
-
-.tw-preflight :is(.tw-bg-\[\#424242\]\/30){
-  background-color: rgb(66 66 66 / 0.3);
-}
-
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/65){
-  background-color: rgb(30 30 30 / 0.65);
-}
-
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/30){
-  background-color: rgb(30 30 30 / 0.3);
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/90){
-  background-color: rgb(117 117 117 / 0.9);
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/75){
-  background-color: rgb(117 117 117 / 0.75);
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/55){
-  background-color: rgb(117 117 117 / 0.55);
-}
-
-.tw-preflight :is(.tw-bg-\[\#BDBDBD\]\/65){
-  background-color: rgb(189 189 189 / 0.65);
-}
-
-.tw-preflight :is(.tw-bg-\[\#9E9E9E\]){
-  --tw-bg-opacity: 1;
-  background-color: rgb(158 158 158 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-\[\#9E9E9E\]\/80){
-  background-color: rgb(158 158 158 / 0.8);
-}
-
-.tw-preflight :is(.tw-bg-\[\#9E9E9E\]\/90){
-  background-color: rgb(158 158 158 / 0.9);
-}
-
-.tw-preflight :is(.tw-bg-\[\#9E9E9E\]\/95){
-  background-color: rgb(158 158 158 / 0.95);
-}
-
-.tw-preflight :is(.tw-bg-\[\#757575\]\/95){
-  background-color: rgb(117 117 117 / 0.95);
-}
-
-.tw-preflight :is(.tw-bg-\[\#2596be\]){
-  --tw-bg-opacity: 1;
-  background-color: rgb(37 150 190 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-\[\#363636\]){
-  --tw-bg-opacity: 1;
-  background-color: rgb(54 54 54 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-\[\#363636\]\/90){
-  background-color: rgb(54 54 54 / 0.9);
-}
-
-.tw-preflight :is(.tw-bg-\[\#363636\]\/80){
-  background-color: rgb(54 54 54 / 0.8);
-}
-
-.tw-preflight :is(.tw-bg-\[\#363636\]\/85){
-  background-color: rgb(54 54 54 / 0.85);
-}
-
-.tw-preflight :is(.tw-bg-\[\#616161\]){
-  --tw-bg-opacity: 1;
-  background-color: rgb(97 97 97 / var(--tw-bg-opacity));
-}
-
-.tw-preflight :is(.tw-bg-\[\#616161\]\/90){
-  background-color: rgb(97 97 97 / 0.9);
-}
-
-.tw-preflight :is(.tw-bg-\[\#616161\]\/95){
-  background-color: rgb(97 97 97 / 0.95);
+.tw-preflight :is(.tw-bg-\[\#1976D2\]\/30){
+  background-color: rgb(25 118 210 / 0.3);
 }
 
 .tw-preflight :is(.tw-p-4){
@@ -644,6 +481,10 @@
   line-height: 1.25rem;
 }
 
+.tw-preflight :is(.tw-font-medium){
+  font-weight: 500;
+}
+
 .tw-preflight :is(.tw-ordinal){
   --tw-ordinal: ordinal;
   font-variant-numeric: var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction);
@@ -676,6 +517,31 @@
 
 .tw-preflight :is(.tw-text-white\/70){
   color: rgb(255 255 255 / 0.7);
+}
+
+.tw-preflight :is(.tw-text-\[\#1976D2\]){
+  --tw-text-opacity: 1;
+  color: rgb(25 118 210 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-\[\#0D47A1\]){
+  --tw-text-opacity: 1;
+  color: rgb(13 71 161 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-\[\#1565C0\]){
+  --tw-text-opacity: 1;
+  color: rgb(21 101 192 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-\[\#42A5F5\]){
+  --tw-text-opacity: 1;
+  color: rgb(66 165 245 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-\[\#1E88E5\]){
+  --tw-text-opacity: 1;
+  color: rgb(30 136 229 / var(--tw-text-opacity));
 }
 
 /* roboto font */

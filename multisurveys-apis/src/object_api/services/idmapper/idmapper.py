@@ -1,6 +1,6 @@
 import numpy as np
 
-from .ztf import encode_ztf_to_masterid_without_survey
+from .ztf import encode_ztf_to_masterid_without_survey, decode_masterid_for_ztf
 
 # Constants
 SURVEY_IDS = {
@@ -22,6 +22,14 @@ def encode_ids(survey, oids):
         encode_array.append(encode_id)
 
     return encode_array
+
+
+def decode_ids(items):
+    for item in items:
+        catalog, catalog_oid = decode_masterid(item["oid"])
+        item["oid"] = catalog_oid
+    
+    return items
 
 
 def catalog_oid_to_masterid(
@@ -58,11 +66,56 @@ def catalog_oid_to_masterid(
 
     if catalog == "ZTF":
         master_id += encode_ztf_to_masterid_without_survey(catalog_oid, validate)
-    # elif catalog == "LSST":
-    #     if db_cursor is None:
-    #         raise ValueError("db_cursor must be provided for LSST catalog")
-    #     master_id += encode_lsst_to_masterid_without_survey_with_db(
-    #         catalog_oid, db_cursor
-    #     )
+    elif catalog == "LSST":
+        return catalog_oid
+        # if db_cursor is None:
+        #     raise ValueError("db_cursor must be provided for LSST catalog")
+        # master_id += encode_lsst_to_masterid_without_survey_with_db(
+        #     catalog_oid, db_cursor
+        # )
 
     return master_id
+
+
+def decode_masterid(
+        masterid: np.int64, 
+        db_cursor=None
+    ) -> tuple[str, str | np.int64]:
+    """
+    Decode a master ID into its components.
+
+    Parameters
+    ----------
+    masterid : np.int64
+        The master ID.
+    db_cursor: psycopg2.extensions.cursor
+        Database cursor for LSST catalog. This parameter is required for LSST.
+
+    Returns
+    -------
+    tuple[str, str]
+        The survey of the object and the original oid.
+    """
+    # Extract the survey from the master ID
+    survey_id = masterid >> (63 - SURVEY_PREFIX_LEN_BITS)
+
+    if survey_id in REVERSE_SURVEY_IDS.keys():
+        survey = REVERSE_SURVEY_IDS[survey_id]
+    else:
+        raise ValueError(f"Invalid survey ID: {survey_id}")
+
+    masterid_without_survey = np.bitwise_and(
+        masterid, ((1 << (63 - SURVEY_PREFIX_LEN_BITS)) - 1)
+    )
+
+    if survey == "ZTF":
+        return "ZTF", decode_masterid_for_ztf(masterid_without_survey)
+
+    elif survey == "LSST":
+        return masterid
+        # if db_cursor is None:
+        #     raise ValueError("db_cursor must be provided for LSST catalog")
+        # return "LSST", decode_masterid_for_lsst(masterid_without_survey, db_cursor)
+
+    else:
+        raise ValueError(f"Unsupported survey ID: {survey_id}")

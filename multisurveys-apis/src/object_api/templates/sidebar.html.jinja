@@ -4,33 +4,52 @@
 
 
 {% if objects_list['items']|length > 0 %}
-<div id="oids_table" class="tw-preflight">
+<div id="sidebar" class="tw-preflight">
 
-    <table class="tw-table-auto tw-border-collapse tw-bg-[#757575] tw-text-left tw-w-full">
+    <table class="tw-table-auto tw-border-collapse tw-bg-[#424242] tw-text-left tw-w-full">
         <thead>
             <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
                 <th class="tw-px-4 tw-text-white">Object List</th>
             </tr>
         </thead>
         <tbody>
-            {% for item in objects_list['items']%}
-                <tr class="tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
-                    <td class="tw-px-4">{{item['oid']}}</td>
+            {% if selected_oid %}
+                <tr class="tw-h-[34px] tw-text-[#1976D2] tw-font-medium tw-text-[0.875rem] tw-bg-[#1976D2]/30">
+                    <td class="tw-px-4">{{selected_oid}}</td>
                 </tr>
+            {% endif %}
+            {% for item in objects_list['items']%}
+
+                {% if item['oid'] != selected_oid %}
+                    <tr class="tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
+                        <td 
+                        name="sidebar-row-element"
+                        data-oid='{{item["oid"]}}'
+                        hx-get="{{API_URL}}/sidebar"
+                        hx-trigger="click"
+                        hx-swap="outerHTML"
+                        hx-target="#sidebar"
+                        hx-replace-url="true"
+                        class="tw-px-4"
+                        >
+                        {{item['oid']}}
+                        </td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>
 
-    <div id="" class="tw-flex tw-justify-end tw-items-center tw-text-base tw-bg-[#757575] tw-h-[48px]">
+    <div id="" class="tw-flex tw-justify-end tw-items-center tw-text-base tw-bg-[#424242] tw-h-[48px]">
         {% if has_prev %}
             <span 
             id="prev_page"
+            name="prev_page_sidebar"
             data-next="{{prev}}"
-            hx-get="{{API_URL}}/oid_table"
+            hx-get="{{API_URL}}/sidebar"
             hx-trigger="click"
             hx-swap="outerHTML"
-            hx-target="#oids_table"
-            hx-vals='js:{...request_data({{prev}}) }'
+            hx-target="#sidebar"
             hx-replace-url="true"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
@@ -45,12 +64,12 @@
         {% if has_next %}
             <span 
             id="next_page"
+            name="next_page_sidebar"
             data-next="{{next}}"
-            hx-get="{{API_URL}}/oid_table"
+            hx-get="{{API_URL}}/sidebar"
             hx-trigger="click"
             hx-swap="outerHTML"
-            hx-target="#oids_table"
-            hx-vals='js:{...request_data({{next}})}'
+            hx-target="#sidebar"
             hx-replace-url="true"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
@@ -71,10 +90,10 @@
 {% endif %}
 
 <script type="module">
-    import {init, elementReady} from "{{API_URL}}/static/oids_table.js"
+    import {init, elementReady} from "{{API_URL}}/static/sidebar.js"
 
 
-    elementReady("#oids_table").then((el) => {
+    elementReady("#sidebar").then((el) => {
         init();
     });
 </script>

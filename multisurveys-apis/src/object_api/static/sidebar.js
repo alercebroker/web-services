@@ -1,7 +1,18 @@
 
 
 export function init(){
-    window.request_data = request_data 
+
+  document.body.addEventListener('htmx:configRequest', function(evt){
+    let element_name = evt.detail.elt.getAttribute("name")
+
+    if(element_name == "sidebar-row-element"){
+      evt.detail.parameters = {...prepare_data(), "selected_oid":evt.detail.elt.dataset.oid}
+    }
+
+    if(element_name == "prev_page_sidebar" || element_name == "next_page_sidebar"){
+      evt.detail.parameters = {...prepare_data(evt.detail.elt.dataset.next)}
+    }
+  })
 }
 
 
@@ -25,10 +36,12 @@ export function elementReady(selector) {
     });
 }
 
-function request_data(next_page){
+function prepare_data(next_page = false){
     let dict_params = get_params_url(document.location.search)
 
-    dict_params["page"] = next_page
+    if(next_page){
+      dict_params["page"] = next_page
+    }
 
     return  dict_params
 }

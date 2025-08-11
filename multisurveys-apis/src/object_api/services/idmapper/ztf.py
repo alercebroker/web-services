@@ -40,3 +40,29 @@ def is_ztf_oid_valid(ztf_oid: str) -> bool:
     if not ztf_oid[5:12].islower():
         return False
     return True
+
+
+def decode_masterid_for_ztf(masterid_without_survey: np.int64) -> str:
+    """
+    Decode a master ID into its components.
+
+    Parameters
+    ----------
+    masterid_without_survey : np.int64
+        The master ID without the survey ID.
+
+    Returns
+    -------
+    str
+        The original oid.
+    """
+    year = (masterid_without_survey // (26**7)) % 100
+    seq = masterid_without_survey % (26**7)
+
+    # Convert the sequence of numbers back to letters
+    seq_str = ""
+    for i in range(6, -1, -1):
+        seq_str += chr((seq // (26**i)) + ord("a"))
+        seq %= 26**i
+
+    return f"ZTF{year:02d}{seq_str}"
