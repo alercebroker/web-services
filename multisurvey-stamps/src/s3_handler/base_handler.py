@@ -23,9 +23,7 @@ class BaseS3Handler():
         self.client = s3_client(bucket_region)
     
     def _get_file_from_s3(self, file_name: str) -> dict:
-        print(f"PRE FILE\n{file_name}")
         file = self.client.get_object(Bucket=self.bucket_name, Key=f"{file_name}.avro")
-        print("POST FILE")
         file_io = io.BytesIO(file["Body"].read())
         avro_data = next(reader(file_io))
         return avro_data
@@ -40,16 +38,14 @@ class BaseS3Handler():
 
         fit_data = self._get_buffer_from_file(avro_data, stamp_type)
             
-        if file_format == "fit":
+        if file_format == "fits":
             file = io.BytesIO(fit_data)
             mime =  "application/fits"
         elif file_format == "png":
             file = io.BytesIO(transform(fit_data, stamp_type, 2, self.compressed))
             mime = "image/png"
         else:
-            # error no valid format
-            pass
-
+            raise Exception(f"Format {file_format} is not valid. Only png and fits accepted.")
         return file_name, file, mime
     
     @abstractmethod
