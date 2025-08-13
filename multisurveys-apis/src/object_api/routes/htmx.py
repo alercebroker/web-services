@@ -201,6 +201,7 @@ def objects_table(
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)
 
+
             if oid != None:
                 oid = encode_ids(survey, oid)
 

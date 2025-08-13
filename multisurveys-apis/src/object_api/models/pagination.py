@@ -15,7 +15,10 @@ class Order(BaseModel):
 
 
 class Pagination:
-    """Paginate responses from the database."""
+    """
+    Paginate responses from the database.
+    
+    """
 
     def __init__(self, page, per_page, items):
         """Set attributes from args."""
@@ -39,7 +42,10 @@ class Pagination:
 
     @property
     def has_next(self):
-        """Check if a next page exists."""
+        """
+        Check if a next page exists.
+        if total_items is equal to per_page + 1 then the next_page exist.
+        """
         return self.total_items > self.per_page
 
     @property
@@ -51,7 +57,10 @@ class Pagination:
     
     @property
     def items_page(self):
-        """Return the number of items in the page size"""
+        """
+        Return the number of items in the page size
+        if exists a next page, then return 10 items of the 11.
+        """
         if self.has_next:
             return self.items[:-1]
         return self.items

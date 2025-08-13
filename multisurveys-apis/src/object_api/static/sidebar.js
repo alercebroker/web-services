@@ -1,18 +1,7 @@
 
 
 export function init(){
-
-  document.body.addEventListener('htmx:configRequest', function(evt){
-    let element_name = evt.detail.elt.getAttribute("name")
-
-    if(element_name == "sidebar-row-element"){
-      evt.detail.parameters = {...prepare_data(), "selected_oid":evt.detail.elt.dataset.oid}
-    }
-
-    if(element_name == "prev_page_sidebar" || element_name == "next_page_sidebar"){
-      evt.detail.parameters = {...prepare_data(evt.detail.elt.dataset.next)}
-    }
-  })
+  window.prepare_params = prepare_params
 }
 
 
@@ -36,24 +25,48 @@ export function elementReady(selector) {
     });
 }
 
-function prepare_data(next_page = false){
-    let dict_params = get_params_url(document.location.search)
 
-    if(next_page){
-      dict_params["page"] = next_page
-    }
+function prepare_params(evt){
+  let url = new URL(evt.detail.headers['HX-Current-URL'])
+  console.log(evt.detail.headers)
+
+  if(evt.detail.elt.getAttribute("name") == "next_page_sidebar" || evt.detail.elt.getAttribute("name") == "prev_page_sidebar"){
+    let next_page = evt.detail.elt.dataset.next
+
+    url.searchParams.set("page", next_page)
+
+    evt.detail.parameters = {...prepare_data(url)}
+  }else{
+    let selected_oid = evt.detail.elt.dataset.oid
+    let current_page = document.getElementById('current_page').dataset.page
+
+    url.searchParams.set("selected_oid", selected_oid)
+    url.searchParams.set("page", current_page)
+
+    evt.detail.parameters = {...prepare_data(url)}
+  }
+
+}
+
+function prepare_data(url,){
+    let dict_params = get_params_url(url)
+    console.log(dict_params)
 
     return  dict_params
 }
 
 
 function get_params_url(url){
-    let params = new URLSearchParams(url)
-    let form_dict = {}
+  let params = new URLSearchParams(url.search)
+  let form_dict = {}
 
-    params.forEach((value, key) => {
-        form_dict[key] = value
-    })
+  params.forEach((value, key) => {
+    if(key == "oid"){
+      form_dict[key] = params.getAll("oid")
+    } else {
+      form_dict[key] = value
+    }
+  })
 
-    return form_dict
+  return form_dict
 }

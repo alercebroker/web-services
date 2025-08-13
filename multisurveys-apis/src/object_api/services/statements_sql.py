@@ -77,8 +77,8 @@ def object_filters(args):
 
     if args["oids"]:
         if len(args["oids"]) == 1:
-            filtered_oid = args["oids"][0].replace("*", "%")
-            oids = (Object.oid == filtered_oid)
+            # filtered_oid = args["oids"][0].replace("*", "%")
+            oids = (Object.oid == args["oids"][0])
         else:
             oids = Object.oid.in_(args["oids"])
         filters_dict.append(oids)

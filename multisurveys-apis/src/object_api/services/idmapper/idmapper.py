@@ -14,7 +14,6 @@ SURVEY_IDS["MAXSURVEY"] = 2**SURVEY_PREFIX_LEN_BITS - 1
 
 REVERSE_SURVEY_IDS = dict((zip(SURVEY_IDS.values(), SURVEY_IDS.keys())))
 
-
 def encode_ids(survey, oids):
     encode_array = []
     for id in oids:
@@ -26,7 +25,9 @@ def encode_ids(survey, oids):
 
 def decode_ids(items):
     for item in items:
-        catalog, catalog_oid = decode_masterid(item["oid"])
+        oid = np.int64(item["oid"])
+        print(oid)
+        catalog, catalog_oid = decode_masterid(oid)
         item["oid"] = catalog_oid
     
     return items
@@ -97,25 +98,22 @@ def decode_masterid(
         The survey of the object and the original oid.
     """
     # Extract the survey from the master ID
-    survey_id = masterid >> (63 - SURVEY_PREFIX_LEN_BITS)
+    # survey_id = masterid >> (63 - SURVEY_PREFIX_LEN_BITS)
 
-    if survey_id in REVERSE_SURVEY_IDS.keys():
-        survey = REVERSE_SURVEY_IDS[survey_id]
-    else:
-        raise ValueError(f"Invalid survey ID: {survey_id}")
 
     masterid_without_survey = np.bitwise_and(
         masterid, ((1 << (63 - SURVEY_PREFIX_LEN_BITS)) - 1)
     )
+    return "ZTF", decode_masterid_for_ztf(masterid_without_survey)
 
-    if survey == "ZTF":
-        return "ZTF", decode_masterid_for_ztf(masterid_without_survey)
+    # if survey == "ZTF":
+    #     return "ZTF", decode_masterid_for_ztf(masterid_without_survey)
 
-    elif survey == "LSST":
-        return masterid
-        # if db_cursor is None:
-        #     raise ValueError("db_cursor must be provided for LSST catalog")
-        # return "LSST", decode_masterid_for_lsst(masterid_without_survey, db_cursor)
+    # elif survey == "LSST":
+    #     return "LSST", masterid
+    #     if db_cursor is None:
+    #         raise ValueError("db_cursor must be provided for LSST catalog")
+    #     return "LSST", decode_masterid_for_lsst(masterid_without_survey, db_cursor)
 
-    else:
-        raise ValueError(f"Unsupported survey ID: {survey_id}")
+    # else:
+    #     raise ValueError(f"Unsupported survey ID: {survey_id}")

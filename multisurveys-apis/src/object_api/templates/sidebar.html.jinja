@@ -13,27 +13,27 @@
             </tr>
         </thead>
         <tbody>
-            {% if selected_oid %}
-                <tr class="tw-h-[34px] tw-text-[#1976D2] tw-font-medium tw-text-[0.875rem] tw-bg-[#1976D2]/30">
-                    <td class="tw-px-4">{{selected_oid}}</td>
-                </tr>
-            {% endif %}
             {% for item in objects_list['items']%}
-
-                {% if item['oid'] != selected_oid %}
+                {% if item['oid']|string != selected_oid|string%}
                     <tr class="tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
                         <td 
+                        id="sidebar-row-element"
                         name="sidebar-row-element"
                         data-oid='{{item["oid"]}}'
                         hx-get="{{API_URL}}/sidebar"
                         hx-trigger="click"
                         hx-swap="outerHTML"
                         hx-target="#sidebar"
-                        hx-replace-url="true"
+                        hx-on="htmx:configRequest: prepare_params(event)"
                         class="tw-px-4"
                         >
                         {{item['oid']}}
                         </td>
+                    </tr>
+                
+                {% else  %}
+                    <tr class="tw-h-[34px] tw-text-[#1976D2] tw-font-medium tw-text-[0.875rem] tw-bg-[#1976D2]/30">
+                        <td class="tw-px-4">{{selected_oid}}</td>
                     </tr>
                 {% endif %}
             {% endfor %}
@@ -50,7 +50,7 @@
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#sidebar"
-            hx-replace-url="true"
+            hx-on="htmx:configRequest: prepare_params(event)"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
@@ -58,7 +58,10 @@
             </svg>
             </span>
         {% endif %}
-        <span class="tw-inline-block tw-text-white tw-text-lg tw-text-center tw-h-[28px] tw-w-[48px]">{{objects_list['current_page']}}
+        <span 
+        id="current_page" 
+        data-page="{{objects_list['current_page']}}" 
+        class="tw-inline-block tw-text-white tw-text-lg tw-text-center tw-h-[28px] tw-w-[48px]">{{objects_list['current_page']}}
         </span>
         
         {% if has_next %}
@@ -70,7 +73,7 @@
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#sidebar"
-            hx-replace-url="true"
+            hx-on="htmx:configRequest: prepare_params(event)"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
@@ -80,13 +83,8 @@
         {%endif%}
     </div>
 </div>
-
 {% else %}
-    {% if objects_list['info_message'] %}
-        <span class="tw-block tw-mx-auto tw-text-white/70 tw-py-2">
-            {{objects_list['info_message'] }}
-        </span>
-    {% endif %}
+<div id="sidebar">hola</div>
 {% endif %}
 
 <script type="module">

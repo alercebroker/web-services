@@ -60,7 +60,8 @@ def parse_objects_list_output(result, survey, classes_list):
     items = serialize_items(result.items_page)
     items_updated = match_and_update_item_class(items, classes_list)
     items_output = parse_items_probabilities(items_updated, survey)
-    items_decode = decode_ids(items_output)
+    if survey == "ztf":
+        items_output = decode_ids(items_output)
     info_message = get_info_message(items_output)
 
     return {
@@ -70,7 +71,7 @@ def parse_objects_list_output(result, survey, classes_list):
         "prev": result.prev_num,
         "has_prev": result.has_prev,
         "current_page": result.page,
-        "items": items_decode,
+        "items": items_output,
         "info_message": info_message
     }
 
