@@ -40,7 +40,7 @@ def classifier_validation(classifier: str):
         raise HTTPException(
             status_code=422, 
             detail={
-                "classifiers_container":"Select a classifier if you want to filter objects."
+                "taxonomy_container":"Select a classifier if you want to filter objects."
             }
         )
     
