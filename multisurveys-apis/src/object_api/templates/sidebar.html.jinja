@@ -24,7 +24,7 @@
                         hx-trigger="click"
                         hx-swap="outerHTML"
                         hx-target="#sidebar"
-                        hx-on="htmx:configRequest: prepare_params(event)"
+                        hx-on::config-request="prepare_params(event)"
                         class="tw-px-4"
                         >
                         {{item['oid']}}
@@ -50,7 +50,7 @@
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#sidebar"
-            hx-on="htmx:configRequest: prepare_params(event)"
+            hx-on::config-request="prepare_params(event)"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
@@ -73,7 +73,7 @@
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#sidebar"
-            hx-on="htmx:configRequest: prepare_params(event)"
+            hx-on::config-request="prepare_params(event)"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">

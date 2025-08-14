@@ -25,10 +25,8 @@ export function elementReady(selector) {
     });
 }
 
-
 function prepare_params(evt){
   let url = new URL(evt.detail.headers['HX-Current-URL'])
-  console.log(evt.detail.headers)
 
   if(evt.detail.elt.getAttribute("name") == "next_page_sidebar" || evt.detail.elt.getAttribute("name") == "prev_page_sidebar"){
     let next_page = evt.detail.elt.dataset.next
@@ -48,9 +46,8 @@ function prepare_params(evt){
 
 }
 
-function prepare_data(url,){
+function prepare_data(url){
     let dict_params = get_params_url(url)
-    console.log(dict_params)
 
     return  dict_params
 }

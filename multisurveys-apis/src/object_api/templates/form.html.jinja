@@ -178,11 +178,12 @@
             <!--Buttons-->
             <div class="tw-w-full tw-flex tw-justify-start tw-gap-4">
                 <button 
-                hx-get="{{API_URL}}/sidebar"
+                id="search_btn"
+                hx-get="{{API_URL}}/objects_table"
                 hx-trigger="click"
                 hx-swap="outerHTML"
-                {# hx-target="#objects_table" #}
-                hx-target="#sidebar"
+                hx-target="#objects_table"
+                {# hx-target="#sidebar" #}
                 hx-vals='js:{...send_form_Data(), ...send_pagination_data()}'
                 class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/2">SEARCH</button>
                 

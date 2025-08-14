@@ -26,7 +26,6 @@ def encode_ids(survey, oids):
 def decode_ids(items):
     for item in items:
         oid = np.int64(item["oid"])
-        print(oid)
         catalog, catalog_oid = decode_masterid(oid)
         item["oid"] = catalog_oid
     
