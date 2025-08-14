@@ -27,9 +27,6 @@ def list_objects(
     oid: Annotated[list[str] | None, Query()] = None,
     survey: str | None = None,
     classifier: str | None = Query(default="lc_classifier"),
-    classifier_version: str | None = Query(
-        default="hierarchical_random_forest_1.1.0"
-    ),
     ranking: int | None = Query(default=1),
     n_det: Annotated[list[int] | None, Query()] = None,
     probability: float | None = Query(default=0),
@@ -54,7 +51,6 @@ def list_objects(
             oids=oid,
             survey = survey,
             classifier=classifier,
-            classifier_version=classifier_version,
             class_name=class_name,
             ranking=ranking,
             n_det=n_det,
