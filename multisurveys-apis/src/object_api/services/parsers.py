@@ -5,10 +5,7 @@ from .statements_sql import (
     create_conesearch_statement,
 )
 from .classifier_data_matcher import match_and_update_item_class
-from .classifiers_utils import format_classifier_name
 from ..models.object import ExportModel
-from .information_messages import get_info_message
-from .idmapper.idmapper import decode_ids
 
 
 class ModelDataParser():
@@ -21,9 +18,8 @@ class ModelDataParser():
     def parse_data(self):
         output_model = ExportModel(self.survey, self.model_variant).get_model()
         model_parsed = output_model(**self.input_data)
-        json_model = jsonable_encoder(model_parsed)
 
-        return json_model
+        return model_parsed
 
 
 def parse_params(search_params):
@@ -57,22 +53,17 @@ def parse_unique_object_query(sql_response, survey):
 
 def parse_objects_list_output(result, survey, classes_list):
 
-    items = serialize_items(result.items_page)
+    items = serialize_items(result.items)
     items_updated = match_and_update_item_class(items, classes_list)
     items_output = parse_items_probabilities(items_updated, survey)
-    if survey == "ztf":
-        items_output = decode_ids(items_output)
-    info_message = get_info_message(items_output)
 
     return {
-        "total": result.total_items,
+        "total": result.total,
         "next": result.next_num,
         "has_next": result.has_next,
         "prev": result.prev_num,
         "has_prev": result.has_prev,
-        "current_page": result.page,
         "items": items_output,
-        "info_message": info_message
     }
 
 
@@ -107,14 +98,4 @@ def parse_classifiers(classes_list):
 
         res.append(merged_dict)
     
-    return res
-
-
-def parse_to_json_classifiers(classifiers):
-    res = []
-    for classifier in classifiers:
-        item = jsonable_encoder(classifier)
-        item['formated_name'] = format_classifier_name(item['classifier_name'])
-        res.append(item)
-
     return res

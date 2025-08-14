@@ -35,22 +35,4 @@ services:
 
 The run_all command will attempt to run all the apis that are included in the services list.
 
-## Colors of this project
-vuetify colors:
-
-https://vuetifyjs.com/en/styles/colors/#classes
-
-primary: colors.blue.darken2
-
-secondary: colors.amber.darken3
-
-accent: colors.grey.darken3
-
-info: colors.teal.lighten1
-
-warning: colors.amber.base
-
-error: colors.deepOrange.accent4
-
-success: colors.green.accent3,
 

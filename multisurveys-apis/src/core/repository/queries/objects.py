@@ -50,11 +50,13 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         stmt = stmt.order_by(order_statement)
 
+        total = calculate_total_items(stmt, pagination_args)
+
         stmt = add_limits_statements(stmt, pagination_args)
 
         items = session.execute(stmt).all()
 
-        return Pagination(pagination_args.page, pagination_args.page_size, items)
+        return Pagination(pagination_args.page, pagination_args.page_size, total, items)
 
 
 def build_subquery_object(survey, filters, parsed_params):
@@ -84,3 +86,12 @@ def check_pagination_args(pagination_args):
         pagination_args.page_size = 10
     
     return pagination_args
+
+
+def calculate_total_items(stmt, pagination_args, max_results=50000):
+    if not pagination_args.count:
+        total = None
+    else:
+        total = stmt.order_by(None).limit(max_results + 1).count()
+
+    return total
