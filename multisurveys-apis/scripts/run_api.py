@@ -1,6 +1,5 @@
 import asyncio
 import os
-import sys
 import yaml
 
 import uvicorn
@@ -90,10 +89,10 @@ async def run_async():
 
 
 async def async_run_service(
-    config_dict: dict = None,
+    config_dict: dict = {},
 ):  
     
-    db_config = config_dict.get("db_config")
+    db_config = config_dict.get("db_config", {})
 
     server_config = uvicorn.Config(
         # put the db config
@@ -115,13 +114,13 @@ async def async_run_service(
     await server.serve()
 
 def run_service(
-    config_dict: dict = None,
+    config_dict: dict = {},
 ):  
     """
     Synchronous version of run_service.
     This is useful for running the service in a synchronous context.
     """
-    db_config = config_dict.get("db_config")
+    db_config = config_dict.get("db_config", {})
 
     os.environ["API_URL"] = config_dict["url"]
     # export db secrets
