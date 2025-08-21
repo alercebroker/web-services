@@ -77,8 +77,8 @@ def object_filters(args):
 
     if args["oids"]:
         if len(args["oids"]) == 1:
-            filtered_oid = args["oids"][0].replace("*", "%")
-            oids = (Object.oid == filtered_oid)
+            # filtered_oid = args["oids"][0].replace("*", "%")
+            oids = (Object.oid == args["oids"][0])
         else:
             oids = Object.oid.in_(args["oids"])
         filters_dict.append(oids)
@@ -92,12 +92,6 @@ def probability_filters(args):
     if args["classifier"]:
         classifier = Probability_ms.classifier_id == args["classifier"]
         filters_prob_dict.append(classifier)
-        
-    if args["classifier_version"]:
-        classifier_version = (
-            Probability_ms.classifier_version == args["classifier_version"]
-        )
-        filters_prob_dict.append(classifier_version)
     if args["class_name"]:
         class_ = Probability_ms.class_id == args["class_name"]
         filters_prob_dict.append(class_)
@@ -118,7 +112,7 @@ def probability_filters(args):
 
 
 def add_limits_statements(stmt, pagination_args):
-
-    stmt = stmt.limit(pagination_args.page_size).offset((pagination_args.page-1) * pagination_args.page_size)
+    row_index = (pagination_args.page-1) * pagination_args.page_size
+    stmt = stmt.limit(pagination_args.page_size + 1).offset(row_index)
 
     return stmt

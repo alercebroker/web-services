@@ -1,5 +1,8 @@
 from core.repository.queries.classifiers import get_all_classifiers
+from classifier_api.services.classifiers import get_classifiers
+from .classifiers_utils import sort_classifiers
 from core.repository.queries.objects import query_get_objects, query_object_by_id
+from ..services.parsers import parse_to_json_classifiers
 from .classifier_data_matcher import update_filters
 from .parsers import (
     parse_params,
@@ -29,9 +32,16 @@ def get_objects_list(session_ms, search_params):
     return result
 
 
-
 def get_classes_list(session_ms):
     classes_list = get_all_classifiers(session_ms)
     classes_list_parsed = parse_classifiers(classes_list)
 
     return classes_list_parsed
+
+
+def get_tidy_classifiers(session_ms):
+    classifiers = get_classifiers(session_ms)
+    classifiers = parse_to_json_classifiers(classifiers)
+    classifiers = sort_classifiers(classifiers)
+
+    return classifiers

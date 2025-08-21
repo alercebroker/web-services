@@ -15,25 +15,18 @@ class Order(BaseModel):
 
 
 class Pagination:
-    """Paginate responses from the database."""
+    """
+    Paginate responses from the database.
+    
+    """
 
-    def __init__(self, page, per_page, total, items):
+    def __init__(self, page, per_page, items):
         """Set attributes from args."""
         self.page = page
         self.per_page = per_page
-        self.total = total
         self.items = items
+        self.total_items = len(items)
 
-
-
-    @property
-    def pages(self):
-        """Get total number of pages."""
-        if self.per_page == 0 or self.total is None:
-            pages = 0
-        else:
-            pages = int(ceil(self.total / float(self.per_page)))
-        return pages
 
     @property
     def prev_num(self):
@@ -49,8 +42,11 @@ class Pagination:
 
     @property
     def has_next(self):
-        """Check if a next page exists."""
-        return self.page < self.pages
+        """
+        Check if a next page exists.
+        if total_items is equal to per_page + 1 then the next_page exist.
+        """
+        return self.total_items > self.per_page
 
     @property
     def next_num(self):
@@ -58,3 +54,13 @@ class Pagination:
         if not self.has_next:
             return None
         return self.page + 1
+    
+    @property
+    def items_page(self):
+        """
+        Return the number of items in the page size
+        if exists a next page, then return 10 items of the 11.
+        """
+        if self.has_next:
+            return self.items[:-1]
+        return self.items
