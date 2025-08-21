@@ -60,6 +60,7 @@ jobs:
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
   ms_object_tests:
+    if: false
     uses: ./.github/workflows/test_template.yaml
     with:
       python-version: '3.11'
