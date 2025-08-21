@@ -4,14 +4,16 @@ import yaml
 
 import uvicorn
 
+
 def config_from_yaml():
     """
     Read the config from a yaml file and return a dict.
     The file is expected to be in the root of the app.
     """
     import pathlib
+
     root_folder = pathlib.Path(__file__).parent.parent.resolve()
-    config_file_name = "config.yaml" 
+    config_file_name = "config.yaml"
     config_file = os.path.join(root_folder, config_file_name)
     if not os.path.exists(config_file):
         raise FileNotFoundError(f"Config file {config_file} not found.")
@@ -21,13 +23,15 @@ def config_from_yaml():
 
     return config
 
+
 ###
 ### Define a single entry point for running the API services
 ### For each api service in the src folder.
 ###
 
+
 def run_object():
-    config_dict = config_from_yaml()    
+    config_dict = config_from_yaml()
     service_config = config_dict["services"]["object_api"]
     print(f"Running service: object_api with config: {service_config}")
     # Use the sync version of run_service to run the FastAPI app
@@ -40,17 +44,20 @@ def run_lightcurve():
     print(f"Running service: lightcurve_api with config: {service_config}")
     run_service(service_config)
 
+
 def run_magstat():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["magstat_api"]
     print(f"Running service: magstat_api with config: {service_config}")
     run_service(service_config)
 
+
 def run_classifier():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["classifier_api"]
     print(f"Running service: classifier_api with config: {service_config}")
     run_service(service_config)
+
 
 def run_probability():
     config_dict = config_from_yaml()
@@ -63,8 +70,10 @@ def run_probability():
 ### A function to run all the services configured in the yaml file
 ###
 
-def run():    
+
+def run():
     asyncio.run(run_async())
+
 
 async def run_async():
     """
@@ -73,7 +82,7 @@ async def run_async():
     for each service in the config
     run the service with the config dict
     """
-    
+
     tasks = []
     config_dict = config_from_yaml()
 
@@ -90,8 +99,7 @@ async def run_async():
 
 async def async_run_service(
     config_dict: dict = {},
-):  
-    
+):
     db_config = config_dict.get("db_config", {})
 
     server_config = uvicorn.Config(
@@ -110,12 +118,13 @@ async def async_run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
-    
+
     await server.serve()
+
 
 def run_service(
     config_dict: dict = {},
-):  
+):
     """
     Synchronous version of run_service.
     This is useful for running the service in a synchronous context.
@@ -135,5 +144,5 @@ def run_service(
         f"src.{config_dict['source_folder']}.api:app",
         port=config_dict["port"],
         reload=config_dict.get("reload", True),
-        reload_dirs=[".", "../libs"]
+        reload_dirs=[".", "../libs"],
     )

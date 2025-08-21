@@ -13,7 +13,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
 )
-from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION, REAL, ARRAY
+from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION, REAL
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -72,7 +72,9 @@ class LsstDiaObject(Base):
 
     oid = Column(BigInteger, nullable=False)
 
-    __table_args__ = (PrimaryKeyConstraint("oid", name="pk_lsstdiaobject_oid"),)
+    __table_args__ = (
+        PrimaryKeyConstraint("oid", name="pk_lsstdiaobject_oid"),
+    )
 
 
 class LsstSsObject(Base):
@@ -175,7 +177,9 @@ class ForcedPhotometry(Base):
 
     __table_args__ = (
         PrimaryKeyConstraint(
-            "oid", "measurement_id", name="pk_forcedphotometry_oid_measurementid"
+            "oid",
+            "measurement_id",
+            name="pk_forcedphotometry_oid_measurementid",
         ),
         ForeignKeyConstraint([oid], [Object.oid]),
         Index("ix_forced_photometry_oid", "oid", postgresql_using="hash"),
@@ -225,7 +229,9 @@ class ZtfForcedPhotometry(Base):
 
     __table_args__ = (
         PrimaryKeyConstraint(
-            "oid", "measurement_id", name="pk_ztfforcedphotometry_oid_measurementid"
+            "oid",
+            "measurement_id",
+            name="pk_ztfforcedphotometry_oid_measurementid",
         ),
         ForeignKeyConstraint([oid], [Object.oid]),
         Index("ix_ztf_forced_photometry_oid", "oid", postgresql_using="hash"),
@@ -246,7 +252,9 @@ class LsstForcedPhotometry(Base):
 
     __table_args__ = (
         PrimaryKeyConstraint(
-            "oid", "measurement_id", name="pk_lsstforcedphotometry_oid_measurementid"
+            "oid",
+            "measurement_id",
+            name="pk_lsstforcedphotometry_oid_measurementid",
         ),
         ForeignKeyConstraint([oid], [Object.oid]),
         Index("ix_lsst_forced_photometry_oid", "oid", postgresql_using="hash"),
@@ -387,7 +395,9 @@ class ztf_dataquality(Base):
 
     __table_args__ = (
         PrimaryKeyConstraint(
-            "oid", "measurement_id", name="pk_ztfdataquality_oid_measurement_id"
+            "oid",
+            "measurement_id",
+            name="pk_ztfdataquality_oid_measurement_id",
         ),
         Index("ix_ztf_dataquality_oid", "oid", postgresql_using="btree"),
         Index(
@@ -429,6 +439,7 @@ class classifier_ms(Base):
     classifier_name = Column(String)
     classifier_version = Column(SmallInteger)
 
+
 class Taxonomy_ms(Base):
     __tablename__ = "taxonomy_ms"
     class_id = Column(Integer, primary_key=True)
@@ -449,7 +460,11 @@ class Probability(Base):
 
     __table_args__ = (
         Index("ix_probabilities_oid", "oid", postgresql_using="hash"),
-        Index("ix_probabilities_probability", "probability", postgresql_using="btree"),
+        Index(
+            "ix_probabilities_probability",
+            "probability",
+            postgresql_using="btree",
+        ),
         Index("ix_probabilities_ranking", "ranking", postgresql_using="btree"),
         Index(
             "ix_classification_rank1",
@@ -459,6 +474,7 @@ class Probability(Base):
         ),
     )
 
+
 class Probability_ms(Base):
     __tablename__ = "probability_ms"
     oid = Column(Integer, primary_key=True)
@@ -467,6 +483,7 @@ class Probability_ms(Base):
     class_id = Column(SmallInteger, primary_key=True)
     probability = Column(Float, nullable=False)
     ranking = Column(SmallInteger, nullable=False)
+
 
 class MagStat(Base):
     __tablename__ = "magstat"

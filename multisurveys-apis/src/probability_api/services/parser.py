@@ -1,5 +1,6 @@
 from ..models.probability import Probability
 
+
 def parse_probability(probability_data, classifiers):
     """
     Parses the probability data from the database response into a list of Probability models.
@@ -17,12 +18,15 @@ def parse_probability(probability_data, classifiers):
         taxonomy_list = row[1].__dict__.copy()
 
         model_dict = {**probability_dict, **taxonomy_list}
-        model_dict["classifier_name"] = classifiers[model_dict["classifier_id"]]
-        
+        model_dict["classifier_name"] = classifiers[
+            model_dict["classifier_id"]
+        ]
+
         model_parsed = Probability(**model_dict)
         parsed_probability.append(model_parsed)
 
     return parsed_probability
+
 
 def parse_classifiers(classifiers_data):
     """
@@ -38,6 +42,8 @@ def parse_classifiers(classifiers_data):
 
     for row in classifiers_data:
         model_dict = row[0].__dict__.copy()
-        parsed_classifiers[model_dict["classifier_id"]] = model_dict["classifier_name"]
+        parsed_classifiers[model_dict["classifier_id"]] = model_dict[
+            "classifier_name"
+        ]
 
     return parsed_classifiers

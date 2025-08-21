@@ -4,6 +4,7 @@ from db_plugins.db.sql.models import MagStat
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
+
 def get_magstats_by_oid(
     oid: str,
     session_factory: Callable[..., AbstractContextManager[Session]]
@@ -17,10 +18,7 @@ def get_magstats_by_oid(
     """
 
     with session_factory() as session:
-        stmt = (
-            select(MagStat)
-            .where(MagStat.oid == oid)
-        )
+        stmt = select(MagStat).where(MagStat.oid == oid)
 
         result = session.execute(stmt).all()
 

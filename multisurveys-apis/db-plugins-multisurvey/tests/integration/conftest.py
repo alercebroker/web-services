@@ -17,7 +17,10 @@ def docker_compose_file(pytestconfig):
     try:
         print(str(pytestconfig.rootdir))
         path = os.path.join(
-            str(pytestconfig.rootdir), "tests", "integration", "docker-compose.yml"
+            str(pytestconfig.rootdir),
+            "tests",
+            "integration",
+            "docker-compose.yml",
         )
         assert os.path.exists(path)
     except Exception:

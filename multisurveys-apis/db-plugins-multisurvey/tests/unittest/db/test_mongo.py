@@ -24,7 +24,8 @@ class MongoConnectionTest(unittest.TestCase):
         new_conf = _MongoConfig(conf)
         # Replacement for deprecated assertDictContainsSubset
         self.assertEqual(
-            new_conf, {**new_conf, **{"someOtherAttribute": "test", "host": "host"}}
+            new_conf,
+            {**new_conf, **{"someOtherAttribute": "test", "host": "host"}},
         )
 
     def test_init(self):
@@ -40,7 +41,9 @@ class MongoConnectionTest(unittest.TestCase):
         mock_mongo.return_value = mongomock.MongoClient()
         conn = MongoConnection(self.config)
         conn.create_db()
-        collections = conn.client[self.config["DATABASE"]].list_collection_names()
+        collections = conn.client[
+            self.config["DATABASE"]
+        ].list_collection_names()
         expected = [
             "object",
             "detection",

@@ -26,7 +26,9 @@ class BaseModelWithExtraFields(BaseModel):
         if "extra_fields" in kwargs:
             return kwargs["extra_fields"]
         else:
-            return {k: v for k, v in kwargs.items() if k not in cls._meta.fields}
+            return {
+                k: v for k, v in kwargs.items() if k not in cls._meta.fields
+            }
 
 
 class Object(BaseModel):
@@ -40,7 +42,9 @@ class Object(BaseModel):
     )  # Survey object ID (unique ID in database)
     aid = Field()  # Alerce object ID (groups objects from different surveys)
     tid = Field()  # List with all telescopes the object has been observed with
-    sid = Field()  # List with all surveys which their telescopes observed this obj
+    sid = (
+        Field()
+    )  # List with all surveys which their telescopes observed this obj
     corrected = Field()
     stellar = Field()
     firstmjd = Field()
@@ -59,7 +63,9 @@ class Object(BaseModel):
     )
     magstats = SpecialField(lambda **kwargs: kwargs.get("magstats", []))
     features = SpecialField(lambda **kwargs: kwargs.get("features", {}))
-    probabilities = SpecialField(lambda **kwargs: kwargs.get("probabilities", []))
+    probabilities = SpecialField(
+        lambda **kwargs: kwargs.get("probabilities", [])
+    )
     xmatch = SpecialField(lambda **kwargs: kwargs.get("xmatch", []))
 
     __table_args__ = [
@@ -85,7 +91,9 @@ class Detection(BaseModelWithExtraFields):
     @classmethod
     def create_extra_fields(cls, **kwargs):
         kwargs = super().create_extra_fields(**kwargs)
-        kwargs.pop("candid", None)  # Prevents candid being duplicated in extra_fields
+        kwargs.pop(
+            "candid", None
+        )  # Prevents candid being duplicated in extra_fields
         return kwargs
 
     tid = Field()  # Telescope ID
@@ -122,7 +130,9 @@ class ForcedPhotometry(BaseModelWithExtraFields):
     @classmethod
     def create_extra_fields(cls, **kwargs):
         kwargs = super().create_extra_fields(**kwargs)
-        kwargs.pop("candid", None)  # Prevents candid being duplicated in extra_fields
+        kwargs.pop(
+            "candid", None
+        )  # Prevents candid being duplicated in extra_fields
         return kwargs
 
     tid = Field()  # Telescope ID
@@ -158,7 +168,9 @@ class NonDetection(BaseModelWithExtraFields):
     @classmethod
     def create_extra_fields(cls, **kwargs):
         kwargs = super().create_extra_fields(**kwargs)
-        kwargs.pop("candid", None)  # Prevents candid being duplicated in extra_fields
+        kwargs.pop(
+            "candid", None
+        )  # Prevents candid being duplicated in extra_fields
         return kwargs
 
     aid = Field()

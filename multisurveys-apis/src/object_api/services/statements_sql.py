@@ -1,6 +1,7 @@
 from db_plugins.db.sql.models import Object, Probability_ms
 from sqlalchemy import text
 
+
 def convert_conesearch_args(args):
     try:
         ra, dec, radius = args["ra"], args["dec"], args.get("radius")
@@ -24,7 +25,7 @@ def create_conesearch_statement(args):
         return text("q3c_radial_query(meanra, meandec,:ra, :dec, :radius)")
     else:
         return True
-    
+
 
 def create_order_statement(query, order_args):
     statement = None
@@ -36,7 +37,7 @@ def create_order_statement(query, order_args):
         if attr:
             statement = attr
             break
-    
+
     if order_args.order_mode == "ASC":
         statement = attr.asc()
     elif order_args.order_mode == "DESC":
@@ -48,7 +49,7 @@ def create_order_statement(query, order_args):
 def convert_filters_to_sqlalchemy_statement(args):
     filters = {
         "probability": probability_filters(args),
-        "objects": object_filters(args)
+        "objects": object_filters(args),
     }
 
     return filters
@@ -78,7 +79,7 @@ def object_filters(args):
     if args["oids"]:
         if len(args["oids"]) == 1:
             # filtered_oid = args["oids"][0].replace("*", "%")
-            oids = (Object.oid == args["oids"][0])
+            oids = Object.oid == args["oids"][0]
         else:
             oids = Object.oid.in_(args["oids"])
         filters_dict.append(oids)
@@ -112,7 +113,7 @@ def probability_filters(args):
 
 
 def add_limits_statements(stmt, pagination_args):
-    row_index = (pagination_args.page-1) * pagination_args.page_size
+    row_index = (pagination_args.page - 1) * pagination_args.page_size
     stmt = stmt.limit(pagination_args.page_size + 1).offset(row_index)
 
     return stmt

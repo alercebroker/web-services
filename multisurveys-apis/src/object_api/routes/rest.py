@@ -1,5 +1,4 @@
 import traceback
-import pprint
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query, Request
 from ..models.filters import Consearch, Filters, SearchParams
@@ -43,13 +42,13 @@ def list_objects(
 ):
     try:
         session = request.app.state.psql_session
-        
+
         ndets_validation(n_det)
         order_mode_validation(order_mode)
 
         filters = Filters(
             oids=oid,
-            survey = survey,
+            survey=survey,
             classifier=classifier,
             class_name=class_name,
             ranking=ranking,
@@ -61,7 +60,9 @@ def list_objects(
 
         conesearch = Consearch(dec=dec, ra=ra, radius=radius)
 
-        pagination = PaginationArgs(page=page, page_size=page_size, count=count)
+        pagination = PaginationArgs(
+            page=page, page_size=page_size, count=count
+        )
 
         order = Order(order_by=order_by, order_mode=order_mode)
 
@@ -99,4 +100,3 @@ def get_object(request: Request, oid: str, survey_id: str):
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
-

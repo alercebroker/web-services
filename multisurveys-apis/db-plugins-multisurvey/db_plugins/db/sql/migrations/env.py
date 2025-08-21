@@ -15,7 +15,7 @@ if "SQL" in DB_CONFIG:
     db_config = DB_CONFIG["SQL"]
     db_config["SQLALCHEMY_DATABASE_URL"] = get_db_url(db_config)
 else:
-    raise Exception(f"Missing arguments in settings")
+    raise Exception("Missing arguments in settings")
 
 db_credentials = db_config["SQLALCHEMY_DATABASE_URL"]
 
@@ -73,7 +73,9 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(
+            connection=connection, target_metadata=target_metadata
+        )
 
         with context.begin_transaction():
             context.run_migrations()

@@ -11,9 +11,10 @@ from .information_messages import get_info_message
 from .idmapper.idmapper import decode_ids
 
 
-class ModelDataParser():
-
-    def __init__(self, survey: str, input_data: dict, model_variant: str = "basic"):
+class ModelDataParser:
+    def __init__(
+        self, survey: str, input_data: dict, model_variant: str = "basic"
+    ):
         self.survey = survey
         self.input_data = input_data
         self.model_variant = model_variant
@@ -54,9 +55,7 @@ def parse_unique_object_query(sql_response, survey):
     return parsed_dict
 
 
-
 def parse_objects_list_output(result, survey, classes_list):
-
     items = serialize_items(result.items_page)
     items_updated = match_and_update_item_class(items, classes_list)
     items_output = parse_items_probabilities(items_updated, survey)
@@ -72,7 +71,7 @@ def parse_objects_list_output(result, survey, classes_list):
         "has_prev": result.has_prev,
         "current_page": result.page,
         "items": items_output,
-        "info_message": info_message
+        "info_message": info_message,
     }
 
 
@@ -83,16 +82,18 @@ def serialize_items(data):
         for sql_model in sql_row:
             model_data = sql_model.__dict__.copy()
             item_dict.update(model_data)
-        
+
         ret.append(item_dict)
 
     return ret
-    
+
 
 def parse_items_probabilities(items, survey):
     ret = []
     for item in items:
-        model_output = ModelDataParser(survey, item, "probability").parse_data()
+        model_output = ModelDataParser(
+            survey, item, "probability"
+        ).parse_data()
         ret.append(model_output)
 
     return ret
@@ -101,12 +102,16 @@ def parse_items_probabilities(items, survey):
 def parse_classifiers(classes_list):
     res = []
     for class_name in classes_list:
-        classifier_ms = jsonable_encoder(class_name[0], exclude={"_sa_instance_state"})
-        taxonomy_ms = jsonable_encoder(class_name[1], exclude={"_sa_instance_state"})
+        classifier_ms = jsonable_encoder(
+            class_name[0], exclude={"_sa_instance_state"}
+        )
+        taxonomy_ms = jsonable_encoder(
+            class_name[1], exclude={"_sa_instance_state"}
+        )
         merged_dict = {**classifier_ms, **taxonomy_ms}
 
         res.append(merged_dict)
-    
+
     return res
 
 
@@ -114,7 +119,7 @@ def parse_to_json_classifiers(classifiers):
     res = []
     for classifier in classifiers:
         item = jsonable_encoder(classifier)
-        item['formated_name'] = format_classifier_name(item['classifier_name'])
+        item["formated_name"] = format_classifier_name(item["classifier_name"])
         res.append(item)
 
     return res

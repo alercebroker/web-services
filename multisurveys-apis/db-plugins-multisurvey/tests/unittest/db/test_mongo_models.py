@@ -22,7 +22,9 @@ class MongoModelsTest(unittest.TestCase):
         )
         self.assertIsInstance(o, models.Object)
         self.assertIsInstance(o, dict)
-        self.assertEqual(o["loc"], {"type": "Point", "coordinates": [-80.0, 50]})
+        self.assertEqual(
+            o["loc"], {"type": "Point", "coordinates": [-80.0, 50]}
+        )
         self.assertEqual(
             o._meta.tablename,
             models.Object.__tablename__,
