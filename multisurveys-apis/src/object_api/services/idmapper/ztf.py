@@ -1,7 +1,9 @@
 import numpy as np
 
 
-def encode_ztf_to_masterid_without_survey(ztf_oid: str, validate: bool) -> np.int64:
+def encode_ztf_to_masterid_without_survey(
+    ztf_oid: str, validate: bool
+) -> np.int64:
     if not isinstance(ztf_oid, str):
         raise ValueError(f"Invalid ZTF object ID: {ztf_oid}")
     if validate and not is_ztf_oid_valid(ztf_oid):
@@ -18,6 +20,7 @@ def encode_ztf_to_masterid_without_survey(ztf_oid: str, validate: bool) -> np.in
     # Convert the year to a number and add it to the master ID
     master_id += int(year) * 26**7
     return master_id
+
 
 def is_ztf_oid_valid(ztf_oid: str) -> bool:
     """

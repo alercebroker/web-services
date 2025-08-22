@@ -1,5 +1,5 @@
-from typing import Optional, Union
 from pydantic import BaseModel
+
 
 class MagStat(BaseModel):
     oid: int

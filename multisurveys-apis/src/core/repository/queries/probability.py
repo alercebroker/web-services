@@ -12,17 +12,14 @@ def get_probability_by_oid(
     | None = None,
 ):
     with session_factory() as session:
-        stmt = (
-            select(
-                Probability_ms, Taxonomy_ms
-            )
-            .join(Taxonomy_ms, Taxonomy_ms.class_id == Probability_ms.class_id)
+        stmt = select(Probability_ms, Taxonomy_ms).join(
+            Taxonomy_ms, Taxonomy_ms.class_id == Probability_ms.class_id
         )
 
         if classifier_id:
             stmt = stmt.where(
-                Probability_ms.oid==oid,
-                Probability_ms.classifier_id == classifier_id
+                Probability_ms.oid == oid,
+                Probability_ms.classifier_id == classifier_id,
             )
         else:
             stmt = stmt.where(Probability_ms.oid == oid)

@@ -2,9 +2,17 @@ from typing import Callable
 from contextlib import AbstractContextManager
 from sqlalchemy.orm import Session
 from core.repository.queries.detections import get_all_unique_detections_sql
-from core.repository.queries.non_detections import get_all_unique_non_detections_sql
-from core.repository.queries.forced_photometry import get_unique_forced_photometry_sql
-from .parsers import parse_sql_detection, parse_sql_non_detections, parse_forced_photometry
+from core.repository.queries.non_detections import (
+    get_all_unique_non_detections_sql,
+)
+from core.repository.queries.forced_photometry import (
+    get_unique_forced_photometry_sql,
+)
+from .parsers import (
+    parse_sql_detection,
+    parse_sql_non_detections,
+    parse_forced_photometry,
+)
 
 
 def get_detections(
@@ -13,7 +21,6 @@ def get_detections(
     session_factory: Callable[..., AbstractContextManager[Session]]
     | None = None,
 ):
-    
     result = get_all_unique_detections_sql(
         oid, survey_id, session_factory=session_factory
     )
@@ -33,10 +40,11 @@ def get_non_detections(
     object in a given survey.
     """
 
-    non_detections_result = get_all_unique_non_detections_sql(oid, survey_id, session_factory)
+    non_detections_result = get_all_unique_non_detections_sql(
+        oid, survey_id, session_factory
+    )
 
     result_parsed = parse_sql_non_detections(non_detections_result, survey_id)
-
 
     return result_parsed
 
@@ -77,10 +85,7 @@ def get_lightcurve(
     non_detections = get_non_detections(
         oid, survey_id, session_factory=session_factory
     )
-    forced_photometry = get_forced_photometry(
-        oid, survey_id, session_factory
-    )
-
+    forced_photometry = get_forced_photometry(oid, survey_id, session_factory)
 
     return {
         "detections": detections,

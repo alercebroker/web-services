@@ -26,7 +26,7 @@ app.include_router(rest.router)
 
 app.mount(
     "/static",
-    StaticFiles(directory="src/lightcurve_api/static"),
+    StaticFiles(directory="src/static"),
     name="static",
 )
 

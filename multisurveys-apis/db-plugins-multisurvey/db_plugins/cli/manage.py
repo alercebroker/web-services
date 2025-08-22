@@ -2,7 +2,9 @@ import click
 import sys
 import os
 from db_plugins.db.sql.initialization import init as init_sql
-from db_plugins.db.sql.initialization import make_migrations as make_sql_migrations
+from db_plugins.db.sql.initialization import (
+    make_migrations as make_sql_migrations,
+)
 from db_plugins.db.sql.initialization import migrate as migrate_sql
 from db_plugins.db.mongo.initialization import (
     init_mongo_database as init_mongo,
@@ -25,11 +27,15 @@ def initdb(settings_path, db=None):
     DB_CONFIG = settings.DB_CONFIG
     if "SQL" in DB_CONFIG:
         init_sql(DB_CONFIG["SQL"], db)
-        click.echo("Database created with credentials from {}".format(settings_path))
+        click.echo(
+            "Database created with credentials from {}".format(settings_path)
+        )
 
     elif "MONGO" in DB_CONFIG:
         init_mongo(DB_CONFIG["MONGO"], db)
-        click.echo("Database created with credentials from {}".format(settings_path))
+        click.echo(
+            "Database created with credentials from {}".format(settings_path)
+        )
 
     else:
         raise Exception("Invalid settings file")
@@ -67,7 +73,9 @@ def migrate(settings_path):
     sys.path.pop(-1)
     if "SQL" in DB_CONFIG:
         migrate_sql()
-        click.echo("Migrated database with config from {}".format(settings_path))
+        click.echo(
+            "Migrated database with config from {}".format(settings_path)
+        )
 
     else:
         print("ERROR", DB_CONFIG)

@@ -45,7 +45,9 @@ def get_db_operations(
                 "probability": prob,
                 "ranking": idx + 1,
             }
-            for idx, (object_class, prob) in enumerate(sorted_classes_and_prob_list)
+            for idx, (object_class, prob) in enumerate(
+                sorted_classes_and_prob_list
+            )
         ]
     )
 

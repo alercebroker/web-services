@@ -1,5 +1,3 @@
-from enum import Enum
-from math import ceil
 from pydantic import BaseModel
 
 
@@ -17,7 +15,7 @@ class Order(BaseModel):
 class Pagination:
     """
     Paginate responses from the database.
-    
+
     """
 
     def __init__(self, page, per_page, items):
@@ -26,7 +24,6 @@ class Pagination:
         self.per_page = per_page
         self.items = items
         self.total_items = len(items)
-
 
     @property
     def prev_num(self):
@@ -54,7 +51,7 @@ class Pagination:
         if not self.has_next:
             return None
         return self.page + 1
-    
+
     @property
     def items_page(self):
         """

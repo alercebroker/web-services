@@ -34,7 +34,6 @@ class ForcedPhotometryMultistream(BaseModel):
         return self.oid == other.oid and self.pid == other.pid
 
 
-
 class ZtfForcedPhotometry(BaseModel):
     oid: int
     survey_id: str

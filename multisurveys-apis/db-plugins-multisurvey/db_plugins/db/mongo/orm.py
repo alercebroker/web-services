@@ -1,4 +1,5 @@
 """Main classes for using the Mongo ORM"""
+
 from pymongo import MongoClient
 
 
@@ -52,7 +53,10 @@ class ModelMetaClass(type):
         tablename = attrs.pop("__tablename__")
         indexes = attrs.get("__table_args__", [])
 
-        mcs.metadata.collections[tablename] = {"indexes": indexes, "fields": fields}
+        mcs.metadata.collections[tablename] = {
+            "indexes": indexes,
+            "fields": fields,
+        }
         cls._meta = ModelMetadata(tablename, fields, indexes)
         return cls
 

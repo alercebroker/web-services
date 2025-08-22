@@ -1,5 +1,4 @@
 import os
-import pprint
 import traceback
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Request, Query
@@ -9,7 +8,15 @@ from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_objects_list
-from ..services.validations import ndets_validation, order_mode_validation, class_validation, consearch_validation, oids_format_validation, oid_lenght_validation, date_validation, probability_validation, classifier_validation
+from ..services.validations import (
+    ndets_validation,
+    order_mode_validation,
+    consearch_validation,
+    oids_format_validation,
+    oid_lenght_validation,
+    date_validation,
+    probability_validation,
+)
 from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 
@@ -23,49 +30,39 @@ templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8001"
 )
 
-templates.env.filters['truncate'] = truncate_float
+templates.env.filters["truncate"] = truncate_float
 
 
 @router.get("/form/", response_class=HTMLResponse)
 async def objects_form(request: Request):
-
     try:
         session = request.app.state.psql_session
         classifiers = get_tidy_classifiers(session)
 
         return templates.TemplateResponse(
-        name="form.html.jinja",
-        context={
-            "request": request,
-            "classifiers": classifiers
-        }
+            name="form.html.jinja",
+            context={"request": request, "classifiers": classifiers},
         )
-    except Exception as e:
+    except Exception:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"An error occurred")
-    
+        raise HTTPException(status_code=500, detail="An error occurred")
 
 
 @router.get("/select", response_class=HTMLResponse)
 async def select_classes_classifier(
-    request: Request,
-    classifier_classes: list[str] = Query(...)
-    ):
-
+    request: Request, classifier_classes: list[str] = Query(...)
+):
     try:
         classes = classifier_classes
 
         return templates.TemplateResponse(
-        name="dependent_select.html.jinja",
-        context={
-            "request": request,
-            "classes": classes
-        }
-    )
-    except Exception as e:
+            name="dependent_select.html.jinja",
+            context={"request": request, "classes": classes},
+        )
+    except Exception:
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"An error occurred")
-    
+        raise HTTPException(status_code=500, detail="An error occurred")
+
 
 @router.get("/table", response_class=HTMLResponse)
 def objects_table(
@@ -89,25 +86,25 @@ def objects_table(
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
-        if survey != None:
+        if survey is not None:
             session = request.app.state.psql_session
-            
+
             ndets_validation(n_det)
             order_mode_validation(order_mode)
             # class_validation(classifier, class_name)
             # classifier_validation(classifier)
-            consearch_validation(ra,dec,radius)
+            consearch_validation(ra, dec, radius)
             oids_format_validation(oid)
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)
 
-            if oid != None:
+            if oid is not None:
                 oid = encode_ids(survey, oid)
 
             filters = Filters(
                 oids=oid,
-                survey = survey,
+                survey=survey,
                 classifier=classifier,
                 class_name=class_name,
                 ranking=ranking,
@@ -119,7 +116,9 @@ def objects_table(
 
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
 
-            pagination = PaginationArgs(page=page, page_size=page_size, count=count)
+            pagination = PaginationArgs(
+                page=page, page_size=page_size, count=count
+            )
 
             order = Order(order_by=order_by, order_mode=order_mode)
 
@@ -135,27 +134,26 @@ def objects_table(
             )
         else:
             object_list = {
-                'next': False,
+                "next": False,
                 "has_next": False,
                 "prev": False,
                 "has_prev": False,
                 "items": [],
-                "info_message": "Results will appear here"
+                "info_message": "Results will appear here",
             }
 
-            
         return templates.TemplateResponse(
             name="objects_table.html.jinja",
             context={
                 "request": request,
                 "objects_list": object_list,
-                "next": object_list['next'],
-                "has_next": object_list['has_next'],
-                "prev": object_list['prev'],
-                "has_prev": object_list['has_prev'],
+                "next": object_list["next"],
+                "has_next": object_list["has_next"],
+                "prev": object_list["prev"],
+                "has_prev": object_list["has_prev"],
                 "actual_order_by": order_by,
                 "actual_order_mode": order_mode,
-            }
+            },
         )
     except HTTPException as e:
         traceback.print_exc()
@@ -166,7 +164,7 @@ def objects_table(
 
 
 @router.get("/sidebar", response_class=HTMLResponse)
-def objects_table(
+def sidebar(
     request: Request,
     survey: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
@@ -188,26 +186,25 @@ def objects_table(
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
-        if survey != None:
+        if survey is not None:
             session = request.app.state.psql_session
-            
+
             ndets_validation(n_det)
             order_mode_validation(order_mode)
             # class_validation(classifier, class_name)
             # classifier_validation(classifier)
-            consearch_validation(ra,dec,radius)
+            consearch_validation(ra, dec, radius)
             oids_format_validation(oid)
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)
 
-
-            if oid != None:
+            if oid is not None:
                 oid = encode_ids(survey, oid)
 
             filters = Filters(
                 oids=oid,
-                survey = survey,
+                survey=survey,
                 classifier=classifier,
                 class_name=class_name,
                 ranking=ranking,
@@ -217,7 +214,9 @@ def objects_table(
                 lastmjd=lastmjd,
             )
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
-            pagination = PaginationArgs(page=page, page_size=page_size, count=count)
+            pagination = PaginationArgs(
+                page=page, page_size=page_size, count=count
+            )
             order = Order(order_by=order_by, order_mode=order_mode)
             search_params = SearchParams(
                 filter_args=filters,
@@ -232,28 +231,27 @@ def objects_table(
 
         else:
             object_list = {
-                'next': False,
+                "next": False,
                 "has_next": False,
                 "prev": False,
                 "has_prev": False,
                 "items": [],
-                "info_message": "Results will appear here"
+                "info_message": "Results will appear here",
             }
 
-            
         return templates.TemplateResponse(
             name="sidebar.html.jinja",
             context={
                 "request": request,
                 "objects_list": object_list,
-                "next": object_list['next'],
-                "has_next": object_list['has_next'],
-                "prev": object_list['prev'],
-                "has_prev": object_list['has_prev'],
+                "next": object_list["next"],
+                "has_next": object_list["has_next"],
+                "prev": object_list["prev"],
+                "has_prev": object_list["has_prev"],
                 "actual_order_by": order_by,
                 "actual_order_mode": order_mode,
-                "selected_oid": selected_oid
-            }
+                "selected_oid": selected_oid,
+            },
         )
     except HTTPException as e:
         traceback.print_exc()
