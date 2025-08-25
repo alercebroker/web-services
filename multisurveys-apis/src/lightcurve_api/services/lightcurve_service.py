@@ -18,8 +18,7 @@ from .parsers import (
 def get_detections(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]],
 ):
     result = get_all_unique_detections_sql(
         oid, survey_id, session_factory=session_factory
@@ -33,8 +32,7 @@ def get_detections(
 def get_non_detections(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]],
 ):
     """Retrieves all unique non-detections from the databases for a given
     object in a given survey.
@@ -52,8 +50,7 @@ def get_non_detections(
 def get_forced_photometry(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]],
 ):
     """
     Retrieves the forced photometry from an object
@@ -71,8 +68,7 @@ def get_forced_photometry(
 def get_lightcurve(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]],
 ):
     """
     Retrieves both unique detections and non detections for a given object in

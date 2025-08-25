@@ -8,8 +8,7 @@ from sqlalchemy import select, text, and_
 def get_all_unique_detections_sql(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]],
 ):
     with session_factory() as session:
         if survey_id == "ztf":
