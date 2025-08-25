@@ -20,7 +20,7 @@ async def stamp(
 ):  
     handler = handler_selector(survey_id)()
 
-    file_name, file_buffer, mime = handler.get_stamp(oid, measurement_id, stamp_type, file_format)
+    _, file_buffer, mime = handler.get_stamp(oid, measurement_id, stamp_type, file_format)
 
     return Response(
         content=file_buffer.getvalue(),

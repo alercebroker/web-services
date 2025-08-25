@@ -23,7 +23,7 @@ class BaseS3Handler():
         self.client = s3_client(bucket_region)
     
     def _get_file_from_s3(self, file_name: str) -> dict:
-        file = self.client.get_object(Bucket=self.bucket_name, Key=f"{file_name}.avro")
+        file = self.client.get_object(Bucket=self.bucket_name, Key=f"{file_name}.avro")       
         file_io = io.BytesIO(file["Body"].read())
         avro_data = next(reader(file_io))
         return avro_data
