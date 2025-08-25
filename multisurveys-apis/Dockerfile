@@ -11,17 +11,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
   POETRY_NO_INTERACTION=1
 
 FROM python-base AS builder
+ARG GH_TOKEN
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends && \
+    apt-get install -y --no-install-recommends git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install poetry;
 
 COPY multisurveys-apis/pyproject.toml multisurveys-apis/poetry.lock /app/
-COPY multisurveys-apis/db-plugins-multisurvey /app/db-plugins-multisurvey
 
 WORKDIR /app
+RUN git config --global url."https://alerceadmin:${GH_TOKEN}@github.com/".insteadOf "git@github.com:"
 RUN poetry install --no-root --without=dev --without=test;
 
 

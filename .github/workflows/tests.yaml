@@ -83,6 +83,7 @@ jobs:
       sources-folder: 'src'
       test-folder: 'tests/test_api'
       base-folder: 'multisurveys-apis'
+      poetry-install: '-vvv'
       files: |
         multisurveys-apis/src/core/**
         multisurveys-apis/src/test_api/**
