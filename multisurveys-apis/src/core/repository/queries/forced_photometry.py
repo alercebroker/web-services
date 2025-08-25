@@ -1,8 +1,8 @@
 from typing import Callable
 from contextlib import AbstractContextManager
 from db_plugins.db.sql.models import (
-    ZtfForcedPhotometry,
     LsstForcedPhotometry,
+    ZtfForcedPhotometry,
     ForcedPhotometry,
 )
 from sqlalchemy.orm import Session
@@ -12,14 +12,15 @@ from sqlalchemy import select, and_
 def get_unique_forced_photometry_sql(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]],
 ):
     with session_factory() as session:
         if survey_id == "ztf":
             stmt = build_query(ZtfForcedPhotometry, oid)
         if survey_id == "lsst":
             stmt = build_query(LsstForcedPhotometry, oid)
+        else:
+            raise ValueError(f"Survey not supported {survey_id}")
 
         result = session.execute(stmt).all()
 

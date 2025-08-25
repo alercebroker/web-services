@@ -1,6 +1,8 @@
 services:
   postgres:
-    image: postgres:15-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile-psql
     environment:
       POSTGRES_DB: multistream
       POSTGRES_USER: alerce

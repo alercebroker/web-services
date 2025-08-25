@@ -33,7 +33,7 @@ pandas = "^2.3.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
-pytest-docker = "^3.0.0"
+testcontainers = "^4.12.0"
 pytest-cov = "^4.1.0"
 
 [tool.poetry.group.production.dependencies]
@@ -60,3 +60,5 @@ magstat = "scripts.run_api:run_magstat"
 classifier = "scripts.run_api:run_classifier"
 probability = "scripts.run_api:run_probability"
 dbp = "db_plugins.cli.manage:cli"
+initdb = "scripts.initdb:initdb"
+create_q3c_idx = "scripts.initdb:create_q3c_idx_cmd"
