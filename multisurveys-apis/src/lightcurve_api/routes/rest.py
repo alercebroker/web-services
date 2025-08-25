@@ -1,15 +1,21 @@
 import traceback
-from fastapi import APIRouter, Request
-from fastapi import HTTPException
+from typing import Annotated
+
+from db_plugins.db.sql._connection import PsqlDatabase
+from fastapi import APIRouter, Depends, HTTPException
+
+from core.config.connection import psql_entity
 from ..services.lightcurve_service import (
     get_detections,
-    get_non_detections,
     get_forced_photometry,
     get_lightcurve,
+    get_non_detections,
 )
 from ..services.validations import survey_validate
 
 router = APIRouter()
+
+db = Annotated[PsqlDatabase, Depends(psql_entity)]
 
 
 @router.get("/")
@@ -24,19 +30,17 @@ def healthcheck():
 
 @router.get("/detections")
 def detections(
-    request: Request,
     oid: str,
     survey_id: str,
+    db: db,
 ):
     try:
         survey_validate(survey_id)
 
-        session_init = request.app.state.psql_session
-
         detections = get_detections(
             oid=oid,
             survey_id=survey_id,
-            session_factory=session_init,
+            session_factory=db.session,
         )
 
         return detections
@@ -54,19 +58,17 @@ def detections(
 
 @router.get("/non_detections")
 def non_detections(
-    request: Request,
     oid: str,
     survey_id: str,
+    db: db,
 ):
     try:
         survey_validate(survey_id)
 
-        session = request.app.state.psql_session
-
         response = get_non_detections(
             oid=oid,
             survey_id=survey_id,
-            session_factory=session,
+            session_factory=db.session,
         )
 
         return response
@@ -80,16 +82,18 @@ def non_detections(
 
 
 @router.get("/forced-photometry")
-def forced_photometry(oid: str, request: Request, survey_id: str):
+def forced_photometry(
+    oid: str,
+    survey_id: str,
+    db: db,
+):
     try:
         survey_validate(survey_id)
-
-        session = request.app.state.psql_session
 
         forced_photometry_data = get_forced_photometry(
             oid=oid,
             survey_id=survey_id,
-            session_factory=session,
+            session_factory=db.session,
         )
 
         return forced_photometry_data
@@ -107,18 +111,16 @@ def forced_photometry(oid: str, request: Request, survey_id: str):
 
 @router.get("/lightcurve")
 def lightcurve(
-    request: Request,
     oid: str,
     survey_id: str,
+    db: db,
 ):
     try:
         survey_validate(survey_id)
-        session = request.app.state.psql_session
-
         response = get_lightcurve(
             oid=oid,
             survey_id=survey_id,
-            session_factory=session,
+            session_factory=db.session,
         )
 
         return response
