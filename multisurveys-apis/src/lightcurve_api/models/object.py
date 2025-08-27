@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class AlerceObject(BaseModel):
+class ApiObject(BaseModel):
     objectId: str
     ra: float
     dec: float
