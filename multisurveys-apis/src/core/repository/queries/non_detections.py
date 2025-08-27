@@ -1,6 +1,6 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import NonDetection, LsstNonDetection
+from db_plugins.db.sql.models import LsstNonDetection, NonDetection
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -8,8 +8,7 @@ from sqlalchemy import select
 def get_all_unique_non_detections_sql(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]],
 ):
     with session_factory() as session:
         if survey_id == "lsst":
