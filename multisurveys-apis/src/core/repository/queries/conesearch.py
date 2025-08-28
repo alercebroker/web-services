@@ -1,4 +1,4 @@
-from typing import Callable, ContextManager, List
+from typing import Callable, ContextManager, List, Tuple
 from db_plugins.db.sql.models import Object
 from numpy import int64
 from sqlalchemy import asc, select, text
@@ -8,12 +8,8 @@ from sqlalchemy.orm import Session, aliased
 def conesearch_coordinates(
     session_factory: Callable[..., ContextManager[Session]],
 ):
-    def _conesearch(
-        ra: float,
-        dec: float,
-        radius: float,
-        neighbors: int,
-    ) -> List[Object]:
+    def _conesearch(args: Tuple[float, float, float, int]) -> List[Object]:
+        ra, dec, radius, neighbors = args
         stmt = _build_statement_coordinates(neighbors)
         with session_factory() as session:
             result = session.execute(
@@ -34,7 +30,8 @@ def _build_statement_coordinates(neighbors: int):
 
 
 def conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
-    def _conesearch(oid: int64, radius: float, neighbors: int) -> List[Object]:
+    def _conesearch(args: Tuple[int64, float, int]) -> List[Object]:
+        oid, radius, neighbors = args
         stmt = _build_statement_oid(oid, neighbors)
         with session_factory() as session:
             result = session.execute(stmt, {"radius": radius}).all()
