@@ -49,9 +49,6 @@ def catalog_oid_to_masterid(
         The ZTF object ID.
     validate: bool
         If True, validate the ztf_oid before conversion.
-    db_cursor: psycopg2.extensions.cursor
-        Database cursor for LSST catalog. This parameter is required for LSST.
-
     Returns
     -------
     str
