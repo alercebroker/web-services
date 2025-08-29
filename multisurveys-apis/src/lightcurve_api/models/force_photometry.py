@@ -1,4 +1,6 @@
 from typing import Optional, Union
+
+from pydantic import model_validator
 from .lightcurve_item import BaseDetection
 
 
@@ -89,6 +91,23 @@ class ZtfForcedPhotometry(BaseDetection):
     ra: float
     dec: float
     band: int
+    band_map: dict[int, str] = {1: "r", 2: "g", 3: "i"}
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_defaults(cls, values: dict) -> dict:
+        defaults = {
+            "pid": 0,
+            "mag_corr": 0,
+            "e_mag_corr": 0,
+            "e_mag_corr_ext": 0,
+        }
+
+        for field, default_value in defaults.items():
+            if field in values and values[field] is None:
+                values[field] = default_value
+
+        return values
 
     def magnitude2flux(self) -> float:
         return 0.0
@@ -114,6 +133,18 @@ class LsstForcedPhotometry(BaseDetection):
     detector: int
     psfFlux: float
     psfFluxErr: float
+    band_map: dict[int, str] = {0: "u", 1: "g", 2: "r", 3: "i", 4: "z", 5: "y"}
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_defaults(cls, values: dict) -> dict:
+        defaults = {}
+
+        for field, default_value in defaults.items():
+            if field in values and values[field] is None:
+                values[field] = default_value
+
+        return values
 
     def magnitude2flux(self) -> float:
         return self.psfFlux
