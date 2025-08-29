@@ -1,8 +1,8 @@
 from typing import Optional, Union
-from pydantic import BaseModel
+from .lightcurve_item import BaseDetection
 
 
-class ForcedPhotometryMultistream(BaseModel):
+class ForcedPhotometryMultistream(BaseDetection):
     candid: str
     tid: str
     sid: Optional[str] = None
@@ -33,8 +33,20 @@ class ForcedPhotometryMultistream(BaseModel):
     def __eq__(self, other):
         return self.oid == other.oid and self.pid == other.pid
 
+    def magnitude2flux(self) -> float:
+        return 0.0
 
-class ZtfForcedPhotometry(BaseModel):
+    def magnitude2flux_err(self) -> float:
+        return 0.0
+
+    def flux2magnitude(self) -> float:
+        return self.mag
+
+    def flux2magnitude_err(self) -> float:
+        return self.e_mag
+
+
+class ZtfForcedPhotometry(BaseDetection):
     oid: int
     survey_id: str
     measurement_id: int
@@ -78,8 +90,20 @@ class ZtfForcedPhotometry(BaseModel):
     dec: float
     band: int
 
+    def magnitude2flux(self) -> float:
+        return 0.0
 
-class LsstForcedPhotometry(BaseModel):
+    def magnitude2flux_err(self) -> float:
+        return 0.0
+
+    def flux2magnitude(self) -> float:
+        return self.mag
+
+    def flux2magnitude_err(self) -> float:
+        return self.e_mag
+
+
+class LsstForcedPhotometry(BaseDetection):
     oid: int
     measurement_id: int
     mjd: float
@@ -90,3 +114,15 @@ class LsstForcedPhotometry(BaseModel):
     detector: int
     psfFlux: float
     psfFluxErr: float
+
+    def magnitude2flux(self) -> float:
+        return self.psfFlux
+
+    def magnitude2flux_err(self) -> float:
+        return self.psfFluxErr
+
+    def flux2magnitude(self) -> float:
+        return 0.0
+
+    def flux2magnitude_err(self) -> float:
+        return 0.0
