@@ -47,7 +47,7 @@ def _build_statement_oid(oid: int64, neighbors: int):
 
     # Build the query using q3c_radial_query function
     return (
-        select(target_obj.oid, target_obj.meanra, target_obj.meandec)
+        select(target_obj)
         .select_from(center_obj, target_obj)
         .where(center_obj.oid == oid.item())
         .where(
