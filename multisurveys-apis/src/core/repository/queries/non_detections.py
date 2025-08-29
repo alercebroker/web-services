@@ -13,7 +13,7 @@ def get_all_unique_non_detections_sql(
     with session_factory() as session:
         if survey_id == "lsst":
             print("LSST non-detections not implemented yet")
-            
+
             return []
         else:
             stmt = build_statement(ZtfNonDetection, oid)
