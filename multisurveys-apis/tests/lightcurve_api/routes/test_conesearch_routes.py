@@ -58,7 +58,7 @@ def test_conesearch_objects_invalid_params(client: TestClient):
             400,
         ),
         (
-            lambda x: x["detail"] == "Unsupported catalog: invalid_survey",
+            lambda x: x["detail"] == "Unsupported catalog: INVALID_SURVEY",
             400,
         ),
         (lambda x: x["detail"] == "Radius must be greater than 0", 400),
@@ -102,3 +102,20 @@ def test_conesearch_coordinates(
     )
     assert response.status_code == 200
     assert len(response.json()) >= 1
+
+
+def test_oid_lightcurve(client: TestClient, populate_database):
+    populate_database(100)
+    response = client.get(
+        "/conesearch/lightcurve_by_oid",
+        params={
+            "oid": "ZTF20aaelulu",
+            "survey": "ZTF",
+            "radius": "30",
+            "neighbors": "10",
+        },
+    )
+    assert response.status_code == 200
+    assert len(response.json()["detections"]) >= 1
+    assert len(response.json()["non_detections"]) >= 1
+    assert len(response.json()["forced_photometry"]) >= 1

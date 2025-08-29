@@ -1,14 +1,20 @@
 import traceback
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, HTTPException, Query
+
+from core.config.dependencies import db_dependency
 
 from ..services.lightcurve_service import (
     get_detections,
+    get_detections_by_list,
     get_forced_photometry,
+    get_forced_photometry_by_list,
     get_lightcurve,
     get_non_detections,
+    get_non_detections_by_list,
 )
 from ..services.validations import survey_validate
-from core.config.dependencies import db_dependency
 
 router = APIRouter()
 
@@ -25,20 +31,27 @@ def healthcheck():
 
 @router.get("/detections")
 def detections(
-    oid: str,
     survey_id: str,
     db: db_dependency,
+    oid: str | None = None,
+    oid_list: Annotated[list[str] | None, Query()] = None,
 ):
+    if not oid and not oid_list:
+        raise HTTPException(
+            status_code=400, detail="oid or oid_list must be provided"
+        )
+
     try:
         survey_validate(survey_id)
 
-        detections = get_detections(
-            oid=oid,
-            survey_id=survey_id,
-            session_factory=db.session,
-        )
-
-        return detections
+        if oid:
+            return get_detections(
+                oid=oid,
+                survey_id=survey_id,
+                session_factory=db.session,
+            )
+        if oid_list:
+            return get_detections_by_list(oid_list, survey_id, db.session)
 
     except HTTPException as e:
         traceback.print_exc()
@@ -53,20 +66,22 @@ def detections(
 
 @router.get("/non_detections")
 def non_detections(
-    oid: str,
     survey_id: str,
     db: db_dependency,
+    oid: str | None = None,
+    oid_list: Annotated[list[str] | None, Query()] = None,
 ):
     try:
         survey_validate(survey_id)
 
-        response = get_non_detections(
-            oid=oid,
-            survey_id=survey_id,
-            session_factory=db.session,
-        )
-
-        return response
+        if oid:
+            return get_non_detections(
+                oid=oid,
+                survey_id=survey_id,
+                session_factory=db.session,
+            )
+        if oid_list:
+            return get_non_detections_by_list(oid_list, survey_id, db.session)
 
     except ValueError as e:
         traceback.print_exc()
@@ -78,20 +93,24 @@ def non_detections(
 
 @router.get("/forced-photometry")
 def forced_photometry(
-    oid: str,
     survey_id: str,
     db: db_dependency,
+    oid: str | None = None,
+    oid_list: Annotated[list[str] | None, Query()] = None,
 ):
     try:
         survey_validate(survey_id)
 
-        forced_photometry_data = get_forced_photometry(
-            oid=oid,
-            survey_id=survey_id,
-            session_factory=db.session,
-        )
-
-        return forced_photometry_data
+        if oid:
+            return get_forced_photometry(
+                oid=oid,
+                survey_id=survey_id,
+                session_factory=db.session,
+            )
+        if oid_list:
+            return get_forced_photometry_by_list(
+                oid_list, survey_id, db.session
+            )
 
     except HTTPException as e:
         traceback.print_exc()
@@ -106,19 +125,39 @@ def forced_photometry(
 
 @router.get("/lightcurve")
 def lightcurve(
-    oid: str,
     survey_id: str,
     db: db_dependency,
+    oid: str | None = None,
+    oid_list: Annotated[list[str] | None, Query()] = None,
 ):
     try:
         survey_validate(survey_id)
-        response = get_lightcurve(
-            oid=oid,
-            survey_id=survey_id,
-            session_factory=db.session,
-        )
+        response = {
+            "detections": [],
+            "non_detections": [],
+            "forced_photometry": [],
+        }
+        if oid:
+            response["detections"] = get_detections(oid, survey_id, db.session)
+            response["non_detections"] = get_non_detections(
+                oid, survey_id, db.session
+            )
+            response["forced_photometry"] = get_forced_photometry(
+                oid, survey_id, db.session
+            )
+        if oid_list:
+            response["detections"] = get_detections_by_list(
+                oid_list, survey_id, db.session
+            )
+            response["non_detections"] = get_non_detections_by_list(
+                oid_list, survey_id, db.session
+            )
+            response["forced_photometry"] = get_forced_photometry_by_list(
+                oid_list, survey_id, db.session
+            )
 
         return response
+
     except HTTPException as e:
         traceback.print_exc()
         raise HTTPException(status_code=e.status_code, detail=e.detail)

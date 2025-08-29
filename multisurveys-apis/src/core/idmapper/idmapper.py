@@ -54,6 +54,7 @@ def catalog_oid_to_masterid(
     str
         The master ID.
     """
+    catalog = catalog.upper()
     if catalog not in SURVEY_IDS.keys():
         raise ValueError(f"Unsupported catalog: {catalog}")
 
