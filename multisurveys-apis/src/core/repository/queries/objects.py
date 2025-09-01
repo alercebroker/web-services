@@ -1,8 +1,8 @@
 from db_plugins.db.sql.models import (
     Object,
     ZtfObject,
-    LsstSsObject,
-    Probability_ms,
+    LsstDiaObject,
+    Probability,
 )
 from sqlalchemy.orm import aliased
 from sqlalchemy import select
@@ -21,7 +21,7 @@ class ObjectsModels:
         if self.survey == "ztf":
             return ZtfObject
         if self.survey == "lsst":
-            return LsstSsObject
+            return LsstDiaObject
 
 
 def query_object_by_id(session_ms, oid, survey_id):
@@ -52,10 +52,10 @@ def query_get_objects(session_ms, search_params, parsed_params):
         )
 
         stmt = (
-            select(Probability_ms, object_alias, dinamic_model_alias)
+            select(Probability, object_alias, dinamic_model_alias)
             .join(
                 dinamic_model_alias,
-                dinamic_model_alias.oid == Probability_ms.oid,
+                dinamic_model_alias.oid == Probability.oid,
             )
             .where(*filters_statements["probability"])
         )

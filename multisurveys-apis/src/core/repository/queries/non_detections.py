@@ -1,6 +1,6 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import LsstNonDetection, NonDetection
+from db_plugins.db.sql.models import ZtfNonDetection
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -12,13 +12,15 @@ def get_all_unique_non_detections_sql(
 ):
     with session_factory() as session:
         if survey_id == "lsst":
-            stmt = build_statement(LsstNonDetection, oid)
+            print("LSST non-detections not implemented yet")
+            
+            return None
         else:
-            stmt = build_statement(NonDetection, oid)
+            stmt = build_statement(ZtfNonDetection, oid)
 
-        result = session.execute(stmt).all()
+            result = session.execute(stmt).all()
 
-        return result
+            return result
 
 
 def build_statement(model_id, oid):

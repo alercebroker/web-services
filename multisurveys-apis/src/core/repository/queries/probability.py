@@ -1,6 +1,6 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import Taxonomy_ms, Probability_ms
+from db_plugins.db.sql.models import Taxonomy, Probability
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -12,19 +12,19 @@ def get_probability_by_oid(
     | None = None,
 ):
     with session_factory() as session:
-        stmt = select(Probability_ms, Taxonomy_ms).join(
-            Taxonomy_ms, Taxonomy_ms.class_id == Probability_ms.class_id
+        stmt = select(Probability, Taxonomy).join(
+            Taxonomy, Taxonomy.class_id == Probability.class_id
         )
 
         if classifier_id:
             stmt = stmt.where(
-                Probability_ms.oid == oid,
-                Probability_ms.classifier_id == classifier_id,
+                Probability.oid == oid,
+                Probability.classifier_id == classifier_id,
             )
         else:
-            stmt = stmt.where(Probability_ms.oid == oid)
+            stmt = stmt.where(Probability.oid == oid)
 
-        stmt = stmt.order_by(Taxonomy_ms.order.asc())
+        stmt = stmt.order_by(Taxonomy.order.asc())
 
         result = session.execute(stmt).all()
         return result
