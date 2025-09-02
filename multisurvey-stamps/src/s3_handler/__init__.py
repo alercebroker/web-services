@@ -8,8 +8,12 @@ SURVEYS_HANDLERS = {
     "ztf": ZTFS3Handler,
 }
 
+
 def handler_selector(survey_id: str):
     try:
         return SURVEYS_HANDLERS[survey_id]
     except KeyError:
-        raise HTTPException(status_code=400, detail=f"Incorrect survey identifier {survey_id}, valid surveys are {list(SURVEYS_HANDLERS.keys())}")
+        raise HTTPException(
+            status_code=400,
+            detail=f"Incorrect survey identifier {survey_id}, valid surveys are {list(SURVEYS_HANDLERS.keys())}",
+        )

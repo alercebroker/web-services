@@ -14,6 +14,7 @@ app.add_middleware(
 
 app.include_router(rest.router)
 
+
 @app.get("/openapi.json")
 def custom_swagger_route():
     return app.openapi()
