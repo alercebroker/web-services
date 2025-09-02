@@ -54,9 +54,7 @@ def get_all_classifiers(
                 Taxonomy,
                 classifier.classifier_id == Taxonomy.classifier_id,
             )
-            .order_by(
-                classifier.classifier_name.asc(), Taxonomy.order.asc()
-            )
+            .order_by(classifier.classifier_name.asc(), Taxonomy.order.asc())
         )
         result = session.execute(stmt)
         result = result.all()
