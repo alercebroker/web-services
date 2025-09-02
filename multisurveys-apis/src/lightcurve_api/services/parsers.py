@@ -17,6 +17,7 @@ def parse_sql_detection(sql_response, survey_id):
 
 
 def parse_sql_non_detections(sql_response, survey_id):
+
     if survey_id == "lsst":
         non_detections = ModelsParser(
             LsstNonDetection, sql_response, survey_id

@@ -14,7 +14,7 @@ def get_all_unique_non_detections_sql(
         if survey_id == "lsst":
             print("LSST non-detections not implemented yet")
             
-            return None
+            return []
         else:
             stmt = build_statement(ZtfNonDetection, oid)
 
