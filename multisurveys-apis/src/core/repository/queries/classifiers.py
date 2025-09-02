@@ -1,6 +1,6 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import classifier_ms, Taxonomy_ms
+from db_plugins.db.sql.models import classifier, Taxonomy
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -22,13 +22,13 @@ def get_classifier_by_name(
     """
     with session_factory() as session:
         stmt = (
-            select(classifier_ms, Taxonomy_ms)
+            select(classifier, Taxonomy)
             .join(
-                Taxonomy_ms,
-                classifier_ms.classifier_id == Taxonomy_ms.classifier_id,
+                Taxonomy,
+                classifier.classifier_id == Taxonomy.classifier_id,
             )
-            .where(classifier_ms.classifier_name == classifier_name)
-            .order_by(Taxonomy_ms.order.asc())
+            .where(classifier.classifier_name == classifier_name)
+            .order_by(Taxonomy.order.asc())
         )
         result = session.execute(stmt).all()
         return result
@@ -49,13 +49,13 @@ def get_all_classifiers(
     """
     with session_factory() as session:
         stmt = (
-            select(classifier_ms, Taxonomy_ms)
+            select(classifier, Taxonomy)
             .join(
-                Taxonomy_ms,
-                classifier_ms.classifier_id == Taxonomy_ms.classifier_id,
+                Taxonomy,
+                classifier.classifier_id == Taxonomy.classifier_id,
             )
             .order_by(
-                classifier_ms.classifier_name.asc(), Taxonomy_ms.order.asc()
+                classifier.classifier_name.asc(), Taxonomy.order.asc()
             )
         )
         result = session.execute(stmt)

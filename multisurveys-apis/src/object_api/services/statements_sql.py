@@ -1,4 +1,4 @@
-from db_plugins.db.sql.models import Object, Probability_ms
+from db_plugins.db.sql.models import Object, Probability
 from sqlalchemy import text
 
 
@@ -91,22 +91,22 @@ def probability_filters(args):
     filters_prob_dict = []
 
     if args["classifier"]:
-        classifier = Probability_ms.classifier_id == args["classifier"]
+        classifier = Probability.classifier_id == args["classifier"]
         filters_prob_dict.append(classifier)
     if args["class_name"]:
-        class_ = Probability_ms.class_id == args["class_name"]
+        class_ = Probability.class_id == args["class_name"]
         filters_prob_dict.append(class_)
     if args["probability"]:
-        probability = Probability_ms.probability >= args["probability"]
+        probability = Probability.probability >= args["probability"]
         filters_prob_dict.append(probability)
     if args["ranking"]:
-        ranking = Probability_ms.ranking == args["ranking"]
+        ranking = Probability.ranking == args["ranking"]
         filters_prob_dict.append(ranking)
     elif not args["ranking"] and (
         args["classifier"] or args["class"] or args["classifier_version"]
     ):
         # Default ranking 1
-        ranking = Probability_ms.ranking == 1
+        ranking = Probability.ranking == 1
         filters_prob_dict.append(ranking)
 
     return filters_prob_dict
