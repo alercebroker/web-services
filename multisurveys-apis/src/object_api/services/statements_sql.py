@@ -1,5 +1,6 @@
-from db_plugins.db.sql.models import Object, Probability_ms
+from db_plugins.db.sql.models import Object, Probability
 from sqlalchemy import text
+
 
 def convert_conesearch_args(args):
     try:
@@ -24,7 +25,7 @@ def create_conesearch_statement(args):
         return text("q3c_radial_query(meanra, meandec,:ra, :dec, :radius)")
     else:
         return True
-    
+
 
 def create_order_statement(query, order_args):
     statement = None
@@ -36,7 +37,7 @@ def create_order_statement(query, order_args):
         if attr:
             statement = attr
             break
-    
+
     if order_args.order_mode == "ASC":
         statement = attr.asc()
     elif order_args.order_mode == "DESC":
@@ -48,7 +49,7 @@ def create_order_statement(query, order_args):
 def convert_filters_to_sqlalchemy_statement(args):
     filters = {
         "probability": probability_filters(args),
-        "objects": object_filters(args)
+        "objects": object_filters(args),
     }
 
     return filters
@@ -78,7 +79,7 @@ def object_filters(args):
     if args["oids"]:
         if len(args["oids"]) == 1:
             # filtered_oid = args["oids"][0].replace("*", "%")
-            oids = (Object.oid == args["oids"][0])
+            oids = Object.oid == args["oids"][0]
         else:
             oids = Object.oid.in_(args["oids"])
         filters_dict.append(oids)
@@ -90,29 +91,29 @@ def probability_filters(args):
     filters_prob_dict = []
 
     if args["classifier"]:
-        classifier = Probability_ms.classifier_id == args["classifier"]
+        classifier = Probability.classifier_id == args["classifier"]
         filters_prob_dict.append(classifier)
     if args["class_name"]:
-        class_ = Probability_ms.class_id == args["class_name"]
+        class_ = Probability.class_id == args["class_name"]
         filters_prob_dict.append(class_)
     if args["probability"]:
-        probability = Probability_ms.probability >= args["probability"]
+        probability = Probability.probability >= args["probability"]
         filters_prob_dict.append(probability)
     if args["ranking"]:
-        ranking = Probability_ms.ranking == args["ranking"]
+        ranking = Probability.ranking == args["ranking"]
         filters_prob_dict.append(ranking)
     elif not args["ranking"] and (
         args["classifier"] or args["class"] or args["classifier_version"]
     ):
         # Default ranking 1
-        ranking = Probability_ms.ranking == 1
+        ranking = Probability.ranking == 1
         filters_prob_dict.append(ranking)
 
     return filters_prob_dict
 
 
 def add_limits_statements(stmt, pagination_args):
-    row_index = (pagination_args.page-1) * pagination_args.page_size
+    row_index = (pagination_args.page - 1) * pagination_args.page_size
     stmt = stmt.limit(pagination_args.page_size + 1).offset(row_index)
 
     return stmt
