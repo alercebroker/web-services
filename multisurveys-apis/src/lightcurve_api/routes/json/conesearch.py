@@ -6,9 +6,9 @@ from fastapi import APIRouter, HTTPException
 from core.config.dependencies import db_dependency
 from core.idmapper import idmapper
 
-from ..models.lightcurve import Lightcurve
-from ..models.object import ApiObject
-from ..services.conesearch import conesearch as service
+from ...models.lightcurve import Lightcurve
+from ...models.object import ApiObject
+from ...services.conesearch import conesearch as service
 
 router = APIRouter(prefix="/conesearch")
 
