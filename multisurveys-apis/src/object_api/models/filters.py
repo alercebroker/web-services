@@ -1,11 +1,9 @@
 from pydantic import BaseModel
-from typing import Annotated
-from fastapi import Query
 from .pagination import PaginationArgs, Order
 
 
 class Filters(BaseModel):
-    oids: list[int] | None= None
+    oids: list[int] | None = None
     survey: str | None = None
     classifier: str | None = None
     class_name: str | None = None

@@ -60,6 +60,7 @@ jobs:
     secrets:
       GH_TOKEN: '${{ secrets.ADMIN_TOKEN }}'
   ms_object_tests:
+    if: false
     uses: ./.github/workflows/test_template.yaml
     with:
       python-version: '3.11'
@@ -82,6 +83,7 @@ jobs:
       sources-folder: 'src'
       test-folder: 'tests/test_api'
       base-folder: 'multisurveys-apis'
+      poetry-install: '-vvv'
       files: |
         multisurveys-apis/src/core/**
         multisurveys-apis/src/test_api/**

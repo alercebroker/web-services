@@ -52,4 +52,4 @@ jobs:
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: |
           cd ci_new
-          poetry run build direct ${{ inputs.packages }} ${{ inputs.build_flags }}
+          poetry run build direct ${{ inputs.packages }} ${{ inputs.build_flags }} --build-args 'GH_TOKEN:${{ secrets.GH_TOKEN }}'

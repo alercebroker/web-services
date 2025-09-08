@@ -1,5 +1,6 @@
-from typing import Optional, Union
-from pydantic import BaseModel, Field
+from typing import Optional
+from pydantic import BaseModel
+
 
 class ztfDetection(BaseModel):
     oid: int
@@ -37,7 +38,7 @@ class ztfDetection(BaseModel):
 class LsstDetection(BaseModel):
     oid: int
     measurement_id: int
-    parentDiaSourceId: int
+    parentDiaSourceId: int | None
     psfFlux: float
     psfFluxErr: float
     psfFlux_flag: int

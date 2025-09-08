@@ -1,13 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from prometheus_fastapi_instrumentator import Instrumentator
 from core.config.connection import psql_entity
 from .routes import rest
 
 app = FastAPI()
 psql_engine = psql_entity()
 app.state.psql_session = psql_engine.session
-#instrumentator = Instrumentator().instrument(app).expose(app)
+# instrumentator = Instrumentator().instrument(app).expose(app)
 
 
 app.add_middleware(

@@ -1,5 +1,6 @@
 from ..models.magstats import MagStat
 
+
 def parse_magstats(magstats_data):
     """
     Parses the magstats data from the database response into a list of MagStat models.
@@ -11,7 +12,7 @@ def parse_magstats(magstats_data):
         list: List of MagStat models.
     """
     parsed_magstats = []
-    
+
     for row in magstats_data:
         model_dict = row[0].__dict__.copy()
         model_parsed = MagStat(**model_dict)

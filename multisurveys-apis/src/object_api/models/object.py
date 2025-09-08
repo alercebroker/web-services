@@ -19,7 +19,7 @@ class ZtfObjectProbability(BaseModel):
     g_r_max_corr: float | None = None
     g_r_mean: float | None = None
     g_r_mean_corr: float | None = None
-    tid: int 
+    tid: int
     sid: int
     meanra: float
     meandec: float
@@ -63,7 +63,7 @@ class LsstObjectProbability(BaseModel):
     ranking: int | None = None
 
 
-class ExportModel():
+class ExportModel:
     def __init__(self, survey: str, model_variant: str = "basic"):
         self.survey = survey
         self.model_variant = model_variant
