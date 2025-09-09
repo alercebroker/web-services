@@ -31,7 +31,7 @@ templates = Jinja2Templates(
     directory="src/object_api/templates", autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8001"
+    "API_URL", "http://localhost:8000"
 )
 
 templates.env.filters["truncate"] = truncate_float
