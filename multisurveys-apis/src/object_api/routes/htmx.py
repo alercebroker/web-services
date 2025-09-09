@@ -1,5 +1,6 @@
 import os
 import traceback
+import pprint
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse
@@ -7,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
-from ..services.object_services import get_objects_list
+from ..services.object_services import get_objects_list, get_object_by_id
 from ..services.validations import (
     ndets_validation,
     order_mode_validation,
@@ -19,6 +20,9 @@ from ..services.validations import (
 )
 from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
+from core.exceptions import ObjectNotFound
+
+from core.repository.dummy_data import object_basic_information_dict, tns_data_dict, tns_link_str
 
 
 router = APIRouter()
@@ -31,6 +35,64 @@ templates.env.globals["API_URL"] = os.getenv(
 )
 
 templates.env.filters["truncate"] = truncate_float
+
+
+@router.get("/htmx/object", response_class=HTMLResponse)
+async def object_info_app(request: Request, oid: str, survey_id: str):
+    try:
+        session = request.app.state.psql_session
+
+        # object_data = get_object_by_id(session, oid, survey_id)
+        # candid = get_first_det_candid(oid, request.app.state.psql_session)
+        # count_ndet = get_count_ndet(oid, request.app.state.psql_session)
+
+        # other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
+        object_data = object_basic_information_dict
+
+    except ObjectNotFound:
+        raise HTTPException(status_code=404, detail="Object ID not found")
+
+
+    return templates.TemplateResponse(
+        name="basic_information/basicInformationPreview.html.jinja",
+        context={
+            "request": request,
+            "object": object_data['oid'],
+            "corrected": "Yes" if object_data['corrected'] else "No",
+            "stellar": "Yes" if object_data['stellar'] else "No",
+            "detections": object_data['ndet'],
+            "nonDetections": object_data['count_ndet'],
+            "discoveryDateMJD": object_data['firstmjd'],
+            "lastDetectionMJD": object_data['lastmjd'],
+            "ra": object_data['meanra'],
+            "dec": object_data['meandec'],
+            "candid": object_data['candid'],
+            "otherArchives": object_data['otherArchives'],
+        },
+    )
+
+
+@router.get("/tns/", response_class=HTMLResponse)
+async def tns_info(request: Request, ra: float, dec:float):
+    try:
+        # tns_data, tns_link = get_tns(ra, dec)
+        tns_data, tns_link = tns_data_dict, tns_link_str
+    except ObjectNotFound:
+        raise HTTPException(status_code=404, detail="Object ID not found")
+
+    return templates.TemplateResponse(
+        name="basic_information/oldTnsInformation.html.jinja",
+        context={
+            "request": request,
+            "tns_data": tns_data,
+            "tns_link": tns_link,
+            "object_name": tns_data["object_name"],
+            "object_type": tns_data["object_type"],
+            "redshift": tns_data["object_data"]["redshift"],
+            "discoverer": tns_data["object_data"]["discoverer"],
+            "discovery_data_source": tns_data["object_data"]["discovery_data_source"]
+        }
+    )
 
 
 @router.get("/form/", response_class=HTMLResponse)
