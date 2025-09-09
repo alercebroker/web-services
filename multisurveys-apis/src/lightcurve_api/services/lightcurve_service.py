@@ -41,9 +41,9 @@ def get_non_detections(
     non_detections_result = get_all_unique_non_detections_sql(
         oid, survey_id, session_factory
     )
-    
+
     result_parsed = parse_sql_non_detections(non_detections_result, survey_id)
-    
+
     return result_parsed
 
 
