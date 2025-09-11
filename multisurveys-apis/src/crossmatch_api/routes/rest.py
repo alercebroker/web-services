@@ -3,7 +3,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from core.exceptions import ObjectNotFound
-from core.services.object import get_object
 from ..get_crossmatch_data import get_alerce_data
 
 
@@ -14,7 +13,7 @@ templates = Jinja2Templates(
 
 @router.get("/")
 def root():
-    return "this is the crossmatch module"
+    return "This is the crossmatch API"
 
 
 @router.get("/healthcheck")
