@@ -11,7 +11,7 @@ from core.repository.dummy_data import magstats_dummy
 
 router = APIRouter()
 templates = Jinja2Templates(
-    directory="src/magstats_api/templates", autoescape=True, auto_reload=True
+    directory=os.path.abspath("src/magstat_api/templates"), autoescape=True, auto_reload=True
 )
 templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8002"
