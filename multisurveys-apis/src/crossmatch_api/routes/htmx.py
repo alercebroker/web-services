@@ -5,12 +5,13 @@ from typing import Annotated
 from fastapi import Query
 import json
 
-from core.services.object import get_object
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from ..result_handler import handle_error, handle_success
 from ..get_crossmatch_data import get_alerce_data
+from core.repository.dummy_data import crossmatch_dummy
+from core.repository.queries.objects import query_object_by_id 
+
 router = APIRouter()
 templates = Jinja2Templates(
     directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True
@@ -19,15 +20,16 @@ templates.env.globals["API_URL"] = os.getenv(
     "API_URL", "http://localhost:8005"
 )
 
-@router.get("/crossmatch/{oid}", response_class=HTMLResponse)
+@router.get("/htmx/crossmatch", response_class=HTMLResponse)
 async def object_mag_app(
     request: Request,
     oid: str,
 ):
 
-    object = get_object(oid,session_factory = request.app.state.psql_session)
+    # object = query_object_by_id(oid,session_factory = request.app.state.psql_session)
 
-    cross = get_alerce_data(object.meanra, object.meandec, 20)
+    # cross = get_alerce_data(object.meanra, object.meandec, 20)
+    cross = crossmatch_dummy
 
     '''
         get_alerce_data returns a list with several dictionaries. The dict format is one key and then a value that is another dictionary.
