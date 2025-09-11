@@ -7,8 +7,7 @@ from sqlalchemy import select
 
 def get_classifier_by_name(
     classifier_name: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
     """
     Retrieves a classifier by its name.
@@ -35,8 +34,7 @@ def get_classifier_by_name(
 
 
 def get_all_classifiers(
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
     """
     Retrieves all classifiers.

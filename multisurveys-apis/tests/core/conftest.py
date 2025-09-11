@@ -36,9 +36,7 @@ def db_setup():
             os.environ["PSQL_PASSWORD"] = "alerce"
             os.environ["PSQL_DATABASE"] = "multistream"
             os.environ["PSQL_HOST"] = host
-            os.environ["PSQL_PORT"] = str(
-                container.get_exposed_port("5432/tcp")
-            )
+            os.environ["PSQL_PORT"] = str(container.get_exposed_port("5432/tcp"))
             print(f"Connecting to {host}:{os.environ['PSQL_PORT']}")
             db = psql_entity()
             db.create_db()

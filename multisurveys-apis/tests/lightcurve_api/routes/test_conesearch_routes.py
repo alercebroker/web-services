@@ -64,8 +64,7 @@ def test_conesearch_objects_invalid_params(client: TestClient):
         (lambda x: x["detail"] == "Radius must be greater than 0", 400),
         (lambda x: x["detail"] == "Neighbors must be greater than 0", 400),
         (
-            lambda x: x["detail"][0]["msg"]
-            == "Input should be a valid number, unable to parse string as a number",
+            lambda x: x["detail"][0]["msg"] == "Input should be a valid number, unable to parse string as a number",
             422,
         ),
     ]
@@ -78,18 +77,12 @@ def test_conesearch_objects_invalid_params(client: TestClient):
         assert exp[0](response.json())
 
 
-def test_conesearch_coordinates(
-    client: TestClient, populate_database, db_setup
-):
+def test_conesearch_coordinates(client: TestClient, populate_database, db_setup):
     populate_database(100)
     # find known object
     with db_setup.session() as session:
         id = catalog_oid_to_masterid("ZTF", "ZTF20aaelulu", True)
-        obj = (
-            session.execute(select(Object).where(Object.oid == id.item()))
-            .scalars()
-            .first()
-        )
+        obj = session.execute(select(Object).where(Object.oid == id.item())).scalars().first()
 
     response = client.get(
         "/conesearch/objects_by_coordinates",

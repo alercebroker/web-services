@@ -28,9 +28,7 @@ def parse_sql_non_detections(args: Tuple[Sequence[Row[Any]], str]):
     sql_response, survey_id = args
 
     if survey_id == "lsst":
-        non_detections = ModelsParser(
-            LsstNonDetection, sql_response, survey_id
-        )
+        non_detections = ModelsParser(LsstNonDetection, sql_response, survey_id)
     else:
         non_detections = ModelsParser(ZtfNonDetections, sql_response, "")
 
@@ -41,13 +39,9 @@ def parse_forced_photometry(args: Tuple[Sequence[Row[Any]], str]):
     sql_response, survey_id = args
 
     if survey_id.lower() == "ztf":
-        forced_photometry_data = ModelsParser(
-            ZtfForcedPhotometry, sql_response, survey_id
-        )
+        forced_photometry_data = ModelsParser(ZtfForcedPhotometry, sql_response, survey_id)
     elif survey_id.lower() == "lsst":
-        forced_photometry_data = ModelsParser(
-            LsstForcedPhotometry, sql_response, survey_id
-        )
+        forced_photometry_data = ModelsParser(LsstForcedPhotometry, sql_response, survey_id)
     else:
         raise ValueError(f"Survey not supported: {survey_id}")
 
@@ -64,9 +58,7 @@ class ModelsParser:
         data_parsed = []
         for row in self.sql_response:
             model_dict = self.transform_models_to_dict(row)
-            model_parsed = self.output_model(
-                **model_dict, survey_id=self.survey_id
-            )
+            model_parsed = self.output_model(**model_dict, survey_id=self.survey_id)
             data_parsed.append(model_parsed)
 
         return data_parsed

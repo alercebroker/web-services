@@ -7,8 +7,7 @@ from sqlalchemy import select
 
 def get_magstats_by_oid(
     oid: str,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
     """
     Retrieves the magstats for a given object in a given survey.

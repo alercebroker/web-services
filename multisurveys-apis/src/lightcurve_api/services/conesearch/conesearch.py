@@ -59,46 +59,34 @@ def get_detections(
 ):
     def _get(objects: List[ApiObject]) -> Tuple[Lightcurve, List[str]]:
         object_ids = [obj.objectId for obj in objects]
-        result.detections.extend(
-            lightcurve_service.get_detections_by_list(
-                object_ids, survey_id, session_factory
-            )
-        )
+        result.detections.extend(lightcurve_service.get_detections_by_list(object_ids, survey_id, session_factory))
         return result, object_ids
 
     return _get
 
 
-def get_non_detections(
-    survey_id: str, session_factory: Callable[..., ContextManager[Session]]
-):
+def get_non_detections(survey_id: str, session_factory: Callable[..., ContextManager[Session]]):
     def _get(
         args: Tuple[Lightcurve, List[str]],
     ) -> Tuple[Lightcurve, List[str]]:
         result, object_ids = args
 
         result.non_detections.extend(
-            lightcurve_service.get_non_detections_by_list(
-                object_ids, survey_id, session_factory
-            )
+            lightcurve_service.get_non_detections_by_list(object_ids, survey_id, session_factory)
         )
         return result, object_ids
 
     return _get
 
 
-def get_forced_photometry(
-    survey_id: str, session_factory: Callable[..., ContextManager[Session]]
-):
+def get_forced_photometry(survey_id: str, session_factory: Callable[..., ContextManager[Session]]):
     def _get(
         args: Tuple[Lightcurve, List[str]],
     ) -> Tuple[Lightcurve, List[str]]:
         result, object_ids = args
 
         result.forced_photometry.extend(
-            lightcurve_service.get_forced_photometry_by_list(
-                object_ids, survey_id, session_factory
-            )
+            lightcurve_service.get_forced_photometry_by_list(object_ids, survey_id, session_factory)
         )
         return result, object_ids
 
@@ -116,15 +104,11 @@ def conesearch_oid_lightcurve(
         Lightcurve,
         pipe(
             idmapper.catalog_oid_to_masterid(survey_id, oid, True),
-            lambda oid: conesearch_oid(
-                oid, radius, neighbors, session_factory
-            ),
+            lambda oid: conesearch_oid(oid, radius, neighbors, session_factory),
             get_detections(
                 survey_id,
                 session_factory,
-                Lightcurve(
-                    detections=[], non_detections=[], forced_photometry=[]
-                ),
+                Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
             ),
             get_non_detections(survey_id, session_factory),
             get_forced_photometry(survey_id, session_factory),

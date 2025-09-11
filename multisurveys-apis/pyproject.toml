@@ -54,7 +54,7 @@ requires = ["poetry-core", "setuptools", "wheel", "Cython==0.29.36", "numpy"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
-line-length = 79
+line-length = 120
 
 [tool.poetry.scripts]
 all = "scripts.run_api:run"

@@ -25,16 +25,12 @@ def test_conesearch_coordinates(mocker):
     # Setup the database mock
     # Result has to be a list of tuples
     # where the first element is the object
-    mock = database_mock(
-        mocker, [(Object(oid=123, meanra=45.0, meandec=45.0),)]
-    )
+    mock = database_mock(mocker, [(Object(oid=123, meanra=45.0, meandec=45.0),)])
     implement_context_manager(mocker, mock)
 
     # Call the service
     ra, dec, radius, neighbors = (45, 45, 30.0, 10)
-    result = conesearch_service.conesearch_coordinates(
-        ra, dec, radius, neighbors, mock
-    )
+    result = conesearch_service.conesearch_coordinates(ra, dec, radius, neighbors, mock)
 
     # Assert that the result is as expected
     assert result == [ApiObject(objectId="ZTF00aaaaaet", ra=45.0, dec=45.0)]
@@ -50,18 +46,14 @@ def test_conesearch_coordinates_db_empty(mocker):
 
     # Call the service
     ra, dec, radius, neighbors = (45, 45, 30.0, 10)
-    assert [] == conesearch_service.conesearch_coordinates(
-        ra, dec, radius, neighbors, mock
-    )
+    assert [] == conesearch_service.conesearch_coordinates(ra, dec, radius, neighbors, mock)
 
 
 def test_conesearch_oid(mocker):
     # Setup the database mock
     # Result has to be a list of tuples
     # where the first element is the object
-    mock = database_mock(
-        mocker, [(Object(oid=123, meanra=45.0, meandec=45.0),)]
-    )
+    mock = database_mock(mocker, [(Object(oid=123, meanra=45.0, meandec=45.0),)])
     implement_context_manager(mocker, mock)
 
     # Call the service
@@ -109,9 +101,7 @@ def test_conesearch_oid_lightcurve(mocker):
         if "q3c_radial_query" in stmt and "target.meanra" in stmt:
             # conesearch query
             return wrapper([(Object(oid=123, meanra=45.0, meandec=45.0),)])
-        elif (
-            "detection" in stmt.lower() and "non_detection" not in stmt.lower()
-        ):
+        elif "detection" in stmt.lower() and "non_detection" not in stmt.lower():
             # detections query
             return wrapper([(make_ztf_detection(123, 1, 1),)])
         elif "non_detection" in stmt.lower():
@@ -125,9 +115,7 @@ def test_conesearch_oid_lightcurve(mocker):
     mock.execute.side_effect = execute_side_effect
     implement_context_manager(mocker, mock)
 
-    result = conesearch_service.conesearch_oid_lightcurve(
-        "ZTF20aaelulu", 30.0, 10, "ZTF", mock
-    )
+    result = conesearch_service.conesearch_oid_lightcurve("ZTF20aaelulu", 30.0, 10, "ZTF", mock)
     assert len(result.detections) == 1
     assert len(result.non_detections) == 1
     assert len(result.forced_photometry) == 1
