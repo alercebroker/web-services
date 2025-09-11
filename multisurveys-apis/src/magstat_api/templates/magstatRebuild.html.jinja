@@ -1,0 +1,65 @@
+<script src="{{API_URL}}/htmx-static/htmx.min.js"></script>
+<meta name="htmx-config" content='{"selfRequestsOnly": false}'>
+<script type="module" src="{{API_URL}}/static/magstats.js"></script>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+<link rel="stylesheet" href="{{API_URL}}/static/magstats.css">
+
+<div id='magstats-app' class="tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-w-full tw-text-sm">
+    <div class="tw-flex tw-flex-col  tw-font-roboto tw-py-4">
+        <div class="tw-w-[95%] tw-mx-auto tw-text-black dark:tw-text-white tw-flex tw-items-center">
+            <div class="tw-text-black dark:tw-text-white">
+                <p class="tw-font-bold tw-text-black dark:tw-text-white ">Magnitude Statistics</p>
+            </div>
+
+            <div class="tw-group tw-relative tw-ml-2">
+                <svg class="tw-h-6 tw-w-6 tw-text-gray-900 dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                    <path path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
+                </svg>
+                <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999]">
+                    <div class="tw-bg-[#757575]/60 tw-text-[#FAFAFA] dark:tw-bg-[#757575]/60 dark:tw-text-[#FAFAFA] tw-w-48 tw-text-xs tw-rounded tw-px-4 tw-py-2">
+                        Magnitudes shown are the corrected version if corrected is true. For more information on correction visit http://alerce.science/alerce-pipeline/
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tw-w-[95%] dark:tw-text-white tw-text-black tw-mx-auto" id="tableContainer">
+            
+        </div>
+
+        <div class="tw-w-[95%] tw-mx-auto tw-text-sm">
+            <div class="tw-flex tw-justify-between tw-items-center tw-pt-[25px]">
+                <div class="tw-flex tw-items-center tw-space-x-2">
+                    <label class="tw-text-black dark:tw-text-white">Rows per page:</label>
+                    <button class="tw-relative hover:tw-cursor-pointer" onclick="changeMenuArrow()">
+                            <select id="rowSelect" class="tw-text-black tw-bg-white dark:tw-text-white dark:tw-bg-[#1e1e1e] tw-border-b tw-pr-2 tw-appearance-none tw-pointer-events-auto">
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="14">All</option>
+                            </select>
+                            {# <div id="menuArrow" class="tw-absolute tw-right-0 tw-top-1/2 tw-transform -tw-translate-y-1/2 tw-pointer-events-none">
+                            </div> #}
+                    </button>
+                </div>
+                <div class="tw-text-black dark:tw-text-white">
+                    <span id="first-number" class="tw-text-black dark:tw-text-white"></span> - <span id="second-number" class="tw-text-black dark:tw-text-white"></span> of <span id="total-number" class="tw-text-black dark:tw-text-white"></span>
+                </div>
+                <div class="tw-text-sm">
+                    <button class="tw-pr-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id='leftArrow'> &lt; </button>
+                    <button class="tw-pl-[10px] tw-text-sm tw-rounded-full hover:tw-text-gray-600" id="rightArrow"> &gt; </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module">
+import { initMagstats, elementReady } from "{{API_URL}}/static/magstats.js";
+
+
+elementReady("#magstats-app").then(() => {
+    initMagstats();
+});
+</script>
+<script id="magstats-data" type="application/json">{{stat_r | tojson}}</script>
