@@ -8,9 +8,7 @@ from sqlalchemy.orm import Session
 import core.repository.queries.conesearch as queries
 
 
-def generate_ra_coordinates(
-    ra_center_deg, dec_center_deg, n, half_range_arcsec
-):
+def generate_ra_coordinates(ra_center_deg, dec_center_deg, n, half_range_arcsec):
     """
     Generate `n` coordinates evenly spaced along the RA axis,
     centered at (ra_center, dec_center), within ±half_range_arcsec.
@@ -36,15 +34,10 @@ def generate_ra_coordinates(
 
     # Correction for Dec: RA offsets shrink by cos(dec)
     dec_rad = np.deg2rad(dec_center_deg)
-    ra_offsets_deg = np.linspace(-half_range_deg, half_range_deg, n) / np.cos(
-        dec_rad
-    )
+    ra_offsets_deg = np.linspace(-half_range_deg, half_range_deg, n) / np.cos(dec_rad)
 
     # Create coordinates
-    coords = [
-        SkyCoord(ra=ra_center_deg + offset, dec=dec_center_deg, unit="deg")
-        for offset in ra_offsets_deg
-    ]
+    coords = [SkyCoord(ra=ra_center_deg + offset, dec=dec_center_deg, unit="deg") for offset in ra_offsets_deg]
 
     return coords
 

@@ -53,9 +53,7 @@ def db_setup():
             os.environ["PSQL_PASSWORD"] = "alerce"
             os.environ["PSQL_DATABASE"] = "multistream"
             os.environ["PSQL_HOST"] = host
-            os.environ["PSQL_PORT"] = str(
-                container.get_exposed_port("5432/tcp")
-            )
+            os.environ["PSQL_PORT"] = str(container.get_exposed_port("5432/tcp"))
             db = ApiDatabase()
             db.create_db()
             create_q3c_idx(db)
@@ -75,9 +73,7 @@ def populate_database(faker: Faker, db_setup: PsqlDatabase):
         # start with a known object
         objects = [
             Object(
-                oid=idmapper.catalog_oid_to_masterid(
-                    "ZTF", "ZTF20aaelulu"
-                ).item(),
+                oid=idmapper.catalog_oid_to_masterid("ZTF", "ZTF20aaelulu").item(),
                 tid=1,
                 sid=1,
                 meanra=faker.latitude(),
@@ -118,31 +114,21 @@ def populate_database(faker: Faker, db_setup: PsqlDatabase):
             obj = _generate_ztf_object(faker)
             objects.append(obj)
             for i in range(n):
-                detection, ztf_detection = _generate_ztf_detection(
-                    faker, obj.oid, i
-                )
+                detection, ztf_detection = _generate_ztf_detection(faker, obj.oid, i)
                 detections.append(detection)
                 ztf_detections.append(ztf_detection)
-                non_detections.append(
-                    _generate_non_detection(faker, obj.oid, i)
-                )
-                fphot, ztf_fphot = _generate_ztf_forced_photometry(
-                    faker, obj.oid, i
-                )
+                non_detections.append(_generate_non_detection(faker, obj.oid, i))
+                fphot, ztf_fphot = _generate_ztf_forced_photometry(faker, obj.oid, i)
                 ztf_forced_photometry.append(ztf_fphot)
                 forced_photometry.append(fphot)
         for _ in range(n):
             obj = _generate_lsst_object(faker)
             objects.append(obj)
             for i in range(n):
-                detection, lsst_detection = _generate_lsst_detection(
-                    faker, obj.oid, i
-                )
+                detection, lsst_detection = _generate_lsst_detection(faker, obj.oid, i)
                 detections.append(detection)
                 lsst_detections.append(lsst_detection)
-                fphot, lsst_fphot = _generate_lsst_forced_photometry(
-                    faker, obj.oid, i
-                )
+                fphot, lsst_fphot = _generate_lsst_forced_photometry(faker, obj.oid, i)
                 lsst_forced_photometry.append(lsst_fphot)
                 forced_photometry.append(fphot)
         session: Session
@@ -191,9 +177,7 @@ def _generate_ztf_object(faker: Faker) -> Object:
     )
 
 
-def _generate_ztf_detection(
-    faker: Faker, oid, idx
-) -> Tuple[Detection, ZtfDetection]:
+def _generate_ztf_detection(faker: Faker, oid, idx) -> Tuple[Detection, ZtfDetection]:
     return Detection(
         oid=oid,
         sid=1,
@@ -228,9 +212,7 @@ def _generate_lsst_object(faker: Faker) -> Object:
     )
 
 
-def _generate_lsst_detection(
-    faker: Faker, oid, idx
-) -> Tuple[Detection, LsstDetection]:
+def _generate_lsst_detection(faker: Faker, oid, idx) -> Tuple[Detection, LsstDetection]:
     return Detection(
         oid=oid,
         sid=2,

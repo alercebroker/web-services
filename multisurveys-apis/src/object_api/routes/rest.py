@@ -60,9 +60,7 @@ def list_objects(
 
         conesearch = Consearch(dec=dec, ra=ra, radius=radius)
 
-        pagination = PaginationArgs(
-            page=page, page_size=page_size, count=count
-        )
+        pagination = PaginationArgs(page=page, page_size=page_size, count=count)
 
         order = Order(order_by=order_by, order_mode=order_mode)
 
@@ -73,9 +71,7 @@ def list_objects(
             order_args=order,
         )
 
-        object_list = get_objects_list(
-            session_ms=session, search_params=search_params
-        )
+        object_list = get_objects_list(session_ms=session, search_params=search_params)
 
         return object_list
     except HTTPException as e:

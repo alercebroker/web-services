@@ -63,8 +63,7 @@ def get_forced_photometry_by_list(
                         ForcedPhotometry,
                         and_(
                             ForcedPhotometry.oid == model.oid,
-                            ForcedPhotometry.measurement_id
-                            == model.measurement_id,
+                            ForcedPhotometry.measurement_id == model.measurement_id,
                         ),
                     )
                     .where(model.oid.in_(oids))

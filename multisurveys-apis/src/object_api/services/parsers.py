@@ -12,9 +12,7 @@ from .idmapper.idmapper import decode_ids
 
 
 class ModelDataParser:
-    def __init__(
-        self, survey: str, input_data: dict, model_variant: str = "basic"
-    ):
+    def __init__(self, survey: str, input_data: dict, model_variant: str = "basic"):
         self.survey = survey
         self.input_data = input_data
         self.model_variant = model_variant
@@ -28,13 +26,9 @@ class ModelDataParser:
 
 
 def parse_params(search_params):
-    consearch_parse = convert_conesearch_args(
-        search_params.conesearch_args.__dict__
-    )
+    consearch_parse = convert_conesearch_args(search_params.conesearch_args.__dict__)
     consearch_statement = create_conesearch_statement(consearch_parse)
-    filters_sqlalchemy_statement = convert_filters_to_sqlalchemy_statement(
-        search_params.filter_args.__dict__
-    )
+    filters_sqlalchemy_statement = convert_filters_to_sqlalchemy_statement(search_params.filter_args.__dict__)
 
     response = {
         "consearch_args": consearch_parse,
@@ -91,9 +85,7 @@ def serialize_items(data):
 def parse_items_probabilities(items, survey):
     ret = []
     for item in items:
-        model_output = ModelDataParser(
-            survey, item, "probability"
-        ).parse_data()
+        model_output = ModelDataParser(survey, item, "probability").parse_data()
         ret.append(model_output)
 
     return ret
@@ -102,12 +94,8 @@ def parse_items_probabilities(items, survey):
 def parse_classifiers(classes_list):
     res = []
     for class_name in classes_list:
-        classifier_ms = jsonable_encoder(
-            class_name[0], exclude={"_sa_instance_state"}
-        )
-        taxonomy_ms = jsonable_encoder(
-            class_name[1], exclude={"_sa_instance_state"}
-        )
+        classifier_ms = jsonable_encoder(class_name[0], exclude={"_sa_instance_state"})
+        taxonomy_ms = jsonable_encoder(class_name[1], exclude={"_sa_instance_state"})
         merged_dict = {**classifier_ms, **taxonomy_ms}
 
         res.append(merged_dict)

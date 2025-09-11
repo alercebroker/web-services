@@ -17,9 +17,7 @@ async def probability(
     oid: str,
     classifier: str | None = None,
 ):
-    classifiers_list = get_classifiers(
-        session_factory=request.app.state.psql_session
-    )
+    classifiers_list = get_classifiers(session_factory=request.app.state.psql_session)
 
     if classifier:
         for key, value in classifiers_list.items():
@@ -29,13 +27,9 @@ async def probability(
         if len(classifiers_list) != 1:
             raise HTTPException(status_code=404, detail="Classifier not found")
 
-    probability = get_probability(
-        oid, classifiers_list, session_factory=request.app.state.psql_session
-    )
+    probability = get_probability(oid, classifiers_list, session_factory=request.app.state.psql_session)
 
     if not probability:
-        raise HTTPException(
-            status_code=404, detail="Probability not found for the given OID"
-        )
+        raise HTTPException(status_code=404, detail="Probability not found for the given OID")
 
     return probability
