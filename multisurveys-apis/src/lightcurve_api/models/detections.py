@@ -1,3 +1,4 @@
+import math
 from typing import Optional
 
 from pydantic import model_validator
@@ -66,21 +67,25 @@ class ztfDetection(BaseDetection):
 
         return values
 
-    def magnitude2flux(self) -> float:
-        return 0.0
+    def magnitude2flux(self, difference: bool) -> float:
+        mag = self.magpsf if difference else self.magpsf_corr
+        partially_converted = 10 ** (-0.4 * (mag - 23.9))
+        return partially_converted * self.isdiffpos if difference else partially_converted
 
-    def magnitude2flux_err(self) -> float:
-        return 0.0
+    def magnitude2flux_err(self, difference: bool) -> float:
+        err = self.sigmapsf if difference else self.sigmapsf_corr_ext
+        return abs(err) * abs(self.magnitude2flux(difference))
 
-    def flux2magnitude(self) -> float:
-        return self.magpsf_corr
+    def flux2magnitude(self, difference: bool) -> float:
+        return self.magpsf if difference else self.magpsf_corr
 
-    def flux2magnitude_err(self) -> float:
-        return self.sigmapsf_corr
+    def flux2magnitude_err(self, difference: bool) -> float:
+        return self.sigmapsf if difference else self.sigmapsf_corr_ext
 
 
 class LsstDetection(BaseDetection):
     oid: int
+    survey_id: str
     measurement_id: int
     parentDiaSourceId: int | None
     psfFlux: float
@@ -88,6 +93,8 @@ class LsstDetection(BaseDetection):
     psfFlux_flag: int
     psfFlux_flag_edge: int
     psfFlux_flag_noGoodPixels: int
+    scienceFlux: float
+    scienceFluxErr: float
     mjd: float
     ra: float
     dec: float
@@ -104,6 +111,8 @@ class LsstDetection(BaseDetection):
             "psfFlux_flag": 0,
             "psfFlux_flag_edge": 0,
             "psfFlux_flag_noGoodPixels": 0,
+            "scienceFlux": 0.0,
+            "scienceFluxErr": 0.0,
             "mjd": 0.0,
             "ra": 0.0,
             "dec": 0.0,
@@ -116,14 +125,16 @@ class LsstDetection(BaseDetection):
 
         return values
 
-    def magnitude2flux(self) -> float:
-        return self.psfFlux
+    def magnitude2flux(self, difference: bool) -> float:
+        return self.psfFlux if difference else self.scienceFlux
 
-    def magnitude2flux_err(self) -> float:
-        return self.psfFluxErr
+    def magnitude2flux_err(self, difference: bool) -> float:
+        return self.psfFluxErr if difference else self.scienceFluxErr
 
-    def flux2magnitude(self) -> float:
-        return 0.0
+    def flux2magnitude(self, difference: bool) -> float:
+        mag = self.psfFlux if difference else self.scienceFlux
+        return -2.5 * math.log10(mag) + 23.9
 
-    def flux2magnitude_err(self) -> float:
-        return 0.0
+    def flux2magnitude_err(self, difference: bool) -> float:
+        err = self.psfFluxErr if difference else self.scienceFluxErr
+        return err  # TODO: compute actual err
