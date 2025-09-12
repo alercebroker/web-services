@@ -231,6 +231,10 @@ def _generate_lsst_detection(faker: Faker, oid, idx) -> Tuple[Detection, LsstDet
         x=1,
         y=1,
         timeProcessedMjdTai=1,
+        psfFlux=faker.pyfloat(min_value=50, max_value=300),
+        psfFluxErr=faker.pyfloat(min_value=0, max_value=2),
+        scienceFlux=faker.pyfloat(min_value=50, max_value=300),
+        scienceFluxErr=faker.pyfloat(min_value=0, max_value=2),
     )
 
 
@@ -306,4 +310,8 @@ def _generate_lsst_forced_photometry(faker: Faker, oid, idx):
         visit=faker.random_int(),
         detector=faker.random_int(),
         timeProcessedMjdTai=faker.random_int(),
+        psfFlux=faker.pyfloat(min_value=50, max_value=300),
+        psfFluxErr=faker.pyfloat(min_value=0, max_value=2),
+        scienceFlux=faker.pyfloat(min_value=50, max_value=300),
+        scienceFluxErr=faker.pyfloat(min_value=0, max_value=2),
     )

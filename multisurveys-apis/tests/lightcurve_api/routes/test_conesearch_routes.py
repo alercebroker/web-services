@@ -108,6 +108,7 @@ def test_oid_lightcurve(client: TestClient, populate_database):
             "neighbors": "10",
         },
     )
+    print(response.json())
     assert response.status_code == 200
     assert len(response.json()["detections"]) >= 1
     assert len(response.json()["non_detections"]) >= 1

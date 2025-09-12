@@ -47,6 +47,9 @@ def parse_forced_photometry(args: Tuple[Sequence[Row[Any]], str]):
 
 
 class ModelsParser:
+    class ParseError(Exception):
+        pass
+
     def __init__(self, output_model, sql_response, survey_id):
         self.output_model = output_model
         self.sql_response = sql_response
@@ -56,8 +59,11 @@ class ModelsParser:
         data_parsed = []
         for row in self.sql_response:
             model_dict = self.transform_models_to_dict(row)
-            model_parsed = self.output_model(**model_dict, survey_id=self.survey_id)
-            data_parsed.append(model_parsed)
+            try:
+                model_parsed = self.output_model(**model_dict, survey_id=self.survey_id)
+                data_parsed.append(model_parsed)
+            except Exception as e:
+                raise self.ParseError(f"Error parsing {self.output_model.__name__} model: {e}")
 
         return data_parsed
 
