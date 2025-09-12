@@ -60,7 +60,7 @@
     });
   }
 
-  loadScript("https://cdn.jsdelivr.net/npm/chart.js")
+  loadScript("{{API_URL}}/chart/dist/chart.umd.min.js")
     .then(() => elementReady('#probabilities-app'))
     .then((el) => {
       init();
