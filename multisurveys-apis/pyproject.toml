@@ -66,6 +66,8 @@ probability = "scripts.run_api:run_probability"
 dbp = "db_plugins.cli.manage:cli"
 initdb = "scripts.initdb:initdb"
 create_q3c_idx = "scripts.initdb:create_q3c_idx_cmd"
+populate_db = "scripts.populate_database:main"
+decode_oid = "scripts.decode_oid:main"
 
 [pytest]
 mock_use_standalone_module = true
