@@ -34,7 +34,7 @@ def get_non_detections_by_list(session_factory):
         oids, survey_id = args
 
         if survey_id.lower() != "ztf":
-            raise ValueError("Survey not supported")
+            return [], survey_id
 
         session: Session
         with session_factory() as session:
