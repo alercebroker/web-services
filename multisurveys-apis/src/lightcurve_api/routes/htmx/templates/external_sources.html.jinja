@@ -1,0 +1,47 @@
+<form id="dr-table"
+  hx-post="/htmx/config_change"
+  hx-target="#main-app"
+  hx-vals='{{config_state.model_dump_json(exclude=["external_sources"])}}'
+  hx-ext="form-json"
+  hx-indicator="#loading"
+>
+  <input type="hidden" name="external_sources.enabled" value="true" {% if not config_state.external_sources.enabled %}disabled{% endif %}>
+  <table class="min-w-full border divide-y">
+      <thead>
+          <tr class="">
+              <th class="w-12 text-center"></th>
+              <th class="text-center">ObjectId</th>
+              <th class="text-center">filterid</th>
+              <th class="text-center">nepochs</th>
+              <th class="text-center">fieldid</th>
+              <th class="text-center">rcid</th>
+              <th class="text-center">ra</th>
+              <th class="text-center">dec</th>
+          </tr>
+      </thead>
+      <tbody class="divide-y">
+          {% for object in config_state.external_sources.objects %}
+              <tr class="hover:bg-gray-100">
+                  <td class="text-center">
+                      <input type="checkbox"
+                              class="form-checkbox h-6 w-6 text-blue-600"
+                              name="external_sources.selected_objects[]"
+                              value="{{ object.objectId }}"
+                              checked
+                      />
+                  </td>
+                  <td class="text-right">{{ object.objectId }}</td>
+                  <td class="text-right">{{ object.filterid }}</td>
+                  <td class="text-right">{{ object.nepochs }}</td>
+                  <td class="text-right">{{ object.fieldid }}</td>
+                  <td class="text-right">{{ object.rcid }}</td>
+                  <td class="text-right">{{ object.ra }}</td>
+                  <td class="text-right">{{ object.dec }}</td>
+              </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+  <button type="submit">Ok</button>
+  <p id="loading" class="htmx-indicator">Loading...</p>
+</form>
+

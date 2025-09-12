@@ -1,0 +1,65 @@
+{% import 'toggle.html.jinja' as toggle %}
+
+<div class="w-full h-px bg-gray-200 my-3"></div>
+
+<form 
+  hx-ext="form-json"
+  hx-post="/htmx/config_change" 
+  hx-target="#main-app" 
+  hx-trigger="change delay:200ms"
+>
+  {% for detection in detections %}
+  <input type="hidden" name="detections[]" value="{{ detection.model_dump_json() }}">
+  {% endfor %}
+
+  {% for non_detection in non_detections %}
+  <input type="hidden" name="non_detections[]" value="{{ non_detection.model_dump_json() }}">
+  {% endfor %}
+
+  {% for forced_photometry in forced_photometry %}
+  <input type="hidden" name="forced_photometry[]" value="{{ forced_photometry.model_dump_json() }}">
+  {% endfor %}
+
+  {% for selected_object in config_state.external_sources.selected_objects %}
+  <input type="hidden" name="external_sources.selected_objects[]" value="{{ selected_object }}">
+  {% endfor %}
+
+  <div>
+    {% include "band_toggles.html.jinja" %}
+  </div>
+
+  <div class="w-full h-px bg-gray-200 my-3"></div>
+
+  <div class="mt-2">
+    {{ toggle.toggle("flux", "Magnitude", "Flux", config_state.flux) }}
+  </div>
+  <div class="mt-2">
+    {{ toggle.toggle("total", "Difference", "Total", config_state.total) }}
+  </div>
+  <div class="mt-2 flex items-center">
+    <span class="font-semibold mr-3">External</span>
+    {{ toggle.toggle("external_sources.enabled", "Off", "On", config_state.external_sources.enabled) }}
+    <button 
+      class="ml-2 p-1.5 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      aria-label="Filter external sources"
+      hx-post="/htmx/external_sources"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="w-full h-px bg-gray-200 my-3"></div>
+
+  <div class="mt-2">
+    {% include "fold_controls.html.jinja" %}
+  </div>
+
+  <div class="w-full h-px bg-gray-200 my-3"></div>
+
+  <div class="mt-2 flex items-center">
+    <span class="font-semibold mr-3">Offset</span>
+    {{ toggle.toggle("offset_bands", "Off", "On", config_state.offset_bands) }}
+  </div>
+</form>

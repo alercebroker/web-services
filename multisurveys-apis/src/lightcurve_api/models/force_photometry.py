@@ -66,19 +66,19 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
 
         return values
 
-    def magnitude2flux(self, difference: bool) -> float:
-        mag = self.mag if difference else self.mag_corr
+    def magnitude2flux(self, total: bool) -> float:
+        mag = self.mag_corr if total else self.mag
         return 10 ** (-0.4 * (mag - 23.9))
 
-    def magnitude2flux_err(self, difference: bool) -> float:
-        err = self.e_mag if difference else self.e_mag_corr
-        return abs(err) * abs(self.magnitude2flux(difference))
+    def magnitude2flux_err(self, total: bool) -> float:
+        err = self.e_mag_corr if total else self.e_mag
+        return abs(err) * abs(self.magnitude2flux(total))
 
-    def flux2magnitude(self, difference: bool) -> float:
-        return self.mag if difference else self.mag_corr
+    def flux2magnitude(self, total: bool) -> float:
+        return self.mag_corr if total else self.mag
 
-    def flux2magnitude_err(self, difference: bool) -> float:
-        return self.e_mag if difference else self.e_mag_corr
+    def flux2magnitude_err(self, total: bool) -> float:
+        return self.e_mag_corr if total else self.e_mag
 
 
 class LsstForcedPhotometry(BaseForcedPhotometry):
@@ -110,15 +110,16 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
         return values
 
-    def magnitude2flux(self, difference: bool) -> float:
-        return self.psfFlux if difference else self.scienceFlux
+    def magnitude2flux(self, total: bool) -> float:
+        return self.scienceFlux if total else self.psfFlux
 
-    def magnitude2flux_err(self, difference: bool) -> float:
-        return self.psfFluxErr if difference else self.scienceFluxErr
+    def magnitude2flux_err(self, total: bool) -> float:
+        return self.scienceFluxErr if total else self.psfFluxErr
 
-    def flux2magnitude(self, difference: bool) -> float:
-        flux = self.psfFlux if difference else self.scienceFlux
+    def flux2magnitude(self, total: bool) -> float:
+        flux = self.scienceFlux if total else self.psfFlux
         return -2.5 * math.log10(flux) + 23.9
 
-    def flux2magnitude_err(self, difference: bool) -> float:
-        return self.psfFluxErr  # TODO: compute actual err
+    def flux2magnitude_err(self, total: bool) -> float:
+        err = self.scienceFluxErr if total else self.psfFlux
+        return err

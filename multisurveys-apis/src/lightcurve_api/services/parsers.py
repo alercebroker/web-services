@@ -2,9 +2,10 @@ from typing import Any, Sequence, Tuple
 
 from sqlalchemy import Row
 
-from ..models.detections import LsstDetection, ztfDetection
+from ..models.detections import LsstDetection, ZtfDataReleaseDetection, ztfDetection
 from ..models.force_photometry import LsstForcedPhotometry, ZtfForcedPhotometry
 from ..models.non_detections import ZtfNonDetections
+from ..models.object import ZtfDrObject
 
 
 def parse_sql_detection(args: Tuple[Sequence[Row[Any]], str]):
@@ -73,3 +74,41 @@ class ModelsParser:
             model_dict.update(model.__dict__.copy())
 
         return model_dict
+
+
+def parse_ztf_dr_detection(detections: list[dict], object_ids: list[str] = []) -> list[ZtfDataReleaseDetection]:
+    parsed_detections = []
+    for det in detections:
+        if str(det["_id"]) not in object_ids and len(object_ids) > 0:
+            continue
+        for epoch in range(det["nepochs"]):
+            parsed_detections.append(
+                ZtfDataReleaseDetection(
+                    band=det["filterid"],
+                    fid=det["filterid"],
+                    field=det["fieldid"],
+                    objectid=det["_id"],
+                    mjd=det["hmjd"][epoch],
+                    mag_corr=det["mag"][epoch],
+                    e_mag_corr_ext=det["magerr"][epoch],
+                    ra=det["objra"],
+                    dec=det["objdec"],
+                )
+            )
+
+    return parsed_detections
+
+
+def parse_ztf_dr_object(objects: list[dict]) -> list[ZtfDrObject]:
+    return [
+        ZtfDrObject(
+            objectId=str(obj["_id"]),
+            filterid=obj["filterid"],
+            nepochs=obj["nepochs"],
+            fieldid=obj["fieldid"],
+            rcid=obj["rcid"],
+            ra=obj["objra"],
+            dec=obj["objdec"],
+        )
+        for obj in objects
+    ]
