@@ -20,13 +20,13 @@ class radarCreator{
         this.scale = (this.max_value/3)
     }
 
-    updateMyChart(){
-        this.removeDataChart()
-        this.updateDataChart()
-        this.isDark();
+    update_chart(){
+        this.remove_data()
+        this.update_data()
+        this.is_dark();
     }
 
-    updateDataChart(){
+    update_data(){
         this.mychart.data.labels.push(...this.classes);
         this.mychart.data.datasets.forEach((dataset) => {
             dataset.data.push(...this.probabilities);
@@ -34,24 +34,30 @@ class radarCreator{
 
         this.set_max_value()
         this.set_scale()
-
-        this.mychart.config.options.scales.r.ticks.stepSize = this.scale
-        this.mychart.config.options.scales.r.max = this.max_value
+        this.update_scale()
 
         this.mychart.update();
     }
 
-    removeDataChart(){
+    update_scale(){
+        this.mychart.config.options.scales.r.ticks.stepSize = this.scale
+        this.mychart.config.options.scales.r.max = this.max_value
+    }
+
+    remove_data(){
         this.mychart.data.labels.length = 0;
         this.mychart.data.datasets.forEach((dataset) => {
             dataset.data.length = 0;
-
         });
 
         this.mychart.update();
     }
 
-    isDark(){
+    destroy_chart(){
+        this.mychart.destroy();
+    }
+
+    is_dark(){
         if(document.getElementById("probabilities-app").classList.contains("tw-dark")){
             this.mychart.config.options.scales.r.backgroundColor = 'rgba(245, 245, 245, 0.2)'
             this.mychart.config.options.scales.r.angleLines.color = '#F5F5F5'
@@ -67,7 +73,7 @@ export function init(){
     let raw_data = JSON.parse(document.getElementById("probabilities-data").text);
     let raw_group_prob_dict = raw_data.group_prob_dict
     let taxonomy_and_probabilities = get_taxonomy_dict(raw_group_prob_dict)
-    let classifiers_data_reverse= reverseData(taxonomy_and_probabilities)
+    let classifiers_data_reverse= reverse_data(taxonomy_and_probabilities)
 
     let custom_select = document.querySelector(".select-wrapper")
     let classifier_selected = document.querySelector('.custom-option.selected').getAttribute("data-value")
@@ -76,7 +82,6 @@ export function init(){
 
     let ctx = document.getElementById('myChart');
     let config = get_radar_config()
-    // let mychart = new Chart(ctx, config);
     let radar = new radarCreator(
         config, 
         ctx, 
@@ -84,9 +89,7 @@ export function init(){
         classifier_data_dict['probabilities']
     )
 
-    radar.updateMyChart()
-
-    // updateMyChart(mychart, classifier_selected_data)
+    radar.update_chart()
 
     custom_select.addEventListener('click', () => {
         custom_select.querySelector('.select').classList.toggle('open');
@@ -99,15 +102,44 @@ export function init(){
                 option.classList.add('selected');
                 option.closest('.select').querySelector('.select__trigger span').textContent = option.textContent;
 
-                classifier_selected_data = classifiers_data_reverse[option.getAttribute("data-value")]
-                console.log(classifier_selected_data)
 
-                // updateMyChart(mychart, classifier_selected_data)
+                classifier_selected_data = classifiers_data_reverse[option.getAttribute("data-value")]
+                classifier_data_dict = get_probabilities_and_classes_dict(classifier_selected_data)
+
+                radar.destroy_chart()
+                radar = new radarCreator(
+                    config, 
+                    ctx, 
+                    classifier_data_dict['classes'], 
+                    classifier_data_dict['probabilities']
+                )
+                radar.update_chart()
+
             }
         })
     }
 }
 
+
+export function elementReady(selector) {
+    return new Promise((resolve, reject) => {
+      const el = document.querySelector(selector);
+      if (el) {
+        resolve(el);
+      }
+  
+      new MutationObserver((mutationRecords, observer) => {
+        Array.from(document.querySelectorAll(selector)).forEach(element => {
+          resolve(element);
+          observer.disconnect();
+        });
+      })
+      .observe(document.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    });
+}
 
 function get_taxonomy_dict(probabilities_dict){
     let response_dict = {}
@@ -122,7 +154,7 @@ function get_taxonomy_dict(probabilities_dict){
     return response_dict
 }
 
-function reverseData(raw_tax){
+function reverse_data(raw_tax){
     let aux_arr = []
 
     Object.keys(raw_tax).forEach((key) => {
@@ -150,78 +182,3 @@ function get_probabilities_and_classes_dict(classifier_probabilities){
 
     return {"classes": classes_array, "probabilities": probabilities_array}
 }
-
-function get_max_value(probabilities){
-    let maxVal = Math.max.apply(Math, probabilities)
-
-    return maxVal
-}
-
-function get_scale(max_value){
-    return (max_value/3)
-}
-
-function updateMyChart(mychart, data){
-    let max_value
-    let classifier_data = get_probabilities_and_classes_dict(data)
-
-    max_value = get_max_value(classifier_data['probabilities'])
-
-    removeDataChart(mychart)
-    updateDataChart(mychart, classifier_data, max_value)
-
-    isDark(mychart);
-}
-
-function removeDataChart(mychart){
-    mychart.data.labels.length = 0;
-    mychart.data.datasets.forEach((dataset) => {
-        dataset.data.length = 0;
-
-    });
-
-    mychart.update();
-}
-
-function updateDataChart(mychart, data, max_value){
-    mychart.data.labels.push(...data['classes']);
-    mychart.data.datasets.forEach((dataset) => {
-        dataset.data.push(...data['probabilities']);
-    });
-
-    mychart.config.options.scales.r.ticks.stepSize = get_scale(max_value)
-    mychart.config.options.scales.r.max = max_value
-
-    mychart.update();
-}
-
-function isDark(mychart){
-    if(document.getElementById("probabilities-app").classList.contains("tw-dark")){
-        mychart.config.options.scales.r.backgroundColor = 'rgba(245, 245, 245, 0.2)'
-        mychart.config.options.scales.r.angleLines.color = '#F5F5F5'
-        mychart.config.options.scales.r.grid.color = '#F5F5F5'
-        mychart.config.options.scales.r.pointLabels.color = '#F5F5F5'
-        
-        mychart.update();
-    }
-}
-
-export function elementReady(selector) {
-    return new Promise((resolve, reject) => {
-      const el = document.querySelector(selector);
-      if (el) {
-        resolve(el);
-      }
-  
-      new MutationObserver((mutationRecords, observer) => {
-        Array.from(document.querySelectorAll(selector)).forEach(element => {
-          resolve(element);
-          observer.disconnect();
-        });
-      })
-      .observe(document.documentElement, {
-        childList: true,
-        subtree: true
-      });
-    });
-  }
