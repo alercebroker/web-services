@@ -4,7 +4,7 @@ from sqlalchemy import Row
 
 from ..models.detections import LsstDetection, ztfDetection
 from ..models.force_photometry import LsstForcedPhotometry, ZtfForcedPhotometry
-from ..models.non_detections import LsstNonDetection, ZtfNonDetections
+from ..models.non_detections import ZtfNonDetections
 
 
 def parse_sql_detection(args: Tuple[Sequence[Row[Any]], str]):
@@ -27,12 +27,10 @@ def parse_sql_detection(args: Tuple[Sequence[Row[Any]], str]):
 def parse_sql_non_detections(args: Tuple[Sequence[Row[Any]], str]):
     sql_response, survey_id = args
 
-    if survey_id == "lsst":
-        non_detections = ModelsParser(LsstNonDetection, sql_response, survey_id)
-    else:
-        non_detections = ModelsParser(ZtfNonDetections, sql_response, "")
+    if survey_id.lower() != "ztf":
+        return []
 
-    return non_detections.parse_data_arr()
+    return ModelsParser(ZtfNonDetections, sql_response, survey_id).parse_data_arr()
 
 
 def parse_forced_photometry(args: Tuple[Sequence[Row[Any]], str]):
