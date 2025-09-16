@@ -101,7 +101,6 @@ def format_classifiers_name(classifier_name):
     return classifier_name
 
 
-import pprint
 @router.get("/probabilities/{oid}", response_class=HTMLResponse)
 async def object_probability_app(
     request: Request,

@@ -100,7 +100,7 @@ export function transformRa(degrees, precision=3) {
   return str;
 }
 
-export function setMenuUrl(ra, dec, candid, object, raTime, decTime) {
+export function setMenuUrl(ra, dec, measurement_id, object, raTime, decTime) {
 
   let raNed = encodeCoordinates(raTime)
   let decNed = encodeCoordinates(decTime)
@@ -122,7 +122,7 @@ export function setMenuUrl(ra, dec, candid, object, raTime, decTime) {
 
     "VSX": `https://www.aavso.org/vsx/index.php?view=results.get&coords=${ra}+${dec}&format=d&size=10&geom=r&unit=3&order=9`,
     
-    "find-button-object": `https://findingchart.alerce.online/get_chart?oid=${object}&candid=${candid}`,
+    "find-button-object": `https://findingchart.alerce.online/get_chart?oid=${object}&candid=${measurement_id}`,
   };
 
 

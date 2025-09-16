@@ -25,7 +25,7 @@ export function init() {
   let nonDetections = objectInfo.nonDetections;
   let ra = objectInfo.ra;
   let dec = objectInfo.dec;
-  let candid = objectInfo.candid;
+  let measurement_id = objectInfo.measurement_id;
 
   let raDec = `${Number.parseFloat(ra).toFixed(FIXED_PRECISION)}<br>${Number.parseFloat(dec).toFixed(FIXED_PRECISION)}`;
 
@@ -60,7 +60,7 @@ export function init() {
   document.getElementById("menu-button-object").addEventListener("click", () => display_menu());
   document.getElementById("menu-box-object").addEventListener("click", () => display_menu());
 
-  setMenuUrl(ra, dec, candid, object, raTime, decTime);
+  setMenuUrl(ra, dec, measurement_id, object, raTime, decTime);
 }
 
 

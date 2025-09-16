@@ -66,7 +66,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
             "lastDetectionMJD": object_data['lastmjd'],
             "ra": object_data['meanra'],
             "dec": object_data['meandec'],
-            "candid": object_data['candid'],
+            "measurement_id": object_data['measurement_id'],
             "otherArchives": object_data['otherArchives'],
         },
     )

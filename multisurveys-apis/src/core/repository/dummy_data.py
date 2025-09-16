@@ -1,16 +1,16 @@
 
 
 object_basic_information_dict = {
-    "oid": "12",
-    "corrected": "Yes",
-    "stellar": "Yes", 
-    "ndet": 1,
+    "oid": "12", #si
+    "corrected": "Yes", #si
+    "stellar": "Yes", #si
+    "ndet": 1, #si
     "count_ndet": 0,
-    "firstmjd": 59450.163946799934,
-    "lastmjd": 59478.19487270014,
-    "meanra": 244.0754619,
-    "meandec": 37.6368494,
-    "candid": "1234",
+    "firstmjd": 59450.163946799934, #si
+    "lastmjd": 59478.19487270014, #si
+    "meanra": 244.0754619, #si
+    "meandec": 37.6368494, #si
+    "measurement_id": 1234,
     "otherArchives": ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX'],
 }
 
