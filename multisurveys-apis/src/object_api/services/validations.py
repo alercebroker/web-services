@@ -9,9 +9,7 @@ def ndets_validation(ndets: list[int]):
         if ndets[0] > ndets[1]:
             raise HTTPException(
                 status_code=422,
-                detail={
-                    "detections_container": "Min value can't be greater than max."
-                },
+                detail={"detections_container": "Min value can't be greater than max."},
             )
 
 
@@ -29,9 +27,7 @@ def class_validation(classifier: str, class_name: str):
     if class_name is None or classifier is None:
         raise HTTPException(
             status_code=422,
-            detail={
-                "classes_container": "Select a class if you want to filter by classifier."
-            },
+            detail={"classes_container": "Select a class if you want to filter by classifier."},
         )
 
 
@@ -39,9 +35,7 @@ def classifier_validation(classifier: str):
     if classifier is None:
         raise HTTPException(
             status_code=422,
-            detail={
-                "taxonomy_container": "Select a classifier if you want to filter objects."
-            },
+            detail={"taxonomy_container": "Select a classifier if you want to filter objects."},
         )
 
 
@@ -57,9 +51,7 @@ def nan_validation(single_coord, name):
         if math.isnan(single_coord):
             raise HTTPException(
                 status_code=422,
-                detail={
-                    "conesearch_filters_container": f"{name} must have a value."
-                },
+                detail={"conesearch_filters_container": f"{name} must have a value."},
             )
 
 
@@ -68,9 +60,7 @@ def radius_validation(radius):
         if radius < 0:
             raise HTTPException(
                 status_code=422,
-                detail={
-                    "conesearch_filters_container": "Radius can't be negative."
-                },
+                detail={"conesearch_filters_container": "Radius can't be negative."},
             )
 
 
@@ -107,9 +97,7 @@ def probability_validation(probability, classifier, class_name):
             if class_name is None:
                 raise HTTPException(
                     status_code=422,
-                    detail={
-                        "prob_range": "Select a class if you want to filter by classifier."
-                    },
+                    detail={"prob_range": "Select a class if you want to filter by classifier."},
                 )
 
 
@@ -118,16 +106,12 @@ def date_validation(firstmjd):
         if len(firstmjd) > 2:
             raise HTTPException(
                 status_code=422,
-                detail={
-                    "discovery_date_filters_container": "To filter by date, there must be a maximum of two dates."
-                },
+                detail={"discovery_date_filters_container": "To filter by date, there must be a maximum of two dates."},
             )
 
         if len(firstmjd) == 2:
             if firstmjd[0] >= firstmjd[1]:
                 raise HTTPException(
                     status_code=422,
-                    detail={
-                        "discovery_date_filters_container": "Min MJD must be lower than max MJD."
-                    },
+                    detail={"discovery_date_filters_container": "Min MJD must be lower than max MJD."},
                 )

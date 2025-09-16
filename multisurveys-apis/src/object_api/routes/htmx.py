@@ -111,9 +111,7 @@ async def objects_form(request: Request):
 
 
 @router.get("/select", response_class=HTMLResponse)
-async def select_classes_classifier(
-    request: Request, classifier_classes: list[str] = Query(...)
-):
+async def select_classes_classifier(request: Request, classifier_classes: list[str] = Query(...)):
     try:
         classes = classifier_classes
 
@@ -178,9 +176,7 @@ def objects_table(
 
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
 
-            pagination = PaginationArgs(
-                page=page, page_size=page_size, count=count
-            )
+            pagination = PaginationArgs(page=page, page_size=page_size, count=count)
 
             order = Order(order_by=order_by, order_mode=order_mode)
 
@@ -191,9 +187,7 @@ def objects_table(
                 order_args=order,
             )
 
-            object_list = get_objects_list(
-                session_ms=session, search_params=search_params
-            )
+            object_list = get_objects_list(session_ms=session, search_params=search_params)
         else:
             object_list = {
                 "next": False,
@@ -276,9 +270,7 @@ def sidebar(
                 lastmjd=lastmjd,
             )
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
-            pagination = PaginationArgs(
-                page=page, page_size=page_size, count=count
-            )
+            pagination = PaginationArgs(page=page, page_size=page_size, count=count)
             order = Order(order_by=order_by, order_mode=order_mode)
             search_params = SearchParams(
                 filter_args=filters,
@@ -287,9 +279,7 @@ def sidebar(
                 order_args=order,
             )
 
-            object_list = get_objects_list(
-                session_ms=session, search_params=search_params
-            )
+            object_list = get_objects_list(session_ms=session, search_params=search_params)
 
         else:
             object_list = {

@@ -1,8 +1,8 @@
-from typing import Callable
+from typing import Any, Callable, List, Sequence, Tuple
 from contextlib import AbstractContextManager
 from db_plugins.db.sql.models import ZtfNonDetection
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import Row, select
 
 
 def get_all_unique_non_detections_sql(
@@ -24,11 +24,23 @@ def get_all_unique_non_detections_sql(
 
 
 def build_statement(model_id, oid):
-    stmt = (
-        select(model_id)
-        .where(model_id.oid == oid)
-        .order_by(model_id.mjd.desc())
-        .limit(10)
-    )
+    stmt = select(model_id).where(model_id.oid == oid).order_by(model_id.mjd.desc()).limit(10)
 
     return stmt
+
+
+def get_non_detections_by_list(session_factory):
+    def _get(args: Tuple[List[int], str]) -> Tuple[Sequence[Row[Any]], str]:
+        oids, survey_id = args
+
+        if survey_id.lower() != "ztf":
+            raise ValueError("Survey not supported")
+
+        session: Session
+        with session_factory() as session:
+            return (
+                session.execute(select(ZtfNonDetection).where(ZtfNonDetection.oid.in_(oids))).all(),
+                survey_id,
+            )
+
+    return _get

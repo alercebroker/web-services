@@ -28,9 +28,7 @@ def get_objects_list(session_ms, search_params):
     parsed_params = parse_params(search_params)
 
     result = query_get_objects(session_ms, search_params, parsed_params)
-    result = parse_objects_list_output(
-        result, search_params.filter_args.survey, classes_list
-    )
+    result = parse_objects_list_output(result, search_params.filter_args.survey, classes_list)
 
     return result
 

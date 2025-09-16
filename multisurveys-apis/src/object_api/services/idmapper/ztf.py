@@ -1,9 +1,7 @@
 import numpy as np
 
 
-def encode_ztf_to_masterid_without_survey(
-    ztf_oid: str, validate: bool
-) -> np.int64:
+def encode_ztf_to_masterid_without_survey(ztf_oid: str, validate: bool) -> np.int64:
     if not isinstance(ztf_oid, str):
         raise ValueError(f"Invalid ZTF object ID: {ztf_oid}")
     if validate and not is_ztf_oid_valid(ztf_oid):

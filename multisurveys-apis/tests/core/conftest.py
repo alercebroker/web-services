@@ -36,9 +36,7 @@ def db_setup():
             os.environ["PSQL_PASSWORD"] = "alerce"
             os.environ["PSQL_DATABASE"] = "multistream"
             os.environ["PSQL_HOST"] = host
-            os.environ["PSQL_PORT"] = str(
-                container.get_exposed_port("5432/tcp")
-            )
+            os.environ["PSQL_PORT"] = str(container.get_exposed_port("5432/tcp"))
             print(f"Connecting to {host}:{os.environ['PSQL_PORT']}")
             db = psql_entity()
             db.create_db()
@@ -52,5 +50,12 @@ def db(db_setup):
     yield db_setup
 
     with db_setup.session() as session:
+        session.execute(text("DELETE FROM ztf_detection"))
+        session.execute(text("DELETE FROM lsst_detection"))
+        session.execute(text("DELETE FROM detection"))
+        session.execute(text("DELETE FROM ztf_non_detection"))
+        session.execute(text("DELETE FROM forced_photometry"))
+        session.execute(text("DELETE FROM ztf_forced_photometry"))
+        session.execute(text("DELETE FROM lsst_forced_photometry"))
         session.execute(text("DELETE FROM object"))
         session.commit()
