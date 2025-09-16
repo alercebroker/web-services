@@ -15,3 +15,12 @@ class DatabaseError(WrapperException):
 
     def __str__(self) -> str:
         return f"{self.database} error: {self.original_exception.__str__()}"
+
+
+class ObjectNotFound(BaseException):
+    def __init__(self, object_id) -> None:
+        super().__init__()
+        self.object_id = object_id
+
+    def __str__(self) -> str:
+        return f"Object {self.object_id} not found on the database"

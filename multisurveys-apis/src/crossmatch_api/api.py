@@ -10,7 +10,6 @@ psql_engine = psql_entity()
 app.state.psql_session = psql_engine.session
 instrumentator = Instrumentator().instrument(app).expose(app)
 
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,8 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="src/magstat_api/static"), name="static")
-app.mount("/htmx-static", StaticFiles(directory="src/core/htmx"), name="htmx-static")
+app.mount("/static", StaticFiles(directory="src/crossmatch_api/static"), name="static")
+app.mount("/htmx-static", StaticFiles(directory="src/htmx"), name="htmx-static")
 
 app.include_router(rest.router)
 app.include_router(htmx.router)
+
