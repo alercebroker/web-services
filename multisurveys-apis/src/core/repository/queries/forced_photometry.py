@@ -1,18 +1,17 @@
-from typing import Callable
-from contextlib import AbstractContextManager
+from typing import Any, Callable, ContextManager, List, Tuple, Sequence
 from db_plugins.db.sql.models import (
     LsstForcedPhotometry,
     ZtfForcedPhotometry,
     ForcedPhotometry,
 )
 from sqlalchemy.orm import Session
-from sqlalchemy import select, and_
+from sqlalchemy import Row, select, and_
 
 
 def get_unique_forced_photometry_sql(
     oid: str,
     survey_id: str,
-    session_factory: Callable[..., AbstractContextManager[Session]],
+    session_factory: Callable[..., ContextManager[Session]],
 ):
     with session_factory() as session:
         if survey_id == "ztf":
@@ -42,3 +41,34 @@ def build_query(model_id, oid):
     )
 
     return stmt
+
+
+def get_forced_photometry_by_list(
+    session_factory: Callable[..., ContextManager[Session]],
+):
+    def _get(args: Tuple[List[int], str]) -> Tuple[Sequence[Row[Any]], str]:
+        oids, survey_id = args
+        if survey_id.lower() == "ztf":
+            model = ZtfForcedPhotometry
+        elif survey_id.lower() == "lsst":
+            model = LsstForcedPhotometry
+        else:
+            raise ValueError("Survey not supported")
+
+        with session_factory() as session:
+            return (
+                session.execute(
+                    select(model, ForcedPhotometry)
+                    .join(
+                        ForcedPhotometry,
+                        and_(
+                            ForcedPhotometry.oid == model.oid,
+                            ForcedPhotometry.measurement_id == model.measurement_id,
+                        ),
+                    )
+                    .where(model.oid.in_(oids))
+                ).all(),
+                survey_id,
+            )
+
+    return _get

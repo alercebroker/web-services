@@ -8,9 +8,7 @@ from sqlalchemy.orm import Session
 import core.repository.queries.conesearch as queries
 
 
-def generate_ra_coordinates(
-    ra_center_deg, dec_center_deg, n, half_range_arcsec
-):
+def generate_ra_coordinates(ra_center_deg, dec_center_deg, n, half_range_arcsec):
     """
     Generate `n` coordinates evenly spaced along the RA axis,
     centered at (ra_center, dec_center), within ±half_range_arcsec.
@@ -36,15 +34,10 @@ def generate_ra_coordinates(
 
     # Correction for Dec: RA offsets shrink by cos(dec)
     dec_rad = np.deg2rad(dec_center_deg)
-    ra_offsets_deg = np.linspace(-half_range_deg, half_range_deg, n) / np.cos(
-        dec_rad
-    )
+    ra_offsets_deg = np.linspace(-half_range_deg, half_range_deg, n) / np.cos(dec_rad)
 
     # Create coordinates
-    coords = [
-        SkyCoord(ra=ra_center_deg + offset, dec=dec_center_deg, unit="deg")
-        for offset in ra_offsets_deg
-    ]
+    coords = [SkyCoord(ra=ra_center_deg + offset, dec=dec_center_deg, unit="deg") for offset in ra_offsets_deg]
 
     return coords
 
@@ -126,14 +119,14 @@ def test_conesearch_oid_few_close_objects(db: PsqlDatabase):
 
     # Execute the conesearch
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch(np.int64(123), 30.0 / 3600, 10)
+    result = conesearch((np.int64(123), 30.0 / 3600, 10))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
 
     # Execute conesearch with more than 10 neighbors
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch(np.int64(123), 30.0 / 3600, 20)
+    result = conesearch((np.int64(123), 30.0 / 3600, 20))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
@@ -195,14 +188,14 @@ def test_conesearch_oid_all_are_close(db: PsqlDatabase):
 
     # Execute the conesearch
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch(np.int64(123), 30.0 / 3600, 10)
+    result = conesearch((np.int64(123), 30.0 / 3600, 10))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
 
     # Execute conesearch with 20 neighbors should return all 20 objects
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch(np.int64(123), 30.0 / 3600, 20)
+    result = conesearch((np.int64(123), 30.0 / 3600, 20))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 20
@@ -235,7 +228,7 @@ def test_conesearch_oid_none_are_close(db: PsqlDatabase):
 
     # Execute the conesearch
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch(np.int64(123), 30.0 / 3600, 10)
+    result = conesearch((np.int64(123), 30.0 / 3600, 10))
 
     # Assert that the conesearch returns the only object
     assert len(result) == 1
@@ -319,14 +312,14 @@ def test_conesearch_coordinates_close_objects(db: PsqlDatabase):
     # Execute the conesearch
     # center at 45, 45 within 30 arcsec and 10 neighbors
     conesearch = queries.conesearch_coordinates(db.session)
-    result = conesearch(45, 45, 30.0 / 3600, 10)
+    result = conesearch((45, 45, 30.0 / 3600, 10))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
 
     # Execute conesearch with more than 10 neighbors
     conesearch = queries.conesearch_coordinates(db.session)
-    result = conesearch(45, 45, 30.0 / 3600, 20)
+    result = conesearch((45, 45, 30.0 / 3600, 20))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
@@ -388,14 +381,14 @@ def test_conesearch_coordinates_all_are_close(db: PsqlDatabase):
 
     # Execute the conesearch
     conesearch = queries.conesearch_coordinates(db.session)
-    result = conesearch(45, 45, 30.0 / 3600, 10)
+    result = conesearch((45, 45, 30.0 / 3600, 10))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
 
     # Execute conesearch with 20 neighbors should return all 20 objects
     conesearch = queries.conesearch_coordinates(db.session)
-    result = conesearch(45, 45, 30.0 / 3600, 20)
+    result = conesearch((45, 45, 30.0 / 3600, 20))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 20
@@ -428,7 +421,7 @@ def test_conesearch_coordinates_none_are_close(db: PsqlDatabase):
 
     # Execute the conesearch
     conesearch = queries.conesearch_coordinates(db.session)
-    result = conesearch(45, 45, 30.0 / 3600, 10)
+    result = conesearch((45, 45, 30.0 / 3600, 10))
 
     # Assert that the conesearch returns the only object
     assert len(result) == 1

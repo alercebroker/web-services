@@ -30,9 +30,7 @@ def initdb():
     parser = argparse.ArgumentParser(description="Init database")
     parser.add_argument("service", type=str, help="the name of the service")
     args = parser.parse_args()
-    config = (
-        config_from_yaml().get("services").get(args.service).get("db_config")
-    )
+    config = config_from_yaml().get("services").get(args.service).get("db_config")
 
     # export db secrets
     os.environ["PSQL_USER"] = config["psql_user"]
@@ -51,9 +49,7 @@ def create_q3c_idx_cmd():
     parser = argparse.ArgumentParser(description="Init database")
     parser.add_argument("service", type=str, help="the name of the service")
     args = parser.parse_args()
-    config = (
-        config_from_yaml().get("services").get(args.service).get("db_config")
-    )
+    config = config_from_yaml().get("services").get(args.service).get("db_config")
 
     # export db secrets
     os.environ["PSQL_USER"] = config["psql_user"]

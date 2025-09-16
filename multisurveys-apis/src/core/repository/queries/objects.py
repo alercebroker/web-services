@@ -60,9 +60,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
             .where(*filters_statements["probability"])
         )
 
-        order_statement = create_order_statement(
-            stmt, search_params.order_args
-        )
+        order_statement = create_order_statement(stmt, search_params.order_args)
 
         stmt = stmt.order_by(order_statement)
 
@@ -70,9 +68,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         items = session.execute(stmt).all()
 
-        return Pagination(
-            pagination_args.page, pagination_args.page_size, items
-        )
+        return Pagination(pagination_args.page, pagination_args.page_size, items)
 
 
 def build_subquery_object(survey, filters, parsed_params):

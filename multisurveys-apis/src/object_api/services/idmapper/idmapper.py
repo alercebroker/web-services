@@ -66,9 +66,7 @@ def catalog_oid_to_masterid(
     master_id = np.int64(master_id)
 
     if catalog == "ZTF":
-        master_id += encode_ztf_to_masterid_without_survey(
-            catalog_oid, validate
-        )
+        master_id += encode_ztf_to_masterid_without_survey(catalog_oid, validate)
     elif catalog == "LSST":
         return catalog_oid
         # if db_cursor is None:
@@ -80,9 +78,7 @@ def catalog_oid_to_masterid(
     return master_id
 
 
-def decode_masterid(
-    masterid: np.int64, db_cursor=None
-) -> tuple[str, str | np.int64]:
+def decode_masterid(masterid: np.int64, db_cursor=None) -> tuple[str, str | np.int64]:
     """
     Decode a master ID into its components.
 
@@ -101,9 +97,7 @@ def decode_masterid(
     # Extract the survey from the master ID
     # survey_id = masterid >> (63 - SURVEY_PREFIX_LEN_BITS)
 
-    masterid_without_survey = np.bitwise_and(
-        masterid, ((1 << (63 - SURVEY_PREFIX_LEN_BITS)) - 1)
-    )
+    masterid_without_survey = np.bitwise_and(masterid, ((1 << (63 - SURVEY_PREFIX_LEN_BITS)) - 1))
     return "ZTF", decode_masterid_for_ztf(masterid_without_survey)
 
     # if survey == "ZTF":

@@ -32,11 +32,13 @@ pyarrow = "^20.0.0"
 pandas = "^2.3.1"
 toolz = "^1.0.0"
 astropy = "^7.1.0"
+faker = "^37.6.0"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
 testcontainers = "^4.12.0"
 pytest-cov = "^4.1.0"
+pytest-mock = "^3.14.1"
 
 [tool.poetry.group.production.dependencies]
 uvicorn = { extras = ["standard"], version = "^0.23.1" }
@@ -52,7 +54,7 @@ requires = ["poetry-core", "setuptools", "wheel", "Cython==0.29.36", "numpy"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
-line-length = 79
+line-length = 120
 
 [tool.poetry.scripts]
 all = "scripts.run_api:run"
@@ -64,3 +66,8 @@ probability = "scripts.run_api:run_probability"
 dbp = "db_plugins.cli.manage:cli"
 initdb = "scripts.initdb:initdb"
 create_q3c_idx = "scripts.initdb:create_q3c_idx_cmd"
+populate_db = "scripts.populate_database:main"
+decode_oid = "scripts.decode_oid:main"
+
+[pytest]
+mock_use_standalone_module = true

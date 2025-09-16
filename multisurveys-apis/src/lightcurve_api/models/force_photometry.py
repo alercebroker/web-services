@@ -1,8 +1,10 @@
 from typing import Optional, Union
-from pydantic import BaseModel
+
+from pydantic import model_validator
+from .lightcurve_item import BaseDetection
 
 
-class ForcedPhotometryMultistream(BaseModel):
+class ForcedPhotometryMultistream(BaseDetection):
     candid: str
     tid: str
     sid: Optional[str] = None
@@ -33,8 +35,20 @@ class ForcedPhotometryMultistream(BaseModel):
     def __eq__(self, other):
         return self.oid == other.oid and self.pid == other.pid
 
+    def magnitude2flux(self) -> float:
+        return 0.0
 
-class ZtfForcedPhotometry(BaseModel):
+    def magnitude2flux_err(self) -> float:
+        return 0.0
+
+    def flux2magnitude(self) -> float:
+        return self.mag
+
+    def flux2magnitude_err(self) -> float:
+        return self.e_mag
+
+
+class ZtfForcedPhotometry(BaseDetection):
     oid: int
     survey_id: str
     measurement_id: int
@@ -77,9 +91,38 @@ class ZtfForcedPhotometry(BaseModel):
     ra: float
     dec: float
     band: int
+    band_map: dict[int, str] = {1: "r", 2: "g", 3: "i"}
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_defaults(cls, values: dict) -> dict:
+        defaults = {
+            "pid": 0,
+            "mag_corr": 0,
+            "e_mag_corr": 0,
+            "e_mag_corr_ext": 0,
+        }
+
+        for field, default_value in defaults.items():
+            if field in values and values[field] is None:
+                values[field] = default_value
+
+        return values
+
+    def magnitude2flux(self) -> float:
+        return 0.0
+
+    def magnitude2flux_err(self) -> float:
+        return 0.0
+
+    def flux2magnitude(self) -> float:
+        return self.mag
+
+    def flux2magnitude_err(self) -> float:
+        return self.e_mag
 
 
-class LsstForcedPhotometry(BaseModel):
+class LsstForcedPhotometry(BaseDetection):
     oid: int
     measurement_id: int
     mjd: float
@@ -90,3 +133,27 @@ class LsstForcedPhotometry(BaseModel):
     detector: int
     psfFlux: float
     psfFluxErr: float
+    band_map: dict[int, str] = {0: "u", 1: "g", 2: "r", 3: "i", 4: "z", 5: "y"}
+
+    @model_validator(mode="before")
+    @classmethod
+    def set_defaults(cls, values: dict) -> dict:
+        defaults = {}
+
+        for field, default_value in defaults.items():
+            if field in values and values[field] is None:
+                values[field] = default_value
+
+        return values
+
+    def magnitude2flux(self) -> float:
+        return self.psfFlux
+
+    def magnitude2flux_err(self) -> float:
+        return self.psfFluxErr
+
+    def flux2magnitude(self) -> float:
+        return 0.0
+
+    def flux2magnitude_err(self) -> float:
+        return 0.0

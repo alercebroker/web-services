@@ -7,8 +7,7 @@ from .parsers import parse_magstats
 
 def get_magstats(
     oid,
-    session_factory: Callable[..., AbstractContextManager[Session]]
-    | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
     result = get_magstats_by_oid(oid, session_factory=session_factory)
     parsed_result = parse_magstats(result)
