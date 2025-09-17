@@ -11,11 +11,11 @@
 
             <!--Search filters-->
 
-            <div id="search_filters" class="tw-w-full">Search filters</div>
+            <div id="search_filters" class="tw-w-full tw-font-medium tw-text-lg tw-text-white">Search Filters</div>
 
             <!--Survey filters-->
             <div id="survey_container" class="tw-w-full">
-                <p>Surveys</p>
+                <p class="tw-font-medium">Surveys</p>
 
                 <div id="survey" data-survey="ztf" class="tw-w-full tw-my-4 tw-flex tw-justify-start tw-gap-4">
                     <span id="ztf_btn" class="obj-survey-selected tw-text-center tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ztf</span>
@@ -25,7 +25,8 @@
 
             <!--general filters-->
             <div class="tw-w-full">
-                <p id="general_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">General filters</p>
+                <p id="general_filters" class="tw-text-[#1976d2] tw-font-medium hover:tw-bg-[#1976d2]/20 hover:tw-cursor-pointer">General filters</p>
+
                 <div id="general_filters_container" class="tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     
                     <div class="tw-col-span-12 tw-flex tw-flex-col tw-content-center">
@@ -101,16 +102,21 @@
 
             <!--Discovery date filters-->
             <div class="tw-w-full">
-                <p id="discovery_date_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">Discovery date filters</p>
+                <p id="discovery_date_filters" class="tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">Discovery Date Filters</p>
                 
                 <div id="discovery_date_filters_container" class="tw-hidden tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     <!--min mjd and date greg-->
                     {{customInput(id="min_mjd", type="number", placeholder="Min MJD", width="tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12", min="0", step="0.01")}}
 
                     <div class="tw-container tw-relative tw-z-[10] lg:tw-col-span-6 md: tw-col-span-12">
-                        <p 
-                        id="min_date_time_text" 
-                        class="tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</p>
+
+                        <div class="tw-flex tw-gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+
+                            <span 
+                            id="min_date_time_text" 
+                            class="tw-inline-block tw-w-[85%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</span>
+                        </div>
 
                         <div id="min_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
                             {{customInput(id="date_min", type="date",width="tw-w-[90%]", style="color-scheme: dark;")}}
@@ -128,7 +134,11 @@
                     {{customInput(id="max_mjd", type="number", placeholder="Max MJD", width="tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12")}}
                     
                     <div class="tw-container tw-relative lg:tw-col-span-6 md: tw-col-span-12">
-                        <p id="max_date_time_text" class="tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</p>
+                        <div class="tw-flex tw-gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+
+                            <span id="max_date_time_text" class="tw-inline-block tw-w-[85%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</span>
+                        </div>
 
                         <div id="max_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
                             {{customInput(id="date_max", type="date", width="tw-w-[90%]", style="color-scheme: dark;")}}
@@ -143,7 +153,13 @@
 
             <!--Conesearch filters-->
             <div class="tw-w-full">
-                <p id="conesearch_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">Conesearch</p>
+
+                <div id="conesearch_filters" class="tw-flex tw-gap-2 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
+                    <span class="tw-font-medium">Conesearch</span>
+
+                    <svg id="consearch_info" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                </div>
+
 
                 <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-my-4 tw-mx-auto tw-gap-4">
                     
@@ -152,8 +168,8 @@
                     </div>
 
                     <div class="tw-px-4 tw-flex tw-flex-col tw-items-end tw-col-span-12 lg:tw-col-span-7 sm:tw-col-span-12">
-                        <button id="resolve_btn" class="tw-w-[95%] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">resolve</button>
-                        <label class="tw-text-sm tw-mt-1">provided by sesame</label>
+                        <button id="resolve_btn" class="tw-w-[95%] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">RESOLVE</button>
+                        <label class="tw-text-sm tw-mt-1">Provided by sesame</label>
                     </div>
 
                     <div class="tw-col-span-12 lg:tw-col-span-12 sm:tw-col-span-12">

@@ -2,7 +2,7 @@ import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec} from "./AstroDa
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate} from "./time.js"
 import { handle_error } from "./error_handler.js";
 import {draw_oids_tags} from "./draw_elements.js";
-import { display, split_oids, format_oids, survey_emphasize, check_radio_consearch }  from "./ui_helpers.js";
+import { display, highlight_text, split_oids, format_oids, survey_emphasize, check_radio_consearch }  from "./ui_helpers.js";
 import {get_sesame_object} from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
 
@@ -89,16 +89,19 @@ export function init(){
   // clicks events
   general_filters.addEventListener("click", () =>{
     item_name = general_filters.id + "_container"
+    highlight_text(general_filters)
     display(item_name)
   })
 
   discovery_date_filters.addEventListener("click", () =>{
     item_name = discovery_date_filters.id + "_container"
+    highlight_text(discovery_date_filters)
     display(item_name)
   })
 
   conesearch_filters.addEventListener("click", () =>{
     item_name = conesearch_filters.id + "_container"
+    highlight_text(conesearch_filters)
     display(item_name)
   })
 

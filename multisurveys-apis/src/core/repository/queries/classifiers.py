@@ -56,4 +56,5 @@ def get_all_classifiers(
         )
         result = session.execute(stmt)
         result = result.all()
+        
         return result
