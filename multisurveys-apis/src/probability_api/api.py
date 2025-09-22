@@ -23,7 +23,6 @@ app.include_router(rest.router)
 app.include_router(htmx.router)
 
 
-
 static_path = Path(__file__).resolve().parent / "static"
 app.mount("/static", StaticFiles(directory=static_path), name="static")
 app.mount("/htmx", StaticFiles(directory="src/core/htmx"), name="htmx")

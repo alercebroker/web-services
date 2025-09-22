@@ -1,6 +1,5 @@
 import os
 import traceback
-import pprint
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse
@@ -8,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
-from ..services.object_services import get_objects_list, get_object_by_id
+from ..services.object_services import get_objects_list
 from ..services.validations import (
     ndets_validation,
     order_mode_validation,
@@ -27,12 +26,8 @@ from core.repository.dummy_data import object_basic_information_dict, tns_data_d
 
 router = APIRouter()
 
-templates = Jinja2Templates(
-    directory="src/object_api/templates", autoescape=True, auto_reload=True
-)
-templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8000"
-)
+templates = Jinja2Templates(directory="src/object_api/templates", autoescape=True, auto_reload=True)
+templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 templates.env.filters["truncate"] = truncate_float
 
@@ -40,7 +35,7 @@ templates.env.filters["truncate"] = truncate_float
 @router.get("/htmx/object", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str, survey_id: str):
     try:
-        session = request.app.state.psql_session
+        # session = request.app.state.psql_session
 
         # object_data = get_object_by_id(session, oid, survey_id)
         # candid = get_first_det_candid(oid, request.app.state.psql_session)
@@ -52,28 +47,27 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 
-
     return templates.TemplateResponse(
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
-            "object": object_data['oid'],
-            "corrected": "Yes" if object_data['corrected'] else "No",
-            "stellar": "Yes" if object_data['stellar'] else "No",
-            "detections": object_data['ndet'],
-            "nonDetections": object_data['count_ndet'],
-            "discoveryDateMJD": object_data['firstmjd'],
-            "lastDetectionMJD": object_data['lastmjd'],
-            "ra": object_data['meanra'],
-            "dec": object_data['meandec'],
-            "measurement_id": object_data['measurement_id'],
-            "otherArchives": object_data['otherArchives'],
+            "object": object_data["oid"],
+            "corrected": "Yes" if object_data["corrected"] else "No",
+            "stellar": "Yes" if object_data["stellar"] else "No",
+            "detections": object_data["ndet"],
+            "nonDetections": object_data["count_ndet"],
+            "discoveryDateMJD": object_data["firstmjd"],
+            "lastDetectionMJD": object_data["lastmjd"],
+            "ra": object_data["meanra"],
+            "dec": object_data["meandec"],
+            "measurement_id": object_data["measurement_id"],
+            "otherArchives": object_data["otherArchives"],
         },
     )
 
 
 @router.get("/tns/", response_class=HTMLResponse)
-async def tns_info(request: Request, ra: float, dec:float):
+async def tns_info(request: Request, ra: float, dec: float):
     try:
         # tns_data, tns_link = get_tns(ra, dec)
         tns_data, tns_link = tns_data_dict, tns_link_str
@@ -90,8 +84,8 @@ async def tns_info(request: Request, ra: float, dec:float):
             "object_type": tns_data["object_type"],
             "redshift": tns_data["object_data"]["redshift"],
             "discoverer": tns_data["object_data"]["discoverer"],
-            "discovery_data_source": tns_data["object_data"]["discovery_data_source"]
-        }
+            "discovery_data_source": tns_data["object_data"]["discovery_data_source"],
+        },
     )
 
 
