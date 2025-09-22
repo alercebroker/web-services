@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from alerce.ms_stamps import AlerceStampsMultisurvey
 from alerce.search import AlerceSearch
+from alerce.ms_search import AlerceSearchMultiSurvey
 from astropy.time import Time
 
 router = APIRouter()
@@ -58,15 +59,23 @@ def _get_measurement_ids(survey_id, detections):
         for d in detections:
             if _has_stamp(d):
                 measurement_ids.append(d['candid'])
+    elif survey_id == 'lsst':
+        for d in detections:
+            measurement_ids.append(d['measurement_id'])
     
     return measurement_ids
 
-def _get_dates(detections):
+def _get_dates(survey_id, detections):
 
     dates = []
-    for d in detections:
-        if _has_stamp(d):
+    if survey_id == 'ztf':
+        for d in detections:
+            if _has_stamp(d):
+                dates.append(str(Time(d['mjd'], format='mjd').isot))
+    elif survey_id == 'lsst':
+        for d in detections:
             dates.append(str(Time(d['mjd'], format='mjd').isot))
+    
 
     return dates
 
@@ -82,11 +91,15 @@ def temp_stamp(
 
     alerce_stamps = AlerceStampsMultisurvey()
     alerce_search = AlerceSearch()
+    alerce_search_ms = AlerceSearchMultiSurvey()
 
-    detections = alerce_search.query_detections(oid)
+    if survey_id == "ztf":
+        detections = alerce_search.query_detections(oid)
+    elif survey_id == "lsst":
+        detections = alerce_search_ms.multisurvey_query_detections(oid=oid, survey_id=survey_id)
 
     measurement_ids = _get_measurement_ids(survey_id, detections)
-    dates = _get_dates(detections)
+    dates = _get_dates(survey_id, detections)
 
     image_types = ['science', 'template', 'difference']
 
