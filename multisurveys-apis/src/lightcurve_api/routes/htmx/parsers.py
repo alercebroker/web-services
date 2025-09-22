@@ -40,6 +40,10 @@ class ConfigState(BaseModel):
     non_detections: List[str] = []
     forced_photometry: List[str] = []
 
+    # additional context
+    oid: str = ""
+    survey_id: str = ""
+
 
 def parse_detections(raw_detections: List[str]) -> List[BaseDetection]:
     detections: List[BaseDetection] = []
