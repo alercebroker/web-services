@@ -345,6 +345,14 @@
   overflow: auto;
 }
 
+.tw-preflight :is(.tw-overflow-x-auto){
+  overflow-x: auto;
+}
+
+.tw-preflight :is(.tw-overflow-x-scroll){
+  overflow-x: scroll;
+}
+
 .tw-preflight :is(.tw-rounded){
   border-radius: 0.25rem;
 }
@@ -1220,6 +1228,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
   .tw-preflight :is(.lg\:tw-w-1\/4){
     width: 25%;
+  }
+
+  .tw-preflight :is(.lg\:tw-w-full){
+    width: 100%;
   }
 
   .tw-preflight :is(.lg\:tw-max-w-\[458px\]){

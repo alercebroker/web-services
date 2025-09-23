@@ -22,7 +22,7 @@ from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
 
-from core.repository.dummy_data import object_basic_information_dict, tns_data_dict, tns_link_str
+from core.repository.dummy_data import object_basic_information_dict, tns_data_dict, tns_link_str, array_dicts_data_table
 
 
 router = APIRouter()
@@ -187,7 +187,16 @@ def objects_table(
                 order_args=order,
             )
 
-            object_list = get_objects_list(session_ms=session, search_params=search_params)
+            # object_list = get_objects_list(session_ms=session, search_params=search_params)
+
+            object_list = {
+                "next": False,
+                "has_next": False,
+                "prev": False,
+                "has_prev": False,
+                "items": array_dicts_data_table,
+            }
+
         else:
             object_list = {
                 "next": False,
