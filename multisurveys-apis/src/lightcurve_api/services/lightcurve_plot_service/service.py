@@ -66,6 +66,18 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]], of
     }
 
 
+def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]], offset: bool):
+    series_name = name + " " + survey.upper() + ": " + band
+    return {
+        "name": series_name + " *" + str(OFFSETS[band]) if offset else series_name,
+        "type": "custom",
+        "data": data,
+        "color": COLORS[survey][band],
+        "renderItem": "renderError",
+        "scale": True,
+    }
+
+
 def default_echarts_options(config_state: ConfigState):
     return {
         "tooltip": {},
@@ -77,13 +89,14 @@ def default_echarts_options(config_state: ConfigState):
             "selectedMode": False,
             "itemWidth": 15,
         },
-        "xAxis": {"type": "value", "name": "MJD", "scale": True},
+        "xAxis": {"type": "value", "name": "MJD", "scale": True, "splitLine": False},
         "yAxis": {
             "type": "value",
             "name": "Magnitude",
             "scale": True,
             "inverse": not config_state.flux,
             "nameLocation": "start",
+            "splitLine": False,
         },
         "series": [],
         "animation": False,
@@ -158,14 +171,26 @@ def set_default_echart_options(result: Result) -> Result:
 def set_chart_options_detections(result: Result) -> Result:
     result_copy = result.copy()
 
-    series = pipe(
+    # Chart points
+    pipe(
         result_copy.lightcurve.detections,
         curry(create_chart_detections, config_state=result.config_state),
-        curry(_group_chart_points_by_survey_band),
+        curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
         curry(_transform_to_series, series_type=DETECTION, offset_bands=result.config_state.offset_bands),
+        lambda series: result_copy.echart_options["series"].extend(series),
     )
 
-    result_copy.echart_options["series"].extend(series)
+    # Error bars
+    pipe(
+        result_copy.lightcurve.detections,
+        curry(create_chart_detections, config_state=result.config_state),
+        curry(_group_chart_points_by_survey_band, error_bar=True, config_state=result.config_state),
+        curry(
+            _transform_to_series, series_type=DETECTION, offset_bands=result.config_state.offset_bands, error_bar=True
+        ),
+        lambda series: result_copy.echart_options["series"].extend(series),
+    )
+
     return result_copy
 
 
@@ -178,7 +203,7 @@ def set_chart_options_non_detections(result: Result) -> Result:
     series = pipe(
         result_copy.lightcurve.non_detections,
         curry(create_chart_non_detections, config_state=result.config_state),
-        curry(_group_chart_points_by_survey_band),
+        curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
         curry(_transform_to_series, series_type=NON_DETECTION, offset_bands=result.config_state.offset_bands),
     )
 
@@ -189,14 +214,29 @@ def set_chart_options_non_detections(result: Result) -> Result:
 def set_chart_options_forced_photometry(result: Result) -> Result:
     result_copy = result.copy()
 
-    series = pipe(
+    # Chart points
+    pipe(
         result_copy.lightcurve.forced_photometry,
         curry(create_chart_forced_photometry, config_state=result.config_state),
-        curry(_group_chart_points_by_survey_band),
+        curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
         curry(_transform_to_series, series_type=FORCED_PHOTOMETRY, offset_bands=result.config_state.offset_bands),
+        lambda series: result_copy.echart_options["series"].extend(series),
     )
 
-    result_copy.echart_options["series"].extend(series)
+    # Error bars
+    pipe(
+        result_copy.lightcurve.forced_photometry,
+        curry(create_chart_forced_photometry, config_state=result.config_state),
+        curry(_group_chart_points_by_survey_band, error_bar=True, config_state=result.config_state),
+        curry(
+            _transform_to_series,
+            series_type=FORCED_PHOTOMETRY,
+            offset_bands=result.config_state.offset_bands,
+            error_bar=True,
+        ),
+        lambda series: result_copy.echart_options["series"].extend(series),
+    )
+
     return result_copy
 
 
@@ -216,12 +256,15 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
                 det.band_name(),
                 det.phase(config_state.period) if config_state.fold else det.mjd,
                 det.magnitude2flux(config_state.total) if config_state.flux else det.flux2magnitude(config_state.total),
+                det.magnitude2flux_err(config_state.total)
+                if config_state.flux
+                else det.flux2magnitude_err(config_state.total),
             )
         )
 
     # Add second phase, repeating the same points when folding
     if config_state.fold:
-        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y) for point in result])
+        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
 
     return result
 
@@ -235,7 +278,7 @@ def create_chart_non_detections(non_detections: List[BaseNonDetection], config_s
         if ndet.survey_id.lower() == ZTF_SURVEY and ndet.band_name() not in config_state.bands.ztf:
             continue
 
-        result.append(ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag()))
+        result.append(ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag(), 0))
 
     return result
 
@@ -259,10 +302,13 @@ def create_chart_forced_photometry(
                 fphot.magnitude2flux(config_state.total)
                 if config_state.flux
                 else fphot.flux2magnitude(config_state.total),
+                fphot.magnitude2flux_err(config_state.total)
+                if config_state.flux
+                else fphot.flux2magnitude_err(config_state.total),
             )
         )
     if config_state.fold:
-        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y) for point in result])
+        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
 
     return result
 
@@ -333,18 +379,20 @@ def get_ztf_dr_objects(
     return result
 
 
-def _group_chart_points_by_survey_band(chart_points: List[ChartPoint]):
+def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_state: ConfigState, error_bar=False):
     """Group chart points by survey and band in a functional style."""
 
     def _add_point_to_group(group: dict, point: ChartPoint):
-        group[point.survey][point.band].append(point.point())
+        limit = 99999 if config_state.flux else 1
+        point_value = point.point() if not error_bar else point.error_bar(limit)
+        group[point.survey][point.band].append(point_value)
         return group
 
     return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
 
 
 def _transform_to_series(
-    grouped_data: dict[str, dict[str, List[List[float]]]], series_type: str, offset_bands: bool
+    grouped_data: dict[str, dict[str, List[List[float]]]], series_type: str, offset_bands: bool, error_bar=False
 ) -> List[dict]:
     """Transform grouped data into series with optional band offsetting."""
 
@@ -357,7 +405,11 @@ def _transform_to_series(
             if offset_bands:
                 data = [[d[0], d[1] * OFFSETS[band]] for d in data]
 
-            return create_series(series_type, survey, band, data, offset_bands)
+            return (
+                create_series(series_type, survey, band, data, offset_bands)
+                if not error_bar
+                else create_error_bar_series(series_type, survey, band, data, offset_bands)
+            )
 
         return map(_process_band, bands_data.items())
 

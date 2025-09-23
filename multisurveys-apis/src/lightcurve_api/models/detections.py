@@ -204,7 +204,7 @@ class LsstDetection(BaseDetection):
         Returns:
             Magnitude error value
         """
-        return self.scienceFluxErr if total else self.psfFlux
+        return self.scienceFluxErr if total else self.psfFluxErr
 
 
 class ZtfDataReleaseDetection(BaseDetection):
