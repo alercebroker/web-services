@@ -33,6 +33,7 @@ pandas = "^2.3.1"
 toolz = "^1.0.0"
 astropy = "^7.1.0"
 faker = "^37.6.0"
+python-multipart = "^0.0.20"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"

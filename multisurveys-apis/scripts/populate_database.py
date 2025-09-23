@@ -332,3 +332,4 @@ def main():
 
             session.add_all(survey_detections)
             session.add_all(survey_forced_photometry)
+            session.commit()

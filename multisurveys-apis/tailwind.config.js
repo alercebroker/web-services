@@ -4,7 +4,8 @@ module.exports = {
   prefix: 'tw-',
   darkMode: 'class',
   content: [
-    "./src/object_api/templates//*.{html.jinja,html,css}",
+    "./src/**/templates/*.{html.jinja,html,css}",
+    "./src/static/**/*.js"
   ],
   theme: {
     extend: {
