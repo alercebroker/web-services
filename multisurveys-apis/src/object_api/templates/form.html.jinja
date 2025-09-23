@@ -6,8 +6,8 @@
 <div id="form-search" hx-ext="response-targets" class="tw-preflight">
     {% from "input.html.jinja" import input as customInput %}
 
-    <div class="tw-flex">
-        <div id="form-container" class="tw-container tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 tw-max-w-[458px] sm:tw-w-full">
+    <div class="tw-flex tw-w-full">
+        <div id="form-container" class=" tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 lg:tw-max-w-[458px] sm:tw-w-full">
 
             <!--Search filters-->
 
@@ -164,12 +164,12 @@
                 <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-my-4 tw-mx-auto tw-gap-4">
                     
                     <div class="tw-col-span-12 lg:tw-col-span-5 sm:tw-col-span-11">
-                        {{customInput(id="target_name", type="text", width="tw-w-full", placeholder="target name")}}
+                        {{customInput(id="target_name", type="text", width="tw-w-full", placeholder="Target Name")}}
                     </div>
 
                     <div class="tw-px-4 tw-flex tw-flex-col tw-items-end tw-col-span-12 lg:tw-col-span-7 sm:tw-col-span-12">
-                        <button id="resolve_btn" class="tw-w-[95%] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">RESOLVE</button>
-                        <label class="tw-text-sm tw-mt-1">Provided by sesame</label>
+                        <button id="resolve_btn" class="tw-w-[95%] tw-h-[36px] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">RESOLVE</button>
+                        <label class="tw-text-sm tw-mt-1">Provided by <a href="https://vizier.cds.unistra.fr/vizier/doc/sesame.htx" target="_blank" class="tw-text-[#1976d2]">sesame</a></label>
                     </div>
 
                     <div class="tw-col-span-12 lg:tw-col-span-12 sm:tw-col-span-12">
@@ -192,7 +192,7 @@
             </div>
 
             <!--Buttons-->
-            <div class="tw-w-full tw-flex tw-justify-start tw-gap-4">
+            <div class="tw-w-full tw-flex tw-justify-start tw-gap-4 tw-flex-col lg:tw-flex-row">
                 <button 
                 id="search_btn"
                 hx-get="{{API_URL}}/table"
@@ -200,11 +200,11 @@
                 hx-swap="outerHTML"
                 hx-target="#objects_table"
                 hx-vals='js:{...send_form_Data(), ...send_pagination_data()}'
-                class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/2">SEARCH</button>
+                class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-full lg:tw-w-1/2 sm:tw-w-full ">SEARCH</button>
                 
                 <button 
                 id="clear_form" 
-                class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded tw-w-1/4"
+                class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded tw-w-full lg:tw-w-1/4 sm:tw-w-full"
                 hx-get="{{API_URL}}/form"
                 hx-trigger="click"
                 hx-swap="outerHTML"
@@ -213,7 +213,7 @@
             </div>
         </div>
 
-        <div id="objects_table" class="tw-max-w-[1422px]">test</div>
+        {# <div id="objects_table" class="tw-max-w-[1422px]">test</div> #}
     </div>
 
 </div>
