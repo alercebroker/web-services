@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 app.mount("/static", StaticFiles(directory="src/crossmatch_api/static"), name="static")
-app.mount("/htmx-static", StaticFiles(directory="src/htmx"), name="htmx-static")
+app.mount("/htmx-static", StaticFiles(directory="src/core/htmx"), name="htmx-static")
 
 app.include_router(rest.router)
 app.include_router(htmx.router)
