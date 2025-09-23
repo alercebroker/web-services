@@ -7,7 +7,12 @@ from numpy import int64
 
 
 def survey_id_map(sid: int) -> str:
-    return "ztf" if sid == 1 else "lsst"
+    mapping = {
+        0: "ztf",
+        1: "lsst",
+        2: "lsst_ss",
+    }
+    return mapping[sid]
 
 
 def parse_api_object(sql_object: Object) -> ApiObject:
