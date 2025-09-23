@@ -64,6 +64,15 @@
     <span class="font-semibold mr-3">Offset</span>
     {{ toggle.toggle("offset_bands", "Off", "On", config_state.offset_bands) }}
   </div>
+  <div class="mt-2 flex items-center gap-3">
+    <input name="offset_num" type="range" min="1" max="10" value="{{config_state.offset_num}}" class="w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+    <select name="offset_metric" class="border border-gray-300 rounded-md px-2 py-1 text-sm">
+      <option value="avg" {% if config_state.offset_metric == "avg" %}selected{% endif %}>avg</option>
+      <option value="min" {% if config_state.offset_metric == "min" %}selected{% endif %}>min</option>
+      <option value="max" {% if config_state.offset_metric == "max" %}selected{% endif %}>max</option>
+      <option value="median" {% if config_state.offset_metric == "median" %}selected{% endif %}>median</option>
+    </select>
+  </div>
 
   <div class="w-full h-px bg-gray-200 my-3"></div>
 

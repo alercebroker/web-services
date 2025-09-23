@@ -4,7 +4,7 @@ import io
 import zipfile
 from collections import defaultdict
 from itertools import chain
-from typing import Callable, ContextManager, List
+from typing import Callable, ContextManager, List, Dict, Any, Tuple
 
 import httpx
 from sqlalchemy.orm.session import Session
@@ -41,35 +41,40 @@ COLORS = {
     ZTF_DR_SURVEY: {"g": "#ADA3A3", "r": "#377EB8", "i": "#FF7F00"},
 }
 SYMBOLS = {
-    ZTF_SURVEY: {DETECTION: "circle", NON_DETECTION: "triangle", FORCED_PHOTOMETRY: "rect"},
-    LSST_SURVEY: {DETECTION: "roundRect", NON_DETECTION: "diamond", FORCED_PHOTOMETRY: "arrow"},
-    ZTF_DR_SURVEY: {DETECTION: "circle", NON_DETECTION: "triangle", FORCED_PHOTOMETRY: "rect"},
-}
-OFFSETS = {
-    "g": 1,
-    "r": 2,
-    "i": 3,
-    "u": 4,
-    "z": 5,
-    "y": 6,
+    ZTF_SURVEY: {
+        DETECTION: {"symbol": "circle"},
+        NON_DETECTION: {
+            "symbol": "path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z",
+        },
+        FORCED_PHOTOMETRY: {"symbol": "square"},
+    },
+    LSST_SURVEY: {
+        DETECTION: {"symbol": "diamond"},
+        FORCED_PHOTOMETRY: {"symbol": "pin"},
+    },
+    ZTF_DR_SURVEY: {
+        DETECTION: {"symbol": "circle"},
+        NON_DETECTION: {
+            "symbol": "path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z"
+        },
+        FORCED_PHOTOMETRY: {"symbol": "square"},
+    },
 }
 
 
-def create_series(name: str, survey: str, band: str, data: List[List[float]], offset: bool) -> dict:
-    series_name = name + " " + survey.upper() + ": " + band
+def create_series(name: str, survey: str, band: str, data: List[List[float]]) -> dict:
     return {
-        "name": series_name + " *" + str(OFFSETS[band]) if offset else series_name,
+        "name": name + " " + survey.upper() + ": " + band,
         "type": "scatter",
         "data": data,
         "color": COLORS[survey][band],
-        "symbol": SYMBOLS[survey][name],
+        "symbol": SYMBOLS[survey][name]["symbol"],
     }
 
 
-def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]], offset: bool):
-    series_name = name + " " + survey.upper() + ": " + band
+def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
     return {
-        "name": series_name + " *" + str(OFFSETS[band]) if offset else series_name,
+        "name": name + " " + survey.upper() + ": " + band,
         "type": "custom",
         "data": data,
         "color": COLORS[survey][band],
@@ -78,17 +83,50 @@ def create_error_bar_series(name: str, survey: str, band: str, data: List[List[f
     }
 
 
+def default_echarts_legend(config_state: ConfigState):
+    legend = {
+        "left": "right",
+        "top": "middle",
+        "height": "80%",
+        "orient": "vertical",
+        "selectedMode": False,
+        "itemWidth": 20,
+        "data": [
+            {"name": f"{DETECTION} {ZTF_SURVEY.upper()}: g"},
+            {"name": f"{DETECTION} {ZTF_SURVEY.upper()}: r"},
+            {"name": f"{DETECTION} {ZTF_SURVEY.upper()}: i"},
+            {"name": f"{NON_DETECTION} {ZTF_SURVEY.upper()}: g"},
+            {"name": f"{NON_DETECTION} {ZTF_SURVEY.upper()}: r"},
+            {"name": f"{NON_DETECTION} {ZTF_SURVEY.upper()}: i"},
+            {"name": f"{FORCED_PHOTOMETRY} {ZTF_SURVEY.upper()}: g"},
+            {"name": f"{FORCED_PHOTOMETRY} {ZTF_SURVEY.upper()}: r"},
+            {"name": f"{FORCED_PHOTOMETRY} {ZTF_SURVEY.upper()}: i"},
+            {"name": f"{DETECTION} {LSST_SURVEY.upper()}: u"},
+            {"name": f"{DETECTION} {LSST_SURVEY.upper()}: g"},
+            {"name": f"{DETECTION} {LSST_SURVEY.upper()}: r"},
+            {"name": f"{DETECTION} {LSST_SURVEY.upper()}: i"},
+            {"name": f"{DETECTION} {LSST_SURVEY.upper()}: z"},
+            {"name": f"{DETECTION} {LSST_SURVEY.upper()}: y"},
+            {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: u"},
+            {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: g"},
+            {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: r"},
+            {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: i"},
+            {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: z"},
+            {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: y"},
+        ],
+    }
+    if config_state.offset_bands:
+        # When offset bands are enabled, the legend is inherited from the series data
+        legend["data"] = None
+
+    return legend
+
+
 def default_echarts_options(config_state: ConfigState):
     return {
         "tooltip": {},
-        "grid": {"right": "25%", "left": "5%", "bottom": "7%", "top": "10%"},
-        "legend": {
-            "right": 10,
-            "top": 80,
-            "orient": "vertical",
-            "selectedMode": False,
-            "itemWidth": 15,
-        },
+        "grid": {"left": "left", "top": "10%", "width": "75%", "height": "100%"},
+        "legend": default_echarts_legend(config_state),
         "xAxis": {"type": "value", "name": "MJD", "scale": True, "splitLine": False},
         "yAxis": {
             "type": "value",
@@ -112,6 +150,7 @@ def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., Con
         set_chart_options_detections,
         set_chart_options_non_detections,
         set_chart_options_forced_photometry,
+        offset_bands,
     )
 
 
@@ -132,6 +171,7 @@ def update_lightcurve_plot(
         set_chart_options_detections,
         set_chart_options_non_detections,
         set_chart_options_forced_photometry,
+        offset_bands,
     )
 
 
@@ -176,7 +216,7 @@ def set_chart_options_detections(result: Result) -> Result:
         result_copy.lightcurve.detections,
         curry(create_chart_detections, config_state=result.config_state),
         curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
-        curry(_transform_to_series, series_type=DETECTION, offset_bands=result.config_state.offset_bands),
+        curry(_transform_to_series, series_type=DETECTION),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
@@ -185,9 +225,7 @@ def set_chart_options_detections(result: Result) -> Result:
         result_copy.lightcurve.detections,
         curry(create_chart_detections, config_state=result.config_state),
         curry(_group_chart_points_by_survey_band, error_bar=True, config_state=result.config_state),
-        curry(
-            _transform_to_series, series_type=DETECTION, offset_bands=result.config_state.offset_bands, error_bar=True
-        ),
+        curry(_transform_to_series, series_type=DETECTION, error_bar=True),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
@@ -204,7 +242,7 @@ def set_chart_options_non_detections(result: Result) -> Result:
         result_copy.lightcurve.non_detections,
         curry(create_chart_non_detections, config_state=result.config_state),
         curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
-        curry(_transform_to_series, series_type=NON_DETECTION, offset_bands=result.config_state.offset_bands),
+        curry(_transform_to_series, series_type=NON_DETECTION),
     )
 
     result_copy.echart_options["series"].extend(series)
@@ -219,7 +257,7 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
         result_copy.lightcurve.forced_photometry,
         curry(create_chart_forced_photometry, config_state=result.config_state),
         curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
-        curry(_transform_to_series, series_type=FORCED_PHOTOMETRY, offset_bands=result.config_state.offset_bands),
+        curry(_transform_to_series, series_type=FORCED_PHOTOMETRY),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
@@ -228,12 +266,7 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
         result_copy.lightcurve.forced_photometry,
         curry(create_chart_forced_photometry, config_state=result.config_state),
         curry(_group_chart_points_by_survey_band, error_bar=True, config_state=result.config_state),
-        curry(
-            _transform_to_series,
-            series_type=FORCED_PHOTOMETRY,
-            offset_bands=result.config_state.offset_bands,
-            error_bar=True,
-        ),
+        curry(_transform_to_series, series_type=FORCED_PHOTOMETRY, error_bar=True),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
@@ -392,9 +425,9 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
 
 
 def _transform_to_series(
-    grouped_data: dict[str, dict[str, List[List[float]]]], series_type: str, offset_bands: bool, error_bar=False
+    grouped_data: dict[str, dict[str, List[List[float]]]], series_type: str, error_bar=False
 ) -> List[dict]:
-    """Transform grouped data into series with optional band offsetting."""
+    """Transform grouped data into series."""
 
     def _create_series_for_band(survey_band_data: tuple[str, dict[str, List[List[float]]]]):
         survey, bands_data = survey_band_data
@@ -402,13 +435,10 @@ def _transform_to_series(
         def _process_band(band_data: tuple[str, List[List[float]]]):
             band, data = band_data
 
-            if offset_bands:
-                data = [[d[0], d[1] * OFFSETS[band]] for d in data]
-
             return (
-                create_series(series_type, survey, band, data, offset_bands)
+                create_series(series_type, survey, band, data)
                 if not error_bar
-                else create_error_bar_series(series_type, survey, band, data, offset_bands)
+                else create_error_bar_series(series_type, survey, band, data)
             )
 
         return map(_process_band, bands_data.items())
@@ -449,3 +479,123 @@ def zip_lightcurve(detections, non_detections, forced_photometry):
 
     zip_buffer.seek(0)
     return zip_buffer
+
+
+def offset_bands(result: Result) -> Result:
+    """
+    Apply vertical offsets to lightcurve bands to separate them visually.
+
+    When band offsetting is enabled in the configuration, this function:
+    1. Separates series into normal data points and error bars
+    2. Calculates a metric for each series to determine offset order
+    3. Applies increasing multiplicative offsets to y-values based on sort order
+    4. Preserves the relationship between data points and their error bars
+
+    Args:
+        result: Result object containing echart_options with series data
+
+    Returns:
+        Result: New Result object with offset series data
+
+    Usage example:
+        # Apply band offsets to a lightcurve plot result
+        result_with_offsets = offset_bands(plot_result)
+
+        # Or use within a pipeline (as shown in lightcurve_plot function):
+        result = pipe(
+            get_lightcurve(...),
+            set_default_echart_options,
+            calculate_period,
+            set_chart_options_detections,
+            set_chart_options_non_detections,
+            set_chart_options_forced_photometry,
+            offset_bands,  # Apply band offsets as final step
+        )
+    """
+    if not result.config_state.offset_bands:
+        return result
+
+    result_copy = result.copy()
+    series_defs = result_copy.echart_options["series"]
+
+    series, error_bars = _extract_series(series_defs, result.config_state.offset_metric)
+
+    # Sort and transform in a functional pipeline
+    new_series = [
+        output
+        for i, (sname, sdata) in enumerate(sorted(series.items(), key=lambda kv: kv[1]["metric"]))
+        for output in _apply_offset(i * result.config_state.offset_num, sdata, error_bars.get(sname))
+    ]
+
+    result_copy.echart_options["series"] = new_series
+    return result_copy
+
+
+def _metric(name: str, values: List[float]) -> float:
+    if name == "max":
+        return max(values)
+    if name == "min":
+        return min(values)
+    if name == "avg":
+        return sum(values) / len(values)
+    if name == "median":
+        return calculate_median(values)
+
+    return 99999
+
+
+def calculate_median(numbers) -> float:
+    sorted_numbers = sorted(numbers)
+    n = len(sorted_numbers)
+
+    if n == 0:
+        return 99999
+
+    mid = n // 2
+
+    if n % 2 == 1:
+        # Odd number of elements - return middle element
+        return sorted_numbers[mid]
+    else:
+        # Even number of elements - return average of two middle elements
+        return (sorted_numbers[mid - 1] + sorted_numbers[mid]) / 2
+
+
+def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    """Split into normal series and error bars."""
+    series = {}
+    error_bars = {}
+    for s in series_defs:
+        if s["type"] == "custom":
+            error_bars[s["name"]] = s
+        else:
+            series[s["name"]] = {
+                "series": s,
+                "metric": _metric(metric, [d[1] for d in s["data"]]),
+            }
+    return series, error_bars
+
+
+def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | None) -> List[Dict[str, Any]]:
+    """Return a list containing the offset series and optional error bar."""
+
+    def offset_points(points: List[List[float]]) -> List[List[float]]:
+        return [[x, y + i] for x, y in points]
+
+    def offset_errors(points: List[List[float]]) -> List[List[float]]:
+        # point is composed by x, y1, y2
+        # where x is the x-axis value (mjd), y1 is the y-axis value plus error, and y2 is the y-axis value minus error
+        return [[x, y1 + i, y2 + i] for x, y1, y2 in points]
+
+    updated_series = {
+        **series["series"],
+        "data": offset_points(series["series"]["data"]),
+        "name": f"{series['series']['name']} + {i}",
+    }
+    outputs = [updated_series]
+
+    if error_bar is not None:
+        updated_error = {**error_bar, "data": offset_errors(error_bar["data"]), "name": f"{error_bar['name']} + {i}"}
+        outputs.append(updated_error)
+
+    return outputs
