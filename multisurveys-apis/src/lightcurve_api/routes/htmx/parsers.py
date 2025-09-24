@@ -32,6 +32,8 @@ class ConfigState(BaseModel):
     external_sources: ExternalSourceConfig = ExternalSourceConfig(enabled=False)
     fold: bool = False
     offset_bands: bool = False
+    offset_num: int = 1
+    offset_metric: str = "median"
     period: float = 1.0
 
     # detections, non_detections and forced_photometry are sent as json strings
