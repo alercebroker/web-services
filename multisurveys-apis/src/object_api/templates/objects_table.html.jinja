@@ -112,17 +112,17 @@
             </thead>
             <tbody>
                 {% for item in objects_list['items']%}
-                    <tr class="tw-border-y-2 tw-border-[#757575]/70 tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
-                        <td class="tw-px-4">{{item['oid']}}</td>
-                        <td class="tw-px-4">{{item['n_det']}}</td>
-                        <td class="tw-px-4">{{item['firstmjd'] | truncate(3)}}</td>
-                        <td class="tw-px-4">{{item['lastmjd'] | truncate(3)}}</td>
-                        <td class="tw-px-4">
+                    <tr name="object_row_element" class="tw-border-y-2 tw-border-[#757575]/70 tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
+                        <td class="tw-px-4" name="oid">{{item['oid']}}</td>
+                        <td class="tw-px-4" name="n_det">{{item['n_det']}}</td>
+                        <td class="tw-px-4" name="firstmjd">{{item['firstmjd'] | truncate(3)}}</td>
+                        <td class="tw-px-4" name="lastmjd">{{item['lastmjd'] | truncate(3)}}</td>
+                        <td class="tw-px-4" name="meanra, meandec">
                         {{ item['meanra'] | truncate(3) }}, {{ item['meandec'] | truncate(3) }}
                         </td>
-                        <td class="tw-px-4">{{item['class_name']}}</td>
-                        <td class="tw-px-4">{{item['ranking']}}</td>
-                        <td class="tw-px-4">{{item['deltamjd']}}</td>
+                        <td class="tw-px-4" name="class_name">{{item['class_name']}}</td>
+                        <td class="tw-px-4" name="ranking">{{item['ranking']}}</td>
+                        <td class="tw-px-4" name="deltamjd">{{item['deltamjd']}}</td>
                     </tr>
                 {% endfor %}
             </tbody>

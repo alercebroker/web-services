@@ -7,7 +7,7 @@
     {% from "input.html.jinja" import input as customInput %}
 
     <div class="tw-flex tw-w-full">
-        <div id="form-container" class=" tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 sm:tw-w-full lg:tw-max-w-[458px]">
+        <div id="form-container" class=" tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 tw-w-full lg:tw-max-w-[458px]">
 
             <!--Search filters-->
 
@@ -25,7 +25,10 @@
 
             <!--general filters-->
             <div class="tw-w-full">
-                <p id="general_filters" class="tw-text-[#1976d2] tw-font-medium hover:tw-bg-[#1976d2]/20 hover:tw-cursor-pointer">General filters</p>
+                <div id="general_filters" class="tw-text-[#1976d2] tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#1976d2]/20 hover:tw-cursor-pointer">
+                    <p>General filters</p>
+                    <svg name="arrow_icon" data-direction="up" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1976d2"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+                </div>
 
                 <div id="general_filters_container" class="tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     
@@ -34,7 +37,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1565C0"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                         </button>
                         <div id="oids_container" class="tw-hidden tw-pb-2 tw-flex tw-gap-2 tw-flex-wrap"></div>
-                        {{customInput(id="objectIds", type="text", placeholder="ObjectId")}}
+                        {{customInput(id="objectIds", type="text", placeholder="Object ID")}}
                     </div>
 
                     <!--select classifiers-->
@@ -102,20 +105,24 @@
 
             <!--Discovery date filters-->
             <div class="tw-w-full">
-                <p id="discovery_date_filters" class="tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">Discovery Date Filters</p>
+                <div id="discovery_date_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
+                    <p>Discovery Date Filters</p>
+                    <svg name="arrow_icon" data-direction="down" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                </div>
+
                 
                 <div id="discovery_date_filters_container" class="tw-hidden tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     <!--min mjd and date greg-->
                     {{customInput(id="min_mjd", type="number", placeholder="Min MJD", width="tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12", min="0", step="0.01")}}
 
-                    <div class="tw-container tw-relative tw-z-[10] lg:tw-col-span-6 md: tw-col-span-12">
+                    <div class="tw-container tw-relative tw-z-[10] tw-col-span-12 lg:tw-col-span-6">
 
-                        <div class="tw-flex tw-gap-2">
+                        <div class="tw-flex tw-w-full tw-gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
 
                             <span 
                             id="min_date_time_text" 
-                            class="tw-inline-block tw-w-[85%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</span>
+                            class="tw-inline-block tw-w-full tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer lg:tw-w-[85%] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</span>
                         </div>
 
                         <div id="min_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
@@ -131,13 +138,13 @@
 
 
                     <!--max mjd and date greg-->
-                    {{customInput(id="max_mjd", type="number", placeholder="Max MJD", width="tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12")}}
+                    {{customInput(id="max_mjd", type="number", placeholder="Max MJD", width="tw-col-span-12 lg:tw-col-span-6")}}
                     
-                    <div class="tw-container tw-relative lg:tw-col-span-6 md: tw-col-span-12">
-                        <div class="tw-flex tw-gap-2">
+                    <div class="tw-container tw-relative tw-col-span-12 lg:tw-col-span-6 ">
+                        <div class="tw-flex tw-gap-2 tw-w-full">
                             <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
 
-                            <span id="max_date_time_text" class="tw-inline-block tw-w-[85%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</span>
+                            <span id="max_date_time_text" class="tw-inline-block tw-w-full lg:tw-w-[85%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</span>
                         </div>
 
                         <div id="max_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
@@ -154,14 +161,19 @@
             <!--Conesearch filters-->
             <div class="tw-w-full">
 
-                <div id="conesearch_filters" class="tw-flex tw-gap-2 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
-                    <span class="tw-font-medium">Conesearch</span>
+                <div id="conesearch_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
 
-                    <svg id="consearch_info" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                    <div class="tw-flex tw-gap-2">
+                        <span class="tw-font-medium">Conesearch</span>
+
+                        <svg id="consearch_info" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                    </div>
+
+                    <svg name="arrow_icon" data-direction="down" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                 </div>
 
 
-                <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-my-4 tw-mx-auto tw-gap-4">
+                <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-my-4 tw-gap-4">
                     
                     <div class="tw-col-span-12 lg:tw-col-span-5 sm:tw-col-span-11">
                         {{customInput(id="target_name", type="text", width="tw-w-full", placeholder="Target Name")}}
