@@ -8,6 +8,8 @@
   hx-target="#main-app" 
   hx-trigger="change delay:200ms"
 >
+  <input type="hidden" name="oid" value="{{ config_state.oid }}">
+  <input type="hidden" name="survey_id" value="{{ config_state.survey_id }}">
   {% for detection in detections %}
   <input type="hidden" name="detections[]" value="{{ detection.model_dump_json() }}">
   {% endfor %}
@@ -62,4 +64,17 @@
     <span class="font-semibold mr-3">Offset</span>
     {{ toggle.toggle("offset_bands", "Off", "On", config_state.offset_bands) }}
   </div>
+
+  <div class="w-full h-px bg-gray-200 my-3"></div>
+
+  <a
+    href="/htmx/download?oid={{config_state.oid}}&survey_id={{config_state.survey_id}}"
+    class="flex items-center justify-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 text-sm"
+    download
+  >
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+    </svg>
+    Download
+  </a>
 </form>

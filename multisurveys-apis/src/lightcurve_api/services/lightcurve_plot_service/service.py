@@ -1,26 +1,31 @@
 import copy
+import csv
+import io
+import zipfile
 from collections import defaultdict
+from itertools import chain
 from typing import Callable, ContextManager, List
 
 import httpx
-from lightcurve_api.services.parsers import parse_ztf_dr_detection, parse_ztf_dr_object
-from lightcurve_api.services.period.service import get_period
 from sqlalchemy.orm.session import Session
-from toolz import curry, pipe
+from toolz import curry, pipe, reduce
 
+from lightcurve_api.models.detections import LsstDetection, ztfDetection
+from lightcurve_api.models.force_photometry import LsstForcedPhotometry, ZtfForcedPhotometry
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.lightcurve_item import (
     BaseDetection,
     BaseForcedPhotometry,
     BaseNonDetection,
 )
+from lightcurve_api.models.non_detections import ZtfNonDetections
 from lightcurve_api.routes.htmx.parsers import ConfigState
+from lightcurve_api.services.parsers import parse_ztf_dr_detection, parse_ztf_dr_object
+from lightcurve_api.services.period.service import get_period
 
 from ..conesearch.conesearch import conesearch_oid_lightcurve
 from .chart_point import ChartPoint
 from .result import Result
-from itertools import chain
-from toolz import reduce
 
 DEFAULT_RADIUS = 30 / 3600
 DEFAULT_NEIGHBORS = 2
@@ -64,7 +69,7 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]], of
 def default_echarts_options(config_state: ConfigState):
     return {
         "tooltip": {},
-        "grid": {"right": "25%", "left": "5%", "bottom": "5%", "top": "10%"},
+        "grid": {"right": "25%", "left": "5%", "bottom": "7%", "top": "10%"},
         "legend": {
             "right": 10,
             "top": 80,
@@ -73,7 +78,13 @@ def default_echarts_options(config_state: ConfigState):
             "itemWidth": 15,
         },
         "xAxis": {"type": "value", "name": "MJD", "scale": True},
-        "yAxis": {"type": "value", "name": "Magnitude", "scale": True, "inverse": not config_state.flux},
+        "yAxis": {
+            "type": "value",
+            "name": "Magnitude",
+            "scale": True,
+            "inverse": not config_state.flux,
+            "nameLocation": "start",
+        },
         "series": [],
         "animation": False,
     }
@@ -82,7 +93,7 @@ def default_echarts_options(config_state: ConfigState):
 def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
     result = Result({}, Lightcurve(detections=[], non_detections=[], forced_photometry=[]), config_state=ConfigState())
     return pipe(
-        get_lightcurve(oid, result, survey_id, session_factory),
+        get_lightcurve(result, oid, survey_id, session_factory),
         set_default_echart_options,
         calculate_period,
         set_chart_options_detections,
@@ -123,7 +134,7 @@ def validate_config_state(config_state: ConfigState) -> ConfigState:
     return config_state
 
 
-def get_lightcurve(oid: str, result: Result, survey_id: str, session_factory: Callable[..., ContextManager[Session]]):
+def get_lightcurve(result: Result, oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]):
     return Result(
         copy.deepcopy(result.echart_options),
         conesearch_oid_lightcurve(
@@ -352,3 +363,37 @@ def _transform_to_series(
 
     # Flatten the nested structure into a single list of series
     return list(chain.from_iterable(map(_create_series_for_band, grouped_data.items())))
+
+
+def _data_to_csv(data_list, fieldnames: set):
+    """Convert a list of Pydantic models to CSV format"""
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=fieldnames)
+    writer.writeheader()
+    for item in data_list:
+        writer.writerow(item.model_dump())
+    return output.getvalue()
+
+
+def zip_lightcurve(detections, non_detections, forced_photometry):
+    zip_buffer = io.BytesIO()
+    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        if detections:
+            detections_csv = _data_to_csv(
+                detections, set(list(ztfDetection.model_fields.keys()) + list(LsstDetection.model_fields.keys()))
+            )
+            zip_file.writestr("detections.csv", detections_csv)
+
+        if non_detections:
+            non_detections_csv = _data_to_csv(non_detections, set(list(ZtfNonDetections.model_fields.keys())))
+            zip_file.writestr("non_detections.csv", non_detections_csv)
+
+        if forced_photometry:
+            forced_photometry_csv = _data_to_csv(
+                forced_photometry,
+                set(list(ZtfForcedPhotometry.model_fields.keys()) + list(LsstForcedPhotometry.model_fields.keys())),
+            )
+            zip_file.writestr("forced_photometry.csv", forced_photometry_csv)
+
+    zip_buffer.seek(0)
+    return zip_buffer
