@@ -74,8 +74,8 @@ def populate_database(faker: Faker, db_setup: PsqlDatabase):
         objects = [
             Object(
                 oid=idmapper.catalog_oid_to_masterid("ZTF", "ZTF20aaelulu").item(),
-                tid=1,
-                sid=1,
+                tid=0,
+                sid=0,
                 meanra=faker.latitude(),
                 meandec=faker.longitude(),
                 firstmjd=faker.random_int(min=59000, max=61000),
@@ -88,8 +88,8 @@ def populate_database(faker: Faker, db_setup: PsqlDatabase):
             ),
             Object(
                 oid=1234,
-                tid=2,
-                sid=2,
+                tid=1,
+                sid=1,
                 meanra=faker.latitude(),
                 meandec=faker.longitude(),
                 firstmjd=faker.random_int(min=59000, max=61000),
@@ -163,8 +163,8 @@ def _generate_ztf_object(faker: Faker) -> Object:
             "ZTF",
             f"ZTF{faker.year()[2:]}{''.join(faker.unique.random_letters(7))}",
         ).item(),
-        tid=1,
-        sid=1,
+        tid=0,
+        sid=0,
         meanra=faker.latitude(),
         meandec=faker.longitude(),
         firstmjd=faker.random_int(min=59000, max=61000),
@@ -180,7 +180,7 @@ def _generate_ztf_object(faker: Faker) -> Object:
 def _generate_ztf_detection(faker: Faker, oid, idx) -> Tuple[Detection, ZtfDetection]:
     return Detection(
         oid=oid,
-        sid=1,
+        sid=0,
         measurement_id=idx,
         mjd=faker.random_int(min=59000, max=61000),
         ra=faker.latitude(),
@@ -188,7 +188,7 @@ def _generate_ztf_detection(faker: Faker, oid, idx) -> Tuple[Detection, ZtfDetec
         band=1,
     ), ZtfDetection(
         oid=oid,
-        sid=1,
+        sid=0,
         measurement_id=idx,
         magpsf=faker.pyfloat(min_value=15, max_value=25),
         sigmapsf=faker.pyfloat(min_value=0, max_value=10),
@@ -198,8 +198,8 @@ def _generate_ztf_detection(faker: Faker, oid, idx) -> Tuple[Detection, ZtfDetec
 def _generate_lsst_object(faker: Faker) -> Object:
     return Object(
         oid=faker.unique.random_int(),
-        tid=2,
-        sid=2,
+        tid=1,
+        sid=1,
         meanra=faker.latitude(),
         meandec=faker.longitude(),
         firstmjd=faker.random_int(min=59000, max=61000),
@@ -215,7 +215,7 @@ def _generate_lsst_object(faker: Faker) -> Object:
 def _generate_lsst_detection(faker: Faker, oid, idx) -> Tuple[Detection, LsstDetection]:
     return Detection(
         oid=oid,
-        sid=2,
+        sid=1,
         measurement_id=idx,
         mjd=faker.random_int(min=59000, max=61000),
         ra=faker.latitude(),
@@ -223,7 +223,7 @@ def _generate_lsst_detection(faker: Faker, oid, idx) -> Tuple[Detection, LsstDet
         band=1,
     ), LsstDetection(
         oid=oid,
-        sid=2,
+        sid=1,
         measurement_id=idx,
         diaSourceId=idx + 1,
         visit=idx + 1,
@@ -241,7 +241,7 @@ def _generate_lsst_detection(faker: Faker, oid, idx) -> Tuple[Detection, LsstDet
 def _generate_non_detection(faker: Faker, oid, idx):
     return ZtfNonDetection(
         oid=oid,
-        sid=1,
+        sid=0,
         band=1,
         mjd=faker.unique.pyfloat(min_value=59000, max_value=61000),
         diffmaglim=faker.pyfloat(min_value=0, max_value=10),
@@ -251,7 +251,7 @@ def _generate_non_detection(faker: Faker, oid, idx):
 def _generate_ztf_forced_photometry(faker: Faker, oid, idx):
     return ForcedPhotometry(
         oid=oid,
-        sid=1,
+        sid=0,
         measurement_id=idx,
         mjd=faker.random_int(min=59000, max=61000),
         ra=faker.latitude(),
@@ -259,7 +259,7 @@ def _generate_ztf_forced_photometry(faker: Faker, oid, idx):
         band=1,
     ), ZtfForcedPhotometry(
         oid=oid,
-        sid=1,
+        sid=0,
         measurement_id=idx,
         mag=faker.pyfloat(min_value=15, max_value=25),
         e_mag=faker.pyfloat(min_value=0, max_value=10),
@@ -297,7 +297,7 @@ def _generate_ztf_forced_photometry(faker: Faker, oid, idx):
 def _generate_lsst_forced_photometry(faker: Faker, oid, idx):
     return ForcedPhotometry(
         oid=oid,
-        sid=2,
+        sid=1,
         measurement_id=idx,
         mjd=faker.random_int(min=59000, max=61000),
         ra=faker.latitude(),
@@ -305,7 +305,7 @@ def _generate_lsst_forced_photometry(faker: Faker, oid, idx):
         band=1,
     ), LsstForcedPhotometry(
         oid=oid,
-        sid=2,
+        sid=1,
         measurement_id=idx,
         visit=faker.random_int(),
         detector=faker.random_int(),
