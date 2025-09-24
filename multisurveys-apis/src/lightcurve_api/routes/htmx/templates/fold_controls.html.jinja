@@ -4,15 +4,17 @@
     {{ toggle.toggle("fold", "Off", "On", config_state.fold)}}
   </div>
   <div class="col-sm-12">
-    <input name="period-slider" type="range" min="1" max="500" value="{{config_state.period}}" class="my-2 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-    <input name="period" type="number" min="1" max="500" value="{{config_state.period}}" >
-    <span name="x2" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer select-none">X2</span>
-    <span name="div2" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer select-none">/2</span>
+    <input id="period-slider" type="range" min="0.05" max="500" value="{{config_state.period}}" class="my-2 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+    <div class="flex items-center gap-2 mt-2">
+      <input name="period" value="{{config_state.period}}" class="w-24">
+      <span name="x2" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer select-none">X2</span>
+      <span name="div2" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer select-none">/2</span>
+    </div>
   </div>
 </div>
 
 <script>
-var slider = document.querySelector('input[name="period-slider"]');
+var slider = document.querySelector('#period-slider');
 var input = document.querySelector('input[name="period"]');
 var x2 = document.querySelector('span[name="x2"]');
 var div2 = document.querySelector('span[name="div2"]');
@@ -28,7 +30,7 @@ input.addEventListener('change', function(e) {
 x2.addEventListener('click', function(e) {
   input.value = input.value * 2;
   if (input.value > 500) input.value = 500
-  if (input.value < 1) input.value = 1
+  if (input.value < 0.05) input.value = 0.05
 
   input.dispatchEvent(new Event('change', { bubbles: true }));
 })
@@ -36,7 +38,7 @@ x2.addEventListener('click', function(e) {
 div2.addEventListener('click', function(e) {
   input.value = input.value / 2;
   if (input.value > 500) input.value = 500
-  if (input.value < 1) input.value = 1
+  if (input.value < 0.05) input.value = 0.05
   input.dispatchEvent(new Event('change', { bubbles: true }));
 })
 </script>

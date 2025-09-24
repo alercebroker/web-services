@@ -11,10 +11,11 @@ class Result:
     lightcurve: Lightcurve
     config_state: ConfigState
 
-    def __init__(self, echart_options: dict[str, Any], lightcurve: Lightcurve, config_state: ConfigState):
+    def __init__(self, echart_options: dict[str, Any], lightcurve: Lightcurve, config_state: ConfigState, period):
         self.echart_options = echart_options
         self.lightcurve = lightcurve
         self.config_state = config_state
+        self.period = period
 
     def copy(self):
         return Result(
@@ -25,4 +26,5 @@ class Result:
                 forced_photometry=copy.deepcopy(self.lightcurve.forced_photometry),
             ),
             config_state=self.config_state.model_copy(deep=True),
+            period=copy.deepcopy(self.period),
         )

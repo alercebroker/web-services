@@ -21,11 +21,12 @@ from lightcurve_api.models.lightcurve_item import (
 from lightcurve_api.models.non_detections import ZtfNonDetections
 from lightcurve_api.routes.htmx.parsers import ConfigState
 from lightcurve_api.services.parsers import parse_ztf_dr_detection, parse_ztf_dr_object
-from lightcurve_api.services.period.service import get_period
+from lightcurve_api.services.period.service import compute_periodogram
 
 from ..conesearch.conesearch import conesearch_oid_lightcurve
 from .chart_point import ChartPoint
 from .result import Result
+
 
 DEFAULT_RADIUS = 30 / 3600
 DEFAULT_NEIGHBORS = 2
@@ -142,11 +143,12 @@ def default_echarts_options(config_state: ConfigState):
 
 
 def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
-    result = Result({}, Lightcurve(detections=[], non_detections=[], forced_photometry=[]), config_state=ConfigState())
+    result = Result(
+        {}, Lightcurve(detections=[], non_detections=[], forced_photometry=[]), config_state=ConfigState(), period={}
+    )
     return pipe(
         get_lightcurve(result, oid, survey_id, session_factory),
         set_default_echart_options,
-        calculate_period,
         set_chart_options_detections,
         set_chart_options_non_detections,
         set_chart_options_forced_photometry,
@@ -165,7 +167,9 @@ def update_lightcurve_plot(
             {},
             Lightcurve(detections=detections, non_detections=non_detections, forced_photometry=forced_photometry),
             config_state=validate_config_state(config_state),
+            period={},
         ),
+        compute_periodogram,
         set_default_echart_options,
         set_chart_options_external_sources,
         set_chart_options_detections,
@@ -198,6 +202,7 @@ def get_lightcurve(result: Result, oid: str, survey_id: str, session_factory: Ca
             session_factory,
         ),
         config_state=result.config_state.model_copy(deep=True),
+        period={},
     )
 
 
@@ -373,12 +378,6 @@ def set_chart_options_external_sources(result: Result) -> Result:
     return result_copy
 
 
-def calculate_period(result: Result) -> Result:
-    result_copy = result.copy()
-    result_copy.config_state.period = get_period(result.lightcurve.detections)
-    return result_copy
-
-
 def get_ztf_dr_objects(
     config_state: ConfigState,
     detections: list[BaseDetection],
@@ -389,6 +388,7 @@ def get_ztf_dr_objects(
         {},
         Lightcurve(detections=detections, non_detections=non_detections, forced_photometry=forced_photometry),
         config_state=validate_config_state(config_state),
+        period={},
     )
 
     if len(result.lightcurve.detections) == 0:
@@ -418,10 +418,22 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
     def _add_point_to_group(group: dict, point: ChartPoint):
         limit = 99999 if config_state.flux else 1
         point_value = point.point() if not error_bar else point.error_bar(limit)
-        group[point.survey][point.band].append(point_value)
+        if _valid_point(point_value):
+            group[point.survey][point.band].append(point_value)
         return group
 
     return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
+
+
+def _valid_point(point: List[float]) -> bool:
+    valid = True
+    if point[1] <= 0:
+        valid = False
+
+    if point[1] >= 999999:
+        valid = False
+
+    return valid
 
 
 def _transform_to_series(

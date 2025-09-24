@@ -79,7 +79,12 @@ def external_sources(request: Request, config_state: ConfigState):
 def download(oid: str, survey_id: str, db: db_dependency):
     """Downloads the lightcurve"""
     service_result = pipe(
-        Result({}, Lightcurve(detections=[], non_detections=[], forced_photometry=[]), config_state=ConfigState()),
+        Result(
+            {},
+            Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+            config_state=ConfigState(),
+            period={},
+        ),
         curry(lightcurve_plot_service.get_lightcurve, oid=oid, survey_id=survey_id, session_factory=db.session),
     )
     zip_buffer = lightcurve_plot_service.zip_lightcurve(
