@@ -1,3 +1,5 @@
+import random
+import time
 
 
 object_basic_information_dict = {
@@ -118,70 +120,27 @@ classifiers_options_dicts = [
 ]
 
 
-array_dicts_data_table = [
-    # Dict 1 (original)
-    {
-        'Object ID': '12345',
-        'n_det': 15,
-        'firstmjd': 58000.5,
-        'lastmjd': 58500.3,
-        'meanra': 150.25,
-        'meandec': 2.75,
-        'Probability': 0.95
-    },
-    
-    # Dict 2
-    {
-        'Object ID': '11345',
-        'n_det': 22,
-        'firstmjd': 57950.8,
-        'lastmjd': 58480.1,
-        'meanra': 148.67,
-        'meandec': 1.92,
-        'Probability': 0.87
-    },
-    
-    # Dict 3
-    {
-        'Object ID': '13345',
-        'n_det': 8,
-        'firstmjd': 58045.2,
-        'lastmjd': 58525.7,
-        'meanra': 152.41,
-        'meandec': 3.18,
-        'Probability': 0.92
-    },
-    
-    # Dict 4
-    {
-        'Object ID': '14345',
-        'n_det': 31,
-        'firstmjd': 57985.3,
-        'lastmjd': 58495.6,
-        'meanra': 149.88,
-        'meandec': 2.34,
-        'Probability': 0.78
-    },
-    
-    # Dict 5
-    {
-        'Object ID': '15345',
-        'n_det': 12,
-        'firstmjd': 58012.9,
-        'lastmjd': 58515.4,
-        'meanra': 151.76,
-        'meandec': 3.05,
-        'Probability': 0.96
-    },
-    
-    # Dict 6
-    {
-        'Object ID': '16345',
-        'n_det': 27,
-        'firstmjd': 57975.1,
-        'lastmjd': 58488.9,
-        'meanra': 147.93,
-        'meandec': 1.67,
-        'Probability': 0.83
-    }
-]
+def generate_array_dicts_data_table(n=20, seed=None):
+    rnd = random.Random(seed if seed is not None else time.time_ns())
+    base_oid = rnd.randint(10000, 99999)
+
+    rows = []
+    for i in range(n):
+        oid = f"{base_oid + i}"
+        n_det = rnd.randint(5, 45)
+        firstmjd = 57900.0 + rnd.uniform(0, 200)
+        lastmjd = firstmjd + rnd.uniform(10, 200)
+        meanra = round(rnd.uniform(0, 360), 5)
+        meandec = round(rnd.uniform(-90, 90), 5)
+        probability = round(rnd.uniform(0.5, 0.99), 2)
+
+        rows.append({
+            'oid': oid,
+            'n_det': n_det,
+            'firstmjd': round(firstmjd, 3),
+            'lastmjd': round(lastmjd, 3),
+            'meanra': meanra,
+            'meandec': meandec,
+            'Probability': probability
+        })
+    return rows
