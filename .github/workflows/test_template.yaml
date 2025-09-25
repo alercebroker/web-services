@@ -58,10 +58,9 @@ jobs:
         run: pipx install poetry==${{ inputs.poetry-version }}
       - name: Set up Python
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ inputs.python-version }}
-          cache: 'poetry'
       - name: Install dependencies
         if: ${{ steps.changed-files.outputs.any_changed == 'true' }}
         run: |
