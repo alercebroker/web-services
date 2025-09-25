@@ -4,8 +4,8 @@
 
 <form 
   hx-ext="form-json"
-  hx-post="/htmx/config_change" 
-  hx-target="#main-app" 
+  hx-post="{{API_URL}}/htmx/config_change"
+  hx-target="#main-app"
   hx-trigger="change delay:200ms"
 >
   <input type="hidden" name="oid" value="{{ config_state.oid }}">
@@ -44,7 +44,7 @@
     <button 
       class="ml-2 p-1.5 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       aria-label="Filter external sources"
-      hx-post="/htmx/external_sources"
+      hx-post="{{API_URL}}/htmx/external_sources"
     >
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
@@ -77,7 +77,7 @@
   <div class="w-full h-px bg-gray-200 my-3"></div>
 
   <a
-    href="/htmx/download?oid={{config_state.oid}}&survey_id={{config_state.survey_id}}"
+    href="{{API_URL}}/htmx/download?oid={{config_state.oid}}&survey_id={{config_state.survey_id}}"
     class="flex items-center justify-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 text-sm"
     download
   >
@@ -87,3 +87,4 @@
     Download
   </a>
 </form>
+

@@ -7,6 +7,7 @@ from itertools import chain
 from typing import Callable, ContextManager, List, Dict, Any, Tuple
 
 import httpx
+from lightcurve_api.models.periodogram import Periodogram
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
@@ -144,10 +145,14 @@ def default_echarts_options(config_state: ConfigState):
 
 def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
     result = Result(
-        {}, Lightcurve(detections=[], non_detections=[], forced_photometry=[]), config_state=ConfigState(), period={}
+        {},
+        Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+        config_state=ConfigState(),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
     return pipe(
         get_lightcurve(result, oid, survey_id, session_factory),
+        compute_periodogram,
         set_default_echart_options,
         set_chart_options_detections,
         set_chart_options_non_detections,
@@ -167,7 +172,7 @@ def update_lightcurve_plot(
             {},
             Lightcurve(detections=detections, non_detections=non_detections, forced_photometry=forced_photometry),
             config_state=validate_config_state(config_state),
-            period={},
+            periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
         ),
         compute_periodogram,
         set_default_echart_options,
@@ -202,7 +207,7 @@ def get_lightcurve(result: Result, oid: str, survey_id: str, session_factory: Ca
             session_factory,
         ),
         config_state=result.config_state.model_copy(deep=True),
-        period={},
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
 
 
@@ -388,7 +393,7 @@ def get_ztf_dr_objects(
         {},
         Lightcurve(detections=detections, non_detections=non_detections, forced_photometry=forced_photometry),
         config_state=validate_config_state(config_state),
-        period={},
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
 
     if len(result.lightcurve.detections) == 0:

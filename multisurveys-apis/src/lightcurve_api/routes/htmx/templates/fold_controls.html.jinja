@@ -11,6 +11,10 @@
       <span name="div2" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer select-none">/2</span>
     </div>
   </div>
+  <div class="col-sm-12 mt-2">
+    <span class="font-semibold mr-3">Periodogram</span>
+    {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled)}}
+  </div>
 </div>
 
 <script>
@@ -41,4 +45,9 @@ div2.addEventListener('click', function(e) {
   if (input.value < 0.05) input.value = 0.05
   input.dispatchEvent(new Event('change', { bubbles: true }));
 })
+
+document.addEventListener('periodogram:periodSelected', function(event) {
+  input.value = event.detail.period;
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+});
 </script>
