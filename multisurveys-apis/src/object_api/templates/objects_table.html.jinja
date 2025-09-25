@@ -8,8 +8,9 @@
         {% if has_prev %}
             <span 
             id="prev_page"
+            name="objects_table_btn_page"
             data-next="{{prev}}"
-            hx-get="{{API_URL}}/table"
+            hx-get="{{API_URL}}/htmx/list_objects"
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#objects_table"
@@ -30,8 +31,9 @@
         {% if has_next %}
             <span 
             id="next_page"
+            name="objects_table_btn_page"
             data-next="{{next}}"
-            hx-get="{{API_URL}}/table"
+            hx-get="{{API_URL}}/htmx/list_objects"
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#objects_table"

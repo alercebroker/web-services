@@ -37,7 +37,7 @@ templates.env.globals["API_URL"] = os.getenv(
 templates.env.filters["truncate"] = truncate_float
 
 
-@router.get("/htmx/object", response_class=HTMLResponse)
+@router.get("/htmx/object_information", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str, survey_id: str):
     try:
         session = request.app.state.psql_session
@@ -72,7 +72,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
     )
 
 
-@router.get("/tns/", response_class=HTMLResponse)
+@router.get("/htmx/tns/", response_class=HTMLResponse)
 async def tns_info(request: Request, ra: float, dec:float):
     try:
         # tns_data, tns_link = get_tns(ra, dec)
@@ -95,7 +95,7 @@ async def tns_info(request: Request, ra: float, dec:float):
     )
 
 
-@router.get("/form/", response_class=HTMLResponse)
+@router.get("/htmx/search_objects/", response_class=HTMLResponse)
 async def objects_form(request: Request):
     try:
         session = request.app.state.psql_session
@@ -110,7 +110,7 @@ async def objects_form(request: Request):
         raise HTTPException(status_code=500, detail="An error occurred")
 
 
-@router.get("/select", response_class=HTMLResponse)
+@router.get("/htmx/classes_select", response_class=HTMLResponse)
 async def select_classes_classifier(request: Request, classifier_classes: list[str] = Query(...)):
     try:
         classes = classifier_classes
@@ -124,7 +124,7 @@ async def select_classes_classifier(request: Request, classifier_classes: list[s
         raise HTTPException(status_code=500, detail="An error occurred")
 
 
-@router.get("/table", response_class=HTMLResponse)
+@router.get("/htmx/list_objects", response_class=HTMLResponse)
 def objects_table(
     request: Request,
     class_name: str | None = None,
