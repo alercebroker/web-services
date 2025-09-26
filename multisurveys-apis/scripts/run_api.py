@@ -66,6 +66,13 @@ def run_probability():
     run_service(service_config)
 
 
+def run_crossmatch():
+    config_dict = config_from_yaml()
+    service_config = config_dict["services"]["crossmatch_api"]
+    print(f"Running service: crossmatch_api with config: {service_config}")
+    run_service(service_config)
+
+
 ###
 ### A function to run all the services configured in the yaml file
 ###

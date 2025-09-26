@@ -6,13 +6,13 @@
 {% if objects_list['items']|length > 0 %}
 <div id="sidebar" class="tw-preflight">
 
-    <table class="tw-table-auto tw-border-collapse tw-bg-[#424242] tw-text-left tw-w-full">
+    <table class="tw-table-auto tw-border-collapse tw-bg-[#424242] tw-text-left tw-w-full tw-h-[95vh]">
         <thead>
             <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
                 <th class="tw-px-4 tw-text-white">Object List</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody class="tw-border-y tw-border-[#616161]">
             {% for item in objects_list['items']%}
                 {% if item['oid']|string != selected_oid|string%}
                     <tr class="tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
@@ -40,11 +40,11 @@
         </tbody>
     </table>
 
-    <div id="" class="tw-flex tw-justify-end tw-items-center tw-text-base tw-bg-[#424242] tw-h-[48px]">
+    <div class="tw-flex tw-justify-center tw-items-center tw-text-base tw-bg-[#424242] tw-h-[48px]">
         {% if has_prev %}
             <span 
             id="prev_page"
-            name="prev_page_sidebar"
+            name="side_objects_btn"
             data-next="{{prev}}"
             hx-get="{{API_URL}}/htmx/side_objects"
             hx-trigger="click"
@@ -53,7 +53,7 @@
             hx-on::config-request="prepare_params(event)"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
-            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
             <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/>
             </svg>
             </span>
@@ -61,13 +61,13 @@
         <span 
         id="current_page" 
         data-page="{{objects_list['current_page']}}" 
-        class="tw-inline-block tw-text-white tw-text-lg tw-text-center tw-h-[28px] tw-w-[48px]">{{objects_list['current_page']}}
+        class="tw-inline-block tw-text-white tw-text-sm tw-text-center tw-h-[28px] tw-w-[48px] tw-flex tw-items-center tw-justify-center">{{objects_list['current_page']}}
         </span>
         
         {% if has_next %}
             <span 
             id="next_page"
-            name="next_page_sidebar"
+            name="side_objects_btn"
             data-next="{{next}}"
             hx-get="{{API_URL}}/htmx/side_objects"
             hx-trigger="click"
@@ -76,7 +76,7 @@
             hx-on::config-request="prepare_params(event)"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
-            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
             <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/>
             </svg>
             </span>
