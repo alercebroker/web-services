@@ -38,6 +38,11 @@
   <div class="mt-2">
     {{ toggle.toggle("total", "Difference", "Total", config_state.total) }}
   </div>
+  {% if use_absolute %}
+  <div class="mt-2">
+    {{ toggle.toggle("absolute", "Apparent", "Absolute", config_state.absolute) }}
+  </div>
+  {% endif %}
   <div class="mt-2 flex items-center">
     <span class="font-semibold mr-3">External</span>
     {{ toggle.toggle("external_sources.enabled", "Off", "On", config_state.external_sources.enabled) }}

@@ -1,5 +1,5 @@
 {% if detections %}
-{% set not_corrected = detections[0].flux2magnitude(True) == 0 %}
+{% set not_corrected = detections[0].flux2magnitude(True, False) == 0 %}
 {% else %}
 {% set not_corrected = True %}
 {% endif %}
@@ -22,7 +22,16 @@
       {% if config_state.fold %}
       <div id="periodogram-container">
         {% if config_state.periodogram_enabled %}
-          {% include "periodogram.html.jinja" %}
+          {% if periodogram.has_period() %}
+            {% include "periodogram.html.jinja" %}
+          {% else %}
+          <div class="h-full flex items-center justify-center">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+              <strong class="text-yellow-800">Info:</strong> 
+              <span class="text-yellow-700">No period computed for this object. Periodogram not available.</span>
+            </div>
+          </div>
+          {% endif %}
         {% endif %}
       </div>
       {% endif %}

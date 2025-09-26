@@ -19,6 +19,9 @@ class Periodogram(BaseModel):
 
         return round(self.periods[self.best_periods_index[0]], 3)
 
+    def has_period(self):
+        return len(self.best_periods_index) > 0
+
     def serialize(self):
         return {
             "periods": self.periods,
