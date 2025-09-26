@@ -230,7 +230,7 @@ def objects_table(
         raise HTTPException(status_code=500, detail="An error occurred")
 
 
-@router.get("/sidebar", response_class=HTMLResponse)
+@router.get("/htmx/side_objects", response_class=HTMLResponse)
 def sidebar(
     request: Request,
     survey: str | None = None,
@@ -290,7 +290,16 @@ def sidebar(
                 order_args=order,
             )
 
-            object_list = get_objects_list(session_ms=session, search_params=search_params)
+            # object_list = get_objects_list(session_ms=session, search_params=search_params)
+
+            object_list = {
+                "next": page+1,
+                "has_next": True,
+                "prev": page - 1 ,
+                "has_prev": True,
+                "current_page": page,
+                "items": generate_array_dicts_data_table(),
+            }
 
         else:
             object_list = {
