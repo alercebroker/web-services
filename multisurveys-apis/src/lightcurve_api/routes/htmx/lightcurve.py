@@ -3,13 +3,16 @@ import os
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
-from lightcurve_api.models.lightcurve import Lightcurve
-from lightcurve_api.services.lightcurve_plot_service import service as lightcurve_plot_service
-from core.config.dependencies import db_dependency
 from toolz import curry, pipe
-from .parsers import ConfigState, parse_detections, parse_non_detections, parse_forced_photometry
-from lightcurve_api.services.lightcurve_plot_service.result import Result
 
+from core.config.dependencies import db_dependency
+from lightcurve_api.models.lightcurve import Lightcurve
+from lightcurve_api.models.periodogram import Periodogram
+from lightcurve_api.services.lightcurve_plot_service import service as lightcurve_plot_service
+from lightcurve_api.services.lightcurve_plot_service.result import Result
+from lightcurve_api.services.period.service import get_periodogram_chart
+
+from .parsers import ConfigState, parse_detections, parse_forced_photometry, parse_non_detections
 
 router = APIRouter(prefix="/htmx")
 
@@ -36,6 +39,8 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
             "detections": result.lightcurve.detections,
             "non_detections": result.lightcurve.non_detections,
             "forced_photometry": result.lightcurve.forced_photometry,
+            "periodogram": result.periodogram,
+            "periodogram_options": get_periodogram_chart(result.periodogram),
         },
     )
 
@@ -57,6 +62,8 @@ def config_change(request: Request, config_state: ConfigState):
             "detections": result.lightcurve.detections,
             "non_detections": result.lightcurve.non_detections,
             "forced_photometry": result.lightcurve.forced_photometry,
+            "periodogram": result.periodogram,
+            "periodogram_options": get_periodogram_chart(result.periodogram),
         },
     )
 
@@ -83,7 +90,7 @@ def download(oid: str, survey_id: str, db: db_dependency):
             {},
             Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
             config_state=ConfigState(),
-            period={},
+            periodogram=Periodogram(periods=[], scores=[], best_periods=[], best_periods_index=[]),
         ),
         curry(lightcurve_plot_service.get_lightcurve, oid=oid, survey_id=survey_id, session_factory=db.session),
     )

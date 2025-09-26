@@ -35,6 +35,7 @@ class ConfigState(BaseModel):
     offset_num: int = 1
     offset_metric: str = "median"
     period: float = 0.05
+    periodogram_enabled: bool = False
 
     # detections, non_detections and forced_photometry are sent as json strings
     # that need to be parsed

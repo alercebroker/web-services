@@ -1,5 +1,5 @@
 <form id="dr-table"
-  hx-post="/htmx/config_change"
+  hx-post="{{API_URL}}/htmx/config_change"
   hx-target="#main-app"
   hx-vals='{{config_state.model_dump_json(exclude=["external_sources"])}}'
   hx-ext="form-json"

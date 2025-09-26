@@ -1,3 +1,4 @@
+from lightcurve_api.models.periodogram import Periodogram
 import numpy as np
 import pandas as pd
 from P4J import MultiBandPeriodogram
@@ -74,15 +75,19 @@ class PeriodogramComputer:
 
         self.periodogram_computer.optimal_finetune_best_frequencies(times_finer=10.0, n_local_optima=10)
 
-        best_freq, best_per = self.periodogram_computer.get_best_frequencies()
+        best_freq, _ = self.periodogram_computer.get_best_frequencies()
 
         freq, score = self.periodogram_computer.get_periodogram()
         period = 1 / freq
 
-        return {
-            "period": period.tolist(),
-            "score": score.tolist(),
-            "best_periods": (1.0 / best_freq).tolist(),
-            "best_periods_index": self.periodogram_computer.best_local_optima,
-            "best_period": best_per,
-        }
+        local_optima = (
+            [self.periodogram_computer.best_local_optima]
+            if isinstance(self.periodogram_computer.best_local_optima, int)
+            else self.periodogram_computer.best_local_optima
+        )
+        return Periodogram(
+            periods=period.tolist(),
+            scores=score.tolist(),
+            best_periods=(1.0 / best_freq).tolist(),
+            best_periods_index=local_optima,
+        )
