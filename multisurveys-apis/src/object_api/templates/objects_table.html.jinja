@@ -1,6 +1,6 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
-
 
 <div id="objects_table" class="tw-preflight">
 
@@ -50,7 +50,7 @@
         {%endif%}
     </div>
     {% if objects_list['items']|length > 0 %}
-    <div class="tw-overflow-x-auto">
+    <div class="tw-overflow-x-auto tw-hidden sm:tw-block">
         <table class="tw-table-auto tw-border-collapse tw-bg-[#1e1e1e] tw-text-left tw-w-full">
             <thead>
                 <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
@@ -130,6 +130,11 @@
             </tbody>
         </table>
     </div>
+
+
+        {% from "objects_table_small_screen.html.jinja" import small_table as small_table %}
+
+        {{small_table(objects_list['items'])}}
     {% else %}
      {% from "objects_table_default.html.jinja" import default_table as defaultTable %}
         <div class="tw-flex tw-flex-col tw-justify-center tw-content-center">
@@ -148,7 +153,7 @@
 
 
 <script type="module">
-    import {draw_arrow_order_table} from "{{API_URL}}/static//draw_elements.js";
+    import {draw_arrow_order_table} from "{{API_URL}}/static/draw_elements.js";
 
     let recived_order_by = '{{actual_order_by}}_column'
     let recived_order_mode = '{{actual_order_mode}}'

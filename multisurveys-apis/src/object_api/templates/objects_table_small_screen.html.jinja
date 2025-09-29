@@ -1,0 +1,110 @@
+{% macro small_table(items) %}
+<div class="tw-flex tw-flex-col tw-w-full tw-max-w-[630px] tw-bg-[#1e1e1e] tw-block sm:tw-hidden">
+
+    <div id="objects_table_sort" class="obj-select-wrapper tw-w-full tw-mb-4 tw-px-4">
+        <div id="" class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
+            <div class="obj-select__trigger tw-flex tw-flex-col">
+                <label class="tw-text-white/80 tw-text-xs">Sort by</label>
+                <span
+                id=""
+                class="tw-text-[#FFFFFF]"
+                data-value="">Highest Probability</span>
+            </div>
+            <div class="obj-custom-options dark:tw-bg-[#1e1e1e]">
+                <span class="obj-custom-option obj-selected  dark:tw-text-[#EEEEEE]"  data-value=""></span>
+                <span 
+                class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" 
+                data-value=''
+                >
+                    FirstMJD
+                </span>
+                <span 
+                class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" 
+                data-value=''
+                >
+                    LastMJD
+                </span>
+                <span 
+                class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" 
+                data-value=''
+                >
+                    Highest Probability
+                </span>
+
+                <span 
+                class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" 
+                data-value=''
+                >
+                    DeltaMJD (days)
+                </span>
+            </div>
+        </div>
+    </div>
+    
+
+    {% for item in items %}
+        <div name="object_row_element" class="tw-text-white tw-text-[0.875rem] tw-border-b-2 tw-border-[#757575]/70 tw-px-4 hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
+            <div class="tw-flex tw-justify-between tw-h-[48px]">
+                <span class="tw-font-semibold">oid</span>
+                <span name="oid">{{item['oid']}}</span>
+            </div>
+            <div class="tw-flex tw-justify-between tw-h-[48px]">
+                <span class="tw-font-semibold">Number of detections</span>
+                <span name="n_det">{{item['n_det']}}</span>
+            </div>
+            <div class="tw-flex tw-justify-between tw-h-[48px]">
+                <span class="tw-font-semibold">FirstMJD</span>
+                <span name="firstmjd">{{item['firstmjd'] | truncate(3)}}</span>
+            </div>
+            <div class="tw-flex tw-justify-between tw-h-[48px]">
+                <span class="tw-font-semibold">LastMJD</span>
+                <span name="lastmjd">{{item['lastmjd'] | truncate(3)}}</span>
+            </div>
+            <div class="tw-flex tw-justify-between tw-h-[48px]">
+                <span class="tw-font-semibold">RA/Dec (degrees)</span>
+                <span name="meanra, meandec">{{ item['meanra'] | truncate(3) }}, {{ item['meandec'] | truncate(3) }}</span>
+            </div>
+            <div class="tw-flex tw-justify-between tw-h-[48px]">
+                <span class="tw-font-semibold">Highest Probability Class</span>
+                <span name="class_name">{{item['class_name']}}</span>
+            </div>
+            <div class="tw-flex tw-justify-between tw-h-[48px]">
+                <span class="tw-font-semibold">Highest Probability</span>
+                <span name="ranking">{{item['ranking']}}</span>
+            </div>
+            <div class="tw-flex tw-justify-between tw-h-[48px]">
+                <span class="tw-font-semibold">DeltaMJD (days)</span>
+                <span name="deltamjd">{{item['deltamjd']}}</span>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+
+<script type="module">
+
+    for (const dropdown of document.querySelectorAll("#objects_table_sort")) {
+        dropdown.addEventListener('click', function() {
+        this.querySelector('.obj-select').classList.toggle('open');
+        })
+    }
+
+    for(const option of document.querySelectorAll(".obj-custom-option")){
+        option.addEventListener('click', () => {
+            if(!option.classList.contains('obj-selected')){
+                option.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
+                option.classList.add('obj-selected');
+
+                option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
+
+                if(!option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.contains('dark:tw-text-[#EEEEEE]')){
+                    option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.add('dark:tw-text-[#EEEEEE]')
+                }
+
+                option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-value",  option.getAttribute("data-value"));
+            }
+        })
+    }
+</script>
+{% endmacro %}

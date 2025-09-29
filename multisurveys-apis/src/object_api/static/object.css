@@ -325,6 +325,10 @@
   margin-top: 6px;
 }
 
+.tw-preflight :is(.tw-mb-4){
+  margin-bottom: 1rem;
+}
+
 .tw-preflight :is(.tw-block){
   display: block;
 }
@@ -397,6 +401,10 @@
   height: 64px;
 }
 
+.tw-preflight :is(.tw-h-\[95vh\]){
+  height: 95vh;
+}
+
 .tw-preflight :is(.tw-h-auto){
   height: auto;
 }
@@ -406,49 +414,8 @@
   height: fit-content;
 }
 
-.tw-preflight :is(.tw-h-full){
-  height: 100%;
-}
-
-.tw-preflight :is(.tw-h-screen){
-  height: 100vh;
-}
-
-.tw-preflight :is(.tw-h-dvh){
-  height: 100dvh;
-}
-
-.tw-preflight :is(.tw-h-max){
-  height: -moz-max-content;
-  height: max-content;
-}
-
-.tw-preflight :is(.tw-h-\[90vh\]){
-  height: 90vh;
-}
-
-.tw-preflight :is(.tw-h-\[98vh\]){
-  height: 98vh;
-}
-
-.tw-preflight :is(.tw-h-\[95vh\]){
-  height: 95vh;
-}
-
 .tw-preflight :is(.tw-max-h-\[304px\]){
   max-height: 304px;
-}
-
-.tw-preflight :is(.tw-min-h-screen){
-  min-height: 100vh;
-}
-
-.tw-preflight :is(.tw-min-h-full){
-  min-height: 100%;
-}
-
-.tw-preflight :is(.tw-min-h-dvh){
-  min-height: 100dvh;
 }
 
 .tw-preflight :is(.tw-w-1\/3){
@@ -539,8 +506,16 @@
   max-width: 40%;
 }
 
+.tw-preflight :is(.tw-max-w-\[564px\]){
+  max-width: 564px;
+}
+
 .tw-preflight :is(.tw-max-w-\[95\%\]){
   max-width: 95%;
+}
+
+.tw-preflight :is(.tw-max-w-\[630px\]){
+  max-width: 630px;
 }
 
 .tw-preflight :is(.tw-grow){
@@ -771,6 +746,11 @@
   border-right-width: 0px;
 }
 
+.tw-preflight :is(.tw-border-y){
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+}
+
 .tw-preflight :is(.tw-border-y-0){
   border-top-width: 0px;
   border-bottom-width: 0px;
@@ -779,11 +759,6 @@
 .tw-preflight :is(.tw-border-y-2){
   border-top-width: 2px;
   border-bottom-width: 2px;
-}
-
-.tw-preflight :is(.tw-border-y){
-  border-top-width: 1px;
-  border-bottom-width: 1px;
 }
 
 .tw-preflight :is(.tw-border-b){
@@ -802,10 +777,6 @@
   border-top-width: 1px;
 }
 
-.tw-preflight :is(.tw-border-t-2){
-  border-top-width: 2px;
-}
-
 .tw-preflight :is(.tw-border-solid){
   border-style: solid;
 }
@@ -813,6 +784,11 @@
 .tw-preflight :is(.tw-border-\[\#1e1e1e\]){
   --tw-border-opacity: 1;
   border-color: rgb(30 30 30 / var(--tw-border-opacity));
+}
+
+.tw-preflight :is(.tw-border-\[\#616161\]){
+  --tw-border-opacity: 1;
+  border-color: rgb(97 97 97 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.tw-border-\[\#757575\]\/70){
@@ -836,30 +812,6 @@
 
 .tw-preflight :is(.tw-border-transparent){
   border-color: transparent;
-}
-
-.tw-preflight :is(.tw-border-indigo-500){
-  --tw-border-opacity: 1;
-  border-color: rgb(99 102 241 / var(--tw-border-opacity));
-}
-
-.tw-preflight :is(.tw-border-\[\#424242\]\/80){
-  border-color: rgb(66 66 66 / 0.8);
-}
-
-.tw-preflight :is(.tw-border-\[\#424242\]){
-  --tw-border-opacity: 1;
-  border-color: rgb(66 66 66 / var(--tw-border-opacity));
-}
-
-.tw-preflight :is(.tw-border-\[\#757575\]){
-  --tw-border-opacity: 1;
-  border-color: rgb(117 117 117 / var(--tw-border-opacity));
-}
-
-.tw-preflight :is(.tw-border-\[\#616161\]){
-  --tw-border-opacity: 1;
-  border-color: rgb(97 97 97 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.tw-border-b-\[\#1e1e1e\]){
@@ -1202,6 +1154,15 @@
 
 .tw-preflight :is(.tw-text-white\/70){
   color: rgb(255 255 255 / 0.7);
+}
+
+.tw-preflight :is(.tw-text-\[\#FFFFFF\]){
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-white\/80){
+  color: rgb(255 255 255 / 0.8);
 }
 
 .tw-preflight :is(.tw-underline){
@@ -1996,6 +1957,14 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
     grid-column: span 12 / span 12;
   }
 
+  .tw-preflight :is(.sm\:tw-block){
+    display: block;
+  }
+
+  .tw-preflight :is(.sm\:tw-hidden){
+    display: none;
+  }
+
   .tw-preflight :is(.sm\:tw-h-\[100\%\]){
     height: 100%;
   }
@@ -2006,6 +1975,12 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
   .tw-preflight :is(.sm\:tw-w-full){
     width: 100%;
+  }
+
+  @media not all and (min-width: 640px){
+    .tw-preflight :is(.sm\:max-sm\:tw-block){
+      display: block;
+    }
   }
 }
 
