@@ -1,6 +1,6 @@
 {% import 'toggle.html.jinja' as toggle %}
 
-<div class="w-full h-px bg-gray-200 my-3"></div>
+<div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
 
 <form 
   hx-ext="form-json"
@@ -30,7 +30,7 @@
     {% include "band_toggles.html.jinja" %}
   </div>
 
-  <div class="w-full h-px bg-gray-200 my-3"></div>
+  <div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
 
   <div class="mt-2">
     {{ toggle.toggle("flux", "Magnitude", "Flux", config_state.flux) }}
@@ -44,10 +44,10 @@
   </div>
   {% endif %}
   <div class="mt-2 flex items-center">
-    <span class="font-semibold mr-3">External</span>
+    <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">External</span>
     {{ toggle.toggle("external_sources.enabled", "Off", "On", config_state.external_sources.enabled) }}
     <button 
-      class="ml-2 p-1.5 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      class="ml-2 p-1.5 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
       aria-label="Filter external sources"
       hx-post="{{API_URL}}/htmx/external_sources"
     >
@@ -57,33 +57,33 @@
     </button>
   </div>
 
-  <div class="w-full h-px bg-gray-200 my-3"></div>
+  <div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
 
   <div class="mt-2">
     {% include "fold_controls.html.jinja" %}
   </div>
 
-  <div class="w-full h-px bg-gray-200 my-3"></div>
+  <div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
 
   <div class="mt-2 flex items-center">
-    <span class="font-semibold mr-3">Offset</span>
+    <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">Offset</span>
     {{ toggle.toggle("offset_bands", "Off", "On", config_state.offset_bands) }}
   </div>
   <div class="mt-2 flex items-center gap-3">
     <input name="offset_num" type="range" min="1" max="10" value="{{config_state.offset_num}}" class="w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-    <select name="offset_metric" class="border border-gray-300 rounded-md px-2 py-1 text-sm">
-      <option value="avg" {% if config_state.offset_metric == "avg" %}selected{% endif %}>avg</option>
+    <select name="offset_metric" class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+      <option value="avg" {% if config_state.offset_metric == "avg" %}selected{% endif %} class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">avg</option>
       <option value="min" {% if config_state.offset_metric == "min" %}selected{% endif %}>min</option>
       <option value="max" {% if config_state.offset_metric == "max" %}selected{% endif %}>max</option>
       <option value="median" {% if config_state.offset_metric == "median" %}selected{% endif %}>median</option>
     </select>
   </div>
 
-  <div class="w-full h-px bg-gray-200 my-3"></div>
+  <div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
 
   <a
     href="{{API_URL}}/htmx/download?oid={{config_state.oid}}&survey_id={{config_state.survey_id}}"
-    class="flex items-center justify-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200 text-sm"
+    class="flex items-center justify-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors duration-200 text-sm"
     download
   >
     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
