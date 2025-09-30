@@ -142,6 +142,15 @@ def default_echarts_options(config_state: ConfigState):
         },
         "series": [],
         "animation": False,
+        "toolbox": {
+            "show": True,
+            "orient": "horizontal",
+            "feature": {
+                "dataZoom": {"show": True},
+                "dataView": {"show": True},
+                "saveAsImage": {"show": True},
+            },
+        },
     }
 
 
