@@ -139,6 +139,7 @@ def run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
+    os.environ["USE_ABSOLUTE"] = config_dict["use_absolute"]
 
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",
