@@ -414,6 +414,10 @@
   height: fit-content;
 }
 
+.tw-preflight :is(.tw-h-\[386px\]){
+  height: 386px;
+}
+
 .tw-preflight :is(.tw-max-h-\[304px\]){
   max-height: 304px;
 }
