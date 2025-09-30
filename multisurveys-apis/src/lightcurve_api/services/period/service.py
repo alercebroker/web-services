@@ -96,8 +96,8 @@ def detections2dataframe(detections: List[BaseDetection]):
     df_dict = {"mjd": [], "brightness": [], "e_brightness": [], "fid": []}
     for det in detections:
         df_dict["mjd"].append(det.mjd)
-        df_dict["brightness"].append(det.flux2magnitude(True))
-        df_dict["e_brightness"].append(det.flux2magnitude_err(True))
+        df_dict["brightness"].append(det.flux2magnitude(True, False))
+        df_dict["e_brightness"].append(det.flux2magnitude_err(True, False))
         df_dict["fid"].append(det.band)
     return pd.DataFrame(df_dict)
 
