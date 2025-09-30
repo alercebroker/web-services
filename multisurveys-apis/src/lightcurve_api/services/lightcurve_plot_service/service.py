@@ -39,7 +39,7 @@ LSST_SURVEY = "lsst"
 ZTF_DR_SURVEY = "ztf dr"
 COLORS = {
     ZTF_SURVEY: {"g": "#56E03A", "r": "#D42F4B", "i": "#F4D617"},
-    LSST_SURVEY: {"u": "#1600EA", "g": "#31DE1F", "r": "#B52626", "i": "#370201", "z": "#BA52FF", "y": "#61A2B3"},
+    LSST_SURVEY: {"u": "#56B4E9", "g": "#009E73", "r": "#F0E442", "i": "#CC79A7", "z": "#D55E00", "y": "#0072B2"},
     ZTF_DR_SURVEY: {"g": "#ADA3A3", "r": "#377EB8", "i": "#FF7F00"},
 }
 SYMBOLS = {

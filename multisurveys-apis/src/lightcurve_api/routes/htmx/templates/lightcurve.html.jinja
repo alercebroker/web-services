@@ -72,8 +72,8 @@ var renderError = (_, api) => {
 echarts.registerCustomSeries('renderError', renderError);
 
 // Ensure error bars are always visible
-maxError = options.series.filter((x) => x.type == "custom").map((x) => x.data).flat().map((x) => x[2]).reduce((a, b) => Math.max(a, b))
-minError = options.series.filter((x) => x.type == "custom").map((x) => x.data).flat().map((x) => x[1]).reduce((a, b) => Math.min(a, b))
+maxError = options.series.filter((x) => x.type == "custom").map((x) => x.data).flat().map((x) => x[2]).reduce((a, b) => Math.max(a, b), -99999)
+minError = options.series.filter((x) => x.type == "custom").map((x) => x.data).flat().map((x) => x[1]).reduce((a, b) => Math.min(a, b), 99999)
 options.yAxis.max = (maxError + 1).toFixed(0);
 options.yAxis.min = (minError - 1).toFixed(0);
 
