@@ -125,6 +125,8 @@ def default_echarts_legend(config_state: ConfigState):
 
 
 def default_echarts_options(config_state: ConfigState):
+    y_axis_name_location = "start" if not config_state.flux else "end"
+    y_axis_name = "Magnitude" if not config_state.flux else "Flux [uJy]"
     return {
         "tooltip": {},
         "grid": {"left": "left", "top": "10%", "width": "75%", "height": "100%"},
@@ -132,10 +134,10 @@ def default_echarts_options(config_state: ConfigState):
         "xAxis": {"type": "value", "name": "MJD", "scale": True, "splitLine": False},
         "yAxis": {
             "type": "value",
-            "name": "Magnitude",
+            "name": y_axis_name,
             "scale": True,
             "inverse": not config_state.flux,
-            "nameLocation": "start",
+            "nameLocation": y_axis_name_location,
             "splitLine": False,
         },
         "series": [],
@@ -435,17 +437,21 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
         max_error = 99999 if config_state.flux else 1
         point_value = point.point() if not error_bar else point.error_bar(max_error)
         max_brightness = 999999 if config_state.flux else 99
-        if _valid_point(point_value, max_brightness):
+        min_brightness = -999999 if config_state.flux else 0
+        if _valid_point(point_value, max_brightness, min_brightness):
             group[point.survey][point.band].append(point_value)
         return group
 
     return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
 
 
-def _valid_point(point: List[float], max_brightness: float) -> bool:
+def _valid_point(point: List[float], max_brightness: float, min_brightness: float) -> bool:
     valid = True
 
     if point[1] >= max_brightness:
+        valid = False
+
+    if point[1] <= min_brightness:
         valid = False
 
     return valid

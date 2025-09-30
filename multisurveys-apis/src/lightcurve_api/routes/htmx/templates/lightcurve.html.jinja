@@ -71,6 +71,12 @@ var renderError = (_, api) => {
 }
 echarts.registerCustomSeries('renderError', renderError);
 
+// Ensure error bars are always visible
+maxError = options.series.filter((x) => x.type == "custom").map((x) => x.data).flat().map((x) => x[2]).reduce((a, b) => Math.max(a, b))
+minError = options.series.filter((x) => x.type == "custom").map((x) => x.data).flat().map((x) => x[1]).reduce((a, b) => Math.min(a, b))
+options.yAxis.max = (maxError + 1).toFixed(0);
+options.yAxis.min = (minError - 1).toFixed(0);
+
 // Display the chart using the configuration items and data just specified.
 myChart.setOption(options);
 </script>
