@@ -18,7 +18,7 @@ pChart.setOption(pOptions);
 // Trigger custom event with the value of the clicked period
 pChart.on('click', function (params) {
   const event = new CustomEvent('periodogram:periodSelected', {
-    detail: { period: params.data[0].toFixed(4) },
+    detail: { period: params.data[0].toFixed(7) },
     bubbles: true
   });
   periodogramDom.dispatchEvent(event);

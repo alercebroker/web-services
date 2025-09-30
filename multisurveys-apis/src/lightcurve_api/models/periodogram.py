@@ -17,7 +17,7 @@ class Periodogram(BaseModel):
         if len(self.best_periods_index) == 0:
             raise NoPeriodError()
 
-        return round(self.periods[self.best_periods_index[0]], 3)
+        return round(self.periods[self.best_periods_index[0]], 7)
 
     def has_period(self):
         return len(self.best_periods_index) > 0
