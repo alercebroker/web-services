@@ -128,6 +128,7 @@ def default_echarts_options(config_state: ConfigState):
     y_axis_name_location = "start" if not config_state.flux else "end"
     y_axis_name = "Magnitude" if not config_state.flux else "Flux [uJy]"
     return {
+        "title": {"show": True, "text": config_state.oid},
         "tooltip": {},
         "grid": {"left": "left", "top": "10%", "width": "75%", "height": "100%"},
         "legend": default_echarts_legend(config_state),
@@ -158,7 +159,7 @@ def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., Con
     result = Result(
         {},
         Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
-        config_state=ConfigState(),
+        config_state=ConfigState(oid=oid, survey_id=survey_id),
         periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
     return pipe(
