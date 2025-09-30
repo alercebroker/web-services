@@ -219,6 +219,9 @@ def set_default_echart_options(result: Result) -> Result:
 
 
 def set_chart_options_detections(result: Result) -> Result:
+    if "detections" not in result.config_state.data_types:
+        return result
+
     result_copy = result.copy()
 
     # Chart points
@@ -243,6 +246,9 @@ def set_chart_options_detections(result: Result) -> Result:
 
 
 def set_chart_options_non_detections(result: Result) -> Result:
+    if "non_detections" not in result.config_state.data_types:
+        return result
+
     result_copy = result.copy()
 
     if result.config_state.total:
@@ -260,6 +266,9 @@ def set_chart_options_non_detections(result: Result) -> Result:
 
 
 def set_chart_options_forced_photometry(result: Result) -> Result:
+    if "forced_photometry" not in result.config_state.data_types:
+        return result
+
     result_copy = result.copy()
 
     # Chart points

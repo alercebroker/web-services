@@ -37,6 +37,9 @@ class ConfigState(BaseModel):
     period: float = 0.05
     periodogram_enabled: bool = False
 
+    # data types
+    data_types: List[str] = ["detections", "non_detections", "forced_photometry"]
+
     # detections, non_detections and forced_photometry are sent as json strings
     # that need to be parsed
     detections: List[str] = []

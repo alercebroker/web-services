@@ -55,4 +55,22 @@
       </label>
     </div>
   </div>
+
+  <!-- Data types -->
+  <div class="flex items-start">
+    <div class="grid grid-cols-3 gap-4">
+      <label class="flex items-center space-x-1">
+        <input type="checkbox" name="data_types[]" value="detections" {% if 'detections' in config_state.data_types %}checked{% endif %}>
+        <span>det</span>
+      </label>
+      <label class="flex items-center space-x-1">
+        <input type="checkbox" name="data_types[]" value="non_detections" {% if 'non_detections' in config_state.data_types %}checked{% endif %}>
+        <span>lim. mag</span>
+      </label>
+      <label class="flex items-center space-x-1">
+        <input type="checkbox" name="data_types[]" value="forced_photometry" {% if 'forced_photometry' in config_state.data_types %}checked{% endif %}>
+        <span>f. phot</span>
+      </label>
+    </div>
+  </div>
 </div>
