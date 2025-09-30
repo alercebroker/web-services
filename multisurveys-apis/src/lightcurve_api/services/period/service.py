@@ -1,5 +1,4 @@
 import copy
-import logging
 from typing import List
 
 import pandas as pd
@@ -47,7 +46,12 @@ def compute_periodogram(result: Result) -> Result:
 
         return result_copy
     except NoPeriodError:
-        logging.debug("No period found")
+        # We set the periodogram to empty if no period is found
+        # Otherwise, the arrays are filled with NaN values that occupy space
+        result_copy.periodogram.best_periods = []
+        result_copy.periodogram.best_periods_index = []
+        result_copy.periodogram.periods = []
+        result_copy.periodogram.scores = []
         return result_copy
 
 

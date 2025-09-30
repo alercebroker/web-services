@@ -298,10 +298,12 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
                 det.survey_id,
                 det.band_name(),
                 det.phase(config_state.period) if config_state.fold else det.mjd,
-                det.magnitude2flux(config_state.total) if config_state.flux else det.flux2magnitude(config_state.total),
-                det.magnitude2flux_err(config_state.total)
+                det.magnitude2flux(config_state.total, config_state.absolute)
                 if config_state.flux
-                else det.flux2magnitude_err(config_state.total),
+                else det.flux2magnitude(config_state.total, config_state.absolute),
+                det.magnitude2flux_err(config_state.total, config_state.absolute)
+                if config_state.flux
+                else det.flux2magnitude_err(config_state.total, config_state.absolute),
             )
         )
 
@@ -421,24 +423,27 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
     """Group chart points by survey and band in a functional style."""
 
     def _add_point_to_group(group: dict, point: ChartPoint):
-        limit = 99999 if config_state.flux else 1
-        point_value = point.point() if not error_bar else point.error_bar(limit)
-        if _valid_point(point_value):
+        max_error = 99999 if config_state.flux else 1
+        point_value = point.point() if not error_bar else point.error_bar(max_error)
+        max_brightness = 999999 if config_state.flux else 99
+        if _valid_point(point_value, max_brightness):
             group[point.survey][point.band].append(point_value)
         return group
 
     return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
 
 
-def _valid_point(point: List[float]) -> bool:
+def _valid_point(point: List[float], max_brightness: float) -> bool:
     valid = True
-    if point[1] <= 0:
-        valid = False
 
-    if point[1] >= 999999:
+    if point[1] >= max_brightness:
         valid = False
 
     return valid
+
+
+def _valid_error_bar(point: List[float]) -> bool:
+    return True  # just default to always valid, but can be customized later
 
 
 def _transform_to_series(

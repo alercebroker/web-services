@@ -9,7 +9,7 @@ class BaseDetection(BaseModel):
     ra: float
     dec: float
 
-    def magnitude2flux(self, total: bool) -> float:
+    def magnitude2flux(self, total: bool, absolute: bool) -> float:
         """Convert magnitude to flux.
 
         Args:
@@ -20,7 +20,7 @@ class BaseDetection(BaseModel):
         """
         raise NotImplementedError
 
-    def magnitude2flux_err(self, total: bool) -> float:
+    def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
 
         Args:
@@ -31,7 +31,7 @@ class BaseDetection(BaseModel):
         """
         raise NotImplementedError
 
-    def flux2magnitude(self, total: bool) -> float:
+    def flux2magnitude(self, total: bool, absolute: bool) -> float:
         """Convert flux to magnitude.
 
         Args:
@@ -42,7 +42,7 @@ class BaseDetection(BaseModel):
         """
         raise NotImplementedError
 
-    def flux2magnitude_err(self, total: bool) -> float:
+    def flux2magnitude_err(self, total: bool, absolute: bool) -> float:
         """Get magnitude error from flux error.
 
         Args:

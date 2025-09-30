@@ -3,6 +3,10 @@ from typing import Optional
 
 from pydantic import model_validator
 from .lightcurve_item import BaseDetection
+from astropy.coordinates import Distance
+import astropy.units as u
+
+REDSHIFT = 0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
 
 
 class ztfDetection(BaseDetection):
@@ -69,21 +73,24 @@ class ztfDetection(BaseDetection):
 
         return values
 
-    def magnitude2flux(self, total: bool) -> float:
+    def magnitude2flux(self, total: bool, absolute: bool) -> float:
         """Convert magnitude to flux.
 
         Args:
             total: Whether to use corrected magnitude (True) or uncorrected (False)
+            absolute: Whether to use absolute magnitude (True) or apparent magnitude (False)
 
         Returns:
             Calculated flux value
         """
-
+        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
         mag = self.magpsf_corr if total else self.magpsf
+        # m = M + mu; where M is absolute magnitude
+        mag = mag - d.distmod.value if absolute else mag
         partially_converted = 10 ** (-0.4 * (mag - 23.9))
         return partially_converted if total else partially_converted * self.isdiffpos
 
-    def magnitude2flux_err(self, total: bool) -> float:
+    def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
 
         Args:
@@ -93,9 +100,9 @@ class ztfDetection(BaseDetection):
             Calculated flux error
         """
         err = self.sigmapsf_corr_ext if total else self.sigmapsf
-        return abs(err) * abs(self.magnitude2flux(total))
+        return abs(err) * abs(self.magnitude2flux(total, absolute))
 
-    def flux2magnitude(self, total: bool) -> float:
+    def flux2magnitude(self, total: bool, absolute: bool) -> float:
         """Convert flux to magnitude.
 
         Args:
@@ -104,10 +111,11 @@ class ztfDetection(BaseDetection):
         Returns:
             Calculated magnitude value
         """
+        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+        mag = self.magpsf_corr if total else self.magpsf
+        return mag - d.distmod.value if absolute else mag
 
-        return self.magpsf_corr if total else self.magpsf
-
-    def flux2magnitude_err(self, total: bool) -> float:
+    def flux2magnitude_err(self, total: bool, absolute: bool) -> float:
         """Get magnitude error from flux error.
 
         Args:
@@ -161,7 +169,7 @@ class LsstDetection(BaseDetection):
 
         return values
 
-    def magnitude2flux(self, total: bool) -> float:
+    def magnitude2flux(self, total: bool, absolute: bool) -> float:
         """Convert magnitude to flux.
 
         Args:
@@ -170,9 +178,11 @@ class LsstDetection(BaseDetection):
         Returns:
             Calculated flux value
         """
-        return self.scienceFlux if total else self.psfFlux
+        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+        mag = self.scienceFlux if total else self.psfFlux
+        return mag - d.distmod.value if absolute else mag
 
-    def magnitude2flux_err(self, total: bool) -> float:
+    def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
 
         Args:
@@ -183,7 +193,7 @@ class LsstDetection(BaseDetection):
         """
         return self.scienceFluxErr if total else self.psfFluxErr
 
-    def flux2magnitude(self, total: bool) -> float:
+    def flux2magnitude(self, total: bool, absolute: bool) -> float:
         """Convert flux to magnitude.
 
         Args:
@@ -192,10 +202,12 @@ class LsstDetection(BaseDetection):
         Returns:
             Calculated magnitude value
         """
+        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
         mag = self.scienceFlux if total else self.psfFlux
-        return -2.5 * math.log10(mag) + 23.9
+        mag = -2.5 * math.log10(mag) + 23.9
+        return mag - d.distmod.value if absolute else mag
 
-    def flux2magnitude_err(self, total: bool) -> float:
+    def flux2magnitude_err(self, total: bool, absolute: bool) -> float:
         """Get magnitude error from flux error.
 
         Args:
@@ -218,7 +230,7 @@ class ZtfDataReleaseDetection(BaseDetection):
     corrected: bool = True
     band_map: dict[int, str] = {1: "r", 2: "g", 3: "i"}
 
-    def magnitude2flux(self, total: bool) -> float:
+    def magnitude2flux(self, total: bool, absolute: bool) -> float:
         """Convert magnitude to flux.
 
         Args:
@@ -227,9 +239,11 @@ class ZtfDataReleaseDetection(BaseDetection):
         Returns:
             Calculated flux value
         """
-        return 10 ** (-0.4 * (self.mag_corr - 23.9))
+        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+        flux = 10 ** (-0.4 * (self.mag_corr - 23.9))
+        return flux - d.distmod.value if absolute else flux
 
-    def magnitude2flux_err(self, total: bool) -> float:
+    def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
 
         Args:
@@ -238,9 +252,9 @@ class ZtfDataReleaseDetection(BaseDetection):
         Returns:
             Calculated flux error
         """
-        return abs(self.e_mag_corr_ext) * abs(self.magnitude2flux(total))
+        return abs(self.e_mag_corr_ext) * abs(self.magnitude2flux(total, absolute))
 
-    def flux2magnitude(self, total: bool) -> float:
+    def flux2magnitude(self, total: bool, absolute: bool) -> float:
         """Convert flux to magnitude.
 
         Args:
@@ -249,9 +263,10 @@ class ZtfDataReleaseDetection(BaseDetection):
         Returns:
             Calculated magnitude value
         """
-        return self.mag_corr
+        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+        return self.mag_corr - d.distmod.value if absolute else self.mag_corr
 
-    def flux2magnitude_err(self, total: bool) -> float:
+    def flux2magnitude_err(self, total: bool, absolute: bool) -> float:
         """Get magnitude error from flux error.
 
         Args:
