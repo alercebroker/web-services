@@ -50,9 +50,9 @@
         {%endif%}
     </div>
     {% if objects_list['items']|length > 0 %}
-    <div class="tw-overflow-x-auto tw-hidden sm:tw-block">
+    <div class="tw-overflow-x-auto">
         <table class="tw-table-auto tw-border-collapse tw-bg-[#1e1e1e] tw-text-left tw-w-full">
-            <thead>
+            <thead class="tw-hidden sm:tw-table-header-group">
                 <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
                     <th class="tw-px-4">Object ID</th>
                     <th
@@ -114,17 +114,45 @@
             </thead>
             <tbody>
                 {% for item in objects_list['items']%}
-                    <tr name="object_row_element" class="tw-border-y-2 tw-border-[#757575]/70 tw-h-[34px] tw-text-white tw-text-[0.875rem] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
-                        <td class="tw-px-4" name="oid">{{item['oid']}}</td>
-                        <td class="tw-px-4" name="n_det">{{item['n_det']}}</td>
-                        <td class="tw-px-4" name="firstmjd">{{item['firstmjd'] | truncate(3)}}</td>
-                        <td class="tw-px-4" name="lastmjd">{{item['lastmjd'] | truncate(3)}}</td>
-                        <td class="tw-px-4" name="meanra, meandec">
-                        {{ item['meanra'] | truncate(3) }}, {{ item['meandec'] | truncate(3) }}
+                    <tr name="object_row_element" class="tw-border-y-2 tw-border-[#757575]/70 tw-h-[384px] tw-text-white tw-text-[0.875rem] tw-flex tw-flex-col hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer sm:tw-h-[34px] sm:tw-table-row sm:tw-flex-none">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                            <span class="tw-font-semibold sm:tw-hidden">oid</span>
+                            <span name="oid">{{item['oid']}}</span>
                         </td>
-                        <td class="tw-px-4" name="class_name">{{item['class_name']}}</td>
-                        <td class="tw-px-4" name="ranking">{{item['ranking']}}</td>
-                        <td class="tw-px-4" name="deltamjd">{{item['deltamjd']}}</td>
+
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                            <span class="tw-font-semibold sm:tw-hidden">Number of detections</span>
+                            <span name="n_det">{{item['n_det']}}</span>
+                        </td>
+
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                            <span class="tw-font-semibold sm:tw-hidden">FirstMJD</span>
+                            <span name="firstmjd">{{item['firstmjd'] | truncate(3)}}</span>
+                        </td>
+
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                            <span class="tw-font-semibold sm:tw-hidden">LastMJD</span>
+                            <span name="lastmjd">{{item['lastmjd'] | truncate(3)}}</span>
+                        </td>
+
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                            <span class="tw-font-semibold sm:tw-hidden">RA/Dec (degrees)</span>
+                            <span name="meanra, meandec">{{ item['meanra'] | truncate(3) }}, {{ item['meandec'] | truncate(3) }}</span>
+                        </td>
+
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                            <span class="tw-font-semibold sm:tw-hidden">Highest Probability Class</span>
+                            <span name="class_name">{{item['class_name']}}</span>
+                        </td>
+                        
+                        <td class="tw-px-4 tw-h-[48px]tw-flex tw-justify-between sm:tw-table-cell">
+                            <span class="tw-font-semibold sm:tw-hidden">Highest Probability</span>
+                            <span name="ranking">{{item['ranking']}}</span>
+                        </td>
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                            <span class="tw-font-semibold sm:tw-hidden">DeltaMJD (days)</span>
+                            <span name="deltamjd">{{item['deltamjd']}}</span>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
