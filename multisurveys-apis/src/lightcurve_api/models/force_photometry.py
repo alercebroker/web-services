@@ -68,7 +68,8 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
 
     def magnitude2flux(self, total: bool) -> float:
         mag = self.mag_corr if total else self.mag
-        return 10 ** (-0.4 * (mag - 23.9))
+        flux = 10 ** (-0.4 * (mag - 23.9))
+        return flux * 1000  # convert to nJy
 
     def magnitude2flux_err(self, total: bool) -> float:
         err = self.e_mag_corr if total else self.e_mag

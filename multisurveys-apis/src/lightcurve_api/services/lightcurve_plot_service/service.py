@@ -130,7 +130,7 @@ def default_echarts_legend(config_state: ConfigState):
 
 def default_echarts_options(config_state: ConfigState):
     y_axis_name_location = "start" if not config_state.flux else "end"
-    y_axis_name = "Magnitude" if not config_state.flux else "Flux [uJy]"
+    y_axis_name = "Magnitude" if not config_state.flux else "Flux [nJy]"
     return {
         "title": {"show": True, "text": config_state.oid},
         "tooltip": {},

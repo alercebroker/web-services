@@ -88,7 +88,8 @@ class ztfDetection(BaseDetection):
         # m = M + mu; where M is absolute magnitude
         mag = mag - d.distmod.value if absolute else mag
         partially_converted = 10 ** (-0.4 * (mag - 23.9))
-        return partially_converted if total else partially_converted * self.isdiffpos
+        flux = partially_converted if total else partially_converted * self.isdiffpos
+        return flux * 1000  # convert to nJy
 
     def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
@@ -179,8 +180,8 @@ class LsstDetection(BaseDetection):
             Calculated flux value
         """
         d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
-        mag = self.scienceFlux if total else self.psfFlux
-        return mag - d.distmod.value if absolute else mag
+        flux = self.scienceFlux if total else self.psfFlux
+        return flux - d.distmod.value if absolute else flux
 
     def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
@@ -241,7 +242,8 @@ class ZtfDataReleaseDetection(BaseDetection):
         """
         d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
         flux = 10 ** (-0.4 * (self.mag_corr - 23.9))
-        return flux - d.distmod.value if absolute else flux
+        flux = flux - d.distmod.value if absolute else flux
+        return flux * 1000  # convert to nJy
 
     def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
