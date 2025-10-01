@@ -2,9 +2,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
-<div id="objects_table" class="tw-preflight">
+<div id="objects_table" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
-    <div id="pagination" class="tw-flex tw-justify-end tw-items-center tw-text-base tw-bg-[#1e1e1e]/95 tw-h-[48px]">
+    <div id="pagination" class="tw-flex tw-justify-end tw-items-center tw-text-base  tw-h-[48px] tw-bg-white tw-text-black dark:tw-bg-[#1e1e1e]/95 dark:tw-text-white">
         {% if has_prev %}
             <span 
             id="prev_page"
@@ -20,12 +20,12 @@
             ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}","{{has_prev}}")}'
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
-            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
+            <svg class="tw-w-[28px] tw-h-[28px] tw-fill-current dark:tw-fill-white" viewBox="0 -960 960 960" width="28px">
             <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/>
             </svg>
             </span>
         {% endif %}
-        <span class="tw-inline-block tw-text-white tw-text-lg tw-text-center tw-h-[28px] tw-w-[48px]">{{objects_list['current_page']}}
+        <span class="tw-inline-block tw-text-lg tw-text-center tw-h-[28px] tw-w-[48px]">{{objects_list['current_page']}}
         </span>
         
         {% if has_next %}
@@ -43,7 +43,7 @@
             ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}", "{{has_next}}") }'
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
-            <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="#FFFFFF">
+            <svg class="tw-w-[28px] tw-h-[28px] tw-fill-current dark:tw-fill-white"  viewBox="0 -960 960 960">
             <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/>
             </svg>
             </span>
@@ -51,9 +51,11 @@
     </div>
     {% if objects_list['items']|length > 0 %}
     <div class="tw-overflow-x-auto">
-        <table class="tw-table-auto tw-border-collapse tw-bg-[#1e1e1e] tw-text-left tw-w-full">
-            <thead class="tw-hidden sm:tw-table-header-group">
-                <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem]">
+        {% include "dropdown_order_table.html.jinja" %}
+
+        <table class="tw-table-auto tw-border-collapse tw-bg-white tw-text-left tw-w-full dark:tw-bg-[#1e1e1e]">
+            <thead class="tw-hidden tw-text-[0.875rem] tw-text-black/60 dark:tw-text-white/70 sm:tw-table-header-group">
+                <tr class="w-h-[34px]">
                     <th class="tw-px-4">Object ID</th>
                     <th
                     id="n_det_column"
@@ -112,44 +114,44 @@
                     <th class="tw-px-4">DeltaMJD (days)</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="tw-text-[0.875rem] tw-text-black dark:tw-text-white">
                 {% for item in objects_list['items']%}
-                    <tr name="object_row_element" class="tw-border-y-2 tw-border-[#757575]/70 tw-h-[384px] tw-text-white tw-text-[0.875rem] tw-flex tw-flex-col hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer sm:tw-h-[34px] sm:tw-table-row sm:tw-flex-none">
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                    <tr name="object_row_element" class="tw-border-y tw-border-[#757575]/70 tw-h-[384px] tw-flex tw-flex-col hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer sm:tw-h-[34px] sm:tw-table-row sm:tw-flex-none">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">oid</span>
                             <span name="oid">{{item['oid']}}</span>
                         </td>
 
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">Number of detections</span>
                             <span name="n_det">{{item['n_det']}}</span>
                         </td>
 
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">FirstMJD</span>
                             <span name="firstmjd">{{item['firstmjd'] | truncate(3)}}</span>
                         </td>
 
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">LastMJD</span>
                             <span name="lastmjd">{{item['lastmjd'] | truncate(3)}}</span>
                         </td>
 
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">RA/Dec (degrees)</span>
                             <span name="meanra, meandec">{{ item['meanra'] | truncate(3) }}, {{ item['meandec'] | truncate(3) }}</span>
                         </td>
 
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">Highest Probability Class</span>
                             <span name="class_name">{{item['class_name']}}</span>
                         </td>
                         
-                        <td class="tw-px-4 tw-h-[48px]tw-flex tw-justify-between sm:tw-table-cell">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">Highest Probability</span>
                             <span name="ranking">{{item['ranking']}}</span>
                         </td>
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between sm:tw-table-cell">
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">DeltaMJD (days)</span>
                             <span name="deltamjd">{{item['deltamjd']}}</span>
                         </td>
@@ -159,17 +161,12 @@
         </table>
     </div>
 
-
-        {% from "objects_table_small_screen.html.jinja" import small_table as small_table %}
-
-        {{small_table(objects_list['items'])}}
     {% else %}
-     {% from "objects_table_default.html.jinja" import default_table as defaultTable %}
         <div class="tw-flex tw-flex-col tw-justify-center tw-content-center">
-            {{defaultTable()}}
+            {% include "objects_table_default.html.jinja" %}
 
             {% if objects_list['info_message'] %}
-                <span class="tw-block tw-mx-auto tw-text-white/70 tw-py-2">
+                <span class="tw-block tw-mx-auto tw-py-2 tw-text-black/60 dark:tw-text-white/70">
                     {{objects_list['info_message'] }}
                 </span>
             {% endif %}

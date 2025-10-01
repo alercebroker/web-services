@@ -1,22 +1,21 @@
-{% macro default_table() %}
+
 <div class="tw-overflow-x-auto">
-    <table class="tw-table-auto tw-border-collapse tw-bg-[#1e1e1e] tw-text-left tw-w-full">
+    <table class="tw-table-auto tw-border-collapse tw-bg-white tw-text-left tw-w-full dark:tw-bg-[#1e1e1e]">
         <thead>
-            <tr class="tw-text-white/70 tw-h-[34px] tw-text-[0.875rem] tw-border-b-2 tw-border-[#757575]/70">
+            <tr class="tw-text-[0.875rem] tw-text-black/60 dark:tw-text-white/70 tw-table-header-group">
                 <th class="tw-px-4">Object ID</th>
-                <th class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                <th class="tw-px-4"
                 >Number of detections</th>
-                <th class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                <th class="tw-px-4"
                 >FirstMJD</th>
-                <th class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                <th class="tw-px-4"
                 >LastMJD</th>
                 <th class="tw-px-4">RA/DEC(degrees)</th>
                 <th class="tw-px-4">Highest Probability Class</th>
-                <th class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                <th class="tw-px-4"
                 >Highest Probability</th>
                 <th class="tw-px-4">DeltaMJD (days)</th>
             </tr>
         </thead>
     </table>
 </div>
-{%endmacro%}

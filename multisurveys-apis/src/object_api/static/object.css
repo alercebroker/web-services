@@ -345,6 +345,10 @@
   display: flex;
 }
 
+.tw-preflight :is(.tw-table-header-group){
+  display: table-header-group;
+}
+
 .tw-preflight :is(.tw-grid){
   display: grid;
 }
@@ -385,6 +389,10 @@
   height: 36px;
 }
 
+.tw-preflight :is(.tw-h-\[384px\]){
+  height: 384px;
+}
+
 .tw-preflight :is(.tw-h-\[3px\]){
   height: 3px;
 }
@@ -414,16 +422,8 @@
   height: fit-content;
 }
 
-.tw-preflight :is(.tw-h-\[384px\]){
-  height: 384px;
-}
-
 .tw-preflight :is(.tw-max-h-\[304px\]){
   max-height: 304px;
-}
-
-.tw-preflight :is(.tw-min-h-\[384px\]){
-  min-height: 384px;
 }
 
 .tw-preflight :is(.tw-w-1\/3){
@@ -456,6 +456,10 @@
 
 .tw-preflight :is(.tw-w-80){
   width: 20rem;
+}
+
+.tw-preflight :is(.tw-w-\[28px\]){
+  width: 28px;
 }
 
 .tw-preflight :is(.tw-w-\[290px\]){
@@ -760,11 +764,6 @@
   border-bottom-width: 0px;
 }
 
-.tw-preflight :is(.tw-border-y-2){
-  border-top-width: 2px;
-  border-bottom-width: 2px;
-}
-
 .tw-preflight :is(.tw-border-b){
   border-bottom-width: 1px;
 }
@@ -860,10 +859,6 @@
   background-color: rgb(30 30 30 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]\/95){
-  background-color: rgb(30 30 30 / 0.95);
-}
-
 .tw-preflight :is(.tw-bg-\[\#2196f3\]){
   --tw-bg-opacity: 1;
   background-color: rgb(33 150 243 / var(--tw-bg-opacity));
@@ -910,6 +905,10 @@
 .tw-preflight :is(.tw-bg-white){
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-fill-current){
+  fill: currentColor;
 }
 
 .tw-preflight :is(.tw-p-2){
@@ -1167,6 +1166,10 @@
 
 .tw-preflight :is(.tw-text-white\/80){
   color: rgb(255 255 255 / 0.8);
+}
+
+.tw-preflight :is(.tw-text-black\/60){
+  color: rgb(0 0 0 / 0.6);
 }
 
 .tw-preflight :is(.tw-underline){
@@ -1913,6 +1916,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(30 30 30 / var(--tw-bg-opacity));
 }
 
+.tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#1e1e1e\]\/95){
+  background-color: rgb(30 30 30 / 0.95);
+}
+
 .tw-preflight :is(.tw-dark .dark\:tw-bg-\[\#757575\]\/60){
   background-color: rgb(117 117 117 / 0.6);
 }
@@ -1920,6 +1927,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 .tw-preflight :is(.tw-dark .dark\:tw-bg-gray-700){
   --tw-bg-opacity: 1;
   background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-fill-white){
+  fill: #fff;
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-text-\[\#EEEEEE\]){
@@ -1942,6 +1953,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.tw-preflight :is(.tw-dark .dark\:tw-text-white\/70){
+  color: rgb(255 255 255 / 0.7);
+}
+
 .tw-preflight :is(.tw-dark .dark\:hover\:tw-border-b-white:hover){
   --tw-border-opacity: 1;
   border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
@@ -1959,14 +1974,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
   .tw-preflight :is(.sm\:tw-col-span-12){
     grid-column: span 12 / span 12;
-  }
-
-  .tw-preflight :is(.sm\:tw-block){
-    display: block;
-  }
-
-  .tw-preflight :is(.sm\:tw-inline-block){
-    display: inline-block;
   }
 
   .tw-preflight :is(.sm\:tw-table-cell){
@@ -1989,12 +1996,12 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
     height: 100%;
   }
 
-  .tw-preflight :is(.sm\:tw-h-\[34px\]){
-    height: 34px;
+  .tw-preflight :is(.sm\:tw-h-\[32px\]){
+    height: 32px;
   }
 
-  .tw-preflight :is(.sm\:tw-min-h-\[34px\]){
-    min-height: 34px;
+  .tw-preflight :is(.sm\:tw-h-\[34px\]){
+    height: 34px;
   }
 
   .tw-preflight :is(.sm\:tw-w-\[100\%\]){
@@ -2007,14 +2014,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
   .tw-preflight :is(.sm\:tw-flex-none){
     flex: none;
-  }
-
-  .tw-preflight :is(.sm\:tw-flex-auto){
-    flex: 1 1 auto;
-  }
-
-  .tw-preflight :is(.sm\:tw-flex-row){
-    flex-direction: row;
   }
 }
 
