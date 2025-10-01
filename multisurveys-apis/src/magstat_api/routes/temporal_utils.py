@@ -20,13 +20,16 @@ def mag_parser(mag_list):
         
         for o_mag, n_mag in key_mapping.items():
             if o_mag in d.__dict__.keys():
-                new_mag_dict[n_mag] = d.__dict__[o_mag]
+                if isinstance(d.__dict__[o_mag], float):
+                    new_mag_dict[n_mag] = round(d.__dict__[o_mag], 3)
+                else:
+                    new_mag_dict[n_mag] = d.__dict__[o_mag]
             else:
-                new_mag_dict[n_mag] = None
+                new_mag_dict[n_mag] = '-'
         
         new_mag_only_keys = ["ndet", "firstmjd", "lastmjd"]
         for key in new_mag_only_keys:
-            new_mag_dict[key] = None
+            new_mag_dict[key] = '-'
             
         result.append(new_mag_dict)
     return result
