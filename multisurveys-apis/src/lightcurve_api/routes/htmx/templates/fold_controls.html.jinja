@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-sm-12">
     <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">Fold</span>
-    {{ toggle.toggle("fold", "Off", "On", config_state.fold)}}
+    {{ toggle.toggle("fold", "Off", "On", config_state.fold, "Toggle fold")}}
   </div>
   <div class="col-sm-12">
     <input id="period-slider" type="range" min="0.05" max="500" value="{{config_state.period}}" class="my-2 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
@@ -13,7 +13,7 @@
   </div>
   <div class="col-sm-12 mt-2">
     <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">Periodogram</span>
-    {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled)}}
+    {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled, "Toggle Periodogram")}}
   </div>
 </div>
 
