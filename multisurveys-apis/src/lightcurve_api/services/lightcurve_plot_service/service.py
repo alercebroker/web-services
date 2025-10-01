@@ -71,6 +71,8 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
         "data": data,
         "color": COLORS[survey][band],
         "symbol": SYMBOLS[survey][name]["symbol"],
+        "survey": survey,
+        "band": band,
     }
 
 
@@ -82,6 +84,8 @@ def create_error_bar_series(name: str, survey: str, band: str, data: List[List[f
         "color": COLORS[survey][band],
         "renderItem": "renderError",
         "scale": True,
+        "survey": survey,
+        "band": band,
     }
 
 
@@ -567,12 +571,21 @@ def offset_bands(result: Result) -> Result:
 
     series, error_bars = _extract_series(series_defs, result.config_state.offset_metric)
 
-    # Sort and transform in a functional pipeline
-    new_series = [
-        output
-        for i, (sname, sdata) in enumerate(sorted(series.items(), key=lambda kv: kv[1]["metric"]))
-        for output in _apply_offset(i * result.config_state.offset_num, sdata, error_bars.get(sname))
-    ]
+    new_series = []
+    # Flatten the structure and sort by metric
+    sorted_items = []
+    for survey in series:
+        for band in series[survey]:
+            sorted_items.append((series[survey][band]["series"], series[survey][band]["metric"]))
+
+    # Sort by metric in ascending order
+    sorted_items.sort(key=lambda x: x[1])
+
+    for i, (sdata, _) in enumerate(sorted_items):
+        for sseries in sdata:
+            new_series.extend(
+                _apply_offset(i * result.config_state.offset_num, sseries, error_bars.get(sseries["name"]))
+            )
 
     result_copy.echart_options["series"] = new_series
     return result_copy
@@ -610,16 +623,22 @@ def calculate_median(numbers) -> float:
 
 def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Split into normal series and error bars."""
-    series = {}
+    series = defaultdict(lambda: {})
     error_bars = {}
     for s in series_defs:
         if s["type"] == "custom":
             error_bars[s["name"]] = s
         else:
-            series[s["name"]] = {
-                "series": s,
-                "metric": _metric(metric, [d[1] for d in s["data"]]),
-            }
+            if series[s["survey"]].get(s["band"]) is None:
+                series[s["survey"]][s["band"]] = {
+                    "series": [s],
+                    "metric": _metric(metric, [d[1] for d in s["data"]]),
+                }
+            else:
+                series[s["survey"]][s["band"]]["series"].append(s)
+                series[s["survey"]][s["band"]]["metric"] = _metric(
+                    metric, [d[1] for x in series[s["survey"]][s["band"]]["series"] for d in x["data"]]
+                )
     return series, error_bars
 
 
@@ -635,9 +654,9 @@ def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | No
         return [[x, y1 + i, y2 + i] for x, y1, y2 in points]
 
     updated_series = {
-        **series["series"],
-        "data": offset_points(series["series"]["data"]),
-        "name": f"{series['series']['name']} + {i}",
+        **series,
+        "data": offset_points(series["data"]),
+        "name": f"{series['name']} + {i}",
     }
     outputs = [updated_series]
 
