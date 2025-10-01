@@ -79,13 +79,27 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
 def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
     return {
         "name": name + " " + survey.upper() + ": " + band,
-        "type": "custom",
-        "data": data,
+        "type": "scatter",
+        "data": list(map(lambda point: [point[0], (point[1] + point[2]) / 2], data)),
+        "silent": True,
+        "symbolSize": 0,
         "color": COLORS[survey][band],
-        "renderItem": "renderError",
+        "markLine": {
+            "data": list(
+                map(
+                    lambda point: [
+                        {"coord": [point[0], point[1]], "symbol": "none"},
+                        {"coord": [point[0], point[2]], "symbol": "none"},
+                    ],
+                    data,
+                )
+            ),
+            "lineStyle": {"color": COLORS[survey][band], "type": "solid"},
+        },
         "scale": True,
         "survey": survey,
         "band": band,
+        "error_bar": True,
     }
 
 
@@ -626,7 +640,7 @@ def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dic
     series = defaultdict(lambda: {})
     error_bars = {}
     for s in series_defs:
-        if s["type"] == "custom":
+        if s.get("error_bar"):
             error_bars[s["name"]] = s
         else:
             if series[s["survey"]].get(s["band"]) is None:
@@ -648,10 +662,16 @@ def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | No
     def offset_points(points: List[List[float]]) -> List[List[float]]:
         return [[x, y + i] for x, y in points]
 
-    def offset_errors(points: List[List[float]]) -> List[List[float]]:
-        # point is composed by x, y1, y2
-        # where x is the x-axis value (mjd), y1 is the y-axis value plus error, and y2 is the y-axis value minus error
-        return [[x, y1 + i, y2 + i] for x, y1, y2 in points]
+    def offset_errors(points: List[dict]) -> List[dict]:
+        new_points = []
+        for point in points:
+            new_points.append(
+                [
+                    {"coord": [point[0]["coord"][0], point[0]["coord"][1] + i], "symbol": "none"},
+                    {"coord": [point[1]["coord"][0], point[1]["coord"][1] + i], "symbol": "none"},
+                ]
+            )
+        return new_points
 
     updated_series = {
         **series,
@@ -661,7 +681,15 @@ def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | No
     outputs = [updated_series]
 
     if error_bar is not None:
-        updated_error = {**error_bar, "data": offset_errors(error_bar["data"]), "name": f"{error_bar['name']} + {i}"}
+        updated_error = {
+            **error_bar,
+            "data": offset_points(error_bar["data"]),
+            "markLine": {
+                "data": offset_errors(error_bar["markLine"]["data"]),
+                "lineStyle": error_bar["markLine"]["lineStyle"],
+            },
+            "name": f"{error_bar['name']} + {i}",
+        }
         outputs.append(updated_error)
 
     return outputs
