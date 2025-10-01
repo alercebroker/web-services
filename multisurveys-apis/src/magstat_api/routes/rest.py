@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi import HTTPException
 from ..services.magstats import get_magstats
+from core.repository.dummy_data import magstats_dummy
 
 router = APIRouter()
 

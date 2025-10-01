@@ -2034,3 +2034,7 @@ th {
   --tw-bg-opacity: 1;
   background-color: rgb(59 57 57 / var(--tw-bg-opacity));
 }
+
+.tw-preflight :is(.tw-overflow-x-auto) {
+  overflow-x: auto;
+}
