@@ -44,12 +44,21 @@
   opacity: 1;
 }
 
-.obj-survey-selected{
+.tw-preflight .obj-survey-selected{
+  display: inline-block;
+  border: 2px solid black;
+  background-color: transparent;
+  text-align: center;
+}
+
+.tw-dark .obj-survey-selected{
   background-color: #424242;
+  border: 0px;
 }
 
 .obj-surveys-unselect{
-  opacity: 0.75;
+  opacity: 0.5;
+  text-align: center;
 }
 
 .obj-select-wrapper{
@@ -119,7 +128,7 @@
 }
 
 .custom-oid{
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #e0e0e0;
   display: inline-flex;
   justify-content: space-around;
   align-items: center;
@@ -129,16 +138,29 @@
   max-width: 12rem;
 }
 
+.tw-dark .custom-oid{
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 .custom-span{
   display: inline-block;
 }
 
-.custom-close-id{
+.custom-close-svg-id{
   display: inline-block;
   cursor: pointer;
+  fill: rgba(0, 0, 0, 0.6);
 }
 
-.custom-close-id:hover svg path{
+.tw-dark .custom-close-svg-id{
+  fill: rgba(255, 255, 255, 0.8);
+}
+
+.custom-close-svg-id:hover{
+  fill: rgba(0, 0, 0, 0.2);
+}
+
+.tw-dark .custom-close-svg-id:hover{
   fill: rgba(255, 255, 255, 0.2);
 }
 
@@ -430,6 +452,14 @@
   height: fit-content;
 }
 
+.tw-preflight :is(.tw-h-\[24px\]){
+  height: 24px;
+}
+
+.tw-preflight :is(.tw-h-\[20px\]){
+  height: 20px;
+}
+
 .tw-preflight :is(.tw-max-h-\[304px\]){
   max-height: 304px;
 }
@@ -516,6 +546,14 @@
 
 .tw-preflight :is(.tw-w-full){
   width: 100%;
+}
+
+.tw-preflight :is(.tw-w-\[24px\]){
+  width: 24px;
+}
+
+.tw-preflight :is(.tw-w-\[20px\]){
+  width: 20px;
 }
 
 .tw-preflight :is(.tw-min-w-full){
@@ -802,11 +840,6 @@
   border-color: rgb(117 117 117 / 0.7);
 }
 
-.tw-preflight :is(.tw-border-black){
-  --tw-border-opacity: 1;
-  border-color: rgb(0 0 0 / var(--tw-border-opacity));
-}
-
 .tw-preflight :is(.tw-border-blue-400){
   --tw-border-opacity: 1;
   border-color: rgb(96 165 250 / var(--tw-border-opacity));
@@ -840,6 +873,10 @@
   border-top-color: transparent;
 }
 
+.tw-preflight :is(.tw-border-b-black\/70){
+  border-bottom-color: rgb(0 0 0 / 0.7);
+}
+
 .tw-preflight :is(.tw-border-opacity-20){
   --tw-border-opacity: 0.2;
 }
@@ -856,11 +893,6 @@
 
 .tw-preflight :is(.tw-bg-\[\#1976D2\]\/30){
   background-color: rgb(25 118 210 / 0.3);
-}
-
-.tw-preflight :is(.tw-bg-\[\#1e1e1e\]){
-  --tw-bg-opacity: 1;
-  background-color: rgb(30 30 30 / var(--tw-bg-opacity));
 }
 
 .tw-preflight :is(.tw-bg-\[\#2196f3\]){
@@ -913,6 +945,18 @@
 
 .tw-preflight :is(.tw-fill-current){
   fill: currentColor;
+}
+
+.tw-preflight :is(.tw-fill-black){
+  fill: #000;
+}
+
+.tw-preflight :is(.tw-fill-\[\#1976d2\]){
+  fill: #1976d2;
+}
+
+.tw-preflight :is(.tw-fill-\[\#1565C0\]){
+  fill: #1565C0;
 }
 
 .tw-preflight :is(.tw-p-2){
@@ -1094,11 +1138,6 @@
   color: rgb(189 189 189 / var(--tw-text-opacity));
 }
 
-.tw-preflight :is(.tw-text-\[\#EEEEEE\]){
-  --tw-text-opacity: 1;
-  color: rgb(238 238 238 / var(--tw-text-opacity));
-}
-
 .tw-preflight :is(.tw-text-\[\#F5F5F5\]){
   --tw-text-opacity: 1;
   color: rgb(245 245 245 / var(--tw-text-opacity));
@@ -1190,6 +1229,12 @@
 .tw-preflight :is(.tw-shadow-2xl){
   --tw-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
   --tw-shadow-colored: 0 25px 50px -12px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.tw-preflight :is(.tw-shadow-md){
+  --tw-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -1831,13 +1876,18 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   cursor: pointer;
 }
 
+.tw-preflight :is(.hover\:tw-border-b-black\/70:hover){
+  border-bottom-color: rgb(0 0 0 / 0.7);
+}
+
 .tw-preflight :is(.hover\:tw-border-b-white:hover){
   --tw-border-opacity: 1;
   border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
-.tw-preflight :is(.hover\:tw-border-b-black\/70:hover){
-  border-bottom-color: rgb(0 0 0 / 0.7);
+.tw-preflight :is(.hover\:tw-border-b-black:hover){
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
 .tw-preflight :is(.hover\:tw-bg-\[\#1976d2\]\/20:hover){
@@ -1890,6 +1940,15 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   flex-direction: column;
 }
 
+.tw-preflight :is(.tw-dark .dark\:tw-border){
+  border-width: 1px;
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-border-black){
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
+
 .tw-preflight :is(.tw-dark .dark\:tw-border-white){
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
@@ -1934,6 +1993,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .tw-preflight :is(.tw-dark .dark\:tw-fill-white){
   fill: #fff;
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-fill-\[\#1976d2\]){
+  fill: #1976d2;
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-text-\[\#EEEEEE\]){

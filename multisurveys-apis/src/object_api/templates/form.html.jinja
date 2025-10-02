@@ -4,23 +4,23 @@
 <script src="https://unpkg.com/htmx-ext-response-targets@2.0.2" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
-<div id="form-search" hx-ext="response-targets" class="tw-preflight">
+<div id="form-search" hx-ext="response-targets" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-[#EEEEEE]">
     {% from "input.html.jinja" import input as customInput %}
 
     <div class="tw-flex tw-w-full">
-        <div id="form-container" class=" tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 tw-w-full lg:tw-max-w-[458px]">
+        <div id="form-container" class="tw-p-4 tw-flex tw-flex-col tw-gap-y-4 tw-w-full tw-shadow-md dark:tw-border dark:tw-border-black lg:tw-max-w-[458px]">
 
             <!--Search filters-->
 
-            <div id="search_filters" class="tw-w-full tw-font-medium tw-text-lg tw-text-white">Search Filters</div>
+            <div id="search_filters" class="tw-w-full tw-font-medium tw-text-lg">Search Filters</div>
 
             <!--Survey filters-->
             <div id="survey_container" class="tw-w-full">
                 <p class="tw-font-medium">Surveys</p>
 
                 <div id="survey" data-survey="ztf" class="tw-w-full tw-my-4 tw-flex tw-justify-start tw-gap-4">
-                    <span id="ztf_btn" class="obj-survey-selected tw-text-center tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ztf</span>
-                    <span id="lsst_btn" class="obj-surveys-unselect tw-w-1/4 tw-text-center hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">lsst</span>
+                    <span id="ztf_btn" class="obj-survey-selected tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ztf</span>
+                    <span id="lsst_btn" class="obj-surveys-unselect tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">lsst</span>
                 </div>
             </div>
 
@@ -28,14 +28,14 @@
             <div class="tw-w-full">
                 <div id="general_filters" class="tw-text-[#1976d2] tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#1976d2]/20 hover:tw-cursor-pointer">
                     <p>General filters</p>
-                    <svg name="arrow_icon" data-direction="up" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1976d2"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+                    <svg name="arrow_icon" data-direction="up" class="tw-w-[24px] tw-h-[24px] tw-fill-[#1976d2] dark:tw-fill-[#1976d2]" viewBox="0 -960 960 960"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
                 </div>
 
                 <div id="general_filters_container" class="tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     
                     <div class="tw-col-span-12 tw-flex tw-flex-col tw-content-center">
                         <button type="button" id="clear_oids_btn" class="tw-self-end tw-hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1565C0"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                            <svg class="tw-h-[24px] tw-w-[24px] tw-fill-[#1565C0]" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                         </button>
                         <div id="oids_container" class="tw-hidden tw-pb-2 tw-flex tw-gap-2 tw-flex-wrap"></div>
                         {{customInput(id="objectIds", type="text", placeholder="Object ID")}}
@@ -108,7 +108,7 @@
             <div class="tw-w-full">
                 <div id="discovery_date_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
                     <p>Discovery Date Filters</p>
-                    <svg name="arrow_icon" data-direction="down" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                 </div>
 
                 
@@ -167,10 +167,10 @@
                     <div class="tw-flex tw-gap-2">
                         <span class="tw-font-medium">Conesearch</span>
 
-                        <svg id="consearch_info" xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                        <svg id="consearch_info" class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
                     </div>
 
-                    <svg name="arrow_icon" data-direction="down" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                 </div>
 
 

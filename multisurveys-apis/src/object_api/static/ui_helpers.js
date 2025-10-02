@@ -14,20 +14,35 @@ function highlight_text(item){
   if(item.classList.contains("tw-text-[#1976d2]")){
     item.classList.remove("tw-text-[#1976d2]", "hover:tw-bg-[#1976d2]/20")
     item.classList.add("hover:tw-bg-[#b2b2b2]")
-    highlight_icon_color(item, '#FFFFFF')
+
+    darken_icon_color(item)
   } else {
     item.classList.remove("hover:tw-bg-[#b2b2b2]")
     item.classList.add("tw-text-[#1976d2]", "hover:tw-bg-[#1976d2]/20")
-    highlight_icon_color(item, '#1976d2')
+    
+    highlight_icon_color(item)
   }
 }
 
 
-function highlight_icon_color(item, color){
+function darken_icon_color(item){
   let svg_items = item.querySelectorAll('svg')
 
   svg_items.forEach((element) => {
-    element.setAttribute('fill', color)
+    element.classList.remove("tw-fill-[#1976d2]", "dark:tw-fill-[#1976d2]")
+
+    element.classList.add("tw-fill-dark", "dark:tw-fill-white")
+  })
+}
+
+
+function highlight_icon_color(item){
+  let svg_items = item.querySelectorAll('svg')
+
+  svg_items.forEach((element) => {
+    element.classList.add("tw-fill-[#1976d2]", "dark:tw-fill-[#1976d2]")
+
+    element.classList.remove("tw-fill-dark", "dark:tw-fill-white")
   })
 }
 

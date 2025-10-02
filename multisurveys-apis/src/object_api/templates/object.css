@@ -18,12 +18,22 @@
     opacity: 1;
   }
 
-  .obj-survey-selected{
+  .tw-preflight .obj-survey-selected{
+    display: inline-block;
+    border: 2px solid black;
+    background-color: transparent;
+    text-align: center;
+  }
+
+  .tw-dark .obj-survey-selected{
     background-color: #424242;
+    border: 0px;
+
   }
 
   .obj-surveys-unselect{
-    opacity: 0.75;
+    opacity: 0.5;
+    text-align: center;
   }
 
   .obj-select-wrapper{
