@@ -43,24 +43,26 @@
 
                     <!--select classifiers-->
                     <div id="classifiers_wrapper" class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        <div id="classifiers_container" class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
+                        <div id="classifiers_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
                             <div class="obj-select__trigger">
                                 <span
                                 id="classifier"
-                                class="tw-text-[#a9a9a9]"
+                                contenteditable="true"
+                                class="placeholder-span"
+                                data-placeholder="Classifiers"
                                 data-classes=""
                                 data-classifier=''
                                 hx-get="{{API_URL}}/htmx/classes_select"
                                 hx-trigger="change"
                                 hx-target="#classes_options"
                                 hx-swap="outerHTML"
-                                hx-vals='js:{...send_classes_data()}'>Classifier</span>
+                                hx-vals='js:{...send_classes_data()}'></span>
                             </div>
-                            <div class="obj-custom-options dark:tw-bg-[#1e1e1e]">
-                                <span class="obj-custom-option obj-selected  dark:tw-text-[#EEEEEE]"  data-value=""></span>
+                            <div class="obj-custom-options">
+                                <span class="obj-custom-option obj-selected"  data-value=""></span>
                                 {% for value in classifiers%}
                                     <span 
-                                    class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" 
+                                    class="obj-custom-option hover:tw-bg-[#b2b2b2]" 
                                     data-classes='{{value.classes}}'
                                     data-classifier='{{value.classifier_name}}'
                                     >
@@ -73,12 +75,12 @@
 
                     <!--select classes-->
                     <div class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        <div id="classes_container" class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
+                        <div id="classes_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
                             <div class="obj-select__trigger">
                                 <span
-                                id="class"
-                                class="tw-text-[#a9a9a9]"
-                                data-value="">Class</span>
+                                id="class"                   class="placeholder-span"
+                                data-placeholder="Class"
+                                data-value=""></span>
                             </div>
                             <div id="classes_options" class="">
                             <!--HTMX CLASSES OPTIONS--->
@@ -86,7 +88,7 @@
                         </div>
                     </div>
                     
-                    <div id="probability_container"class="tw-col-span-12">
+                    <div id="probability_container" class="tw-col-span-12">
                         <label>Probability ≥</label>
                         <label id="prob_number" class="tw-inline-block tw-w-[36px]"> 0.00</label>
                         <input id="prob_range" class="" type="range" step="0.01" max="1" value="0.00">

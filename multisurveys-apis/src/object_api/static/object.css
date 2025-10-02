@@ -44,6 +44,15 @@
   opacity: 1;
 }
 
+.placeholder-span:empty:before {
+  content: attr(data-placeholder);
+  color: rgba(0, 0, 0, 0.6)
+}
+
+.tw-dark .placeholder-span:empty:before {
+  color: rgba(255, 255, 255, 0.6)
+}
+
 .tw-preflight .obj-survey-selected{
   display: inline-block;
   border: 2px solid black;
@@ -128,7 +137,7 @@
 }
 
 .custom-oid{
-  background-color: #e0e0e0;
+  background-color: rgba(255, 255, 255, 0.2);
   display: inline-flex;
   justify-content: space-around;
   align-items: center;
@@ -138,29 +147,16 @@
   max-width: 12rem;
 }
 
-.tw-dark .custom-oid{
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
 .custom-span{
   display: inline-block;
 }
 
-.custom-close-svg-id{
+.custom-close-id{
   display: inline-block;
   cursor: pointer;
-  fill: rgba(0, 0, 0, 0.6);
 }
 
-.tw-dark .custom-close-svg-id{
-  fill: rgba(255, 255, 255, 0.8);
-}
-
-.custom-close-svg-id:hover{
-  fill: rgba(0, 0, 0, 0.2);
-}
-
-.tw-dark .custom-close-svg-id:hover{
+.custom-close-id:hover svg path{
   fill: rgba(255, 255, 255, 0.2);
 }
 
@@ -403,6 +399,14 @@
   height: 2rem;
 }
 
+.tw-preflight :is(.tw-h-\[20px\]){
+  height: 20px;
+}
+
+.tw-preflight :is(.tw-h-\[24px\]){
+  height: 24px;
+}
+
 .tw-preflight :is(.tw-h-\[28px\]){
   height: 28px;
 }
@@ -452,14 +456,6 @@
   height: fit-content;
 }
 
-.tw-preflight :is(.tw-h-\[24px\]){
-  height: 24px;
-}
-
-.tw-preflight :is(.tw-h-\[20px\]){
-  height: 20px;
-}
-
 .tw-preflight :is(.tw-max-h-\[304px\]){
   max-height: 304px;
 }
@@ -494,6 +490,14 @@
 
 .tw-preflight :is(.tw-w-80){
   width: 20rem;
+}
+
+.tw-preflight :is(.tw-w-\[20px\]){
+  width: 20px;
+}
+
+.tw-preflight :is(.tw-w-\[24px\]){
+  width: 24px;
 }
 
 .tw-preflight :is(.tw-w-\[28px\]){
@@ -546,14 +550,6 @@
 
 .tw-preflight :is(.tw-w-full){
   width: 100%;
-}
-
-.tw-preflight :is(.tw-w-\[24px\]){
-  width: 24px;
-}
-
-.tw-preflight :is(.tw-w-\[20px\]){
-  width: 20px;
 }
 
 .tw-preflight :is(.tw-min-w-full){
@@ -873,10 +869,6 @@
   border-top-color: transparent;
 }
 
-.tw-preflight :is(.tw-border-b-black\/70){
-  border-bottom-color: rgb(0 0 0 / 0.7);
-}
-
 .tw-preflight :is(.tw-border-opacity-20){
   --tw-border-opacity: 0.2;
 }
@@ -943,20 +935,16 @@
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-fill-current){
-  fill: currentColor;
-}
-
-.tw-preflight :is(.tw-fill-black){
-  fill: #000;
+.tw-preflight :is(.tw-fill-\[\#1565C0\]){
+  fill: #1565C0;
 }
 
 .tw-preflight :is(.tw-fill-\[\#1976d2\]){
   fill: #1976d2;
 }
 
-.tw-preflight :is(.tw-fill-\[\#1565C0\]){
-  fill: #1565C0;
+.tw-preflight :is(.tw-fill-current){
+  fill: currentColor;
 }
 
 .tw-preflight :is(.tw-p-2){
@@ -1148,11 +1136,6 @@
   color: rgb(250 250 250 / var(--tw-text-opacity));
 }
 
-.tw-preflight :is(.tw-text-\[\#a9a9a9\]){
-  --tw-text-opacity: 1;
-  color: rgb(169 169 169 / var(--tw-text-opacity));
-}
-
 .tw-preflight :is(.tw-text-black){
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
@@ -1212,6 +1195,14 @@
 
 .tw-preflight :is(.tw-underline){
   text-decoration-line: underline;
+}
+
+.tw-preflight :is(.tw-placeholder-black\/50)::-moz-placeholder{
+  color: rgb(0 0 0 / 0.5);
+}
+
+.tw-preflight :is(.tw-placeholder-black\/50)::placeholder{
+  color: rgb(0 0 0 / 0.5);
 }
 
 .tw-preflight :is(.tw-opacity-0){
@@ -1885,11 +1876,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
-.tw-preflight :is(.hover\:tw-border-b-black:hover){
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
-}
-
 .tw-preflight :is(.hover\:tw-bg-\[\#1976d2\]\/20:hover){
   background-color: rgb(25 118 210 / 0.2);
 }
@@ -1991,12 +1977,12 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   background-color: rgb(55 65 81 / var(--tw-bg-opacity));
 }
 
-.tw-preflight :is(.tw-dark .dark\:tw-fill-white){
-  fill: #fff;
-}
-
 .tw-preflight :is(.tw-dark .dark\:tw-fill-\[\#1976d2\]){
   fill: #1976d2;
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-fill-white){
+  fill: #fff;
 }
 
 .tw-preflight :is(.tw-dark .dark\:tw-text-\[\#EEEEEE\]){
@@ -2025,6 +2011,14 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .tw-preflight :is(.tw-dark .dark\:tw-text-white\/80){
   color: rgb(255 255 255 / 0.8);
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-placeholder-white\/60)::-moz-placeholder{
+  color: rgb(255 255 255 / 0.6);
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-placeholder-white\/60)::placeholder{
+  color: rgb(255 255 255 / 0.6);
 }
 
 .tw-preflight :is(.tw-dark .dark\:hover\:tw-border-b-white:hover){

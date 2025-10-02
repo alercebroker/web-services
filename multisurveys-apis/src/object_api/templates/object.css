@@ -18,6 +18,15 @@
     opacity: 1;
   }
 
+  .placeholder-span:empty:before {
+    content: attr(data-placeholder);
+    color: rgba(0, 0, 0, 0.6)
+  }
+
+  .tw-dark .placeholder-span:empty:before {
+    color: rgba(255, 255, 255, 0.6)
+  }
+
   .tw-preflight .obj-survey-selected{
     display: inline-block;
     border: 2px solid black;
