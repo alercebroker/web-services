@@ -20,7 +20,7 @@
             ...send_order_data("{{actual_order_by}}", "{{actual_order_mode}}","{{has_prev}}")}'
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
-            <svg class="tw-w-[28px] tw-h-[28px] tw-fill-current dark:tw-fill-white" viewBox="0 -960 960 960" width="28px">
+            <svg class="tw-w-[28px] tw-h-[28px] tw-fill-current dark:tw-fill-white" viewBox="0 -960 960 960">
             <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/>
             </svg>
             </span>
@@ -187,7 +187,7 @@
 
     if(document.getElementById(recived_order_by)){
         document.getElementById(recived_order_by).appendChild(icon)
-        document.getElementById(recived_order_by).classList.add("tw-flex", "tw-items-center", "tw-text-white")
+        document.getElementById(recived_order_by).classList.add("tw-flex", "tw-items-center","tw-text-black" ,"dark:tw-text-white")
     }
 
 </script>

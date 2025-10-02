@@ -52,29 +52,23 @@ export function draw_oids_tags(oids_arr){
 
 
 export function draw_arrow_order_table(order_mode){
-  // let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  // svg.id = 'selected_order_table'
-  // svg.setAttribute("viewBox", "0 -960 960 960");
-  // svg.classList.add("tw-w-[18px]", "tw-h-[18px]", "tw-fill-black", "dark:tw-fill-white")
+  let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.id = 'selected_order_table'
+  svg.setAttribute("viewBox", "0 -960 960 960");
+  svg.setAttribute("width", "20px");
+  svg.setAttribute("height", "20px");
+  svg.classList.add("tw-inline-block", "tw-fill-black", "dark:tw-fill-white")
 
 
-  // let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  let svg 
+  let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
   if(order_mode == 'DESC'){
-      // path.setAttribute("d", "M480-240 240-480l56-56 144 144v-368h80v368l144-144 56 56-240 240Z");
-    svg = `<svg id='selected_order_table' class="tw-w-[18px] tw-h-[18px] tw-inline-block tw-fill-black dark:tw-fill-white"  viewBox="0 -960 960 960">
-    <path d="M480-240 240-480l56-56 144 144v-368h80v368l144-144 56 56-240 240Z"/>
-    </svg>`
+    path.setAttribute("d", "M480-240 240-480l56-56 144 144v-368h80v368l144-144 56 56-240 240Z");
   } else {
-      // path.setAttribute("d", "M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z");
-
-    svg = `<svg id='selected_order_table' class="tw-w-[18px] tw-h-[18px] tw-inline-block tw-fill-black dark:tw-fill-white"  viewBox="0 -960 960 960">
-    <path d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z"/>
-    </svg>`
+    path.setAttribute("d", "M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z");
   }
 
-  // svg.classList.add("tw-inline-block")
-  // svg.appendChild(path)
+  svg.appendChild(path)
 
   return svg
 }

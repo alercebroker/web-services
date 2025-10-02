@@ -86,6 +86,10 @@
   z-index: 20;
   visibility: hidden;
   opacity: 0;
+  background: white;
+}
+
+.tw-dark .obj-custom-options{
   background: #1e1e1e;
 }
 
@@ -100,9 +104,13 @@
   display: block;
   padding: 0px 16px;
   line-height: 2.25rem;
-  color: #EEEEEE;
+  color: black;
   cursor: pointer;
   transition: all;
+}
+
+.tw-dark .obj-custom-option{
+  color: #EEEEEE;
 }
 
 .obj-custom-option.obj-selected{
@@ -768,10 +776,6 @@
   border-bottom-width: 1px;
 }
 
-.tw-preflight :is(.tw-border-b-2){
-  border-bottom-width: 2px;
-}
-
 .tw-preflight :is(.tw-border-b-\[1px\]){
   border-bottom-width: 1px;
 }
@@ -1105,11 +1109,6 @@
   color: rgb(250 250 250 / var(--tw-text-opacity));
 }
 
-.tw-preflight :is(.tw-text-\[\#FFFFFF\]){
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
 .tw-preflight :is(.tw-text-\[\#a9a9a9\]){
   --tw-text-opacity: 1;
   color: rgb(169 169 169 / var(--tw-text-opacity));
@@ -1118,6 +1117,14 @@
 .tw-preflight :is(.tw-text-black){
   --tw-text-opacity: 1;
   color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.tw-preflight :is(.tw-text-black\/60){
+  color: rgb(0 0 0 / 0.6);
+}
+
+.tw-preflight :is(.tw-text-black\/80){
+  color: rgb(0 0 0 / 0.8);
 }
 
 .tw-preflight :is(.tw-text-blue-50){
@@ -1162,14 +1169,6 @@
 
 .tw-preflight :is(.tw-text-white\/70){
   color: rgb(255 255 255 / 0.7);
-}
-
-.tw-preflight :is(.tw-text-white\/80){
-  color: rgb(255 255 255 / 0.8);
-}
-
-.tw-preflight :is(.tw-text-black\/60){
-  color: rgb(0 0 0 / 0.6);
 }
 
 .tw-preflight :is(.tw-underline){
@@ -1837,6 +1836,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity));
 }
 
+.tw-preflight :is(.hover\:tw-border-b-black\/70:hover){
+  border-bottom-color: rgb(0 0 0 / 0.7);
+}
+
 .tw-preflight :is(.hover\:tw-bg-\[\#1976d2\]\/20:hover){
   background-color: rgb(25 118 210 / 0.2);
 }
@@ -1955,6 +1958,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .tw-preflight :is(.tw-dark .dark\:tw-text-white\/70){
   color: rgb(255 255 255 / 0.7);
+}
+
+.tw-preflight :is(.tw-dark .dark\:tw-text-white\/80){
+  color: rgb(255 255 255 / 0.8);
 }
 
 .tw-preflight :is(.tw-dark .dark\:hover\:tw-border-b-white:hover){
