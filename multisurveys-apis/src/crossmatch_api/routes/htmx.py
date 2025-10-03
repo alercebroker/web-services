@@ -10,6 +10,7 @@ templates = Jinja2Templates(directory="src/crossmatch_api/templates", autoescape
 templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8005")
 
 
+
 @router.get("/htmx/crossmatch", response_class=HTMLResponse)
 async def object_mag_app(
     request: Request,

@@ -1,3 +1,7 @@
+import random
+import time
+
+
 object_basic_information_dict = {
     "oid": "12",  # si
     "corrected": "Yes",  # si
@@ -422,3 +426,29 @@ classifiers_options_dicts = [
     {"lc_classifier": "Lc Classifier"},
     {"LC_classifier_ATAT_forced_phot": "Lc Classifier ATAT Forced Phot"},
 ]
+
+
+def generate_array_dicts_data_table(n=20, seed=None):
+    rnd = random.Random(seed if seed is not None else time.time_ns())
+    base_oid = rnd.randint(10000, 99999)
+
+    rows = []
+    for i in range(n):
+        oid = f"{base_oid + i}"
+        n_det = rnd.randint(5, 45)
+        firstmjd = 57900.0 + rnd.uniform(0, 200)
+        lastmjd = firstmjd + rnd.uniform(10, 200)
+        meanra = round(rnd.uniform(0, 360), 5)
+        meandec = round(rnd.uniform(-90, 90), 5)
+        probability = round(rnd.uniform(0.5, 0.99), 2)
+
+        rows.append({
+            'oid': oid,
+            'n_det': n_det,
+            'firstmjd': round(firstmjd, 3),
+            'lastmjd': round(lastmjd, 3),
+            'meanra': meanra,
+            'meandec': meandec,
+            'Probability': probability
+        })
+    return rows

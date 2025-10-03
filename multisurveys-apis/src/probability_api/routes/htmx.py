@@ -97,7 +97,7 @@ def format_classifiers_name(classifier_name):
     return classifier_name
 
 
-@router.get("/probabilities/{oid}", response_class=HTMLResponse)
+@router.get("/htmx/probabilities/{oid}", response_class=HTMLResponse)
 async def object_probability_app(
     request: Request,
     oid: str,
