@@ -121,17 +121,17 @@
                     <div class="tw-container tw-relative tw-z-[10] tw-col-span-12 lg:tw-col-span-6">
 
                         <div class="tw-flex tw-w-full tw-gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+                            <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
 
                             <span 
                             id="min_date_time_text" 
-                            class="tw-inline-block tw-w-full tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer lg:tw-w-[85%] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</span>
+                            class="tw-inline-block tw-w-full tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-cursor-pointer lg:tw-w-[85%] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</span>
                         </div>
 
-                        <div id="min_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
-                            {{customInput(id="date_min", type="date",width="tw-w-[90%]", style="color-scheme: dark;")}}
+                        <div id="min_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-shadow-lg tw-bg-white dark:tw-bg-[#424242] tw-scheme-light dark:tw-scheme-dark">
+                            {{customInput(id="date_min", type="date",width="tw-w-[90%]")}}
 
-                            {{customInput(id="time_min", type="time", value="00:00",width="tw-w-[90%]", style="color-scheme: dark;")}}
+                            {{customInput(id="time_min", type="time", value="00:00",width="tw-w-[90%]")}}
 
                             <div class="tw-container tw-flex tw-justify-end tw-gap-4">
                                 <button id="save_date" class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-[30%] tw-self-end">Save</button>
@@ -145,15 +145,15 @@
                     
                     <div class="tw-container tw-relative tw-col-span-12 lg:tw-col-span-6 ">
                         <div class="tw-flex tw-gap-2 tw-w-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+                            <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
 
-                            <span id="max_date_time_text" class="tw-inline-block tw-w-full lg:tw-w-[85%] tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</span>
+                            <span id="max_date_time_text" class="tw-inline-block tw-w-full lg:tw-w-[85%] tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</span>
                         </div>
 
-                        <div id="max_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
-                            {{customInput(id="date_max", type="date", width="tw-w-[90%]", style="color-scheme: dark;")}}
+                        <div id="max_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-shadow-lg tw-bg-white dark:tw-bg-[#424242] tw-scheme-light dark:tw-scheme-dark">
+                            {{customInput(id="date_max", type="date", width="tw-w-[90%]")}}
 
-                            {{customInput(id="time_max", type="time", value="00:00",width="tw-w-[90%]", style="color-scheme: dark;")}}
+                            {{customInput(id="time_max", type="time", value="00:00",width="tw-w-[90%]")}}
 
                             <button id="save_date_max" class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/4 tw-self-end">Save</button>
                         </div>
@@ -183,7 +183,7 @@
                     </div>
 
                     <div class="tw-px-4 tw-flex tw-flex-col tw-items-end tw-col-span-12 lg:tw-col-span-7 sm:tw-col-span-12">
-                        <button id="resolve_btn" class="tw-w-[95%] tw-h-[36px] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">RESOLVE</button>
+                        <button id="resolve_btn" class="tw-w-[95%] tw-h-[36px] tw-shadow-xl tw-bg-[#f5f5f5] dark:tw-bg-[#424242] tw-text-black/80 dark:tw-text-[#F5F5F5] tw-rounded">RESOLVE</button>
                         <label class="tw-text-sm tw-mt-1">Provided by <a href="https://vizier.cds.unistra.fr/vizier/doc/sesame.htx" target="_blank" class="tw-text-[#1976d2]">sesame</a></label>
                     </div>
 
@@ -219,7 +219,7 @@
                 
                 <button 
                 id="clear_form" 
-                class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded tw-w-full lg:tw-w-1/4 sm:tw-w-full"
+                class=" tw-text-black/80 dark:tw-text-[#F5F5F5] tw-rounded tw-w-full tw-bg-[#f5f5f5] dark:tw-bg-[#424242] lg:tw-w-1/4 sm:tw-w-full"
                 hx-get="{{API_URL}}/htmx/search_objects/"
                 hx-trigger="click"
                 hx-swap="outerHTML"

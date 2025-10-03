@@ -109,7 +109,7 @@
     background-color: rgba(25, 118, 210, 0.3);
   }
   .custom-oid{
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.1);
     display: inline-flex;
     justify-content: space-around;
     align-items: center;
@@ -118,20 +118,34 @@
     border-radius: 4px;
     max-width: 12rem;
   }
+
+  .tw-dark .custom-oid{
+    background-color: rgba(255, 255, 255, 0.2);
+  }
   
 
   .custom-span{
     display: inline-block;
   }
   
-  .custom-close-id{
+  .custom-close-svg-id{
     display: inline-block;
     cursor: pointer;
+    fill: rgba(0, 0, 0, 0.6);
   }
   
-  .custom-close-id:hover svg path{
-    fill: rgba(255, 255, 255, 0.2);
+  .tw-dark .custom-close-svg-id{
+    fill: rgba(255, 255, 255, 1);
   }
+
+  .custom-close-svg-id:hover{
+    fill: rgba(0, 0, 0, 0.2);
+  }
+
+  .tw-dark .custom-close-svg-id:hover{
+    fill: rgba(255, 255, 255, 0.4);
+  }
+
 
   .custom-error{
     display: flex;
@@ -148,6 +162,14 @@
 
   .custom-bg-error{
     background-color: rgb(190 40 40 / 0.2);
+  }
+
+  .tw-scheme-dark {
+    color-scheme: dark;
+  }
+  
+  .tw-scheme-light {
+    color-scheme: light;
   }
 
 }
