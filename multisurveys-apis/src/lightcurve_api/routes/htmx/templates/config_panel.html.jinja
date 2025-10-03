@@ -1,0 +1,95 @@
+{% import 'toggle.html.jinja' as toggle %}
+
+<div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
+
+<form 
+  hx-ext="form-json"
+  hx-post="{{API_URL}}/htmx/config_change"
+  hx-target="#main-app"
+  hx-trigger="change delay:200ms"
+>
+  <input type="hidden" name="oid" value="{{ config_state.oid }}">
+  <input type="hidden" name="survey_id" value="{{ config_state.survey_id }}">
+  {% for detection in detections %}
+  <input type="hidden" name="detections[]" value="{{ detection.model_dump_json() }}">
+  {% endfor %}
+
+  {% for non_detection in non_detections %}
+  <input type="hidden" name="non_detections[]" value="{{ non_detection.model_dump_json() }}">
+  {% endfor %}
+
+  {% for forced_photometry in forced_photometry %}
+  <input type="hidden" name="forced_photometry[]" value="{{ forced_photometry.model_dump_json() }}">
+  {% endfor %}
+
+  {% for selected_object in config_state.external_sources.selected_objects %}
+  <input type="hidden" name="external_sources.selected_objects[]" value="{{ selected_object }}">
+  {% endfor %}
+
+  <div>
+    {% include "band_toggles.html.jinja" %}
+  </div>
+
+  <div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
+
+  <div class="mt-2">
+    {{ toggle.toggle("flux", "Magnitude", "Flux", config_state.flux, "Toggle flux") }}
+  </div>
+  <div class="mt-2">
+    {{ toggle.toggle("total", "Difference", "Total", config_state.total, "Toggle total") }}
+  </div>
+  {% if use_absolute %}
+  <div class="mt-2">
+    {{ toggle.toggle("absolute", "Apparent", "Absolute", config_state.absolute, "Toggle absolute") }}
+  </div>
+  {% endif %}
+  <div class="mt-2 flex items-center">
+    <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">External</span>
+    {{ toggle.toggle("external_sources.enabled", "Off", "On", config_state.external_sources.enabled, "Toggle external sources") }}
+    <button 
+      class="ml-2 p-1.5 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+      aria-label="Filter external sources"
+      hx-post="{{API_URL}}/htmx/external_sources"
+    >
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
+
+  <div class="mt-2">
+    {% include "fold_controls.html.jinja" %}
+  </div>
+
+  <div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
+
+  <div class="mt-2 flex items-center">
+    <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">Offset</span>
+    {{ toggle.toggle("offset_bands", "Off", "On", config_state.offset_bands, "Toggle band offsets") }}
+  </div>
+  <div class="mt-2 flex items-center gap-3">
+    <input name="offset_num" type="range" min="1" max="10" value="{{config_state.offset_num}}" class="w-32 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+    <select name="offset_metric" class="border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+      <option value="avg" {% if config_state.offset_metric == "avg" %}selected{% endif %} class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">avg</option>
+      <option value="min" {% if config_state.offset_metric == "min" %}selected{% endif %}>min</option>
+      <option value="max" {% if config_state.offset_metric == "max" %}selected{% endif %}>max</option>
+      <option value="median" {% if config_state.offset_metric == "median" %}selected{% endif %}>median</option>
+    </select>
+  </div>
+
+  <div class="w-full h-px bg-gray-200 dark:bg-gray-600 my-3"></div>
+
+  <a
+    href="{{API_URL}}/htmx/download?oid={{config_state.oid}}&survey_id={{config_state.survey_id}}"
+    class="flex items-center justify-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition-colors duration-200 text-sm"
+    download
+  >
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+    </svg>
+    Download
+  </a>
+</form>
+
