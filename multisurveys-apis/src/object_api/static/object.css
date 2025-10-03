@@ -258,6 +258,10 @@
   z-index: 10;
 }
 
+.tw-preflight :is(.tw-z-\[11\]){
+  z-index: 11;
+}
+
 .tw-preflight :is(.tw-z-\[2\]){
   z-index: 2;
 }
@@ -1150,11 +1154,6 @@
 .tw-preflight :is(.tw-text-\[\#BDBDBD\]){
   --tw-text-opacity: 1;
   color: rgb(189 189 189 / var(--tw-text-opacity));
-}
-
-.tw-preflight :is(.tw-text-\[\#F5F5F5\]){
-  --tw-text-opacity: 1;
-  color: rgb(245 245 245 / var(--tw-text-opacity));
 }
 
 .tw-preflight :is(.tw-text-\[\#FAFAFA\]){
