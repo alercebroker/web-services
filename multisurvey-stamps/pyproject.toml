@@ -1,15 +1,14 @@
-[project]
+[tool.poetry]
 name = "multisurvey-stamps"
 version = "0.1.0"
 description = ""
-authors = [
-    {name = "Alex Alvarez",email = "otajla@hotmail.com"}
-]
+authors = ["Claudio Mansilla <c.mansillabrito@gmail.com>"]
 readme = "README.md"
 packages = [
-    {include = "multisurvey_stamps", from = "src"}
+	{ include = "core", from = "src" },
+	{ include = "multisurvey_stamps", from = "src" },
+	{ include = "s3_handler", from = "src" },
 ]
-
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.12"
@@ -18,10 +17,15 @@ fastapi = "^0.115.12"
 pydantic-settings = "^2.10.1"
 pyyaml = "^6.0.2"
 boto3 = "^1.39.14"
+alerce = {git = "https://github.com/alercebroker/alerce_client.git", branch = "feat/return_stamps_function", develop = true}
 astropy = "^7.1.0"
 scipy = "^1.16.1"
 fastavro = "^1.11.1"
 matplotlib = "^3.10.3"
+jinja2 = "^3.1.2"
+httpx = "^0.24.1"
+psycopg2-binary = "^2.9.6"
+sqlalchemy = { extras = ["asyncio"], version = "^2.0.19" }
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -43,4 +47,4 @@ line-length = 79
 
 
 [tool.poetry.scripts]
-service = "scripts.run_api:run"
+all = "scripts.run_api:run"
