@@ -4,7 +4,7 @@
 
 
 {% if objects_list['items']|length > 0 %}
-<div id="sidebar" class="tw-preflight tw-text-black tw-bg-transparent dark:tw-bg-[#424242] dark:tw-text-[#EEEEEE]">
+<div id="sidebar-objects-htmx" class="tw-preflight tw-text-black tw-bg-transparent dark:tw-bg-[#424242] dark:tw-text-[#EEEEEE]">
 
     <table class="tw-table-auto tw-border-collapse tw-text-left tw-w-full tw-h-[95vh] tw-text-[0.875rem] dark:tw-bg-[#424242]">
         <thead class="tw-text-black/60 dark:tw-text-white/70 tw-h-[34px]">
@@ -22,8 +22,8 @@
                         data-oid='{{item["oid"]}}'
                         hx-get="{{API_URL}}/htmx/side_objects"
                         hx-trigger="click"
-                        hx-swap="outerHTML"
-                        hx-target="#sidebar"
+                        hx-swap="innerHTML"
+                        hx-target="#sidebar-objects-htmx"
                         hx-on::config-request="prepare_params(event)"
                         class="tw-px-4"
                         >
@@ -40,7 +40,7 @@
         </tbody>
     </table>
 
-    <div class="tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[48px] dark:tw-bg-[#424242]">
+    <div class=" tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[48px] dark:tw-bg-[#424242]">
         {% if has_prev %}
             <span 
             id="prev_page"
@@ -48,8 +48,8 @@
             data-next="{{prev}}"
             hx-get="{{API_URL}}/htmx/side_objects"
             hx-trigger="click"
-            hx-swap="outerHTML"
-            hx-target="#sidebar"
+            hx-swap="innerHTML"
+            hx-target="#sidebar-objects-htmx"
             hx-on::config-request="prepare_params(event)"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
@@ -71,8 +71,8 @@
             data-next="{{next}}"
             hx-get="{{API_URL}}/htmx/side_objects"
             hx-trigger="click"
-            hx-swap="outerHTML"
-            hx-target="#sidebar"
+            hx-swap="innerHTML"
+            hx-target="#sidebar-objects-htmx"
             hx-on::config-request="prepare_params(event)"
             class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
             >
@@ -84,14 +84,14 @@
     </div>
 </div>
 {% else %}
-<div id="sidebar"></div>
+<div id="sidebar-objects-htmx"></div>
 {% endif %}
 
 <script type="module">
     import {init, elementReady} from "{{API_URL}}/static/sidebar.js"
 
 
-    elementReady("#sidebar").then((el) => {
+    elementReady("#sidebar-objects-htmx").then((el) => {
         init();
     });
 </script>
