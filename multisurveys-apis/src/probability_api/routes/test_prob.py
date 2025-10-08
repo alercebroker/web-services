@@ -17,5 +17,4 @@ def probability_parser(prob_list_raw: list) -> dict:
             class_name = d['classifier_name']
             del d['classifier_name']
             prob_dict[class_name].append(d)
-    print(prob_dict)
     return prob_dict
