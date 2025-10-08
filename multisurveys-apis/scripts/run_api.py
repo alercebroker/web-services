@@ -41,6 +41,7 @@ def run_object():
 def run_lightcurve():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["lightcurve_api"]
+    os.environ["USE_ABSOLUTE"] = service_config["use_absolute"]
     print(f"Running service: lightcurve_api with config: {service_config}")
     run_service(service_config)
 
@@ -69,6 +70,7 @@ def run_probability():
 def run_crossmatch():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["crossmatch_api"]
+    os.environ["XWAVE_URL"] = service_config.get("xwave_url", "http://localhost:8080")
     print(f"Running service: crossmatch_api with config: {service_config}")
     run_service(service_config)
 
@@ -146,7 +148,6 @@ def run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
-    os.environ["USE_ABSOLUTE"] = config_dict["use_absolute"]
 
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",
