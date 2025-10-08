@@ -1,6 +1,6 @@
 import requests
 
-def get_alerce_data(ra, dec, radius):
+def get_alerce_data(ra, dec, radius=20):
 
     '''
         The catshtm api returns a list with every survey with information in a radius (we use 20 arcsec). Every element in this list is a dictionary with
