@@ -172,6 +172,13 @@
         </table>
         <div id="loader" class="htmx-indicator tw-animate-pulse tw-text-center tw-my-4 tw-w-full">Loading...</div>
     </div>
+    <div class="tw-w-[50%] tw-mx-auto">
+        <button id="magstats-button"
+                hx-on:click="window.dispatchEvent(new CustomEvent('openMagstatsModal'))"
+                class="tw-block tw-mx-0 tw-bg-[#2196f3] tw-text-blue-50 tw-w-full tw-text-center tw-h-5 tw-text-xs tw-font-medium tw-px-[8px] tw-py-[2px]">
+            Magstats
+        </button>
+    </div>
 </div>
 <script type="module">
 import { init, elementReady } from "{{API_URL}}/static/basic_information/object.js";
