@@ -43,8 +43,18 @@
                                 <td class="tw-w-full">  
                                     <button id="{{key}}" class="tw-w-full tw-h-[64px] tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-gray-600" data-key="{{key}}" arcsec-dist="{{values.distance.value}}">
                                         <div class="tw-flex tw-justify-center tw-float-left tw-items-center">
+                                          <div>
                                             <p class="tw-text-xl tw-font-bold">{{key}}</p> 
-                                            <p class="tw-text-gray-300 tw-ml-2 tw-text-sm">({{values|length}} attributes )</p>
+                                            <p class="tw-text-[#1e1e1e] dark:tw-text-white tw-text-xs tw-pt-3 tw-bottom-0 tw-right-0">
+                                            Powered by 
+                                            {% if values.powered_by %}
+                                            <a href="{{values.powered_by.url}}" target="_blank" class="tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer"> {{values.powered_by.name}} </a>
+                                            {% else %}
+                                            <a id="catsHTM-link" href="https://arxiv.org/abs/1805.02666" target="_blank" class="tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer"> catsHTM </a>
+                                            {% endif %}
+                                            </p>
+                                          </div>
+                                          <p class="tw-text-gray-300 tw-ml-2 tw-text-sm">({{(values|length - 1) if 'powered_by' in values else values|length}} attributes )</p>
                                         </div>
                                         <div class="tw-flex tw-justify-center tw-float-right tw-items-center">
                                             <p class="tw-text-black dark:tw-text-gray-300 tw-text-sm"> Distance: {{values.distance.value|round(3)}} arcsec </p>
@@ -61,11 +71,13 @@
                                         </thead>
                                         <tbody>
                                             {% for key1, values1 in values.items() %}
+                                              {% if key1 != "powered_by" %}
                                                 <tr class="tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-gray-600 hover:tw-bg-gray-600">
                                                     <td class="tw-p-2 tw-break-words"> {{ key1 }} </td>
                                                     <td class="tw-p-2 tw-break-words"> {{ (values1.values()|list)[1] }} </td>
                                                     <td class="tw-p-2 tw-break-words"> {{ (values1.values()|list)[0] }} </td>
                                                 </tr>
+                                              {% endif %}
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -77,17 +89,6 @@
 
         </table>
     </div>
-
-    <div class="tw-flex tw-justify-between tw-w-[95%] tw-mx-auto tw-font-roboto">
-
-        <p id="dummy-p"> </p>
-        
-        <p class="tw-text-[#1e1e1e] dark:tw-text-white tw-text-xs tw-pt-3 tw-bottom-0 tw-right-0">
-            Powered by 
-            <a id="catsHTM-link" href="https://arxiv.org/abs/1805.02666" target="_blank" class="tw-inline tw-text-blue-600 tw-underline tw-cursor-pointer"> catsHTM </a>
-        </p>
-    </div>
-
 </div>
      
 
