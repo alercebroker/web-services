@@ -2,11 +2,12 @@ import os
 import pprint
 from fastapi import FastAPI, Request, Query
 
-# from core.services.object import get_probabilities, get_taxonomies
+from ..services.probability import get_probability, get_classifiers
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
 from core.repository.dummy_data import classifiers_probabilities_dict, classifiers_options_dicts
+from .test_prob import probability_parser
 
 router = APIRouter()
 templates = Jinja2Templates(
@@ -101,24 +102,16 @@ def format_classifiers_name(classifier_name):
     return classifier_name
 
 
-@router.get("/probabilities/{oid}", response_class=HTMLResponse)
+@router.get("/htmx/probabilities", response_class=HTMLResponse)
 async def object_probability_app(
     request: Request,
     oid: str,
 ):
+    classifier_list = get_classifiers(session_factory = request.app.state.psql_session) # classifier_list es un diccionario
+    class_options = [{v: v} for k, v in classifier_list.items()]
+    prob_list = get_probability(oid, classifier_list, session_factory = request.app.state.psql_session)
 
-    # prob_list = get_probabilities(oid,session_factory = request.app.state.psql_session)
-    # taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
-
-    # taxonomy_dict = taxonomy_data(taxonomy_list)
-
-    # group_prob = group_data_by_classifier_dict(prob_list)
-    # group_prob_by_version = filter_data_by_higher_version(group_prob)
-    
-    # class_options = classifiers_options(group_prob_by_version)
-
-    group_prob = classifiers_probabilities_dict
-    class_options = classifiers_options_dicts
+    group_prob = probability_parser(prob_list)
 
     return templates.TemplateResponse(
       name='prob.html.jinja',
