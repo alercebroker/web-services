@@ -40,18 +40,13 @@ templates.env.filters["truncate"] = truncate_float
 @router.get("/htmx/object", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str, survey_id: str):
     try:
-        session = request.app.state.psql_session
 
-        # object_data = get_object_by_id(session, oid, survey_id)
-        # candid = get_first_det_candid(oid, request.app.state.psql_session)
-        # count_ndet = get_count_ndet(oid, request.app.state.psql_session)
+        object_data = get_object_by_id(oid, survey_id, session_factory=request.app.state.psql_session)
 
-        # other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
-        object_data = object_basic_information_dict
+        other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
 
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
-
 
     return templates.TemplateResponse(
         name="basic_information/basicInformationPreview.html.jinja",
@@ -60,14 +55,14 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
             "object": object_data['oid'],
             "corrected": "Yes" if object_data['corrected'] else "No",
             "stellar": "Yes" if object_data['stellar'] else "No",
-            "detections": object_data['ndet'],
-            "nonDetections": object_data['count_ndet'],
+            "detections": object_data['n_det'],
+            "nonDetections": object_data['n_non_det'],
             "discoveryDateMJD": object_data['firstmjd'],
             "lastDetectionMJD": object_data['lastmjd'],
             "ra": object_data['meanra'],
             "dec": object_data['meandec'],
-            "measurement_id": object_data['measurement_id'],
-            "otherArchives": object_data['otherArchives'],
+            "measurement_id": object_data['sid'],
+            "otherArchives": other_archives,
         },
     )
 
