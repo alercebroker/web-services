@@ -1218,6 +1218,11 @@
   color: rgb(255 255 255 / 0.7);
 }
 
+.tw-preflight :is(.tw-text-yellow-500){
+  --tw-text-opacity: 1;
+  color: rgb(234 179 8 / var(--tw-text-opacity));
+}
+
 .tw-preflight :is(.tw-underline){
   text-decoration-line: underline;
 }
