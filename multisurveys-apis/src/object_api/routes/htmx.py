@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
-from ..services.object_services import get_objects_list
+from ..services.object_services import get_objects_list, get_object_by_id
 from ..services.validations import (
     ndets_validation,
     order_mode_validation,
@@ -35,11 +35,11 @@ templates.env.filters["truncate"] = truncate_float
 @router.get("/htmx/object_information", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str, survey_id: str):
     try:
-        # session = request.app.state.psql_session
+        session = request.app.state.psql_session
 
         # object_data = get_object_by_id(session, oid, survey_id)
         # candid = get_first_det_candid(oid, request.app.state.psql_session)
-        # count_ndet = get_count_ndet(oid, request.app.state.psql_session)
+        # count_ndet = get_count_dnet(oid, request.app.state.psql_session)
 
         # other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
         object_data = object_basic_information_dict
