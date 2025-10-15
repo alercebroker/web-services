@@ -4,19 +4,21 @@
 {% set not_corrected = True %}
 {% endif %}
 
-<div class="grid grid-cols-5 gap-4 h-full bg-white dark:bg-bgdark">
-  <div class="col-span-1 text-center ml-3">{% include "config_panel.html.jinja" %}</div>
-  <div class="col-span-4 h-full">
+<div class="tw-grid tw-grid-cols-5 tw-gap-4 tw-h-full tw-bg-white dark:tw-bg-[#1e1e1e]">
+
+  <div class="tw-col-span-full tw-order-last tw-text-center tw-mx-3 md:tw-col-span-1 md:tw-order-none ">{% include "config_panel.html.jinja" %}</div>
+
+  <div class="tw-col-span-full tw-order-first tw-h-full md:tw-col-span-4 md:tw-order-none">
     {% if not_corrected and config_state.total %}
-      <div class="h-full flex items-center justify-center">
-        <div class="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded-md p-4 mb-4">
-          <strong class="text-yellow-800 dark:text-yellow-200">Info:</strong> 
-          <span class="text-yellow-700 dark:text-yellow-300">Lightcurve not corrected. Lightcurve plot not available for Total magnitude. Switch back to Difference.</span>
+      <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
+        <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4 tw-mb-4">
+          <strong class="tw-text-yellow-800 dark:tw-text-yellow-200">Info:</strong> 
+          <span class="tw-text-yellow-700 dark:tw-text-yellow-300">Lightcurve not corrected. Lightcurve plot not available for Total magnitude. Switch back to Difference.</span>
         </div>
       </div>
     {% else %}
-    <div id="plot-grid" class="flex flex-col gap-4 h-full">
-      <div id="lightcurve-container" class="flex-1 min-h-0">
+    <div id="plot-grid" class="tw-mx-4 tw-flex tw-flex-col tw-gap-4 tw-h-full">
+      <div id="lightcurve-container" class="tw-flex-1 tw-min-h-80 tw-max-h-[610px]">
       {% include "lightcurve.html.jinja" %}
       </div>
       {% if config_state.fold %}
@@ -25,10 +27,10 @@
           {% if periodogram.has_period() %}
             {% include "periodogram.html.jinja" %}
           {% else %}
-            <div class="h-full flex items-center justify-center">
-              <div class="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded-md p-4 mb-4">
-                <strong class="text-yellow-800 dark:text-yellow-200">Info:</strong> 
-                <span class="text-yellow-700 dark:text-yellow-300">No period computed for this object. Periodogram not available.</span>
+            <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
+              <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4 tw-mb-4">
+                <strong class="tw-text-yellow-800 dark:tw-text-yellow-200">Info:</strong> 
+                <span class="tw-text-yellow-700 dark:tw-text-yellow-300">No period computed for this object. Periodogram not available.</span>
             </div>
           </div>
           {% endif %}

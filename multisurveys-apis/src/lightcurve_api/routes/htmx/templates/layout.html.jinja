@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <!-- Include the ECharts file you just downloaded -->
-    <script src="{{API_URL}}/static/echarts.min.js"></script>
-    <script src="{{API_URL}}/static/htmx.min.js"></script>
-    <script src="{{API_URL}}/static/form-json.js"></script>
-    <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
-    <link rel="stylesheet" href="{{ API_URL }}/static/main.css">
-  </head>
-  <body>
-    <div id="main-app">{% include "main.html.jinja" %}</div>
-  </body>
-</html>
+
+<!-- Include the ECharts file you just downloaded -->
+<script src="{{API_URL}}/static/echarts.min.js"></script>
+<script src="{{API_URL}}/static/htmx.min.js"></script>
+<script src="{{API_URL}}/static/form-json.js"></script>
+<meta name="htmx-config" content='{"selfRequestsOnly": false}'>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="{{ API_URL }}/static/lightcurve.css">
+
+<div id="main-app" class="tw-preflight">{% include "main.html.jinja" %}</div>
+
