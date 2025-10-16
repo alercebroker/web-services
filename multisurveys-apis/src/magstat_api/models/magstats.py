@@ -7,18 +7,18 @@ class MagStat(BaseModel):
     band: int
     stellar: bool
     corrected: bool
-    ndubious: Optional[int] = None
-    dmdt_first: Optional[int] = None
-    dm_first: Optional[int] = None
-    sigmadm_first: Optional[int] = None
-    dt_first: Optional[int] = None
+    ndubious: Optional[float] = None #int
+    dmdt_first: Optional[float] = None #int
+    dm_first: Optional[float] = None #int
+    sigmadm_first: Optional[float] = None #int
+    dt_first: Optional[float] = None #int
     magmean: Optional[float] = None
     magmedian: Optional[float] = None
     magmax: Optional[float] = None
     magmin: Optional[float] = None
     magsigma: Optional[float] = None
-    maglast: Optional[int] = None
-    magfirst: Optional[int] = None
+    maglast: Optional[float] = None #int
+    magfirst: Optional[float] = None #int
     magmean_corr: Optional[float] = None
     magmedian_corr: Optional[float] = None
     magmax_corr: Optional[float] = None
