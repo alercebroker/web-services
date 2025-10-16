@@ -33,3 +33,17 @@ def mag_parser(mag_list):
             
         result.append(new_mag_dict)
     return result
+
+def parse_lsst_dia_objects_to_dict(lsst_list):
+    result = []
+    
+    for obj in lsst_list:
+        obj_dict = obj.model_dump(mode='json')
+        
+        for key, value in obj_dict.items():
+            if isinstance(value, float):
+                obj_dict[key] = round(value, 3)
+        
+        result.append(obj_dict)
+    
+    return result
