@@ -1,11 +1,19 @@
 <div id="chart" style="width: 100%;height:100%;"></div>
+<button id="toggle-theme-lc" class="tw-hidden"></button>
 <script type="module">
+import customDark from '{{API_URL}}/static/echarts-theme/customDark.js'
+
+
 // Initialize the echarts instance and use the current system theme
-var mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-var theme = mediaQuery.matches ? 'dark' : 'light';
+{# var mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+var theme = mediaQuery.matches ? 'dark' : 'light'; #}
+
+var customDarkTheme = customDark()
+var theme = document.getElementById('main-app').classList.contains('tw-dark') ? customDarkTheme : 'light'
 var chartDom = document.getElementById('chart')
 var myChart = echarts.init(chartDom, theme);
 var options = {{ options | tojson }};
+var toggleLcTheme = document.getElementById('toggle-theme-lc')
 
 // Make chart responsive
 var plotGrid = document.getElementById('plot-grid');
@@ -15,13 +23,23 @@ var resizeObserver = new ResizeObserver(_ => {
 resizeObserver.observe(plotGrid);
 
 // Dynamic theme switching. This detects system theme changes and updates the chart accordingly.
-mediaQuery.addListener((e) => {
+{# mediaQuery.addListener((e) => {
     const theme = e.matches ? 'dark' : 'light';
     myChart.clear()
     myChart.dispose();
     myChart = echarts.init(document.getElementById('chart'), theme);
     myChart.setOption(options);
-});
+}); #}
+
+
+toggleLcTheme.addEventListener('click', () => {
+  var themeMode = document.getElementById('main-app').classList.contains('tw-dark') ? customDarkTheme : 'light'
+  myChart.clear()
+  myChart.dispose();
+  myChart = echarts.init(document.getElementById('chart'), themeMode);
+  myChart.setOption(options);
+
+})
 
 // Display the chart using the configuration items and data just specified.
 myChart.setOption(options);

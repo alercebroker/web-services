@@ -272,10 +272,6 @@
   margin: auto
 }
 
-.tw-preflight :is(.tw-m-4) {
-  margin: 1rem
-}
-
 .tw-preflight :is(.tw-mx-0) {
   margin-left: 0px;
   margin-right: 0px
@@ -284,6 +280,11 @@
 .tw-preflight :is(.tw-mx-2) {
   margin-left: 0.5rem;
   margin-right: 0.5rem
+}
+
+.tw-preflight :is(.tw-mx-3) {
+  margin-left: 0.75rem;
+  margin-right: 0.75rem
 }
 
 .tw-preflight :is(.tw-mx-4) {
@@ -314,11 +315,6 @@
 .tw-preflight :is(.tw-my-4) {
   margin-top: 1rem;
   margin-bottom: 1rem
-}
-
-.tw-preflight :is(.tw-mx-3) {
-  margin-left: 0.75rem;
-  margin-right: 0.75rem
 }
 
 .tw-preflight :is(.tw-mb-2) {
@@ -506,49 +502,20 @@
   height: 1px
 }
 
-.tw-preflight :is(.tw-h-\[587px\]) {
-  height: 587px
-}
-
-.tw-preflight :is(.tw-h-1\/2) {
-  height: 50%
-}
-
-.tw-preflight :is(.tw-h-\[80\%\]) {
-  height: 80%
-}
-
 .tw-preflight :is(.tw-max-h-\[304px\]) {
   max-height: 304px
-}
-
-.tw-preflight :is(.tw-max-h-fit) {
-  max-height: -moz-fit-content;
-  max-height: fit-content
-}
-
-.tw-preflight :is(.tw-max-h-\[587px\]) {
-  max-height: 587px
 }
 
 .tw-preflight :is(.tw-max-h-\[610px\]) {
   max-height: 610px
 }
 
-.tw-preflight :is(.tw-min-h-0) {
-  min-height: 0px
-}
-
-.tw-preflight :is(.tw-min-h-\[587px\]) {
-  min-height: 587px
-}
-
-.tw-preflight :is(.tw-min-h-64) {
-  min-height: 16rem
-}
-
 .tw-preflight :is(.tw-min-h-80) {
   min-height: 20rem
+}
+
+.tw-preflight :is(.tw-min-h-0) {
+  min-height: 0px
 }
 
 .tw-preflight :is(.tw-w-1\/3) {
@@ -1173,11 +1140,6 @@
 .tw-preflight :is(.tw-py-\[2px\]) {
   padding-top: 2px;
   padding-bottom: 2px
-}
-
-.tw-preflight :is(.tw-px-8) {
-  padding-left: 2rem;
-  padding-right: 2rem
 }
 
 .tw-preflight :is(.tw-pb-2) {
@@ -1861,16 +1823,32 @@
     order: 0
   }
 
-  .tw-preflight :is(.md\:tw-col-span-12) {
-    grid-column: span 12 / span 12
-  }
-
   .tw-preflight :is(.md\:tw-col-span-1) {
     grid-column: span 1 / span 1
   }
 
+  .tw-preflight :is(.md\:tw-col-span-12) {
+    grid-column: span 12 / span 12
+  }
+
   .tw-preflight :is(.md\:tw-col-span-4) {
     grid-column: span 4 / span 4
+  }
+
+  .tw-preflight :is(.md\:tw-col-span-2) {
+    grid-column: span 2 / span 2
+  }
+
+  .tw-preflight :is(.md\:tw-col-span-3) {
+    grid-column: span 3 / span 3
+  }
+
+  .tw-preflight :is(.md\:tw-col-span-8) {
+    grid-column: span 8 / span 8
+  }
+
+  .tw-preflight :is(.md\:tw-flex) {
+    display: flex
   }
 
   .tw-preflight :is(.md\:tw-h-\[250px\]) {
@@ -1880,23 +1858,19 @@
   .tw-preflight :is(.md\:tw-w-\[365px\]) {
     width: 365px
   }
+
+  .tw-preflight :is(.md\:tw-w-1\/3) {
+    width: 33.333333%
+  }
+
+  .tw-preflight :is(.md\:tw-w-2\/3) {
+    width: 66.666667%
+  }
 }
 
 @media (min-width: 1024px) {
-  .tw-preflight :is(.lg\:tw-order-none) {
-    order: 0
-  }
-
-  .tw-preflight :is(.lg\:tw-col-span-1) {
-    grid-column: span 1 / span 1
-  }
-
   .tw-preflight :is(.lg\:tw-col-span-12) {
     grid-column: span 12 / span 12
-  }
-
-  .tw-preflight :is(.lg\:tw-col-span-4) {
-    grid-column: span 4 / span 4
   }
 
   .tw-preflight :is(.lg\:tw-col-span-5) {
