@@ -72,6 +72,13 @@ def run_crossmatch():
     run_service(service_config)
 
 
+def run_crossmatch():
+    config_dict = config_from_yaml()
+    service_config = config_dict["services"]["crossmatch_api"]
+    print(f"Running service: crossmatch_api with config: {service_config}")
+    run_service(service_config)
+
+
 ###
 ### A function to run all the services configured in the yaml file
 ###
@@ -145,6 +152,7 @@ def run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
+    os.environ["USE_ABSOLUTE"] = config_dict["use_absolute"]
 
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",

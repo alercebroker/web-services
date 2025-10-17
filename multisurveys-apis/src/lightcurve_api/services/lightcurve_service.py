@@ -51,7 +51,7 @@ def get_detections_by_list(
 
 
 def convert_oid_list_to_int(
-    args: Tuple[List[str], str],
+    args: Tuple[List[int] | List[str], str],
 ) -> Tuple[List[int], str]:
     oid_list, survey_id = args
 

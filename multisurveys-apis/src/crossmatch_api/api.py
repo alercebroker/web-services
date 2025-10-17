@@ -23,4 +23,3 @@ app.mount("/htmx-static", StaticFiles(directory="src/core/htmx"), name="htmx-sta
 
 app.include_router(rest.router)
 app.include_router(htmx.router)
-

@@ -1,0 +1,43 @@
+{% if detections %}
+{% set not_corrected = detections[0].flux2magnitude(True, False) == 0 %}
+{% else %}
+{% set not_corrected = True %}
+{% endif %}
+
+<div class="grid grid-cols-5 gap-4 h-full bg-white dark:bg-bgdark">
+  <div class="col-span-1 text-center ml-3">{% include "config_panel.html.jinja" %}</div>
+  <div class="col-span-4 h-full">
+    {% if not_corrected and config_state.total %}
+      <div class="h-full flex items-center justify-center">
+        <div class="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded-md p-4 mb-4">
+          <strong class="text-yellow-800 dark:text-yellow-200">Info:</strong> 
+          <span class="text-yellow-700 dark:text-yellow-300">Lightcurve not corrected. Lightcurve plot not available for Total magnitude. Switch back to Difference.</span>
+        </div>
+      </div>
+    {% else %}
+    <div id="plot-grid" class="flex flex-col gap-4 h-full">
+      <div id="lightcurve-container" class="flex-1 min-h-0">
+      {% include "lightcurve.html.jinja" %}
+      </div>
+      {% if config_state.fold %}
+      <div id="periodogram-container">
+        {% if config_state.periodogram_enabled %}
+          {% if periodogram.has_period() %}
+            {% include "periodogram.html.jinja" %}
+          {% else %}
+            <div class="h-full flex items-center justify-center">
+              <div class="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded-md p-4 mb-4">
+                <strong class="text-yellow-800 dark:text-yellow-200">Info:</strong> 
+                <span class="text-yellow-700 dark:text-yellow-300">No period computed for this object. Periodogram not available.</span>
+            </div>
+          </div>
+          {% endif %}
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
+<script>
+</script>
