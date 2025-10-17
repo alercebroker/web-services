@@ -1,6 +1,6 @@
 {% import 'toggle.html.jinja' as toggle %}
 
-<div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
+<div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-mb-3"></div>
 
 <form 
   hx-ext="form-json"
@@ -8,7 +8,7 @@
   hx-target="#main-app"
   hx-swap="innerHTML"
   hx-trigger="change delay:200ms"
-  class=""
+  class="tw-max-h-fit tw-w-full"
 >
   <input type="hidden" name="oid" value="{{ config_state.oid }}">
   <input type="hidden" name="survey_id" value="{{ config_state.survey_id }}">
@@ -34,7 +34,7 @@
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
 
-  <div class="tw-flex tw-flex-col tw-items-center tw-gap-4">
+  <div class="tw-flex tw-flex-col tw-flex-wrap tw-items-center tw-gap-4">
     <div>
     {{ toggle.toggle("flux", "Magnitude", "Flux", config_state.flux, "Toggle flux") }}
     </div>
@@ -47,7 +47,7 @@
     </div>
     {% endif %}
 
-    <div class="tw-flex tw-justify-center tw-items-center">
+    <div class="tw-flex tw-flex-wrap tw-justify-center tw-items-center">
       <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">External</span>
       {{ toggle.toggle("external_sources.enabled", "Off", "On", config_state.external_sources.enabled, "Toggle external sources") }}
       <button 

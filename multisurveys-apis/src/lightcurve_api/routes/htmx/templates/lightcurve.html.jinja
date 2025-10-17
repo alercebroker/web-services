@@ -5,8 +5,6 @@ import customDark from '{{API_URL}}/static/echarts-theme/customDark.js'
 
 
 // Initialize the echarts instance and use the current system theme
-{# var mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-var theme = mediaQuery.matches ? 'dark' : 'light'; #}
 
 var customDarkTheme = customDark()
 var theme = document.getElementById('main-app').classList.contains('tw-dark') ? customDarkTheme : 'light'
@@ -23,15 +21,6 @@ var resizeObserver = new ResizeObserver(_ => {
 resizeObserver.observe(plotGrid);
 
 // Dynamic theme switching. This detects system theme changes and updates the chart accordingly.
-{# mediaQuery.addListener((e) => {
-    const theme = e.matches ? 'dark' : 'light';
-    myChart.clear()
-    myChart.dispose();
-    myChart = echarts.init(document.getElementById('chart'), theme);
-    myChart.setOption(options);
-}); #}
-
-
 toggleLcTheme.addEventListener('click', () => {
   var themeMode = document.getElementById('main-app').classList.contains('tw-dark') ? customDarkTheme : 'light'
   myChart.clear()
