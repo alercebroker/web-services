@@ -145,6 +145,7 @@ class LsstDetection(BaseDetection):
     dec: float
     band: int
     band_map: dict[int, str] = {0: "u", 1: "g", 2: "r", 3: "i", 4: "z", 5: "y"}
+    has_stamp: bool
 
     @model_validator(mode="before")
     @classmethod
