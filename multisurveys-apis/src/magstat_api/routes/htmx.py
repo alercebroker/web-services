@@ -19,7 +19,7 @@ templates.env.globals["API_URL"] = os.getenv(
 )
 
 
-@router.get("/htmx/mag", response_class=HTMLResponse)
+@router.get("/htmx/magstats", response_class=HTMLResponse)
 async def object_mag_app(request: Request, oid: str, survey_id=None):
     bandMapping = {
         1: "g",
@@ -46,8 +46,10 @@ async def object_mag_app(request: Request, oid: str, survey_id=None):
             del d['fid']
     elif survey_id == "lsst":
         mag_stats = parse_lsst_dia_objects_to_dict(mag_stats_raw)
-    
+        del mag_stats[0]["created_date"]
+
     mag_keys = list(mag_stats[0].keys())
+
     return templates.TemplateResponse(
         name="magstatRebuild.html.jinja",
         context={"request": request, "stat_r": mag_stats, 'stat_r_keys': mag_keys, 'band_mapping': bandMapping},
