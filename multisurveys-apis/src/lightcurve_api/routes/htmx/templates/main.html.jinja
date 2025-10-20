@@ -17,12 +17,12 @@
         </div>
       </div>
     {% else %}
-    <div id="plot-grid" class="tw-mx-4 tw-flex tw-flex-col tw-flex-wrap tw-gap-4 tw-h-full">
-      <div id="lightcurve-container" class="tw-flex-1 tw-min-h-80 tw-max-h-[600px]">
+    <div id="plot-grid" class="tw-mx-4 tw-flex tw-flex-col tw-flex-wrap tw-gap-4 tw-h-80 md:tw-h-full">
+      <div id="lightcurve-container" class="tw-flex-1 tw-min-h-0 tw-w-full">
       {% include "lightcurve.html.jinja" %}
       </div>
       {% if config_state.fold %}
-      <div id="periodogram-container">
+      <div id="periodogram-container" class="tw-flex-1 tw-min-h-0 tw-max-h-[200px] tw-w-full">
         {% if config_state.periodogram_enabled %}
           {% if periodogram.has_period() %}
             {% include "periodogram.html.jinja" %}
