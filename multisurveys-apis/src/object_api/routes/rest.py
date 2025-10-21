@@ -81,11 +81,13 @@ def list_objects(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
 
+
 @router.get("/object")
 def get_object(request: Request, oid: str, survey_id: str):
     try:
+        session = request.app.state.psql_session
 
-        response = get_object_by_id(oid, survey_id, session_factory = request.app.state.psql_session)
+        response = get_object_by_id(session, oid, survey_id)
 
         return response
     except ValueError as e:

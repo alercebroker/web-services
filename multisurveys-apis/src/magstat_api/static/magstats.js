@@ -1,112 +1,90 @@
-export function initMagstats() {
-  let stat_r_keys = JSON.parse(document.getElementById('magstats-data-keys').text);
-  let totalRows = stat_r_keys.length;
-
-  updateTable(0, 5, stat_r_keys);
-  showNumberOfPages(totalRows);
-  arrowsControl(totalRows, stat_r_keys);
-
-  document.getElementById('rowSelect').addEventListener('input', function(){
-
-    // Reiniciar a la primera página cuando se cambia el número de filas
-    updateTable(0, parseInt(this.value), stat_r_keys);
-    document.getElementById('first-number').textContent = 1;
-    document.getElementById('second-number').textContent = Math.min(parseInt(this.value), totalRows);
-    arrowsControl(totalRows, stat_r_keys);
-  });
+const bandMapping = {
+  2: "r",
+  3: "i",
+  1: "g",
 };
 
-function updateTable(startIndex, endIndex, stat_r_keys){
-  for (let i = 0; i < stat_r_keys.length; i++){
-    let key = stat_r_keys[i];
-    let currentRow = document.getElementById(`row-${key}`);
+let db = [];
+let numColumns = 0; // Esto  es numero de bandas + 1
+let numRows = 0;
+let currentPage = 1;
+let numBands = [];
+let realBands = [];
+let boolColumns = 0;
+let rowsToShow = 5;
 
-    if (i >= startIndex && i < endIndex) {
-      currentRow.classList.remove('tw-hidden');
-      currentRow.classList.add('tw-table-row');
+const arrowUp = `<svg class="tw-h-5 tw-w-6" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path stroke="none" d="M0 0h24v24H0z" />
+<line x1="12" y1="5" x2="12" y2="19" />
+<line x1="16" y1="9" x2="12" y2="5" />
+<line x1="8" y1="9" x2="12" y2="5" />
+</svg>`;
+
+const arrowDown = `<svg class="tw-h-6 tw-w-6"  width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z" />  <line x1="12" y1="5" x2="12" y2="19" />  <line x1="16" y1="15" x2="12" y2="19" />  <line x1="8" y1="15" x2="12" y2="19" /></svg>`;
+
+
+export function initMagstats() {
+  currentPage = 1;
+  numBands = [];
+  realBands = [];
+  boolColumns = 0;
+  rowsToShow = 5;
+  
+  let rawDb = JSON.parse(document.getElementById("magstats-data").text);
+  db = [];
+
+  parseStatR(rawDb);
+  
+  numColumns = db.length + 1; // Esto  es numero de bandas + 1
+  numRows = Object.keys(db[0]).length;
+  
+  
+  for (let i = 0; i < numBands.length; i++) {
+    realBands.push(bandMapping[numBands[i]]);
+  }
+  
+
+  // We call the function to create the html structure
+  createTable();
+
+  // We call the function to inject the data.
+  displayColumns();
+
+  document.getElementById("arrowButton").innerHTML = arrowUp;
+
+  // We add an event listener to detect if the user wants to change the order
+  document.getElementById("arrowButton").addEventListener("click", () => {
+    displayColumns();
+
+    if (boolColumns === 1) {
+      document.getElementById("arrowButton").innerHTML = arrowUp;
     } else {
-      currentRow.classList.add('tw-hidden');
-      currentRow.classList.remove('tw-table-row');
+      document.getElementById("arrowButton").innerHTML = arrowDown;
     }
-  }
-}
+  });
 
-function showNumberOfPages(totalRows){
-  let rowSelect = document.getElementById('rowSelect');
-  let rowsPerPage = parseInt(rowSelect.value);
-  
-  let firstNumber = 1;
-  let secondNumber = Math.min(rowsPerPage, totalRows);
-  
-  document.getElementById('first-number').textContent = firstNumber;
-  document.getElementById('second-number').textContent = secondNumber;
-  document.getElementById('total-number').textContent = totalRows;
-}
+  const dataTableBody = document.getElementById("dataTableBody");
+  const rowSelect = document.getElementById("rowSelect");
 
-export function arrowsControl(totalRows, stat_r_keys){
-  let numberDisplayed = parseInt(document.getElementById('rowSelect').value);
-  let currentFirstNumber = parseInt(document.getElementById('first-number').textContent);
-  let currentSecondNumber = parseInt(document.getElementById('second-number').textContent);
-  let leftArrow = document.getElementById('leftArrow');
-  let rightArrow = document.getElementById('rightArrow');
-  
-  // Deshabilitar flecha izquierda si estamos en la primera página
-  if (currentFirstNumber === 1) {
-    leftArrow.disabled = true;
-    leftArrow.style.opacity = '0.5';
-    leftArrow.style.cursor = 'not-allowed';
-  } else {
-    leftArrow.disabled = false;
-    leftArrow.style.opacity = '1';
-    leftArrow.style.cursor = 'pointer';
-  }
-  
-  // Deshabilitar flecha derecha si estamos en la última página
-  if (currentSecondNumber >= totalRows) {
-    rightArrow.disabled = true;
-    rightArrow.style.opacity = '0.5';
-    rightArrow.style.cursor = 'not-allowed';
-  } else {
-    rightArrow.disabled = false;
-    rightArrow.style.opacity = '1';
-    rightArrow.style.cursor = 'pointer';
-  }
-  
-  // Event listener para flecha izquierda
-  leftArrow.onclick = function() {
-    if (currentFirstNumber > 1) {
-      let newFirst = Math.max(1, currentFirstNumber - numberDisplayed);
-      let newSecond = Math.min(newFirst + numberDisplayed - 1, totalRows);
-      
-      let startIndex = newFirst - 1;
-      let endIndex = newSecond;
-      
-      document.getElementById('first-number').textContent = newFirst;
-      document.getElementById('second-number').textContent = newSecond;
-      
-      updateTable(startIndex, endIndex, stat_r_keys);
-      
-      arrowsControl(totalRows, stat_r_keys);
-    }
-  };
-  
-  // Event listener para flecha derecha
-  rightArrow.onclick = function() {
-    if (currentSecondNumber < totalRows) {
-      let newFirst = currentSecondNumber + 1;
-      let newSecond = Math.min(newFirst + numberDisplayed - 1, totalRows);
-      
-      let startIndex = newFirst - 1;
-      let endIndex = newSecond;
-      
-      document.getElementById('first-number').textContent = newFirst;
-      document.getElementById('second-number').textContent = newSecond;
-      
-      updateTable(startIndex, endIndex, stat_r_keys);
-      
-      arrowsControl(totalRows, stat_r_keys);
-    }
-  };
+  displayRows();
+
+  document.getElementById("total-number").innerHTML = dataTableBody.rows.length;
+  rowSelect.addEventListener("change", () => {
+    rowsToShow = parseInt(rowSelect.value);
+    currentPage = 1;
+    displayRows();
+  });
+
+
+  const btnLeft = document.getElementById("leftArrow");
+  const btnRight = document.getElementById("rightArrow");
+
+  btnLeft.addEventListener("click", () => {
+    navigateTable(-1);
+  });
+  btnRight.addEventListener("click", () => {
+    navigateTable(1);
+  });
 }
 
 export function elementReady(selector) {
@@ -128,3 +106,178 @@ export function elementReady(selector) {
     });
   });
 }
+
+
+function parseStatR(dict) {
+  Object.keys(dict).forEach((key) => {
+    let auxJson = {};
+    auxJson = {
+      stellar: dict[key]["stellar"] != null ? dict[key]["stellar"] : "-",
+      corrected: dict[key]["corrected"] != null ? dict[key]["corrected"] : "-",
+      ndet: dict[key]["ndet"] != null ?  dict[key]["ndet"]: "-",
+      ndubious: dict[key]["ndubious"] != null ? dict[key]["ndubious"] : "-",
+      magmean: dict[key]["magmean"] != null ? dict[key]["magmean"].toFixed(3) : "-" ,
+      magmedian: dict[key]["magmedian"] != null ? dict[key]["magmedian"].toFixed(3) : "-",
+      magmax: dict[key]["magmax"] != null ? dict[key]["magmax"].toFixed(3) : "-" ,
+      magmin: dict[key]["magmin"] != null ? dict[key]["magmin"].toFixed(3) : "-" ,
+      magsigma: dict[key]["magsigma"] != null ? dict[key]["magsigma"].toFixed(3) : "-" ,
+      maglast: dict[key]["maglast"] != null ? dict[key]["maglast"].toFixed(3) : "-" ,
+      magfirst: dict[key]["magfirst"] != null ? dict[key]["magfirst"].toFixed(3) : "-" ,
+      firstmjd: dict[key]["firstmjd"] != null ? dict[key]["firstmjd"].toFixed(3) : "-" ,
+      lastmjd: dict[key]["lastmjd"] != null ? dict[key]["lastmjd"].toFixed(3) : "-" ,
+      step_id_corr: dict[key]["step_id_corr"] != null ? dict[key]["step_id_corr"] : "-",
+    };
+    numBands.push(dict[key]["fid"]);
+    db.push(auxJson);
+  });
+}
+
+
+// This function creates the entire html structure dinamicly.
+function createTable() {
+  let columNames = ["Stat"].concat(realBands);
+
+  const tableContainer = document.getElementById("tableContainer");
+
+  // Clear any existing table
+  tableContainer.innerHTML = "";
+
+  // Create the table element
+  const table = document.createElement("table");
+  table.classList =
+    "tw-overflow-auto tw-w-full tw-text-sm tw-font-roboto ";
+
+  // Create the table header row
+  const headerRow = document.createElement("tr");
+  headerRow.classList =
+    "hover:tw-opacity-70 hover:tw-cursor-pointer dark:tw-text-white tw-text-black tw-w-full";
+
+  for (let i = 0; i < numColumns; i++) {
+    const th = document.createElement("th");
+    th.textContent = columNames[i];
+
+    const arrowButton = document.createElement("button");
+    arrowButton.setAttribute("id", "arrowButton");
+
+    th.appendChild(arrowButton);
+    headerRow.appendChild(th);
+  }
+  table.appendChild(headerRow);
+
+  const tBody = document.createElement("tbody");
+  tBody.setAttribute("id", "dataTableBody");
+  // Create the table data rows
+  for (let i = 0; i < numRows; i++) {
+    const dataRow = document.createElement("tr");
+    dataRow.classList =
+      "tw-w-full hover:tw-bg-[#757575] dark:tw-text-white tw-text-black tw-border-b-[1px] tw-border-b-solid tw-border-b-black dark:tw-border-b-white tw-border-opacity-20 dark:tw-border-opacity-20";
+
+    for (let j = 0; j < numColumns; j++) {
+      const td = document.createElement("td");
+      if (j < numColumns - 1) {
+        td.setAttribute("style", `max-width: ${(1 / (numColumns - 1)) * 100}%`);
+      }
+      td.id = `cell-${i}-${j}`;
+      dataRow.appendChild(td);
+    }
+    tBody.appendChild(dataRow);
+  }
+  //table.appendChild(colGroup)
+  table.appendChild(tBody);
+
+  // Append the table to the container
+  tableContainer.appendChild(table);
+}
+
+// This function inject the data into the html table created in createTable function
+function displayColumns() {
+  if (boolColumns === 0) {
+    for (let j = 0; j < numRows; j++) {
+      let name = "cell-" + String(j) + "-" + String(0);
+      document.getElementById(name).innerHTML = Object.keys(db[0])[j];
+    }
+    // Let's note that here i is for columns and j is for rows
+    for (let i = 1; i < numColumns; i++) {
+      for (let j = 0; j < numRows; j++) {
+        let name = "cell-" + String(j) + "-" + String(i);
+        document.getElementById(name).innerHTML = Object.values(db[i - 1])[j];
+      }
+    }
+
+    boolColumns = 1;
+  } else {
+    for (let j = 0; j < numRows; j++) {
+      let name = "cell-" + String(j) + "-" + String(0);
+      document.getElementById(name).innerHTML = Object.keys(db[0])[
+        numRows - j - 1
+      ];
+    }
+    for (let i = 1; i < numColumns; i++) {
+      for (let j = 0; j < numRows; j++) {
+        let name = "cell-" + String(j) + "-" + String(i);
+        document.getElementById(name).innerHTML = Object.values(db[i - 1])[
+          numRows - j - 1
+        ];
+      }
+    }
+    boolColumns = 0;
+  }
+}
+
+
+// This function change the page of the table if there is less rows selected by the user to show
+function navigateTable(direction) {
+  let rowsPerPage = parseInt(rowSelect.value);
+
+  currentPage += direction;
+  const totalPages = Math.ceil(dataTableBody.rows.length / rowsPerPage);
+
+  if (currentPage < 1) {
+    currentPage = 1;
+  } else if (currentPage > totalPages) {
+    currentPage = totalPages;
+  }
+
+  displayRows();
+}
+
+// This function decide what rows are showed depends of the rows per page selected by the user
+function displayRows() {
+  const startIndex = (currentPage - 1) * rowsToShow;
+  const endIndex = startIndex + rowsToShow;
+  const totalRows = dataTableBody.rows.length;
+
+  const leftArrow = document.getElementById("leftArrow");
+  const rightArrow = document.getElementById("rightArrow");
+  const firstNumber = document.getElementById("first-number");
+  const secondNumber = document.getElementById("second-number");
+
+  // Update numbers
+  firstNumber.textContent = startIndex === 0 ? 1 : startIndex + 1;
+  secondNumber.textContent = Math.min(endIndex, totalRows);
+
+  // Update arrow colors
+  updateArrowColor(leftArrow, startIndex === 0);
+  updateArrowColor(rightArrow, endIndex >= totalRows);
+
+  // Show/hide rows
+  Array.from(dataTableBody.rows).forEach((row, index) => {
+    row.style.display =
+      index >= startIndex && index < endIndex ? "table-row" : "none";
+  });
+}
+
+function updateArrowColor(arrowElement, isDisabled) {
+  arrowElement.classList.remove(
+    "tw-text-gray-400",
+    "tw-text-black",
+    "tw-text-white",
+    "dark:tw-text-white",
+  );
+  if (isDisabled) {
+    arrowElement.classList.add("tw-text-gray-400");
+  } else {
+    arrowElement.classList.add("tw-text-black", "dark:tw-text-white");
+  }
+}
+

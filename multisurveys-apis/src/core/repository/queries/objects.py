@@ -4,9 +4,6 @@ from db_plugins.db.sql.models import (
     LsstDiaObject,
     Probability,
 )
-from typing import Callable
-from contextlib import AbstractContextManager
-from sqlalchemy.orm import Session
 from sqlalchemy.orm import aliased
 from sqlalchemy import select
 from object_api.services.statements_sql import (
@@ -27,13 +24,14 @@ class ObjectsModels:
             return LsstDiaObject
 
 
-def query_object_by_id(oid, survey_id, session_factory: Callable[..., AbstractContextManager[Session]] | None = None,):
-    with session_factory() as session:
-        model = Object #ObjectsModels(survey_id).get_model_by_survey()
+def query_object_by_id(session_ms, oid, survey_id):
+    with session_ms() as session:
+        model = ObjectsModels(survey_id).get_model_by_survey()
 
         stmt = build_statement_object(model, oid)
 
         object = session.execute(stmt).one()
+
         return object
 
 
