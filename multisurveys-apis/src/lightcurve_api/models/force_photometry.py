@@ -1,54 +1,11 @@
-from typing import Optional, Union
+import math
+from typing import Optional
 
 from pydantic import model_validator
-from .lightcurve_item import BaseDetection
+from .lightcurve_item import BaseForcedPhotometry
 
 
-class ForcedPhotometryMultistream(BaseDetection):
-    candid: str
-    tid: str
-    sid: Optional[str] = None
-    aid: Optional[str] = None
-    pid: int
-    oid: str
-    mjd: float
-    fid: int
-    ra: float
-    e_ra: Optional[float] = None
-    dec: float
-    e_dec: Optional[float] = None
-    mag: float
-    e_mag: float
-    mag_corr: Optional[float] = None
-    e_mag_corr: Optional[float] = None
-    e_mag_corr_ext: Optional[float] = None
-    isdiffpos: Union[bool, int]
-    corrected: bool
-    dubious: bool
-    parent_candid: Optional[int] = None
-    has_stamp: Optional[bool] = None
-    extra_fields: Optional[dict] = {}
-
-    def __hash__(self):
-        return hash(str(f"{self.oid}_{self.pid}"))
-
-    def __eq__(self, other):
-        return self.oid == other.oid and self.pid == other.pid
-
-    def magnitude2flux(self) -> float:
-        return 0.0
-
-    def magnitude2flux_err(self) -> float:
-        return 0.0
-
-    def flux2magnitude(self) -> float:
-        return self.mag
-
-    def flux2magnitude_err(self) -> float:
-        return self.e_mag
-
-
-class ZtfForcedPhotometry(BaseDetection):
+class ZtfForcedPhotometry(BaseForcedPhotometry):
     oid: int
     survey_id: str
     measurement_id: int
@@ -109,20 +66,23 @@ class ZtfForcedPhotometry(BaseDetection):
 
         return values
 
-    def magnitude2flux(self) -> float:
-        return 0.0
+    def magnitude2flux(self, total: bool) -> float:
+        mag = self.mag_corr if total else self.mag
+        flux = 10 ** (-0.4 * (mag - 23.9))
+        return flux * 1000  # convert to nJy
 
-    def magnitude2flux_err(self) -> float:
-        return 0.0
+    def magnitude2flux_err(self, total: bool) -> float:
+        err = self.e_mag_corr if total else self.e_mag
+        return abs(err) * abs(self.magnitude2flux(total))
 
-    def flux2magnitude(self) -> float:
-        return self.mag
+    def flux2magnitude(self, total: bool) -> float:
+        return self.mag_corr if total else self.mag
 
-    def flux2magnitude_err(self) -> float:
-        return self.e_mag
+    def flux2magnitude_err(self, total: bool) -> float:
+        return self.e_mag_corr if total else self.e_mag
 
 
-class LsstForcedPhotometry(BaseDetection):
+class LsstForcedPhotometry(BaseForcedPhotometry):
     oid: int
     measurement_id: int
     mjd: float
@@ -133,12 +93,17 @@ class LsstForcedPhotometry(BaseDetection):
     detector: int
     psfFlux: float
     psfFluxErr: float
+    scienceFlux: float
+    scienceFluxErr: float
     band_map: dict[int, str] = {0: "u", 1: "g", 2: "r", 3: "i", 4: "z", 5: "y"}
 
     @model_validator(mode="before")
     @classmethod
     def set_defaults(cls, values: dict) -> dict:
-        defaults = {}
+        defaults = {
+            "scienceFlux": 0.0,
+            "scienceFluxErr": 0.0,
+        }
 
         for field, default_value in defaults.items():
             if field in values and values[field] is None:
@@ -146,14 +111,16 @@ class LsstForcedPhotometry(BaseDetection):
 
         return values
 
-    def magnitude2flux(self) -> float:
-        return self.psfFlux
+    def magnitude2flux(self, total: bool) -> float:
+        return self.scienceFlux if total else self.psfFlux
 
-    def magnitude2flux_err(self) -> float:
-        return self.psfFluxErr
+    def magnitude2flux_err(self, total: bool) -> float:
+        return self.scienceFluxErr if total else self.psfFluxErr
 
-    def flux2magnitude(self) -> float:
-        return 0.0
+    def flux2magnitude(self, total: bool) -> float:
+        flux = self.scienceFlux if total else self.psfFlux
+        return -2.5 * math.log10(flux) + 23.9
 
-    def flux2magnitude_err(self) -> float:
-        return 0.0
+    def flux2magnitude_err(self, total: bool) -> float:
+        err = self.scienceFluxErr if total else self.psfFlux
+        return err

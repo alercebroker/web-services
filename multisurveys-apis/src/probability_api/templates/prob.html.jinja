@@ -3,14 +3,14 @@
 <script  type="module" src="{{API_URL}}/static/probability.js"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/probability.css">
 
-<div id="probabilities-app" class="tw-preflight tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e]">
+<div id="probabilities-app" class="tw-preflight tw-w-full tw-bg-white tw-text-black dark:tw-bg-[#1e1e1e] dark:tw-text-white">
     <div class="tw-flex tw-flex-col tw-items-center">
 
         <div id="selectContainer" class="tw-flex tw-justify-center tw-my-4 tw-mx-auto tw-w-full">
             
             <div id='robot' class="tw-ml-4">
-                <svg id="robotImg" class="tw-h-[30px] tw-w-[30px]" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/>
+                <svg id="robotImg" class="tw-h-[30px] tw-w-[30px] tw-fill-black dark:tw-fill-white" viewBox="0 0 24 24">
+                <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2M7.5 13A2.5 2.5 0 0 0 5 15.5A2.5 2.5 0 0 0 7.5 18a2.5 2.5 0 0 0 2.5-2.5A2.5 2.5 0 0 0 7.5 13m9 0a2.5 2.5 0 0 0-2.5 2.5a2.5 2.5 0 0 0 2.5 2.5a2.5 2.5 0 0 0 2.5-2.5a2.5 2.5 0 0 0-2.5-2.5"/>
                 </svg>
             </div>
             
@@ -39,9 +39,11 @@
 
         </div>
 
-        <div class="md:tw-w-[365px] md:tw-h-[250px] sm:tw-w-[100%] sm:tw-h-[100%] tw-mx-auto tw-relative">
+        <div id="chart-container" class="md:tw-w-[365px] md:tw-h-[250px] sm:tw-w-[100%] sm:tw-h-[100%] tw-mx-auto tw-relative">
             <canvas id="myChart"></canvas>
         </div>
+
+
     </div>
 </div>
 

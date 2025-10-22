@@ -4,7 +4,11 @@ module.exports = {
   prefix: 'tw-',
   darkMode: 'class',
   content: [
-    "./src/object_api/templates//*.{html.jinja,html,css}",
+    "./src/object_api/templates/**/*.{html.jinja,html,css}",
+    "./src/probability_api/templates/**/*.{html.jinja,html,css}",
+    "./src/magstat_api/templates/**/*.{html.jinja,html,css}",
+    "./src/lightcurve_api/templates/**/*.{html.jinja,html,css}",
+    "./src/crossmatch_api/templates/**/*.{html.jinja,html,css}",
   ],
   theme: {
     extend: {

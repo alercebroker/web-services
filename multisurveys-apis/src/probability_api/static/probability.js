@@ -20,10 +20,26 @@ class radarCreator{
         this.scale = (this.max_value/3)
     }
 
+    set_dark_mode(){
+        this.mychart.config.options.scales.r.backgroundColor = 'rgba(245, 245, 245, 0.2)'
+        this.mychart.config.options.scales.r.angleLines.color = '#F5F5F5'
+        this.mychart.config.options.scales.r.grid.color = '#F5F5F5'
+        this.mychart.config.options.scales.r.pointLabels.color = '#F5F5F5'
+        
+        this.mychart.update();
+    }
+
+    set_light_mode(){
+        this.mychart.config.options.scales.r.backgroundColor = 'rgba(0, 0, 0, 0.1)'
+        this.mychart.config.options.scales.r.angleLines.color = '#000000'
+        this.mychart.config.options.scales.r.grid.color = '#000000'
+        this.mychart.config.options.scales.r.pointLabels.color = '#000'
+        this.mychart.update();
+    }
+
     update_chart(){
         this.remove_data()
         this.update_data()
-        this.is_dark();
     }
 
     update_data(){
@@ -34,8 +50,8 @@ class radarCreator{
 
         this.set_max_value()
         this.set_scale()
+        
         this.update_scale()
-
         this.mychart.update();
     }
 
@@ -55,17 +71,6 @@ class radarCreator{
 
     destroy_chart(){
         this.mychart.destroy();
-    }
-
-    is_dark(){
-        if(document.getElementById("probabilities-app").classList.contains("tw-dark")){
-            this.mychart.config.options.scales.r.backgroundColor = 'rgba(245, 245, 245, 0.2)'
-            this.mychart.config.options.scales.r.angleLines.color = '#F5F5F5'
-            this.mychart.config.options.scales.r.grid.color = '#F5F5F5'
-            this.mychart.config.options.scales.r.pointLabels.color = '#F5F5F5'
-            
-            this.mychart.update();
-        }
     }
 }
 
@@ -90,6 +95,8 @@ export function init(){
     )
 
     radar.update_chart()
+    check_radar_theme(radar)
+
 
     custom_select.addEventListener('click', () => {
         custom_select.querySelector('.select').classList.toggle('open');
@@ -113,11 +120,15 @@ export function init(){
                     classifier_data_dict['classes'], 
                     classifier_data_dict['probabilities']
                 )
+                check_radar_theme(radar)
                 radar.update_chart()
 
             }
         })
     }
+
+
+    window.switch_theme_probability = () => {check_radar_theme(radar)}
 }
 
 
@@ -181,4 +192,15 @@ function get_probabilities_and_classes_dict(classifier_probabilities){
     let probabilities_array = classifier_probabilities.map((probability) => {return probability[1]}) 
 
     return {"classes": classes_array, "probabilities": probabilities_array}
+}
+
+
+function check_radar_theme(radar){
+    let theme_dark = document.getElementById("probabilities-app").classList.contains("tw-dark")
+
+    if(theme_dark){
+        radar.set_dark_mode()
+    }else{
+        radar.set_light_mode() 
+    }
 }

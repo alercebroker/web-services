@@ -1,0 +1,26 @@
+<div id="periodogram" style="width: 100%;height:100%;min-height:130px"></div>
+<script type="text/javascript">
+// Initialize the echarts instance based on the prepared dom
+var periodogramDom = document.getElementById('periodogram')
+var pChart = echarts.init(periodogramDom);
+var pOptions = {{ periodogram_options | tojson }};
+// we have to set the formatter here because it has to be a JavaScript function
+pOptions.tooltip.formatter = (params) => {
+  return `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}`;
+}
+
+// Make chart responsive
+window.addEventListener('resize', pChart.resize);
+
+// Display the chart using the configuration items and data just specified.
+pChart.setOption(pOptions);
+
+// Trigger custom event with the value of the clicked period
+pChart.on('click', function (params) {
+  const event = new CustomEvent('periodogram:periodSelected', {
+    detail: { period: params.data[0].toFixed(7) },
+    bubbles: true
+  });
+  periodogramDom.dispatchEvent(event);
+})
+</script>

@@ -48,8 +48,8 @@ def test_get_detections_by_list(db, faker: Faker):
         ),
         Object(
             oid=789,
-            tid=2,
-            sid=2,
+            tid=0,
+            sid=0,
             meanra=45.0,
             meandec=45.0,
             firstmjd=59000.0,
@@ -83,7 +83,7 @@ def test_get_detections_by_list(db, faker: Faker):
         dets.append(
             LsstDetection(
                 oid=789,
-                sid=2,
+                sid=0,
                 measurement_id=11,
                 diaSourceId=12,
                 visit=1,
@@ -112,8 +112,8 @@ def test_get_detections_by_list_only_lsst(db):
         session.add(
             Object(
                 oid=123,
-                tid=2,
-                sid=2,
+                tid=0,
+                sid=0,
                 meanra=45.0,
                 meandec=45.0,
                 firstmjd=59000.0,
@@ -129,7 +129,7 @@ def test_get_detections_by_list_only_lsst(db):
             session.add(
                 LsstDetection(
                     oid=123,
-                    sid=2,
+                    sid=0,
                     measurement_id=i + 1,
                     diaSourceId=i + 1,
                     visit=i + 1,

@@ -1,2 +1,4 @@
 dummy_data/
 mise.toml
+node_modules/
+.envrc

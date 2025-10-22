@@ -1,7 +1,8 @@
 from ..models.magstats import MagStat
+from ..models.lsst_dia_object import LsstDiaObjectSchema
 
 
-def parse_magstats(magstats_data):
+def parse_magstats(magstats_data, survey_id):
     """
     Parses the magstats data from the database response into a list of MagStat models.
 
@@ -15,7 +16,12 @@ def parse_magstats(magstats_data):
 
     for row in magstats_data:
         model_dict = row[0].__dict__.copy()
-        model_parsed = MagStat(**model_dict)
+        if survey_id == "ztf":
+            model_parsed = MagStat(**model_dict)
+        elif survey_id == "lsst":
+            model_parsed = LsstDiaObjectSchema(**model_dict)
+            
         parsed_magstats.append(model_parsed)
 
     return parsed_magstats
+

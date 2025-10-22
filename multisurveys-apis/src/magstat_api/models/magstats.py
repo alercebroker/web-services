@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 class MagStat(BaseModel):
     oid: int
-    sid: int
     band: int
     stellar: bool
     corrected: bool

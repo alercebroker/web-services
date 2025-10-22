@@ -38,9 +38,9 @@ class ALeRCEProvider(BaseProvider):
         return coord + random.uniform(-delta, delta)
 
     def band(self, sid: int) -> int:
-        if sid == 1:
+        if sid == 0:
             return self.random_int(1, 3)
-        if sid == 2:
+        if sid == 1 or sid == 2:
             return self.random_int(0, 5)
         else:
             raise ValueError("Invalid survey id")
@@ -78,9 +78,9 @@ class ALeRCEProvider(BaseProvider):
 
 
 def generate_object(faker: Faker):
-    sid = faker.random_int(1, 2)
+    sid = faker.random_int(0, 1)
     oid: int
-    if sid == 1:
+    if sid == 0:
         oid = faker.ztf_oid()
     else:
         oid = faker.unique.random_int()
@@ -97,7 +97,7 @@ def generate_object(faker: Faker):
         deltamjd=faker.deltamjd(),
         n_det=faker.random_int(1, 50),
         n_forced=faker.random_int(1, 50),
-        n_non_det=faker.random_int(1, 50) if sid == 1 else 0,
+        n_non_det=faker.random_int(1, 50) if sid == 0 else 0,
         corrected=faker.boolean(),
         stellar=faker.boolean(),
     )
@@ -277,7 +277,7 @@ def generate_lightcurve(faker: Faker, obj: models.Object):
     survey_forced_photometry = []
     for _ in range(cast(int, obj.n_det)):
         detections.append(generate_detection(faker, obj))
-        if cast(int, obj.sid) == 1:  # ZTF
+        if cast(int, obj.sid) == 0:  # ZTF
             survey_detections.append(generate_ztf_detection(faker, detections[-1]))
         else:  # lsst
             survey_detections.append(generate_lsst_detection(faker, detections[-1]))
@@ -287,7 +287,7 @@ def generate_lightcurve(faker: Faker, obj: models.Object):
 
     for _ in range(cast(int, obj.n_forced)):
         forced_photometry.append(generate_forced_photometry(faker, obj))
-        if cast(int, obj.sid) == 1:  # ZTF
+        if cast(int, obj.sid) == 0:  # ZTF
             survey_forced_photometry.append(generate_ztf_forced_photometry(faker, forced_photometry[-1]))
         else:  # lsst
             survey_forced_photometry.append(generate_lsst_forced_photometry(faker, forced_photometry[-1]))
@@ -332,3 +332,4 @@ def main():
 
             session.add_all(survey_detections)
             session.add_all(survey_forced_photometry)
+            session.commit()

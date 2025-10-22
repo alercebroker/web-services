@@ -11,7 +11,18 @@ export function draw_span(text){
 export function draw_close_tags(father_element, div_tag, oid, oids_arr){
     let newBtn = document.createElement("div")
 
-    newBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#FFFFFF"><path d="m330-288 150-150 150 150 42-42-150-150 150-150-42-42-150 150-150-150-42 42 150 150-150 150 42 42ZM480-80q-82 0-155-31.5t-127.5-86Q143-252 111.5-325T80-480q0-83 31.5-156t86-127Q252-817 325-848.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 82-31.5 155T763-197.5q-54 54.5-127 86T480-80Z"/></svg>'
+    let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("width", "18");
+    svg.setAttribute("height", "18");
+    svg.setAttribute("viewBox", "0 -960 960 960");
+    svg.classList.add("custom-close-svg-id");
+    
+    let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z");
+    
+    svg.appendChild(path);
+    newBtn.appendChild(svg);
+    newBtn.classList.add("tw-inline-block")
 
     newBtn.addEventListener("click", () =>{
         let index = oids_arr.indexOf(oid)
@@ -24,8 +35,6 @@ export function draw_close_tags(father_element, div_tag, oid, oids_arr){
 
         father_element.removeChild(erase_tag)
     }, { once: true});
-
-    newBtn.classList.add("custom-close-id")
 
     return newBtn
 }
@@ -54,20 +63,20 @@ export function draw_oids_tags(oids_arr){
 export function draw_arrow_order_table(order_mode){
   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.id = 'selected_order_table'
-  svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  svg.setAttribute("height", "24px");
   svg.setAttribute("viewBox", "0 -960 960 960");
-  svg.setAttribute("width", "24px");
-  svg.setAttribute("fill", "#FFFFFF");
+  svg.setAttribute("width", "20px");
+  svg.setAttribute("height", "20px");
+  svg.classList.add("tw-inline-block", "tw-fill-black", "dark:tw-fill-white")
+
 
   let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
   if(order_mode == 'DESC'){
-      path.setAttribute("d", "M480-240 240-480l56-56 144 144v-368h80v368l144-144 56 56-240 240Z");
+    path.setAttribute("d", "M480-240 240-480l56-56 144 144v-368h80v368l144-144 56 56-240 240Z");
   } else {
-      path.setAttribute("d", "M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z");
+    path.setAttribute("d", "M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z");
   }
 
-  svg.classList.add("tw-inline-block")
   svg.appendChild(path)
 
   return svg

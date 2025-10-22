@@ -28,21 +28,19 @@ export function elementReady(selector) {
 function prepare_params(evt){
   let url = new URL(evt.detail.headers['HX-Current-URL'])
 
-  if(evt.detail.elt.getAttribute("name") == "next_page_sidebar" || evt.detail.elt.getAttribute("name") == "prev_page_sidebar"){
+  if(evt.detail.elt.getAttribute("name") == "side_objects_btn"){
     let next_page = evt.detail.elt.dataset.next
 
     url.searchParams.set("page", next_page)
-
-    evt.detail.parameters = {...prepare_data(url)}
   }else{
     let selected_oid = evt.detail.elt.dataset.oid
     let current_page = document.getElementById('current_page').dataset.page
 
     url.searchParams.set("selected_oid", selected_oid)
     url.searchParams.set("page", current_page)
-
-    evt.detail.parameters = {...prepare_data(url)}
   }
+
+  evt.detail.parameters = {...prepare_data(url)}
 
 }
 

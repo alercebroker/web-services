@@ -15,7 +15,7 @@ from .parsers import (
 )
 
 
-def get_object_by_id(session_ms, oid, survey_id):
+def get_object_by_id(oid, survey_id, session_ms):
     object_model = query_object_by_id(session_ms, oid, survey_id)
     response = parse_unique_object_query(object_model, survey_id)
 

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from datetime import datetime
 
 class ZtfObject(BaseModel):
     oid: int
@@ -62,7 +62,23 @@ class LsstObjectProbability(BaseModel):
     probability: float | None = None
     ranking: int | None = None
 
-
+class Object(BaseModel):
+    oid: int
+    tid: int
+    sid: int
+    meanra: float
+    meandec: float
+    sigmara: float | None = None
+    sigmadec: float | None = None
+    firstmjd: float
+    lastmjd: float
+    deltamjd: float = 0.0
+    n_det: int = 1
+    n_forced: int = 1
+    n_non_det: int = 1
+    corrected: bool = False
+    stellar: bool | None = None
+    
 class ExportModel:
     def __init__(self, survey: str, model_variant: str = "basic"):
         self.survey = survey
@@ -76,6 +92,6 @@ class ExportModel:
                 return LsstObjectProbability
         else:
             if self.survey == "ztf":
-                return ZtfObject
+                return Object
             elif self.survey == "lsst":
-                return LsstObject
+                return Object

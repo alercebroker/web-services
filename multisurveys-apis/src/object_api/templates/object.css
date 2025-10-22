@@ -18,12 +18,31 @@
     opacity: 1;
   }
 
-  .obj-survey-selected{
+  .placeholder-span:empty:before {
+    content: attr(data-placeholder);
+    color: rgba(0, 0, 0, 0.6)
+  }
+
+  .tw-dark .placeholder-span:empty:before {
+    color: rgba(255, 255, 255, 0.6)
+  }
+
+  .tw-preflight .obj-survey-selected{
+    display: inline-block;
+    border: 2px solid black;
+    background-color: transparent;
+    text-align: center;
+  }
+
+  .tw-dark .obj-survey-selected{
     background-color: #424242;
+    border: 0px;
+
   }
 
   .obj-surveys-unselect{
-    opacity: 0.75;
+    opacity: 0.5;
+    text-align: center;
   }
 
   .obj-select-wrapper{
@@ -37,6 +56,7 @@
     display: flex;
     flex-direction: column;
   }
+  
   .obj-select__trigger{
     position: relative;
     display: inline-block;
@@ -57,6 +77,10 @@
     z-index: 20;
     visibility: hidden;
     opacity: 0;
+    background: white;
+  }
+
+  .tw-dark .obj-custom-options{
     background: #1e1e1e;
   }
 
@@ -71,9 +95,13 @@
     display: block;
     padding: 0px 16px;
     line-height: 2.25rem;
-    color: #EEEEEE;
+    color: black;
     cursor: pointer;
     transition: all;
+  }
+
+  .tw-dark .obj-custom-option{
+    color: #EEEEEE;
   }
 
   .obj-custom-option.obj-selected{
@@ -81,7 +109,7 @@
     background-color: rgba(25, 118, 210, 0.3);
   }
   .custom-oid{
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.1);
     display: inline-flex;
     justify-content: space-around;
     align-items: center;
@@ -90,20 +118,34 @@
     border-radius: 4px;
     max-width: 12rem;
   }
+
+  .tw-dark .custom-oid{
+    background-color: rgba(255, 255, 255, 0.2);
+  }
   
 
   .custom-span{
     display: inline-block;
   }
   
-  .custom-close-id{
+  .custom-close-svg-id{
     display: inline-block;
     cursor: pointer;
+    fill: rgba(0, 0, 0, 0.6);
   }
   
-  .custom-close-id:hover svg path{
-    fill: rgba(255, 255, 255, 0.2);
+  .tw-dark .custom-close-svg-id{
+    fill: rgba(255, 255, 255, 1);
   }
+
+  .custom-close-svg-id:hover{
+    fill: rgba(0, 0, 0, 0.2);
+  }
+
+  .tw-dark .custom-close-svg-id:hover{
+    fill: rgba(255, 255, 255, 0.4);
+  }
+
 
   .custom-error{
     display: flex;
@@ -120,6 +162,14 @@
 
   .custom-bg-error{
     background-color: rgb(190 40 40 / 0.2);
+  }
+
+  .tw-scheme-dark {
+    color-scheme: dark;
+  }
+  
+  .tw-scheme-light {
+    color-scheme: light;
   }
 
 }

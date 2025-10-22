@@ -18,19 +18,19 @@ export function get_radar_config(){
             },
             scales: {
                 r: {
-                    backgroundColor: 'white',
+                    backgroundColor: 'rgba(245, 245, 245, 0.2)',
                     ticks: {
                         display: false,
                         stepSize: 0.33,
                     },
                     angleLines: {
-                        color: '#000000'
+                        color: '#F5F5F5'
                     },
                     grid: {
-                        color: '#000000',
+                        color: '#F5F5F5',
                     },
                     pointLabels: {
-                        color: '#000000',
+                        color: '#F5F5F5',
                         font: {
                             size: 14
                         }

@@ -1,61 +1,68 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{{API_URL}}/htmx/htmx.min.js"></script>
 <script src="https://unpkg.com/htmx-ext-response-targets@2.0.2" crossorigin="anonymous"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
-<div id="form-search" hx-ext="response-targets" class="tw-preflight">
+<div id="form-search" hx-ext="response-targets" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-[#EEEEEE]">
     {% from "input.html.jinja" import input as customInput %}
 
-    <div class="tw-flex">
-        <div id="form-container" class="tw-container tw-p-4 tw-bg-[#1e1e1e] tw-text-[#EEEEEE] tw-border tw-border-black tw-flex tw-flex-col tw-gap-y-4 tw-max-w-[458px] sm:tw-w-full">
+    <div class="tw-flex tw-w-full">
+        <div id="form-container" class="tw-p-4 tw-flex tw-flex-col tw-gap-y-4 tw-w-full tw-shadow-md dark:tw-border dark:tw-border-black lg:tw-max-w-[458px]">
 
             <!--Search filters-->
 
-            <div id="search_filters" class="tw-w-full">Search filters</div>
+            <div id="search_filters" class="tw-w-full tw-font-medium tw-text-lg">Search Filters</div>
 
             <!--Survey filters-->
             <div id="survey_container" class="tw-w-full">
-                <p>Surveys</p>
+                <p class="tw-font-medium">Surveys</p>
 
                 <div id="survey" data-survey="ztf" class="tw-w-full tw-my-4 tw-flex tw-justify-start tw-gap-4">
-                    <span id="ztf_btn" class="obj-survey-selected tw-text-center tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ztf</span>
-                    <span id="lsst_btn" class="obj-surveys-unselect tw-w-1/4 tw-text-center hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">lsst</span>
+                    <span id="ztf_btn" class="obj-survey-selected tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ztf</span>
+                    <span id="lsst_btn" class="obj-surveys-unselect tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">lsst</span>
                 </div>
             </div>
 
             <!--general filters-->
             <div class="tw-w-full">
-                <p id="general_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">General filters</p>
+                <div id="general_filters" class="tw-text-[#1976d2] tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#1976d2]/20 hover:tw-cursor-pointer">
+                    <p>General filters</p>
+                    <svg name="arrow_icon" data-direction="up" class="tw-w-[24px] tw-h-[24px] tw-fill-[#1976d2] dark:tw-fill-[#1976d2]" viewBox="0 -960 960 960"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
+                </div>
+
                 <div id="general_filters_container" class="tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     
                     <div class="tw-col-span-12 tw-flex tw-flex-col tw-content-center">
                         <button type="button" id="clear_oids_btn" class="tw-self-end tw-hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1565C0"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                            <svg class="tw-h-[24px] tw-w-[24px] tw-fill-[#1565C0]" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                         </button>
                         <div id="oids_container" class="tw-hidden tw-pb-2 tw-flex tw-gap-2 tw-flex-wrap"></div>
-                        {{customInput(id="objectIds", type="text", placeholder="ObjectId")}}
+                        {{customInput(id="objectIds", type="text", placeholder="Object ID")}}
                     </div>
 
                     <!--select classifiers-->
                     <div id="classifiers_wrapper" class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        <div id="classifiers_container" class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
+                        <div id="classifiers_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
                             <div class="obj-select__trigger">
                                 <span
                                 id="classifier"
-                                class="tw-text-[#a9a9a9]"
+                                contenteditable="true"
+                                class="placeholder-span"
+                                data-placeholder="Classifiers"
                                 data-classes=""
                                 data-classifier=''
-                                hx-get="{{API_URL}}/select"
+                                hx-get="{{API_URL}}/htmx/classes_select"
                                 hx-trigger="change"
                                 hx-target="#classes_options"
                                 hx-swap="outerHTML"
-                                hx-vals='js:{...send_classes_data()}'>Classifier</span>
+                                hx-vals='js:{...send_classes_data()}'></span>
                             </div>
-                            <div class="obj-custom-options dark:tw-bg-[#1e1e1e]">
-                                <span class="obj-custom-option obj-selected  dark:tw-text-[#EEEEEE]"  data-value=""></span>
+                            <div class="obj-custom-options">
+                                <span class="obj-custom-option obj-selected"  data-value=""></span>
                                 {% for value in classifiers%}
                                     <span 
-                                    class="obj-custom-option dark:tw-text-[#EEEEEE] hover:tw-bg-[#b2b2b2]" 
+                                    class="obj-custom-option hover:tw-bg-[#b2b2b2]" 
                                     data-classes='{{value.classes}}'
                                     data-classifier='{{value.classifier_name}}'
                                     >
@@ -68,12 +75,12 @@
 
                     <!--select classes-->
                     <div class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        <div id="classes_container" class="obj-select tw-border tw-border-transparent tw-border-b-[#757575] hover:tw-border-b-white">
+                        <div id="classes_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
                             <div class="obj-select__trigger">
                                 <span
-                                id="class"
-                                class="tw-text-[#a9a9a9]"
-                                data-value="">Class</span>
+                                id="class"                   class="placeholder-span"
+                                data-placeholder="Class"
+                                data-value=""></span>
                             </div>
                             <div id="classes_options" class="">
                             <!--HTMX CLASSES OPTIONS--->
@@ -81,7 +88,7 @@
                         </div>
                     </div>
                     
-                    <div id="probability_container"class="tw-col-span-12">
+                    <div id="probability_container" class="tw-col-span-12">
                         <label>Probability ≥</label>
                         <label id="prob_number" class="tw-inline-block tw-w-[36px]"> 0.00</label>
                         <input id="prob_range" class="" type="range" step="0.01" max="1" value="0.00">
@@ -101,21 +108,30 @@
 
             <!--Discovery date filters-->
             <div class="tw-w-full">
-                <p id="discovery_date_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">Discovery date filters</p>
+                <div id="discovery_date_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
+                    <p>Discovery Date Filters</p>
+                    <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                </div>
+
                 
                 <div id="discovery_date_filters_container" class="tw-hidden tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     <!--min mjd and date greg-->
                     {{customInput(id="min_mjd", type="number", placeholder="Min MJD", width="tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12", min="0", step="0.01")}}
 
-                    <div class="tw-container tw-relative tw-z-[10] lg:tw-col-span-6 md: tw-col-span-12">
-                        <p 
-                        id="min_date_time_text" 
-                        class="tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</p>
+                    <div class="tw-container tw-relative tw-z-[11] tw-col-span-12 lg:tw-col-span-6">
 
-                        <div id="min_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
-                            {{customInput(id="date_min", type="date",width="tw-w-[90%]", style="color-scheme: dark;")}}
+                        <div class="tw-flex tw-w-full tw-gap-2">
+                            <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
 
-                            {{customInput(id="time_min", type="time", value="00:00",width="tw-w-[90%]", style="color-scheme: dark;")}}
+                            <span 
+                            id="min_date_time_text" 
+                            class="tw-inline-block tw-w-full tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-cursor-pointer lg:tw-w-[85%] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</span>
+                        </div>
+
+                        <div id="min_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-shadow-lg tw-bg-white dark:tw-bg-[#424242] tw-scheme-light dark:tw-scheme-dark">
+                            {{customInput(id="date_min", type="date",width="tw-w-[90%]")}}
+
+                            {{customInput(id="time_min", type="time", value="00:00",width="tw-w-[90%]")}}
 
                             <div class="tw-container tw-flex tw-justify-end tw-gap-4">
                                 <button id="save_date" class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-[30%] tw-self-end">Save</button>
@@ -125,15 +141,19 @@
 
 
                     <!--max mjd and date greg-->
-                    {{customInput(id="max_mjd", type="number", placeholder="Max MJD", width="tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12")}}
+                    {{customInput(id="max_mjd", type="number", placeholder="Max MJD", width="tw-col-span-12 lg:tw-col-span-6")}}
                     
-                    <div class="tw-container tw-relative lg:tw-col-span-6 md: tw-col-span-12">
-                        <p id="max_date_time_text" class="tw-bg-transparent tw-border tw-border-transparent tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</p>
+                    <div class="tw-container tw-relative tw-z-[10] tw-col-span-12 lg:tw-col-span-6 ">
+                        <div class="tw-flex tw-gap-2 tw-w-full">
+                            <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
 
-                        <div id="max_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-bg-[#424242]">
-                            {{customInput(id="date_max", type="date", width="tw-w-[90%]", style="color-scheme: dark;")}}
+                            <span id="max_date_time_text" class="tw-inline-block tw-w-full lg:tw-w-[85%] tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</span>
+                        </div>
 
-                            {{customInput(id="time_max", type="time", value="00:00",width="tw-w-[90%]", style="color-scheme: dark;")}}
+                        <div id="max_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-shadow-lg tw-bg-white dark:tw-bg-[#424242] tw-scheme-light dark:tw-scheme-dark">
+                            {{customInput(id="date_max", type="date", width="tw-w-[90%]")}}
+
+                            {{customInput(id="time_max", type="time", value="00:00",width="tw-w-[90%]")}}
 
                             <button id="save_date_max" class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/4 tw-self-end">Save</button>
                         </div>
@@ -143,17 +163,28 @@
 
             <!--Conesearch filters-->
             <div class="tw-w-full">
-                <p id="conesearch_filters" class="hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">Conesearch</p>
 
-                <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-my-4 tw-mx-auto tw-gap-4">
+                <div id="conesearch_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
+
+                    <div class="tw-flex tw-gap-2">
+                        <span class="tw-font-medium">Conesearch</span>
+
+                        <svg id="consearch_info" class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                    </div>
+
+                    <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                </div>
+
+
+                <div id="conesearch_filters_container" class="tw-hidden tw-container tw-grid tw-grid-cols-12 tw-my-4 tw-gap-4">
                     
                     <div class="tw-col-span-12 lg:tw-col-span-5 sm:tw-col-span-11">
-                        {{customInput(id="target_name", type="text", width="tw-w-full", placeholder="target name")}}
+                        {{customInput(id="target_name", type="text", width="tw-w-full", placeholder="Target Name")}}
                     </div>
 
                     <div class="tw-px-4 tw-flex tw-flex-col tw-items-end tw-col-span-12 lg:tw-col-span-7 sm:tw-col-span-12">
-                        <button id="resolve_btn" class="tw-w-[95%] tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded">resolve</button>
-                        <label class="tw-text-sm tw-mt-1">provided by sesame</label>
+                        <button id="resolve_btn" class="tw-w-[95%] tw-h-[36px] tw-shadow-xl tw-bg-[#f5f5f5] dark:tw-bg-[#424242] tw-text-black/80 dark:tw-text-[#F5F5F5] tw-rounded">RESOLVE</button>
+                        <label class="tw-text-sm tw-mt-1">Provided by <a href="https://vizier.cds.unistra.fr/vizier/doc/sesame.htx" target="_blank" class="tw-text-[#1976d2]">sesame</a></label>
                     </div>
 
                     <div class="tw-col-span-12 lg:tw-col-span-12 sm:tw-col-span-12">
@@ -176,28 +207,26 @@
             </div>
 
             <!--Buttons-->
-            <div class="tw-w-full tw-flex tw-justify-start tw-gap-4">
+            <div class="tw-w-full tw-flex tw-justify-start tw-gap-4 tw-flex-col lg:tw-flex-row">
                 <button 
                 id="search_btn"
-                hx-get="{{API_URL}}/table"
+                hx-get="{{API_URL}}/htmx/list_objects"
                 hx-trigger="click"
                 hx-swap="outerHTML"
                 hx-target="#objects_table"
                 hx-vals='js:{...send_form_Data(), ...send_pagination_data()}'
-                class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/2">SEARCH</button>
+                class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-full lg:tw-w-1/2 sm:tw-w-full ">SEARCH</button>
                 
                 <button 
                 id="clear_form" 
-                class="tw-bg-[#424242] tw-text-[#F5F5F5] tw-rounded tw-w-1/4"
-                hx-get="{{API_URL}}/form"
+                class=" tw-text-black/80 dark:tw-text-[#F5F5F5] tw-rounded tw-w-full tw-bg-[#f5f5f5] dark:tw-bg-[#424242] lg:tw-w-1/4 sm:tw-w-full"
+                hx-get="{{API_URL}}/htmx/search_objects/"
                 hx-trigger="click"
                 hx-swap="outerHTML"
                 hx-target="#form-search"
                 >CLEAR</button>
             </div>
         </div>
-
-        <div id="objects_table" class="tw-max-w-[1422px]">test</div>
     </div>
 
 </div>
