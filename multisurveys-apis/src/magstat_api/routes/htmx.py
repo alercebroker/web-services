@@ -19,7 +19,7 @@ templates.env.globals["API_URL"] = os.getenv(
 )
 
 
-@router.get("/htmx/magstats", response_class=HTMLResponse)
+@router.get("/htmx/mag", response_class=HTMLResponse)
 async def object_mag_app(request: Request, oid: str, survey_id=None):
     bandMapping = {
         1: "g",
