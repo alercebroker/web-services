@@ -49,7 +49,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
-            "object": object_data['oid'],
+            "object": str(object_data['oid']),
             "corrected": "Yes" if object_data['corrected'] else "No",
             "stellar": "Yes" if object_data['stellar'] else "No",
             "detections": object_data['n_det'],
