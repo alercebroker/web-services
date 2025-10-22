@@ -78,9 +78,7 @@ class Object(BaseModel):
     n_non_det: int = 1
     corrected: bool = False
     stellar: bool | None = None
-    created_date: datetime | None = None
-    updated_date: datetime | None = None
-
+    
 class ExportModel:
     def __init__(self, survey: str, model_variant: str = "basic"):
         self.survey = survey
