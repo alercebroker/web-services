@@ -102,7 +102,7 @@ async def objects_form(request: Request):
         raise HTTPException(status_code=500, detail="An error occurred")
 
 
-@router.get("/htmx/classes_select/", response_class=HTMLResponse)
+@router.get("/htmx/classes_select", response_class=HTMLResponse)
 async def select_classes_classifier(request: Request, classifier_classes: list[str] = Query(...)):
     try:
         classes = classifier_classes
