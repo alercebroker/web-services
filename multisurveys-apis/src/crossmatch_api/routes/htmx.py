@@ -22,7 +22,7 @@ async def object_mag_app(
     survey_id: str
 ):
 
-    object = query_object_by_id(oid, survey_id, session_factory = request.app.state.psql_session)
+    object = query_object_by_id(oid=oid, survey_id=survey_id, session_ms = request.app.state.psql_session)
     object = object[0].__dict__
     cross = get_alerce_data(object['meanra'], object['meandec'], 20)
 

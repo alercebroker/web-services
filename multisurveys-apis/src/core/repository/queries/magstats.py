@@ -4,7 +4,6 @@ from db_plugins.db.sql.models import MagStat, LsstDiaObject
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-SURVEYS = ["ztf", "lsst"]
 
 def get_magstats_by_oid(
     oid: str,
@@ -21,17 +20,10 @@ def get_magstats_by_oid(
     with session_factory() as session:
 
         if survey_id == "ztf":
-            
             stmt = select(MagStat).where(MagStat.oid == oid)
-
-            result = session.execute(stmt).all()
-
-            return result
-        elif survey_id in SURVEYS:
-
+        elif survey_id == "lsst":
             stmt = select(LsstDiaObject).where(LsstDiaObject.oid == oid)
 
-            result = session.execute(stmt).all()
+        result = session.execute(stmt).all()
 
-            return result
-
+        return result

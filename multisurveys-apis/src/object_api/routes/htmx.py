@@ -1,6 +1,5 @@
 import os
 import traceback
-import pprint
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse
@@ -8,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
-from ..services.object_services import get_objects_list, get_object_by_id
+from ..services.object_services import get_objects_list
 from ..services.validations import (
     ndets_validation,
     order_mode_validation,
@@ -22,17 +21,15 @@ from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
 
-from core.repository.dummy_data import object_basic_information_dict, tns_data_dict, tns_link_str
-
+from core.repository.dummy_data import object_basic_information_dict, tns_data_dict, tns_link_str, generate_array_dicts_data_table
+from object_api.services.object_services import (
+    get_object_by_id,
+)
 
 router = APIRouter()
 
-templates = Jinja2Templates(
-    directory="src/object_api/templates", autoescape=True, auto_reload=True
-)
-templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8000"
-)
+templates = Jinja2Templates(directory="src/object_api/templates", autoescape=True, auto_reload=True)
+templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 templates.env.filters["truncate"] = truncate_float
 
@@ -41,7 +38,7 @@ templates.env.filters["truncate"] = truncate_float
 async def object_info_app(request: Request, oid: str, survey_id: str):
     try:
 
-        object_data = get_object_by_id(oid, survey_id, session_factory=request.app.state.psql_session)
+        object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
 
         other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
 
@@ -85,8 +82,8 @@ async def tns_info(request: Request, ra: float, dec:float):
             "object_type": tns_data["object_type"],
             "redshift": tns_data["object_data"]["redshift"],
             "discoverer": tns_data["object_data"]["discoverer"],
-            "discovery_data_source": tns_data["object_data"]["discovery_data_source"]
-        }
+            "discovery_data_source": tns_data["object_data"]["discovery_data_source"],
+        },
     )
 
 
@@ -182,7 +179,18 @@ def objects_table(
                 order_args=order,
             )
 
-            object_list = get_objects_list(session_ms=session, search_params=search_params)
+            # object_list = get_objects_list(session_ms=session, search_params=search_params)
+
+
+            object_list = {
+                "next": page+1,
+                "has_next": True,
+                "prev": page - 1 ,
+                "has_prev": True,
+                "current_page": page,
+                "items": generate_array_dicts_data_table(),
+            }
+
         else:
             object_list = {
                 "next": False,
@@ -274,7 +282,16 @@ def sidebar(
                 order_args=order,
             )
 
-            object_list = get_objects_list(session_ms=session, search_params=search_params)
+            # object_list = get_objects_list(session_ms=session, search_params=search_params)
+
+            object_list = {
+                "next": page+1,
+                "has_next": True,
+                "prev": page - 1 ,
+                "has_prev": True,
+                "current_page": page,
+                "items": generate_array_dicts_data_table(),
+            }
 
         else:
             object_list = {

@@ -13,16 +13,14 @@ from .parsers import (
     parse_unique_object_query,
     parse_classifiers,
 )
-from typing import Callable
-from contextlib import AbstractContextManager
-from sqlalchemy.orm import Session
 
 
-def get_object_by_id(oid, survey_id, session_factory: Callable[..., AbstractContextManager[Session]] | None = None,):
-    response = query_object_by_id(oid, survey_id, session_factory=session_factory)
+def get_object_by_id(oid, survey_id, session_ms):
+    object_model = query_object_by_id(session_ms, oid, survey_id)
+    response = object_model[0].__dict__
     # response = parse_unique_object_query(object_model, survey_id)
 
-    return response[0].__dict__
+    return response
 
 
 def get_objects_list(session_ms, search_params):

@@ -10,13 +10,10 @@ from ..services.magstats import get_magstats
 from .temporal_utils import mag_parser, parse_lsst_dia_objects_to_dict
 import warnings
 
+
 router = APIRouter()
-templates = Jinja2Templates(
-    directory=os.path.abspath("src/magstat_api/templates"), autoescape=True, auto_reload=True
-)
-templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8002"
-)
+templates = Jinja2Templates(directory=os.path.abspath("src/magstat_api/templates"), autoescape=True, auto_reload=True)
+templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8002")
 
 
 @router.get("/htmx/mag", response_class=HTMLResponse)
