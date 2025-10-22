@@ -1,14 +1,12 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import MagStat, LsstDiaObject
+from db_plugins.db.sql.models import MagStat
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-SURVEYS = ["ztf", "lsst"]
 
 def get_magstats_by_oid(
     oid: str,
-    survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
     """
@@ -19,19 +17,8 @@ def get_magstats_by_oid(
     """
 
     with session_factory() as session:
+        stmt = select(MagStat).where(MagStat.oid == oid)
 
-        if survey_id == "ztf":
-            
-            stmt = select(MagStat).where(MagStat.oid == oid)
+        result = session.execute(stmt).all()
 
-            result = session.execute(stmt).all()
-
-            return result
-        elif survey_id in SURVEYS:
-
-            stmt = select(LsstDiaObject).where(LsstDiaObject.oid == oid)
-
-            result = session.execute(stmt).all()
-
-            return result
-
+        return result

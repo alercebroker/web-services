@@ -3,12 +3,10 @@ import time
 
 
 object_basic_information_dict = {
-    "oid": "12", #si
-    "sid":0,
-    "corrected": "Yes", #si
-    "stellar": "Yes", #si
-    "n_det": 1, #si
-    "n_non_det": 1,
+    "oid": "12",  # si
+    "corrected": "Yes",  # si
+    "stellar": "Yes",  # si
+    "ndet": 1,  # si
     "count_ndet": 0,
     "firstmjd": 59450.163946799934,  # si
     "lastmjd": 59478.19487270014,  # si
