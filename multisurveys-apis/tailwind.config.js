@@ -7,11 +7,14 @@ module.exports = {
     "./src/object_api/templates/**/*.{html.jinja,html,css}",
     "./src/probability_api/templates/**/*.{html.jinja,html,css}",
     "./src/magstat_api/templates/**/*.{html.jinja,html,css}",
-    "./src/lightcurve_api/templates/**/*.{html.jinja,html,css}",
+    "./src/lightcurve_api/routes/htmx/templates/**/*.{html.jinja,html,css}",
     "./src/crossmatch_api/templates/**/*.{html.jinja,html,css}",
   ],
   theme: {
     extend: {
+      colors: {
+        'bgdark': '#1e1e1e'
+      },
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
       }

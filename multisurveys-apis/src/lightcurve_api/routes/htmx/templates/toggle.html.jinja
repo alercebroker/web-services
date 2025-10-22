@@ -1,20 +1,20 @@
 {% macro toggle(name, left, right, checked=False, tooltip="") -%}
-<label class="inline-flex items-center cursor-pointer">
+<label class="tw-inline-flex tw-items-center tw-cursor-pointer">
   {% if tooltip %}
-  <div class="relative group mr-2">
-    <span class="cursor-help text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-sm">
+  <div class="tw-relative tw-group tw-mr-2">
+    <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">
       ?
     </span>
-    <div class="absolute bottom-full left-0 mb-2 hidden group-hover:block z-10">
-      <div class="bg-gray-900 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+    <div class="tw-absolute tw-bottom-full tw-left-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
+      <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-whitespace-nowrap">
         {{ tooltip }}
       </div>
     </div>
   </div>
   {% endif %}
-  <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">{{ left }}</span>
-  <input type="checkbox" name="{{ name }}" class="sr-only peer" {% if checked %}checked{% endif %} >
-  <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none  rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-gray-600 dark:peer-checked:bg-gray-600"></div>
-  <span class="font-semibold ml-3 text-gray-900 dark:text-gray-100">{{ right }}</span>
+  <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">{{ left }}</span>
+  <input type="checkbox" name="{{ name }}" class="tw-sr-only tw-peer" {% if checked %}checked{% endif %} >
+  <div class="tw-relative tw-w-11 tw-h-6 tw-bg-gray-200 peer-focus:tw-outline-none tw-rounded-full tw-peer dark:tw-bg-gray-700 peer-checked:after:tw-translate-x-full rtl:peer-checked:after:-tw-translate-x-full peer-checked:after:tw-border-white after:tw-content-[''] after:tw-absolute after:tw-top-[2px] after:tw-start-[2px] after:tw-bg-white after:tw-border-gray-300 after:tw-border after:tw-rounded-full after:tw-h-5 after:tw-w-5 after:tw-transition-all dark:tw-border-gray-600 peer-checked:tw-bg-gray-600 dark:peer-checked:tw-bg-gray-600"></div>
+  <span class="tw-font-semibold tw-ml-3 tw-text-gray-900 dark:tw-text-gray-100">{{ right }}</span>
 </label>
 {%- endmacro %}

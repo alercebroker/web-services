@@ -6,37 +6,37 @@
   hx-indicator="#loading"
 >
   <input type="hidden" name="external_sources.enabled" value="true" {% if not config_state.external_sources.enabled %}disabled{% endif %}>
-  <table class="min-w-full border divide-y">
+  <table class="tw-min-w-full tw-border tw-divide-y">
       <thead>
           <tr class="">
-              <th class="w-12 text-center"></th>
-              <th class="text-center">ObjectId</th>
-              <th class="text-center">filterid</th>
-              <th class="text-center">nepochs</th>
-              <th class="text-center">fieldid</th>
-              <th class="text-center">rcid</th>
-              <th class="text-center">ra</th>
-              <th class="text-center">dec</th>
+              <th class="tw-w-12 tw-text-center"></th>
+              <th class="tw-text-center">ObjectId</th>
+              <th class="tw-text-center">filterid</th>
+              <th class="tw-text-center">nepochs</th>
+              <th class="tw-text-center">fieldid</th>
+              <th class="tw-text-center">rcid</th>
+              <th class="tw-text-center">ra</th>
+              <th class="tw-text-center">dec</th>
           </tr>
       </thead>
-      <tbody class="divide-y">
+      <tbody class="tw-divide-y">
           {% for object in config_state.external_sources.objects %}
-              <tr class="hover:bg-gray-100">
-                  <td class="text-center">
+              <tr class="hover:tw-bg-gray-400">
+                  <td class="tw-text-center">
                       <input type="checkbox"
-                              class="form-checkbox h-6 w-6 text-blue-600"
+                              class="tw-form-checkbox tw-h-6 tw-w-6 tw-text-blue-600"
                               name="external_sources.selected_objects[]"
                               value="{{ object.objectId }}"
                               checked
                       />
                   </td>
-                  <td class="text-right">{{ object.objectId }}</td>
-                  <td class="text-right">{{ object.filterid }}</td>
-                  <td class="text-right">{{ object.nepochs }}</td>
-                  <td class="text-right">{{ object.fieldid }}</td>
-                  <td class="text-right">{{ object.rcid }}</td>
-                  <td class="text-right">{{ object.ra }}</td>
-                  <td class="text-right">{{ object.dec }}</td>
+                  <td class="tw-text-right">{{ object.objectId }}</td>
+                  <td class="tw-text-right">{{ object.filterid }}</td>
+                  <td class="tw-text-right">{{ object.nepochs }}</td>
+                  <td class="tw-text-right">{{ object.fieldid }}</td>
+                  <td class="tw-text-right">{{ object.rcid }}</td>
+                  <td class="tw-text-right">{{ object.ra }}</td>
+                  <td class="tw-text-right">{{ object.dec }}</td>
               </tr>
           {% endfor %}
       </tbody>

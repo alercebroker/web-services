@@ -4,6 +4,10 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from core.repository.dummy_data import crossmatch_dummy
+from core.repository.queries.objects import (
+    query_object_by_id,
+)
+from crossmatch_api.get_crossmatch_data import get_alerce_data
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True)
@@ -18,7 +22,7 @@ async def object_mag_app(
     survey_id: str
 ):
 
-    object = query_object_by_id(oid, survey_id, session_factory = request.app.state.psql_session)
+    object = query_object_by_id(oid=oid, survey_id=survey_id, session_ms = request.app.state.psql_session)
     object = object[0].__dict__
     cross = get_alerce_data(object['meanra'], object['meandec'], 20)
 
