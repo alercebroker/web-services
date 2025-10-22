@@ -19,9 +19,9 @@ class ObjectsModels:
 
     def get_model_by_survey(self):
         if self.survey == "ztf":
-            return ZtfObject
+            return Object
         if self.survey == "lsst":
-            return LsstDiaObject
+            return Object
 
 
 def query_object_by_id(session_ms, oid, survey_id):
@@ -31,7 +31,7 @@ def query_object_by_id(session_ms, oid, survey_id):
         stmt = build_statement_object(model, oid)
 
         object = session.execute(stmt).one()
-
+        
         return object
 
 

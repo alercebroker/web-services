@@ -7,9 +7,10 @@ from .parsers import parse_magstats
 
 def get_magstats(
     oid,
+    survey_id,
     session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
-    result = get_magstats_by_oid(oid, session_factory=session_factory)
-    parsed_result = parse_magstats(result)
+    result = get_magstats_by_oid(oid, survey_id, session_factory=session_factory)
+    parsed_result = parse_magstats(result, survey_id)
 
     return parsed_result
