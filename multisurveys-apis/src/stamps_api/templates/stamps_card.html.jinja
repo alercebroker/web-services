@@ -2,7 +2,7 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 <link rel="stylesheet" href="{{API_URL}}/static/stamp.css"> 
-<script type="module" src="{{API_URL}}/static/stamp.js"></script>
+<!--script type="module" src="{{API_URL}}/static/stamp.js"></script-->
 
 <!DOCTYPE html>
 <html lang="es">
@@ -83,7 +83,7 @@
                             Science
                         </button>
                     </div>
-                    <img id="scienceImg" src="" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+                    <img id="scienceImg" src="data:image/{{ science_mime }};base64,{{ science_img }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
                 </div>
                 
                 <!-- Template Image -->
@@ -96,7 +96,7 @@
                             Template
                         </button>
                     </div>
-                    <img id="templateImg" src="" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+                    <img id="templateImg" src="data:image/{{ template_mime }};base64,{{ template_img }}" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
                 </div>
                 
                 <!-- Difference Image -->
@@ -109,7 +109,7 @@
                             Difference
                         </button>
                     </div>
-                    <img id="differenceImg" src="" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+                    <img id="differenceImg" src="data:image/{{ difference_mime }};base64,{{ difference_img }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
                 </div>
             </div>
             

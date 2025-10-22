@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from .routes import rest
+from .routes import rest, htmx
+from core.config.connection import psql_entity
 
 app = FastAPI(openapi_url="/stamps/openapi.json")
+psql = psql_entity()
+app.state.psql_session = psql.session
 
 app.add_middleware(
     CORSMiddleware,
@@ -14,10 +17,10 @@ app.add_middleware(
 )
 
 app.include_router(rest.router)
+app.include_router(htmx.router, prefix="/htmx")
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="src/multisurvey_stamps/static"), name="static")
-app.mount("/htmx", StaticFiles(directory="src/multisurvey_stamps/static/htmx"), name="htmx")
+app.mount("/static", StaticFiles(directory="src/stamps_api/static"), name="static")
 
 
 @app.get("/openapi.json")

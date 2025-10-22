@@ -72,6 +72,14 @@ def run_crossmatch():
     print(f"Running service: crossmatch_api with config: {service_config}")
     run_service(service_config)
 
+def run_stamp():
+    config_dict = config_from_yaml()
+    service_config = config_dict["services"]["stamp_api"]
+    os.environ["LSST_BUCKET_REGION"] = service_config.get("lsst_bucket_region", "")
+    os.environ["LSST_BUCKET_NAME"] = service_config.get("lsst_bucket_name",)
+    print(f"Running service: stamp_api with config: {service_config}")
+    run_service(service_config)
+
 
 ###
 ### A function to run all the services configured in the yaml file
@@ -146,7 +154,7 @@ def run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
-    os.environ["USE_ABSOLUTE"] = config_dict["use_absolute"]
+    os.environ["USE_ABSOLUTE"] = config_dict.get("use_absolute", "false")
 
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",

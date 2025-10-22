@@ -1,5 +1,5 @@
 import os
-from s3_handler.base_handler import BaseS3Handler
+from .base_handler import BaseS3Handler
 
 
 class LSSTS3Handler(BaseS3Handler):

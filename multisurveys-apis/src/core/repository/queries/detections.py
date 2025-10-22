@@ -1,7 +1,7 @@
 from typing import Callable, ContextManager, List, Tuple
 from db_plugins.db.sql.models import ZtfDetection, Detection, LsstDetection
 from sqlalchemy.orm import Session
-from sqlalchemy import select, text, and_
+from sqlalchemy import select, text, and_, desc
 
 
 def get_all_unique_detections_sql(
@@ -67,3 +67,28 @@ def get_detections_by_list(
             )  # we are passing this to a pipe expecting the rows and survey_id
 
     return _get_detections_by_list
+
+def get_ordered_detections_sql(
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., ContextManager[Session]],
+):
+    with session_factory() as session:
+        if survey_id.lower() == "ztf":
+            detection_model = ZtfDetection
+        elif survey_id.lower() == "lsst":
+            detection_model = LsstDetection
+        else:
+            raise ValueError("Survey not supported")
+
+        stmt = (
+            select(detection_model)
+            .where(
+                detection_model.oid == oid
+            ).where(
+                detection_model.has_stamp == True
+            ).order_by(desc(detection_model.mjd))
+        )
+
+        return session.execute(stmt).all()
+    
