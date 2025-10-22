@@ -4,6 +4,10 @@ from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from core.repository.dummy_data import crossmatch_dummy
+from core.repository.queries.objects import (
+    query_object_by_id,
+)
+from crossmatch_api.get_crossmatch_data import get_alerce_data
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True)
