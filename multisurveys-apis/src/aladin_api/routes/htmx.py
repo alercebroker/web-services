@@ -22,14 +22,21 @@ async def object_probability_app(
 
     objects_list = [{
         'oid': 'ZTF19abqshry',
-        'ra': '37.6735327',
-        'dec': '-14.5691207'
+        'meanra': '249.6383295266666',
+        'meandec': '45.63117178'
     }]
+
+    selected_object = {
+        'oid': 'ZTF19abqshry',
+        'meanra': '249.6383295266666',
+        'meandec': '45.63117178'
+    }
 
     return templates.TemplateResponse(
       name='layout.html.jinja',
       context={
             'request': request,
-            'objects': objects_list
+            'objects': objects_list,
+            'selected_object': selected_object
         },
   )
