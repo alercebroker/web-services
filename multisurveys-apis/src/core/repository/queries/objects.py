@@ -22,6 +22,8 @@ class ObjectsModels:
             return ZtfObject
         if self.survey == "lsst":
             return LsstDiaObject
+        else:
+            raise ValueError(f"Survey {self.survey} not supported")
 
 
 def query_object_by_id(session_ms, oid, survey_id):

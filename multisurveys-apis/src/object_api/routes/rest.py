@@ -25,6 +25,8 @@ def list_objects(
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
     survey: str | None = None,
+    # TODO: default classifier lc_classifier is not available in multisurveys
+    # TODO: If no classifier is provided, it triggers an error in the query
     classifier: str | None = Query(default="lc_classifier"),
     ranking: int | None = Query(default=1),
     n_det: Annotated[list[int] | None, Query()] = None,

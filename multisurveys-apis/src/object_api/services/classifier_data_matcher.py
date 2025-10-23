@@ -1,4 +1,6 @@
 def update_filters(search_params, classes_list):
+    if search_params.filter_args.classifier == "":
+        return search_params
     for item in classes_list:
         if search_params.filter_args.classifier == item["classifier_name"]:
             classifier = item["classifier_id"]

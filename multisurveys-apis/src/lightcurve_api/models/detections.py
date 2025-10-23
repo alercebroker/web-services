@@ -6,7 +6,9 @@ from .lightcurve_item import BaseDetection
 from astropy.coordinates import Distance
 import astropy.units as u
 
-REDSHIFT = 0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
+REDSHIFT = (
+    0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
+)
 
 
 class ztfDetection(BaseDetection):
@@ -145,6 +147,7 @@ class LsstDetection(BaseDetection):
     dec: float
     band: int
     band_map: dict[int, str] = {0: "u", 1: "g", 2: "r", 3: "i", 4: "z", 5: "y"}
+    has_stamp: bool
 
     @model_validator(mode="before")
     @classmethod
