@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
+from core.repository.dummy_data import objects_dummy
 
 router = APIRouter(prefix="/htmx")
 templates = Jinja2Templates(
@@ -20,16 +21,12 @@ async def object_probability_app(
     oid: str,
 ):
 
-    objects_list = [{
-        'oid': 'ZTF19abqshry',
-        'meanra': '249.6383295266666',
-        'meandec': '45.63117178'
-    }]
+    objects_list = objects_dummy
 
     selected_object = {
-        'oid': 'ZTF19abqshry',
-        'meanra': '249.6383295266666',
-        'meandec': '45.63117178'
+        'oid': 'ZTF21abywdxt',
+        "meanra": 326.5036098666667, 
+        "meandec": 21.962613925925925,
     }
 
     return templates.TemplateResponse(

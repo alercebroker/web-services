@@ -24,7 +24,6 @@ export async function init(A) {
   }
 
   on_selected_object_change(selected_object, aladin, catalog)
-  console.log(aladin.view.aladinDiv)
   // aladin.addEventListener('wheel', customZoom, {passive: false });
 
 }
@@ -48,10 +47,30 @@ function addObjects(aladin, objects){
   catalog.addSources(sources)
   aladin.addCatalog(catalog)
 
-  // aladin.on('objectClicked', this.onCLick)
+  aladin.on('objectClicked', (event) => {
+    if(event?.catalog?.name == "catalog"){
+      let new_object = find_object_in_catalog(event, objects)
+      on_selected_object_change(new_object, aladin, catalog)
+    }
+  })
 
   return catalog
 }
+
+
+function find_object_in_catalog(object_selected, objects){
+  let found_object = objects.find((object) => {
+    return object.oid === object_selected.data.name
+  })
+
+  if(!found_object){
+    console.log("no object found")
+    return null
+  }
+
+  return {'oid': found_object.oid, 'meanra': found_object.meanra, 'meandec': found_object.meandec }
+}
+
 
 function on_selected_object_change(view_object, aladin, catalog){
 
@@ -66,16 +85,22 @@ function on_selected_object_change(view_object, aladin, catalog){
     return source.data.name === view_object.oid
   })
 
+  let old_object = catalog.sources.find((source) => {
+    return source.isSelected === true
+  })
 
-  on_aladin_object_change(src)
+  
+  on_aladin_object_change(src, old_object)
+  console.log(catalog.sources)
+
   aladin.gotoRaDec(coordinates.ra, coordinates.dec)
 }
 
 
 function add_catalogs_information(coordinates) {
-  // if (!this.showCloseObjects || !this.aladin) {
-  //   return
-  // }
+  if (!aladin) {
+    return
+  }
   aladin.addCatalog(
     A.catalogFromSimbad(coordinates, 0.014, {
       onClick: 'showTable',
@@ -94,28 +119,29 @@ function add_catalogs_information(coordinates) {
   )
 }
 
-function on_aladin_object_change(new_object){
+function on_aladin_object_change(new_object, old_object){
   new_object.select()
+  if(old_object){
+    old_object.deselect()
+  }
 }
 
 function customZoom(event){
-    event.preventDefault()
-    event.stopPropagation()
+  event.preventDefault()
+  event.stopPropagation()
 
-    console.log("hola")
+  let level = aladin.view.zoomLevel
+  let delta = -event.deltaY
 
-    let level = aladin.view.zoomLevel
-    let delta = -event.deltaY
+  if(delta > 0){
+      level += 1
+  } else {
+      level -= 1
+  }
 
-    if(delta > 0){
-        level += 1
-    } else {
-        level -= 1
-    }
+  aladin.view.setZoomLevel(level)
 
-    aladin.view.setZoomLevel(level)
-
-    return false
+  return false
 }
 
 
