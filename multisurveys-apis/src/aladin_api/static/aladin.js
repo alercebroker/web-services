@@ -1,13 +1,53 @@
 import { draw } from "./ui_tools.js";
 
 
-let aladin
+class creatorAladin {
+
+  constructor(aladin, catalog, objects){
+    this._aladin = aladin
+    this._catalog = catalog
+    this._objects = objects
+    this.sources = []
+  }
+
+  get aladin(){
+    return this._aladin
+  }
+
+  get objects(){
+    return this._objects
+  }
+
+  get catalog(){
+    return this._catalog
+  }
+
+  set_sources(new_sources){
+    this._aladin.removeLayers()
+    this.sources = new_sources
+  }
+
+  create_catalog(config){
+    this._catalog = config
+    this._catalog.addSources(this.sources)
+    this._aladin.addCatalog(this._catalog)
+  }
+
+  add_catalog_information(new_catalog) {
+    this._aladin.addCatalog(new_catalog)
+  }
+
+}
+
 
 export async function init(A) {
   let raw_data = JSON.parse(document.getElementById("aladin-data").text);
   let objects = raw_data.objects
   let selected_object = raw_data.selected_object
   let catalog = null
+  let new_object = null
+  let aladin = null
+  let aladin_instance = null
 
 
   await A.init
@@ -19,22 +59,33 @@ export async function init(A) {
       }
   );
 
+  aladin_instance = new creatorAladin(aladin, catalog, objects)
+
   if(objects){
-    catalog = addObjects(aladin, objects)
+    let catalog_config = A.catalog({ sourceSize: 10, shape: draw})
+    let new_source = create_source(aladin_instance)
+
+    aladin_instance.set_sources(new_source)
+    aladin_instance.create_catalog(catalog_config)
+
+    aladin_instance.aladin.on('objectClicked', (event) => {
+      if(event?.catalog?.name == "catalog"){
+        new_object = find_object_in_catalog(event, aladin_instance)
+        on_selected_object_change(new_object, aladin_instance)
+      }
+    })
   }
 
-  on_selected_object_change(selected_object, aladin, catalog)
+  on_selected_object_change(selected_object, aladin_instance)
   // aladin.addEventListener('wheel', customZoom, {passive: false });
 
 }
 
+function create_source(aladin){
+  let new_source = []
 
-function addObjects(aladin, objects){
-  aladin.removeLayers()
-
-  let sources = []
-  objects.forEach((object) => {
-    sources.push(
+  aladin.objects.forEach((object) => {
+    new_source.push(
       A.source(object.meanra, object.meandec, {
         name: object.oid,
         size: 2,
@@ -43,87 +94,62 @@ function addObjects(aladin, objects){
     )  
   })
 
-  let catalog = A.catalog({ sourceSize: 10, shape: draw})
-  catalog.addSources(sources)
-  aladin.addCatalog(catalog)
-
-  aladin.on('objectClicked', (event) => {
-    if(event?.catalog?.name == "catalog"){
-      let new_object = find_object_in_catalog(event, objects)
-      on_selected_object_change(new_object, aladin, catalog)
-    }
-  })
-
-  return catalog
+  return new_source
 }
 
-
-function find_object_in_catalog(object_selected, objects){
-  let found_object = objects.find((object) => {
+function find_object_in_catalog(object_selected, aladin){
+  let found_object = aladin.objects.find((object) => {
     return object.oid === object_selected.data.name
   })
 
   if(!found_object){
-    console.log("no object found")
     return null
   }
 
   return {'oid': found_object.oid, 'meanra': found_object.meanra, 'meandec': found_object.meandec }
 }
 
+function on_selected_object_change(view_object, aladin){
+  let coordinates = { ra: view_object.meanra, dec: view_object.meandec }
 
-function on_selected_object_change(view_object, aladin, catalog){
+  add_catalogs_information(aladin, coordinates)
+  unselect_old_object(aladin)
+  select_new_object_by_oid(aladin, view_object.oid)
 
-  let coordinates = {
-    ra: view_object.meanra,
-    dec: view_object.meandec
-  }
 
-  add_catalogs_information(coordinates)
-
-  let src = catalog.sources.find((source) => {
-    return source.data.name === view_object.oid
-  })
-
-  let old_object = catalog.sources.find((source) => {
-    return source.isSelected === true
-  })
-
-  
-  on_aladin_object_change(src, old_object)
-  console.log(catalog.sources)
-
-  aladin.gotoRaDec(coordinates.ra, coordinates.dec)
+  aladin._aladin.gotoRaDec(coordinates.ra, coordinates.dec)
 }
 
 
-function add_catalogs_information(coordinates) {
+function unselect_old_object(aladin){
+  aladin.catalog.deselectAll()
+}
+
+function select_new_object_by_oid(aladin_instace, selected_oid){
+  let find_new_object = aladin_instace.catalog.sources.find((source) => {
+    if(source.data.name === selected_oid){
+      return source
+    }
+  })
+
+  if(find_new_object){
+    find_new_object.select()
+  }
+}
+
+function add_catalogs_information(aladin, coordinates){
   if (!aladin) {
     return
   }
-  aladin.addCatalog(
-    A.catalogFromSimbad(coordinates, 0.014, {
-      onClick: 'showTable',
-    })
-  )
-  aladin.addCatalog(
-    A.catalogFromNED(coordinates, 0.014, {
-      onClick: 'showTable',
-      shape: 'plus',
-    })
-  )
-  aladin.addCatalog(
-    A.catalogFromVizieR('I/311/hip2', coordinates, 0.014, {
-      onClick: 'showTable',
-    })
-  )
-}
 
-function on_aladin_object_change(new_object, old_object){
-  new_object.select()
-  if(old_object){
-    old_object.deselect()
-  }
+  let  simbad_catalog = A.catalogFromSimbad(coordinates, 0.014, { onClick: 'showTable', })
+  let  ned_catalog = A.catalogFromNED(coordinates, 0.014, { onClick: 'showTable', shape: 'plus', })
+  let vizier_catalog = A.catalogFromVizieR('I/311/hip2', coordinates, 0.014, { onClick: 'showTable', })
+
+  aladin.add_catalog_information(simbad_catalog)
+  aladin.add_catalog_information(ned_catalog)
+  aladin.add_catalog_information(vizier_catalog)
+
 }
 
 function customZoom(event){

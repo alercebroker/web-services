@@ -24,9 +24,9 @@ async def object_probability_app(
     objects_list = objects_dummy
 
     selected_object = {
-        'oid': 'ZTF21abywdxt',
-        "meanra": 326.5036098666667, 
-        "meandec": 21.962613925925925,
+        'oid': 'ZTF20acobvxk',
+        "meanra": 37.67353272162162, 
+        "meandec": -14.569120659459461,
     }
 
     return templates.TemplateResponse(
