@@ -12,7 +12,7 @@ def get_detections(
     session_factory: Callable[..., ContextManager[Session]],
 ):
     result = detections.get_ordered_detections_sql(oid, survey_id, session_factory=session_factory)
+    print(result)
 
     result = parse_lightcurve(result)
-    print(result)
     return result

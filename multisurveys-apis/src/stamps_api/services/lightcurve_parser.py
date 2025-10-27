@@ -14,11 +14,12 @@ def parse_lightcurve(lightcurve_data):
     parsed_lighturve = []
 
     for row in lightcurve_data:
-        model_dict = row[0].__dict__.copy()
+        lsst_model_dict = row[0].__dict__.copy()
+        detection_model_dict = row[1].__dict__.copy()
         model_parsed = detection(**{
-            "mjd": model_dict.get("mjd"),
+            "mjd": detection_model_dict.get("mjd"),
             "greg": "22/10/2025",
-            "measurement_id": model_dict.get("measurement_id"),
+            "measurement_id": lsst_model_dict.get("measurement_id"),
         })
         parsed_lighturve.append(model_parsed)
 

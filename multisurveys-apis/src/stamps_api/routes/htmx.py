@@ -58,17 +58,20 @@ async def get_stamp_card(
         survey_id=survey_id,
         session_factory=request.app.state.psql_session,
     )
-    measurement_id = detections[0]['measurement_id']
+    print("detections:")
+    print(detections)
+    measurement_id = detections[0].measurement_id
 
     stamps = handler.get_all_stamps(oid, measurement_id, "png")
 
-    context = build_image_context(detections, stamps)
-    context.extend({
+    context = build_image_context(stamps)
+    context.update({
         "request": request,
         "oid": oid,
-        "detections": detections,
+        "detections": [d.to_json() for d in detections],
     })
     
+    print(f"context: {context}")
     return templates.TemplateResponse(
       name='stamps_card.html.jinja',
       context=context,
@@ -87,11 +90,11 @@ async def post_stamp_card(
 
     stamps = handler.get_all_stamps(oid, measurement_id, "png")
 
-    context = build_image_context(detections_list, stamps)
-    context.extend({
+    context = build_image_context(stamps)
+    context.update({
         "request": request,
         "oid": oid,
-        "detections": detections_list,
+        "detections": [d.to_json() for d in detections_list.detections],
     })
 
     return templates.TemplateResponse(
@@ -102,9 +105,9 @@ async def post_stamp_card(
 def build_image_context(stamps: dict) -> dict:
     return {
         "science_mime": stamps['cutoutScience']['mime'],
-        "science_img": base64.b64encode(stamps['cutoutScience']['file']),
+        "science_img": base64.b64encode(stamps['cutoutScience']['file']).decode("utf-8"),
         "template_mime": stamps['cutoutTemplate']['mime'],
-        "template_img": base64.b64encode(stamps['cutoutTemplate']['file']),
+        "template_img": base64.b64encode(stamps['cutoutTemplate']['file']).decode("utf-8"),
         "difference_mime": stamps['cutoutDifference']['mime'],
-        "difference_img": base64.b64encode(stamps['cutoutDifference']['file']),
+        "difference_img": base64.b64encode(stamps['cutoutDifference']['file']).decode("utf-8"),
     }

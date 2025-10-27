@@ -82,12 +82,19 @@ def get_ordered_detections_sql(
             raise ValueError("Survey not supported")
 
         stmt = (
-            select(detection_model)
+            select(detection_model, Detection)
+            .join(
+                Detection,
+                and_(
+                    Detection.oid == detection_model.oid,
+                    Detection.measurement_id == detection_model.measurement_id,
+                ),
+            )
             .where(
                 detection_model.oid == oid
             ).where(
                 detection_model.has_stamp == True
-            ).order_by(desc(detection_model.mjd))
+            ).order_by(desc(Detection.mjd))
         )
 
         return session.execute(stmt).all()

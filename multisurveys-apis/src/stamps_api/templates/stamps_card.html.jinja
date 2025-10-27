@@ -83,7 +83,7 @@
                             Science
                         </button>
                     </div>
-                    <img id="scienceImg" src="data:image/{{ science_mime }};base64,{{ science_img }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+                    <img id="scienceImg" src="data:image/{{ science_mime }};base64, {{ science_img }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
                 </div>
                 
                 <!-- Template Image -->
@@ -96,7 +96,7 @@
                             Template
                         </button>
                     </div>
-                    <img id="templateImg" src="data:image/{{ template_mime }};base64,{{ template_img }}" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+                    <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
                 </div>
                 
                 <!-- Difference Image -->
@@ -109,7 +109,7 @@
                             Difference
                         </button>
                     </div>
-                    <img id="differenceImg" src="data:image/{{ difference_mime }};base64,{{ difference_img }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+                    <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
                 </div>
             </div>
             
@@ -189,155 +189,6 @@
             </div>
         </div>
     </div>
-
-    <script id="stamps-data" type="application/json">{{stamps | tojson}}</script>
-    <script id="stamps-dates" type="application/json">{{dates | tojson}}</script>
-
-    <script type="module">
-        // Variables globales
-        let currentDateIndex = 0;
-        let zoomLevel = 1;
-        let isZoomed = false;
-
-        
-        // Elementos del DOM
-        const dateSelector = document.getElementById('dateSelector');
-        const prevBtn = document.getElementById('prevDate');
-        const nextBtn = document.getElementById('nextDate');
-        const avroBtn = document.getElementById('avroBtn');
-        const avroModal = document.getElementById('avroModal');
-        const closeModal = document.getElementById('closeModal');
-        const zoomBtn = document.getElementById('zoomBtn');
-        const centerBtn = document.getElementById('centerBtn');
-        const imagesByDate = JSON.parse(document.getElementById('stamps-data').textContent)
-        const dates = JSON.parse(document.getElementById('stamps-dates').textContent)
-        updateImages()
-        
-        // Funciones de navegación de fechas
-        function updateImages() {
-            const currentDate = dates[currentDateIndex];
-            const images = imagesByDate[currentDateIndex][currentDate];
-            // Actualizar las imágenes
-            document.getElementById('scienceImg').src = images.science;
-            document.getElementById('templateImg').src = images.template;
-            document.getElementById('differenceImg').src = images.difference;
-            
-        }
-        
-        function updateDateSelector() {
-            dateSelector.selectedIndex = currentDateIndex;
-            updateImages(); // Actualizar imágenes cuando cambie la fecha
-        }
-        
-        function goToPrevDate() {
-            if (currentDateIndex > 0) {
-                currentDateIndex--;
-                updateDateSelector();
-            }
-        }
-        
-        function goToNextDate() {
-            if (currentDateIndex < dates.length - 1) {
-                currentDateIndex++;
-                updateDateSelector();
-            }
-        }
-        
-        // Función de descarga de imágenes
-        window.downloadImage = function(type) {
-            const currentDate = dates[currentDateIndex];
-            const imagePath = imagesByDate[currentDateIndex][currentDate][type];
-            
-            // Crear un enlace temporal para la descarga
-            const link = document.createElement('a');
-            
-            // Usar la imagen real del diccionario
-            link.href = imagePath;
-            link.download = `${type}_${imagePath.split('/').pop().split('.')[0]}_${currentDate.replace(/[^a-zA-Z0-9]/g, '_')}.jpg`;
-            
-            // Simular clic para descargar
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-        }
-        
-        // Función de zoom
-        function toggleZoom() {
-            const images = document.querySelectorAll('#scienceImg, #templateImg, #differenceImg');
-            isZoomed = !isZoomed;
-            
-            const zoomIcon = zoomBtn.querySelector('svg');
-            const zoomText = zoomBtn.childNodes[2]; // El texto después del SVG
-            
-            images.forEach(img => {
-                if (isZoomed) {
-                    img.style.transform = 'scale(1.5)';
-                    zoomText.textContent = ' Zoom Out';
-                } else {
-                    img.style.transform = 'scale(1)';
-                    zoomText.textContent = ' Zoom';
-                }
-            });
-        }
-        
-        // Función para centrar imágenes
-        function centerImages() {
-            const images = document.querySelectorAll('#scienceImg, #templateImg, #differenceImg');
-            images.forEach(img => {
-                img.style.transform = 'scale(1) translate(0, 0)';
-                img.style.transformOrigin = 'center center';
-            });
-            
-            // Reset zoom state
-            isZoomed = false;
-            const zoomText = zoomBtn.childNodes[2];
-            if (zoomText) zoomText.textContent = ' Zoom';
-            
-        }
-        
-        // Event listeners
-
-        // Click en fechas de menu desplegable
-        dateSelector.addEventListener('change', (e) => {
-            currentDateIndex = parseInt(e.target.value);
-            updateImages();
-        });
-        
-        prevBtn.addEventListener('click', goToPrevDate);
-        nextBtn.addEventListener('click', goToNextDate);
-        
-        // Modal AVRO
-        avroBtn.addEventListener('click', () => {
-            avroModal.classList.remove('tw-hidden');
-        });
-        
-        closeModal.addEventListener('click', () => {
-            avroModal.classList.add('tw-hidden');
-        });
-        
-        // Cerrar modal al hacer clic fuera
-        avroModal.addEventListener('click', (e) => {
-            if (e.target === avroModal) {
-                avroModal.classList.add('tw-hidden');
-            }
-        });
-        
-        // Cerrar modal con Escape
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !avroModal.classList.contains('tw-hidden')) {
-                avroModal.classList.add('tw-hidden');
-            }
-        });
-        
-        // Controles de imagen
-        zoomBtn.addEventListener('click', toggleZoom);
-        centerBtn.addEventListener('click', centerImages);
-        
-        // Inicialización
-        updateDateSelector();
-        
-    </script>
 
 
 </body>
