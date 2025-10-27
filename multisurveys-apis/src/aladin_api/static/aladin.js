@@ -89,11 +89,12 @@ function create_source(aladin){
       A.source(object.meanra, object.meandec, {
         name: object.oid,
         size: 2,
-        class: ''
+        class: object["class"]? object["class"] : '' 
       })
     )  
   })
 
+  console.log(new_source)
   return new_source
 }
 
