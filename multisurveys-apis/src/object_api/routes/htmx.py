@@ -37,7 +37,6 @@ templates.env.filters["truncate"] = truncate_float
 @router.get("/htmx/object_information", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str, survey_id: str):
     try:
-
         object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
 
         other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
@@ -179,17 +178,7 @@ def objects_table(
                 order_args=order,
             )
 
-            # object_list = get_objects_list(session_ms=session, search_params=search_params)
-
-
-            object_list = {
-                "next": page+1,
-                "has_next": True,
-                "prev": page - 1 ,
-                "has_prev": True,
-                "current_page": page,
-                "items": generate_array_dicts_data_table(),
-            }
+            object_list = get_objects_list(session_ms=session, search_params=search_params)
 
         else:
             object_list = {
@@ -282,17 +271,7 @@ def sidebar(
                 order_args=order,
             )
 
-            # object_list = get_objects_list(session_ms=session, search_params=search_params)
-
-            object_list = {
-                "next": page+1,
-                "has_next": True,
-                "prev": page - 1 ,
-                "has_prev": True,
-                "current_page": page,
-                "items": generate_array_dicts_data_table(),
-            }
-
+            object_list = get_objects_list(session_ms=session, search_params=search_params)
         else:
             object_list = {
                 "next": False,
