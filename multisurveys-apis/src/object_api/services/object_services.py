@@ -21,7 +21,6 @@ def get_object_by_id(oid, survey_id, session_ms):
 
     return response
 
-
 def get_objects_list(session_ms, search_params):
     classes_list = get_classes_list(session_ms)
     search_params = update_filters(search_params, classes_list)
