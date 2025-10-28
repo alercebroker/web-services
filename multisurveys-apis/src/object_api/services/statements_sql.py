@@ -90,12 +90,12 @@ def object_filters(args):
 def probability_filters(args):
     filters_prob_dict = []
 
-    if args["classifier"]:
+    if args["classifier"] is not None:
         classifier = Probability.classifier_id == args["classifier"]
         filters_prob_dict.append(classifier)
-    if args["class_name"]:
-        class_ = Probability.class_id == args["class_name"]
-        filters_prob_dict.append(class_)
+    if args["class_name"] is not None:
+        class_id = Probability.class_id == args["class_name"]
+        filters_prob_dict.append(class_id)
     if args["probability"]:
         probability = Probability.probability >= args["probability"]
         filters_prob_dict.append(probability)
