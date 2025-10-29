@@ -94,7 +94,6 @@ function create_source(aladin){
     )  
   })
 
-  console.log(new_source)
   return new_source
 }
 

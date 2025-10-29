@@ -5,6 +5,7 @@ from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from core.repository.dummy_data import objects_dummy
+from ..services.aladin_services import get_object_by_id
 
 router = APIRouter(prefix="/htmx")
 templates = Jinja2Templates(
@@ -18,11 +19,15 @@ templates.env.globals["API_URL"] = os.getenv(
 @router.get("/aladin", response_class=HTMLResponse)
 async def object_probability_app(
     request: Request,
-    oid: str,
+    oid: str
 ):
+
+    session_ms = request.app.state.psql_session
 
     objects_list = objects_dummy
 
+    get_object_by_id(session_ms, oid, 'lsst')
+    
     selected_object = {
         'oid': 'ZTF20acobvxk',
         "meanra": 37.67353272162162, 
