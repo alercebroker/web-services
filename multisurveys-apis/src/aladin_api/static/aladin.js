@@ -48,12 +48,14 @@ export async function init(A) {
   let new_object = null
   let aladin = null
   let aladin_instance = null
+  let pan_starrs = 'P/PanSTARRS/DR1/color-z-zg-g'
+  let hips_2_fits = 'CDS/P/DESI-Legacy-Surveys/DR10/color'
 
 
   await A.init
   aladin = A.aladin('#aladin-lite-div', 
       {
-          survey: 'P/PanSTARRS/DR1/color-z-zg-g',
+          survey: hips_2_fits,
           fov: 0.01, 
           cooFrame: 'J2000d', 
           showReticle: true,
