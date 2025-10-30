@@ -22,7 +22,9 @@ from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
 
 from core.repository.dummy_data import object_basic_information_dict, tns_data_dict, tns_link_str, generate_array_dicts_data_table
-
+from object_api.services.object_services import (
+    get_object_by_id,
+)
 
 router = APIRouter()
 
@@ -35,14 +37,9 @@ templates.env.filters["truncate"] = truncate_float
 @router.get("/htmx/object_information", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str, survey_id: str):
     try:
-        # session = request.app.state.psql_session
+        object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
 
-        # object_data = get_object_by_id(session, oid, survey_id)
-        # candid = get_first_det_candid(oid, request.app.state.psql_session)
-        # count_ndet = get_count_ndet(oid, request.app.state.psql_session)
-
-        # other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
-        object_data = object_basic_information_dict
+        other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
 
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
@@ -51,17 +48,17 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
-            "object": object_data["oid"],
-            "corrected": "Yes" if object_data["corrected"] else "No",
-            "stellar": "Yes" if object_data["stellar"] else "No",
-            "detections": object_data["ndet"],
-            "nonDetections": object_data["count_ndet"],
-            "discoveryDateMJD": object_data["firstmjd"],
-            "lastDetectionMJD": object_data["lastmjd"],
-            "ra": object_data["meanra"],
-            "dec": object_data["meandec"],
-            "measurement_id": object_data["measurement_id"],
-            "otherArchives": object_data["otherArchives"],
+            "object": str(object_data['oid']),
+            "corrected": "Yes" if object_data['corrected'] else "No",
+            "stellar": "Yes" if object_data['stellar'] else "No",
+            "detections": object_data['n_det'],
+            "nonDetections": object_data['n_non_det'],
+            "discoveryDateMJD": object_data['firstmjd'],
+            "lastDetectionMJD": object_data['lastmjd'],
+            "ra": object_data['meanra'],
+            "dec": object_data['meandec'],
+            "measurement_id": object_data['sid'],
+            "otherArchives": other_archives,
         },
     )
 
@@ -181,17 +178,7 @@ def objects_table(
                 order_args=order,
             )
 
-            # object_list = get_objects_list(session_ms=session, search_params=search_params)
-
-
-            object_list = {
-                "next": page+1,
-                "has_next": True,
-                "prev": page - 1 ,
-                "has_prev": True,
-                "current_page": page,
-                "items": generate_array_dicts_data_table(),
-            }
+            object_list = get_objects_list(session_ms=session, search_params=search_params)
 
         else:
             object_list = {
@@ -284,17 +271,7 @@ def sidebar(
                 order_args=order,
             )
 
-            # object_list = get_objects_list(session_ms=session, search_params=search_params)
-
-            object_list = {
-                "next": page+1,
-                "has_next": True,
-                "prev": page - 1 ,
-                "has_prev": True,
-                "current_page": page,
-                "items": generate_array_dicts_data_table(),
-            }
-
+            object_list = get_objects_list(session_ms=session, search_params=search_params)
         else:
             object_list = {
                 "next": False,

@@ -1,3 +1,4 @@
+import pprint
 from db_plugins.db.sql.models import (
     Object,
     ZtfObject,
@@ -19,9 +20,9 @@ class ObjectsModels:
 
     def get_model_by_survey(self):
         if self.survey == "ztf":
-            return ZtfObject
+            return Object
         if self.survey == "lsst":
-            return LsstDiaObject
+            return Object
 
 
 def query_object_by_id(session_ms, oid, survey_id):
@@ -31,7 +32,7 @@ def query_object_by_id(session_ms, oid, survey_id):
         stmt = build_statement_object(model, oid)
 
         object = session.execute(stmt).one()
-
+        
         return object
 
 
@@ -47,15 +48,15 @@ def query_get_objects(session_ms, search_params, parsed_params):
     pagination_args = check_pagination_args(search_params.pagination_args)
 
     with session_ms() as session:
-        object_alias, dinamic_model_alias = build_subquery_object(
+        object_alias = build_subquery_object(
             filter_args.survey, filters_statements["objects"], parsed_params
         )
 
         stmt = (
-            select(Probability, object_alias, dinamic_model_alias)
+            select(Probability, object_alias)
             .join(
-                dinamic_model_alias,
-                dinamic_model_alias.oid == Probability.oid,
+                object_alias,
+                object_alias.oid == Probability.oid,
             )
             .where(*filters_statements["probability"])
         )
@@ -77,18 +78,16 @@ def build_subquery_object(survey, filters, parsed_params):
     consearch_args = parsed_params["consearch_args"]
 
     stmt = (
-        select(Object, model_id)
-        .join(model_id, model_id.oid == Object.oid)
+        select(model_id)
         .where(*filters)
         .where(consearch)
         .params(**consearch_args)
         .subquery()
     )
 
-    object_alias = aliased(Object, stmt)
-    dinamic_model_alias = aliased(model_id, stmt)
+    object_alias = aliased(model_id, stmt)
 
-    return object_alias, dinamic_model_alias
+    return object_alias
 
 
 def check_pagination_args(pagination_args):

@@ -1,12 +1,13 @@
 import os
-from fastapi import Request
+import pprint
+from fastapi import FastAPI, Request, Query
 
-# from core.services.object import get_probabilities, get_taxonomies
-from fastapi import APIRouter
+from ..services.probability import get_probability, get_classifiers
+from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from core.repository.dummy_data import classifiers_probabilities_dict, classifiers_options_dicts
-
+from .test_prob import probability_parser
 router = APIRouter()
 templates = Jinja2Templates(directory="src/probability_api/templates", autoescape=True, auto_reload=True)
 templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8004")
@@ -102,20 +103,17 @@ async def object_probability_app(
     request: Request,
     oid: str,
 ):
-    # prob_list = get_probabilities(oid,session_factory = request.app.state.psql_session)
-    # taxonomy_list = get_taxonomies(session_factory = request.app.state.psql_session)
+    classifier_list = get_classifiers(session_factory = request.app.state.psql_session) # classifier_list es un diccionario
+    class_options = [{v: v} for k, v in classifier_list.items()]
+    prob_list = get_probability(oid, classifier_list, session_factory = request.app.state.psql_session)
 
-    # taxonomy_dict = taxonomy_data(taxonomy_list)
-
-    # group_prob = group_data_by_classifier_dict(prob_list)
-    # group_prob_by_version = filter_data_by_higher_version(group_prob)
-
-    # class_options = classifiers_options(group_prob_by_version)
-
-    group_prob = classifiers_probabilities_dict
-    class_options = classifiers_options_dicts
+    group_prob = probability_parser(prob_list)
 
     return templates.TemplateResponse(
-        name="prob.html.jinja",
-        context={"request": request, "group_prob_dict": group_prob, "class_dict": class_options},
-    )
+      name='prob.html.jinja',
+      context={
+            'request': request,
+            'group_prob_dict': group_prob,
+            'class_dict' : class_options
+        },
+  )
