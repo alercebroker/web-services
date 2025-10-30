@@ -3,7 +3,7 @@ import { draw } from "./ui_tools.js";
 
 class creatorAladin {
 
-  constructor(aladin, catalog, objects){
+  constructor(aladin, catalog, objects = []){
     this._aladin = aladin
     this._catalog = catalog
     this._objects = objects
@@ -56,6 +56,7 @@ export async function init(A) {
           survey: 'P/PanSTARRS/DR1/color-z-zg-g',
           fov: 0.01, 
           cooFrame: 'J2000d', 
+          showReticle: true,
       }
   );
 
@@ -112,9 +113,13 @@ function find_object_in_catalog(object_selected, aladin){
 function on_selected_object_change(view_object, aladin){
   let coordinates = { ra: view_object.meanra, dec: view_object.meandec }
 
+  
   add_catalogs_information(aladin, coordinates)
-  unselect_old_object(aladin)
-  select_new_object_by_oid(aladin, view_object.oid)
+
+  if(aladin.objects){
+    unselect_old_object(aladin)
+    select_new_object_by_oid(aladin, view_object.oid)
+  }
 
 
   aladin._aladin.gotoRaDec(coordinates.ra, coordinates.dec)
@@ -142,8 +147,8 @@ function add_catalogs_information(aladin, coordinates){
     return
   }
 
-  let  simbad_catalog = A.catalogFromSimbad(coordinates, 0.014, { onClick: 'showTable', })
-  let  ned_catalog = A.catalogFromNED(coordinates, 0.014, { onClick: 'showTable', shape: 'plus', })
+  let simbad_catalog = A.catalogFromSimbad(coordinates, 0.014, { onClick: 'showTable', })
+  let ned_catalog = A.catalogFromNED(coordinates, 0.014, { onClick: 'showTable', shape: 'plus', })
   let vizier_catalog = A.catalogFromVizieR('I/311/hip2', coordinates, 0.014, { onClick: 'showTable', })
 
   aladin.add_catalog_information(simbad_catalog)
