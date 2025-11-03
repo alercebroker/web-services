@@ -37,9 +37,7 @@ async def object_mag_app(request: Request, oid: str, survey_id=None):
         )
 
     try:
-        mag_stats_raw = get_magstats(
-            oid, survey_id, session_factory=request.app.state.psql_session
-        )
+        mag_stats_raw = get_magstats(oid, survey_id, session_factory=request.app.state.psql_session)
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object not found")
     if survey_id == "ztf":

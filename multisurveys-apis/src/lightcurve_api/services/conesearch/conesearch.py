@@ -62,11 +62,7 @@ def get_detections(
         for obj in objects:
             object_ids_by_survey[obj.survey_id].append(obj.objectId)
         for survey_id, object_ids in object_ids_by_survey.items():
-            result.detections.extend(
-                lightcurve_service.get_detections_by_list(
-                    object_ids, survey_id, session_factory
-                )
-            )
+            result.detections.extend(lightcurve_service.get_detections_by_list(object_ids, survey_id, session_factory))
 
         # now return result and the flattened list of object ids
         return result, object_ids_by_survey
@@ -80,9 +76,7 @@ def get_non_detections(session_factory: Callable[..., ContextManager[Session]]):
 
         for survey_id, object_ids in object_ids_by_survey.items():
             result.non_detections.extend(
-                lightcurve_service.get_non_detections_by_list(
-                    object_ids, survey_id, session_factory
-                )
+                lightcurve_service.get_non_detections_by_list(object_ids, survey_id, session_factory)
             )
 
         return result, object_ids_by_survey
@@ -96,9 +90,7 @@ def get_forced_photometry(session_factory: Callable[..., ContextManager[Session]
 
         for survey_id, object_ids in object_ids_by_survey.items():
             result.forced_photometry.extend(
-                lightcurve_service.get_forced_photometry_by_list(
-                    object_ids, survey_id, session_factory
-                )
+                lightcurve_service.get_forced_photometry_by_list(object_ids, survey_id, session_factory)
             )
 
         return result, object_ids_by_survey
@@ -124,8 +116,6 @@ def conesearch_oid_lightcurve(
             ),
             get_non_detections(session_factory),
             get_forced_photometry(session_factory),
-            lambda result: result[
-                0
-            ],  # here we only care about result object, and discard the object ids dictionary
+            lambda result: result[0],  # here we only care about result object, and discard the object ids dictionary
         ),
     )

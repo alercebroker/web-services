@@ -73,9 +73,7 @@ class PeriodogramComputer:
             shift=self.shift,
         )
 
-        self.periodogram_computer.optimal_finetune_best_frequencies(
-            times_finer=10.0, n_local_optima=10
-        )
+        self.periodogram_computer.optimal_finetune_best_frequencies(times_finer=10.0, n_local_optima=10)
 
         best_freq, _ = self.periodogram_computer.get_best_frequencies()
 

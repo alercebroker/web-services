@@ -27,9 +27,7 @@ def class_validation(classifier: str, class_name: str):
     if class_name is None or classifier is None:
         raise HTTPException(
             status_code=422,
-            detail={
-                "classes_container": "Select a class if you want to filter by classifier."
-            },
+            detail={"classes_container": "Select a class if you want to filter by classifier."},
         )
 
 
@@ -37,9 +35,7 @@ def classifier_validation(classifier: str):
     if classifier is None:
         raise HTTPException(
             status_code=422,
-            detail={
-                "taxonomy_container": "Select a classifier if you want to filter objects."
-            },
+            detail={"taxonomy_container": "Select a classifier if you want to filter objects."},
         )
 
 
@@ -101,9 +97,7 @@ def probability_validation(probability, classifier, class_name):
             if class_name is None:
                 raise HTTPException(
                     status_code=422,
-                    detail={
-                        "prob_range": "Select a class if you want to filter by classifier."
-                    },
+                    detail={"prob_range": "Select a class if you want to filter by classifier."},
                 )
 
 
@@ -112,16 +106,12 @@ def date_validation(firstmjd):
         if len(firstmjd) > 2:
             raise HTTPException(
                 status_code=422,
-                detail={
-                    "discovery_date_filters_container": "To filter by date, there must be a maximum of two dates."
-                },
+                detail={"discovery_date_filters_container": "To filter by date, there must be a maximum of two dates."},
             )
 
         if len(firstmjd) == 2:
             if firstmjd[0] >= firstmjd[1]:
                 raise HTTPException(
                     status_code=422,
-                    detail={
-                        "discovery_date_filters_container": "Min MJD must be lower than max MJD."
-                    },
+                    detail={"discovery_date_filters_container": "Min MJD must be lower than max MJD."},
                 )

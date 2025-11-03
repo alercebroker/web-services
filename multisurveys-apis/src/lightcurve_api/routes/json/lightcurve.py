@@ -127,20 +127,12 @@ def lightcurve(
         }
         if len(oid) == 1:
             response["detections"] = get_detections(oid[0], survey_id, db.session)
-            response["non_detections"] = get_non_detections(
-                oid[0], survey_id, db.session
-            )
-            response["forced_photometry"] = get_forced_photometry(
-                oid[0], survey_id, db.session
-            )
+            response["non_detections"] = get_non_detections(oid[0], survey_id, db.session)
+            response["forced_photometry"] = get_forced_photometry(oid[0], survey_id, db.session)
         else:
             response["detections"] = get_detections_by_list(oid, survey_id, db.session)
-            response["non_detections"] = get_non_detections_by_list(
-                oid, survey_id, db.session
-            )
-            response["forced_photometry"] = get_forced_photometry_by_list(
-                oid, survey_id, db.session
-            )
+            response["non_detections"] = get_non_detections_by_list(oid, survey_id, db.session)
+            response["forced_photometry"] = get_forced_photometry_by_list(oid, survey_id, db.session)
 
         return response
 

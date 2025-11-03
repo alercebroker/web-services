@@ -99,9 +99,7 @@ def test_get_detections_by_list(db, faker: Faker):
         session.add_all(dets)
         session.commit()
 
-    rows, survey_id = detection_repository.get_detections_by_list(db.session)(
-        ([123, 456], "ZTF")
-    )
+    rows, survey_id = detection_repository.get_detections_by_list(db.session)(([123, 456], "ZTF"))
     result = [row[0] for row in rows]
 
     assert survey_id == "ZTF"
@@ -142,9 +140,7 @@ def test_get_detections_by_list_only_lsst(db):
                 )
             )
 
-    rows, survey_id = detection_repository.get_detections_by_list(db.session)(
-        ([123, 456], "ZTF")
-    )
+    rows, survey_id = detection_repository.get_detections_by_list(db.session)(([123, 456], "ZTF"))
     result = [row[0] for row in rows]
 
     assert survey_id == "ZTF"
@@ -183,16 +179,12 @@ def test_get_non_detections_by_list(db, faker: Faker):
 
         session.commit()
 
-    rows, survey_id = non_detection_repository.get_non_detections_by_list(db.session)(
-        ([123], "ZTF")
-    )
+    rows, survey_id = non_detection_repository.get_non_detections_by_list(db.session)(([123], "ZTF"))
     result = [row[0] for row in rows]
     assert survey_id == "ZTF"
     assert len(result) == 10
 
-    rows, survey_id = non_detection_repository.get_non_detections_by_list(db.session)(
-        ([456], "ZTF")
-    )
+    rows, survey_id = non_detection_repository.get_non_detections_by_list(db.session)(([456], "ZTF"))
     result = [row[0] for row in rows]
     assert survey_id == "ZTF"
     assert len(result) == 0
@@ -269,16 +261,12 @@ def test_get_forced_photometry_by_list(db, faker: Faker):
 
         session.commit()
 
-    rows, survey_id = forced_photometry_repository.get_forced_photometry_by_list(
-        db.session
-    )(([123], "ZTF"))
+    rows, survey_id = forced_photometry_repository.get_forced_photometry_by_list(db.session)(([123], "ZTF"))
     result = [row[0] for row in rows]
     assert survey_id == "ZTF"
     assert len(result) == 10
 
-    rows, survey_id = forced_photometry_repository.get_forced_photometry_by_list(
-        db.session
-    )(([456], "ZTF"))
+    rows, survey_id = forced_photometry_repository.get_forced_photometry_by_list(db.session)(([456], "ZTF"))
     result = [row[0] for row in rows]
     assert survey_id == "ZTF"
     assert len(result) == 0

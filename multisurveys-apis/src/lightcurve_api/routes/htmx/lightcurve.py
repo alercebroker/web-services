@@ -99,9 +99,7 @@ def download(oid: str, survey_id: str, db: db_dependency):
             {},
             Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
             config_state=ConfigState(),
-            periodogram=Periodogram(
-                periods=[], scores=[], best_periods=[], best_periods_index=[]
-            ),
+            periodogram=Periodogram(periods=[], scores=[], best_periods=[], best_periods_index=[]),
         ),
         curry(
             lightcurve_plot_service.get_lightcurve,

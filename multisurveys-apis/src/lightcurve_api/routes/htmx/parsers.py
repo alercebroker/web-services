@@ -32,9 +32,7 @@ class ExternalSourceConfig(BaseModel):
 
 
 class ConfigState(BaseModel):
-    bands: BandConfig = BandConfig(
-        ztf=["g", "r", "i"], lsst=["u", "g", "r", "i", "z", "y"]
-    )
+    bands: BandConfig = BandConfig(ztf=["g", "r", "i"], lsst=["u", "g", "r", "i", "z", "y"])
     flux: bool = False
     absolute: bool = False
     total: bool = False

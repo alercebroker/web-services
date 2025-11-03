@@ -37,10 +37,7 @@ def generate_ra_coordinates(ra_center_deg, dec_center_deg, n, half_range_arcsec)
     ra_offsets_deg = np.linspace(-half_range_deg, half_range_deg, n) / np.cos(dec_rad)
 
     # Create coordinates
-    coords = [
-        SkyCoord(ra=ra_center_deg + offset, dec=dec_center_deg, unit="deg")
-        for offset in ra_offsets_deg
-    ]
+    coords = [SkyCoord(ra=ra_center_deg + offset, dec=dec_center_deg, unit="deg") for offset in ra_offsets_deg]
 
     return coords
 

@@ -102,9 +102,7 @@ def probability_filters(args):
         ranking = Probability.ranking == args["ranking"]
         filters_prob_dict.append(ranking)
     elif args["ranking"] is None and (
-        args["classifier"] is None
-        or args["class"] is None
-        or args["classifier_version"] is None
+        args["classifier"] is None or args["class"] is None or args["classifier_version"] is None
     ):
         # Default ranking 1
         ranking = Probability.ranking == 1

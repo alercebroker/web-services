@@ -8,9 +8,7 @@ from fastapi.responses import HTMLResponse
 from .test_prob import probability_parser
 
 router = APIRouter()
-templates = Jinja2Templates(
-    directory="src/probability_api/templates", autoescape=True, auto_reload=True
-)
+templates = Jinja2Templates(directory="src/probability_api/templates", autoescape=True, auto_reload=True)
 templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8004")
 
 
@@ -37,9 +35,7 @@ def filter_data_by_higher_version(prob_dict):
         if len(itemValue) > 1:
             lastest_version = max(itemValue.keys())
             if itemKey not in data_by_higher_version:
-                data_by_higher_version[itemKey] = {
-                    lastest_version: itemValue[lastest_version]
-                }
+                data_by_higher_version[itemKey] = {lastest_version: itemValue[lastest_version]}
         else:
             if itemKey not in data_by_higher_version:
                 data_by_higher_version[itemKey] = itemValue
@@ -110,9 +106,7 @@ async def object_probability_app(
         session_factory=request.app.state.psql_session
     )  # classifier_list es un diccionario
     class_options = [{v: v} for k, v in classifier_list.items()]
-    prob_list = get_probability(
-        oid, classifier_list, session_factory=request.app.state.psql_session
-    )
+    prob_list = get_probability(oid, classifier_list, session_factory=request.app.state.psql_session)
 
     group_prob = probability_parser(prob_list)
 

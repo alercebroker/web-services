@@ -183,16 +183,12 @@ def default_echarts_options(config_state: ConfigState):
     }
 
 
-def lightcurve_plot(
-    oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]
-) -> Result:
+def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
     result = Result(
         {},
         Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
         config_state=ConfigState(oid=oid, survey_id=survey_id),
-        periodogram=Periodogram(
-            periods=[], scores=[], best_periods_index=[], best_periods=[]
-        ),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
     return pipe(
         get_lightcurve(result, oid, survey_id, session_factory),
@@ -220,9 +216,7 @@ def update_lightcurve_plot(
                 forced_photometry=forced_photometry,
             ),
             config_state=validate_config_state(config_state),
-            periodogram=Periodogram(
-                periods=[], scores=[], best_periods_index=[], best_periods=[]
-            ),
+            periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
         ),
         compute_periodogram,
         set_default_echart_options,
@@ -262,9 +256,7 @@ def get_lightcurve(
             session_factory,
         ),
         config_state=result.config_state.model_copy(deep=True),
-        periodogram=Periodogram(
-            periods=[], scores=[], best_periods_index=[], best_periods=[]
-        ),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
 
 
@@ -369,20 +361,14 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
     return result_copy
 
 
-def create_chart_detections(
-    detections: List[BaseDetection], config_state: ConfigState
-) -> List[ChartPoint]:
+def create_chart_detections(detections: List[BaseDetection], config_state: ConfigState) -> List[ChartPoint]:
     result: list[ChartPoint] = []
     for det in detections:
         if (
-            det.survey_id.lower() == ZTF_SURVEY
-            or det.survey_id.lower() == ZTF_DR_SURVEY
+            det.survey_id.lower() == ZTF_SURVEY or det.survey_id.lower() == ZTF_DR_SURVEY
         ) and det.band_name() not in config_state.bands.ztf:
             continue
-        if (
-            det.survey_id.lower() == LSST_SURVEY
-            and det.band_name() not in config_state.bands.lsst
-        ):
+        if det.survey_id.lower() == LSST_SURVEY and det.band_name() not in config_state.bands.lsst:
             continue
 
         result.append(
@@ -398,42 +384,28 @@ def create_chart_detections(
                 (
                     det.magnitude2flux_err(config_state.total, config_state.absolute)
                     if config_state.flux
-                    else det.flux2magnitude_err(
-                        config_state.total, config_state.absolute
-                    )
+                    else det.flux2magnitude_err(config_state.total, config_state.absolute)
                 ),
             )
         )
 
     # Add second phase, repeating the same points when folding
     if config_state.fold:
-        result.extend(
-            [
-                ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error)
-                for point in result
-            ]
-        )
+        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
 
     return result
 
 
-def create_chart_non_detections(
-    non_detections: List[BaseNonDetection], config_state: ConfigState
-) -> List[ChartPoint]:
+def create_chart_non_detections(non_detections: List[BaseNonDetection], config_state: ConfigState) -> List[ChartPoint]:
     result = []
     if config_state.fold:
         return result
 
     for ndet in non_detections:
-        if (
-            ndet.survey_id.lower() == ZTF_SURVEY
-            and ndet.band_name() not in config_state.bands.ztf
-        ):
+        if ndet.survey_id.lower() == ZTF_SURVEY and ndet.band_name() not in config_state.bands.ztf:
             continue
 
-        result.append(
-            ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag(), 0)
-        )
+        result.append(ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag(), 0))
 
     return result
 
@@ -444,15 +416,9 @@ def create_chart_forced_photometry(
     result = []
 
     for fphot in forced_photometry:
-        if (
-            fphot.survey_id.lower() == LSST_SURVEY
-            and fphot.band_name() not in config_state.bands.lsst
-        ):
+        if fphot.survey_id.lower() == LSST_SURVEY and fphot.band_name() not in config_state.bands.lsst:
             continue
-        if (
-            fphot.survey_id.lower() == ZTF_SURVEY
-            and fphot.band_name() not in config_state.bands.ztf
-        ):
+        if fphot.survey_id.lower() == ZTF_SURVEY and fphot.band_name() not in config_state.bands.ztf:
             continue
 
         result.append(
@@ -473,12 +439,7 @@ def create_chart_forced_photometry(
             )
         )
     if config_state.fold:
-        result.extend(
-            [
-                ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error)
-                for point in result
-            ]
-        )
+        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
 
     return result
 
@@ -486,18 +447,11 @@ def create_chart_forced_photometry(
 def set_chart_options_external_sources(result: Result) -> Result:
     result_copy = result.copy()
 
-    if (
-        len(result_copy.lightcurve.detections) == 0
-        or not result.config_state.external_sources.enabled
-    ):
+    if len(result_copy.lightcurve.detections) == 0 or not result.config_state.external_sources.enabled:
         return result_copy
 
-    meanra = sum(det.ra for det in result.lightcurve.detections) / len(
-        result.lightcurve.detections
-    )
-    meandec = sum(det.dec for det in result.lightcurve.detections) / len(
-        result.lightcurve.detections
-    )
+    meanra = sum(det.ra for det in result.lightcurve.detections) / len(result.lightcurve.detections)
+    meandec = sum(det.dec for det in result.lightcurve.detections) / len(result.lightcurve.detections)
 
     meanra = 269.0062838  # TODO: TEST COORDINATES
     meandec = -16.4499040  # TODO: TEST COORDINATES
@@ -531,20 +485,14 @@ def get_ztf_dr_objects(
             forced_photometry=forced_photometry,
         ),
         config_state=validate_config_state(config_state),
-        periodogram=Periodogram(
-            periods=[], scores=[], best_periods_index=[], best_periods=[]
-        ),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
 
     if len(result.lightcurve.detections) == 0:
         return result
 
-    meanra = sum(det.ra for det in result.lightcurve.detections) / len(
-        result.lightcurve.detections
-    )
-    meandec = sum(det.dec for det in result.lightcurve.detections) / len(
-        result.lightcurve.detections
-    )
+    meanra = sum(det.ra for det in result.lightcurve.detections) / len(result.lightcurve.detections)
+    meandec = sum(det.dec for det in result.lightcurve.detections) / len(result.lightcurve.detections)
 
     meanra = 269.0062838  # TODO: TEST COORDINATES
     meandec = -16.4499040  # TODO: TEST COORDINATES
@@ -561,9 +509,7 @@ def get_ztf_dr_objects(
     return result
 
 
-def _group_chart_points_by_survey_band(
-    chart_points: List[ChartPoint], config_state: ConfigState, error_bar=False
-):
+def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_state: ConfigState, error_bar=False):
     """Group chart points by survey and band in a functional style."""
 
     def _add_point_to_group(group: dict, point: ChartPoint):
@@ -575,14 +521,10 @@ def _group_chart_points_by_survey_band(
             group[point.survey][point.band].append(point_value)
         return group
 
-    return reduce(
-        _add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list))
-    )
+    return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
 
 
-def _valid_point(
-    point: List[float], max_brightness: float, min_brightness: float
-) -> bool:
+def _valid_point(point: List[float], max_brightness: float, min_brightness: float) -> bool:
     valid = True
 
     if point[1] >= max_brightness:
@@ -641,26 +583,18 @@ def zip_lightcurve(detections, non_detections, forced_photometry):
         if detections:
             detections_csv = _data_to_csv(
                 detections,
-                set(
-                    list(ztfDetection.model_fields.keys())
-                    + list(LsstDetection.model_fields.keys())
-                ),
+                set(list(ztfDetection.model_fields.keys()) + list(LsstDetection.model_fields.keys())),
             )
             zip_file.writestr("detections.csv", detections_csv)
 
         if non_detections:
-            non_detections_csv = _data_to_csv(
-                non_detections, set(list(ZtfNonDetections.model_fields.keys()))
-            )
+            non_detections_csv = _data_to_csv(non_detections, set(list(ZtfNonDetections.model_fields.keys())))
             zip_file.writestr("non_detections.csv", non_detections_csv)
 
         if forced_photometry:
             forced_photometry_csv = _data_to_csv(
                 forced_photometry,
-                set(
-                    list(ZtfForcedPhotometry.model_fields.keys())
-                    + list(LsstForcedPhotometry.model_fields.keys())
-                ),
+                set(list(ZtfForcedPhotometry.model_fields.keys()) + list(LsstForcedPhotometry.model_fields.keys())),
             )
             zip_file.writestr("forced_photometry.csv", forced_photometry_csv)
 
@@ -712,9 +646,7 @@ def offset_bands(result: Result) -> Result:
     sorted_items = []
     for survey in series:
         for band in series[survey]:
-            sorted_items.append(
-                (series[survey][band]["series"], series[survey][band]["metric"])
-            )
+            sorted_items.append((series[survey][band]["series"], series[survey][band]["metric"]))
 
     # Sort by metric in ascending order
     sorted_items.sort(key=lambda x: x[1])
@@ -763,9 +695,7 @@ def calculate_median(numbers) -> float:
         return (sorted_numbers[mid - 1] + sorted_numbers[mid]) / 2
 
 
-def _extract_series(
-    series_defs: List[Dict[str, Any]], metric: str
-) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Split into normal series and error bars."""
     series = defaultdict(lambda: {})
     error_bars = {}
@@ -782,18 +712,12 @@ def _extract_series(
                 series[s["survey"]][s["band"]]["series"].append(s)
                 series[s["survey"]][s["band"]]["metric"] = _metric(
                     metric,
-                    [
-                        d[1]
-                        for x in series[s["survey"]][s["band"]]["series"]
-                        for d in x["data"]
-                    ],
+                    [d[1] for x in series[s["survey"]][s["band"]]["series"] for d in x["data"]],
                 )
     return series, error_bars
 
 
-def _apply_offset(
-    i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | None
-) -> List[Dict[str, Any]]:
+def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | None) -> List[Dict[str, Any]]:
     """Return a list containing the offset series and optional error bar."""
 
     def offset_points(points: List[List[float]]) -> List[List[float]]:

@@ -6,9 +6,7 @@ from .lightcurve_item import BaseDetection
 from astropy.coordinates import Distance
 import astropy.units as u
 
-REDSHIFT = (
-    0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
-)
+REDSHIFT = 0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
 
 
 class ztfDetection(BaseDetection):

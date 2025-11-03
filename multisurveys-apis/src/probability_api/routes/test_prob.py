@@ -1,5 +1,4 @@
 def probability_parser(prob_list_raw: list) -> dict:
-
     prob_list = [d.__dict__ for d in prob_list_raw]
 
     unique_classifiers = []
