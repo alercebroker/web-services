@@ -1,18 +1,18 @@
-<div class="row">
-  <div class="col-sm-12">
-    <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">Fold</span>
+<div class="tw-row">
+  <div class="tw-col-sm-12">
+    <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Fold</span>
     {{ toggle.toggle("fold", "Off", "On", config_state.fold, "Toggle fold")}}
   </div>
-  <div class="col-sm-12">
-    <input id="period-slider" type="range" min="0.05" max="500" value="{{config_state.period}}" class="my-2 w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
-    <div class="flex items-center gap-2 mt-2">
-      <input name="period" value="{{config_state.period}}" class="w-24 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-      <span name="x2" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer select-none">X2</span>
-      <span name="div2" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors cursor-pointer select-none">/2</span>
+  <div class="tw-col-sm-12">
+    <input id="period-slider" type="range" min="0.05" max="500" value="{{config_state.period}}" class="tw-my-2 tw-w-full tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">
+    <div class="tw-flex tw-items-center tw-gap-2 tw-mt-2">
+      <input name="period" value="{{config_state.period}}" class="tw-w-24 tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-2 tw-py-1 tw-bg-white dark:tw-bg-gray-800 tw-text-gray-900 dark:tw-text-gray-100">
+      <span name="x2" class="tw-px-3 tw-py-1 tw-bg-blue-500 tw-text-white tw-rounded hover:tw-bg-blue-600 tw-transition-colors tw-cursor-pointer tw-select-none">X2</span>
+      <span name="div2" class="tw-px-3 tw-py-1 tw-bg-blue-500 tw-text-white tw-rounded hover:tw-bg-blue-600 tw-transition-colors tw-cursor-pointer tw-select-none">/2</span>
     </div>
   </div>
-  <div class="col-sm-12 mt-2">
-    <span class="font-semibold mr-3 text-gray-900 dark:text-gray-100">Periodogram</span>
+  <div class="tw-col-sm-12 tw-mt-2">
+    <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Periodogram</span>
     {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled, "Toggle Periodogram")}}
   </div>
 </div>
