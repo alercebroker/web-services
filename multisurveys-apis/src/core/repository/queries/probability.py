@@ -11,7 +11,9 @@ def get_probability_by_oid(
     session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
     with session_factory() as session:
-        stmt = select(Probability, Taxonomy).join(Taxonomy, Taxonomy.class_id == Probability.class_id)
+        stmt = select(Probability, Taxonomy).join(
+            Taxonomy, Taxonomy.class_id == Probability.class_id
+        )
 
         if classifier_id:
             stmt = stmt.where(

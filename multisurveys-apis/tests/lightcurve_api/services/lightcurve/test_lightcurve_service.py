@@ -13,6 +13,8 @@ def test_get_detections_by_list(populate_database, db_setup: PsqlDatabase, faker
             session.add(lsst_detection)
             session.commit()
 
-    result = lightcurve_service.get_detections_by_list(["1234"], "LSST", db_setup.session)
+    result = lightcurve_service.get_detections_by_list(
+        ["1234"], "LSST", db_setup.session
+    )
 
     assert len(result) >= 100

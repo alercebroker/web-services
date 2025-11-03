@@ -27,9 +27,13 @@ async def probability(
         if len(classifiers_list) != 1:
             raise HTTPException(status_code=404, detail="Classifier not found")
 
-    probability = get_probability(oid, classifiers_list, session_factory=request.app.state.psql_session)
+    probability = get_probability(
+        oid, classifiers_list, session_factory=request.app.state.psql_session
+    )
 
     if not probability:
-        raise HTTPException(status_code=404, detail="Probability not found for the given OID")
+        raise HTTPException(
+            status_code=404, detail="Probability not found for the given OID"
+        )
 
     return probability

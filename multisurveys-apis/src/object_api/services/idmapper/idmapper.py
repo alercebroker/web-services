@@ -97,7 +97,9 @@ def decode_masterid(masterid: np.int64, db_cursor=None) -> tuple[str, str | np.i
     # Extract the survey from the master ID
     # survey_id = masterid >> (63 - SURVEY_PREFIX_LEN_BITS)
 
-    masterid_without_survey = np.bitwise_and(masterid, ((1 << (63 - SURVEY_PREFIX_LEN_BITS)) - 1))
+    masterid_without_survey = np.bitwise_and(
+        masterid, ((1 << (63 - SURVEY_PREFIX_LEN_BITS)) - 1)
+    )
     return "ZTF", decode_masterid_for_ztf(masterid_without_survey)
 
     # if survey == "ZTF":

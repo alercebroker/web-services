@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+
 class ZtfObject(BaseModel):
     oid: int
     g_r_max: float | None = None
@@ -62,6 +63,7 @@ class LsstObjectProbability(BaseModel):
     probability: float | None = None
     ranking: int | None = None
 
+
 class Object(BaseModel):
     oid: int
     tid: int
@@ -78,7 +80,8 @@ class Object(BaseModel):
     n_non_det: int = 1
     corrected: bool = False
     stellar: bool | None = None
-    
+
+
 class ExportModel:
     def __init__(self, survey: str, model_variant: str = "basic"):
         self.survey = survey

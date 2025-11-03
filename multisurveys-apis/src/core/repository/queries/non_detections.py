@@ -24,7 +24,12 @@ def get_all_unique_non_detections_sql(
 
 
 def build_statement(model_id, oid):
-    stmt = select(model_id).where(model_id.oid == oid).order_by(model_id.mjd.desc()).limit(10)
+    stmt = (
+        select(model_id)
+        .where(model_id.oid == oid)
+        .order_by(model_id.mjd.desc())
+        .limit(10)
+    )
 
     return stmt
 
@@ -39,7 +44,9 @@ def get_non_detections_by_list(session_factory):
         session: Session
         with session_factory() as session:
             return (
-                session.execute(select(ZtfNonDetection).where(ZtfNonDetection.oid.in_(oids))).all(),
+                session.execute(
+                    select(ZtfNonDetection).where(ZtfNonDetection.oid.in_(oids))
+                ).all(),
                 survey_id,
             )
 

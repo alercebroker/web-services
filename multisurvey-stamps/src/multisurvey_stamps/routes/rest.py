@@ -30,9 +30,7 @@ async def stamp(
 
 
 @router.get("/avro")
-async def stamp(
-    request: Request, oid: str, measurement_id: str, survey_id: str
-):
+async def stamp(request: Request, oid: str, measurement_id: str, survey_id: str):
     handler = handler_selector(survey_id)()
 
     avro_json = handler.get_avro(oid, measurement_id)

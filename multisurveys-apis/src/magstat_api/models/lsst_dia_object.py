@@ -5,7 +5,7 @@ from datetime import datetime
 
 class LsstDiaObjectSchema(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    
+
     oid: int
     validityStartMjdTai: float
     ra: float
@@ -89,6 +89,8 @@ class LsstDiaObjectSchema(BaseModel):
     lastDiaSourceMjdTai: Optional[float] = None
     nDiaSources: int
     created_date: Optional[datetime] = None
+
+
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime

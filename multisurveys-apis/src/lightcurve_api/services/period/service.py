@@ -36,12 +36,18 @@ def compute_periodogram(result: Result) -> Result:
     result_copy = result.copy()
 
     computer = PeriodogramComputer()
-    df = detections2dataframe(filter_survey_detections(result.lightcurve.detections, result.config_state.survey_id))
+    df = detections2dataframe(
+        filter_survey_detections(
+            result.lightcurve.detections, result.config_state.survey_id
+        )
+    )
     computed = computer.compute(df)
     result_copy.periodogram = computed
 
     try:
-        if result.config_state.period == 0.05:  # if period is the default, set the computed period
+        if (
+            result.config_state.period == 0.05
+        ):  # if period is the default, set the computed period
             result_copy.config_state.period = computed.get_best_period()
 
         return result_copy
@@ -55,7 +61,9 @@ def compute_periodogram(result: Result) -> Result:
         return result_copy
 
 
-def filter_survey_detections(detections: List[BaseDetection], survey_id: str) -> List[BaseDetection]:
+def filter_survey_detections(
+    detections: List[BaseDetection], survey_id: str
+) -> List[BaseDetection]:
     """Filter detections to include only those from a specific survey.
 
     Args:
@@ -200,9 +208,17 @@ def add_best_periods_series(options: dict, periodogram: Periodogram) -> dict:
     """
     new_options = copy.deepcopy(options)
     new_options["series"].append(
-        {"name": "best periods", "type": "scatter", "data": [], "symbol": "triangle", "color": "red"}
+        {
+            "name": "best periods",
+            "type": "scatter",
+            "data": [],
+            "symbol": "triangle",
+            "color": "red",
+        }
     )
     for bpi in periodogram.best_periods_index:
-        new_options["series"][-1]["data"].append([periodogram.periods[bpi], periodogram.scores[bpi]])
+        new_options["series"][-1]["data"].append(
+            [periodogram.periods[bpi], periodogram.scores[bpi]]
+        )
 
     return new_options

@@ -29,9 +29,7 @@ class BaseS3Handler:
         self.client = s3_client(bucket_region)
 
     def _get_file_from_s3(self, file_name: str) -> dict:
-        file = self.client.get_object(
-            Bucket=self.bucket_name, Key=f"{file_name}.avro"
-        )
+        file = self.client.get_object(Bucket=self.bucket_name, Key=f"{file_name}.avro")
         file_io = io.BytesIO(file["Body"].read())
         avro_data = next(reader(file_io))
         return avro_data
@@ -55,9 +53,7 @@ class BaseS3Handler:
             file = io.BytesIO(fit_data)
             mime = "application/fits"
         elif file_format == "png":
-            file = io.BytesIO(
-                transform(fit_data, stamp_type, 2, self.compressed)
-            )
+            file = io.BytesIO(transform(fit_data, stamp_type, 2, self.compressed))
             mime = "image/png"
         else:
             raise Exception(

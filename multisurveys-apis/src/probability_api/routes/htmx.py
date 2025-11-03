@@ -6,10 +6,16 @@ from ..services.probability import get_probability, get_classifiers
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, JSONResponse
-from core.repository.dummy_data import classifiers_probabilities_dict, classifiers_options_dicts
+from core.repository.dummy_data import (
+    classifiers_probabilities_dict,
+    classifiers_options_dicts,
+)
 from .test_prob import probability_parser
+
 router = APIRouter()
-templates = Jinja2Templates(directory="src/probability_api/templates", autoescape=True, auto_reload=True)
+templates = Jinja2Templates(
+    directory="src/probability_api/templates", autoescape=True, auto_reload=True
+)
 templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8004")
 
 
@@ -36,7 +42,9 @@ def filter_data_by_higher_version(prob_dict):
         if len(itemValue) > 1:
             lastest_version = max(itemValue.keys())
             if itemKey not in data_by_higher_version:
-                data_by_higher_version[itemKey] = {lastest_version: itemValue[lastest_version]}
+                data_by_higher_version[itemKey] = {
+                    lastest_version: itemValue[lastest_version]
+                }
         else:
             if itemKey not in data_by_higher_version:
                 data_by_higher_version[itemKey] = itemValue
@@ -103,17 +111,21 @@ async def object_probability_app(
     request: Request,
     oid: str,
 ):
-    classifier_list = get_classifiers(session_factory = request.app.state.psql_session) # classifier_list es un diccionario
+    classifier_list = get_classifiers(
+        session_factory=request.app.state.psql_session
+    )  # classifier_list es un diccionario
     class_options = [{v: v} for k, v in classifier_list.items()]
-    prob_list = get_probability(oid, classifier_list, session_factory = request.app.state.psql_session)
+    prob_list = get_probability(
+        oid, classifier_list, session_factory=request.app.state.psql_session
+    )
 
     group_prob = probability_parser(prob_list)
 
     return templates.TemplateResponse(
-      name='prob.html.jinja',
-      context={
-            'request': request,
-            'group_prob_dict': group_prob,
-            'class_dict' : class_options
+        name="prob.html.jinja",
+        context={
+            "request": request,
+            "group_prob_dict": group_prob,
+            "class_dict": class_options,
         },
-  )
+    )

@@ -20,9 +20,7 @@ def get_max(data, window):
     y = data.shape[1] // 2
     center = data[x - window : x + window, y - window : y + window]
     max_val = np.nanmax(center)
-    min_val = np.nanmin(data) + 0.2 * np.nanmedian(
-        np.abs(data - np.nanmedian(data))
-    )
+    min_val = np.nanmin(data) + 0.2 * np.nanmedian(np.abs(data - np.nanmedian(data)))
 
     return max_val, min_val
 

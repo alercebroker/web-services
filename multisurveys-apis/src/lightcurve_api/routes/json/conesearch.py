@@ -55,9 +55,13 @@ def conesearch_coordinates(
 
 
 @router.get("/lightcurve_by_oid")
-def conesearch_oid_lightcurve(oid: str, survey: str, radius: float, neighbors: int, db: db_dependency) -> Lightcurve:
+def conesearch_oid_lightcurve(
+    oid: str, survey: str, radius: float, neighbors: int, db: db_dependency
+) -> Lightcurve:
     try:
-        return service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)
+        return service.conesearch_oid_lightcurve(
+            oid, radius, neighbors, survey, db.session
+        )
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception:

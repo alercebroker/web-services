@@ -27,7 +27,9 @@ def get_detections(
     survey_id: str,
     session_factory: Callable[..., ContextManager[Session]],
 ):
-    result = detection_repository.get_all_unique_detections_sql(oid, survey_id, session_factory=session_factory)
+    result = detection_repository.get_all_unique_detections_sql(
+        oid, survey_id, session_factory=session_factory
+    )
 
     result = parse_sql_detection((result, survey_id))
 
@@ -55,7 +57,9 @@ def convert_oid_list_to_int(
 ) -> Tuple[List[int], str]:
     oid_list, survey_id = args
 
-    return [idmapper.catalog_oid_to_masterid(survey_id, oid).item() for oid in oid_list], survey_id
+    return [
+        idmapper.catalog_oid_to_masterid(survey_id, oid).item() for oid in oid_list
+    ], survey_id
 
 
 def get_non_detections(
@@ -67,7 +71,9 @@ def get_non_detections(
     object in a given survey.
     """
 
-    non_detections_result = non_detections_repository.get_all_unique_non_detections_sql(oid, survey_id, session_factory)
+    non_detections_result = non_detections_repository.get_all_unique_non_detections_sql(
+        oid, survey_id, session_factory
+    )
 
     result_parsed = parse_sql_non_detections((non_detections_result, survey_id))
 
@@ -99,7 +105,9 @@ def get_forced_photometry(
     Retrieves the forced photometry from an object
     """
 
-    forced_photometry = forced_photometry_repository.get_unique_forced_photometry_sql(oid, survey_id, session_factory)
+    forced_photometry = forced_photometry_repository.get_unique_forced_photometry_sql(
+        oid, survey_id, session_factory
+    )
 
     result_parsed = parse_forced_photometry((forced_photometry, survey_id))
 

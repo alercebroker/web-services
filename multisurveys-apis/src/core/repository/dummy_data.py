@@ -13,7 +13,16 @@ object_basic_information_dict = {
     "meanra": 244.0754619,  # si
     "meandec": 37.6368494,  # si
     "measurement_id": 1234,
-    "otherArchives": ["DESI Legacy Survey DR10", "NED", "PanSTARRS", "SDSS DR18", "SIMBAD", "TNS", "Vizier", "VSX"],
+    "otherArchives": [
+        "DESI Legacy Survey DR10",
+        "NED",
+        "PanSTARRS",
+        "SDSS DR18",
+        "SIMBAD",
+        "TNS",
+        "Vizier",
+        "VSX",
+    ],
 }
 
 magstats_dummy = [
@@ -385,13 +394,55 @@ classifiers_probabilities_dict = {
         },
     ],
     "LC_classifier_ATAT_forced_phot": [
-        {"class_name": "SNIa", "classifier_version": "1.0.1", "probability": 0.067890, "ranking": 9, "order": 1},
-        {"class_name": "SNIbc", "classifier_version": "1.0.1", "probability": 0.045678, "ranking": 15, "order": 2},
-        {"class_name": "SNIIb", "classifier_version": "1.0.1", "probability": 0.123456, "ranking": 3, "order": 3},
-        {"class_name": "SNII", "classifier_version": "1.0.1", "probability": 0.098765, "ranking": 5, "order": 4},
-        {"class_name": "SNIIn", "classifier_version": "1.0.1", "probability": 0.034567, "ranking": 19, "order": 5},
-        {"class_name": "SLSN", "classifier_version": "1.0.1", "probability": 0.056789, "ranking": 12, "order": 6},
-        {"class_name": "TDE", "classifier_version": "1.0.1", "probability": 0.078901, "ranking": 7, "order": 7},
+        {
+            "class_name": "SNIa",
+            "classifier_version": "1.0.1",
+            "probability": 0.067890,
+            "ranking": 9,
+            "order": 1,
+        },
+        {
+            "class_name": "SNIbc",
+            "classifier_version": "1.0.1",
+            "probability": 0.045678,
+            "ranking": 15,
+            "order": 2,
+        },
+        {
+            "class_name": "SNIIb",
+            "classifier_version": "1.0.1",
+            "probability": 0.123456,
+            "ranking": 3,
+            "order": 3,
+        },
+        {
+            "class_name": "SNII",
+            "classifier_version": "1.0.1",
+            "probability": 0.098765,
+            "ranking": 5,
+            "order": 4,
+        },
+        {
+            "class_name": "SNIIn",
+            "classifier_version": "1.0.1",
+            "probability": 0.034567,
+            "ranking": 19,
+            "order": 5,
+        },
+        {
+            "class_name": "SLSN",
+            "classifier_version": "1.0.1",
+            "probability": 0.056789,
+            "ranking": 12,
+            "order": 6,
+        },
+        {
+            "class_name": "TDE",
+            "classifier_version": "1.0.1",
+            "probability": 0.078901,
+            "ranking": 7,
+            "order": 7,
+        },
         {
             "class_name": "Microlensing",
             "classifier_version": "1.0.1",
@@ -399,14 +450,62 @@ classifiers_probabilities_dict = {
             "ranking": 4,
             "order": 8,
         },
-        {"class_name": "QSO", "classifier_version": "1.0.1", "probability": 0.145678, "ranking": 2, "order": 9},
-        {"class_name": "AGN", "classifier_version": "1.0.1", "probability": 0.043210, "ranking": 16, "order": 10},
-        {"class_name": "Blazar", "classifier_version": "1.0.1", "probability": 0.062358, "ranking": 11, "order": 11},
-        {"class_name": "YSO", "classifier_version": "1.0.1", "probability": 0.051234, "ranking": 13, "order": 12},
-        {"class_name": "CV/Nova", "classifier_version": "1.0.1", "probability": 0.039876, "ranking": 17, "order": 13},
-        {"class_name": "LPV", "classifier_version": "1.0.1", "probability": 0.067543, "ranking": 10, "order": 14},
-        {"class_name": "EA", "classifier_version": "1.0.1", "probability": 0.023456, "ranking": 22, "order": 15},
-        {"class_name": "EB/EW", "classifier_version": "1.0.1", "probability": 0.034521, "ranking": 20, "order": 16},
+        {
+            "class_name": "QSO",
+            "classifier_version": "1.0.1",
+            "probability": 0.145678,
+            "ranking": 2,
+            "order": 9,
+        },
+        {
+            "class_name": "AGN",
+            "classifier_version": "1.0.1",
+            "probability": 0.043210,
+            "ranking": 16,
+            "order": 10,
+        },
+        {
+            "class_name": "Blazar",
+            "classifier_version": "1.0.1",
+            "probability": 0.062358,
+            "ranking": 11,
+            "order": 11,
+        },
+        {
+            "class_name": "YSO",
+            "classifier_version": "1.0.1",
+            "probability": 0.051234,
+            "ranking": 13,
+            "order": 12,
+        },
+        {
+            "class_name": "CV/Nova",
+            "classifier_version": "1.0.1",
+            "probability": 0.039876,
+            "ranking": 17,
+            "order": 13,
+        },
+        {
+            "class_name": "LPV",
+            "classifier_version": "1.0.1",
+            "probability": 0.067543,
+            "ranking": 10,
+            "order": 14,
+        },
+        {
+            "class_name": "EA",
+            "classifier_version": "1.0.1",
+            "probability": 0.023456,
+            "ranking": 22,
+            "order": 15,
+        },
+        {
+            "class_name": "EB/EW",
+            "classifier_version": "1.0.1",
+            "probability": 0.034521,
+            "ranking": 20,
+            "order": 16,
+        },
         {
             "class_name": "Periodic-Other",
             "classifier_version": "1.0.1",
@@ -414,11 +513,41 @@ classifiers_probabilities_dict = {
             "ranking": 14,
             "order": 17,
         },
-        {"class_name": "RSCVn", "classifier_version": "1.0.1", "probability": 0.029876, "ranking": 21, "order": 18},
-        {"class_name": "CEP", "classifier_version": "1.0.1", "probability": 0.156789, "ranking": 1, "order": 19},
-        {"class_name": "RRLab", "classifier_version": "1.0.1", "probability": 0.087654, "ranking": 6, "order": 20},
-        {"class_name": "RRLc", "classifier_version": "1.0.1", "probability": 0.076543, "ranking": 8, "order": 21},
-        {"class_name": "DSCT", "classifier_version": "1.0.1", "probability": 0.037654, "ranking": 18, "order": 22},
+        {
+            "class_name": "RSCVn",
+            "classifier_version": "1.0.1",
+            "probability": 0.029876,
+            "ranking": 21,
+            "order": 18,
+        },
+        {
+            "class_name": "CEP",
+            "classifier_version": "1.0.1",
+            "probability": 0.156789,
+            "ranking": 1,
+            "order": 19,
+        },
+        {
+            "class_name": "RRLab",
+            "classifier_version": "1.0.1",
+            "probability": 0.087654,
+            "ranking": 6,
+            "order": 20,
+        },
+        {
+            "class_name": "RRLc",
+            "classifier_version": "1.0.1",
+            "probability": 0.076543,
+            "ranking": 8,
+            "order": 21,
+        },
+        {
+            "class_name": "DSCT",
+            "classifier_version": "1.0.1",
+            "probability": 0.037654,
+            "ranking": 18,
+            "order": 22,
+        },
     ],
 }
 
@@ -442,13 +571,15 @@ def generate_array_dicts_data_table(n=20, seed=None):
         meandec = round(rnd.uniform(-90, 90), 5)
         probability = round(rnd.uniform(0.5, 0.99), 2)
 
-        rows.append({
-            'oid': oid,
-            'n_det': n_det,
-            'firstmjd': round(firstmjd, 3),
-            'lastmjd': round(lastmjd, 3),
-            'meanra': meanra,
-            'meandec': meandec,
-            'Probability': probability
-        })
+        rows.append(
+            {
+                "oid": oid,
+                "n_det": n_det,
+                "firstmjd": round(firstmjd, 3),
+                "lastmjd": round(lastmjd, 3),
+                "meanra": meanra,
+                "meandec": meandec,
+                "Probability": probability,
+            }
+        )
     return rows

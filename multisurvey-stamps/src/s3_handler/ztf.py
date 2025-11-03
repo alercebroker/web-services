@@ -39,8 +39,6 @@ class ZTFS3Handler(BaseS3Handler):
         del avro_data["cutoutTemplate"]
         del avro_data["cutoutScience"]
         del avro_data["cutoutDifference"]
-        avro_data["candidate"]["candid"] = str(
-            avro_data["candidate"]["candid"]
-        )
+        avro_data["candidate"]["candid"] = str(avro_data["candidate"]["candid"])
 
         return avro_data
