@@ -1,6 +1,4 @@
-import asyncio
 import os
-import sys
 import yaml
 
 import uvicorn
@@ -37,7 +35,6 @@ def run():
     buckets_config = config_dict["buckets_config"]
 
     for survey, values in buckets_config.items():
-
         os.environ[f"{survey}_BUCKET_REGION"] = values["bucket_region"]
         os.environ[f"{survey}_BUCKET_NAME"] = values["bucket_name"]
 

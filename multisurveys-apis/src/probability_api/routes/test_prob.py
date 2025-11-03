@@ -6,7 +6,7 @@ def probability_parser(prob_list_raw: list) -> dict:
     prob_dict = {}
 
     for d in prob_list:
-        if not d["classifier_name"] in unique_classifiers:
+        if d["classifier_name"] not in unique_classifiers:
             class_name = d["classifier_name"]
             unique_classifiers.append(class_name)
             prob_dict[class_name] = []

@@ -1,15 +1,10 @@
 import os
-import pprint
-from fastapi import FastAPI, Request, Query
+from fastapi import Request
 
 from ..services.probability import get_probability, get_classifiers
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse, JSONResponse
-from core.repository.dummy_data import (
-    classifiers_probabilities_dict,
-    classifiers_options_dicts,
-)
+from fastapi.responses import HTMLResponse
 from .test_prob import probability_parser
 
 router = APIRouter()
