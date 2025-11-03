@@ -1,21 +1,28 @@
 def update_filters(search_params, classes_list):
-    if search_params.filter_args.classifier == "":
+    requested_classifier_name = search_params.filter_args.classifier
+    requested_class_name = search_params.filter_args.class_name
+
+    # If no classifier name is provided, return the original search_params
+    if requested_classifier_name is None:
         return search_params
+
+    # Find the corresponding IDs for the requested classifier and class names
+    classifier_id = None
+    class_name_id = None
     for item in classes_list:
-        if search_params.filter_args.classifier == item["classifier_name"]:
-            classifier = item["classifier_id"]
+        if requested_classifier_name == item["classifier_name"]:
+            classifier_id = item["classifier_id"]
 
-        if (
-            search_params.filter_args.class_name == item["class_name"]
-            and search_params.filter_args.classifier == item["classifier_name"]
-        ):
-            class_name = item["class_id"]
+            if requested_class_name == item["class_name"]:
+                class_name_id = item["class_id"]
+                break
 
-    if search_params.filter_args.classifier is not None:
-        search_params.filter_args.classifier = classifier
+    if classifier_id is None:
+        raise ValueError(f"Classifier name '{requested_classifier_name}' not found.")
 
-    if search_params.filter_args.class_name:
-        search_params.filter_args.class_name = class_name
+    search_params.filter_args.classifier = classifier_id
+    if search_params.filter_args.class_name is not None:
+        search_params.filter_args.class_name = class_name_id
 
     return search_params
 

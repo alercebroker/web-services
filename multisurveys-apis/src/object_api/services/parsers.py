@@ -28,7 +28,9 @@ class ModelDataParser:
 def parse_params(search_params):
     consearch_parse = convert_conesearch_args(search_params.conesearch_args.__dict__)
     consearch_statement = create_conesearch_statement(consearch_parse)
-    filters_sqlalchemy_statement = convert_filters_to_sqlalchemy_statement(search_params.filter_args.__dict__)
+    filters_sqlalchemy_statement = convert_filters_to_sqlalchemy_statement(
+        search_params.filter_args.__dict__
+    )
 
     response = {
         "consearch_args": consearch_parse,
@@ -40,13 +42,27 @@ def parse_params(search_params):
 
 
 def parse_unique_object_query(sql_response, survey):
-    parsed_dict = {}
-    for model in sql_response:
-        model_dict = model.__dict__.copy()
-        model_parsed = ModelDataParser(survey, model_dict).parse_data()
-        parsed_dict.update(model_parsed)
+    # Merge the dicts from the joined SQLAlchemy models (common Object + survey-specific)
+    merged_dict = {}
 
-    return parsed_dict
+    for model in sql_response:
+        # model is typically a SQLAlchemy mapped object; copy its __dict__ and drop SA internals
+        if hasattr(model, "__dict__"):
+            model_data = model.__dict__.copy()
+            model_data.pop("_sa_instance_state", None)
+            merged_dict.update(model_data)
+        else:
+            # If model is already a dict-like mapping, merge directly
+            try:
+                merged_dict.update(dict(model))
+            except Exception:
+                # fallback: skip unsupported entries
+                continue
+
+    # Parse the merged dict once with the appropriate ExportModel for the survey
+    model_parsed = ModelDataParser(survey, merged_dict).parse_data()
+
+    return model_parsed
 
 
 def parse_objects_list_output(result, survey, classes_list):
