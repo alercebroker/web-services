@@ -31,11 +31,13 @@
         <div class="tw-flex tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
             
             <!-- Selector de Fechas -->
+            <!--     Inptu hidden curva de luz -->
+            <input id="detections" class="tw-hidden" data-objects="{{ detections }}">
             <div class="tw-whitespace-nowrap">
                 <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
                 <select id="dateSelector" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]">
-                    {% for date in dates %}
-                        <option value="{{loop.index0}}">{{date}}</option>
+                    {% for detection in detections %}
+                        <option value="{{loop.index0}}">{{detection.mjd}}</option>
                     {% endfor %}
                 </select>
             </div>
