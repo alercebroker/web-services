@@ -28,8 +28,7 @@ def config_from_yaml():
 ### Define a single entry point for running the API services
 ### For each api service in the src folder.
 ###
-
-
+import pprint
 def run_object():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["object_api"]

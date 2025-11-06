@@ -136,15 +136,9 @@
         </tbody>
     </table>
 
-    <div class="tw-flex tw-font-roboto  tw-space-x-4 tw-w-[95%] tw-mx-auto tw-my-1 tw-justify-center">
-        <a
-        id="find-button-object"
-        target="_blank"
-        class="tw-inline-block tw-bg-[#0097A7] tw-text-cyan-50 tw-w-[50%] tw-text-center tw-h-5 tw-text-xs tw-font-medium tw-px-[8px] tw-py-[2px] tw-cursor-pointer">
-            FINDING CHART
-        </a>
+    <div class="tw-flex tw-flex-col tw-font-roboto tw-gap-2 tw-w-[95%] tw-mx-auto tw-my-1 tw-justify-center">
     
-        <div class="tw-w-[50%] tw-relative">
+        <div class="tw-w-[100%] tw-relative">
             <button id="menu-button-object" class="tw-block tw-mx-0 tw-bg-[#2196f3] tw-text-blue-50 tw-w-full tw-text-center tw-h-5 tw-text-xs tw-font-medium tw-px-[8px] tw-py-[2px]">
             OTHER ARCHIVES
             </button>
@@ -157,12 +151,20 @@
                 {% endfor %}
             </div>
         </div>
-    </div>
 
-    <div class="tw-w-[50%] tw-mx-auto">
-        <button command="show-modal" commandfor="dialog" class="tw-block tw-mx-0 tw-bg-[#2196f3] tw-text-blue-50 tw-w-full tw-text-center tw-h-5 tw-text-xs tw-font-medium tw-px-[8px] tw-py-[2px] tw-pb-5">MAGNITUDE STATISTICS</button>
+        <a
+        id="find-button-object"
+        target="_blank"
+        class="tw-inline-block tw-bg-[#0097A7] tw-text-cyan-50 tw-w-[100%] tw-text-center tw-h-5 tw-text-xs tw-font-medium tw-px-[8px] tw-py-[2px] tw-cursor-pointer">
+            FINDING CHART
+        </a>
 
-        {% include "basic_information/magstat_popup.html.jinja" %}
+        <div class="tw-w-[100%] tw-mx-auto">
+            <button id="magstats-btn-modal" command="show-modal" commandfor="magstats-dialog" class="tw-text-[#2196f3] tw-w-full tw-text-center tw-h-5 tw-text-xs tw-font-medium hover:tw-bg-[#2196f3]/30">MAGNITUDE STATISTICS</button>
+
+            {% include "basic_information/magstat_popup.html.jinja" %}
+
+        </div>
     </div>
 
     <div hx-get="{{API_URL}}/htmx/tns/" hx-vals='{"ra": {{ra}}, "dec": {{dec}} }' hx-trigger="load" hx-indicator="#loader" class="tw-w-full">

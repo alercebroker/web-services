@@ -21,7 +21,7 @@ from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
 
-from core.repository.dummy_data import object_basic_information_dict, tns_data_dict, tns_link_str, generate_array_dicts_data_table
+from core.repository.dummy_data import tns_data_dict, tns_link_str
 from object_api.services.object_services import (
     get_object_by_id,
 )

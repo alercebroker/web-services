@@ -1,17 +1,16 @@
 <el-dialog>
-  <dialog id="dialog" aria-labelledby="dialog-title" class="tw-fixed tw-inset-0 tw-m-0 tw-size-auto tw-max-h-none tw-max-w-none tw-overflow-y-auto tw-bg-transparent tw-p-0 backdrop:tw-bg-transparent">
-    <el-dialog-backdrop class="tw-fixed tw-inset-0 tw-bg-gray-900/50 tw-transition-opacity data-[closed]:tw-opacity-0 data-[enter]:tw-duration-300 data-[leave]:tw-duration-200 data-[enter]:tw-ease-out data-[leave]:tw-ease-in"></el-dialog-backdrop>
+  <dialog id="magstats-dialog" aria-labelledby="dialog-title" class="tw-fixed tw-inset-0 tw-m-0 tw-size-auto tw-max-h-none tw-max-w-none tw-overflow-y-auto tw-bg-transparent tw-p-0 tw-backdrop:tw-bg-transparent">
+    <el-dialog-backdrop class="tw-fixed tw-inset-0 tw-bg-gray-500/75 tw-transition-opacity tw-data-[closed]:tw-opacity-0 tw-data-[enter]:tw-duration-300 tw-data-[leave]:tw-duration-200 tw-data-[enter]:tw-ease-out tw-data-[leave]:tw-ease-in"></el-dialog-backdrop>
 
     <div tabindex="0" class="tw-flex tw-min-h-full tw-items-center tw-justify-center tw-p-4 tw-text-center focus:tw-outline focus:tw-outline-0 sm:tw-items-center sm:tw-p-0">
-      <el-dialog-panel class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-relative tw-transform tw-overflow-hidden tw-rounded-lg tw-text-left tw-shadow-xl tw-outline tw-outline-1 -tw-outline-offset-1 tw-outline-white/10 tw-transition-all data-[closed]:tw-translate-y-4 data-[closed]:tw-opacity-0 data-[enter]:tw-duration-300 data-[leave]:tw-duration-200 data-[enter]:tw-ease-out data-[leave]:tw-ease-in sm:tw-my-8 sm:tw-w-full sm:tw-max-w-lg data-[closed]:sm:tw-translate-y-0 data-[closed]:sm:tw-scale-95">
+      <el-dialog-panel class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-relative tw-transform tw-overflow-hidden tw-rounded-lg tw-bg-white tw-text-left tw-shadow-xl tw-transition-all tw-data-[closed]:tw-translate-y-4 tw-data-[closed]:tw-opacity-0 tw-data-[enter]:tw-duration-300 tw-data-[leave]:tw-duration-200 tw-data-[enter]:tw-ease-out tw-data-[leave]:tw-ease-in sm:tw-my-8 sm:tw-w-full sm:tw-max-w-lg tw-data-[closed]:sm:tw-translate-y-0 tw-data-[closed]:sm:tw-scale-95">
         <div 
-        hx-get="http://localhost:8002/htmx/mag" 
-        hx-vals='{"oid": "{{object}}", "survey_id": "{{survey_id}}"}' 
-        hx-trigger="load once"
-        hx-swap="outerHTML"></div>
-        
+        id="magstats-modal"
+        hx-trigger="update-magstats-modal from:body"
+        hx-swap="innerHTML"></div>
+
         <div class="tw-px-4 tw-py-3 sm:tw-flex sm:tw-flex-row-reverse sm:tw-px-6">
-          <button type="button" command="close" commandfor="dialog" style="background-color: #1976d2;" class="tw-text-blue-50 tw-mt-3 tw-inline-flex tw-w-full tw-justify-center tw-rounded-md tw-px-3 tw-py-2 tw-text-sm tw-font-semibold sm:tw-mt-0 sm:tw-w-auto">Close</button>
+          <button type="button" command="close" commandfor="magstats-dialog" style="background-color: #1976d2;" class="tw-text-blue-50 tw-mt-3 tw-inline-flex tw-w-full tw-justify-center tw-rounded-md tw-px-3 tw-py-2 tw-text-sm tw-font-semibold sm:tw-mt-0 sm:tw-w-auto">Close</button>
         </div>
       </el-dialog-panel>
     </div>
