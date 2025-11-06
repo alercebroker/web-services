@@ -60,7 +60,9 @@ class ALeRCEProvider(BaseProvider):
                 return val
             tries += 1
             if tries > 1000:
-                raise ValueError(f"Could not find a new unique int after {tries} tries. ")
+                raise ValueError(
+                    f"Could not find a new unique int after {tries} tries. "
+                )
 
     def ztf_oid(self):
         tries = 0
@@ -74,7 +76,9 @@ class ALeRCEProvider(BaseProvider):
                 ).item()
             tries += 1
             if tries > 1000:
-                raise ValueError("Could not find a new unique ZTF OID after 1000 tries.")
+                raise ValueError(
+                    "Could not find a new unique ZTF OID after 1000 tries."
+                )
 
 
 def generate_object(faker: Faker):
@@ -160,6 +164,7 @@ def generate_lsst_detection(faker: Faker, det: models.Detection):
         x=faker.pyfloat(min_value=0, max_value=64),
         y=faker.pyfloat(min_value=0, max_value=64),
         timeProcessedMjdTai=faker.pyfloat(min_value=0, max_value=60),
+        has_stamp=faker.pybool(truth_probability=90),
     )
 
 
@@ -288,9 +293,13 @@ def generate_lightcurve(faker: Faker, obj: models.Object):
     for _ in range(cast(int, obj.n_forced)):
         forced_photometry.append(generate_forced_photometry(faker, obj))
         if cast(int, obj.sid) == 0:  # ZTF
-            survey_forced_photometry.append(generate_ztf_forced_photometry(faker, forced_photometry[-1]))
+            survey_forced_photometry.append(
+                generate_ztf_forced_photometry(faker, forced_photometry[-1])
+            )
         else:  # lsst
-            survey_forced_photometry.append(generate_lsst_forced_photometry(faker, forced_photometry[-1]))
+            survey_forced_photometry.append(
+                generate_lsst_forced_photometry(faker, forced_photometry[-1])
+            )
 
     return (
         detections,

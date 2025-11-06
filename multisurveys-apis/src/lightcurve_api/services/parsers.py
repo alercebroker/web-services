@@ -38,9 +38,13 @@ def parse_forced_photometry(args: Tuple[Sequence[Row[Any]], str]):
     sql_response, survey_id = args
 
     if survey_id.lower() == "ztf":
-        forced_photometry_data = ModelsParser(ZtfForcedPhotometry, sql_response, survey_id)
+        forced_photometry_data = ModelsParser(
+            ZtfForcedPhotometry, sql_response, survey_id
+        )
     elif survey_id.lower() == "lsst":
-        forced_photometry_data = ModelsParser(LsstForcedPhotometry, sql_response, survey_id)
+        forced_photometry_data = ModelsParser(
+            LsstForcedPhotometry, sql_response, survey_id
+        )
     else:
         raise ValueError(f"Survey not supported: {survey_id}")
 
@@ -64,7 +68,9 @@ class ModelsParser:
                 model_parsed = self.output_model(**model_dict, survey_id=self.survey_id)
                 data_parsed.append(model_parsed)
             except Exception as e:
-                raise self.ParseError(f"Error parsing {self.output_model.__name__} model: {e}")
+                raise self.ParseError(
+                    f"Error parsing {self.output_model.__name__} model with {model_dict}: {e}"
+                )
 
         return data_parsed
 
@@ -76,7 +82,9 @@ class ModelsParser:
         return model_dict
 
 
-def parse_ztf_dr_detection(detections: list[dict], object_ids: list[str] = []) -> list[ZtfDataReleaseDetection]:
+def parse_ztf_dr_detection(
+    detections: list[dict], object_ids: list[str] = []
+) -> list[ZtfDataReleaseDetection]:
     parsed_detections = []
     for det in detections:
         if str(det["_id"]) not in object_ids and len(object_ids) > 0:

@@ -235,6 +235,7 @@ def _generate_lsst_detection(faker: Faker, oid, idx) -> Tuple[Detection, LsstDet
         psfFluxErr=faker.pyfloat(min_value=0, max_value=2),
         scienceFlux=faker.pyfloat(min_value=50, max_value=300),
         scienceFluxErr=faker.pyfloat(min_value=0, max_value=2),
+        has_stamp=faker.boolean(),
     )
 
 
