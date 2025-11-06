@@ -48,8 +48,6 @@ async def get_stamp_card(
     request: Request,
     oid: str,
     survey_id: str,
-    measurement_id: str | None = None,
-    detections_list: LightcurveModel | None = None,
 ):
     handler = handler_selector(survey_id)()
 
@@ -60,15 +58,19 @@ async def get_stamp_card(
     )
     print("detections:")
     print(detections)
-    measurement_id = detections[0].measurement_id
+    selected_measurement_id = detections[0].measurement_id
+    next_measurement_id = detections[1].measurement_id
 
-    stamps = handler.get_all_stamps(oid, measurement_id, "png")
+    stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
 
     context = build_image_context(stamps)
     context.update({
         "request": request,
         "oid": oid,
         "detections": [d.to_json() for d in detections],
+        "selected_measurement_id": str(selected_measurement_id),
+        "prv_measurement_id": str(selected_measurement_id),
+        "nxt_measurement_id": str(next_measurement_id),
     })
     
     print(f"context: {context}")
