@@ -9,7 +9,7 @@ class detection(BaseModel):
         return {
             "mjd": self.mjd,
             "greg": self.greg,
-            "measurement_id": self.measurement_id,
+            "measurement_id": str(self.measurement_id,)
         }
 
 class LightcurveModel(BaseModel):

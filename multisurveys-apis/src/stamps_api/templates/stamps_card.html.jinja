@@ -1,4 +1,9 @@
 <script src="{{API_URL}}/htmx/htmx.min.js"></script>
+<script>
+    function update_measurement_id(new_measurement_id) {
+        console.log("New value selected measurement_id :" + new_measurement_id)
+    }
+</script>
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 <link rel="stylesheet" href="{{API_URL}}/static/stamp.css"> 
@@ -18,7 +23,9 @@
     </script>
 </head>
 <body class="tw-bg-gray-100 tw-p-4">
-    
+    {{selected_measurement_id}}
+    {{prv_measurement_id}}
+    {{nxt_measurement_id}}
     <!-- Scientific Data Card -->
     <div id='stamp-app' class="tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-w-full tw-text-sm tw-max-w-4xl tw-mx-auto">
         
@@ -31,21 +38,23 @@
         <div class="tw-flex tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
             
             <!-- Selector de Fechas -->
+            <!--     Inptu hidden curva de luz -->
+            <input id="detections" class="tw-hidden" data-objects="{{ detections }}">
             <div class="tw-whitespace-nowrap">
                 <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
                 <select id="dateSelector" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]">
-                    {% for date in dates %}
-                        <option value="{{loop.index0}}">{{date}}</option>
+                    {% for detection in detections %}
+                        <option value="{{loop.index0}}">{{detection.mjd}}</option>
                     {% endfor %}
                 </select>
             </div>
             
             <!-- Flechas de navegación -->
             <div class="tw-flex tw-gap-1 tw-mt-5">
-                <button id="prevDate" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-rounded tw-transition-all tw-duration-200 hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-text-black dark:tw-text-white" title="Fecha anterior">
+                <button id="prevDate" onclick="update_measurement_id('{{ prv_measurement_id }}')"class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-rounded tw-transition-all tw-duration-200 hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-text-black dark:tw-text-white" title="Fecha anterior">
                     ←
                 </button>
-                <button id="nextDate" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-rounded tw-transition-all tw-duration-200 hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-text-black dark:tw-text-white" title="Fecha siguiente">
+                <button id="nextDate" onclick="update_measurement_id('{{ nxt_measurement_id }}')" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-rounded tw-transition-all tw-duration-200 hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-text-black dark:tw-text-white" title="Fecha siguiente">
                     →
                 </button>
             </div>
