@@ -11,6 +11,7 @@ packages = [
     { include = "magstat_api", from = "src" },
     { include = "classifier_api", from = "src" },
     { include = "probability_api", from = "src" },
+    { include = "stamps_api", from = "src" },
     { include = "test_api", from = "src" },
 ]
 
@@ -39,6 +40,11 @@ P4J = [
     { platform = "darwin", url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-macosx_14_0_x86_64.whl" },
 ]
 scipy = "^1.16.2"
+
+[tool.poetry.group.stamps.dependencies]
+boto3 = "^1.39.14"
+matplotlib = "^3.10.3"
+fastavro = "^1.11.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -70,6 +76,7 @@ magstat = "scripts.run_api:run_magstat"
 classifier = "scripts.run_api:run_classifier"
 probability = "scripts.run_api:run_probability"
 crossmatch = "scripts.run_api:run_crossmatch"
+stamp = "scripts.run_api:run_stamp"
 dbp = "db_plugins.cli.manage:cli"
 initdb = "scripts.initdb:initdb"
 create_q3c_idx = "scripts.initdb:create_q3c_idx_cmd"

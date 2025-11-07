@@ -1,13 +1,7 @@
 from fastapi import APIRouter, Request, Response
-from ...s3_handler import handler_selector
+from ..s3_handler import handler_selector
 
 router = APIRouter()
-templates = Jinja2Templates(
-    directory="src/multisurvey_stamps/templates", autoescape=True, auto_reload=True
-)
-
-router = APIRouter()
-
 
 @router.get("/")
 async def ping():
