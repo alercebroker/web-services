@@ -38,7 +38,6 @@ def parse_params(search_params):
 
     return response
 
-
 def parse_unique_object_query(sql_response, survey):
     parsed_dict = {}
     for model in sql_response:
