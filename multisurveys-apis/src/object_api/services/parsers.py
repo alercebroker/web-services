@@ -38,11 +38,12 @@ def parse_params(search_params):
 
     return response
 
-
+import pprint
 def parse_unique_object_query(sql_response, survey):
     parsed_dict = {}
     for model in sql_response:
         model_dict = model.__dict__.copy()
+        pprint.pprint(model_dict)
         model_parsed = ModelDataParser(survey, model_dict).parse_data()
         parsed_dict.update(model_parsed)
 
