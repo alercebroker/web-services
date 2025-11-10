@@ -7,5 +7,5 @@ class Classifiers(BaseModel):
     """
 
     classifier_name: str
-    classifier_version: int
+    classifier_version: str
     classes: list[str]
