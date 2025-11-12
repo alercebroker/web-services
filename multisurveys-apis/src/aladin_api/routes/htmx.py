@@ -1,10 +1,8 @@
 import os
-import pprint
 from typing import List, Optional
 from fastapi import APIRouter, Request, Form, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from core.repository.dummy_data import objects_dummy
 from ..services.aladin_services import get_object_by_id
 from ..services.aladin_parser import loads_objects_list
 
@@ -29,13 +27,6 @@ async def object_probability_app(
     objects_list = loads_objects_list(objects_arr)
     selected_object = get_object_by_id(session_ms, oid, 'lsst')
 
-    # objects_list = objects_dummy
-
-    # selected_object = {
-    #     'oid': 'ZTF20acobvxk',
-    #     "meanra": 37.67353272162162, 
-    #     "meandec": -14.569120659459461,
-    # }
 
     return templates.TemplateResponse(
       name='layout.html.jinja',
