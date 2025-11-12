@@ -28,7 +28,9 @@ class ModelDataParser:
 def parse_params(search_params):
     consearch_parse = convert_conesearch_args(search_params.conesearch_args.__dict__)
     consearch_statement = create_conesearch_statement(consearch_parse)
-    filters_sqlalchemy_statement = convert_filters_to_sqlalchemy_statement(search_params.filter_args.__dict__)
+    filters_sqlalchemy_statement = convert_filters_to_sqlalchemy_statement(
+        search_params.filter_args.__dict__
+    )
 
     response = {
         "consearch_args": consearch_parse,
@@ -39,7 +41,7 @@ def parse_params(search_params):
     return response
 
 
-def parse_unique_object_query(sql_response, survey):
+def parse_unique_object_query(sql_response, survey, return_survey_extra=False):
     # Merge the dicts from the joined SQLAlchemy models (common Object + survey-specific)
     merged_dict = {}
 
@@ -57,8 +59,13 @@ def parse_unique_object_query(sql_response, survey):
                 # fallback: skip unsupported entries
                 continue
 
+    if return_survey_extra:
+        model_variant = "with_extra"
+    else:
+        model_variant = "basic"
+
     # Parse the merged dict once with the appropriate ExportModel for the survey
-    model_parsed = ModelDataParser(survey, merged_dict).parse_data()
+    model_parsed = ModelDataParser(survey, merged_dict, model_variant).parse_data()
 
     return model_parsed
 
