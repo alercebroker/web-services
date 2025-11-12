@@ -1,0 +1,27 @@
+from fastapi import FastAPI
+from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from core.config.connection import psql_entity
+from .routes import htmx, rest
+
+app = FastAPI()
+psql = psql_entity()
+app.state.psql_session = psql.session
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(rest.router)
+app.include_router(htmx.router)
+
+
+static_path = Path(__file__).resolve().parent / "static"
+app.mount("/static", StaticFiles(directory=static_path), name="static")
+app.mount("/htmx", StaticFiles(directory="src/core/htmx"), name="htmx")

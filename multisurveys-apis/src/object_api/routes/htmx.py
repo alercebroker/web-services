@@ -31,7 +31,9 @@ from object_api.services.object_services import (
 
 router = APIRouter()
 
-templates = Jinja2Templates(directory="src/object_api/templates", autoescape=True, auto_reload=True)
+templates = Jinja2Templates(
+    directory="src/object_api/templates", autoescape=True, auto_reload=True
+)
 templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
 
 templates.env.filters["truncate"] = truncate_float
@@ -40,7 +42,9 @@ templates.env.filters["truncate"] = truncate_float
 @router.get("/htmx/object_information", response_class=HTMLResponse)
 async def object_info_app(request: Request, oid: str, survey_id: str):
     try:
-        object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
+        object_data = get_object_by_id(
+            oid, survey_id, session_ms=request.app.state.psql_session
+        )
 
         other_archives = [
             "DESI Legacy Survey DR10",
@@ -61,6 +65,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
         context={
             "request": request,
             "object": str(object_data["oid"]),
+            "survey_id": survey_id,
             "corrected": "Yes" if object_data["corrected"] else "No",
             "stellar": "Yes" if object_data["stellar"] else "No",
             "detections": object_data["n_det"],
@@ -114,7 +119,9 @@ async def objects_form(request: Request):
 
 
 @router.get("/htmx/classes_select", response_class=HTMLResponse)
-async def select_classes_classifier(request: Request, classifier_classes: list[str] = Query(...)):
+async def select_classes_classifier(
+    request: Request, classifier_classes: list[str] = Query(...)
+):
     try:
         classes = classifier_classes
 
@@ -190,7 +197,9 @@ def objects_table(
                 order_args=order,
             )
 
-            object_list = get_objects_list(session_ms=session, search_params=search_params)
+            object_list = get_objects_list(
+                session_ms=session, search_params=search_params
+            )
 
         else:
             object_list = {
@@ -283,7 +292,9 @@ def sidebar(
                 order_args=order,
             )
 
-            object_list = get_objects_list(session_ms=session, search_params=search_params)
+            object_list = get_objects_list(
+                session_ms=session, search_params=search_params
+            )
         else:
             object_list = {
                 "next": False,

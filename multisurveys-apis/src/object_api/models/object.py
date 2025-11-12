@@ -264,7 +264,7 @@ class LsstObjectProbability(BaseModel):
     n_forced: int
     n_non_det: int
     corrected: bool
-    stellar: bool
+    stellar: bool | None = None
     class_name: str | None = None
     classifier_name: str | None = None
     classfier_version: str | None = None
