@@ -1,6 +1,5 @@
 import boto3
 from fastavro import reader
-import os
 import io
 from abc import abstractmethod
 from s3_handler.fits_to_png import transform

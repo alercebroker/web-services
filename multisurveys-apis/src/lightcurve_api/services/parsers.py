@@ -64,7 +64,7 @@ class ModelsParser:
                 model_parsed = self.output_model(**model_dict, survey_id=self.survey_id)
                 data_parsed.append(model_parsed)
             except Exception as e:
-                raise self.ParseError(f"Error parsing {self.output_model.__name__} model: {e}")
+                raise self.ParseError(f"Error parsing {self.output_model.__name__} model with {model_dict}: {e}")
 
         return data_parsed
 

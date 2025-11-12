@@ -8,11 +8,18 @@ from toolz import curry, pipe
 from core.config.dependencies import db_dependency
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import Periodogram
-from lightcurve_api.services.lightcurve_plot_service import service as lightcurve_plot_service
+from lightcurve_api.services.lightcurve_plot_service import (
+    service as lightcurve_plot_service,
+)
 from lightcurve_api.services.lightcurve_plot_service.result import Result
 from lightcurve_api.services.period.service import get_periodogram_chart
 
-from .parsers import ConfigState, parse_detections, parse_forced_photometry, parse_non_detections
+from .parsers import (
+    ConfigState,
+    parse_detections,
+    parse_forced_photometry,
+    parse_non_detections,
+)
 
 router = APIRouter(prefix="/htmx")
 
@@ -94,7 +101,12 @@ def download(oid: str, survey_id: str, db: db_dependency):
             config_state=ConfigState(),
             periodogram=Periodogram(periods=[], scores=[], best_periods=[], best_periods_index=[]),
         ),
-        curry(lightcurve_plot_service.get_lightcurve, oid=oid, survey_id=survey_id, session_factory=db.session),
+        curry(
+            lightcurve_plot_service.get_lightcurve,
+            oid=oid,
+            survey_id=survey_id,
+            session_factory=db.session,
+        ),
     )
     zip_buffer = lightcurve_plot_service.zip_lightcurve(
         service_result.lightcurve.detections,

@@ -3,7 +3,6 @@ import os
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from core.repository.dummy_data import crossmatch_dummy
 from core.repository.queries.objects import (
     query_object_by_id,
 )
@@ -14,17 +13,11 @@ templates = Jinja2Templates(directory="src/crossmatch_api/templates", autoescape
 templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8005")
 
 
-
 @router.get("/htmx/crossmatch", response_class=HTMLResponse)
-async def object_mag_app(
-    request: Request,
-    oid: str,
-    survey_id: str
-):
-
-    object = query_object_by_id(oid=oid, survey_id=survey_id, session_ms = request.app.state.psql_session)
+async def object_mag_app(request: Request, oid: str, survey_id: str):
+    object = query_object_by_id(oid=oid, survey_id=survey_id, session_ms=request.app.state.psql_session)
     object = object[0].__dict__
-    cross = get_alerce_data(object['meanra'], object['meandec'], 20)
+    cross = get_alerce_data(object["meanra"], object["meandec"], 20)
 
     """
         get_alerce_data returns a list with several dictionaries. The dict format is one key and then a value that is another dictionary.

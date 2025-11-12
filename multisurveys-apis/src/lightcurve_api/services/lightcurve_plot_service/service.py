@@ -12,7 +12,10 @@ from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
 from lightcurve_api.models.detections import LsstDetection, ztfDetection
-from lightcurve_api.models.force_photometry import LsstForcedPhotometry, ZtfForcedPhotometry
+from lightcurve_api.models.force_photometry import (
+    LsstForcedPhotometry,
+    ZtfForcedPhotometry,
+)
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.lightcurve_item import (
     BaseDetection,
@@ -39,7 +42,14 @@ LSST_SURVEY = "lsst"
 ZTF_DR_SURVEY = "ztf dr"
 COLORS = {
     ZTF_SURVEY: {"g": "#56E03A", "r": "#D42F4B", "i": "#F4D617"},
-    LSST_SURVEY: {"u": "#56B4E9", "g": "#009E73", "r": "#F0E442", "i": "#CC79A7", "z": "#D55E00", "y": "#0072B2"},
+    LSST_SURVEY: {
+        "u": "#56B4E9",
+        "g": "#009E73",
+        "r": "#F0E442",
+        "i": "#CC79A7",
+        "z": "#D55E00",
+        "y": "#0072B2",
+    },
     ZTF_DR_SURVEY: {"g": "#ADA3A3", "r": "#377EB8", "i": "#FF7F00"},
 }
 SYMBOLS = {
@@ -200,7 +210,11 @@ def update_lightcurve_plot(
     return pipe(
         Result(
             {},
-            Lightcurve(detections=detections, non_detections=non_detections, forced_photometry=forced_photometry),
+            Lightcurve(
+                detections=detections,
+                non_detections=non_detections,
+                forced_photometry=forced_photometry,
+            ),
             config_state=validate_config_state(config_state),
             periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
         ),
@@ -226,7 +240,12 @@ def validate_config_state(config_state: ConfigState) -> ConfigState:
     return config_state
 
 
-def get_lightcurve(result: Result, oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]):
+def get_lightcurve(
+    result: Result,
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., ContextManager[Session]],
+):
     return Result(
         copy.deepcopy(result.echart_options),
         conesearch_oid_lightcurve(
@@ -258,7 +277,11 @@ def set_chart_options_detections(result: Result) -> Result:
     pipe(
         result_copy.lightcurve.detections,
         curry(create_chart_detections, config_state=result.config_state),
-        curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
+        curry(
+            _group_chart_points_by_survey_band,
+            error_bar=False,
+            config_state=result.config_state,
+        ),
         curry(_transform_to_series, series_type=DETECTION),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
@@ -267,7 +290,11 @@ def set_chart_options_detections(result: Result) -> Result:
     pipe(
         result_copy.lightcurve.detections,
         curry(create_chart_detections, config_state=result.config_state),
-        curry(_group_chart_points_by_survey_band, error_bar=True, config_state=result.config_state),
+        curry(
+            _group_chart_points_by_survey_band,
+            error_bar=True,
+            config_state=result.config_state,
+        ),
         curry(_transform_to_series, series_type=DETECTION, error_bar=True),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
@@ -287,7 +314,11 @@ def set_chart_options_non_detections(result: Result) -> Result:
     series = pipe(
         result_copy.lightcurve.non_detections,
         curry(create_chart_non_detections, config_state=result.config_state),
-        curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
+        curry(
+            _group_chart_points_by_survey_band,
+            error_bar=False,
+            config_state=result.config_state,
+        ),
         curry(_transform_to_series, series_type=NON_DETECTION),
     )
 
@@ -305,7 +336,11 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
     pipe(
         result_copy.lightcurve.forced_photometry,
         curry(create_chart_forced_photometry, config_state=result.config_state),
-        curry(_group_chart_points_by_survey_band, error_bar=False, config_state=result.config_state),
+        curry(
+            _group_chart_points_by_survey_band,
+            error_bar=False,
+            config_state=result.config_state,
+        ),
         curry(_transform_to_series, series_type=FORCED_PHOTOMETRY),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
@@ -314,7 +349,11 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
     pipe(
         result_copy.lightcurve.forced_photometry,
         curry(create_chart_forced_photometry, config_state=result.config_state),
-        curry(_group_chart_points_by_survey_band, error_bar=True, config_state=result.config_state),
+        curry(
+            _group_chart_points_by_survey_band,
+            error_bar=True,
+            config_state=result.config_state,
+        ),
         curry(_transform_to_series, series_type=FORCED_PHOTOMETRY, error_bar=True),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
@@ -337,12 +376,16 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
                 det.survey_id,
                 det.band_name(),
                 det.phase(config_state.period) if config_state.fold else det.mjd,
-                det.magnitude2flux(config_state.total, config_state.absolute)
-                if config_state.flux
-                else det.flux2magnitude(config_state.total, config_state.absolute),
-                det.magnitude2flux_err(config_state.total, config_state.absolute)
-                if config_state.flux
-                else det.flux2magnitude_err(config_state.total, config_state.absolute),
+                (
+                    det.magnitude2flux(config_state.total, config_state.absolute)
+                    if config_state.flux
+                    else det.flux2magnitude(config_state.total, config_state.absolute)
+                ),
+                (
+                    det.magnitude2flux_err(config_state.total, config_state.absolute)
+                    if config_state.flux
+                    else det.flux2magnitude_err(config_state.total, config_state.absolute)
+                ),
             )
         )
 
@@ -383,12 +426,16 @@ def create_chart_forced_photometry(
                 fphot.survey_id,
                 fphot.band_name(),
                 fphot.phase(config_state.period) if config_state.fold else fphot.mjd,
-                fphot.magnitude2flux(config_state.total)
-                if config_state.flux
-                else fphot.flux2magnitude(config_state.total),
-                fphot.magnitude2flux_err(config_state.total)
-                if config_state.flux
-                else fphot.flux2magnitude_err(config_state.total),
+                (
+                    fphot.magnitude2flux(config_state.total)
+                    if config_state.flux
+                    else fphot.flux2magnitude(config_state.total)
+                ),
+                (
+                    fphot.magnitude2flux_err(config_state.total)
+                    if config_state.flux
+                    else fphot.flux2magnitude_err(config_state.total)
+                ),
             )
         )
     if config_state.fold:
@@ -432,7 +479,11 @@ def get_ztf_dr_objects(
 ) -> Result:
     result = Result(
         {},
-        Lightcurve(detections=detections, non_detections=non_detections, forced_photometry=forced_photometry),
+        Lightcurve(
+            detections=detections,
+            non_detections=non_detections,
+            forced_photometry=forced_photometry,
+        ),
         config_state=validate_config_state(config_state),
         periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
@@ -490,11 +541,15 @@ def _valid_error_bar(point: List[float]) -> bool:
 
 
 def _transform_to_series(
-    grouped_data: dict[str, dict[str, List[List[float]]]], series_type: str, error_bar=False
+    grouped_data: dict[str, dict[str, List[List[float]]]],
+    series_type: str,
+    error_bar=False,
 ) -> List[dict]:
     """Transform grouped data into series."""
 
-    def _create_series_for_band(survey_band_data: tuple[str, dict[str, List[List[float]]]]):
+    def _create_series_for_band(
+        survey_band_data: tuple[str, dict[str, List[List[float]]]],
+    ):
         survey, bands_data = survey_band_data
 
         def _process_band(band_data: tuple[str, List[List[float]]]):
@@ -527,7 +582,8 @@ def zip_lightcurve(detections, non_detections, forced_photometry):
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
             detections_csv = _data_to_csv(
-                detections, set(list(ztfDetection.model_fields.keys()) + list(LsstDetection.model_fields.keys()))
+                detections,
+                set(list(ztfDetection.model_fields.keys()) + list(LsstDetection.model_fields.keys())),
             )
             zip_file.writestr("detections.csv", detections_csv)
 
@@ -598,7 +654,11 @@ def offset_bands(result: Result) -> Result:
     for i, (sdata, _) in enumerate(sorted_items):
         for sseries in sdata:
             new_series.extend(
-                _apply_offset(i * result.config_state.offset_num, sseries, error_bars.get(sseries["name"]))
+                _apply_offset(
+                    i * result.config_state.offset_num,
+                    sseries,
+                    error_bars.get(sseries["name"]),
+                )
             )
 
     result_copy.echart_options["series"] = new_series
@@ -651,7 +711,8 @@ def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dic
             else:
                 series[s["survey"]][s["band"]]["series"].append(s)
                 series[s["survey"]][s["band"]]["metric"] = _metric(
-                    metric, [d[1] for x in series[s["survey"]][s["band"]]["series"] for d in x["data"]]
+                    metric,
+                    [d[1] for x in series[s["survey"]][s["band"]]["series"] for d in x["data"]],
                 )
     return series, error_bars
 
@@ -667,8 +728,14 @@ def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | No
         for point in points:
             new_points.append(
                 [
-                    {"coord": [point[0]["coord"][0], point[0]["coord"][1] + i], "symbol": "none"},
-                    {"coord": [point[1]["coord"][0], point[1]["coord"][1] + i], "symbol": "none"},
+                    {
+                        "coord": [point[0]["coord"][0], point[0]["coord"][1] + i],
+                        "symbol": "none",
+                    },
+                    {
+                        "coord": [point[1]["coord"][0], point[1]["coord"][1] + i],
+                        "symbol": "none",
+                    },
                 ]
             )
         return new_points

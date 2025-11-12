@@ -20,8 +20,7 @@ def parse_magstats(magstats_data, survey_id):
             model_parsed = MagStat(**model_dict)
         elif survey_id == "lsst":
             model_parsed = LsstDiaObjectSchema(**model_dict)
-            
+
         parsed_magstats.append(model_parsed)
 
     return parsed_magstats
-

@@ -110,7 +110,10 @@ def conesearch_oid_lightcurve(
         pipe(
             idmapper.catalog_oid_to_masterid(survey_id, oid, True),
             lambda oid: conesearch_oid(oid, radius, neighbors, session_factory),
-            get_detections(session_factory, Lightcurve(detections=[], non_detections=[], forced_photometry=[])),
+            get_detections(
+                session_factory,
+                Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+            ),
             get_non_detections(session_factory),
             get_forced_photometry(session_factory),
             lambda result: result[0],  # here we only care about result object, and discard the object ids dictionary

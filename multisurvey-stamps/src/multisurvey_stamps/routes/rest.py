@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import Response
 from ...s3_handler import handler_selector
 
 
@@ -30,9 +30,7 @@ async def stamp(
 
 
 @router.get("/avro")
-async def stamp(
-    request: Request, oid: str, measurement_id: str, survey_id: str
-):
+async def get_avro(request: Request, oid: str, measurement_id: str, survey_id: str):
     handler = handler_selector(survey_id)()
 
     avro_json = handler.get_avro(oid, measurement_id)

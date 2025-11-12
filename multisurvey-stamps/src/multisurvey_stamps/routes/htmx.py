@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Request
-from fastapi import APIRouter, HTTPException, Request, Response
+from fastapi import Response
 from ...s3_handler import handler_selector
 
 

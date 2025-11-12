@@ -16,18 +16,11 @@ def root():
 def healthcheck():
     return "OK"
 
+
 @router.get("/crossmatch")
-async def object_mag_app(
-    request: Request,
-    oid: str,
-    survey_id: str
-):
-    
-    session = request.app.state.psql_session
-
-
-    object = query_object_by_id(oid=oid, survey_id=survey_id, session_ms = request.app.state.psql_session)
+async def object_mag_app(request: Request, oid: str, survey_id: str):
+    object = query_object_by_id(oid=oid, survey_id=survey_id, session_ms=request.app.state.psql_session)
     object = object[0].__dict__
-    cross = get_alerce_data(object['meanra'], object['meandec'], 20)
+    cross = get_alerce_data(object["meanra"], object["meandec"], 20)
 
     return cross

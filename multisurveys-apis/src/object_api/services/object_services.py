@@ -15,11 +15,12 @@ from .parsers import (
 )
 
 
-def get_object_by_id(oid, survey_id, session_ms):
+def get_object_by_id(oid, survey_id: str, session_ms, return_survey_extra: bool = False):
     object_model = query_object_by_id(session_ms, oid, survey_id)
-    response = parse_unique_object_query(object_model, survey_id)
 
+    response = parse_unique_object_query(object_model, survey_id, return_survey_extra)
     return response
+
 
 def get_objects_list(session_ms, search_params):
     classes_list = get_classes_list(session_ms)

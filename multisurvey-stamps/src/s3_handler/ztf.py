@@ -1,6 +1,5 @@
 import os
 from .base_handler import BaseS3Handler
-import json
 
 
 class ZTFS3Handler(BaseS3Handler):

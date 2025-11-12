@@ -5,8 +5,15 @@ from lightcurve_api.models.object import ApiObject
 from pydantic import BaseModel
 
 from lightcurve_api.models.detections import LsstDetection, ztfDetection
-from lightcurve_api.models.force_photometry import LsstForcedPhotometry, ZtfForcedPhotometry
-from lightcurve_api.models.lightcurve_item import BaseDetection, BaseForcedPhotometry, BaseNonDetection
+from lightcurve_api.models.force_photometry import (
+    LsstForcedPhotometry,
+    ZtfForcedPhotometry,
+)
+from lightcurve_api.models.lightcurve_item import (
+    BaseDetection,
+    BaseForcedPhotometry,
+    BaseNonDetection,
+)
 from lightcurve_api.models.non_detections import ZtfNonDetections
 
 

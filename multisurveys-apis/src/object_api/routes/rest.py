@@ -25,7 +25,7 @@ def list_objects(
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
     survey: str | None = None,
-    classifier: str | None = Query(default="lc_classifier"),
+    classifier: str | None = None,
     ranking: int | None = Query(default=1),
     n_det: Annotated[list[int] | None, Query()] = None,
     probability: float | None = Query(default=0),
@@ -83,11 +83,16 @@ def list_objects(
 
 
 @router.get("/object")
-def get_object(request: Request, oid: str, survey_id: str):
+def get_object(request: Request, oid: str, survey_id: str, return_survey_extra: bool = False):
     try:
         session = request.app.state.psql_session
 
-        response = get_object_by_id(session_ms=session, oid=oid, survey_id=survey_id)
+        response = get_object_by_id(
+            session_ms=session,
+            oid=oid,
+            survey_id=survey_id,
+            return_survey_extra=return_survey_extra,
+        )
 
         return response
     except ValueError as e:

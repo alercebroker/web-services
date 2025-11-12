@@ -1,9 +1,9 @@
-[project]
+[tool.poetry]
 name = "multisurvey-stamps"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Alex Alvarez",email = "otajla@hotmail.com"}
+    "Alex Alvarez <otajla@hotmail.com>"
 ]
 readme = "README.md"
 packages = [
