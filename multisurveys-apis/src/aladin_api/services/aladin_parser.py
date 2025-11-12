@@ -10,8 +10,9 @@ def object_parser(sql_response):
 
     return jsonable_encoder(model_parsed)
 
+
 def loads_objects_list(objects):
-    if objects == None:
+    if objects is None:
         return None
 
     res = []

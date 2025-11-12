@@ -83,9 +83,7 @@ def list_objects(
 
 
 @router.get("/object")
-def get_object(
-    request: Request, oid: str, survey_id: str, return_survey_extra: bool = False
-):
+def get_object(request: Request, oid: str, survey_id: str, return_survey_extra: bool = False):
     try:
         session = request.app.state.psql_session
 

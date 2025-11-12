@@ -13,9 +13,7 @@ async def ping():
 
 @router.get("/magstats")
 async def magstats(request: Request, oid: str, survey_id: str):
-    mag_stats_raw = get_magstats(
-        oid, survey_id, session_factory=request.app.state.psql_session
-    )
+    mag_stats_raw = get_magstats(oid, survey_id, session_factory=request.app.state.psql_session)
 
     if survey_id == "ztf":
         magstats = mag_parser(mag_stats_raw)
@@ -26,8 +24,6 @@ async def magstats(request: Request, oid: str, survey_id: str):
         del magstats[0]["created_date"]
 
     if not magstats:
-        raise HTTPException(
-            status_code=404, detail="Magstats not found for the given OID"
-        )
+        raise HTTPException(status_code=404, detail="Magstats not found for the given OID")
 
     return magstats
