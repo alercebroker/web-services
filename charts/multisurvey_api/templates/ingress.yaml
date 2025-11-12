@@ -10,6 +10,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/certificate-arn: {{ .Values.ingress.certificateArn }}
     alb.ingress.kubernetes.io/group.name: {{ .Values.ingress.k8sGroupName }}
+    alb.ingress.kubernetes.io/inbound-cidrs: "146.83.2.38/32,190.211.12.0/32"
 spec:
   ingressClassName: alb
   rules:
