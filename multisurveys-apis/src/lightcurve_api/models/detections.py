@@ -205,8 +205,15 @@ class LsstDetection(BaseDetection):
             Calculated magnitude value
         """
         d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
-        mag = self.scienceFlux if total else self.psfFlux
-        mag = -2.5 * math.log10(mag) + 23.9
+        flux = self.scienceFlux if total else self.psfFlux
+
+        if flux < 0 and total != True:
+            positive_flux = math.fabs(flux)
+            mag = 31.4 - 2.5 * (math.log10(positive_flux) * -1)
+        else:
+            mag = 31.4 - 2.5 * math.log10(flux)
+
+
         return mag - d.distmod.value if absolute else mag
 
     def flux2magnitude_err(self, total: bool, absolute: bool) -> float:
