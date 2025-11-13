@@ -1,5 +1,4 @@
 import os
-
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -17,7 +16,7 @@ templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8005")
 async def object_mag_app(request: Request, oid: str, survey_id: str):
     object = query_object_by_id(oid=oid, survey_id=survey_id, session_ms=request.app.state.psql_session)
     object = object[0].__dict__
-    cross = get_alerce_data(object["meanra"], object["meandec"], 20)
+    cross = get_alerce_data(object["ra"], object["dec"], 20)
 
     """
         get_alerce_data returns a list with several dictionaries. The dict format is one key and then a value that is another dictionary.

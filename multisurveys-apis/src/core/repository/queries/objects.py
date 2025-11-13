@@ -27,6 +27,21 @@ class ObjectsModels:
         return Object
 
 
+def query_common_object(session_ms, oid, survey_id):
+    with session_ms() as session:
+        model = ObjectsModels(survey_id).get_model_by_survey()
+
+        stmt = (
+            select(model)
+            .where(and_(model.oid == oid))
+            .limit(1)
+        )
+
+        object_row = session.execute(stmt).one()
+
+        return object_row
+
+
 def query_object_by_id(session_ms, oid, survey_id):
     """Query a single object joining the common `Object` table and the survey-specific table.
 

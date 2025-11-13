@@ -16,7 +16,8 @@ async def object_probability_app(request: Request, oid: str, objects_arr: Option
     session_ms = request.app.state.psql_session
 
     objects_list = loads_objects_list(objects_arr)
-    selected_object = get_object_by_id(session_ms, oid, "lsst")
+    survey = ""
+    selected_object = get_object_by_id(session_ms, oid, survey)
 
     return templates.TemplateResponse(
         name="layout.html.jinja",
