@@ -11,6 +11,7 @@ packages = [
     { include = "magstat_api", from = "src" },
     { include = "classifier_api", from = "src" },
     { include = "probability_api", from = "src" },
+    { include = "aladin_api", from = "src" },
     { include = "test_api", from = "src" },
 ]
 
@@ -71,6 +72,7 @@ magstat = "scripts.run_api:run_magstat"
 classifier = "scripts.run_api:run_classifier"
 probability = "scripts.run_api:run_probability"
 crossmatch = "scripts.run_api:run_crossmatch"
+aladin = "scripts.run_api:run_aladin"
 dbp = "db_plugins.cli.manage:cli"
 initdb = "scripts.initdb:initdb"
 create_q3c_idx = "scripts.initdb:create_q3c_idx_cmd"
