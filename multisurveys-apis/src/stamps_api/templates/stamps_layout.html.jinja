@@ -1,4 +1,4 @@
-<script src="{{API_URL}}/htmx/htmx.min.js"></script>
+<script src="{{API_URL}}/htmx-static/htmx.min.js"></script>
 <script>
     function update_measurement_id(new_measurement_id) {
         console.log("New value selected measurement_id :" + new_measurement_id);
@@ -14,33 +14,29 @@
         console.log("post data string")
         console.log(post_string)
         var post_input = document.getElementById("post-input")
-        post_input.setAttribute("data-objects", post_string)        
+        post_input.setAttribute("data-objects", post_string)
+
+        let option_vals_div = document.getElementById("opcion-vals")
+        option_vals_div.setAttribute("hx-vals", post_string)
     }
 </script>
-<meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 <link rel="stylesheet" href="{{API_URL}}/static/stamp.css"> 
 <!--script type="module" src="{{API_URL}}/static/stamp.js"></script-->
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scientific Data Card</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            prefix: 'tw-',
-        }
-    </script>
-</head>
-<body class="tw-bg-gray-100 tw-p-4">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Data Card</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        prefix: 'tw-',
+    }
+</script>
+<div class="tw-bg-gray-100 tw-p-4">
     <div id="stamp-app" class="tw-preflight">
     <!-- app div -->
     {% include "stamps_card.html.jinja" %}
     <!-- fin app div -->
     </div>
-
-</body>
-</html>
+</div>

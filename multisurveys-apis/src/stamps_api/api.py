@@ -21,6 +21,7 @@ app.include_router(htmx.router, prefix="/htmx")
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="src/stamps_api/static"), name="static")
+app.mount("/htmx-static", StaticFiles(directory="src/core/htmx"), name="htmx-static")
 
 
 @app.get("/openapi.json")

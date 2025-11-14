@@ -1,144 +1,150 @@
 <!-- Scientific Data Card -->
-<div id='stamp-app' class="tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-w-full tw-text-sm tw-max-w-4xl tw-mx-auto">
+
+
+<!-- Header -->
+<div class="tw-inline tw-mb-[5px]">
+    <h1 class="tw-font-semibold tw-text-2xl tw-pt-[30px] tw-pl-[10px] tw-mb-[20px] dark:tw-text-white tw-text-black">Stamps</h1>
+</div>
+
+<!-- Primera Sección: Control de Fechas -->
+<div class="tw-flex tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
     
-    <!-- Header -->
-    <div class="tw-inline tw-mb-[5px]">
-        <h1 class="tw-font-semibold tw-text-2xl tw-pt-[30px] tw-pl-[10px] tw-mb-[20px] dark:tw-text-white tw-text-black">Stamps</h1>
+    <!-- HTMX post form-->
+    <div id="opcion-vals" hx-post="{{ API_URL }}/htmx/update_stamp_card"
+        hx-vals='js:{"oid": "169298437436605124","survey_id": "lsst","measurement_id": "169298437436605124","detections_list": [{"mjd": "60925.27063149112", "greg": "22/10/2025", "measurement_id": "169302852953964547"}, {"mjd": 60924.367098591145, "greg": "22/10/2025", "measurement_id": "169298437436605124"}]}'
+        hx-trigger="click" hx-swap="innerHTML" hx-target="#opcion-vals">
+        trigger
+    </div>
+    <form 
+        id="stamp-form"
+        hx-post="{{ API_URL }}/htmx/update_stamp_card"
+        hx-target="#stamp-app"
+        hx-swap="innerHTML"
+        hx-trigger="click from:#form-trigger"
+    >
+        <input name="post-input" id="post-input" class="tw-hidden" data-objects="">
+        <button id="form-trigger">submit</button>
+    </form>
+    <!-- Selector de Fechas Form-->
+    <div class="tw-whitespace-nowrap">
+        <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
+        <select id="measurement_id" onchange="update_measurement_id(this.value  )" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]">
+            {% for detection in detections %}
+                <option value="{{detection.measurement_id}}" 
+                    {% if detection.measurement_id == selected_measurement_id %}
+                        selected=true
+                    {% endif %}
+                >{{detection.mjd}}</option>
+            {% endfor %}
+        </select>
     </div>
 
-    <!-- Primera Sección: Control de Fechas -->
-    <div class="tw-flex tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
+    <!-- Flechas de navegación -->
+    <div class="tw-flex tw-gap-1 tw-mt-5">
+        <button id="prevDate" onclick="update_measurement_id('{{ prv_measurement_id }}')" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-rounded tw-transition-all tw-duration-200 hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-text-black dark:tw-text-white" title="Fecha anterior">
+            ←
+        </button>
+        <button id="nextDate" onclick="update_measurement_id('{{ nxt_measurement_id }}')" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-rounded tw-transition-all tw-duration-200 hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-text-black dark:tw-text-white" title="Fecha siguiente">
+            →
+        </button>
+    </div>
+    
+    <!-- Botón AVRO -->
+    <button id="avroBtn" class="tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium tw-transition-colors tw-mt-5 tw-ml-20">
+        AVRO
+    </button>
+    
+    <!-- Tooltip -->
+    <div class="tw-relative tw-group tw-mt-5">
+        <span class="tw-w-6 tw-h-6 tw-bg-gray-400 dark:tw-bg-gray-600 tw-text-white tw-rounded-full tw-text-xs tw-flex tw-items-center tw-justify-center tw-cursor-help">
+            <svg class="tw-w-3 tw-h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+            </svg>
+        </span>
+        <div class="tw-invisible group-hover:tw-visible tw-absolute tw-z-50 tw-bg-gray-800 dark:tw-bg-gray-900 tw-text-white tw-text-center tw-rounded-md tw-px-3 tw-py-2 tw-text-xs tw-whitespace-nowrap tw-opacity-0 group-hover:tw-opacity-100 tw-transition-opacity tw-duration-300 tw-pointer-events-none tw-bottom-full tw-left-1/2 tw-transform tw--translate-x-1/2 tw-mb-2">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.
+            <div class="tw-absolute tw-top-full tw-left-1/2 tw-transform tw--translate-x-1/2 tw-w-0 tw-h-0 tw-border-l-4 tw-border-r-4 tw-border-t-4 tw-border-transparent tw-border-t-gray-800 dark:tw-border-t-gray-900"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Segunda Sección: Imágenes -->
+<div class="tw-w-[95%] tw-mx-auto tw-mb-6">
+    <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-mb-4">
         
-        <!-- Selector de Fechas Form-->
-        <!--     Inptu hidden curva de luz -->
-        <form 
-            id="stamp-form"
-            hx-post="{{ API_URL }}/htmx/update_stamp_card"
-            hx-target="#stamp-app"
-            hx-swap="innerHTML"
-        >
-            <input id="post-input" class="tw-hidden" data-objects="">
-            <input type="submit" value="Submit">
-        </form>
-            <div class="tw-whitespace-nowrap">
-                <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
-                <select id="measurement_id" onchange="update_measurement_id(this.value  )" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]">
-                    {% for detection in detections %}
-                        <option value="{{detection.measurement_id}}" 
-                            {% if detection.measurement_id == selected_measurement_id %}
-                                selected=true
-                            {% endif %}
-                        >{{detection.mjd}}</option>
-                    {% endfor %}
-                </select>
+        <!-- Science Image -->
+        <div class="tw-flex tw-flex-col tw-items-center">
+            <div class="tw-mb-2">
+                <button onclick="downloadImage('science')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                    <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    Science
+                </button>
             </div>
-        
-        <!-- Flechas de navegación -->
-        <div class="tw-flex tw-gap-1 tw-mt-5">
-            <button id="prevDate" onclick="update_measurement_id('{{ prv_measurement_id }}')" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-rounded tw-transition-all tw-duration-200 hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-text-black dark:tw-text-white" title="Fecha anterior">
-                ←
-            </button>
-            <button id="nextDate" onclick="update_measurement_id('{{ nxt_measurement_id }}')" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-cursor-pointer tw-rounded tw-transition-all tw-duration-200 hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-text-black dark:tw-text-white" title="Fecha siguiente">
-                →
-            </button>
+            <img id="scienceImg" src="data:image/{{ science_mime }};base64, {{ science_img }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
         </div>
         
-        <!-- Botón AVRO -->
-        <button id="avroBtn" class="tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium tw-transition-colors tw-mt-5 tw-ml-20">
-            AVRO
-        </button>
+        <!-- Template Image -->
+        <div class="tw-flex tw-flex-col tw-items-center">
+            <div class="tw-mb-2">
+                <button onclick="downloadImage('template')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                    <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    Template
+                </button>
+            </div>
+            <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+        </div>
         
-        <!-- Tooltip -->
-        <div class="tw-relative tw-group tw-mt-5">
-            <span class="tw-w-6 tw-h-6 tw-bg-gray-400 dark:tw-bg-gray-600 tw-text-white tw-rounded-full tw-text-xs tw-flex tw-items-center tw-justify-center tw-cursor-help">
-                <svg class="tw-w-3 tw-h-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
+        <!-- Difference Image -->
+        <div class="tw-flex tw-flex-col tw-items-center">
+            <div class="tw-mb-2">
+                <button onclick="downloadImage('difference')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                    <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                    Difference
+                </button>
+            </div>
+            <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+        </div>
+    </div>
+    
+    <!-- Controles de Imagen -->
+    <div class="tw-flex tw-justify-center tw-gap-3 tw-mt-4">
+        <button id="zoomBtn" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-text-black dark:tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-transition-colors">
+            <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+            </svg>
+            Zoom
+        </button>
+        <button id="centerBtn" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-text-black dark:tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-transition-colors">
+            <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+            </svg>
+            Center
+        </button>
+        <div class="tw-relative tw-group tw-mt-0.5">
+            <button class="tw-bg-gray-400 dark:tw-bg-gray-600 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-sm tw-font-medium">
+                <svg class="tw-w-4 tw-h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
                 </svg>
-            </span>
+            </button>
             <div class="tw-invisible group-hover:tw-visible tw-absolute tw-z-50 tw-bg-gray-800 dark:tw-bg-gray-900 tw-text-white tw-text-center tw-rounded-md tw-px-3 tw-py-2 tw-text-xs tw-whitespace-nowrap tw-opacity-0 group-hover:tw-opacity-100 tw-transition-opacity tw-duration-300 tw-pointer-events-none tw-bottom-full tw-left-1/2 tw-transform tw--translate-x-1/2 tw-mb-2">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.
+                Lorem ipsum dolor sit amet consectetur adipiscing elit
                 <div class="tw-absolute tw-top-full tw-left-1/2 tw-transform tw--translate-x-1/2 tw-w-0 tw-h-0 tw-border-l-4 tw-border-r-4 tw-border-t-4 tw-border-transparent tw-border-t-gray-800 dark:tw-border-t-gray-900"></div>
             </div>
         </div>
     </div>
-    
-    <!-- Segunda Sección: Imágenes -->
-    <div class="tw-w-[95%] tw-mx-auto tw-mb-6">
-        <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-mb-4">
-            
-            <!-- Science Image -->
-            <div class="tw-flex tw-flex-col tw-items-center">
-                <div class="tw-mb-2">
-                    <button onclick="downloadImage('science')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                        <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                        Science
-                    </button>
-                </div>
-                <img id="scienceImg" src="data:image/{{ science_mime }};base64, {{ science_img }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
-            </div>
-            
-            <!-- Template Image -->
-            <div class="tw-flex tw-flex-col tw-items-center">
-                <div class="tw-mb-2">
-                    <button onclick="downloadImage('template')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                        <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                        Template
-                    </button>
-                </div>
-                <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
-            </div>
-            
-            <!-- Difference Image -->
-            <div class="tw-flex tw-flex-col tw-items-center">
-                <div class="tw-mb-2">
-                    <button onclick="downloadImage('difference')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                        <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                        </svg>
-                        Difference
-                    </button>
-                </div>
-                <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
-            </div>
-        </div>
-        
-        <!-- Controles de Imagen -->
-        <div class="tw-flex tw-justify-center tw-gap-3 tw-mt-4">
-            <button id="zoomBtn" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-text-black dark:tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-transition-colors">
-                <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
-                </svg>
-                Zoom
-            </button>
-            <button id="centerBtn" class="tw-bg-white dark:tw-bg-[#1e1e1e] tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-text-black dark:tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-transition-colors">
-                <svg class="tw-w-4 tw-h-4 tw-inline tw-mr-1" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                </svg>
-                Center
-            </button>
-            <div class="tw-relative tw-group tw-mt-0.5">
-                <button class="tw-bg-gray-400 dark:tw-bg-gray-600 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-sm tw-font-medium">
-                    <svg class="tw-w-4 tw-h-4" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
-                    </svg>
-                </button>
-                <div class="tw-invisible group-hover:tw-visible tw-absolute tw-z-50 tw-bg-gray-800 dark:tw-bg-gray-900 tw-text-white tw-text-center tw-rounded-md tw-px-3 tw-py-2 tw-text-xs tw-whitespace-nowrap tw-opacity-0 group-hover:tw-opacity-100 tw-transition-opacity tw-duration-300 tw-pointer-events-none tw-bottom-full tw-left-1/2 tw-transform tw--translate-x-1/2 tw-mb-2">
-                    Lorem ipsum dolor sit amet consectetur adipiscing elit
-                    <div class="tw-absolute tw-top-full tw-left-1/2 tw-transform tw--translate-x-1/2 tw-w-0 tw-h-0 tw-border-l-4 tw-border-r-4 tw-border-t-4 tw-border-transparent tw-border-t-gray-800 dark:tw-border-t-gray-900"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="tw-flex tw-justify-between tw-w-[95%] tw-mx-auto tw-font-roboto tw-pb-4">
-        <p id="dummy-p"></p>
-    </div>
 </div>
+
+<!-- Footer -->
+<div class="tw-flex tw-justify-between tw-w-[95%] tw-mx-auto tw-font-roboto tw-pb-4">
+    <p id="dummy-p"></p>
+</div>
+
 
 <!-- Modal AVRO -->
 <div id="avroModal" class="tw-hidden tw-fixed tw-inset-0 tw-w-full tw-h-full tw-bg-black tw-bg-opacity-50 tw-z-50">

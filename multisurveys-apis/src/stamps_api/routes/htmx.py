@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request
 from fastapi import APIRouter, HTTPException, Request, Response
 from ..s3_handler import handler_selector
 from ..services.lightcurve_service import get_detections
-from ..models.lightcurve import LightcurveModel, detection
+from ..models.lightcurve import LightcurveModel, detection, PostRequestInputModel
 from fastapi.templating import Jinja2Templates
 from astropy.time import Time
 import os
@@ -67,6 +67,7 @@ async def get_stamp_card(
     context.update({
         "request": request,
         "oid": oid,
+        "survey_id": survey_id,
         "detections": [d.to_json() for d in detections],
         "selected_measurement_id": str(selected_measurement_id),
         "prv_measurement_id": str(selected_measurement_id),
@@ -75,28 +76,40 @@ async def get_stamp_card(
     
     print(f"context: {context}")
     return templates.TemplateResponse(
-      name='stamps_card.html.jinja',
+      name='stamps_layout.html.jinja',
       context=context,
     )
 
 
-@router.post("/stamp_card")
+@router.post("/update_stamp_card")
 async def post_stamp_card(
     request: Request,
-    oid: str,
-    measurement_id: str,
-    survey_id: str,
-    detections_list:LightcurveModel | None = None,
+    post_input: PostRequestInputModel
+    # oid: str,
+    # survey_id: str,
+    # measurement_id: int,
+    # #detections_list:LightcurveModel | None = None,
 ):
-    handler = handler_selector(survey_id)()
+    print("In post_stamp_card")
+    print(f"input: {post_input}")
+    handler = handler_selector(post_input.survey_id)()
 
-    stamps = handler.get_all_stamps(oid, measurement_id, "png")
+    stamps = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "png")
+
+    prv_measurement_id, nxt_measurement_id = find_prv_and_nxt_measurement_ids(
+        post_input.detections_list,
+        selected_measurement_id=post_input.measurement_id,
+    )
 
     context = build_image_context(stamps)
     context.update({
         "request": request,
-        "oid": oid,
-        "detections": [d.to_json() for d in detections_list.detections],
+        "oid": post_input.oid,
+        "survey_id": post_input.survey_id,
+        "detections": post_input.detections_list,
+        "selected_measurement_id": str(post_input.measurement_id),
+        "prv_measurement_id": str(prv_measurement_id),
+        "nxt_measurement_id": str(nxt_measurement_id),
     })
 
     return templates.TemplateResponse(
@@ -113,3 +126,15 @@ def build_image_context(stamps: dict) -> dict:
         "difference_mime": stamps['cutoutDifference']['mime'],
         "difference_img": base64.b64encode(stamps['cutoutDifference']['file']).decode("utf-8"),
     }
+
+def find_prv_and_nxt_measurement_ids(detections: list[dict], selected_measurement_id: int) -> tuple[int | None, int | None]:
+    prv_id = selected_measurement_id
+    nxt_id = selected_measurement_id
+    for idx, det in enumerate(detections):
+        if det["measurement_id"] == selected_measurement_id:
+            if idx > 0:
+                prv_id = detections[idx - 1]["measurement_id"]
+            if idx < len(detections) - 1:
+                nxt_id = detections[idx + 1]["measurement_id"]
+            break
+    return prv_id, nxt_id
