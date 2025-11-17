@@ -2,7 +2,6 @@ import json
 from fastapi.encoders import jsonable_encoder
 from ..models.object import Object
 
-
 def object_parser(sql_response):
     for model in sql_response:
         model_dict = model.__dict__
