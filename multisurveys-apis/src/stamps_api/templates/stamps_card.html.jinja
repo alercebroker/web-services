@@ -11,19 +11,20 @@
     
     <!-- HTMX post form-->
     <div id="opcion-vals" hx-post="{{ API_URL }}/htmx/update_stamp_card"
-        hx-vals='js:{"oid": "169298437436605124","survey_id": "lsst","measurement_id": "169298437436605124","detections_list": [{"mjd": "60925.27063149112", "greg": "22/10/2025", "measurement_id": "169302852953964547"}, {"mjd": 60924.367098591145, "greg": "22/10/2025", "measurement_id": "169298437436605124"}]}'
+        hx-ext="json-enc"
+        hx-vals='{"oid": "169298437436605124","survey_id": "lsst","measurement_id": "169298437436605124","detections_list": [{"mjd": "60925.27063149112", "greg": "22/10/2025", "measurement_id": "169302852953964547"}, {"mjd": 60924.367098591145, "greg": "22/10/2025", "measurement_id": "169298437436605124"}]}'
         hx-trigger="click" hx-swap="innerHTML" hx-target="#opcion-vals">
         trigger
     </div>
     <form 
         id="stamp-form"
         hx-post="{{ API_URL }}/htmx/update_stamp_card"
+        hx-ext="json-enc"
         hx-target="#stamp-app"
         hx-swap="innerHTML"
-        hx-trigger="click from:#form-trigger"
+        hx-trigger="hx-post-trigger from:body"
+        hx-vals=""
     >
-        <input name="post-input" id="post-input" class="tw-hidden" data-objects="">
-        <button id="form-trigger">submit</button>
     </form>
     <!-- Selector de Fechas Form-->
     <div class="tw-whitespace-nowrap">
