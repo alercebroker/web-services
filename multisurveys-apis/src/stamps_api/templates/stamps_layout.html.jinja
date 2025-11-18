@@ -2,21 +2,14 @@
 <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js"></script>
 <script>
     function update_measurement_id(new_measurement_id) {
-        console.log("New value selected measurement_id :" + new_measurement_id);
         var post_data = {
             "oid": "{{oid}}",
             "survey_id": "{{ survey_id }}",
             "measurement_id": new_measurement_id,
             "detections_list": {{ detections | tojson | safe  }}
         }
-        console.log("post data ")
-        console.log(post_data)
-        var post_string = JSON.stringify(post_data) 
-        console.log("post data string")
-        console.log(post_string)
+        var post_string = JSON.stringify(post_data)
 
-        let option_vals_div = document.getElementById("opcion-vals")
-        option_vals_div.setAttribute("hx-vals", post_string)
         let stamp_form = document.getElementById("stamp-form")
         stamp_form.setAttribute("hx-vals", post_string)
         document.body.dispatchEvent(new CustomEvent('hx-post-trigger', {}));

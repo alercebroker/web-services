@@ -34,15 +34,6 @@ difference_mime
 """
 
 
-###
-# We need a get method that return all the stamps and get the 
-# detections list from the db
-# and a post method that comes with the detections list
-# both return the same template
-###
-
-
-
 @router.get("/stamp_card")
 async def get_stamp_card(
     request: Request,
@@ -56,8 +47,6 @@ async def get_stamp_card(
         survey_id=survey_id,
         session_factory=request.app.state.psql_session,
     )
-    print("detections:")
-    print(detections)
     selected_measurement_id = detections[0].measurement_id
     next_measurement_id = detections[1].measurement_id
 
@@ -74,7 +63,6 @@ async def get_stamp_card(
         "nxt_measurement_id": str(next_measurement_id),
     })
     
-    print(f"context: {context}")
     return templates.TemplateResponse(
       name='stamps_layout.html.jinja',
       context=context,
@@ -85,13 +73,7 @@ async def get_stamp_card(
 async def post_stamp_card(
     request: Request,
     post_input: PostRequestInputModel
-    # oid: str,
-    # survey_id: str,
-    # measurement_id: int,
-    # #detections_list:LightcurveModel | None = None,
 ):
-    print("In post_stamp_card")
-    print(f"input: {post_input}")
     handler = handler_selector(post_input.survey_id)()
 
     stamps = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "png")

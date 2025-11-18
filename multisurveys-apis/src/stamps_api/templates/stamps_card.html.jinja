@@ -10,12 +10,6 @@
 <div class="tw-flex tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
     
     <!-- HTMX post form-->
-    <div id="opcion-vals" hx-post="{{ API_URL }}/htmx/update_stamp_card"
-        hx-ext="json-enc"
-        hx-vals='{"oid": "169298437436605124","survey_id": "lsst","measurement_id": "169298437436605124","detections_list": [{"mjd": "60925.27063149112", "greg": "22/10/2025", "measurement_id": "169302852953964547"}, {"mjd": 60924.367098591145, "greg": "22/10/2025", "measurement_id": "169298437436605124"}]}'
-        hx-trigger="click" hx-swap="innerHTML" hx-target="#opcion-vals">
-        trigger
-    </div>
     <form 
         id="stamp-form"
         hx-post="{{ API_URL }}/htmx/update_stamp_card"
@@ -29,7 +23,7 @@
     <!-- Selector de Fechas Form-->
     <div class="tw-whitespace-nowrap">
         <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
-        <select id="measurement_id" onchange="update_measurement_id(this.value  )" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]">
+        <select id="measurement_id" onchange="update_measurement_id(this.value)" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]">
             {% for detection in detections %}
                 <option value="{{detection.measurement_id}}" 
                     {% if detection.measurement_id == selected_measurement_id %}
@@ -51,9 +45,11 @@
     </div>
     
     <!-- Botón AVRO -->
+    {% if survey_id == "ztf" %}
     <button id="avroBtn" class="tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium tw-transition-colors tw-mt-5 tw-ml-20">
         AVRO
     </button>
+    {% endif %}
     
     <!-- Tooltip -->
     <div class="tw-relative tw-group tw-mt-5">
