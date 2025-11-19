@@ -15,13 +15,7 @@ def loads_objects_list(objects):
     if objects is None:
         return None
 
-    json_string = (objects
-        .replace("'", '"')
-        .replace("None", "null")
-        .replace("False", "false")
-        .replace("True", "true")
-    )
-    objects_json = json.loads(json_string)
+    objects_json = _parse_json_string(objects)
 
     res = []
     for object in objects_json:
@@ -31,3 +25,13 @@ def loads_objects_list(objects):
         res.append(return_model)
 
     return res
+
+def _parse_json_string(json_string):
+    json_parsed = (json_string
+        .replace("'", '"')
+        .replace("None", "null")
+        .replace("False", "false")
+        .replace("True", "true")
+    )
+    
+    return json.loads(json_parsed)
