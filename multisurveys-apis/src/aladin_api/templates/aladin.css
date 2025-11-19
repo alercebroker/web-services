@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+
+.aladin-indicator{
+    opacity: 0;
+    visibility: hidden;
+}
+
+.htmx-request .aladin-indicator,
+.htmx-request.aladin-indicator{
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 200ms ease-in;
+}

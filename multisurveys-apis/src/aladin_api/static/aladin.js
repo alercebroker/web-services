@@ -51,7 +51,6 @@ export async function init(A) {
   let pan_starrs = 'P/PanSTARRS/DR1/color-z-zg-g'
   let hips_2_fits = 'CDS/P/DESI-Legacy-Surveys/DR10/color'
 
-
   await A.init
   aladin = A.aladin('#aladin-lite-div', 
       {
@@ -80,6 +79,7 @@ export async function init(A) {
   }
 
   on_selected_object_change(selected_object, aladin_instance)
+  document.getElementById("aladin-loader").classList.remove("htmx-request")
   // aladin.addEventListener('wheel', customZoom, {passive: false });
 
 }
