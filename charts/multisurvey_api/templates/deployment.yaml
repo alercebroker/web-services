@@ -29,6 +29,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.envVariables }}
+          env:
+            {{- toYaml .Values.envVariables | nindent 12 }}
+          {{- end}}
           volumeMounts:
             - name: api-config
               mountPath: /app/config.yaml
