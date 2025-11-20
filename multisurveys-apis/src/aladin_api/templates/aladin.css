@@ -9,8 +9,8 @@
     visibility: hidden;
 }
 
-.htmx-request .aladin-indicator,
-.htmx-request.aladin-indicator{
+.aladin-loading .aladin-indicator,
+.aladin-loading.aladin-indicator{
     opacity: 1;
     visibility: visible;
     transition: opacity 200ms ease-in;

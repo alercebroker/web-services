@@ -41,9 +41,10 @@ async def object_probability_app_get(
         session_ms = request.app.state.psql_session
 
         objects_list = loads_objects_list(objects_arr)
+        survey = ""
         selected_object = None
         if oid is not None:
-            selected_object = get_object_by_id(session_ms, oid, "lsst")
+            selected_object = get_object_by_id(session_ms, oid, survey)
     except HTTPException as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
