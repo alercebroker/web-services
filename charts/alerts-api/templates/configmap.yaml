@@ -20,21 +20,39 @@ data:
     server {
       listen 80;
 
-      location /v1/alerts/ {
+      location {{ .Values.ingress.path }}/ {
         proxy_pass http://localhost:5000/;
         proxy_redirect off;
-        proxy_set_header X-Forwarded-Prefix /v1/alerts/;
+        proxy_set_header X-Forwarded-Prefix {{ .Values.ingress.path }}/;
         proxy_set_header Host $http_host;
         proxy_set_header X-Forwarded-Host $http_host;
       }
 
-      location /v1/alerts {
+      location {{ .Values.ingress.path }} {
         proxy_pass http://localhost:5000/;
         proxy_redirect off;
-        proxy_set_header X-Forwarded-Prefix /v1/alerts;
+        proxy_set_header X-Forwarded-Prefix {{ .Values.ingress.path }};
         proxy_set_header Host $http_host;
         proxy_set_header X-Forwarded-Host $http_host;
       }
+      
+      
+      location /ztf/v1/ {
+        proxy_pass http://localhost:5000/;
+        proxy_redirect off;
+        proxy_set_header X-Forwarded-Prefix /ztf/v1/;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+      }
+
+      location /ztf/v1 {
+        proxy_pass http://localhost:5000/;
+        proxy_redirect off;
+        proxy_set_header X-Forwarded-Prefix /ztf/v1;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_host;
+      }
+
 
       location / {
         proxy_pass http://localhost:5000/;
