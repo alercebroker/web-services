@@ -160,6 +160,7 @@ def generate_lsst_detection(faker: Faker, det: models.Detection):
         x=faker.pyfloat(min_value=0, max_value=64),
         y=faker.pyfloat(min_value=0, max_value=64),
         timeProcessedMjdTai=faker.pyfloat(min_value=0, max_value=60),
+        has_stamp=faker.pybool(truth_probability=90),
     )
 
 

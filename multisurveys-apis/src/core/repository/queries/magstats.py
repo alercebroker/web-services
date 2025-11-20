@@ -18,7 +18,6 @@ def get_magstats_by_oid(
     """
 
     with session_factory() as session:
-
         if survey_id == "ztf":
             stmt = select(MagStat).where(MagStat.oid == oid)
         elif survey_id == "lsst":

@@ -200,7 +200,13 @@ def add_best_periods_series(options: dict, periodogram: Periodogram) -> dict:
     """
     new_options = copy.deepcopy(options)
     new_options["series"].append(
-        {"name": "best periods", "type": "scatter", "data": [], "symbol": "triangle", "color": "red"}
+        {
+            "name": "best periods",
+            "type": "scatter",
+            "data": [],
+            "symbol": "triangle",
+            "color": "red",
+        }
     )
     for bpi in periodogram.best_periods_index:
         new_options["series"][-1]["data"].append([periodogram.periods[bpi], periodogram.scores[bpi]])

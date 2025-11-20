@@ -16,10 +16,22 @@ spec:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: /v1/alerts
+          - path: {{ .Values.ingress.path }}
             pathType: Prefix
             backend:
               service:
-                name: alerts-api
+                name: ws-alerts-api
                 port:
                   number: {{ .Values.service.port }}
+                  
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /ztf/v1
+            pathType: Prefix
+            backend:
+              service:
+                name: ws-alerts-api
+                port:
+                  number: {{ .Values.service.port }}
+	

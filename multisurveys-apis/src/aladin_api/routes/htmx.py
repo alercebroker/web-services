@@ -1,50 +1,33 @@
 import os
-import pprint
+import traceback
 from typing import List, Optional
-from fastapi import APIRouter, Request, Form, Query
+from fastapi import APIRouter, HTTPException, Request, Form, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from core.repository.dummy_data import objects_dummy
 from ..services.aladin_services import get_object_by_id
 from ..services.aladin_parser import loads_objects_list
 
 router = APIRouter(prefix="/htmx")
-templates = Jinja2Templates(
-    directory="src/aladin_api/templates", autoescape=True, auto_reload=True
-)
-templates.env.globals["API_URL"] = os.getenv(
-    "API_URL", "http://localhost:8006"
-)
+templates = Jinja2Templates(directory="src/aladin_api/templates", autoescape=True, auto_reload=True)
+templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8006")
 
 
 @router.post("/aladin", response_class=HTMLResponse)
-async def object_probability_app(
-    request: Request,
-    oid: str,
-    objects_arr: Optional[List[str]] = Form(None)
-):
+async def object_probability_app(request: Request, oid: str, objects_arr: Optional[str] = Form(None)):
+    try:
+        session_ms = request.app.state.psql_session
 
-    session_ms = request.app.state.psql_session
-
-    objects_list = loads_objects_list(objects_arr)
-    selected_object = get_object_by_id(session_ms, oid, 'lsst')
-
-    # objects_list = objects_dummy
-
-    # selected_object = {
-    #     'oid': 'ZTF20acobvxk',
-    #     "meanra": 37.67353272162162, 
-    #     "meandec": -14.569120659459461,
-    # }
-
+        objects_list = loads_objects_list(objects_arr)
+        survey = ""
+        selected_object = get_object_by_id(session_ms, oid, survey)
+    except HTTPException as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="An error occurred")
+        
     return templates.TemplateResponse(
-      name='layout.html.jinja',
-      context={
-            'request': request,
-            'objects': objects_list,
-            'selected_object': selected_object
-        },
-  )
+        name="layout.html.jinja",
+        context={"request": request, "objects": objects_list, "selected_object": selected_object},
+    )
 
 
 @router.get("/aladin", response_class=HTMLResponse)
@@ -54,19 +37,18 @@ async def object_probability_app_get(
     objects_arr: Optional[List[str]] = Query(None),
 ):
 
-    session_ms = request.app.state.psql_session
+    try:
+        session_ms = request.app.state.psql_session
 
-    objects_list = loads_objects_list(objects_arr)
-    selected_object = None
-    if oid is not None:
-        selected_object = get_object_by_id(session_ms, oid, 'lsst')
+        objects_list = loads_objects_list(objects_arr)
+        selected_object = None
+        if oid is not None:
+            selected_object = get_object_by_id(session_ms, oid, "lsst")
+    except HTTPException as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="An error occurred")
 
     return templates.TemplateResponse(
-      name='layout.html.jinja',
-      context={
-            'request': request,
-            'objects': objects_list,
-            'selected_object': selected_object
-        },
-  )
-
+        name="layout.html.jinja",
+        context={"request": request, "objects": objects_list, "selected_object": selected_object},
+    )

@@ -1,1 +1,0 @@
-The HTMX version is the 1.9.12

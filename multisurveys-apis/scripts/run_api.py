@@ -28,8 +28,6 @@ def config_from_yaml():
 ### Define a single entry point for running the API services
 ### For each api service in the src folder.
 ###
-
-
 def run_object():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["object_api"]
@@ -78,6 +76,13 @@ def run_stamp():
     os.environ["LSST_BUCKET_REGION"] = service_config.get("lsst_bucket_region", "")
     os.environ["LSST_BUCKET_NAME"] = service_config.get("lsst_bucket_name",)
     print(f"Running service: stamp_api with config: {service_config}")
+    run_service(service_config)
+
+
+def run_aladin():
+    config_dict = config_from_yaml()
+    service_config = config_dict["services"]["aladin_api"]
+    print(f"Running service: aladin_api with config: {service_config}")
     run_service(service_config)
 
 
