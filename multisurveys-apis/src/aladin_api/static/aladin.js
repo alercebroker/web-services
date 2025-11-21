@@ -79,7 +79,7 @@ export async function init(A) {
   }
 
   on_selected_object_change(selected_object, aladin_instance)
-  document.getElementById("aladin-loader").classList.remove("htmx-request")
+  document.getElementById("aladin-loader").classList.add("tw-hidden")
   // aladin.addEventListener('wheel', customZoom, {passive: false });
 
 }
