@@ -74,7 +74,9 @@ def run_stamp():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["stamp_api"]
     os.environ["LSST_BUCKET_REGION"] = service_config.get("lsst_bucket_region", "")
-    os.environ["LSST_BUCKET_NAME"] = service_config.get("lsst_bucket_name",)
+    os.environ["LSST_BUCKET_NAME"] = service_config.get("lsst_bucket_name", "")
+    os.environ["ZTF_BUCKET_REGION"] = service_config.get("ztf_bucket_region", "")
+    os.environ["ZTF_BUCKET_NAME"] = service_config.get("ztf_bucket_name", "")
     print(f"Running service: stamp_api with config: {service_config}")
     run_service(service_config)
 
