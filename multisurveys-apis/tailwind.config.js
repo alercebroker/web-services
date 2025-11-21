@@ -9,6 +9,7 @@ module.exports = {
     "./src/magstat_api/templates/**/*.{html.jinja,html,css}",
     "./src/lightcurve_api/routes/htmx/templates/**/*.{html.jinja,html,css}",
     "./src/crossmatch_api/templates/**/*.{html.jinja,html,css}",
+    "./src/aladin_api/templates/**/*.{html.jinja,html,css}",
   ],
   theme: {
     extend: {
