@@ -8,6 +8,9 @@ class ZtfObject(BaseModel):
     g_r_max_corr: float | None = None
     g_r_mean: float | None = None
     g_r_mean_corr: float | None = None
+    corrected: bool = False
+    stellar: bool | None = None
+    created_date: datetime | None = None
 
 
 class ObjectPlusZtfObject(BaseModel):
@@ -25,13 +28,14 @@ class ObjectPlusZtfObject(BaseModel):
     n_det: int = 1
     n_forced: int = 1
     n_non_det: int = 1
-    corrected: bool = False
-    stellar: bool | None = None
 
     g_r_max: float | None = None
     g_r_max_corr: float | None = None
     g_r_mean: float | None = None
     g_r_mean_corr: float | None = None
+    corrected: bool = False
+    stellar: bool | None = None
+    created_date: datetime | None = None
 
 
 class LsstObject(BaseModel):
@@ -135,8 +139,6 @@ class ObjectPlusLsstObject(BaseModel):
     n_det: int = 1
     n_forced: int = 1
     n_non_det: int = 1
-    corrected: bool = False
-    stellar: bool | None = None
 
     validityStartMjdTai: float
     ra: float
@@ -263,7 +265,6 @@ class LsstObjectProbability(BaseModel):
     n_det: int
     n_forced: int
     n_non_det: int
-    corrected: bool
     stellar: bool | None = None
     class_name: str | None = None
     classifier_name: str | None = None
@@ -286,8 +287,8 @@ class Object(BaseModel):
     n_det: int = 1
     n_forced: int = 1
     n_non_det: int = 1
-    corrected: bool = False
-    stellar: bool | None = None
+    created_date: datetime | None = None
+    updated_date: datetime | None = None
 
 
 class ExportModel:
