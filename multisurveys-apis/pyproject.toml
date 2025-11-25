@@ -11,6 +11,7 @@ packages = [
     { include = "magstat_api", from = "src" },
     { include = "classifier_api", from = "src" },
     { include = "probability_api", from = "src" },
+    { include = "aladin_api", from = "src" },
     { include = "test_api", from = "src" },
 ]
 
@@ -22,7 +23,7 @@ psycopg2-binary = "^2.9.6"
 prometheus-fastapi-instrumentator = "^6.1.0"
 jinja2 = "^3.1.2"
 httpx = "^0.24.1"
-db-plugins = {git = "https://github.com/alercebroker/pipeline.git", subdirectory = "libs/db-plugins-multisurvey", branch = "ms_explorer_staging"}
+db-plugins = {git = "https://github.com/alercebroker/pipeline.git", subdirectory = "libs/db-plugins-multisurvey", branch = "multisurvey"}
 djlint = "^1.35.2"
 fastapi = "^0.115.12"
 pydantic-settings = "^2.10.1"
@@ -39,6 +40,7 @@ P4J = [
     { platform = "darwin", url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-macosx_14_0_x86_64.whl" },
 ]
 scipy = "^1.16.2"
+requests = "^2.32.5"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
@@ -70,6 +72,7 @@ magstat = "scripts.run_api:run_magstat"
 classifier = "scripts.run_api:run_classifier"
 probability = "scripts.run_api:run_probability"
 crossmatch = "scripts.run_api:run_crossmatch"
+aladin = "scripts.run_api:run_aladin"
 dbp = "db_plugins.cli.manage:cli"
 initdb = "scripts.initdb:initdb"
 create_q3c_idx = "scripts.initdb:create_q3c_idx_cmd"

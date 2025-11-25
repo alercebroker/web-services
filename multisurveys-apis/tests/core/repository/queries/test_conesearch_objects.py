@@ -37,7 +37,10 @@ def generate_ra_coordinates(ra_center_deg, dec_center_deg, n, half_range_arcsec)
     ra_offsets_deg = np.linspace(-half_range_deg, half_range_deg, n) / np.cos(dec_rad)
 
     # Create coordinates
-    coords = [SkyCoord(ra=ra_center_deg + offset, dec=dec_center_deg, unit="deg") for offset in ra_offsets_deg]
+    coords = [
+        SkyCoord(ra=ra_center_deg + offset, dec=dec_center_deg, unit="deg")
+        for offset in ra_offsets_deg
+    ]
 
     return coords
 
@@ -69,7 +72,6 @@ def test_conesearch_oid_few_close_objects(db: PsqlDatabase):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         )
         session.add(center)
         session.commit()
@@ -90,7 +92,6 @@ def test_conesearch_oid_few_close_objects(db: PsqlDatabase):
                     n_det=1,
                     n_forced=1,
                     n_non_det=1,
-                    corrected=False,
                 )
             )
         session.commit()
@@ -109,7 +110,6 @@ def test_conesearch_oid_few_close_objects(db: PsqlDatabase):
                     n_det=1,
                     n_forced=1,
                     n_non_det=1,
-                    corrected=False,
                 )
             )
         session.commit()
@@ -157,7 +157,6 @@ def test_conesearch_oid_all_are_close(db: PsqlDatabase):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         )
         session.add(center)
         session.commit()
@@ -178,7 +177,6 @@ def test_conesearch_oid_all_are_close(db: PsqlDatabase):
                     n_det=1,
                     n_forced=1,
                     n_non_det=1,
-                    corrected=False,
                 )
             )
         session.commit()
@@ -221,7 +219,6 @@ def test_conesearch_oid_none_are_close(db: PsqlDatabase):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         )
         session.add(center)
         session.commit()
@@ -261,7 +258,6 @@ def test_conesearch_coordinates_close_objects(db: PsqlDatabase):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         )
         session.add(center)
         session.commit()
@@ -282,7 +278,6 @@ def test_conesearch_coordinates_close_objects(db: PsqlDatabase):
                     n_det=1,
                     n_forced=1,
                     n_non_det=1,
-                    corrected=False,
                 )
             )
         session.commit()
@@ -301,7 +296,6 @@ def test_conesearch_coordinates_close_objects(db: PsqlDatabase):
                     n_det=1,
                     n_forced=1,
                     n_non_det=1,
-                    corrected=False,
                 )
             )
         session.commit()
@@ -350,7 +344,6 @@ def test_conesearch_coordinates_all_are_close(db: PsqlDatabase):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         )
         session.add(center)
         session.commit()
@@ -371,7 +364,6 @@ def test_conesearch_coordinates_all_are_close(db: PsqlDatabase):
                     n_det=1,
                     n_forced=1,
                     n_non_det=1,
-                    corrected=False,
                 )
             )
         session.commit()
@@ -414,7 +406,6 @@ def test_conesearch_coordinates_none_are_close(db: PsqlDatabase):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         )
         session.add(center)
         session.commit()

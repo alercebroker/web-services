@@ -5,6 +5,7 @@ metadata:
   name: {{ include "alerts-api.fullname" . }}
   labels:
     {{- include "alerts-api.labels" . | nindent 4 }}
+  namespace: {{ .Values.namespace }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1

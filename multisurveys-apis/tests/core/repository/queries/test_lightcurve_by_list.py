@@ -30,7 +30,6 @@ def test_get_detections_by_list(db, faker: Faker):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         ),
         Object(
             oid=456,
@@ -44,7 +43,6 @@ def test_get_detections_by_list(db, faker: Faker):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         ),
         Object(
             oid=789,
@@ -58,7 +56,6 @@ def test_get_detections_by_list(db, faker: Faker):
             n_det=1,
             n_forced=1,
             n_non_det=1,
-            corrected=False,
         ),
     ]
     with db.session() as session:
@@ -85,7 +82,6 @@ def test_get_detections_by_list(db, faker: Faker):
                 oid=789,
                 sid=0,
                 measurement_id=11,
-                diaSourceId=12,
                 visit=1,
                 detector=1,
                 x=1,
@@ -99,7 +95,9 @@ def test_get_detections_by_list(db, faker: Faker):
         session.add_all(dets)
         session.commit()
 
-    rows, survey_id = detection_repository.get_detections_by_list(db.session)(([123, 456], "ZTF"))
+    rows, survey_id = detection_repository.get_detections_by_list(db.session)(
+        ([123, 456], "ZTF")
+    )
     result = [row[0] for row in rows]
 
     assert survey_id == "ZTF"
@@ -122,7 +120,6 @@ def test_get_detections_by_list_only_lsst(db):
                 n_det=1,
                 n_forced=1,
                 n_non_det=1,
-                corrected=False,
             )
         )
         for i in range(10):
@@ -131,7 +128,6 @@ def test_get_detections_by_list_only_lsst(db):
                     oid=123,
                     sid=0,
                     measurement_id=i + 1,
-                    diaSourceId=i + 1,
                     visit=i + 1,
                     detector=i + 1,
                     x=1,
@@ -140,7 +136,9 @@ def test_get_detections_by_list_only_lsst(db):
                 )
             )
 
-    rows, survey_id = detection_repository.get_detections_by_list(db.session)(([123, 456], "ZTF"))
+    rows, survey_id = detection_repository.get_detections_by_list(db.session)(
+        ([123, 456], "ZTF")
+    )
     result = [row[0] for row in rows]
 
     assert survey_id == "ZTF"
@@ -162,7 +160,6 @@ def test_get_non_detections_by_list(db, faker: Faker):
                 n_det=1,
                 n_forced=1,
                 n_non_det=1,
-                corrected=False,
             )
         )
 
@@ -179,12 +176,16 @@ def test_get_non_detections_by_list(db, faker: Faker):
 
         session.commit()
 
-    rows, survey_id = non_detection_repository.get_non_detections_by_list(db.session)(([123], "ZTF"))
+    rows, survey_id = non_detection_repository.get_non_detections_by_list(db.session)(
+        ([123], "ZTF")
+    )
     result = [row[0] for row in rows]
     assert survey_id == "ZTF"
     assert len(result) == 10
 
-    rows, survey_id = non_detection_repository.get_non_detections_by_list(db.session)(([456], "ZTF"))
+    rows, survey_id = non_detection_repository.get_non_detections_by_list(db.session)(
+        ([456], "ZTF")
+    )
     result = [row[0] for row in rows]
     assert survey_id == "ZTF"
     assert len(result) == 0
@@ -205,7 +206,6 @@ def test_get_forced_photometry_by_list(db, faker: Faker):
                 n_det=1,
                 n_forced=1,
                 n_non_det=1,
-                corrected=False,
             )
         )
 
@@ -261,12 +261,16 @@ def test_get_forced_photometry_by_list(db, faker: Faker):
 
         session.commit()
 
-    rows, survey_id = forced_photometry_repository.get_forced_photometry_by_list(db.session)(([123], "ZTF"))
+    rows, survey_id = forced_photometry_repository.get_forced_photometry_by_list(
+        db.session
+    )(([123], "ZTF"))
     result = [row[0] for row in rows]
     assert survey_id == "ZTF"
     assert len(result) == 10
 
-    rows, survey_id = forced_photometry_repository.get_forced_photometry_by_list(db.session)(([456], "ZTF"))
+    rows, survey_id = forced_photometry_repository.get_forced_photometry_by_list(
+        db.session
+    )(([456], "ZTF"))
     result = [row[0] for row in rows]
     assert survey_id == "ZTF"
     assert len(result) == 0

@@ -2,6 +2,6 @@ from pydantic import BaseModel
 
 
 class Object(BaseModel):
-    oid: int
+    oid: str
     meanra: float
     meandec: float
