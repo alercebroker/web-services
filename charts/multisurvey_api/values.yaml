@@ -45,6 +45,8 @@ service:
 configYaml:
   services: {}  # important, api port must be 8000.
 
+envVariables: {}
+
 ingress:
   certificateArn: ""
   host: ""
