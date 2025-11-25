@@ -111,14 +111,14 @@ typing = ["pandas-stubs (>=2.0)"]
 
 [[package]]
 name = "astropy-iers-data"
-version = "0.2025.11.10.0.38.31"
+version = "0.2025.11.24.0.39.11"
 description = "IERS Earth Rotation and Leap Second tables for the astropy core package"
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "astropy_iers_data-0.2025.11.10.0.38.31-py3-none-any.whl", hash = "sha256:620155a3f04d7c96e7f4aaa498dc4571e15449f23963574106d29d8959d4c66f"},
-    {file = "astropy_iers_data-0.2025.11.10.0.38.31.tar.gz", hash = "sha256:487dc974b9a5114ac75ff4fd96244e8fa7d07e1504092f7c2b8138c2b9c842e9"},
+    {file = "astropy_iers_data-0.2025.11.24.0.39.11-py3-none-any.whl", hash = "sha256:219a9fa61ba454e7413b5e3165ecfa9affed8433549df2ca1bb11cb3f590cc2f"},
+    {file = "astropy_iers_data-0.2025.11.24.0.39.11.tar.gz", hash = "sha256:de73939bf2aaae6ca1b8a62904ae93c50285d1ed7a6aeb6967b4f0d113f19afc"},
 ]
 
 [package.extras]
@@ -127,18 +127,18 @@ test = ["hypothesis", "pytest", "pytest-remotedata"]
 
 [[package]]
 name = "boto3"
-version = "1.41.1"
+version = "1.41.3"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["stamps"]
 files = [
-    {file = "boto3-1.41.1-py3-none-any.whl", hash = "sha256:05009dadcb0c63a2a4a11780f615362a811aa85e7a6950f2793ecf8055fcd1f2"},
-    {file = "boto3-1.41.1.tar.gz", hash = "sha256:fdee48cff828cfe0fb66295ae4d5f47736ee35f11e1de6be6c6dcd910f0810a4"},
+    {file = "boto3-1.41.3-py3-none-any.whl", hash = "sha256:10a3f5a72e071c362f5aa8443bd949edc31b7494c48a315ccdab14b1c387a1fd"},
+    {file = "boto3-1.41.3.tar.gz", hash = "sha256:8a89f3900a356879022c1600f72cbb3d8b85708f094d2d08a461bd193d0b07ca"},
 ]
 
 [package.dependencies]
-botocore = ">=1.41.1,<1.42.0"
+botocore = ">=1.41.3,<1.42.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.15.0,<0.16.0"
 
@@ -147,14 +147,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.41.1"
+version = "1.41.3"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.9"
 groups = ["stamps"]
 files = [
-    {file = "botocore-1.41.1-py3-none-any.whl", hash = "sha256:0db40b7dbddef56fe8cfa06b5eda73b327786db9d64c09c3a616fc9b5548120d"},
-    {file = "botocore-1.41.1.tar.gz", hash = "sha256:e98095492ef8f18d0d6a02ba87d9135c663d4627322e049228143b3a4ef4c2a3"},
+    {file = "botocore-1.41.3-py3-none-any.whl", hash = "sha256:fe2379b30cc726e9e44bf47c3834fe208b85f7eaa57b934ab05f305ca9d05a8b"},
+    {file = "botocore-1.41.3.tar.gz", hash = "sha256:1c6ad338f445c9bf02e231bfa302239d60520ec6dd88ded3206b34dca100103c"},
 ]
 
 [package.dependencies]
@@ -163,7 +163,7 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""}
 
 [package.extras]
-crt = ["awscrt (==0.28.4)"]
+crt = ["awscrt (==0.29.0)"]
 
 [[package]]
 name = "certifi"
@@ -577,8 +577,8 @@ SQLAlchemy = "2.0.19"
 [package.source]
 type = "git"
 url = "https://github.com/alercebroker/pipeline.git"
-reference = "ms_explorer_staging"
-resolved_reference = "711f9f6d23e8315134ddeed45f5ac6c95b1fc6f5"
+reference = "multisurvey"
+resolved_reference = "b9e6f51bfaa4f87f9348776a985a67017ae719c2"
 subdirectory = "libs/db-plugins-multisurvey"
 
 [[package]]
@@ -3808,4 +3808,4 @@ dev = ["pytest", "setuptools"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "89fd6cc3143bac58aab88ba08b436281257ad9f5d52e0d9eb5944ff83f63e6f7"
+content-hash = "c230be8aeeffaf97882d4c30153beea1351593b2963f434480fd18d8973c5a9f"

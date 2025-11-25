@@ -6,7 +6,9 @@ from .lightcurve_item import BaseDetection
 from astropy.coordinates import Distance
 import astropy.units as u
 
-REDSHIFT = 0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
+REDSHIFT = (
+    0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
+)
 
 
 class ztfDetection(BaseDetection):
@@ -133,6 +135,7 @@ class LsstDetection(BaseDetection):
     survey_id: str
     measurement_id: int
     parentDiaSourceId: int | None
+    diaObjectId: int | None
     psfFlux: float
     psfFluxErr: float
     psfFlux_flag: int
@@ -152,6 +155,7 @@ class LsstDetection(BaseDetection):
     def set_defaults(cls, values: dict) -> dict:
         defaults = {
             "parentDiaSourceId": -1,
+            "diaObjectId": -1,
             "psfFlux": 0.0,
             "psfFluxErr": 0.0,
             "psfFlux_flag": 0,
@@ -212,7 +216,6 @@ class LsstDetection(BaseDetection):
             mag = 31.4 - 2.5 * (math.log10(positive_flux) * -1)
         else:
             mag = 31.4 - 2.5 * math.log10(flux)
-
 
         return mag - d.distmod.value if absolute else mag
 
