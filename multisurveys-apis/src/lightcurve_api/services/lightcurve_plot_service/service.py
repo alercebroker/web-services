@@ -273,6 +273,9 @@ def set_chart_options_detections(result: Result) -> Result:
 
     result_copy = result.copy()
 
+    result_copy.lightcurve.detections = [item for item in result_copy.lightcurve.detections if item.oid == int(result_copy.config_state.oid)]
+
+
     # Chart points
     pipe(
         result_copy.lightcurve.detections,
@@ -301,12 +304,13 @@ def set_chart_options_detections(result: Result) -> Result:
 
     return result_copy
 
-
 def set_chart_options_non_detections(result: Result) -> Result:
     if "non_detections" not in result.config_state.data_types:
         return result
 
     result_copy = result.copy()
+
+    result_copy.lightcurve.non_detections = [item for item in result_copy.lightcurve.non_detections if item.oid == int(result_copy.config_state.oid)]
 
     if result.config_state.total:
         return result_copy
@@ -331,6 +335,8 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
         return result
 
     result_copy = result.copy()
+
+    result_copy.lightcurve.forced_photometry = [item for item in result_copy.lightcurve.forced_photometry if item.oid == int(result_copy.config_state.oid)]
 
     # Chart points
     pipe(

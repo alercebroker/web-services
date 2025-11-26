@@ -1,5 +1,6 @@
 import asyncio
 import os
+from sqlalchemy import false
 import yaml
 
 import uvicorn
@@ -151,7 +152,7 @@ def run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
-    os.environ["USE_ABSOLUTE"] = config_dict["use_absolute"]
+    os.environ["USE_ABSOLUTE"] = "false"
 
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",
