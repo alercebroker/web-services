@@ -1,6 +1,6 @@
 from ..models.classifiers import Classifiers
 
-import pprint
+
 def parse_classifiers(classifier_data: list) -> list:
     """
     Parses the classifiers data from the database response into a list of Classifiers models.
