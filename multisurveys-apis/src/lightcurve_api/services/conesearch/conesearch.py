@@ -52,7 +52,6 @@ def conesearch_oid(
         ),
     )
 
-
 def get_detections(
     session_factory: Callable[..., ContextManager[Session]],
     result: Lightcurve,
