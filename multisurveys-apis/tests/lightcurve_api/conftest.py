@@ -84,7 +84,6 @@ def populate_database(faker: Faker, db_setup: PsqlDatabase):
                 n_det=faker.random_int(min=0, max=100),
                 n_forced=faker.random_int(min=0, max=100),
                 n_non_det=faker.random_int(min=0, max=100),
-                corrected=faker.boolean(),
             ),
             Object(
                 oid=1234,
@@ -98,7 +97,6 @@ def populate_database(faker: Faker, db_setup: PsqlDatabase):
                 n_det=faker.random_int(min=0, max=100),
                 n_forced=faker.random_int(min=0, max=100),
                 n_non_det=faker.random_int(min=0, max=100),
-                corrected=faker.boolean(),
             ),
         ]
         ztf_detections = []
@@ -173,7 +171,6 @@ def _generate_ztf_object(faker: Faker) -> Object:
         n_det=faker.random_int(min=0, max=100),
         n_forced=faker.random_int(min=0, max=100),
         n_non_det=faker.random_int(min=0, max=100),
-        corrected=faker.boolean(),
     )
 
 
@@ -208,7 +205,6 @@ def _generate_lsst_object(faker: Faker) -> Object:
         n_det=faker.random_int(min=0, max=100),
         n_forced=faker.random_int(min=0, max=100),
         n_non_det=faker.random_int(min=0, max=100),
-        corrected=faker.boolean(),
     )
 
 
@@ -225,7 +221,6 @@ def _generate_lsst_detection(faker: Faker, oid, idx) -> Tuple[Detection, LsstDet
         oid=oid,
         sid=1,
         measurement_id=idx,
-        diaSourceId=idx + 1,
         visit=idx + 1,
         detector=idx + 1,
         x=1,
