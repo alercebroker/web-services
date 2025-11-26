@@ -62,8 +62,6 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
             "request": request,
             "object": str(object_data["oid"]),
             "survey_id": survey_id,
-            "corrected": "Yes" if object_data["corrected"] else "No",
-            "stellar": "Yes" if object_data["stellar"] else "No",
             "detections": object_data["n_det"],
             "nonDetections": object_data["n_non_det"],
             "discoveryDateMJD": object_data["firstmjd"],
