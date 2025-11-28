@@ -48,8 +48,7 @@ async def get_stamp_card(
         session_factory=request.app.state.psql_session,
     )
     selected_measurement_id = detections[0].measurement_id
-    next_measurement_id = detections[1].measurement_id
-    detections_json = [d.to_json() for d in detections]
+    next_measurement_id = detections[min(1, len(detections) - 1)].measurement_id
 
     stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
     context = build_image_context(stamps)
@@ -57,7 +56,7 @@ async def get_stamp_card(
         "request": request,
         "oid": oid,
         "survey_id": survey_id,
-        "detections": detections_json,
+        "detections": [d.to_json() for d in detections],
         "selected_measurement_id": str(selected_measurement_id),
         "prv_measurement_id": str(selected_measurement_id),
         "nxt_measurement_id": str(next_measurement_id),
