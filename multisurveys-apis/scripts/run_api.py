@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')
+
 import asyncio
 import os
 import yaml
