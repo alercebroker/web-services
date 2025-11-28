@@ -25,8 +25,8 @@ class ObjectPlusZtfObject(BaseModel):
     n_det: int = 1
     n_forced: int = 1
     n_non_det: int = 1
-    corrected: bool = False
-    stellar: bool | None = None
+    # corrected: bool = False
+    # stellar: bool | None = None
 
     g_r_max: float | None = None
     g_r_max_corr: float | None = None
@@ -263,8 +263,8 @@ class LsstObjectProbability(BaseModel):
     n_det: int
     n_forced: int
     n_non_det: int
-    corrected: bool
-    stellar: bool | None = None
+    # corrected: bool
+    # stellar: bool | None = None
     class_name: str | None = None
     classifier_name: str | None = None
     classfier_version: str | None = None
