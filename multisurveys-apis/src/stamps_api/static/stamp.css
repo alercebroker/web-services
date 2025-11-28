@@ -45,6 +45,9 @@
 .table {
   display: table;
 }
+.flex-shrink {
+  flex-shrink: 1;
+}
 .shrink {
   flex-shrink: 1;
 }
