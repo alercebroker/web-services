@@ -1,37 +1,44 @@
 <script src="{{API_URL}}/htmx-static/htmx.min.js"></script>
 <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js"></script>
-<script>
-    function update_measurement_id(new_measurement_id) {
-        var post_data = {
-            "oid": "{{oid}}",
-            "survey_id": "{{ survey_id }}",
-            "measurement_id": new_measurement_id,
-            "detections_list": {{ detections | tojson | safe  }}
-        }
-        var post_string = JSON.stringify(post_data)
-
-        let stamp_form = document.getElementById("stamp-form")
-        stamp_form.setAttribute("hx-vals", post_string)
-        document.body.dispatchEvent(new CustomEvent('hx-post-trigger', {}));
-    }
-</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 <link rel="stylesheet" href="{{API_URL}}/static/stamp.css"> 
 <!--script type="module" src="{{API_URL}}/static/stamp.js"></script-->
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scientific Data Card</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
-        prefix: 'tw-',
-    }
-</script>
+
 <div class="tw-bg-gray-100 tw-p-4">
     <div id="stamp-app" class="tw-preflight">
-    <!-- app div -->
-    {% include "stamps_card.html.jinja" %}
-    <!-- fin app div -->
+        {% include "stamps_card.html.jinja" %}
     </div>
+    
 </div>
+
+<script>
+    const STAMP_CONFIG = {
+        oid: "{{oid}}",
+        survey_id: "{{ survey_id }}",
+        detections_list: {{ detections | tojson | safe }} 
+    };
+
+    htmx.defineExtension('final-payload', {
+        encodeParameters: function(xhr, parameters, elt) {
+            let rawId;
+            
+            if (elt.tagName === 'SELECT') {
+                rawId = elt.value;
+            } else {
+                rawId = elt.getAttribute('data-measurement-id');
+            }
+
+            const payload = {
+                oid: STAMP_CONFIG.oid,
+                survey_id: STAMP_CONFIG.survey_id,
+                measurement_id: rawId,
+                detections_list: STAMP_CONFIG.detections_list
+            };
+            
+            return JSON.stringify(payload);
+        }
+    });
+</script>
