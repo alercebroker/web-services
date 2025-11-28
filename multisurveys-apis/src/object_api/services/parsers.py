@@ -38,7 +38,6 @@ def parse_params(search_params):
 
     return response
 
-
 def parse_unique_object_query(sql_response, survey, return_survey_extra=False):
     # Merge the dicts from the joined SQLAlchemy models (common Object + survey-specific)
     merged_dict = {}
