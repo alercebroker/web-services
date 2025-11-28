@@ -15,7 +15,7 @@ templates = Jinja2Templates(
     autoescape=True,
     auto_reload=True,
 )
-templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8001")
+templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8007")
 
 """
 Service
@@ -48,10 +48,9 @@ async def get_stamp_card(
         session_factory=request.app.state.psql_session,
     )
     selected_measurement_id = detections[0].measurement_id
-    next_measurement_id = detections[1].measurement_id
+    next_measurement_id = detections[min(1, len(detections) - 1)].measurement_id
 
     stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
-
     context = build_image_context(stamps)
     context.update({
         "request": request,
@@ -113,7 +112,7 @@ def find_prv_and_nxt_measurement_ids(detections: list[dict], selected_measuremen
     prv_id = selected_measurement_id
     nxt_id = selected_measurement_id
     for idx, det in enumerate(detections):
-        if det["measurement_id"] == selected_measurement_id:
+        if det["measurement_id"] == str(selected_measurement_id):
             if idx > 0:
                 prv_id = detections[idx - 1]["measurement_id"]
             if idx < len(detections) - 1:

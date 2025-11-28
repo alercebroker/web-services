@@ -17,8 +17,8 @@ export function init() {
   let objectInfo = JSON.parse(document.getElementById("object-data").text);
 
   let object = objectInfo.object;
-  let corrected = objectInfo.corrected;
-  let stellar = objectInfo.stellar;
+  let corrected = "---";
+  let stellar = "---";
   let detections = objectInfo.detections;
   let discoveryDateMJD = objectInfo.discoveryDateMJD;
   let lastDetectionMJD = objectInfo.lastDetectionMJD;
