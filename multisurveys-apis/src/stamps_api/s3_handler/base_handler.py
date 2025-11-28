@@ -29,6 +29,7 @@ class BaseS3Handler:
         self.client = s3_client(bucket_region)
 
     def _get_file_from_s3(self, file_name: str) -> dict:
+        print("\n\n\nget_stamp avro_name:", file_name, "\n\n\n")
         file = self.client.get_object(
             Bucket=self.bucket_name, Key=f"{file_name}.avro"
         )
