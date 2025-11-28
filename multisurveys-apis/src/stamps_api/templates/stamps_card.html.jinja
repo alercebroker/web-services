@@ -12,6 +12,7 @@
             name="measurement_id" 
             class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]"
             
+            hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
             hx-post="{{ API_URL }}/htmx/update_stamp_card"
             hx-trigger="change"
             hx-target="#stamp-app"
@@ -39,6 +40,7 @@
             {% endif %}"
             
             {% if prv_measurement_id != 'None' and prv_measurement_id %}
+                hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
                 hx-post="{{ API_URL }}/htmx/update_stamp_card"
                 hx-trigger="click"
                 hx-target="#stamp-app"
@@ -61,6 +63,7 @@
             {% endif %}"
 
             {% if nxt_measurement_id != 'None' and nxt_measurement_id %}
+                hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
                 hx-post="{{ API_URL }}/htmx/update_stamp_card"
                 hx-trigger="click"
                 hx-target="#stamp-app"

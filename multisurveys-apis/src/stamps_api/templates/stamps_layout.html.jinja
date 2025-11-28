@@ -41,12 +41,4 @@
             return JSON.stringify(payload);
         }
     });
-
-    document.addEventListener('htmx:configRequest', function(evt) {
-        const targetId = evt.target.id;
-        if (targetId === 'measurement_id' || targetId === 'prevDate' || targetId === 'nextDate') {
-            evt.detail.headers['Content-Type'] = 'application/json';
-        }
-    });
-
 </script>
