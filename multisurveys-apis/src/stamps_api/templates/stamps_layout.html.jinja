@@ -15,11 +15,17 @@
 </div>
 
 <script>
-    const STAMP_CONFIG = {
-        oid: "{{oid}}",
-        survey_id: "{{ survey_id }}",
-        detections_list: {{ detections | tojson | safe }} 
-    };
+    if (typeof STAMP_CONFIG === 'undefined') {
+        var STAMP_CONFIG = {
+            oid: "{{oid}}",
+            survey_id: "{{ survey_id }}",
+            detections_list: {{ detections | tojson | safe }} 
+        };
+    } else {
+        STAMP_CONFIG.oid = "{{oid}}";
+        STAMP_CONFIG.survey_id = "{{ survey_id }}";
+        STAMP_CONFIG.detections_list = {{ detections | tojson | safe }};
+    }
 
     htmx.defineExtension('final-payload', {
         encodeParameters: function(xhr, parameters, elt) {
@@ -31,7 +37,7 @@
                 rawId = elt.getAttribute('data-measurement-id');
             }
 
-            const payload = {
+            let payload = {
                 oid: STAMP_CONFIG.oid,
                 survey_id: STAMP_CONFIG.survey_id,
                 measurement_id: rawId,
