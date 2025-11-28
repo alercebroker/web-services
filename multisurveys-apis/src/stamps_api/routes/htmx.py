@@ -15,7 +15,7 @@ templates = Jinja2Templates(
     autoescape=True,
     auto_reload=True,
 )
-templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8001")
+templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8007")
 
 """
 Service
@@ -49,15 +49,15 @@ async def get_stamp_card(
     )
     selected_measurement_id = detections[0].measurement_id
     next_measurement_id = detections[1].measurement_id
+    detections_json = [d.to_json() for d in detections]
 
     stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
-
     context = build_image_context(stamps)
     context.update({
         "request": request,
         "oid": oid,
         "survey_id": survey_id,
-        "detections": [d.to_json() for d in detections],
+        "detections": detections_json,
         "selected_measurement_id": str(selected_measurement_id),
         "prv_measurement_id": str(selected_measurement_id),
         "nxt_measurement_id": str(next_measurement_id),
