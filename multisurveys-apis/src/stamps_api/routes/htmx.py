@@ -113,7 +113,7 @@ def find_prv_and_nxt_measurement_ids(detections: list[dict], selected_measuremen
     prv_id = selected_measurement_id
     nxt_id = selected_measurement_id
     for idx, det in enumerate(detections):
-        if det["measurement_id"] == selected_measurement_id:
+        if det["measurement_id"] == str(selected_measurement_id):
             if idx > 0:
                 prv_id = detections[idx - 1]["measurement_id"]
             if idx < len(detections) - 1:
