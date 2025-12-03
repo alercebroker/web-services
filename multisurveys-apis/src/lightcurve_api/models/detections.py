@@ -1,7 +1,9 @@
 import math
+import traceback
 from typing import Optional
 
 from pydantic import model_validator
+from toolz.functoolz import return_none
 from .lightcurve_item import BaseDetection
 from astropy.coordinates import Distance
 import astropy.units as u
@@ -184,9 +186,9 @@ class LsstDetection(BaseDetection):
         Returns:
             Calculated flux value
         """
-        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
-        flux = self.scienceFlux if total else self.psfFlux
-        return flux - d.distmod.value if absolute else flux
+        magnitude = self.flux2magnitude(total, absolute)
+
+        return 10**(-(magnitude - 31.4) / 2.5)
 
     def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
@@ -197,8 +199,13 @@ class LsstDetection(BaseDetection):
         Returns:
             Calculated flux error
         """
-        return self.scienceFluxErr if total else self.psfFluxErr
 
+        flux = self.magnitude2flux(total, absolute)
+        magnitude_error = self.flux2magnitude_err(total, absolute)
+
+        return math.log(10.0)  * flux / 2.5 * magnitude_error
+        
+        
     def flux2magnitude(self, total: bool, absolute: bool) -> float:
         """Convert flux to magnitude.
 
@@ -208,14 +215,23 @@ class LsstDetection(BaseDetection):
         Returns:
             Calculated magnitude value
         """
-        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
-        flux = self.scienceFlux if total else self.psfFlux
+        try:
+            d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+            flux = self.scienceFlux if total else self.psfFlux
 
-        if flux < 0 and total != True:
-            positive_flux = math.fabs(flux)
-            mag = 31.4 - 2.5 * (math.log10(positive_flux) * -1)
-        else:
+            if flux < 0:
+                flux = math.fabs(flux)
+                if total == True:
+                    flux = flux * -1
+
+
+            if flux < 0:
+                raise ValueError("Flux no puede ser negativo para cálculo de magnitud")
+                
             mag = 31.4 - 2.5 * math.log10(flux)
+        except ValueError as e:
+            traceback.print_exc()
+            return 0
 
         return mag - d.distmod.value if absolute else mag
 
@@ -228,7 +244,24 @@ class LsstDetection(BaseDetection):
         Returns:
             Magnitude error value
         """
-        return self.scienceFluxErr if total else self.psfFluxErr
+        try:
+            flux = self.scienceFlux if total else self.psfFlux
+            flux_err = self.scienceFluxErr if total else self.psfFluxErr
+
+            if flux < 0:
+                flux = math.fabs(flux)
+            
+            if flux_err < 0: 
+                flux_err = math.fabs(flux_err)
+            
+            magnitude_error = (2.5 * flux_err) / (math.log(10.0) * flux)
+
+        except ValueError as e:
+            traceback.print_exc()
+            return 0
+
+
+        return magnitude_error
 
 
 class ZtfDataReleaseDetection(BaseDetection):
