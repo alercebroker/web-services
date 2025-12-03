@@ -2775,3 +2775,11 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
   --tw-translate-x: -100%;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
+
+.tw-preflight :is(.tw-group:hover .group-hover\:tw-opacity-100) {
+  opacity: 1;
+}
+
+.tw-preflight :is(.tw-group:hover .group-hover\:tw-visible) {
+  visibility: visible;
+}
