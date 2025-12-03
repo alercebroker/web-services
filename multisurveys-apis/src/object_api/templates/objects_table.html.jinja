@@ -129,17 +129,17 @@
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">FirstMJD</span>
-                            <span name="firstmjd">{{item['firstmjd'] | truncate(3)}}</span>
+                            <span name="firstmjd">{{"%.3f" | format(item['firstmjd'])}}</span>
                         </td>
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">LastMJD</span>
-                            <span name="lastmjd">{{item['lastmjd'] | truncate(3)}}</span>
+                            <span name="lastmjd">{{"%.3f" | format(item['lastmjd'])}}</span>
                         </td>
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">RA/Dec (degrees)</span>
-                            <span name="meanra, meandec">{{ item['meanra'] | truncate(3) }}, {{ item['meandec'] | truncate(3) }}</span>
+                            <span name="meanra, meandec">{{"%.3f" | format(item['meanra'])}}, {{"%.3f" | format(item['meandec'])}}</span>
                         </td>
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
@@ -149,11 +149,11 @@
                         
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">Highest Probability</span>
-                            <span name="probability">{{item['probability']}}</span>
+                            <span name="probability">{{"%.3f" | format(item['probability'])}}</span>
                         </td>
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">DeltaMJD (days)</span>
-                            <span name="deltamjd">{{item['deltamjd']}}</span>
+                            <span name="deltamjd">{{"%.3f" | format(item['firstmjd'])}}</span>
                         </td>
                     </tr>
                 {% endfor %}
