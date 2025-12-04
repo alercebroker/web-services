@@ -69,7 +69,20 @@
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
                     ...send_order_data("n_det", "{{actual_order_mode}}")}'
-                    >Number of detections</th>
+                    >
+                    <div class="tw-group tw-flex tw-items-center tw-gap-1.5 tw-cursor-pointer">
+                        <span class="placeholder-span">
+                            Number of detections
+                        </span> 
+                        <svg xmlns="http://www.w3.org/2000/svg" 
+                            class="tw-invisible group-hover:tw-visible tw-h-4 tw-w-4 tw-fill-black dark:tw-fill-white" 
+                            viewBox="0 -960 960 960" 
+                            fill="#e3e3e3">
+                            <path d="M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z"/>
+                        </svg>
+                    </div>
+                    
+                    </th>
                     <th 
                     id="firstmjd_column"
                     data-column = "firstmjd"
