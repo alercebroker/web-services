@@ -20,14 +20,20 @@
           </tr>
       </thead>
       <tbody class="tw-divide-y">
+          {% set selected_objects = config_state.external_sources.selected_objects %}
+
           {% for object in config_state.external_sources.objects %}
+          
               <tr class="hover:tw-bg-gray-400">
                   <td class="tw-text-center">
                       <input type="checkbox"
                               class="tw-form-checkbox tw-h-6 tw-w-6 tw-text-blue-600"
                               name="external_sources.selected_objects[]"
                               value="{{ object.objectId }}"
-                              checked
+
+                              {% if object.objectId in selected_objects or selected_objects|length == 0 %}
+                                checked
+                              {% endif %}
                       />
                   </td>
                   <td class="tw-text-right">{{ object.objectId }}</td>
