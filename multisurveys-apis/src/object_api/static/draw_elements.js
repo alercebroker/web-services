@@ -66,7 +66,7 @@ export function draw_arrow_order_table(order_mode){
   svg.setAttribute("viewBox", "0 -960 960 960");
   svg.setAttribute("width", "20px");
   svg.setAttribute("height", "20px");
-  svg.classList.add("tw-inline-block", "tw-fill-black", "dark:tw-fill-white")
+  svg.classList.add("tw-inline-block", "tw-fill-black", "dark:tw-fill-white", "tw-hidden")
 
 
   let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
