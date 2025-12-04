@@ -59,6 +59,7 @@
                     <th class="tw-px-4">Object ID</th>
                     <th
                     id="n_det_column"
+                    name="object_column_name"
                     data-column = "n_det"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     hx-get="{{API_URL}}/htmx/list_objects"
@@ -72,6 +73,7 @@
                     >Number of detections</th>
                     <th 
                     id="firstmjd_column"
+                    name="object_column_name"
                     data-column = "firstmjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     hx-get="{{API_URL}}/htmx/list_objects"
@@ -85,6 +87,7 @@
                     >FirstMJD</th>
                     <th
                     id="lastmjd_column"
+                    name="object_column_name"
                     data-column = "lastmjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     hx-get="{{API_URL}}/htmx/list_objects"
@@ -100,6 +103,7 @@
                     <th class="tw-px-4">Highest Probability Class</th>
                     <th 
                     id="probability_column"
+                    name="object_column_name"
                     data-column = "probability"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     hx-get="{{API_URL}}/htmx/list_objects"
