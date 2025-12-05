@@ -273,9 +273,6 @@ def set_chart_options_detections(result: Result) -> Result:
 
     result_copy = result.copy()
 
-    result_copy.lightcurve.detections = [item for item in result_copy.lightcurve.detections if item.oid == int(result_copy.config_state.oid)]
-
-
     # Chart points
     pipe(
         result_copy.lightcurve.detections,
@@ -310,8 +307,6 @@ def set_chart_options_non_detections(result: Result) -> Result:
 
     result_copy = result.copy()
 
-    result_copy.lightcurve.non_detections = [item for item in result_copy.lightcurve.non_detections if item.oid == int(result_copy.config_state.oid)]
-
     if result.config_state.total:
         return result_copy
 
@@ -335,8 +330,6 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
         return result
 
     result_copy = result.copy()
-
-    result_copy.lightcurve.forced_photometry = [item for item in result_copy.lightcurve.forced_photometry if item.oid == int(result_copy.config_state.oid)]
 
     # Chart points
     pipe(
@@ -369,6 +362,11 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
 
 def create_chart_detections(detections: List[BaseDetection], config_state: ConfigState) -> List[ChartPoint]:
     result: list[ChartPoint] = []
+    
+    if config_state.external_sources.enabled != True:
+        detections = [item for item in detections if item.oid == int(config_state.oid)]
+
+
     for det in detections:
         if (
             det.survey_id.lower() == ZTF_SURVEY or det.survey_id.lower() == ZTF_DR_SURVEY
@@ -376,6 +374,14 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
             continue
         if det.survey_id.lower() == LSST_SURVEY and det.band_name() not in config_state.bands.lsst:
             continue
+
+        if det.survey_id.lower() == LSST_SURVEY and config_state.external_sources.enabled == True:
+            continue
+
+        if config_state.external_sources.enabled != True:
+            if det.oid != int(config_state.oid):
+                continue
+
 
         result.append(
             ChartPoint(
@@ -395,6 +401,7 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
             )
         )
 
+
     # Add second phase, repeating the same points when folding
     if config_state.fold:
         result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
@@ -411,6 +418,10 @@ def create_chart_non_detections(non_detections: List[BaseNonDetection], config_s
         if ndet.survey_id.lower() == ZTF_SURVEY and ndet.band_name() not in config_state.bands.ztf:
             continue
 
+        if config_state.external_sources.enabled != True:
+            if ndet.oid != int(config_state.oid):
+                continue
+
         result.append(ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag(), 0))
 
     return result
@@ -426,6 +437,11 @@ def create_chart_forced_photometry(
             continue
         if fphot.survey_id.lower() == ZTF_SURVEY and fphot.band_name() not in config_state.bands.ztf:
             continue
+
+
+        if config_state.external_sources.enabled != True:
+            if fphot.oid != int(config_state.oid):
+                continue
 
         result.append(
             ChartPoint(
@@ -525,6 +541,7 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
         min_brightness = -999999 if config_state.flux else 0
         if _valid_point(point_value, max_brightness, min_brightness):
             group[point.survey][point.band].append(point_value)
+
         return group
 
     return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
