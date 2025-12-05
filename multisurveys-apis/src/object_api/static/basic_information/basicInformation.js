@@ -106,7 +106,7 @@ export function setMenuUrl(ra, dec, measurement_id, object, raTime, decTime) {
   let decNed = encodeCoordinates(decTime)
 
   const urlDict = {
-    "DESI Legacy Survey DR10": `https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=${ra}&dec=${dec}&layer=ls-dr10&pixscale=0.1&bands=grz`,
+    "DESI Legacy Survey DR11": `https://www.legacysurvey.org/viewer-dev/?ra=${ra}&dec=${dec}&layer=ls-dr11-early-v2&zoom=15`,
 
     "NED": `https://ned.ipac.caltech.edu/conesearch?search_type=Near%20Position%20Search&in_csys=Equatorial&in_equinox=J2000&ra=${raNed}&dec=${decNed}&radius=0.17`,
 
