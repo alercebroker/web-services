@@ -22,6 +22,11 @@ export function init(){
   let discovery_date_filters = document.getElementById("discovery_date_filters")
   let conesearch_filters = document.getElementById("conesearch_filters")
 
+  let classifiers_list = document.getElementById("classifiers_list")
+  let classifiers_options = document.getElementById("classifiers_options")
+  let classes_list = document.getElementById("classes_list")
+  let classes_options = document.getElementById("classes_options")
+
   let clear_oids = document.getElementById("clear_oids_btn")
   let oids_container = document.getElementById("oids_container")
   let prob_range = document.getElementById("prob_range")
@@ -105,6 +110,34 @@ export function init(){
     item_name = conesearch_filters.id + "_container"
     switch_arrow_icon(conesearch_filters)
     highlight_text(conesearch_filters)
+    display(item_name)
+  })
+
+  classifiers_list.addEventListener("click", () =>{
+    item_name = classifiers_list.id + "_container"
+    switch_arrow_icon(classifiers_list)
+    highlight_text(classifiers_list)
+    display(item_name)
+  })
+
+  classifiers_options.addEventListener("click", () =>{
+    item_name = classifiers_list.id + "_container"
+    switch_arrow_icon(classifiers_list)
+    highlight_text(classifiers_list)
+    display(item_name)
+  })
+
+  classes_list.addEventListener("click", () =>{
+    item_name = classes_list.id + "_container"
+    switch_arrow_icon(classes_list)
+    highlight_text(classes_list)
+    display(item_name)
+  })
+
+  classes_options.addEventListener("click", () =>{
+    item_name = classes_list.id + "_container"
+    switch_arrow_icon(classes_list)
+    highlight_text(classes_list)
     display(item_name)
   })
 
@@ -291,7 +324,6 @@ export function elementReady(selector) {
 function reset_values(){
   document.getElementById("clear_oids_btn").click()
 }
-
 
 function send_form_Data(){
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])

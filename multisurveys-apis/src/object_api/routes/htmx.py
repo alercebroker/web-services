@@ -46,7 +46,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
             "DESI Legacy Survey DR10",
             "NED",
             "PanSTARRS",
-            "SDSS DR18",
+            "SDSS DR19",
             "SIMBAD",
             "TNS",
             "Vizier",

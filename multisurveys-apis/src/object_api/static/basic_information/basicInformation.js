@@ -106,13 +106,13 @@ export function setMenuUrl(ra, dec, measurement_id, object, raTime, decTime) {
   let decNed = encodeCoordinates(decTime)
 
   const urlDict = {
-    "DESI Legacy Survey DR10": `https://www.legacysurvey.org/viewer/jpeg-cutout/?ra=${ra}&dec=${dec}&layer=ls-dr10&pixscale=0.1&bands=grz`,
+    "DESI Legacy Survey DR11": `https://www.legacysurvey.org/viewer-dev/?ra=${ra}&dec=${dec}&layer=ls-dr11-early-v2&zoom=15`,
 
     "NED": `https://ned.ipac.caltech.edu/conesearch?search_type=Near%20Position%20Search&in_csys=Equatorial&in_equinox=J2000&ra=${raNed}&dec=${decNed}&radius=0.17`,
 
     "PanSTARRS": `https://ps1images.stsci.edu/cgi-bin/ps1cutouts?pos=${ra}+${dec}&filter=color`,
 
-    "SDSS DR18": `https://skyserver.sdss.org/dr18/en/tools/chart/navi.aspx?ra=${ra}8&dec=${dec}`,
+    "SDSS DR19": ` https://skyserver.sdss.org/dr19/VisualTools/navi2?ra=${ra}8&dec=${dec}`,
 
     "SIMBAD": `https://simbad.u-strasbg.fr/simbad/sim-coo?Coord=${ra}%20${dec}&Radius.unit=arcsec&Radius=10`,
 

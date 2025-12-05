@@ -20,7 +20,7 @@
 
                 <div id="survey" data-survey="lsst" class="tw-w-full tw-my-4 tw-flex tw-justify-start tw-gap-4">
                     <span id="ztf_btn" class="tw-hidden obj-survey-unselect tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ztf</span>
-                    <span id="lsst_btn" class="obj-survey-selected tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">lsst</span>
+                    <span id="lsst_btn" class="obj-survey-selected tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">LSST</span>
                 </div>
             </div>
 
@@ -44,7 +44,7 @@
                     <!--select classifiers-->
                     <div id="classifiers_wrapper" class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
                         <div id="classifiers_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
-                            <div class="obj-select__trigger">
+                            <div id="classifiers_list" class="obj-select__trigger tw-flex tw-items-center tw-justify-between">
                                 <span
                                 id="classifier"
                                 contenteditable="true"
@@ -55,10 +55,11 @@
                                 hx-get="{{API_URL}}/htmx/classes_select"
                                 hx-trigger="change"
                                 hx-target="#classes_options"
-                                hx-swap="outerHTML"
+                                hx-swap="innerHTML"
                                 hx-vals='js:{...send_classes_data()}'></span>
+                                <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                             </div>
-                            <div class="obj-custom-options">
+                            <div id="classifiers_options" class="obj-custom-options">
                                 <span class="obj-custom-option obj-selected"  data-value=""></span>
                                 {% for value in classifiers%}
                                     <span 
@@ -76,12 +77,15 @@
                     <!--select classes-->
                     <div class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
                         <div id="classes_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
-                            <div class="obj-select__trigger">
+                            <div id="classes_list" class="obj-select__trigger tw-flex tw-items-center tw-justify-between">
                                 <span
-                                id="class"                   class="placeholder-span"
+                                id="class"                   
+                                class="placeholder-span"
                                 data-placeholder="Class"
                                 data-value=""></span>
+                                <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                             </div>
+                            
                             <div id="classes_options" class="">
                             <!--HTMX CLASSES OPTIONS--->
                             </div>
@@ -166,10 +170,36 @@
 
                 <div id="conesearch_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
 
-                    <div class="tw-flex tw-gap-2">
+                    <div class="tw-flex tw-items-center tw-gap-2">
+    
                         <span class="tw-font-medium">Conesearch</span>
 
-                        <svg id="consearch_info" class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg>
+                       <div class="tw-relative tw-group tw-flex tw-items-center">
+    
+                            <svg id="consearch_info" class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960">
+                                <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                            </svg>
+
+                            <div class="tw-absolute tw-left-[100%] tw-top-1/2 -tw-translate-y-1/2 tw-ml-2 
+                                    tw-min-w-max tw-whitespace-nowrap
+                                    tw-px-3 tw-py-2
+                                    tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded 
+                                    tw-opacity-0 tw-invisible
+                                    group-hover:tw-opacity-100 group-hover:tw-visible
+                                    tw-transition-all tw-duration-300 tw-z-50 tw-pointer-events-none">
+                                
+                                    Conesearch is a coordinate search tool with a search radius.
+                                    <br>
+                                    You can input RA/DEC manually or, optionally, give a target name and let Sesame fill in the coordinates.
+                                    <br>
+                                    Formats accepted for HMS/DMS: "23:14:56.3" or "23 14 56.3".
+
+                                <div class="tw-absolute tw-right-[100%] tw-top-1/2 -tw-translate-y-1/2 
+                                        tw-border-4 tw-border-transparent tw-border-r-gray-900">
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
 
                     <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
