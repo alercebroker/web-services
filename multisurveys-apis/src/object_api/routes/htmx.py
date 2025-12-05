@@ -43,7 +43,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
         object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
 
         other_archives = [
-            "DESI Legacy Survey DR10",
+            "DESI Legacy Survey DR11",
             "NED",
             "PanSTARRS",
             "SDSS DR19",
