@@ -112,7 +112,7 @@ export function setMenuUrl(ra, dec, measurement_id, object, raTime, decTime) {
 
     "PanSTARRS": `https://ps1images.stsci.edu/cgi-bin/ps1cutouts?pos=${ra}+${dec}&filter=color`,
 
-    "SDSS DR18": `https://skyserver.sdss.org/dr18/en/tools/chart/navi.aspx?ra=${ra}8&dec=${dec}`,
+    "SDSS DR19": ` https://skyserver.sdss.org/dr19/VisualTools/navi2?ra=${ra}8&dec=${dec}`,
 
     "SIMBAD": `https://simbad.u-strasbg.fr/simbad/sim-coo?Coord=${ra}%20${dec}&Radius.unit=arcsec&Radius=10`,
 
