@@ -144,7 +144,7 @@
   gap: 1em;
   padding:0px 8px;
   border-radius: 4px;
-  max-width: 12rem;
+  max-width: 14rem;
 }
 
 .tw-dark .custom-oid{
@@ -605,6 +605,10 @@
   height: 1px;
 }
 
+.tw-preflight :is(.tw-h-\[45px\]){
+  height: 45px;
+}
+
 .tw-preflight :is(.tw-max-h-\[200px\]){
   max-height: 200px;
 }
@@ -620,6 +624,10 @@
 
 .tw-preflight :is(.tw-max-h-none){
   max-height: none;
+}
+
+.tw-preflight :is(.tw-max-h-\[34px\]){
+  max-height: 34px;
 }
 
 .tw-preflight :is(.tw-min-h-0){

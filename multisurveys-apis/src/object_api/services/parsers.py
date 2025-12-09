@@ -129,3 +129,11 @@ def parse_to_json_classifiers(classifiers):
         res.append(item)
 
     return res
+
+
+def _parse_oids_string_to_array(oids_list):
+    print(oids_list)
+    if oids_list != None:
+        oids_list = [item.strip() for item in oids_list.split(',')]
+
+    return oids_list
