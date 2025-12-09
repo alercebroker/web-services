@@ -96,18 +96,21 @@ export function init(){
     item_name = general_filters.id + "_container"
     switch_arrow_icon(general_filters)
     highlight_text(general_filters)
+    display(item_name)
   })
-
+  
   discovery_date_filters.addEventListener("click", () =>{
     item_name = discovery_date_filters.id + "_container"
     switch_arrow_icon(discovery_date_filters)
     highlight_text(discovery_date_filters)
+    display(item_name)
   })
-
+  
   conesearch_filters.addEventListener("click", () =>{
     item_name = conesearch_filters.id + "_container"
     switch_arrow_icon(conesearch_filters)
     highlight_text(conesearch_filters)
+    display(item_name)
   })
 
   classifiers_list.addEventListener("click", () =>{
