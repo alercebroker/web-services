@@ -17,6 +17,7 @@ from ..services.validations import (
     date_validation,
     probability_validation,
 )
+from ..services.tns_service import get_tns
 from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
@@ -77,8 +78,8 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
 @router.get("/htmx/tns/", response_class=HTMLResponse)
 async def tns_info(request: Request, ra: float, dec: float):
     try:
-        # tns_data, tns_link = get_tns(ra, dec)
-        tns_data, tns_link = tns_data_dict, tns_link_str
+        tns_data, tns_link = get_tns(ra, dec)
+        # tns_data, tns_link = tns_data_dict, tns_link_str
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 
