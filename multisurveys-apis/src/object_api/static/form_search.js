@@ -335,7 +335,6 @@ function send_form_Data(){
   )
   let radius_consearch = document.getElementById('radius_consearch').value
 
-
   let response = {
     oid: list_oids == '' ? null : list_oids,
     classifier: classifier_selected.dataset.classifier == "" ? null : classifier_selected.dataset.classifier,
