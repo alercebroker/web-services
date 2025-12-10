@@ -53,17 +53,39 @@ function clean_nulls_form(form_response){
 
 
 function get_values_array_fields(fields){
+  let response_array = []
 
-    let response_array = []
-    for(let field of fields){
-      if(document.getElementById(field).value != ""){
-        response_array.push(document.getElementById(field).value)
-      }
+  for(let [index, field] of fields.entries()){
+    let field_value = document.getElementById(field).value
+
+    if(_check_max_arr_position(index, response_array) && !_check_is_empty(field_value)){
+      response_array.push(0)
     }
+
+    if(!_check_is_empty(field_value)){
+      response_array.push(field_value)
+    }
+  }
+
   
-    return response_array
+  return response_array
 }
-  
+
+function _check_is_empty(value){
+  if(value == ''){
+    return true
+  }
+
+  return false
+}
+
+function _check_max_arr_position(index, response_array){
+  if (index == 1 && response_array.length == 0 ){
+    return true
+  }
+
+  return false
+}
 
 export {
     send_classes_data, 

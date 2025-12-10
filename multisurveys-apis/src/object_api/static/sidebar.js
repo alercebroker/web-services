@@ -56,8 +56,8 @@ function get_params_url(url){
   let form_dict = {}
 
   params.forEach((value, key) => {
-    if(key == "oid"){
-      form_dict[key] = params.getAll("oid")
+    if (key === 'oid' || key === 'n_det') {
+      form_dict[key] = params.getAll(key)
     } else {
       form_dict[key] = value
     }

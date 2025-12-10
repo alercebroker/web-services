@@ -255,10 +255,6 @@ export function init(){
     input_ids.value = ""
   })
 
-  min_detections.addEventListener("change", () =>{
-    max_detections.removeAttribute("disabled")
-  })
-
   date_min.addEventListener("change", () => {
     dateUTC = convertToDate(date_min.value, time_min.value)
     dateUTC = gregorianToJd(dateUTC)
@@ -338,7 +334,6 @@ function send_form_Data(){
     document.getElementById('dec_consearch').value
   )
   let radius_consearch = document.getElementById('radius_consearch').value
-
 
 
   let response = {

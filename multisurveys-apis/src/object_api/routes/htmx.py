@@ -148,6 +148,7 @@ def objects_table(
             session = request.app.state.psql_session
             oid = _parse_oids_string_to_array(oid)
 
+
             ndets_validation(n_det)
             order_mode_validation(order_mode)
             consearch_validation(ra, dec, radius)
@@ -227,7 +228,7 @@ def sidebar(
     classifier: str | None = None,
     class_name: str | None = None,
     ranking: int | None = Query(default=1),
-    n_det: Annotated[list[int] | None, Query()] = None,
+    n_det: Annotated[list[str] | None, Query()] = None,
     probability: float | None = None,
     firstmjd: Annotated[list[float] | None, Query()] = None,
     lastmjd: Annotated[list[float] | None, Query()] = None,
