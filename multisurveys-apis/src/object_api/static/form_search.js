@@ -98,14 +98,14 @@ export function init(){
     highlight_text(general_filters)
     display(item_name)
   })
-
+  
   discovery_date_filters.addEventListener("click", () =>{
     item_name = discovery_date_filters.id + "_container"
     switch_arrow_icon(discovery_date_filters)
     highlight_text(discovery_date_filters)
     display(item_name)
   })
-
+  
   conesearch_filters.addEventListener("click", () =>{
     item_name = conesearch_filters.id + "_container"
     switch_arrow_icon(conesearch_filters)
@@ -113,33 +113,29 @@ export function init(){
     display(item_name)
   })
 
-  // classifiers_list.addEventListener("click", () =>{
-  //   item_name = classifiers_list.id + "_container"
-  //   switch_arrow_icon(classifiers_list)
-  //   highlight_text(classifiers_list)
-  //   display(item_name)
-  // })
+  classifiers_list.addEventListener("click", () =>{
+    item_name = classifiers_list.id + "_container"
+    switch_arrow_icon(classifiers_list)
+    highlight_text(classifiers_list)
+  })
 
-  // classifiers_options.addEventListener("click", () =>{
-  //   item_name = classifiers_list.id + "_container"
-  //   switch_arrow_icon(classifiers_list)
-  //   highlight_text(classifiers_list)
-  //   display(item_name)
-  // })
+  classifiers_options.addEventListener("click", () =>{
+    item_name = classifiers_list.id + "_container"
+    switch_arrow_icon(classifiers_list)
+    highlight_text(classifiers_list)
+  })
 
-  // classes_list.addEventListener("click", () =>{
-  //   item_name = classes_list.id + "_container"
-  //   switch_arrow_icon(classes_list)
-  //   highlight_text(classes_list)
-  //   display(item_name)
-  // })
+  classes_list.addEventListener("click", () =>{
+    item_name = classes_list.id + "_container"
+    switch_arrow_icon(classes_list)
+    highlight_text(classes_list)
+  })
 
-  // classes_options.addEventListener("click", () =>{
-  //   item_name = classes_list.id + "_container"
-  //   switch_arrow_icon(classes_list)
-  //   highlight_text(classes_list)
-  //   display(item_name)
-  // })
+  classes_options.addEventListener("click", () =>{
+    item_name = classes_list.id + "_container"
+    switch_arrow_icon(classes_list)
+    highlight_text(classes_list)
+  })
 
   min_date_time_text.addEventListener("click", () => {
     item_name = min_date_time_text.id + "_container"
