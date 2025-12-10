@@ -7,39 +7,36 @@
 <div id="sidebar-objects-htmx" class="tw-preflight tw-text-black tw-bg-transparent dark:tw-bg-[#424242] dark:tw-text-[#EEEEEE]">
     <input id="objects-store" class="tw-hidden" data-objects="{{ objects_list['items'] }}">
 
-    <table class="tw-table-auto tw-border-collapse tw-text-left tw-w-full tw-h-[95vh] tw-text-[0.875rem] dark:tw-bg-[#424242]">
-        <thead class="tw-text-black/60 dark:tw-text-white/70 tw-h-[34px]">
-            <tr>
-                <th class="tw-px-4">Object List</th>
-            </tr>
-        </thead>
-        <tbody class="tw-border-y tw-border-[#616161]">
-            {% for item in objects_list['items']%}
-                {% if item['oid']|string != selected_oid|string%}
-                    <tr class="tw-h-[34px] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
-                        <td 
-                        id="sidebar-row-element"
-                        name="sidebar-row-element"
-                        data-oid='{{item["oid"]}}'
-                        hx-get="{{API_URL}}/htmx/side_objects"
-                        hx-trigger="click"
-                        hx-swap="innerHTML"
-                        hx-target="#sidebar-objects-htmx"
-                        hx-on::config-request="prepare_params(event)"
-                        class="tw-px-4"
-                        >
-                        {{item['oid']}}
-                        </td>
-                    </tr>
-                
-                {% else  %}
-                    <tr class="tw-h-[34px] tw-text-[#1976D2] tw-font-medium tw-bg-[#1976D2]/30">
-                        <td class="tw-px-4">{{selected_oid}}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
+
+    <div class="tw-flex tw-flex-col tw-w-full tw-h-[95vh] tw-text-[0.875rem] dark:tw-bg-[#424242]">
+        <div class="tw-px-4 tw-text-black/60 tw-border-y tw-border-[#616161] dark:tw-text-white/70 tw-h-[45px] tw-flex tw-items-center tw-justify-start">Object List</div>
+
+        {% for item in objects_list['items']%}
+            {% if item['oid']|string != selected_oid|string%}
+                <div class="tw-flex tw-items-center tw-justify-start tw-h-[45px] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
+                    <span 
+                    id="sidebar-row-element"
+                    name="sidebar-row-element"
+                    data-oid='{{item["oid"]}}'
+                    hx-get="{{API_URL}}/htmx/side_objects"
+                    hx-trigger="click"
+                    hx-swap="innerHTML"
+                    hx-target="#sidebar-objects-htmx"
+                    hx-on::config-request="prepare_params(event)"
+                    class="tw-px-4 tw-inline-block"
+                    >
+                    {{item['oid']}}
+                    </span>
+                </div>
+            
+            {% else  %}
+                <div class="tw-flex tw-items-center tw-justify-start tw-h-[45px] tw-text-[#1976D2] tw-font-medium tw-bg-[#1976D2]/30">
+                    <span class="tw-px-4 tw-inline-block">{{selected_oid}}</span>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
 
     <div class=" tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[48px] dark:tw-bg-[#424242]">
         {% if has_prev %}

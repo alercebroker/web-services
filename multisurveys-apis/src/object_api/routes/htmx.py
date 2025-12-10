@@ -17,17 +17,14 @@ from ..services.validations import (
     date_validation,
     probability_validation,
 )
+from ..services.tns_service import get_tns
 from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
-
-from core.repository.dummy_data import (
-    tns_data_dict,
-    tns_link_str,
-)
 from object_api.services.object_services import (
     get_object_by_id,
 )
+from ..services.parsers import _parse_oids_string_to_array
 
 router = APIRouter()
 
@@ -77,8 +74,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
 @router.get("/htmx/tns/", response_class=HTMLResponse)
 async def tns_info(request: Request, ra: float, dec: float):
     try:
-        # tns_data, tns_link = get_tns(ra, dec)
-        tns_data, tns_link = tns_data_dict, tns_link_str
+        tns_data, tns_link = get_tns(ra, dec)
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
 
@@ -130,7 +126,7 @@ async def select_classes_classifier(request: Request, classifier_classes: list[s
 def objects_table(
     request: Request,
     class_name: str | None = None,
-    oid: Annotated[list[str] | None, Query()] = None,
+    oid: str | None = None,
     survey: str | None = None,
     classifier: str | None = None,
     ranking: int | None = Query(default=1),
@@ -150,16 +146,17 @@ def objects_table(
     try:
         if survey is not None:
             session = request.app.state.psql_session
+            oid = _parse_oids_string_to_array(oid)
+
 
             ndets_validation(n_det)
             order_mode_validation(order_mode)
-            # class_validation(classifier, class_name)
-            # classifier_validation(classifier)
             consearch_validation(ra, dec, radius)
-            oids_format_validation(oid)
+            oids_format_validation(oid, survey)
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)
+
 
             if oid is not None:
                 oid = encode_ids(survey, oid)
@@ -226,12 +223,12 @@ def objects_table(
 def sidebar(
     request: Request,
     survey: str | None = None,
-    oid: Annotated[list[str] | None, Query()] = None,
+    oid: str | None = None,
     selected_oid: str | None = None,
     classifier: str | None = None,
     class_name: str | None = None,
     ranking: int | None = Query(default=1),
-    n_det: Annotated[list[int] | None, Query()] = None,
+    n_det: Annotated[list[str] | None, Query()] = None,
     probability: float | None = None,
     firstmjd: Annotated[list[float] | None, Query()] = None,
     lastmjd: Annotated[list[float] | None, Query()] = None,
@@ -247,13 +244,12 @@ def sidebar(
     try:
         if survey is not None:
             session = request.app.state.psql_session
+            oid = _parse_oids_string_to_array(oid)
 
             ndets_validation(n_det)
             order_mode_validation(order_mode)
-            # class_validation(classifier, class_name)
-            # classifier_validation(classifier)
             consearch_validation(ra, dec, radius)
-            oids_format_validation(oid)
+            oids_format_validation(oid, survey)
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)

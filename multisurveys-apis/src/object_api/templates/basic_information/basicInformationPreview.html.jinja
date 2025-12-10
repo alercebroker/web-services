@@ -13,47 +13,6 @@
                     <td class=""></td>
             </tr>
 
-                <!--Corrected row-->
-            <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-h-8">
-                    <td class="tw-text-left tw-max-w-[40%]">Corrected</td>
-                    <td class="tw-text-center " id="corrected"></td>
-                    <td class="">
-                        <div class="tw-flex tw-justify-center">
-                            <div class="tw-group tw-relative">
-                                <svg class="tw-h-6 tw-text-black dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <path   path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
-                                </svg>
-
-                                <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999]">
-                                    <div class="tw-bg-[#757575]/60 tw-text-[#FAFAFA] dark:tw-bg-[#757575]/60 dark:tw-text-[#FAFAFA] tw-text-xs tw-w-48 tw-rounded tw-px-4 tw-py-2">
-                                        There is a matching source in the reference image. The apparent magnitude combines the difference and reference fluxes. 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-            </tr>
-
-                <!--Stellar row-->
-            <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto tw-h-8">
-                    <td class="tw-text-left tw-max-w-[40%]">Stellar</td>
-                    <td class="tw-text-center" id="stellar"></td>
-                    <td>
-                        <div class="tw-flex tw-justify-center">
-                            <div class="tw-group tw-relative">
-                                <svg class="tw-h-6 tw-text-black dark:tw-text-white" data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <path   path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
-                                </svg>
-                                <div class="tw-absolute tw-left-10 tw-mt-2 tw-hidden group-hover:tw-flex tw-flex-col tw-items-center tw-z-[9999]">
-                                    <div class="tw-bg-[#757575]/60 tw-text-[#FAFAFA] dark:tw-bg-[#757575]/60 dark:tw-text-[#FAFAFA] tw-w-48 tw-text-xs tw-rounded tw-px-4 tw-py-2">
-                                        There is a matching point-like source in the reference image.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-            </tr>
-
                 <!--detections row-->
             <tr class="hover:tw-bg-[#757575] tw-duration-200 tw-border-b tw-border-[#1e1e1e] dark:tw-border-white tw-border-opacity-20 dark:tw-border-opacity-20 tw-w-[95%] tw-mx-auto tw-h-8">
                     <td class="tw-text-left tw-max-w-[40%]">Detections</td>
@@ -143,7 +102,7 @@
             OTHER ARCHIVES
             </button>
 
-            <div id="menu-box-object" class="tw-absolute tw-z-[10] tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e] tw-shadow-2xl tw-hidden">
+            <div id="menu-box-object" style="z-index: 60" class="tw-absolute tw-w-full tw-bg-white dark:tw-bg-[#1e1e1e] tw-shadow-2xl tw-hidden">
                 {% for option in otherArchives %}
                     <a target="_blank" id="{{option}}" class="tw-inline-block tw-px-4 tw-py-3 tw-w-full tw-cursor-pointer tw-text-[#1e1e1e] tw-font-light dark:tw-text-white hover:tw-bg-[#e5e4e2] dark:hover:tw-bg-[#3b3939]">
                         {{option}}

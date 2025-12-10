@@ -17,8 +17,6 @@ export function init() {
   let objectInfo = JSON.parse(document.getElementById("object-data").text);
 
   let object = objectInfo.object;
-  let corrected = "---";
-  let stellar = "---";
   let detections = objectInfo.detections;
   let discoveryDateMJD = objectInfo.discoveryDateMJD;
   let lastDetectionMJD = objectInfo.lastDetectionMJD;
@@ -38,8 +36,6 @@ export function init() {
   let raDecTime = `${raTime}<br>${decTime}`;
 
   document.getElementById("object").innerHTML = object;
-  document.getElementById("corrected").innerHTML = corrected;
-  document.getElementById("stellar").innerHTML = stellar;
   document.getElementById("detections").innerHTML = detections;
   document.getElementById("nonDetections").innerHTML = nonDetections;
   document.getElementById("discoveryDate").innerHTML = discoveryDateMGD;
