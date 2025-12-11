@@ -293,6 +293,18 @@ export function init(){
   window.send_form_Data = send_form_Data
   window.send_pagination_data = send_pagination_data
   window.send_order_data = send_order_data
+
+  // Esperar a que HTMX esté completamente inicializado antes de restaurar
+  if (typeof htmx !== 'undefined') {
+    setTimeout(() => {
+      restore_form_from_url()
+    }, 100)
+  } else {
+    // Si HTMX no está cargado aún, esperar al evento load
+    document.addEventListener('htmx:load', function() {
+      restore_form_from_url()
+    }, { once: true })
+  }
 }
 
 
@@ -353,3 +365,116 @@ function send_form_Data(){
 
   return response
 }
+
+function restore_form_from_url() {
+  const urlParams = new URLSearchParams(window.location.search)
+
+  // Restaurar survey
+  const survey = urlParams.get('survey')
+  if (survey) {
+    document.getElementById('survey').dataset.survey = survey
+    if (survey === 'ztf') {
+      survey_emphasize(document.getElementById('ztf_btn'))
+    } else if (survey === 'lsst') {
+      survey_emphasize(document.getElementById('lsst_btn'))
+    }
+  }
+
+  // Restaurar Object IDs
+  const oids = urlParams.getAll('oid')
+  if (oids.length > 0) {
+    oids_arr = oids
+    draw_oids_tags(oids_arr)
+    document.getElementById("clear_oids_btn").classList.remove("tw-hidden")
+  }
+
+  // Restaurar classifier y class_name
+  const classifier = urlParams.get('classifier')
+  const className = urlParams.get('class_name')
+
+  if (classifier) {
+    const classifierElement = document.getElementById('classifier')
+
+    if (className) {
+      document.body.addEventListener('htmx:afterSwap', function handleClassesLoaded(event) {
+        if (event.detail.target.id === 'classes_options') {
+          const classOptions = document.querySelectorAll('#classes_options .obj-custom-option')
+          const classElement = document.getElementById('class')
+
+          classOptions.forEach(option => {
+            if (option.dataset.value === className) {
+              const previousSelected = document.querySelector('#classes_options .obj-custom-option.obj-selected')
+              if (previousSelected) {
+                previousSelected.classList.remove('obj-selected')
+              }
+
+              option.classList.add('obj-selected')
+
+              if (classElement) {
+                classElement.textContent = option.textContent.trim()
+                classElement.setAttribute('data-value', option.dataset.value)
+              }
+            }
+          })
+
+          document.body.removeEventListener('htmx:afterSwap', handleClassesLoaded)
+        }
+      })
+    }
+
+    const classifierOptions = document.querySelectorAll('#classifiers_options .obj-custom-option')
+    classifierOptions.forEach(option => {
+      if (option.dataset.classifier === classifier) {
+
+        classifierElement.setAttribute('data-classifier', option.dataset.classifier)
+        classifierElement.setAttribute('data-classes', option.dataset.classes)
+        classifierElement.textContent = option.textContent.trim()
+
+        document.querySelector('#classifiers_options .obj-custom-option.obj-selected')?.classList.remove('obj-selected')
+        option.classList.add('obj-selected')
+
+        classifierElement.dispatchEvent(new Event('change'))
+      }
+    })
+  }
+
+  // Restaurar probability
+  const probability = urlParams.get('probability')
+  if (probability) {
+    const probRange = document.getElementById('prob_range')
+    probRange.value = probability
+    document.getElementById('prob_number').innerHTML = probability
+  }
+
+  // Restaurar n_det
+  const nDets = urlParams.getAll('n_det')
+  if (nDets.length > 0) {
+    if (nDets[0]) document.getElementById('min_detections').value = nDets[0]
+    if (nDets[1]) {
+      document.getElementById('max_detections').removeAttribute('disabled')
+      document.getElementById('max_detections').value = nDets[1]
+    }
+  }
+
+  // Restaurar firstmjd
+  const firstmjds = urlParams.getAll('firstmjd')
+  if (firstmjds.length > 0) {
+    if (firstmjds[0]) {
+      document.getElementById('min_mjd').value = firstmjds[0]
+      document.getElementById('min_mjd').dispatchEvent(new Event('input'))
+    }
+    if (firstmjds[1]) {
+      document.getElementById('max_mjd').value = firstmjds[1]
+      document.getElementById('max_mjd').dispatchEvent(new Event('input'))
+    }
+  }
+
+  // Restaurar conesearch (ra, dec, radius)
+  const ra = urlParams.get('ra')
+  const dec = urlParams.get('dec')
+  const radius = urlParams.get('radius')
+
+  if (ra) document.getElementById('ra_consearch').value = ra
+  if (dec) document.getElementById('dec_consearch').value = dec
+  if (radius) document.getElementById('radius_consearch').value = radius
+  }
