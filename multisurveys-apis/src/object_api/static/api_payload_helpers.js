@@ -55,12 +55,22 @@ function clean_nulls_form(form_response){
 function get_values_array_fields(fields){
 
     let response_array = []
+    let has_any_value = false
+
     for(let field of fields){
-      if(document.getElementById(field).value != ""){
-        response_array.push(document.getElementById(field).value)
+      let value = document.getElementById(field).value
+      if(value != ""){
+        response_array.push(value)
+        has_any_value = true
+      } else {
+        response_array.push(null)
       }
     }
-  
+
+    if(!has_any_value){
+      return []
+    }
+
     return response_array
 }
   
