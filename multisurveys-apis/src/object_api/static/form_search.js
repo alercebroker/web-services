@@ -62,11 +62,11 @@ export function init(){
   for(const option of document.querySelectorAll(".obj-custom-option")){
     option.addEventListener('click', () => {
         if(!option.classList.contains('obj-selected')){
-            
+
           option.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
-          
+
           option.classList.add('obj-selected');
-          
+
           option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
 
           if(!option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.contains('dark:tw-text-[#EEEEEE]')){
@@ -300,7 +300,6 @@ export function init(){
       restore_form_from_url()
     }, 100)
   } else {
-    // Si HTMX no está cargado aún, esperar al evento load
     document.addEventListener('htmx:load', function() {
       restore_form_from_url()
     }, { once: true })
@@ -342,7 +341,7 @@ function send_form_Data(){
   let survey_id = document.getElementById('survey')
   let list_oids = format_oids(oids_arr)
   let [ra_consearch, dec_consearch] = check_radio_consearch(
-    document.getElementById('ra_consearch').value, 
+    document.getElementById('ra_consearch').value,
     document.getElementById('dec_consearch').value
   )
   let radius_consearch = document.getElementById('radius_consearch').value
@@ -354,7 +353,8 @@ function send_form_Data(){
     class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value ,
     survey: survey_id.dataset.survey,
     probability: probability_value > 0 ? probability_value : null,
-    n_det: ndet_arr.length > 0 ? ndet_arr : null,
+    n_det_min: ndet_arr.length > 0 && ndet_arr[0] !== null ? parseInt(ndet_arr[0]) : null,
+    n_det_max: ndet_arr.length > 1 && ndet_arr[1] !== null ? parseInt(ndet_arr[1]) : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
     dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
@@ -447,13 +447,15 @@ function restore_form_from_url() {
   }
 
   // Restaurar n_det
-  const nDets = urlParams.getAll('n_det')
-  if (nDets.length > 0) {
-    if (nDets[0]) document.getElementById('min_detections').value = nDets[0]
-    if (nDets[1]) {
-      document.getElementById('max_detections').removeAttribute('disabled')
-      document.getElementById('max_detections').value = nDets[1]
-    }
+  const nDetMin = urlParams.get('n_det_min')
+  const nDetMax = urlParams.get('n_det_max')
+
+  if (nDetMin) {
+    document.getElementById('min_detections').value = nDetMin
+  }
+  if (nDetMax) {
+    document.getElementById('max_detections').removeAttribute('disabled')
+    document.getElementById('max_detections').value = nDetMax
   }
 
   // Restaurar firstmjd
