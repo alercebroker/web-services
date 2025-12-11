@@ -22,10 +22,10 @@ export function init(){
   let discovery_date_filters = document.getElementById("discovery_date_filters")
   let conesearch_filters = document.getElementById("conesearch_filters")
 
-  let classifiers_list = document.getElementById("classifiers_list")
-  let classifiers_options = document.getElementById("classifiers_options")
-  let classes_list = document.getElementById("classes_list")
-  let classes_options = document.getElementById("classes_options")
+  // let classifiers_list = document.getElementById("classifiers_list")
+  // let classifiers_options = document.getElementById("classifiers_options")
+  // let classes_list = document.getElementById("classes_list")
+  // let classes_options = document.getElementById("classes_options")
 
   let clear_oids = document.getElementById("clear_oids_btn")
   let oids_container = document.getElementById("oids_container")
@@ -251,10 +251,6 @@ export function init(){
     input_ids.value = ""
   })
 
-  min_detections.addEventListener("change", () =>{
-    max_detections.removeAttribute("disabled")
-  })
-
   date_min.addEventListener("change", () => {
     dateUTC = convertToDate(date_min.value, time_min.value)
     dateUTC = gregorianToJd(dateUTC)
@@ -346,9 +342,8 @@ function send_form_Data(){
   )
   let radius_consearch = document.getElementById('radius_consearch').value
 
-
   let response = {
-    oid: list_oids,
+    oid: list_oids == '' ? null : list_oids,
     classifier: classifier_selected.dataset.classifier == "" ? null : classifier_selected.dataset.classifier,
     class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value ,
     survey: survey_id.dataset.survey,

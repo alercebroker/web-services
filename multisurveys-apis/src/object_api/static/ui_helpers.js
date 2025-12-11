@@ -86,10 +86,9 @@ function surveys_blur_items(){
 
 
 function split_oids(oids_values){
-  let regExp = /[,;]*\s/
-  return oids_values.split(regExp)
+  let regExp = /[,;]+\s*/;
+  return oids_values.split(regExp).filter(oid => oid.length > 0);
 }
-
 
 function format_oids(listOfOids) {
   const reducer = (accumulator, current) =>
@@ -97,7 +96,7 @@ function format_oids(listOfOids) {
   let oids = listOfOids.reduce(reducer, [])
   oids = oids.map((x) => x.trim())
   oids = Array.from(new Set(oids))
-  return oids
+  return oids.toString()
 }
 
 

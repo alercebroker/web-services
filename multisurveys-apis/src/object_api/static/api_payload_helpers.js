@@ -73,7 +73,6 @@ function get_values_array_fields(fields){
 
     return response_array
 }
-  
 
 export {
     send_classes_data, 
