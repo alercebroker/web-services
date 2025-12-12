@@ -90,21 +90,46 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
         "band": band,
     }
 
-def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
-    min_error = float('inf')
-    max_error = -(float('inf'))
+def _get_min_and_max_error_bar(data: List[List[float]]):
+    # min_error = float('inf')
+    # max_error = -(float('inf'))
+    
+    # for error_bar in data:
+    #     aux_min = min(error_bar[1],error_bar[2])
+    #     aux_max = max(error_bar[1],error_bar[2])
 
+    #     if aux_min < min_error:
+    #         min_error = aux_min
+
+    #     if aux_max > max_error:
+    #         max_error = aux_max
+
+    min_errors = []
+    max_errors = []
     for error_bar in data:
+        min_ = min(error_bar[1],error_bar[2])
+        max_ = max(error_bar[1],error_bar[2])
 
-        aux_min = min(error_bar[1],error_bar[2])
-        aux_max = max(error_bar[1],error_bar[2])
+        if len(min_errors) == 0 and len(max_errors) == 0:
+            min_errors.append(min_)
+            max_errors.append(max_)
+            continue
 
-        if aux_min < min_error:
-            min_error = aux_min
+        if min_ < min_errors[0]:
+            min_errors[0] = min_
 
-        if aux_max > max_error:
-            max_error = aux_max
+        if max_ > max_errors[0]:
+            max_errors[0] = max_
+            
+    
+    return min_errors[0], max_errors[0]
 
+def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
+    min_error, max_error = _get_min_and_max_error_bar(data)
+
+    pprint.pprint(data)
+
+    print(min_error, ", ", max_error)
 
     return {
         "name": name + " " + survey.upper() + ": " + band,
