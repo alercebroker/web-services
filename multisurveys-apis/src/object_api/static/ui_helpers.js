@@ -66,7 +66,7 @@ function switch_arrow_icon(item){
 
 
 function survey_emphasize(btn){
-  document.getElementById("survey").dataset.survey = btn.textContent
+  document.getElementById("survey").dataset.survey = btn.textContent.toLowerCase()
   document.querySelector('.obj-survey-selected').classList.remove('obj-survey-selected')
   btn.classList.add('obj-survey-selected')
   btn.classList.remove('obj-surveys-unselect')

@@ -52,6 +52,22 @@ function clean_nulls_form(form_response){
 }
 
 
+function _check_is_empty(value){
+  if(value == ''){
+    return true
+  }
+
+  return false
+}
+
+function _check_max_arr_position(index, response_array){
+  if (index == 1 && response_array.length == 0 ){
+    return true
+  }
+
+  return false
+}
+
 function get_values_array_fields(fields){
   let response_array = []
 
@@ -69,22 +85,6 @@ function get_values_array_fields(fields){
 
   
   return response_array
-}
-
-function _check_is_empty(value){
-  if(value == ''){
-    return true
-  }
-
-  return false
-}
-
-function _check_max_arr_position(index, response_array){
-  if (index == 1 && response_array.length == 0 ){
-    return true
-  }
-
-  return false
 }
 
 export {
