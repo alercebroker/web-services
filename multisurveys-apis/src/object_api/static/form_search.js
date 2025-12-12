@@ -5,6 +5,8 @@ import {draw_oids_tags} from "./draw_elements.js";
 import { display, highlight_text, split_oids, format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon }  from "./ui_helpers.js";
 import {get_sesame_object} from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
+import {restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch} from "./form_restore_functions.js";
+
 
 let oids_arr = []
 
@@ -364,114 +366,21 @@ function send_form_Data(){
 function restore_form_from_url() {
   const urlParams = new URLSearchParams(window.location.search)
 
-  // Restaurar survey
-  const survey = urlParams.get('survey')
-  if (survey) {
-    document.getElementById('survey').dataset.survey = survey
-    if (survey === 'ztf') {
-      survey_emphasize(document.getElementById('ztf_btn'))
-    } else if (survey === 'lsst') {
-      survey_emphasize(document.getElementById('lsst_btn'))
-    }
-  }
 
-  // Restaurar Object IDs
-  const oids = urlParams.getAll('oid')
-  if (oids.length > 0) {
-    oids_arr = oids
-    draw_oids_tags(oids_arr)
-    document.getElementById("clear_oids_btn").classList.remove("tw-hidden")
-  }
+  restore_survey(urlParams)
+  
+  restore_object_id(urlParams)
+  
+  restore_classifier(urlParams)
+  
+  restore_class(urlParams)
 
-  // Restaurar classifier y class_name
-  const classifier = urlParams.get('classifier')
-  const className = urlParams.get('class_name')
+  restore_probability(urlParams)
 
-  if (classifier) {
-    const classifierElement = document.getElementById('classifier')
+  restore_n_det(urlParams)
 
-    if (className) {
-      document.body.addEventListener('htmx:afterSwap', function handleClassesLoaded(event) {
-        if (event.detail.target.id === 'classes_options') {
-          const classOptions = document.querySelectorAll('#classes_options .obj-custom-option')
-          const classElement = document.getElementById('class')
+  restore_mjd(urlParams)  
 
-          classOptions.forEach(option => {
-            if (option.dataset.value === className) {
-              const previousSelected = document.querySelector('#classes_options .obj-custom-option.obj-selected')
-              if (previousSelected) {
-                previousSelected.classList.remove('obj-selected')
-              }
+  restore_conesearch(urlParams)
 
-              option.classList.add('obj-selected')
-
-              if (classElement) {
-                classElement.textContent = option.textContent.trim()
-                classElement.setAttribute('data-value', option.dataset.value)
-              }
-            }
-          })
-
-          document.body.removeEventListener('htmx:afterSwap', handleClassesLoaded)
-        }
-      })
-    }
-
-    const classifierOptions = document.querySelectorAll('#classifiers_options .obj-custom-option')
-    classifierOptions.forEach(option => {
-      if (option.dataset.classifier === classifier) {
-
-        classifierElement.setAttribute('data-classifier', option.dataset.classifier)
-        classifierElement.setAttribute('data-classes', option.dataset.classes)
-        classifierElement.textContent = option.textContent.trim()
-
-        document.querySelector('#classifiers_options .obj-custom-option.obj-selected')?.classList.remove('obj-selected')
-        option.classList.add('obj-selected')
-
-        classifierElement.dispatchEvent(new Event('change'))
-      }
-    })
-  }
-
-  // Restaurar probability
-  const probability = urlParams.get('probability')
-  if (probability) {
-    const probRange = document.getElementById('prob_range')
-    probRange.value = probability
-    document.getElementById('prob_number').innerHTML = probability
-  }
-
-  // Restaurar n_det
-  const nDetMin = urlParams.get('n_det_min')
-  const nDetMax = urlParams.get('n_det_max')
-
-  if (nDetMin) {
-    document.getElementById('min_detections').value = nDetMin
-  }
-  if (nDetMax) {
-    document.getElementById('max_detections').removeAttribute('disabled')
-    document.getElementById('max_detections').value = nDetMax
-  }
-
-  // Restaurar firstmjd
-  const firstmjds = urlParams.getAll('firstmjd')
-  if (firstmjds.length > 0) {
-    if (firstmjds[0]) {
-      document.getElementById('min_mjd').value = firstmjds[0]
-      document.getElementById('min_mjd').dispatchEvent(new Event('input'))
-    }
-    if (firstmjds[1]) {
-      document.getElementById('max_mjd').value = firstmjds[1]
-      document.getElementById('max_mjd').dispatchEvent(new Event('input'))
-    }
-  }
-
-  // Restaurar conesearch (ra, dec, radius)
-  const ra = urlParams.get('ra')
-  const dec = urlParams.get('dec')
-  const radius = urlParams.get('radius')
-
-  if (ra) document.getElementById('ra_consearch').value = ra
-  if (dec) document.getElementById('dec_consearch').value = dec
-  if (radius) document.getElementById('radius_consearch').value = radius
-  }
+}
