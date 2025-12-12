@@ -52,26 +52,39 @@ function clean_nulls_form(form_response){
 }
 
 
+function _check_is_empty(value){
+  if(value == ''){
+    return true
+  }
+
+  return false
+}
+
+function _check_max_arr_position(index, response_array){
+  if (index == 1 && response_array.length == 0 ){
+    return true
+  }
+
+  return false
+}
+
 function get_values_array_fields(fields){
+  let response_array = []
 
-    let response_array = []
-    let has_any_value = false
+  for(let [index, field] of fields.entries()){
+    let field_value = document.getElementById(field).value
 
-    for(let field of fields){
-      let value = document.getElementById(field).value
-      if(value != ""){
-        response_array.push(value)
-        has_any_value = true
-      } else {
-        response_array.push(null)
-      }
+    if(_check_max_arr_position(index, response_array) && !_check_is_empty(field_value)){
+      response_array.push(0)
     }
 
-    if(!has_any_value){
-      return []
+    if(!_check_is_empty(field_value)){
+      response_array.push(field_value)
     }
+  }
 
-    return response_array
+  
+  return response_array
 }
 
 export {
