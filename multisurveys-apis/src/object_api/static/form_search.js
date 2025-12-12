@@ -22,6 +22,11 @@ export function init(){
   let discovery_date_filters = document.getElementById("discovery_date_filters")
   let conesearch_filters = document.getElementById("conesearch_filters")
 
+  // let classifiers_list = document.getElementById("classifiers_list")
+  // let classifiers_options = document.getElementById("classifiers_options")
+  // let classes_list = document.getElementById("classes_list")
+  // let classes_options = document.getElementById("classes_options")
+
   let clear_oids = document.getElementById("clear_oids_btn")
   let oids_container = document.getElementById("oids_container")
   let prob_range = document.getElementById("prob_range")
@@ -93,19 +98,43 @@ export function init(){
     highlight_text(general_filters)
     display(item_name)
   })
-
+  
   discovery_date_filters.addEventListener("click", () =>{
     item_name = discovery_date_filters.id + "_container"
     switch_arrow_icon(discovery_date_filters)
     highlight_text(discovery_date_filters)
     display(item_name)
   })
-
+  
   conesearch_filters.addEventListener("click", () =>{
     item_name = conesearch_filters.id + "_container"
     switch_arrow_icon(conesearch_filters)
     highlight_text(conesearch_filters)
     display(item_name)
+  })
+
+  classifiers_list.addEventListener("click", () =>{
+    item_name = classifiers_list.id + "_container"
+    switch_arrow_icon(classifiers_list)
+    highlight_text(classifiers_list)
+  })
+
+  classifiers_options.addEventListener("click", () =>{
+    item_name = classifiers_list.id + "_container"
+    switch_arrow_icon(classifiers_list)
+    highlight_text(classifiers_list)
+  })
+
+  classes_list.addEventListener("click", () =>{
+    item_name = classes_list.id + "_container"
+    switch_arrow_icon(classes_list)
+    highlight_text(classes_list)
+  })
+
+  classes_options.addEventListener("click", () =>{
+    item_name = classes_list.id + "_container"
+    switch_arrow_icon(classes_list)
+    highlight_text(classes_list)
   })
 
   min_date_time_text.addEventListener("click", () => {
@@ -222,10 +251,6 @@ export function init(){
     input_ids.value = ""
   })
 
-  min_detections.addEventListener("change", () =>{
-    max_detections.removeAttribute("disabled")
-  })
-
   date_min.addEventListener("change", () => {
     dateUTC = convertToDate(date_min.value, time_min.value)
     dateUTC = gregorianToJd(dateUTC)
@@ -292,7 +317,6 @@ function reset_values(){
   document.getElementById("clear_oids_btn").click()
 }
 
-
 function send_form_Data(){
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
   let first_mjd_arr = get_values_array_fields(["min_mjd", "max_mjd"])
@@ -307,9 +331,8 @@ function send_form_Data(){
   )
   let radius_consearch = document.getElementById('radius_consearch').value
 
-
   let response = {
-    oid: list_oids,
+    oid: list_oids == '' ? null : list_oids,
     classifier: classifier_selected.dataset.classifier == "" ? null : classifier_selected.dataset.classifier,
     class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value ,
     survey: survey_id.dataset.survey,

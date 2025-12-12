@@ -12,8 +12,9 @@ def object_parser(sql_response):
     return jsonable_encoder(model_parsed)
 
 def loads_objects_list(objects):
-    if objects is None:
-        return None
+
+    if _object_is_empty(objects):
+        return []
 
     objects_json = _parse_json_string(objects)
 
@@ -35,3 +36,7 @@ def _parse_json_string(json_string):
     )
     
     return json.loads(json_parsed)
+
+def _object_is_empty(objects):
+    if objects is None or objects == "":
+        return True

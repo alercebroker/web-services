@@ -59,6 +59,7 @@
                     <th class="tw-px-4">Object ID</th>
                     <th
                     id="n_det_column"
+                    name="object_column_name"
                     data-column = "n_det"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     hx-get="{{API_URL}}/htmx/list_objects"
@@ -69,9 +70,26 @@
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
                     ...send_order_data("n_det", "{{actual_order_mode}}")}'
-                    >Number of detections</th>
+                    >
+                    <div id="number_of_detections" class="tw-group tw-flex tw-items-center tw-gap-1.5 tw-cursor-pointer">
+                        <span class="placeholder-span">
+                            Number of detections
+                        </span>
+                        <svg
+                            name="sort_arrow"
+                            data-direction="{% if actual_order_by == 'n_det' %}{{ 'down' if actual_order_mode == 'DESC' else 'up' }}{% else %}down{% endif %}"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="{% if actual_order_by == 'n_det' %}tw-visible{% else %}tw-invisible group-hover:tw-visible{% endif %} tw-h-4 tw-w-4 tw-fill-black dark:tw-fill-white"
+                            viewBox="0 -960 960 960"
+                            fill="#e3e3e3">
+                            <path d="{% if actual_order_by == 'n_det' and actual_order_mode == 'ASC' %}M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z{% else %}M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z{% endif %}"/>
+                        </svg>
+                    </div>
+
+                    </th>
                     <th 
                     id="firstmjd_column"
+                    name="object_column_name"
                     data-column = "firstmjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     hx-get="{{API_URL}}/htmx/list_objects"
@@ -82,9 +100,27 @@
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
                     ...send_order_data("firstmjd", "{{actual_order_mode}}")}'
-                    >FirstMJD</th>
+                    >
+                    
+                    <div id="first_mjd" class="tw-group tw-flex tw-items-center tw-gap-1.5 tw-cursor-pointer">
+                        <span class="placeholder-span">
+                            FirstMJD
+                        </span>
+                        <svg
+                            name="sort_arrow"
+                            data-direction="{% if actual_order_by == 'firstmjd' %}{{ 'down' if actual_order_mode == 'DESC' else 'up' }}{% else %}down{% endif %}"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="{% if actual_order_by == 'firstmjd' %}tw-visible{% else %}tw-invisible group-hover:tw-visible{% endif %} tw-h-4 tw-w-4 tw-fill-black dark:tw-fill-white"
+                            viewBox="0 -960 960 960"
+                            fill="#e3e3e3">
+                            <path d="{% if actual_order_by == 'firstmjd' and actual_order_mode == 'ASC' %}M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z{% else %}M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z{% endif %}"/>
+                        </svg>
+                    </div>
+                    
+                    </th>
                     <th
                     id="lastmjd_column"
+                    name="object_column_name"
                     data-column = "lastmjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     hx-get="{{API_URL}}/htmx/list_objects"
@@ -95,11 +131,29 @@
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
                     ...send_order_data("lastmjd", "{{actual_order_mode}}")}'
-                    >LastMJD</th>
+                    >
+        
+                    <div id="last_mjd" class="tw-group tw-flex tw-items-center tw-gap-1.5 tw-cursor-pointer">
+                        <span class="placeholder-span">
+                            LastMJD
+                        </span>
+                        <svg
+                            name="sort_arrow"
+                            data-direction="{% if actual_order_by == 'lastmjd' %}{{ 'down' if actual_order_mode == 'DESC' else 'up' }}{% else %}down{% endif %}"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="{% if actual_order_by == 'lastmjd' %}tw-visible{% else %}tw-invisible group-hover:tw-visible{% endif %} tw-h-4 tw-w-4 tw-fill-black dark:tw-fill-white"
+                            viewBox="0 -960 960 960"
+                            fill="#e3e3e3">
+                            <path d="{% if actual_order_by == 'lastmjd' and actual_order_mode == 'ASC' %}M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z{% else %}M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z{% endif %}"/>
+                        </svg>
+                    </div>
+                    
+                    </th>
                     <th class="tw-px-4">RA/DEC(degrees)</th>
                     <th class="tw-px-4">Highest Probability Class</th>
                     <th 
                     id="probability_column"
+                    name="object_column_name"
                     data-column = "probability"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     hx-get="{{API_URL}}/htmx/list_objects"
@@ -110,7 +164,24 @@
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
                     ...send_order_data("probability", "{{actual_order_mode}}")}'
-                    >Highest Probability</th>
+                    >
+                    
+                    <div id="highest_probability" class="tw-group tw-flex tw-items-center tw-gap-1.5 tw-cursor-pointer">
+                        <span class="placeholder-span">
+                            Highest Probability
+                        </span>
+                        <svg
+                            name="sort_arrow"
+                            data-direction="{% if actual_order_by == 'probability' %}{{ 'down' if actual_order_mode == 'DESC' else 'up' }}{% else %}down{% endif %}"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="{% if actual_order_by == 'probability' %}tw-visible{% else %}tw-invisible group-hover:tw-visible{% endif %} tw-h-4 tw-w-4 tw-fill-black dark:tw-fill-white"
+                            viewBox="0 -960 960 960"
+                            fill="#e3e3e3">
+                            <path d="{% if actual_order_by == 'probability' and actual_order_mode == 'ASC' %}M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z{% else %}M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z{% endif %}"/>
+                        </svg>
+                    </div>
+                    
+                    </th>
                     <th class="tw-px-4">DeltaMJD (days)</th>
                 </tr>
             </thead>
@@ -129,17 +200,17 @@
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">FirstMJD</span>
-                            <span name="firstmjd">{{item['firstmjd'] | truncate(3)}}</span>
+                            <span name="firstmjd">{{"%.3f" | format(item['firstmjd'])}}</span>
                         </td>
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">LastMJD</span>
-                            <span name="lastmjd">{{item['lastmjd'] | truncate(3)}}</span>
+                            <span name="lastmjd">{{"%.3f" | format(item['lastmjd'])}}</span>
                         </td>
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">RA/Dec (degrees)</span>
-                            <span name="meanra, meandec">{{ item['meanra'] | truncate(3) }}, {{ item['meandec'] | truncate(3) }}</span>
+                            <span name="meanra, meandec">{{"%.3f" | format(item['meanra'])}}, {{"%.3f" | format(item['meandec'])}}</span>
                         </td>
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
@@ -149,11 +220,11 @@
                         
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">Highest Probability</span>
-                            <span name="ranking">{{item['ranking']}}</span>
+                            <span name="probability">{{"%.3f" | format(item['probability'])}}</span>
                         </td>
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">DeltaMJD (days)</span>
-                            <span name="deltamjd">{{item['deltamjd']}}</span>
+                            <span name="deltamjd">{{"%.3f" | format(item['firstmjd'])}}</span>
                         </td>
                     </tr>
                 {% endfor %}
@@ -178,7 +249,7 @@
 
 
 <script type="module">
-    import {draw_arrow_order_table} from "{{API_URL}}/static/draw_elements.js";
+    import {draw_arrow_order_table} from "{{API_URL}}/static/draw_elements.js"
 
     let recived_order_by = '{{actual_order_by}}_column'
     let recived_order_mode = '{{actual_order_mode}}'

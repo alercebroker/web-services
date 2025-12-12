@@ -64,8 +64,8 @@ def radius_validation(radius):
             )
 
 
-def oids_format_validation(oids):
-    if oids is not None:
+def oids_format_validation(oids, survey):
+    if oids is not None and survey == 'ztf':
         pattern = re.compile(r"(ZTF)\d{2,}\w+|[Ss]upernova")
 
         for oid in oids:

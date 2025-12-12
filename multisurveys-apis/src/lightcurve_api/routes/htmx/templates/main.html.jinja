@@ -6,8 +6,6 @@
 
 <div class="tw-grid tw-grid-cols-12 tw-h-full tw-bg-white dark:tw-bg-[#1e1e1e]">
 
-  <div class="tw-col-span-full tw-order-last tw-py-4 tw-text-center tw-mx-3 md:tw-col-span-3 md:tw-order-none ">{% include "config_panel.html.jinja" %}</div>
-
   <div class="tw-col-span-full tw-order-first tw-h-full md:tw-col-span-9 md:tw-order-none">
     {% if not_corrected and config_state.total %}
       <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
@@ -40,6 +38,8 @@
     </div>
     {% endif %}
   </div>
+
+  <div class="tw-col-span-full tw-order-last tw-py-4 tw-text-center tw-mx-3 md:tw-col-span-3 md:tw-order-none ">{% include "config_panel.html.jinja" %}</div>
 </div>
 <script>
 </script>
