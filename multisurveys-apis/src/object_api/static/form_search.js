@@ -292,16 +292,10 @@ export function init(){
   window.send_pagination_data = send_pagination_data
   window.send_order_data = send_order_data
 
-  // Esperar a que HTMX esté completamente inicializado antes de restaurar
-  if (typeof htmx !== 'undefined') {
-    setTimeout(() => {
-      restore_form_from_url()
-    }, 100)
-  } else {
-    document.addEventListener('htmx:load', function() {
-      restore_form_from_url()
-    }, { once: true })
-  }
+  setTimeout(() => {
+    restore_form_from_url()
+  }, 100)
+
 }
 
 

@@ -59,30 +59,28 @@ function restore_class(urlParams){
     const className = urlParams.get('class_name')
     let classes_options = document.getElementById('classes_options')
     if (className) {
-
-
         classes_options.addEventListener('htmx:afterSwap', function handleClassesLoaded(event) {
             if (event.detail.target.id === 'classes_options') {
-            const classOptions = document.querySelectorAll('#classes_options .obj-custom-option')
-            const classElement = document.getElementById('class')
+                const classOptions = document.querySelectorAll('#classes_options .obj-custom-option')
+                const classElement = document.getElementById('class')
 
-            classOptions.forEach(option => {
-                if (option.dataset.value === className) {
-                const previousSelected = document.querySelector('#classes_options .obj-custom-option.obj-selected')
-                if (previousSelected) {
-                    previousSelected.classList.remove('obj-selected')
-                }
+                classOptions.forEach(option => {
+                    if (option.dataset.value === className) {
+                        const previousSelected = document.querySelector('#classes_options .obj-custom-option.obj-selected')
+                        if (previousSelected) {
+                            previousSelected.classList.remove('obj-selected')
+                        }
 
-                option.classList.add('obj-selected')
+                        option.classList.add('obj-selected')
 
-                if (classElement) {
-                    classElement.textContent = option.textContent.trim()
-                    classElement.setAttribute('data-value', option.dataset.value)
-                }
-                }
-            })
+                        if (classElement) {
+                            classElement.textContent = option.textContent.trim()
+                            classElement.setAttribute('data-value', option.dataset.value)
+                        }
+                    }
+                })
 
-            classes_options.removeEventListener('htmx:afterSwap', handleClassesLoaded)
+                classes_options.removeEventListener('htmx:afterSwap', handleClassesLoaded)
             }
         })
     }
