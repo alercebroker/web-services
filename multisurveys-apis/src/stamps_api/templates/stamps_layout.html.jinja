@@ -1,0 +1,50 @@
+<script src="{{API_URL}}/htmx-static/htmx.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/json-enc.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+<link rel="stylesheet" href="{{API_URL}}/static/stamp.css"> 
+<!--script type="module" src="{{API_URL}}/static/stamp.js"></script-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scientific Data Card</title>
+
+<div class="tw-bg-gray-100 tw-p-4">
+    <div id="stamp-app" class="tw-preflight">
+        {% include "stamps_card.html.jinja" %}
+    </div>
+    
+</div>
+
+<script>
+    if (typeof STAMP_CONFIG === 'undefined') {
+        var STAMP_CONFIG = {
+            oid: "{{oid}}",
+            survey_id: "{{ survey_id }}",
+            detections_list: {{ detections | tojson | safe }} 
+        };
+    } else {
+        STAMP_CONFIG.oid = "{{oid}}";
+        STAMP_CONFIG.survey_id = "{{ survey_id }}";
+        STAMP_CONFIG.detections_list = {{ detections | tojson | safe }};
+    }
+
+    htmx.defineExtension('final-payload', {
+        encodeParameters: function(xhr, parameters, elt) {
+            let rawId;
+            
+            if (elt.tagName === 'SELECT') {
+                rawId = elt.value;
+            } else {
+                rawId = elt.getAttribute('data-measurement-id');
+            }
+
+            let payload = {
+                oid: STAMP_CONFIG.oid,
+                survey_id: STAMP_CONFIG.survey_id,
+                measurement_id: rawId,
+                detections_list: STAMP_CONFIG.detections_list
+            };
+            
+            return JSON.stringify(payload);
+        }
+    });
+</script>
