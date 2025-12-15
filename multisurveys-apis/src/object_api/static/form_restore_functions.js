@@ -104,11 +104,10 @@ function restore_n_det(urlParams){
     const nDetMax = urlParams.get('n_det_max')
 
     if (nDetMin) {
-    document.getElementById('min_detections').value = nDetMin
+        document.getElementById('min_detections').value = nDetMin
     }
     if (nDetMax) {
-    document.getElementById('max_detections').removeAttribute('disabled')
-    document.getElementById('max_detections').value = nDetMax
+        document.getElementById('max_detections').value = nDetMax
     }
 
 }
