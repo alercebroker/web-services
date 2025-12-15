@@ -134,7 +134,8 @@ def objects_table(
     survey: str | None = None,
     classifier: str | None = None,
     ranking: int | None = Query(default=1),
-    n_det: Annotated[list[int] | None, Query()] = None,
+    n_det_min: int | None = None,
+    n_det_max: int | None = None,
     probability: float | None = None,
     firstmjd: Annotated[list[float] | None, Query()] = None,
     lastmjd: Annotated[list[float] | None, Query()] = None,
@@ -152,6 +153,7 @@ def objects_table(
             session = request.app.state.psql_session
             oid = _parse_oids_string_to_array(oid)
 
+            n_det = ndet_build(n_det_min, n_det_max)
 
             ndets_validation(n_det)
             order_mode_validation(order_mode)
@@ -232,7 +234,8 @@ def sidebar(
     classifier: str | None = None,
     class_name: str | None = None,
     ranking: int | None = Query(default=1),
-    n_det: Annotated[list[str] | None, Query()] = None,
+    n_det_min: int | None = None,
+    n_det_max: int | None = None,
     probability: float | None = None,
     firstmjd: Annotated[list[float] | None, Query()] = None,
     lastmjd: Annotated[list[float] | None, Query()] = None,
@@ -249,6 +252,8 @@ def sidebar(
         if survey is not None:
             session = request.app.state.psql_session
             oid = _parse_oids_string_to_array(oid)
+
+            n_det = ndet_build(n_det_min, n_det_max)
 
             ndets_validation(n_det)
             order_mode_validation(order_mode)
@@ -313,3 +318,15 @@ def sidebar(
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
+
+
+def ndet_build(n_det_min, n_det_max):
+
+    n_det = []
+    if n_det_min is not None:
+        n_det.append(n_det_min)
+    if n_det_max is not None:
+        n_det.append(n_det_max)
+    n_det = n_det if len(n_det) > 0 else None
+
+    return n_det

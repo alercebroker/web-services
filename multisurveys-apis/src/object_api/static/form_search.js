@@ -5,6 +5,8 @@ import {draw_oids_tags} from "./draw_elements.js";
 import { display, highlight_text, split_oids, format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon }  from "./ui_helpers.js";
 import {get_sesame_object} from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
+import {restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch} from "./form_restore_functions.js";
+
 
 let oids_arr = []
 
@@ -62,11 +64,11 @@ export function init(){
   for(const option of document.querySelectorAll(".obj-custom-option")){
     option.addEventListener('click', () => {
         if(!option.classList.contains('obj-selected')){
-            
+
           option.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
-          
+
           option.classList.add('obj-selected');
-          
+
           option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
 
           if(!option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.contains('dark:tw-text-[#EEEEEE]')){
@@ -289,6 +291,11 @@ export function init(){
   window.send_form_Data = send_form_Data
   window.send_pagination_data = send_pagination_data
   window.send_order_data = send_order_data
+
+  setTimeout(() => {
+    restore_form_from_url()
+  }, 100)
+
 }
 
 
@@ -326,7 +333,7 @@ function send_form_Data(){
   let survey_id = document.getElementById('survey')
   let list_oids = format_oids(oids_arr)
   let [ra_consearch, dec_consearch] = check_radio_consearch(
-    document.getElementById('ra_consearch').value, 
+    document.getElementById('ra_consearch').value,
     document.getElementById('dec_consearch').value
   )
   let radius_consearch = document.getElementById('radius_consearch').value
@@ -337,7 +344,8 @@ function send_form_Data(){
     class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value ,
     survey: survey_id.dataset.survey,
     probability: probability_value > 0 ? probability_value : null,
-    n_det: ndet_arr.length > 0 ? ndet_arr : null,
+    n_det_min: ndet_arr.length > 0 && ndet_arr[0] !== null ? parseInt(ndet_arr[0]) : null,
+    n_det_max: ndet_arr.length > 1 && ndet_arr[1] !== null ? parseInt(ndet_arr[1]) : null,
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
     dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
@@ -347,4 +355,26 @@ function send_form_Data(){
   response = clean_nulls_form(response)
 
   return response
+}
+
+function restore_form_from_url() {
+  const urlParams = new URLSearchParams(window.location.search)
+
+
+  restore_survey(urlParams)
+  
+  restore_object_id(urlParams)
+  
+  restore_classifier(urlParams)
+  
+  restore_class(urlParams)
+
+  restore_probability(urlParams)
+
+  restore_n_det(urlParams)
+
+  restore_mjd(urlParams)  
+
+  restore_conesearch(urlParams)
+
 }
