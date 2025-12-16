@@ -1,6 +1,8 @@
+import array
 import copy
 import csv
 import io
+from os import name
 import re
 import zipfile
 import pprint
@@ -13,6 +15,8 @@ from typing import Callable, ContextManager, List, Dict, Any, Tuple
 import httpx
 from lightcurve_api.models.periodogram import Periodogram
 from lightcurve_api.services.lightcurve_plot_service import plots_utils
+from pydantic.networks import MAX_EMAIL_LENGTH
+from sqlalchemy import true
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
@@ -45,6 +49,7 @@ FORCED_PHOTOMETRY = "f. phot"
 ZTF_SURVEY = "ztf"
 LSST_SURVEY = "lsst"
 ZTF_DR_SURVEY = "ztf dr"
+EMPTY = 'empty'
 COLORS = {
     ZTF_SURVEY: {"g": "#56E03A", "r": "#D42F4B", "i": "#F4D617"},
     LSST_SURVEY: {
@@ -56,6 +61,7 @@ COLORS = {
         "y": "#0072B2",
     },
     ZTF_DR_SURVEY: {"g": "#ADA3A3", "r": "#377EB8", "i": "#FF7F00"},
+    EMPTY: {"empty" : "#00CBFF"}
 }
 SYMBOLS = {
     ZTF_SURVEY: {
@@ -76,6 +82,9 @@ SYMBOLS = {
         },
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
+    EMPTY: {
+        EMPTY: {"symbol": "circle"}
+    },
 }
 
 
@@ -91,45 +100,35 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
     }
 
 def _get_min_and_max_error_bar(data: List[List[float]]):
-    # min_error = float('inf')
-    # max_error = -(float('inf'))
-    
-    # for error_bar in data:
-    #     aux_min = min(error_bar[1],error_bar[2])
-    #     aux_max = max(error_bar[1],error_bar[2])
+    min_plot_error = []
+    max_plot_error = []
 
-    #     if aux_min < min_error:
-    #         min_error = aux_min
-
-    #     if aux_max > max_error:
-    #         max_error = aux_max
-
-    min_errors = []
-    max_errors = []
     for error_bar in data:
         min_ = min(error_bar[1],error_bar[2])
         max_ = max(error_bar[1],error_bar[2])
+        mjd = error_bar[0]
 
-        if len(min_errors) == 0 and len(max_errors) == 0:
-            min_errors.append(min_)
-            max_errors.append(max_)
+        if len(min_plot_error) == 0 and len(max_plot_error) == 0:
+            min_plot_error.append(error_bar[0])
+            min_plot_error.append(min_)
+            max_plot_error.append(error_bar[0])
+            max_plot_error.append(max_)
             continue
+        
 
-        if min_ < min_errors[0]:
-            min_errors[0] = min_
+        if min_ < min_plot_error[1]:
+            min_plot_error[1] = min_
+            min_plot_error[0] = mjd 
 
-        if max_ > max_errors[0]:
-            max_errors[0] = max_
-            
+        if max_ > max_plot_error[1]:
+            max_plot_error[1] = max_
+            max_plot_error[0] = mjd
     
-    return min_errors[0], max_errors[0]
+    
+    return min_plot_error, max_plot_error
 
 def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
-    min_error, max_error = _get_min_and_max_error_bar(data)
-
-    pprint.pprint(data)
-
-    print(min_error, ", ", max_error)
+    min_plot_error, max_plot_error = _get_min_and_max_error_bar(data)
 
     return {
         "name": name + " " + survey.upper() + ": " + band,
@@ -154,8 +153,8 @@ def create_error_bar_series(name: str, survey: str, band: str, data: List[List[f
         "survey": survey,
         "band": band,
         "error_bar": True,
-        "min_error_bar": min_error,
-        "max_error_bar": max_error,
+        "min_plot_error": min_plot_error,
+        "max_plot_error": max_plot_error,
     }
 
 
@@ -344,38 +343,40 @@ def set_chart_options_detections(result: Result) -> Result:
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
-    _set_chart_min_and_max_limits(result_copy)
+    #limits of detections errors
+    pipe(
+        result_copy.echart_options,
+        curry(_find_chart_min_and_max_limits, config_state=result.config_state),
+        lambda limits_arr: create_series(name='empty', survey='empty', band='empty', data=limits_arr),
+        lambda series_dict: [series_dict],
+        lambda series: result_copy.echart_options["series"].extend(series),
+    )
 
-    return result_copy
-
-def _set_chart_min_and_max_limits(result_copy: Result):
-    if plots_utils._check_limits_conditions(result_copy.config_state):
-        approximate_decimal = plots_utils._calculate_approximate_decimal(result_copy.config_state)
-        min_error, max_error = _get_min_and_max_errors(result_copy)
-        min_error, max_error = plots_utils._aproximate_errors(min_error, max_error, approximate_decimal)
-
-        result_copy.echart_options['yAxis']['min'] = min_error
-        result_copy.echart_options['yAxis']['max'] = max_error
-
+    
     return result_copy
 
 
-def _get_min_and_max_errors(result_copy: Result):
-    error_minimums = []
-    error_maximums= []
+def _find_chart_min_and_max_limits(echarts_options: dict[str, Any], config_state: ConfigState) -> List:
+    if plots_utils._check_limits_conditions(config_state):
+        limits_error_plots_arr = _get_min_and_max_errors(echarts_options)
 
-    for serie in result_copy.echart_options['series']:
-        if "error_bar" in serie:
-            error_minimums.append(serie['min_error_bar'])
-            error_maximums.append(serie['max_error_bar'])
+        return limits_error_plots_arr
+    
+    return []
 
-    if not error_minimums:
+
+def _get_min_and_max_errors(echarts_options: dict[str, Any]) -> List:
+    limits_error_plots_series = []
+
+    for serie in echarts_options['series']:
+        if 'error_bar' in serie:
+            limits_error_plots_series.append(serie['min_plot_error'])
+            limits_error_plots_series.append(serie['max_plot_error'])
+
+    if not limits_error_plots_series:
         raise ValueError("No error bars found in any series")
 
-    min_error = min(error_minimums)
-    max_error = max(error_maximums)
-
-    return min_error, max_error
+    return limits_error_plots_series
 
 
 def set_chart_options_non_detections(result: Result) -> Result:
@@ -663,6 +664,8 @@ def _transform_to_series(
 
         def _process_band(band_data: tuple[str, List[List[float]]]):
             band, data = band_data
+
+
 
             return (
                 create_series(series_type, survey, band, data)
