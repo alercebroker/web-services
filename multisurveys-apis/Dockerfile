@@ -38,4 +38,4 @@ COPY multisurveys-apis/README.md /app/
 WORKDIR /app
 RUN poetry install --only-root;
 
-CMD ["poetry", "run", "stamp"]
+CMD ["poetry", "run", "all"]
