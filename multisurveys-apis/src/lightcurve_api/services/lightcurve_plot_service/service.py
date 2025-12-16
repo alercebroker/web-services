@@ -83,7 +83,7 @@ SYMBOLS = {
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
     EMPTY: {
-        EMPTY: {"symbol": "circle"}
+        EMPTY: {"symbol": "none"}
     },
 }
 
@@ -98,34 +98,6 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
         "survey": survey,
         "band": band,
     }
-
-def _get_min_and_max_error_bar(data: List[List[float]]):
-    min_plot_error = []
-    max_plot_error = []
-
-    for error_bar in data:
-        min_ = min(error_bar[1],error_bar[2])
-        max_ = max(error_bar[1],error_bar[2])
-        mjd = error_bar[0]
-
-        if len(min_plot_error) == 0 and len(max_plot_error) == 0:
-            min_plot_error.append(error_bar[0])
-            min_plot_error.append(min_)
-            max_plot_error.append(error_bar[0])
-            max_plot_error.append(max_)
-            continue
-        
-
-        if min_ < min_plot_error[1]:
-            min_plot_error[1] = min_
-            min_plot_error[0] = mjd 
-
-        if max_ > max_plot_error[1]:
-            max_plot_error[1] = max_
-            max_plot_error[0] = mjd
-    
-    
-    return min_plot_error, max_plot_error
 
 def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
     min_plot_error, max_plot_error = _get_min_and_max_error_bar(data)
@@ -156,6 +128,34 @@ def create_error_bar_series(name: str, survey: str, band: str, data: List[List[f
         "min_plot_error": min_plot_error,
         "max_plot_error": max_plot_error,
     }
+
+def _get_min_and_max_error_bar(data: List[List[float]]):
+    min_plot_error = []
+    max_plot_error = []
+
+    for error_bar in data:
+        min_ = min(error_bar[1],error_bar[2])
+        max_ = max(error_bar[1],error_bar[2])
+        mjd = error_bar[0]
+
+        if len(min_plot_error) == 0 and len(max_plot_error) == 0:
+            min_plot_error.append(error_bar[0])
+            min_plot_error.append(min_)
+            max_plot_error.append(error_bar[0])
+            max_plot_error.append(max_)
+            continue
+        
+
+        if min_ < min_plot_error[1]:
+            min_plot_error[1] = min_
+            min_plot_error[0] = mjd 
+
+        if max_ > max_plot_error[1]:
+            max_plot_error[1] = max_
+            max_plot_error[0] = mjd
+    
+    
+    return min_plot_error, max_plot_error
 
 
 def default_echarts_legend(config_state: ConfigState):
