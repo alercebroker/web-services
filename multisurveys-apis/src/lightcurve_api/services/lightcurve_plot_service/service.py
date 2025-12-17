@@ -53,12 +53,12 @@ EMPTY = 'empty'
 COLORS = {
     ZTF_SURVEY: {"g": "#56E03A", "r": "#D42F4B", "i": "#F4D617"},
     LSST_SURVEY: {
-        "u": "#56B4E9",
-        "g": "#009E73",
-        "r": "#F0E442",
-        "i": "#CC79A7",
-        "z": "#D55E00",
-        "y": "#0072B2",
+        "u": "#56B4E9", # sky blue
+        "g": "#009E73", # bluish green
+        "r": "#D55E00", # vermillion
+        "i": "#E69F00", # orange
+        "z": "#CC79A7", # reddish purple
+        "y": "#0072B2", # blue
     },
     ZTF_DR_SURVEY: {"g": "#ADA3A3", "r": "#377EB8", "i": "#FF7F00"},
     EMPTY: {"empty" : "#00CBFF"}
