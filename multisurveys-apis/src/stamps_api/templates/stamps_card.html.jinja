@@ -100,7 +100,7 @@
     <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-mb-4">
         <div class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button onclick="downloadImage('science')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                <button id="scienceDownload" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
                     Science
                 </button>
             </div>
@@ -109,7 +109,7 @@
         
         <div class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button onclick="downloadImage('template')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                <button id="templateDownload" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
                     Template
                 </button>
             </div>
@@ -118,7 +118,7 @@
         
         <div class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button onclick="downloadImage('difference')" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                <button id="differenceDownload" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
                     Difference
                 </button>
             </div>
@@ -126,3 +126,8 @@
         </div>
     </div>
 </div>
+
+<script type="module">
+import {downloadStamp} from "{{API_URL}}/static/stamp.js"
+
+</script>
