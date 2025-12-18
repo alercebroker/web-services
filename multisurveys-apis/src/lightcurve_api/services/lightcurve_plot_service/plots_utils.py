@@ -3,8 +3,8 @@ from lightcurve_api.routes.htmx.parsers import ConfigState
 
 
 def _check_limits_conditions(config_state: ConfigState):
-    if config_state.external_sources.enabled == True:
-        return False
+    # if config_state.external_sources.enabled == True:
+    #     return False
 
     return True
 

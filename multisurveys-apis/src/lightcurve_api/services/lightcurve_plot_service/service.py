@@ -83,7 +83,7 @@ SYMBOLS = {
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
     EMPTY: {
-        EMPTY: {"symbol": "none"}
+        EMPTY: {"symbol": "circle"}
     },
 }
 
@@ -188,6 +188,9 @@ def default_echarts_legend(config_state: ConfigState):
             {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: i"},
             {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: z"},
             {"name": f"{FORCED_PHOTOMETRY} {LSST_SURVEY.upper()}: y"},
+            {"name": f"{DETECTION} {ZTF_DR_SURVEY.upper()}: g"},
+            {"name": f"{DETECTION} {ZTF_DR_SURVEY.upper()}: r"},
+            {"name": f"{DETECTION} {ZTF_DR_SURVEY.upper()}: i"},
         ],
     }
     if config_state.offset_bands:
@@ -352,7 +355,10 @@ def set_chart_options_detections(result: Result) -> Result:
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
-    
+    for serie in result_copy.echart_options["series"]:
+        if serie['survey'] == 'empty':
+            pprint.pprint(serie)
+        
     return result_copy
 
 
@@ -440,10 +446,6 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
 
 def create_chart_detections(detections: List[BaseDetection], config_state: ConfigState) -> List[ChartPoint]:
     result: list[ChartPoint] = []
-    
-    if config_state.external_sources.enabled != True:
-        detections = [item for item in detections if item.oid == int(config_state.oid)]
-
 
     for det in detections:
         if (
@@ -453,12 +455,9 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
         if det.survey_id.lower() == LSST_SURVEY and det.band_name() not in config_state.bands.lsst:
             continue
 
-        if det.survey_id.lower() == LSST_SURVEY and config_state.external_sources.enabled == True:
+        #filtro solo det de lsst
+        if det.survey_id.lower() == LSST_SURVEY and det.oid != int(config_state.oid):
             continue
-
-        if config_state.external_sources.enabled != True:
-            if det.oid != int(config_state.oid):
-                continue
 
 
         result.append(
@@ -553,8 +552,7 @@ def set_chart_options_external_sources(result: Result) -> Result:
     meanra = sum(det.ra for det in result.lightcurve.detections) / len(result.lightcurve.detections)
     meandec = sum(det.dec for det in result.lightcurve.detections) / len(result.lightcurve.detections)
 
-    meanra = 269.0062838  # TODO: TEST COORDINATES
-    meandec = -16.4499040  # TODO: TEST COORDINATES
+
     with httpx.Client() as client:
         result_copy.lightcurve.detections.extend(
             pipe(
@@ -568,6 +566,7 @@ def set_chart_options_external_sources(result: Result) -> Result:
                 ),
             )
         )
+
     return result_copy
 
 
@@ -594,8 +593,9 @@ def get_ztf_dr_objects(
     meanra = sum(det.ra for det in result.lightcurve.detections) / len(result.lightcurve.detections)
     meandec = sum(det.dec for det in result.lightcurve.detections) / len(result.lightcurve.detections)
 
-    meanra = 269.0062838  # TODO: TEST COORDINATES
-    meandec = -16.4499040  # TODO: TEST COORDINATES
+    # meanra = 269.0062838  # TODO: TEST COORDINATES
+    # meandec = -16.4499040  # TODO: TEST COORDINATES
+
     with httpx.Client() as client:
         result.config_state.external_sources.objects.extend(
             pipe(
