@@ -1,45 +1,32 @@
 
-const imagesList = ['bird.jpg', 'cat.jpg', 'elephant.jpg'];
 
-const imageParser = {
-    'bird': 'bird.jpg',
-    'cat': 'cat.jpg',
-    'elephant': 'elephant.jpg',
-};
+let scienceDownload = document.getElementById("scienceDownload")
+let templateDownload = document.getElementById("templateDownload")
+let differenceDownload = document.getElementById("differenceDownload")
 
-const stampsIds = ['science', 'template', 'difference']
+scienceDownload.addEventListener("click", () => downloadStamp("science"))
+templateDownload.addEventListener("click", () => downloadStamp("template"))
+differenceDownload.addEventListener("click", () => downloadStamp("difference"))
 
-export function initStamp(){
-    // Make function available globally for onclick handlers
-    window.showNewImage = showNewImage;
-};
-
-
-export function showNewImage(imageName){
-  console.log(imageName);
-  for (let stamp of stampsIds){
-      document.getElementById(`${stamp}-image`).src = `../static/stamps/${imageParser[imageName]}`;
-  };
-
-};
-
-
-export function elementReady(selector) {
-  return new Promise((resolve, reject) => {
-    const el = document.querySelector(selector);
-    if (el) {
-      resolve(el);
+export function downloadStamp(stampType) {
+    console.log("hola mundo", stampType)
+    const imageIdMap = {
+    "science": "scienceImg",
+    "template": "templateImg",
+    "difference": "differenceImg"
     }
 
-    new MutationObserver((mutationRecords, observer) => {
-      Array.from(document.querySelectorAll(selector)).forEach(element => {
-        resolve(element);
-        observer.disconnect();
-      });
-    })
-    .observe(document.documentElement, {
-      childList: true,
-      subtree: true
-    });
-  });
+    const imgElement = document.getElementById(imageIdMap[stampType])
+    if (!imgElement) {
+    console.error(`Image element not found for stamp type: ${stampType}`)
+    return
+    }
+
+    const dataUrl = imgElement.src
+    const link = document.createElement("a")
+    link.href = dataUrl
+    link.download = `stamp_${stampType}.png`
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
 }
