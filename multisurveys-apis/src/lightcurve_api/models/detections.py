@@ -186,9 +186,7 @@ class LsstDetection(BaseDetection):
         Returns:
             Calculated flux value
         """
-        d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
         magnitude = self.flux2magnitude(total, absolute)
-        magnitude = magnitude - d.distmod.value if absolute else magnitude
 
         return 10**(-(magnitude - 31.4) / 2.5)
 

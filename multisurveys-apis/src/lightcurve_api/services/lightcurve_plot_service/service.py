@@ -1,13 +1,22 @@
+import array
 import copy
 import csv
 import io
+from os import name
+import re
 import zipfile
+import pprint
+import math
+import lightcurve_api.services.lightcurve_plot_service.plots_utils as plots_utils
 from collections import defaultdict
 from itertools import chain
 from typing import Callable, ContextManager, List, Dict, Any, Tuple
 
 import httpx
 from lightcurve_api.models.periodogram import Periodogram
+from lightcurve_api.services.lightcurve_plot_service import plots_utils
+from pydantic.networks import MAX_EMAIL_LENGTH
+from sqlalchemy import true
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
@@ -40,17 +49,19 @@ FORCED_PHOTOMETRY = "f. phot"
 ZTF_SURVEY = "ztf"
 LSST_SURVEY = "lsst"
 ZTF_DR_SURVEY = "ztf dr"
+EMPTY = 'empty'
 COLORS = {
     ZTF_SURVEY: {"g": "#56E03A", "r": "#D42F4B", "i": "#F4D617"},
     LSST_SURVEY: {
-        "u": "#56B4E9",
-        "g": "#009E73",
-        "r": "#F0E442",
-        "i": "#CC79A7",
-        "z": "#D55E00",
-        "y": "#0072B2",
+        "u": "#56B4E9", # sky blue
+        "g": "#009E73", # bluish green
+        "r": "#D55E00", # vermillion
+        "i": "#E69F00", # orange
+        "z": "#CC79A7", # reddish purple
+        "y": "#0072B2", # blue
     },
     ZTF_DR_SURVEY: {"g": "#ADA3A3", "r": "#377EB8", "i": "#FF7F00"},
+    EMPTY: {"empty" : "#00CBFF"}
 }
 SYMBOLS = {
     ZTF_SURVEY: {
@@ -71,6 +82,9 @@ SYMBOLS = {
         },
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
+    EMPTY: {
+        EMPTY: {"symbol": "none"}
+    },
 }
 
 
@@ -85,8 +99,9 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
         "band": band,
     }
 
-
 def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
+    min_plot_error, max_plot_error = _get_min_and_max_error_bar(data)
+
     return {
         "name": name + " " + survey.upper() + ": " + band,
         "type": "scatter",
@@ -110,7 +125,37 @@ def create_error_bar_series(name: str, survey: str, band: str, data: List[List[f
         "survey": survey,
         "band": band,
         "error_bar": True,
+        "min_plot_error": min_plot_error,
+        "max_plot_error": max_plot_error,
     }
+
+def _get_min_and_max_error_bar(data: List[List[float]]):
+    min_plot_error = []
+    max_plot_error = []
+
+    for error_bar in data:
+        min_ = min(error_bar[1],error_bar[2])
+        max_ = max(error_bar[1],error_bar[2])
+        mjd = error_bar[0]
+
+        if len(min_plot_error) == 0 and len(max_plot_error) == 0:
+            min_plot_error.append(error_bar[0])
+            min_plot_error.append(min_)
+            max_plot_error.append(error_bar[0])
+            max_plot_error.append(max_)
+            continue
+        
+
+        if min_ < min_plot_error[1]:
+            min_plot_error[1] = min_
+            min_plot_error[0] = mjd 
+
+        if max_ > max_plot_error[1]:
+            max_plot_error[1] = max_
+            max_plot_error[0] = mjd
+    
+    
+    return min_plot_error, max_plot_error
 
 
 def default_echarts_legend(config_state: ConfigState):
@@ -266,7 +311,6 @@ def set_default_echart_options(result: Result) -> Result:
     result_copy.echart_options = chart_options
     return result_copy
 
-
 def set_chart_options_detections(result: Result) -> Result:
     if "detections" not in result.config_state.data_types:
         return result
@@ -299,7 +343,41 @@ def set_chart_options_detections(result: Result) -> Result:
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
+    #limits of detections errors
+    pipe(
+        result_copy.echart_options,
+        curry(_find_chart_min_and_max_limits, config_state=result.config_state),
+        lambda limits_arr: create_series(name='empty', survey='empty', band='empty', data=limits_arr),
+        lambda series_dict: [series_dict],
+        lambda series: result_copy.echart_options["series"].extend(series),
+    )
+
+    
     return result_copy
+
+
+def _find_chart_min_and_max_limits(echarts_options: dict[str, Any], config_state: ConfigState) -> List:
+    if plots_utils._check_limits_conditions(config_state):
+        limits_error_plots_arr = _get_min_and_max_errors(echarts_options)
+
+        return limits_error_plots_arr
+    
+    return []
+
+
+def _get_min_and_max_errors(echarts_options: dict[str, Any]) -> List:
+    limits_error_plots_series = []
+
+    for serie in echarts_options['series']:
+        if 'error_bar' in serie:
+            limits_error_plots_series.append(serie['min_plot_error'])
+            limits_error_plots_series.append(serie['max_plot_error'])
+
+    if not limits_error_plots_series:
+        raise ValueError("No error bars found in any series")
+
+    return limits_error_plots_series
+
 
 def set_chart_options_non_detections(result: Result) -> Result:
     if "non_detections" not in result.config_state.data_types:
@@ -537,8 +615,7 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
     def _add_point_to_group(group: dict, point: ChartPoint):
         max_error = 99999 if config_state.flux else 1
         point_value = point.point() if not error_bar else point.error_bar(max_error)
-        max_brightness = 999999 if config_state.flux else 99
-        min_brightness = -999999 if config_state.flux else 0
+        max_brightness, min_brightness = _get_max_and_min_brightness(config_state)
         if _valid_point(point_value, max_brightness, min_brightness):
             group[point.survey][point.band].append(point_value)
 
@@ -546,6 +623,15 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
 
     return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
 
+def _get_max_and_min_brightness(config_state: ConfigState):
+    max_brightness = 999999 if config_state.flux else 99
+    min_brightness = -999999 if config_state.flux else 0
+
+    if config_state.survey_id == 'lsst':
+        max_brightness = 9999999 if config_state.flux else 99
+        min_brightness = -9999999 if config_state.flux else 0
+
+    return max_brightness, min_brightness
 
 def _valid_point(point: List[float], max_brightness: float, min_brightness: float) -> bool:
     valid = True
@@ -555,6 +641,7 @@ def _valid_point(point: List[float], max_brightness: float, min_brightness: floa
 
     if point[1] <= min_brightness:
         valid = False
+
 
     return valid
 
@@ -577,6 +664,8 @@ def _transform_to_series(
 
         def _process_band(band_data: tuple[str, List[List[float]]]):
             band, data = band_data
+
+
 
             return (
                 create_series(series_type, survey, band, data)
