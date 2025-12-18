@@ -165,15 +165,11 @@ def run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
-<<<<<<< HEAD
-    os.environ["USE_ABSOLUTE"] =  'false'
-=======
     os.environ["USE_ABSOLUTE"] = config_dict.get("use_absolute", "false")
     os.environ["LSST_BUCKET_REGION"] = config_dict.get("lsst_bucket_region", "")
     os.environ["LSST_BUCKET_NAME"] = config_dict.get("lsst_bucket_name", "")
     os.environ["ZTF_BUCKET_REGION"] = config_dict.get("ztf_bucket_region", "")
     os.environ["ZTF_BUCKET_NAME"] = config_dict.get("ztf_bucket_name", "")
->>>>>>> 8cf4c444917499ab2716afbe5de00b67e896162c
 
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",
