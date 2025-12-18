@@ -49,9 +49,7 @@ async def get_stamp_card(
     )
     selected_measurement_id = detections[0].measurement_id
     next_measurement_id = detections[min(1, len(detections) - 1)].measurement_id
-
-    for d in detections:
-        print(f"\n\n\n detections: {d.to_json()} \n\n\n")
+    
 
     stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
     context = build_image_context(stamps)
