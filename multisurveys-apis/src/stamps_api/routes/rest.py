@@ -1,10 +1,7 @@
-from fastapi import APIRouter, Request
-from fastapi import Response
-from ...s3_handler import handler_selector
-
+from fastapi import APIRouter, Request, Response
+from ..s3_handler import handler_selector
 
 router = APIRouter()
-
 
 @router.get("/")
 async def ping():
@@ -30,9 +27,12 @@ async def stamp(
 
 
 @router.get("/avro")
-async def get_avro(request: Request, oid: str, measurement_id: str, survey_id: str):
+async def stamp(
+    request: Request, oid: str, measurement_id: str, survey_id: str
+):
     handler = handler_selector(survey_id)()
 
     avro_json = handler.get_avro(oid, measurement_id)
 
     return avro_json
+

@@ -1,3 +1,6 @@
+import matplotlib
+matplotlib.use('Agg')
+
 import asyncio
 import os
 from sqlalchemy import false
@@ -69,6 +72,16 @@ def run_crossmatch():
     config_dict = config_from_yaml()
     service_config = config_dict["services"]["crossmatch_api"]
     print(f"Running service: crossmatch_api with config: {service_config}")
+    run_service(service_config)
+
+def run_stamp():
+    config_dict = config_from_yaml()
+    service_config = config_dict["services"]["stamp_api"]
+    os.environ["LSST_BUCKET_REGION"] = service_config.get("lsst_bucket_region", "")
+    os.environ["LSST_BUCKET_NAME"] = service_config.get("lsst_bucket_name", "")
+    os.environ["ZTF_BUCKET_REGION"] = service_config.get("ztf_bucket_region", "")
+    os.environ["ZTF_BUCKET_NAME"] = service_config.get("ztf_bucket_name", "")
+    print(f"Running service: stamp_api with config: {service_config}")
     run_service(service_config)
 
 
@@ -152,7 +165,15 @@ def run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
+<<<<<<< HEAD
     os.environ["USE_ABSOLUTE"] =  'false'
+=======
+    os.environ["USE_ABSOLUTE"] = config_dict.get("use_absolute", "false")
+    os.environ["LSST_BUCKET_REGION"] = config_dict.get("lsst_bucket_region", "")
+    os.environ["LSST_BUCKET_NAME"] = config_dict.get("lsst_bucket_name", "")
+    os.environ["ZTF_BUCKET_REGION"] = config_dict.get("ztf_bucket_region", "")
+    os.environ["ZTF_BUCKET_NAME"] = config_dict.get("ztf_bucket_name", "")
+>>>>>>> 8cf4c444917499ab2716afbe5de00b67e896162c
 
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",
