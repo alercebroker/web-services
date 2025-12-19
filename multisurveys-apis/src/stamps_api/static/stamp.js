@@ -9,7 +9,6 @@ templateDownload.addEventListener("click", () => downloadStamp("template"))
 differenceDownload.addEventListener("click", () => downloadStamp("difference"))
 
 export function downloadStamp(stampType) {
-    console.log("hola mundo", stampType)
     const imageIdMap = {
     "science": "scienceImg",
     "template": "templateImg",
