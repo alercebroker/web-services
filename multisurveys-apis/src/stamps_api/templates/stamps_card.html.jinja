@@ -82,7 +82,7 @@
         AVRO
     </button>
     {% endif %}
-
+    {% if survey_id == "ztf" %}
     <div class="tw-relative tw-group tw-mt-5">
         <span class="tw-w-6 tw-h-6 tw-bg-gray-400 dark:tw-bg-gray-600 tw-text-white tw-rounded-full tw-text-xs tw-flex tw-items-center tw-justify-center tw-cursor-help">
             <svg class="tw-w-3 tw-h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -94,13 +94,14 @@
             <div class="tw-absolute tw-top-full tw-left-1/2 tw-transform tw--translate-x-1/2 tw-w-0 tw-h-0 tw-border-l-4 tw-border-r-4 tw-border-t-4 tw-border-transparent tw-border-t-gray-800 dark:tw-border-t-gray-900"></div>
         </div>
     </div>
+    {% endif %}
 </div>
 
 <div class="tw-w-[95%] tw-mx-auto tw-mb-6">
     <div class="tw-grid tw-grid-cols-3 tw-gap-4 tw-mb-4">
         <div class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button id="scienceDownload" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+        <button id="scienceDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
                     Science
                 </button>
             </div>
@@ -109,7 +110,7 @@
         
         <div class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button id="templateDownload" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                <button id="templateDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
                     Template
                 </button>
             </div>
@@ -118,7 +119,7 @@
         
         <div class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button id="differenceDownload" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                <button id="differenceDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
                     Difference
                 </button>
             </div>
