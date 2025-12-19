@@ -83,7 +83,7 @@ SYMBOLS = {
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
     EMPTY: {
-        EMPTY: {"symbol": "circle"}
+        EMPTY: {"symbol": "none"}
     },
 }
 
@@ -95,6 +95,7 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
         "data": data,
         "color": COLORS[survey][band],
         "symbol": SYMBOLS[survey][name]["symbol"],
+        "symbolSize": 9,
         "survey": survey,
         "band": band,
     }
@@ -354,10 +355,6 @@ def set_chart_options_detections(result: Result) -> Result:
         lambda series_dict: [series_dict],
         lambda series: result_copy.echart_options["series"].extend(series),
     )
-
-    for serie in result_copy.echart_options["series"]:
-        if serie['survey'] == 'empty':
-            pprint.pprint(serie)
         
     return result_copy
 
@@ -459,7 +456,6 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
         if det.survey_id.lower() == LSST_SURVEY and det.oid != int(config_state.oid):
             continue
 
-
         result.append(
             ChartPoint(
                 det.survey_id,
@@ -495,9 +491,8 @@ def create_chart_non_detections(non_detections: List[BaseNonDetection], config_s
         if ndet.survey_id.lower() == ZTF_SURVEY and ndet.band_name() not in config_state.bands.ztf:
             continue
 
-        if config_state.external_sources.enabled != True:
-            if ndet.oid != int(config_state.oid):
-                continue
+        if ndet.survey_id.lower() == LSST_SURVEY and ndet.oid != int(config_state.oid):
+            continue
 
         result.append(ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag(), 0))
 
@@ -516,9 +511,8 @@ def create_chart_forced_photometry(
             continue
 
 
-        if config_state.external_sources.enabled != True:
-            if fphot.oid != int(config_state.oid):
-                continue
+        if fphot.survey_id.lower() == LSST_SURVEY and fphot.oid != int(config_state.oid):
+            continue
 
         result.append(
             ChartPoint(
