@@ -1,4 +1,5 @@
 import os
+import pprint
 
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
@@ -37,6 +38,7 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
     result = lightcurve_plot_service.lightcurve_plot(oid, survey_id, db.session)
     result.config_state.oid = oid
     result.config_state.survey_id = survey_id
+
     return templates.TemplateResponse(
         name="layout.html.jinja",
         context={

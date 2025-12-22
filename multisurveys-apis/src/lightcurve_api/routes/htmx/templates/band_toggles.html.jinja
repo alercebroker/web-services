@@ -77,6 +77,37 @@
     </div>
   </div>
 
+
+  <!-- ZTF Data release row -->
+  <div class="tw-flex tw-items-start {% if config_state['external_sources'].enabled %}tw-block{% else %}tw-hidden{% endif %}">
+    <div class="tw-relative tw-group tw-mr-2">
+      <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">
+        ?
+      </span>
+      <div class="tw-absolute tw-top-full tw-left-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
+        <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-whitespace-nowrap">
+          ZTF DR Help
+        </div>
+      </div>
+      <label class="tw-font-semibold tw-pt-1 tw-text-gray-900 dark:tw-text-gray-100 tw-mr-1">ZTF DR:</label>
+      <div class="tw-w-15"></div>
+    </div>
+    <div class="tw-grid tw-grid-cols-3 tw-gap-4">
+      <label class="tw-flex tw-items-center tw-space-x-1">
+        <input type="checkbox" name="bands.ztf_dr[]" value="g" {% if 'g' in config_state.bands.ztf_dr %}checked{% endif %}>
+        <span class="tw-text-gray-900 dark:tw-text-gray-100">g</span>
+      </label>
+      <label class="tw-flex tw-items-center tw-space-x-1">
+        <input type="checkbox" name="bands.ztf_dr[]" value="r" {% if 'r' in config_state.bands.ztf_dr %}checked{% endif %}>
+        <span class="tw-text-gray-900 dark:tw-text-gray-100">r</span>
+      </label>
+      <label class="tw-flex tw-items-center tw-space-x-1">
+        <input type="checkbox" name="bands.ztf_dr[]" value="i" {% if 'i' in config_state.bands.ztf_dr %}checked{% endif %}>
+        <span class="tw-text-gray-900 dark:tw-text-gray-100">i</span>
+      </label>
+    </div>
+  </div>
+
   <!-- Data types -->
   <div class="tw-flex tw-items-start">
     <div class="tw-relative tw-group tw-mr-2">

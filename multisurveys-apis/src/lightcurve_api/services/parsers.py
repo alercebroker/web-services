@@ -2,6 +2,7 @@ from typing import Any, Sequence, Tuple
 
 from sqlalchemy import Row
 
+from lightcurve_api.models.object import CommonObject
 from ..models.detections import LsstDetection, ZtfDataReleaseDetection, ztfDetection
 from ..models.force_photometry import LsstForcedPhotometry, ZtfForcedPhotometry
 from ..models.non_detections import ZtfNonDetections
@@ -112,3 +113,9 @@ def parse_ztf_dr_object(objects: list[dict]) -> list[ZtfDrObject]:
         )
         for obj in objects
     ]
+
+
+def _parse_object_common(object_sql) -> CommonObject:
+    object_model = CommonObject(**object_sql[1].__dict__)
+    
+    return object_model

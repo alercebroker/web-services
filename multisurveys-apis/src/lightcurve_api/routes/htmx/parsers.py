@@ -20,6 +20,7 @@ from lightcurve_api.models.non_detections import ZtfNonDetections
 class BandConfig(BaseModel):
     ztf: List[str]
     lsst: List[str]
+    ztf_dr: List[str]
 
     def all(self):
         return self.ztf + self.lsst
@@ -32,7 +33,7 @@ class ExternalSourceConfig(BaseModel):
 
 
 class ConfigState(BaseModel):
-    bands: BandConfig = BandConfig(ztf=["g", "r", "i"], lsst=["u", "g", "r", "i", "z", "y"])
+    bands: BandConfig = BandConfig(ztf=["g", "r", "i"], lsst=["u", "g", "r", "i", "z", "y"], ztf_dr=["g", "r", "i"])
     flux: bool = False
     absolute: bool = False
     total: bool = False
@@ -56,7 +57,8 @@ class ConfigState(BaseModel):
     # additional context
     oid: str = ""
     survey_id: str = ""
-
+    meanra: float = None
+    meandec: float = None
 
 def parse_detections(raw_detections: List[str]) -> List[BaseDetection]:
     detections: List[BaseDetection] = []
