@@ -14,3 +14,8 @@ class ZtfDrObject(ApiObject):
     nepochs: int
     fieldid: int
     rcid: int
+
+
+class CommonObject(BaseModel):
+    meanra: float
+    meandec: float

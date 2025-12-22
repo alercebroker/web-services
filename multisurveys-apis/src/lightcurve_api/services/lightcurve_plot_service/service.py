@@ -5,8 +5,7 @@ import io
 from os import name
 import re
 import zipfile
-import pprint
-import math
+from core.repository.queries.objects import query_object_by_id
 import lightcurve_api.services.lightcurve_plot_service.plots_utils as plots_utils
 from collections import defaultdict
 from itertools import chain
@@ -33,7 +32,7 @@ from lightcurve_api.models.lightcurve_item import (
 )
 from lightcurve_api.models.non_detections import ZtfNonDetections
 from lightcurve_api.routes.htmx.parsers import ConfigState
-from lightcurve_api.services.parsers import parse_ztf_dr_detection, parse_ztf_dr_object
+from lightcurve_api.services.parsers import parse_ztf_dr_detection, parse_ztf_dr_object, _parse_object_common
 from lightcurve_api.services.period.service import compute_periodogram
 
 from ..conesearch.conesearch import conesearch_oid_lightcurve
@@ -241,14 +240,13 @@ def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., Con
     )
     return pipe(
         get_lightcurve(result, oid, survey_id, session_factory),
-        compute_periodogram,
+        lambda r: get_object_coordinates(r, session_factory=session_factory),
         set_default_echart_options,
         set_chart_options_detections,
         set_chart_options_non_detections,
         set_chart_options_forced_photometry,
         offset_bands,
     )
-
 
 def update_lightcurve_plot(
     config_state: ConfigState,
@@ -307,6 +305,17 @@ def get_lightcurve(
         config_state=result.config_state.model_copy(deep=True),
         periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
+
+def get_object_coordinates(result: Result, session_factory: Callable[..., ContextManager[Session]]) -> Result:
+    result_copy = result.copy()
+    
+    object = query_object_by_id(session_factory, result_copy.config_state.oid, result_copy.config_state.survey_id)
+    object_model = _parse_object_common(object)
+
+    result_copy.config_state.meanra = object_model.meanra
+    result_copy.config_state.meandec = object_model.meandec
+
+    return result_copy
 
 
 def set_default_echart_options(result: Result) -> Result:
@@ -445,16 +454,17 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
     result: list[ChartPoint] = []
 
     for det in detections:
-        if (
-            det.survey_id.lower() == ZTF_SURVEY or det.survey_id.lower() == ZTF_DR_SURVEY
-        ) and det.band_name() not in config_state.bands.ztf:
+        if ( det.survey_id.lower() == ZTF_SURVEY ) and det.band_name() not in config_state.bands.ztf:
             continue
         if det.survey_id.lower() == LSST_SURVEY and det.band_name() not in config_state.bands.lsst:
+            continue
+        if det.survey_id.lower() == ZTF_DR_SURVEY and det.band_name() not in config_state.bands.ztf_dr:
             continue
 
         #filtro solo det de lsst
         if det.survey_id.lower() == LSST_SURVEY and det.oid != int(config_state.oid):
             continue
+
 
         result.append(
             ChartPoint(
@@ -490,9 +500,14 @@ def create_chart_non_detections(non_detections: List[BaseNonDetection], config_s
     for ndet in non_detections:
         if ndet.survey_id.lower() == ZTF_SURVEY and ndet.band_name() not in config_state.bands.ztf:
             continue
+        
+        if ndet.survey_id.lower() == ZTF_DR_SURVEY and ndet.band_name() not in config_state.bands.ztf_dr:
+            continue
 
         if ndet.survey_id.lower() == LSST_SURVEY and ndet.oid != int(config_state.oid):
             continue
+
+        
 
         result.append(ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag(), 0))
 
@@ -508,6 +523,8 @@ def create_chart_forced_photometry(
         if fphot.survey_id.lower() == LSST_SURVEY and fphot.band_name() not in config_state.bands.lsst:
             continue
         if fphot.survey_id.lower() == ZTF_SURVEY and fphot.band_name() not in config_state.bands.ztf:
+            continue
+        if fphot.survey_id.lower() == ZTF_DR_SURVEY and fphot.band_name() not in config_state.bands.ztf_dr:
             continue
 
 
@@ -535,17 +552,16 @@ def create_chart_forced_photometry(
         result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
 
     return result
-
-
+import math
 def set_chart_options_external_sources(result: Result) -> Result:
     result_copy = result.copy()
 
     if len(result_copy.lightcurve.detections) == 0 or not result.config_state.external_sources.enabled:
         return result_copy
 
-    meanra = sum(det.ra for det in result.lightcurve.detections) / len(result.lightcurve.detections)
-    meandec = sum(det.dec for det in result.lightcurve.detections) / len(result.lightcurve.detections)
 
+    meanra = result.config_state.meanra
+    meandec = result.config_state.meandec
 
     with httpx.Client() as client:
         result_copy.lightcurve.detections.extend(
@@ -584,11 +600,8 @@ def get_ztf_dr_objects(
     if len(result.lightcurve.detections) == 0:
         return result
 
-    meanra = sum(det.ra for det in result.lightcurve.detections) / len(result.lightcurve.detections)
-    meandec = sum(det.dec for det in result.lightcurve.detections) / len(result.lightcurve.detections)
-
-    # meanra = 269.0062838  # TODO: TEST COORDINATES
-    # meandec = -16.4499040  # TODO: TEST COORDINATES
+    meanra = result.config_state.meanra
+    meandec = result.config_state.meandec
 
     with httpx.Client() as client:
         result.config_state.external_sources.objects.extend(

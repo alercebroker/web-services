@@ -12,6 +12,8 @@
 >
   <input type="hidden" name="oid" value="{{ config_state.oid }}">
   <input type="hidden" name="survey_id" value="{{ config_state.survey_id }}">
+  <input type="hidden" name="meanra" value="{{ config_state.meanra }}">
+  <input type="hidden" name="meandec" value="{{ config_state.meandec }}">
   {% for detection in detections %}
   <input type="hidden" name="detections[]" value="{{ detection.model_dump_json() }}">
   {% endfor %}
