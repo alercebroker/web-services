@@ -6,14 +6,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Scientific Data Card</title>
-
-<div class="tw-bg-gray-100 tw-p-4">
-    <div id="stamp-app" class="tw-preflight">
-        {% include "stamps_card.html.jinja" %}
+<div class="tw-preflight tw-dark">
+    <div class="dark:tw-bg-[#1e1e1e] tw-bg-gray-100 tw-p-4">
+        <div id="stamp-app" class="">
+            {% include "stamps_card.html.jinja" %}
+        </div>
+        
     </div>
-    
 </div>
-
 <script>
     if (typeof STAMP_CONFIG === 'undefined') {
         var STAMP_CONFIG = {
