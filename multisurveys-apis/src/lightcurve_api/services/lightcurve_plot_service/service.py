@@ -241,6 +241,7 @@ def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., Con
     return pipe(
         get_lightcurve(result, oid, survey_id, session_factory),
         lambda r: get_object_coordinates(r, session_factory=session_factory),
+        compute_periodogram,
         set_default_echart_options,
         set_chart_options_detections,
         set_chart_options_non_detections,
@@ -552,7 +553,7 @@ def create_chart_forced_photometry(
         result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
 
     return result
-import math
+
 def set_chart_options_external_sources(result: Result) -> Result:
     result_copy = result.copy()
 
