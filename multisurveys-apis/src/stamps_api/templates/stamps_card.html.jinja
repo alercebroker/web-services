@@ -10,7 +10,7 @@
        <select 
             id="measurement_id" 
             name="measurement_id" 
-            class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]"
+            class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-3 tw-py-2 tw-bg-white dark:hover:tw-bg-gray-800 dark:tw-bg-[#1e1e1e] dark:hover:tw-bg-gray-800 tw-cursor-pointer tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]"
             
             hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
             hx-post="{{ API_URL }}/htmx/update_stamp_card"
