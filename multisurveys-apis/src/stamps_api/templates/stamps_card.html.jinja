@@ -118,7 +118,7 @@
                     Science
                 </button>
             </div>
-            <div id="imageZoom" class="tw-relative" style="
+            <div id="scienceZoom" class="imageZoom tw-relative" style="
               --url: url('data:image/{{ science_mime }};base64, {{ science_img }}');
               --zoom-x: 0%; --zoom-y:0%;
               --display: none; --z-index: -1;
@@ -133,7 +133,13 @@
                     Template
                 </button>
             </div>
-            <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+            <div id="templateZoom" class="imageZoom tw-relative" style="
+              --url: url('data:image/{{ template_mime }};base64, {{ template_img }}');
+              --zoom-x: 0%; --zoom-y:0%;
+              --display: none; --z-index: -1;
+              ">
+              <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+            </div>
         </div>
         
         <div class="tw-flex tw-flex-col tw-items-center">
@@ -142,7 +148,13 @@
                     Difference
                 </button>
             </div>
-            <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+            <div id="differenceZoom" class="imageZoom tw-relative" style="
+              --url: url('data:image/{{ difference_mime }};base64, {{ difference_img }}');
+              --zoom-x: 0%; --zoom-y:0%;
+              --display: none; --z-index: -1;
+              ">
+              <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+            </div>
         </div>
     </div>
 </div>
