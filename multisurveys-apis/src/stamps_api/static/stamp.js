@@ -35,8 +35,10 @@ export function init() {
   let selectElement = document.getElementById("measurement_id");
 
   // Zoom image elements
-  let imageZoom = document.getElementById("imageZoom");
-
+  let scienceZoom = document.getElementById("scienceZoom");
+  let templateZoom = document.getElementById("templateZoom");
+  let differenceZoom = document.getElementById("differenceZoom");
+  let imagesZoom = [scienceZoom, templateZoom, differenceZoom];
   // Zoom button elements
   let zoomStamps = document.getElementById("zoomStamp")
 
@@ -53,33 +55,41 @@ export function init() {
     set_arrow_direction(mjdArrowWrapper);
   });
 
-  // Zoom image eventListeners
-  imageZoom.addEventListener('mousemove', (event) => {
-    imageZoom.style.setProperty('--display', 'block');
+  for (let zoomElement of imagesZoom) {
+    // Zoom image eventListeners
+    console.log(zoomElement)
+    zoomElement.addEventListener('mousemove', (event) => {
+      zoomElement.style.setProperty('--display', 'block');
 
-    let rect = imageZoom.getBoundingClientRect();
+      let rect = zoomElement.getBoundingClientRect();
 
-    let pointer = {
-      x: ((event.clientX - rect.left) * 100) / rect.width,
-      y: ((event.clientY - rect.top) * 100) / rect.height
-    }
+      let pointer = {
+        x: ((event.clientX - rect.left) * 100) / rect.width,
+        y: ((event.clientY - rect.top) * 100) / rect.height
+      }
 
-    imageZoom.style.setProperty('--zoom-x', pointer.x + '%');
-    imageZoom.style.setProperty('--zoom-y', pointer.y + '%');
+      zoomElement.style.setProperty('--zoom-x', pointer.x + '%');
+      zoomElement.style.setProperty('--zoom-y', pointer.y + '%');
 
-  })
-  imageZoom.addEventListener('mouseleave', () => {
-    imageZoom.style.setProperty('--display', 'none');
-  })
+    })
+    zoomElement.addEventListener('mouseleave', () => {
+      zoomElement.style.setProperty('--display', 'none');
+    })
+  }
 
   // Zoom button eventListeners
   zoomStamps.addEventListener('click', () => {
-    let currentVal = getComputedStyle(imageZoom).getPropertyValue('--z-index').trim();
+    let currentVal = getComputedStyle(scienceZoom).getPropertyValue('--z-index').trim();
 
     if (parseInt(currentVal) > 0) {
-      imageZoom.style.setProperty('--z-index', -1)
+      scienceZoom.style.setProperty('--z-index', -1)
+      templateZoom.style.setProperty('--z-index', -1)
+      differenceZoom.style.setProperty('--z-index', -1)
     } else {
-      imageZoom.style.setProperty('--z-index', 1)
+
+      scienceZoom.style.setProperty('--z-index', 1)
+      templateZoom.style.setProperty('--z-index', 1)
+      differenceZoom.style.setProperty('--z-index', 1)
     }
   })
 }
