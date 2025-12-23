@@ -184,6 +184,11 @@
   inset: 0px
 }
 
+.tw-preflight .tw-inset-y-0 {
+  top: 0px;
+  bottom: 0px
+}
+
 .tw-preflight .tw-bottom-0 {
   bottom: 0px
 }
@@ -1331,8 +1336,16 @@
   padding-bottom: 0.5rem
 }
 
+.tw-preflight .tw-pl-3 {
+  padding-left: 0.75rem
+}
+
 .tw-preflight .tw-pl-\[10px\] {
   padding-left: 10px
+}
+
+.tw-preflight .tw-pr-10 {
+  padding-right: 2.5rem
 }
 
 .tw-preflight .tw-pr-2 {
