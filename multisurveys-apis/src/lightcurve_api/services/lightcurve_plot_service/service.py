@@ -845,7 +845,7 @@ def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dic
     return series, error_bars
 
 
-def _multiply_coord(index: int, point) -> List:
+def _multiply_coord(index: int, point: List) -> List:
 
     multiply_coord = [
         {
@@ -860,7 +860,7 @@ def _multiply_coord(index: int, point) -> List:
 
     return multiply_coord
 
-def _add_constant_in_coord(index: int, point) -> List:
+def _add_constant_in_coord(index: int, point: List) -> List:
     add_constant = [
         {
             "coord": [point[0]["coord"][0], point[0]["coord"][1] + index],
