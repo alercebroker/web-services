@@ -450,7 +450,7 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
 
     return result_copy
 
-
+import pprint
 def create_chart_detections(detections: List[BaseDetection], config_state: ConfigState) -> List[ChartPoint]:
     result: list[ChartPoint] = []
 
