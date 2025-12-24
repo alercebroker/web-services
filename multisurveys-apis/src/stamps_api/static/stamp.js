@@ -38,7 +38,7 @@ export function init() {
   let scienceZoom = document.getElementById("scienceZoom");
   let templateZoom = document.getElementById("templateZoom");
   let differenceZoom = document.getElementById("differenceZoom");
-  let imagesZoom = [scienceZoom, templateZoom, differenceZoom];
+  let imagesZoom = [scienceZoom];
   // Zoom button elements
   let zoomStamps = document.getElementById("zoomStamp")
 
@@ -60,7 +60,8 @@ export function init() {
     console.log(zoomElement)
     zoomElement.addEventListener('mousemove', (event) => {
       zoomElement.style.setProperty('--display', 'block');
-
+      templateZoom.style.setProperty('--display', 'block');
+      differenceZoom.style.setProperty('--display', 'block');
       let rect = zoomElement.getBoundingClientRect();
 
       let pointer = {
@@ -69,12 +70,20 @@ export function init() {
       }
 
       zoomElement.style.setProperty('--zoom-x', pointer.x + '%');
+      templateZoom.style.setProperty('--zoom-x', pointer.x + '%');
+      differenceZoom.style.setProperty('--zoom-x', pointer.x + '%');
+
       zoomElement.style.setProperty('--zoom-y', pointer.y + '%');
+      templateZoom.style.setProperty('--zoom-y', pointer.y + '%');
+      differenceZoom.style.setProperty('--zoom-y', pointer.y + '%');
 
     })
     zoomElement.addEventListener('mouseleave', () => {
       zoomElement.style.setProperty('--display', 'none');
+      templateZoom.style.setProperty('--display', 'none');
+      differenceZoom.style.setProperty('--display', 'none');
     })
+
   }
 
   // Zoom button eventListeners
