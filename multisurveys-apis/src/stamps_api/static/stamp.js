@@ -55,35 +55,8 @@ export function init() {
     set_arrow_direction(mjdArrowWrapper);
   });
 
-  for (let zoomElement of imagesZoom) {
-    // Zoom image eventListeners
-    zoomElement.addEventListener('mousemove', (event) => {
-      scienceZoom.style.setProperty('--display', 'block');
-      templateZoom.style.setProperty('--display', 'block');
-      differenceZoom.style.setProperty('--display', 'block');
-      let rect = zoomElement.getBoundingClientRect();
-
-      let pointer = {
-        x: ((event.clientX - rect.left) * 100) / rect.width,
-        y: ((event.clientY - rect.top) * 100) / rect.height
-      }
-
-      scienceZoom.style.setProperty('--zoom-x', pointer.x + '%');
-      templateZoom.style.setProperty('--zoom-x', pointer.x + '%');
-      differenceZoom.style.setProperty('--zoom-x', pointer.x + '%');
-
-      scienceZoom.style.setProperty('--zoom-y', pointer.y + '%');
-      templateZoom.style.setProperty('--zoom-y', pointer.y + '%');
-      differenceZoom.style.setProperty('--zoom-y', pointer.y + '%');
-
-    })
-    zoomElement.addEventListener('mouseleave', () => {
-      scienceZoom.style.setProperty('--display', 'none');
-      templateZoom.style.setProperty('--display', 'none');
-      differenceZoom.style.setProperty('--display', 'none');
-    })
-
-  }
+  // Function to connect mouseover functionality into the 3 stamps when zoom is activated.
+  makeZoomWork(imagesZoom)
 
   // Zoom button eventListeners
   zoomStamps.addEventListener('click', () => {
@@ -120,7 +93,38 @@ function set_arrow_direction(container) {
 
 }
 
+function makeZoomWork(imagesZoom) {
 
+  for (let zoomElement of imagesZoom) {
+    // Zoom image eventListeners
+    zoomElement.addEventListener('mousemove', (event) => {
+      scienceZoom.style.setProperty('--display', 'block');
+      templateZoom.style.setProperty('--display', 'block');
+      differenceZoom.style.setProperty('--display', 'block');
+      let rect = zoomElement.getBoundingClientRect();
+
+      let pointer = {
+        x: ((event.clientX - rect.left) * 100) / rect.width,
+        y: ((event.clientY - rect.top) * 100) / rect.height
+      }
+
+      scienceZoom.style.setProperty('--zoom-x', pointer.x + '%');
+      templateZoom.style.setProperty('--zoom-x', pointer.x + '%');
+      differenceZoom.style.setProperty('--zoom-x', pointer.x + '%');
+
+      scienceZoom.style.setProperty('--zoom-y', pointer.y + '%');
+      templateZoom.style.setProperty('--zoom-y', pointer.y + '%');
+      differenceZoom.style.setProperty('--zoom-y', pointer.y + '%');
+
+    })
+    zoomElement.addEventListener('mouseleave', () => {
+      scienceZoom.style.setProperty('--display', 'none');
+      templateZoom.style.setProperty('--display', 'none');
+      differenceZoom.style.setProperty('--display', 'none');
+    })
+
+  }
+}
 
 
 
