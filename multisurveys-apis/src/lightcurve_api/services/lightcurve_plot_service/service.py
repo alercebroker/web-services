@@ -450,7 +450,6 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
 
     return result_copy
 
-
 def create_chart_detections(detections: List[BaseDetection], config_state: ConfigState) -> List[ChartPoint]:
     result: list[ChartPoint] = []
 
@@ -697,12 +696,14 @@ def _data_to_csv(data_list, fieldnames: set):
     return output.getvalue()
 
 
-def zip_lightcurve(detections, non_detections, forced_photometry):
+def zip_lightcurve(detections, non_detections, forced_photometry, oid):
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
+            filtered_detections = [det for det in detections if det.oid == oid]
+
             detections_csv = _data_to_csv(
-                detections,
+                filtered_detections,
                 set(list(ztfDetection.model_fields.keys()) + list(LsstDetection.model_fields.keys())),
             )
             zip_file.writestr("detections.csv", detections_csv)
@@ -771,6 +772,13 @@ def offset_bands(result: Result) -> Result:
     # Sort by metric in ascending order
     sorted_items.sort(key=lambda x: x[1])
 
+    pop_index = 0 
+    for index, item in enumerate(sorted_items):
+        if item[0][0]['band'] == 'empty':
+            pop_index = index
+    
+    sorted_items.pop(pop_index)
+
     for i, (sdata, _) in enumerate(sorted_items):
         for sseries in sdata:
             new_series.extend(
@@ -778,6 +786,7 @@ def offset_bands(result: Result) -> Result:
                     i * result.config_state.offset_num,
                     sseries,
                     error_bars.get(sseries["name"]),
+                    result.config_state
                 )
             )
 
@@ -837,45 +846,81 @@ def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dic
     return series, error_bars
 
 
-def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | None) -> List[Dict[str, Any]]:
+def _multiply_coord(index: int, point: List) -> List:
+
+    multiply_coord = [
+        {
+            "coord": [point[0]["coord"][0], point[0]["coord"][1] * (index + 1)],
+            "symbol": "none",
+        },
+        {
+            "coord": [point[1]["coord"][0], point[1]["coord"][1] * (index + 1)],
+            "symbol": "none",
+        },
+    ]
+
+    return multiply_coord
+
+def _add_constant_in_coord(index: int, point: List) -> List:
+    add_constant = [
+        {
+            "coord": [point[0]["coord"][0], point[0]["coord"][1] + index],
+            "symbol": "none",
+        },
+        {
+            "coord": [point[1]["coord"][0], point[1]["coord"][1] + index],
+            "symbol": "none",
+        },
+    ]
+
+    return add_constant
+
+def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | None, config_state: ConfigState) -> List[Dict[str, Any]]:
     """Return a list containing the offset series and optional error bar."""
 
-    def offset_points(points: List[List[float]]) -> List[List[float]]:
+    def offset_points(points: List[List[float]], config_state: ConfigState) -> List[List[float]]:
+
+        if config_state.flux:
+            return [[x, y * (i + 1)] for x, y in points]
+
         return [[x, y + i] for x, y in points]
 
-    def offset_errors(points: List[dict]) -> List[dict]:
+    def offset_errors(points: List[dict], config_state: ConfigState) -> List[dict]:
         new_points = []
         for point in points:
-            new_points.append(
-                [
-                    {
-                        "coord": [point[0]["coord"][0], point[0]["coord"][1] + i],
-                        "symbol": "none",
-                    },
-                    {
-                        "coord": [point[1]["coord"][0], point[1]["coord"][1] + i],
-                        "symbol": "none",
-                    },
-                ]
-            )
+            if config_state.flux:
+                new_points.append(_multiply_coord(i, point))
+            else:
+                new_points.append(_add_constant_in_coord(i, point))
+        
         return new_points
+
+
+    error_tag_name = f"{error_bar['name']} + {i}"
+    tag_name = f"{series['name']} + {i}"
+
+    if config_state.flux: 
+        tag_name = f"{series['name']} * {(i + 1)}"
+        error_tag_name = f"{error_bar['name']} * {(i + 1)}"
+
 
     updated_series = {
         **series,
-        "data": offset_points(series["data"]),
-        "name": f"{series['name']} + {i}",
+        "data": offset_points(series["data"], config_state),
+        "name": tag_name,
     }
+
     outputs = [updated_series]
 
     if error_bar is not None:
         updated_error = {
             **error_bar,
-            "data": offset_points(error_bar["data"]),
+            "data": offset_points(error_bar["data"], config_state),
             "markLine": {
-                "data": offset_errors(error_bar["markLine"]["data"]),
+                "data": offset_errors(error_bar["markLine"]["data"], config_state),
                 "lineStyle": error_bar["markLine"]["lineStyle"],
             },
-            "name": f"{error_bar['name']} + {i}",
+            "name": error_tag_name,
         }
         outputs.append(updated_error)
 
