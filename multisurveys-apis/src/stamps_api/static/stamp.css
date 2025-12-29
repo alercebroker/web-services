@@ -1642,6 +1642,11 @@
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1)
 }
 
+.tw-preflight .after\:tw-pointer-events-none::after {
+  content: var(--tw-content);
+  pointer-events: none
+}
+
 .tw-preflight .after\:tw-absolute::after {
   content: var(--tw-content);
   position: absolute
@@ -1657,14 +1662,46 @@
   top: 2px
 }
 
+.tw-preflight .after\:tw-left-1\/2::after {
+  content: var(--tw-content);
+  left: 50%
+}
+
+.tw-preflight .after\:tw-top-1\/2::after {
+  content: var(--tw-content);
+  top: 50%
+}
+
 .tw-preflight .after\:tw-h-5::after {
   content: var(--tw-content);
   height: 1.25rem
 }
 
+.tw-preflight .after\:tw-h-\[34px\]::after {
+  content: var(--tw-content);
+  height: 34px
+}
+
 .tw-preflight .after\:tw-w-5::after {
   content: var(--tw-content);
   width: 1.25rem
+}
+
+.tw-preflight .after\:tw-w-\[34px\]::after {
+  content: var(--tw-content);
+  width: 34px
+}
+
+.tw-preflight .after\:-tw-translate-x-1\/2::after {
+  content: var(--tw-content);
+  --tw-translate-x: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+}
+
+.tw-preflight .after\:-tw-translate-y-1\/2::after {
+  content: var(--tw-content);
+  --tw-translate-y: -50%;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
 }
 
 .tw-preflight .after\:tw-rounded-full::after {
@@ -1687,6 +1724,16 @@
   content: var(--tw-content);
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1))
+}
+
+.tw-preflight .after\:tw-bg-center::after {
+  content: var(--tw-content);
+  background-position: center
+}
+
+.tw-preflight .after\:tw-bg-no-repeat::after {
+  content: var(--tw-content);
+  background-repeat: no-repeat
 }
 
 .tw-preflight .after\:tw-transition-all::after {
