@@ -114,6 +114,7 @@ def download(oid: str, survey_id: str, db: db_dependency):
         service_result.lightcurve.detections,
         service_result.lightcurve.non_detections,
         service_result.lightcurve.forced_photometry,
+        int(oid)
     )
 
     return StreamingResponse(
