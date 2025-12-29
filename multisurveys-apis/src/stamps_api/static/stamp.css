@@ -237,6 +237,22 @@
   top: 100%
 }
 
+.tw-preflight .tw-right-\[59\%\] {
+  right: 59%
+}
+
+.tw-preflight .tw-right-\[50\%\] {
+  right: 50%
+}
+
+.tw-preflight .tw-right-\[75\%\] {
+  right: 75%
+}
+
+.tw-preflight .tw-right-\[199\%\] {
+  right: 199%
+}
+
 .tw-preflight .tw-z-10 {
   z-index: 10
 }
