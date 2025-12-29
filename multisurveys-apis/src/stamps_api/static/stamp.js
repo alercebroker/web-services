@@ -39,8 +39,15 @@ export function init() {
   let templateZoom = document.getElementById("templateZoom");
   let differenceZoom = document.getElementById("differenceZoom");
   let imagesZoom = [scienceZoom, templateZoom, differenceZoom];
+
   // Zoom button elements
   let zoomStamps = document.getElementById("zoomStamp")
+
+  // Crosshair image elements
+  let stampsContainer = document.getElementById('stampsContainer')
+
+  // Crosshair button elements
+  let crossHair = document.getElementById('crossHairStamps')
 
   // Download button eventListeners 
   scienceDownload.addEventListener("click", () => downloadStamp("science", scienceDownload))
@@ -60,18 +67,12 @@ export function init() {
 
   // Zoom button eventListeners
   zoomStamps.addEventListener('click', () => {
-    let currentVal = getComputedStyle(scienceZoom).getPropertyValue('--z-index').trim();
+    toggleZoom()
+  })
 
-    if (parseInt(currentVal) > 0) {
-      scienceZoom.style.setProperty('--z-index', -1)
-      templateZoom.style.setProperty('--z-index', -1)
-      differenceZoom.style.setProperty('--z-index', -1)
-    } else {
-
-      scienceZoom.style.setProperty('--z-index', 1)
-      templateZoom.style.setProperty('--z-index', 1)
-      differenceZoom.style.setProperty('--z-index', 1)
-    }
+  // Crosshair buttom eventListeners
+  crossHair.addEventListener('click', () => {
+    stampsContainer.classList.toggle('hide-crosshairs')
   })
 }
 
@@ -126,7 +127,25 @@ function makeZoomWork(imagesZoom) {
   }
 }
 
+function toggleZoom() {
 
+  let currentVal = getComputedStyle(scienceZoom).getPropertyValue('--z-index').trim();
+
+  if (parseInt(currentVal) > 0) {
+    scienceZoom.style.setProperty('--z-index', -1)
+    templateZoom.style.setProperty('--z-index', -1)
+    differenceZoom.style.setProperty('--z-index', -1)
+
+  } else {
+    scienceZoom.style.setProperty('--z-index', 1)
+    templateZoom.style.setProperty('--z-index', 1)
+    differenceZoom.style.setProperty('--z-index', 1)
+
+  }
+  if (!stampsContainer.classList.contains('hide-crosshairs')) {
+    stampsContainer.classList.toggle('hide-crosshairs')
+  }
+}
 
 
 
