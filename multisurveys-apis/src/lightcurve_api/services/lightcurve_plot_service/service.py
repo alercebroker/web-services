@@ -697,12 +697,14 @@ def _data_to_csv(data_list, fieldnames: set):
     return output.getvalue()
 
 
-def zip_lightcurve(detections, non_detections, forced_photometry):
+def zip_lightcurve(detections, non_detections, forced_photometry, oid):
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
+            filtered_detections = [det for det in detections if det.oid == oid]
+
             detections_csv = _data_to_csv(
-                detections,
+                filtered_detections,
                 set(list(ztfDetection.model_fields.keys()) + list(LsstDetection.model_fields.keys())),
             )
             zip_file.writestr("detections.csv", detections_csv)
