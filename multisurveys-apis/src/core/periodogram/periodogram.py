@@ -1,6 +1,7 @@
 from lightcurve_api.models.periodogram import Periodogram
 import numpy as np
 import pandas as pd
+import pprint
 from P4J import MultiBandPeriodogram
 
 
@@ -85,6 +86,7 @@ class PeriodogramComputer:
             if isinstance(self.periodogram_computer.best_local_optima, int)
             else self.periodogram_computer.best_local_optima
         )
+
         return Periodogram(
             periods=period.tolist(),
             scores=score.tolist(),

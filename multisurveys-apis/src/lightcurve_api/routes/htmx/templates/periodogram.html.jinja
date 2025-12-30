@@ -1,9 +1,16 @@
 <div id="periodogram" style="width: 100%;height:100%;min-height:130px;"></div>
 <script type="module">
+import customDark from '{{API_URL}}/static/echarts-theme/customDark.js'
+
 // Initialize the echarts instance based on the prepared dom
+var customDarkTheme = customDark()
+var theme = document.getElementById('main-app').classList.contains('tw-dark') ? customDarkTheme : 'light'
 var periodogramDom = document.getElementById('periodogram')
-var pChart = echarts.init(periodogramDom);
+var pChart = echarts.init(periodogramDom, theme);
 var pOptions = {{ periodogram_options | tojson }};
+var toggleLcTheme = document.getElementById('toggle-theme-lc')
+
+
 // we have to set the formatter here because it has to be a JavaScript function
 pOptions.tooltip.formatter = (params) => {
   return `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}`;
@@ -13,6 +20,17 @@ pOptions.tooltip.formatter = (params) => {
 window.addEventListener('resize', () => {
   pChart.resize()
 });
+
+
+// Dynamic theme switching. This detects system theme changes and updates the chart accordingly.
+toggleLcTheme.addEventListener('click', () => {
+  var themeMode = document.getElementById('main-app').classList.contains('tw-dark') ? customDarkTheme : 'light'
+  pChart.clear()
+  pChart.dispose();
+  pChart = echarts.init(periodogramDom, themeMode);
+  pChart.setOption(pOptions);
+
+})
 
 // Display the chart using the configuration items and data just specified.
 pChart.setOption(pOptions);
