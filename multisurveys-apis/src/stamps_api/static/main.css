@@ -1,0 +1,84 @@
+
+
+
+.imageZoom img {
+  width: 100%;
+  height: 100%;
+  object-fit:cover;
+  object-position: 0 0;
+}
+
+.imageZoom::after{
+  display: var(--display);
+  content: '';
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  background-image: var(--url);
+  background-size: 200%;
+  background-position: var(--zoom-x) var(--zoom-y);
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: var(--z-index);
+  pointer-events: none;
+}
+
+.crossHair {
+  --crossHair: block;
+  position: relative;
+  display: flex;
+  width: -moz-fit-content;
+  width: fit-content;
+  max-width: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+}
+
+#stampsContainer.hide-crosshairs .crossHair {
+  --crossHair: none;
+}
+
+.crossHair::before {
+  content:'';
+  display: var(--crossHair);
+  position:absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+/*  z-index: var(--z-index); */
+  z-index: 999;
+  pointer-events: none;
+  --n: 10px;
+  --m: 36px;
+  --color: rgb(255,0,0,0.45);
+  --grosor: 5px;
+
+  width: calc((var(--m) + var(--n))*2);
+  height: calc((var(--m) + var(--n))*2);
+
+  background: 
+      /* Línea Vertical */
+      linear-gradient(
+        to bottom, 
+        var(--color) var(--m), 
+        transparent var(--m), 
+        transparent calc(var(--m) + (var(--n) * 2)), 
+        var(--color) calc(var(--m) + (var(--n) * 2))
+      ),
+      /* Línea Horizontal */
+      linear-gradient(
+        to right, 
+        var(--color) var(--m), 
+        transparent var(--m), 
+        transparent calc(var(--m) + (var(--n) * 2)), 
+        var(--color) calc(var(--m) + (var(--n) * 2))
+      );
+
+  /* Define el grosor y evita que se repita */
+  background-size: var(--grosor) 100%, 100% var(--grosor);
+  background-position: center;
+  background-repeat: no-repeat;
+}
