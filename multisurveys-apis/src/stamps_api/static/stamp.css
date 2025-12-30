@@ -1126,14 +1126,11 @@
   border-color: rgb(254 240 138 / var(--tw-border-opacity, 1))
 }
 
-<<<<<<< Updated upstream
-=======
 .tw-preflight .tw-border-gray-400 {
   --tw-border-opacity: 1;
   border-color: rgb(156 163 175 / var(--tw-border-opacity, 1))
 }
 
->>>>>>> Stashed changes
 .tw-preflight .tw-border-b-\[\#1e1e1e\] {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(30 30 30 / var(--tw-border-opacity, 1))
