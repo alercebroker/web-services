@@ -1880,14 +1880,11 @@
   border-color: rgb(161 98 7 / var(--tw-border-opacity, 1))
 }
 
-<<<<<<< Updated upstream
-=======
 .tw-preflight .dark\:tw-border-gray-700:is(.tw-dark *) {
   --tw-border-opacity: 1;
   border-color: rgb(55 65 81 / var(--tw-border-opacity, 1))
 }
 
->>>>>>> Stashed changes
 .tw-preflight .dark\:tw-border-b-\[\#757575\]:is(.tw-dark *) {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(117 117 117 / var(--tw-border-opacity, 1))
