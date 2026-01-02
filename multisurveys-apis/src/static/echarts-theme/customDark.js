@@ -1,7 +1,7 @@
 export default function customDark() {
     return {
         "color": [
-            "#dd6b66",
+            "#5470c6",
             "#759aa0",
             "#e69d87",
             "#8dc1a9",
