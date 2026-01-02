@@ -1,4 +1,4 @@
-{% macro toggle(name, left, right, checked=False, tooltip="") -%}
+{% macro toggle(name, left, right, checked=False, tooltip="", disable=False) -%}
 <label class="tw-inline-flex tw-items-center tw-cursor-pointer">
   {% if tooltip %}
   <div class="tw-relative tw-group tw-mr-2">
@@ -13,7 +13,7 @@
   </div>
   {% endif %}
   <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">{{ left }}</span>
-  <input type="checkbox" name="{{ name }}" class="tw-sr-only tw-peer" {% if checked %}checked{% endif %} >
+  <input type="checkbox" name="{{ name }}" class="tw-sr-only tw-peer" {% if checked %}checked{% endif %} {% if disable %}disabled{% endif %}>
   <div class="tw-relative tw-w-11 tw-h-6 tw-bg-gray-200 peer-focus:tw-outline-none tw-rounded-full tw-peer dark:tw-bg-gray-700 peer-checked:after:tw-translate-x-full rtl:peer-checked:after:-tw-translate-x-full peer-checked:after:tw-border-white after:tw-content-[''] after:tw-absolute after:tw-top-[2px] after:tw-start-[2px] after:tw-bg-white after:tw-border-gray-300 after:tw-border after:tw-rounded-full after:tw-h-5 after:tw-w-5 after:tw-transition-all dark:tw-border-gray-600 peer-checked:tw-bg-gray-600 dark:peer-checked:tw-bg-gray-600"></div>
   <span class="tw-font-semibold tw-ml-3 tw-text-gray-900 dark:tw-text-gray-100">{{ right }}</span>
 </label>

@@ -19,19 +19,17 @@
       <div id="lightcurve-container" class="tw-flex-1 tw-min-h-0 tw-w-full">
       {% include "lightcurve.html.jinja" %}
       </div>
-      {% if config_state.fold %}
+      {% if config_state.fold and config_state.periodogram_enabled %}
       <div id="periodogram-container" class="tw-flex-1 tw-min-h-0 tw-max-h-[200px] tw-w-full">
-        {% if config_state.periodogram_enabled %}
-          {% if periodogram.has_period() %}
-            {% include "periodogram.html.jinja" %}
-          {% else %}
-            <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
-              <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4 tw-mb-4">
-                <strong class="tw-text-yellow-800 dark:tw-text-yellow-200">Info:</strong> 
-                <span class="tw-text-yellow-700 dark:tw-text-yellow-300">No period computed for this object. Periodogram not available.</span>
-            </div>
+        {% if periodogram.has_period() %}
+          {% include "periodogram.html.jinja" %}
+        {% else %}
+          <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
+            <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4 tw-mb-4">
+              <strong class="tw-text-yellow-800 dark:tw-text-yellow-200">Info:</strong> 
+              <span class="tw-text-yellow-700 dark:tw-text-yellow-300">No period computed for this object. Periodogram not available.</span>
           </div>
-          {% endif %}
+        </div>
         {% endif %}
       </div>
       {% endif %}

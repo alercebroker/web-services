@@ -13,7 +13,7 @@
   </div>
   <div class="tw-col-sm-12 tw-mt-2">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Periodogram</span>
-    {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled, "Toggle Periodogram")}}
+    {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled, "Toggle Periodogram", not config_state.fold)}}
   </div>
 </div>
 
