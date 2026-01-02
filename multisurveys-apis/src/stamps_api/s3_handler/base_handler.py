@@ -4,6 +4,7 @@ import os
 import io
 from abc import abstractmethod
 from .fits_to_png import transform
+import gzip
 
 
 def s3_client(bucket_region: str):
@@ -53,8 +54,9 @@ class BaseS3Handler:
         fit_data = self._get_buffer_from_file(avro_data, stamp_type)
 
         if file_format == "fits":
-            file = io.BytesIO(fit_data)
-            mime = "application/fits"
+            compressed_fits = gzip.compress(fit_data)
+            file = io.BytesIO(compressed_fits)
+            mime = "application/gzip"
         elif file_format == "png":
             file = io.BytesIO(
                 transform(fit_data, stamp_type, 2, self.compressed)
