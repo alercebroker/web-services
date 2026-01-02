@@ -14,10 +14,10 @@ export function downloadStamp(stampType, buttonElement) {
   }
 
   const oidMid = buttonElement.getAttribute("content")
-  const dataUrl = imgElement.src
+  const dataUrl = imgElement.getAttribute("content")
   const link = document.createElement("a")
   link.href = dataUrl
-  link.download = `${oidMid}_${stampType}.png`
+  link.download = `${oidMid}_${stampType}.fits.gz`
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
