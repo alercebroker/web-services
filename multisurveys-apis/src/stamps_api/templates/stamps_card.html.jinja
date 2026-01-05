@@ -27,8 +27,9 @@
                         {% if detection.measurement_id|string == selected_measurement_id|string %}
                             selected
                         {% endif %}
-                    >{{detection.greg}}</option>
+                    >{{detection.greg}} ({{detection.band}}-band)</option>
                 {% endfor %}
+                
             </select>
 
             <div id="mjd_arrow" class="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2">
