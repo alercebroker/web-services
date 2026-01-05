@@ -12,7 +12,7 @@ BANDS = {
     6: 'u',
 }
 
-def parse_band(band):    
+def parse_band(band):   
     return BANDS[band]   
 
 def _mjd_to_date(mjd):
@@ -46,6 +46,5 @@ def parse_lightcurve(lightcurve_data):
             "band": parse_band(detection_model_dict.get("band")),
         })
         parsed_lighturve.append(model_parsed)
-
     return parsed_lighturve
 
