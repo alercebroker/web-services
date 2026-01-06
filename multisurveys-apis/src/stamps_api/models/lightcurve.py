@@ -4,12 +4,14 @@ class detection(BaseModel):
     mjd : float
     greg: str
     measurement_id: int
-
+    band: str
+    
     def to_json(self):
         return {
             "mjd": self.mjd,
             "greg": self.greg,
-            "measurement_id": str(self.measurement_id,)
+            "measurement_id": str(self.measurement_id),
+            "band": self.band,
         }
 
 class LightcurveModel(BaseModel):

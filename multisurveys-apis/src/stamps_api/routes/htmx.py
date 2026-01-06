@@ -52,7 +52,9 @@ async def get_stamp_card(
     
 
     stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
-    context = build_image_context(stamps)
+    stamps_fits = handler.get_all_stamps(oid, selected_measurement_id, "fits")
+
+    context = build_image_context(stamps, stamps_fits)
     context.update({
         "request": request,
         "oid": oid,
@@ -76,13 +78,14 @@ async def post_stamp_card(
     handler = handler_selector(post_input.survey_id)()
 
     stamps = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "png")
+    stamps_fits = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "fits")
 
     prv_measurement_id, nxt_measurement_id = find_prv_and_nxt_measurement_ids(
         post_input.detections_list,
         selected_measurement_id=post_input.measurement_id,
     )
 
-    context = build_image_context(stamps)
+    context = build_image_context(stamps, stamps_fits)
     context.update({
         "request": request,
         "oid": post_input.oid,
@@ -98,14 +101,22 @@ async def post_stamp_card(
       context=context,
     )
 
-def build_image_context(stamps: dict) -> dict:
+def build_image_context(stamps: dict, stamps_fits: dict) -> dict:
     return {
+        # Images for explorer
         "science_mime": stamps['cutoutScience']['mime'],
         "science_img": base64.b64encode(stamps['cutoutScience']['file']).decode("utf-8"),
         "template_mime": stamps['cutoutTemplate']['mime'],
         "template_img": base64.b64encode(stamps['cutoutTemplate']['file']).decode("utf-8"),
         "difference_mime": stamps['cutoutDifference']['mime'],
         "difference_img": base64.b64encode(stamps['cutoutDifference']['file']).decode("utf-8"),
+        # Images for download
+        "science_mime_fits": stamps_fits['cutoutScience']['mime'],
+        "science_img_fits": base64.b64encode(stamps_fits['cutoutScience']['file']).decode("utf-8"),
+        "template_mime_fits": stamps_fits['cutoutTemplate']['mime'],
+        "template_img_fits": base64.b64encode(stamps_fits['cutoutTemplate']['file']).decode("utf-8"),
+        "difference_mime_fits": stamps_fits['cutoutDifference']['mime'],
+        "difference_img_fits": base64.b64encode(stamps_fits['cutoutDifference']['file']).decode("utf-8"),
     }
 
 def find_prv_and_nxt_measurement_ids(detections: list[dict], selected_measurement_id: int) -> tuple[int | None, int | None]:
