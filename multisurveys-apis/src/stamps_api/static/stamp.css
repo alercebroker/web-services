@@ -2089,6 +2089,10 @@
     margin-top: 0px
   }
 
+  .tw-preflight .sm\:tw-mt-7 {
+    margin-top: 1.75rem
+  }
+
   .tw-preflight .sm\:tw-flex {
     display: flex
   }
@@ -2131,6 +2135,10 @@
 
   .tw-preflight .sm\:tw-flex-none {
     flex: none
+  }
+
+  .tw-preflight .sm\:tw-flex-row {
+    flex-direction: row
   }
 
   .tw-preflight .sm\:tw-flex-row-reverse {
@@ -2180,6 +2188,18 @@
     margin-top: 0px
   }
 
+  .tw-preflight .md\:tw-ml-2 {
+    margin-left: 0.5rem
+  }
+
+  .tw-preflight .md\:tw-mt-6 {
+    margin-top: 1.5rem
+  }
+
+  .tw-preflight .md\:\!tw-mt-7 {
+    margin-top: 1.75rem !important
+  }
+
   .tw-preflight .md\:tw-h-full {
     height: 100%
   }
@@ -2198,6 +2218,10 @@
 
   .tw-preflight .md\:tw-flex-row {
     flex-direction: row
+  }
+
+  .tw-preflight .md\:\!tw-flex-row {
+    flex-direction: row !important
   }
 
   .tw-preflight .md\:tw-items-start {
