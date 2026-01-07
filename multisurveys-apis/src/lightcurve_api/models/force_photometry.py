@@ -95,7 +95,7 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
     psfFluxErr: float
     scienceFlux: float
     scienceFluxErr: float
-    band_map: dict[int, str] = {0: "u", 1: "g", 2: "r", 3: "i", 4: "z", 5: "y"}
+    band_map: dict[int, str] = {6: "u", 1: "g", 2: "r", 3: "i", 4: "z", 5: "y"}
 
     @model_validator(mode="before")
     @classmethod
