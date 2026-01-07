@@ -1,18 +1,3 @@
-
-import customDark from '{{API_URL}}/static/echarts-theme/customDark.js'
-
-function toggleDarkTheme(currentTheme) {
-
-  let stampContainer = document.getElementById("stamp-container")
-
-  if (currentMode === 'light') {
-    stampContainer.classList.remove('tw-dark');
-  }
-  else {
-    stampContainer.classList.add('tw-dark');
-  }
-}
-
 export function downloadStamp(stampType, buttonElement) {
   const imageIdMap = {
     "science": "scienceImg",
@@ -37,10 +22,6 @@ export function downloadStamp(stampType, buttonElement) {
 }
 
 export function init() {
-  // Dummy button for darkmode
-  let toggleDarkStamp = document.getElementById("toggle-theme-stamp")
-  let theme = document.getElementById('main-app').classList.contains('tw-dark') ? customDark : 'light'
-  toggleDarkTheme(theme)
   // Download button elements
   let scienceDownload = document.getElementById("scienceDownload")
   let templateDownload = document.getElementById("templateDownload")
@@ -65,11 +46,6 @@ export function init() {
   // Crosshair button elements
   let crossHair = document.getElementById('crossHairStamps')
 
-  // Dummy button darkmode listener
-  toggleDarkStamp.addEventListener('click', () => {
-    var themeMode = document.getElementById('main-app').classList.contains('tw-dark') ? customDark : 'light'
-    toggleDarkTheme(themeMode)
-  })
   // Download button eventListeners 
   scienceDownload.addEventListener("click", () => downloadStamp("science", scienceDownload))
   templateDownload.addEventListener("click", () => downloadStamp("template", templateDownload))
