@@ -71,8 +71,8 @@ SYMBOLS = {
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
     LSST_SURVEY: {
-        DETECTION: {"symbol": "diamond"},
-        FORCED_PHOTOMETRY: {"symbol": "pin"},
+        DETECTION: {"symbol": "roundRect"},
+        FORCED_PHOTOMETRY: {"symbol": "diamond"},
     },
     ZTF_DR_SURVEY: {
         DETECTION: {"symbol": "circle"},
@@ -537,14 +537,14 @@ def create_chart_forced_photometry(
                 fphot.band_name(),
                 fphot.phase(config_state.period) if config_state.fold else fphot.mjd,
                 (
-                    fphot.magnitude2flux(config_state.total)
+                    fphot.magnitude2flux(config_state.total, config_state.absolute)
                     if config_state.flux
-                    else fphot.flux2magnitude(config_state.total)
+                    else fphot.flux2magnitude(config_state.total, config_state.absolute)
                 ),
                 (
-                    fphot.magnitude2flux_err(config_state.total)
+                    fphot.magnitude2flux_err(config_state.total, config_state.absolute)
                     if config_state.flux
-                    else fphot.flux2magnitude_err(config_state.total)
+                    else fphot.flux2magnitude_err(config_state.total, config_state.absolute)
                 ),
             )
         )

@@ -1,8 +1,16 @@
 import math
+import traceback
 from typing import Optional
 
 from pydantic import model_validator
 from .lightcurve_item import BaseForcedPhotometry
+from astropy.coordinates import Distance
+import astropy.units as u
+
+
+REDSHIFT = (
+    0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
+)
 
 
 class ZtfForcedPhotometry(BaseForcedPhotometry):
@@ -111,16 +119,54 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
         return values
 
-    def magnitude2flux(self, total: bool) -> float:
-        return self.scienceFlux if total else self.psfFlux
+    def magnitude2flux(self, total: bool, absolute: bool) -> float:
+        magnitude = self.flux2magnitude(total, absolute)
 
-    def magnitude2flux_err(self, total: bool) -> float:
-        return self.scienceFluxErr if total else self.psfFluxErr
+        return 10**(-(magnitude - 31.4) / 2.5)
 
-    def flux2magnitude(self, total: bool) -> float:
-        flux = self.scienceFlux if total else self.psfFlux
-        return -2.5 * math.log10(flux) + 23.9
+    def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
+        flux = self.magnitude2flux(total, absolute)
+        magnitude_error = self.flux2magnitude_err(total, absolute)
 
-    def flux2magnitude_err(self, total: bool) -> float:
-        err = self.scienceFluxErr if total else self.psfFlux
-        return err
+        return math.log(10.0)  * flux / 2.5 * magnitude_error
+
+    def flux2magnitude(self, total: bool, absolute: bool) -> float:
+        try:
+            d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+            flux = self.scienceFlux if total else self.psfFlux
+
+            if flux < 0:
+                flux = math.fabs(flux)
+                if total == True:
+                    flux = flux * -1
+
+
+            if flux < 0:
+                raise ValueError("Flux no puede ser negativo para cálculo de magnitud")
+                
+            mag = 31.4 - 2.5 * math.log10(flux)
+        except ValueError as e:
+            traceback.print_exc()
+            return 0
+
+        return mag - d.distmod.value if absolute else mag
+
+    def flux2magnitude_err(self, total: bool, absolute: bool) -> float:
+        try:
+            flux = self.scienceFlux if total else self.psfFlux
+            flux_err = self.scienceFluxErr if total else self.psfFluxErr
+
+            if flux < 0:
+                flux = math.fabs(flux)
+            
+            if flux_err < 0: 
+                flux_err = math.fabs(flux_err)
+            
+            magnitude_error = (2.5 * flux_err) / (math.log(10.0) * flux)
+
+        except ValueError as e:
+            traceback.print_exc()
+            return 0
+
+
+        return magnitude_error
