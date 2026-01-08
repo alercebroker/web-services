@@ -61,7 +61,7 @@ export class Periodogram {
   load() {
     if (this.isPeriodogramBuilt) return;
 
-    this.periodogram_plot = echarts.init(this.elements.main);
+    this.periodogram_plot = window.echarts.init(this.elements.main);
     window.addEventListener("resize", this.periodogram_plot.resize);
     this.periodogram_plot.on("click", (params) => {
       this.setPeriod(params.data[0]);
