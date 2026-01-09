@@ -129,10 +129,16 @@ def default_echart_options():
             "height": "80%",
             "orient": "vertical",
         },
-        "xAxis": {"type": "value", "name": "period", "scale": True, "splitLine": False},
+        "xAxis": {
+            "type": "log", 
+            "name": "Period", 
+            "scale": True, 
+            "splitLine": False,
+            "min": "0.05",
+            "max": "500"},
         "yAxis": {
             "type": "value",
-            "name": "score",
+            "name": "Score",
             "scale": True,
             "splitLine": False,
         },

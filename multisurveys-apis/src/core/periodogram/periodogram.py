@@ -59,28 +59,6 @@ class PeriodogramComputer:
 
         return lightcurve.iloc[best_starting : (best_ending + 1)]
 
-    def optimal_frequency_grid_evaluation(self, smallest_period, largest_period, shift):
-
-        lc_time_length = self.periodogram_computer.get_lc_time_length()
-        smallest_frequency = 1.0/largest_period
-        largest_frequency = 1.0/smallest_period
-        f_range = largest_frequency - smallest_frequency
-        grid_size = int(np.ceil(f_range * lc_time_length / (2.0 * shift)))
-        grid_size = max(grid_size, 1_000)
-        self.periodogram_computer.freq_step_coarse = f_range / (grid_size - 1)
-
-        frequency_grid = np.logspace(
-            smallest_frequency,
-            largest_frequency,
-            grid_size,
-            dtype=np.float32
-        )
-
-        self.periodogram_computer.per, self.periodogram_computer.per_single_band = self.periodogram_computer._compute_periodogram(frequency_grid)
-
-        self.periodogram_computer.freq = frequency_grid
-
-
     def compute(self, lightcurve: pd.DataFrame):
         trimmed_lightcurve = self.trim_lightcurve(lightcurve)
 
@@ -92,7 +70,7 @@ class PeriodogramComputer:
         )
 
 
-        self.optimal_frequency_grid_evaluation(
+        self.periodogram_computer.optimal_frequency_grid_evaluation(
             smallest_period=self.smallest_period,
             largest_period=self.largest_period,
             shift=self.shift,
