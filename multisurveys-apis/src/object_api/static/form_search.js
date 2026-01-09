@@ -216,7 +216,7 @@ export function init() {
     get_sesame_object(document.getElementById("target_name").value)
   })
 
-  clear_btn_form.addEventListener("click", () => {
+  clear_btn_form.addEventListener("htmx:beforeRequest", () => {
     reset_values()
   })
 
@@ -321,7 +321,7 @@ export function elementReady(selector) {
 
 
 function reset_values() {
-  document.getElementById("clear_oids_btn").click()
+  window.history.pushState({}, document.title, "/")
 }
 
 function send_form_Data() {
@@ -378,3 +378,4 @@ function restore_form_from_url() {
   restore_conesearch(urlParams)
 
 }
+
