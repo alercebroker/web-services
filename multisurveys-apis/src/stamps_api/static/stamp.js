@@ -1,5 +1,3 @@
-
-
 export function downloadStamp(stampType, buttonElement) {
   const imageIdMap = {
     "science": "scienceImg",
@@ -14,17 +12,16 @@ export function downloadStamp(stampType, buttonElement) {
   }
 
   const oidMid = buttonElement.getAttribute("content")
-  const dataUrl = imgElement.src
+  const dataUrl = imgElement.getAttribute("content")
   const link = document.createElement("a")
   link.href = dataUrl
-  link.download = `${oidMid}_${stampType}.png`
+  link.download = `${oidMid}_${stampType}.fits.gz`
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
 }
 
 export function init() {
-
   // Download button elements
   let scienceDownload = document.getElementById("scienceDownload")
   let templateDownload = document.getElementById("templateDownload")
@@ -68,11 +65,15 @@ export function init() {
   // Zoom button eventListeners
   zoomStamps.addEventListener('click', () => {
     toggleZoom()
+    if (!stampsContainer.classList.contains('hide-crosshairs')) {
+      stampsContainer.classList.toggle('hide-crosshairs')
+    }
   })
 
   // Crosshair buttom eventListeners
   crossHair.addEventListener('click', () => {
     stampsContainer.classList.toggle('hide-crosshairs')
+    toggleZoom(true)
   })
 }
 
@@ -127,23 +128,19 @@ function makeZoomWork(imagesZoom) {
   }
 }
 
-function toggleZoom() {
+function toggleZoom(crossFlag = false) {
 
   let currentVal = getComputedStyle(scienceZoom).getPropertyValue('--z-index').trim();
 
-  if (parseInt(currentVal) > 0) {
+  if (parseInt(currentVal) > 0 || crossFlag) {
     scienceZoom.style.setProperty('--z-index', -1)
     templateZoom.style.setProperty('--z-index', -1)
     differenceZoom.style.setProperty('--z-index', -1)
-
+    crossFlag = false
   } else {
     scienceZoom.style.setProperty('--z-index', 1)
     templateZoom.style.setProperty('--z-index', 1)
     differenceZoom.style.setProperty('--z-index', 1)
-
-  }
-  if (!stampsContainer.classList.contains('hide-crosshairs')) {
-    stampsContainer.classList.toggle('hide-crosshairs')
   }
 }
 

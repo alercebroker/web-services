@@ -1,17 +1,17 @@
-import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec} from "./AstroDates.js"
-import { getUTCDate, extractDate, extractTime, convertToDate, formatDate} from "./time.js"
+import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "./AstroDates.js"
+import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "./time.js"
 import { handle_error } from "./error_handler.js";
-import {draw_oids_tags} from "./draw_elements.js";
-import { display, highlight_text, split_oids, format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon }  from "./ui_helpers.js";
-import {get_sesame_object} from "./sesame.js"
+import { draw_oids_tags } from "./draw_elements.js";
+import { display, highlight_text, split_oids, format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon } from "./ui_helpers.js";
+import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
-import {restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch} from "./form_restore_functions.js";
+import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
 
 
 let oids_arr = []
 
-export function init(){
-    
+export function init() {
+
   let item_name = ""
   let minDate = ""
   let minDatetime = ""
@@ -41,7 +41,7 @@ export function init(){
   let date_min = document.getElementById("date_min")
   let time_min = document.getElementById("time_min")
   let save_date = document.getElementById("save_date")
-  
+
   let max_mjd = document.getElementById("max_mjd")
   let max_date_time_text = document.getElementById("max_date_time_text")
   let date_max = document.getElementById("date_max")
@@ -49,43 +49,43 @@ export function init(){
   let save_date_max = document.getElementById("save_date_max")
 
   let resolve_btn = document.getElementById("resolve_btn")
-  let radio_HMS = document.getElementById("HMS/DMS" )
+  let radio_HMS = document.getElementById("HMS/DMS")
   let radio_degress = document.getElementById("degrees")
   let clear_btn_form = document.getElementById("clear_form")
 
   // se seleccionan todos los dropdowns
   for (const dropdown of document.querySelectorAll(".obj-select-wrapper")) {
-    dropdown.addEventListener('click', function() {
+    dropdown.addEventListener('click', function () {
       this.querySelector('.obj-select').classList.toggle('open');
     })
   }
 
   // Se incorporan funcionalidad a las opciones de los dropdowns
-  for(const option of document.querySelectorAll(".obj-custom-option")){
+  for (const option of document.querySelectorAll(".obj-custom-option")) {
     option.addEventListener('click', () => {
-        if(!option.classList.contains('obj-selected')){
+      if (!option.classList.contains('obj-selected')) {
 
-          option.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
+        option.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
 
-          option.classList.add('obj-selected');
+        option.classList.add('obj-selected');
 
-          option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
+        option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
 
-          if(!option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.contains('dark:tw-text-[#EEEEEE]')){
-            option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.add('dark:tw-text-[#EEEEEE]')
-          }
-
-
-          option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classes",  option.getAttribute("data-classes"));
-          option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classifier",  option.getAttribute("data-classifier"));
-          option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-version",  option.getAttribute("data-version"));
-
-
-
-          if(option.closest('.obj-select').querySelector('.obj-select__trigger span').id == "classifier"){
-            document.getElementById("classifier").dispatchEvent(new Event("change"))
-          }
+        if (!option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.contains('dark:tw-text-[#EEEEEE]')) {
+          option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.add('dark:tw-text-[#EEEEEE]')
         }
+
+
+        option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classes", option.getAttribute("data-classes"));
+        option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classifier", option.getAttribute("data-classifier"));
+        option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-version", option.getAttribute("data-version"));
+
+
+
+        if (option.closest('.obj-select').querySelector('.obj-select__trigger span').id == "classifier") {
+          document.getElementById("classifier").dispatchEvent(new Event("change"))
+        }
+      }
     })
   }
 
@@ -94,46 +94,46 @@ export function init(){
 
 
   // clicks events
-  general_filters.addEventListener("click", () =>{
+  general_filters.addEventListener("click", () => {
     item_name = general_filters.id + "_container"
     switch_arrow_icon(general_filters)
     highlight_text(general_filters)
     display(item_name)
   })
-  
-  discovery_date_filters.addEventListener("click", () =>{
+
+  discovery_date_filters.addEventListener("click", () => {
     item_name = discovery_date_filters.id + "_container"
     switch_arrow_icon(discovery_date_filters)
     highlight_text(discovery_date_filters)
     display(item_name)
   })
-  
-  conesearch_filters.addEventListener("click", () =>{
+
+  conesearch_filters.addEventListener("click", () => {
     item_name = conesearch_filters.id + "_container"
     switch_arrow_icon(conesearch_filters)
     highlight_text(conesearch_filters)
     display(item_name)
   })
 
-  classifiers_list.addEventListener("click", () =>{
+  classifiers_list.addEventListener("click", () => {
     item_name = classifiers_list.id + "_container"
     switch_arrow_icon(classifiers_list)
     highlight_text(classifiers_list)
   })
 
-  classifiers_options.addEventListener("click", () =>{
+  classifiers_options.addEventListener("click", () => {
     item_name = classifiers_list.id + "_container"
     switch_arrow_icon(classifiers_list)
     highlight_text(classifiers_list)
   })
 
-  classes_list.addEventListener("click", () =>{
+  classes_list.addEventListener("click", () => {
     item_name = classes_list.id + "_container"
     switch_arrow_icon(classes_list)
     highlight_text(classes_list)
   })
 
-  classes_options.addEventListener("click", () =>{
+  classes_options.addEventListener("click", () => {
     item_name = classes_list.id + "_container"
     switch_arrow_icon(classes_list)
     highlight_text(classes_list)
@@ -157,10 +157,10 @@ export function init(){
     display("max_date_time_text_container")
   })
 
-  clear_oids.addEventListener("click", () =>{
+  clear_oids.addEventListener("click", () => {
     oids_arr = []
 
-    while(oids_container.firstChild){
+    while (oids_container.firstChild) {
       oids_container.removeChild(oids_container.firstChild)
     }
 
@@ -194,7 +194,7 @@ export function init(){
   radio_HMS.addEventListener("click", () => {
     let [ra_hms, dec_dms] = raDectoHMS(document.getElementById("ra_consearch").value, document.getElementById("dec_consearch").value).split(" ")
 
-    document.getElementById("ra_consearch").type = "text" 
+    document.getElementById("ra_consearch").type = "text"
     document.getElementById("ra_consearch").value = ra_hms
 
     document.getElementById("dec_consearch").type = "text"
@@ -205,7 +205,7 @@ export function init(){
     let ra_degree = HMStoRa(document.getElementById("ra_consearch").value)
     let dec_degree = DMStoDec(document.getElementById("dec_consearch").value)
 
-    document.getElementById("ra_consearch").type = "number" 
+    document.getElementById("ra_consearch").type = "number"
     document.getElementById("ra_consearch").value = ra_degree
 
     document.getElementById("dec_consearch").type = "number"
@@ -216,7 +216,7 @@ export function init(){
     get_sesame_object(document.getElementById("target_name").value)
   })
 
-  clear_btn_form.addEventListener("click", () => {
+  clear_btn_form.addEventListener("htmx:beforeRequest", () => {
     reset_values()
   })
 
@@ -300,31 +300,31 @@ export function init(){
 
 
 export function elementReady(selector) {
-    return new Promise((resolve, reject) => {
-      const el = document.querySelector(selector);
-      if (el) {
-        resolve(el);
-      }
-  
-      new MutationObserver((mutationRecords, observer) => {
-        Array.from(document.querySelectorAll(selector)).forEach(element => {
-          resolve(element);
-          observer.disconnect();
-        });
-      })
+  return new Promise((resolve, reject) => {
+    const el = document.querySelector(selector);
+    if (el) {
+      resolve(el);
+    }
+
+    new MutationObserver((mutationRecords, observer) => {
+      Array.from(document.querySelectorAll(selector)).forEach(element => {
+        resolve(element);
+        observer.disconnect();
+      });
+    })
       .observe(document.documentElement, {
         childList: true,
         subtree: true
       });
-    });
+  });
 }
 
 
-function reset_values(){
-  document.getElementById("clear_oids_btn").click()
+function reset_values() {
+  window.history.pushState({}, document.title, "/")
 }
 
-function send_form_Data(){
+function send_form_Data() {
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
   let first_mjd_arr = get_values_array_fields(["min_mjd", "max_mjd"])
   let probability_value = parseFloat(document.getElementById("prob_range").value);
@@ -341,7 +341,7 @@ function send_form_Data(){
   let response = {
     oid: list_oids == '' ? null : list_oids,
     classifier: classifier_selected.dataset.classifier == "" ? null : classifier_selected.dataset.classifier,
-    class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value ,
+    class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value,
     survey: survey_id.dataset.survey,
     probability: probability_value > 0 ? probability_value : null,
     n_det_min: ndet_arr.length > 0 && ndet_arr[0] !== null ? parseInt(ndet_arr[0]) : null,
@@ -349,7 +349,7 @@ function send_form_Data(){
     firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
     dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
-    radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch: null,
+    radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch : null,
   }
 
   response = clean_nulls_form(response)
@@ -362,19 +362,20 @@ function restore_form_from_url() {
 
 
   restore_survey(urlParams)
-  
+
   restore_object_id(urlParams)
-  
+
   restore_classifier(urlParams)
-  
+
   restore_class(urlParams)
 
   restore_probability(urlParams)
 
   restore_n_det(urlParams)
 
-  restore_mjd(urlParams)  
+  restore_mjd(urlParams)
 
   restore_conesearch(urlParams)
 
 }
+

@@ -2,47 +2,42 @@
     <h1 class="tw-font-semibold tw-text-2xl tw-pt-[30px] tw-pl-[10px] tw-mb-[20px] dark:tw-text-white tw-text-black">Stamps</h1>
 </div>
 
-<div class="tw-flex tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
+<div class="tw-flex tw-flex-col md:!tw-flex-row tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
     
     <div class="tw-whitespace-nowrap">
         <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
         <div class="tw-cursor-pointer">
+            <button id="mid_arrow" class="tw-relative tw-cursor-pointer">
+                <select 
+                    id="measurement_id" 
+                    name="measurement_id" 
+                    class="tw-appearance-none tw-cursor-pointer tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-pl-3 tw-pr-10 tw-py-2 tw-bg-white dark:hover:tw-bg-gray-800 dark:tw-bg-[#1e1e1e] dark:hover:tw-bg-gray-800 tw-cursor-pointer tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]"
+                    hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
+                    hx-post="{{ API_URL }}/htmx/update_stamp_card"
+                    hx-trigger="change"
+                    hx-target="#stamp-app"
+                    hx-swap="innerHTML"
+                    hx-ext="final-payload"
+                >
+                    {% for detection in detections %}
+                        <option class="tw-cursor-pointer" value="{{detection.measurement_id}}" 
+                            {% if detection.measurement_id|string == selected_measurement_id|string %}
+                                selected
+                            {% endif %}
+                        >{{detection.greg}} ({{detection.band}}-band)</option>
+                    {% endfor %}
+                </select>
 
-          <button id="mid_arrow" class="tw-relative tw-cursor-pointer">
-            
-            <select 
-                id="measurement_id" 
-                name="measurement_id" 
-                class="tw-appearance-none tw-cursor-pointer tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-pl-3 tw-pr-10 tw-py-2 tw-bg-white dark:hover:tw-bg-gray-800 dark:tw-bg-[#1e1e1e] dark:hover:tw-bg-gray-800 tw-cursor-pointer tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]"
-                
-                hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
-                hx-post="{{ API_URL }}/htmx/update_stamp_card"
-                hx-trigger="change"
-                hx-target="#stamp-app"
-                hx-swap="innerHTML"
-                hx-ext="final-payload"
-            >
-                {% for detection in detections %}
-                    <option class="tw-cursor-pointer" value="{{detection.measurement_id}}" 
-                        {% if detection.measurement_id|string == selected_measurement_id|string %}
-                            selected
-                        {% endif %}
-                    >{{detection.greg}}</option>
-                {% endfor %}
-            </select>
-
-            <div id="mjd_arrow" class="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2">
-                <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-current tw-text-black dark:tw-text-white" viewBox="0 -960 960 960">
-                    <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/>
-                </svg>
-            </div>
-
-          </button>
-        
+                <div id="mjd_arrow" class="tw-pointer-events-none tw-absolute tw-inset-y-0 tw-right-0 tw-flex tw-items-center tw-px-2">
+                    <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-current tw-text-black dark:tw-text-white" viewBox="0 -960 960 960">
+                        <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/>
+                    </svg>
+                </div>
+            </button>
         </div> 
     </div>
 
-    <div class="tw-flex tw-gap-1 tw-mt-7">
+    <div class="tw-flex tw-gap-1 tw-mt-2 md:!tw-mt-7">
         <button id="prevDate" 
             data-measurement-id="{{ prv_measurement_id }}"
             class="tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded tw-transition-all tw-duration-200 tw-border
@@ -51,7 +46,6 @@
             {% else %}
                 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-cursor-pointer hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-border-gray-700 dark:tw-border-gray-300
             {% endif %}"
-            
             {% if prv_measurement_id != selected_measurement_id %}
                 hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
                 hx-post="{{ API_URL }}/htmx/update_stamp_card"
@@ -62,11 +56,11 @@
             {% else %}
                 disabled
             {% endif %}
-            title="Fecha anterior">
+            title="Previous date">
         ←
-    </button>
+        </button>
 
-    <button id="nextDate" 
+        <button id="nextDate" 
             data-measurement-id="{{ nxt_measurement_id }}"
             class="tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded tw-transition-all tw-duration-200 tw-border
             {% if nxt_measurement_id == selected_measurement_id %}
@@ -74,7 +68,6 @@
             {% else %}
                 tw-bg-white dark:tw-bg-[#1e1e1e] tw-text-black dark:tw-text-white tw-cursor-pointer hover:tw-bg-gray-100 dark:hover:tw-bg-gray-800 tw-border-gray-700 dark:tw-border-gray-300
             {% endif %}"
-
             {% if nxt_measurement_id != selected_measurement_id %}
                 hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
                 hx-post="{{ API_URL }}/htmx/update_stamp_card"
@@ -85,18 +78,19 @@
             {% else %}
                 disabled
             {% endif %}
-            title="Fecha siguiente">
+            title="Next date">
         →
-    </button>
+        </button>
     </div>
     
     {% if survey_id == "ztf" %}
-    <button id="avroBtn" class="tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium tw-transition-colors tw-mt-5 tw-ml-20">
+    <button id="avroBtn" class="tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium tw-transition-colors tw-mt-5 md:tw-mt-6 tw-ml-20 md:tw-ml-2">
         AVRO
     </button>
     {% endif %}
+
     {% if survey_id == "ztf" %}
-    <div class="tw-relative tw-group tw-mt-5">
+    <div class="tw-relative tw-group tw-mt-5 md:tw-mt-6">
         <span class="tw-w-6 tw-h-6 tw-bg-gray-400 dark:tw-bg-gray-600 tw-text-white tw-rounded-full tw-text-xs tw-flex tw-items-center tw-justify-center tw-cursor-help">
             <svg class="tw-w-3 tw-h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
@@ -114,8 +108,11 @@
     <div id='stampsContainer' class="tw-grid tw-grid-cols-3 tw-gap-4 tw-mb-4">
         <div id="" class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button id="scienceDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                    Science
+                <button id="scienceDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-2 tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-1 md:tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                  <span> Science </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3">
+                    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+                  </svg>
                 </button>
             </div>
             <div id="scienceZoom" class="imageZoom crossHair tw-relative" style="
@@ -123,14 +120,17 @@
               --zoom-x: 0%; --zoom-y:0%;
               --display: none; --z-index: -1;
               ">
-              <img id="scienceImg" src="data:image/{{ science_mime }};base64, {{ science_img }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+              <img id="scienceImg" src="data:image/{{ science_mime }};base64, {{ science_img }}" content="data:{{ science_mime_fits }};base64, {{ science_img_fits }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
             </div>
         </div>
         
         <div class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button id="templateDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                    Template
+                <button id="templateDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-2 tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-1 md:tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                  <span> Template </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3">
+                    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+                  </svg>
                 </button>
             </div>
             <div id="templateZoom" class="imageZoom crossHair tw-relative" style="
@@ -138,14 +138,17 @@
               --zoom-x: 0%; --zoom-y:0%;
               --display: none; --z-index: -1;
               ">
-              <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+              <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" content="data:{{ template_mime_fits }};base64, {{ template_img_fits }}"alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
             </div>
         </div>
         
         <div class="tw-flex tw-flex-col tw-items-center">
             <div class="tw-mb-2">
-                <button id="differenceDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                    Difference
+                <button id="differenceDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-2 tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-1 md:tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
+                  <span> Difference </span>
+                  <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3">
+                    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+                  </svg>
                 </button>
             </div>
             <div id="differenceZoom" class="imageZoom crossHair tw-relative" style="
@@ -153,7 +156,7 @@
               --zoom-x: 0%; --zoom-y:0%;
               --display: none; --z-index: -1;
               ">
-              <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+              <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" content="data:{{ difference_mime_fits }};base64, {{ difference_img_fits }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
             </div>
         </div>
     </div>
