@@ -56,7 +56,7 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     ra: float
     dec: float
     band: int
-    band_map: dict[int, str] = {1: "r", 2: "g", 3: "i"}
+    band_map: dict[int, str] = {1: "g", 2: "r", 3: "i"}
 
     @model_validator(mode="before")
     @classmethod

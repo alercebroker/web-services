@@ -44,8 +44,7 @@ class ztfDetection(BaseDetection):
     ra: float
     dec: float
     band: int
-    band_map: dict[int, str] = {1: "r", 2: "g", 3: "i"}
-
+    band_map: dict[int, str] = {1: "g", 2: "r", 3: "i"}
     @model_validator(mode="before")
     @classmethod
     def set_defaults(cls, values: dict) -> dict:
@@ -273,7 +272,7 @@ class ZtfDataReleaseDetection(BaseDetection):
     field: int
     objectid: float
     corrected: bool = True
-    band_map: dict[int, str] = {1: "r", 2: "g", 3: "i"}
+    band_map: dict[int, str] = {1: "g", 2: "r", 3: "i"}
 
     def magnitude2flux(self, total: bool, absolute: bool) -> float:
         """Convert magnitude to flux.

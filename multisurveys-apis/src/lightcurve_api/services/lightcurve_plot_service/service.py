@@ -3,6 +3,7 @@ import copy
 import csv
 import io
 from os import name
+import pprint
 import re
 import zipfile
 from core.repository.queries.objects import query_object_by_id
@@ -88,6 +89,9 @@ SYMBOLS = {
 
 
 def create_series(name: str, survey: str, band: str, data: List[List[float]]) -> dict:
+    
+    z_index = 2 if survey == 'ztf dr' else 10
+
     return {
         "name": name + " " + survey.upper() + ": " + band,
         "type": "scatter",
@@ -96,6 +100,7 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
         "symbol": SYMBOLS[survey][name]["symbol"],
         "symbolSize": 9,
         "survey": survey,
+        "z": z_index,
         "band": band,
     }
 
