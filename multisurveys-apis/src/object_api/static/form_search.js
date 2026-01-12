@@ -9,8 +9,17 @@ import { restore_survey, restore_object_id, restore_classifier, restore_class, r
 
 
 let oids_arr = []
+let currentStates = null
 
 export function init() {
+
+  if (currentStates) {
+    const statesToRestore = currentStates
+    setTimeout(() => {
+      restore_states(statesToRestore)
+    }, 100)
+    currentStates = null
+  }
 
   let item_name = ""
   let minDate = ""
@@ -216,7 +225,9 @@ export function init() {
     get_sesame_object(document.getElementById("target_name").value)
   })
 
+  // Elements to delete form, get states of conesearch and discovery dates and restore states
   clear_btn_form.addEventListener("htmx:beforeRequest", () => {
+    currentStates = get_states()
     reset_values()
   })
 
@@ -322,6 +333,28 @@ export function elementReady(selector) {
 
 function reset_values() {
   window.history.pushState({}, document.title, "/")
+}
+
+function restore_states(currentStates) {
+  let discoveryDate = document.getElementById('discovery_date_filters_container')
+  let conesearch = document.getElementById('conesearch_filters_container')
+  if (currentStates[0]) {
+    discoveryDate.classList.remove('tw-hidden')
+  }
+  if (currentStates[1]) {
+    conesearch.classList.remove('tw-hidden')
+  }
+}
+
+function get_states() {
+  let discoveryDate = document.getElementById('discovery_date_filters_container')
+  let conesearch = document.getElementById('conesearch_filters_container')
+  let currentStates = [
+    !discoveryDate.classList.contains('tw-hidden'),
+    !conesearch.classList.contains('tw-hidden')
+  ]
+
+  return currentStates
 }
 
 function send_form_Data() {
