@@ -9,8 +9,17 @@ import { restore_survey, restore_object_id, restore_classifier, restore_class, r
 
 
 let oids_arr = []
+let currentStates = null
 
 export function init() {
+
+  if (currentStates) {
+    const statesToRestore = currentStates
+    setTimeout(() => {
+      restore_states(statesToRestore)
+    }, 100)
+    currentStates = null
+  }
 
   let item_name = ""
   let minDate = ""
@@ -217,15 +226,9 @@ export function init() {
   })
 
   // Elements to delete form, get states of conesearch and discovery dates and restore states
-  let currentStates
   clear_btn_form.addEventListener("htmx:beforeRequest", () => {
     currentStates = get_states()
     reset_values()
-  })
-
-  clear_btn_form.addEventListener("htmx:afterRequest", () => {
-    console.log(currentStates)
-    restore_states(currentStates)
   })
 
   // inputs events
@@ -353,6 +356,7 @@ function get_states() {
 
   return currentStates
 }
+
 function send_form_Data() {
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
   let first_mjd_arr = get_values_array_fields(["min_mjd", "max_mjd"])
