@@ -216,8 +216,16 @@ export function init() {
     get_sesame_object(document.getElementById("target_name").value)
   })
 
+  // Elements to delete form, get states of conesearch and discovery dates and restore states
+  let currentStates
   clear_btn_form.addEventListener("htmx:beforeRequest", () => {
+    currentStates = get_states()
     reset_values()
+  })
+
+  clear_btn_form.addEventListener("htmx:afterRequest", () => {
+    console.log(currentStates)
+    restore_states(currentStates)
   })
 
   // inputs events
@@ -324,6 +332,27 @@ function reset_values() {
   window.history.pushState({}, document.title, "/")
 }
 
+function restore_states(currentStates) {
+  let discoveryDate = document.getElementById('discovery_date_filters_container')
+  let conesearch = document.getElementById('conesearch_filters_container')
+  if (currentStates[0]) {
+    discoveryDate.classList.remove('tw-hidden')
+  }
+  if (currentStates[1]) {
+    conesearch.classList.remove('tw-hidden')
+  }
+}
+
+function get_states() {
+  let discoveryDate = document.getElementById('discovery_date_filters_container')
+  let conesearch = document.getElementById('conesearch_filters_container')
+  let currentStates = [
+    !discoveryDate.classList.contains('tw-hidden'),
+    !conesearch.classList.contains('tw-hidden')
+  ]
+
+  return currentStates
+}
 function send_form_Data() {
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
   let first_mjd_arr = get_values_array_fields(["min_mjd", "max_mjd"])
