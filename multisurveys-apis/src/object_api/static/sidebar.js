@@ -27,21 +27,23 @@ export function elementReady(selector) {
 
 function prepare_params(evt){
   let url = new URL(evt.detail.headers['HX-Current-URL'])
+  let page = get_page(evt.detail.elt)
+  let selected_oid = evt.detail.elt.dataset.oid
 
-  if(evt.detail.elt.getAttribute("name") == "side_objects_btn"){
-    let next_page = evt.detail.elt.dataset.next
-
-    url.searchParams.set("page", next_page)
-  }else{
-    let selected_oid = evt.detail.elt.dataset.oid
-    let current_page = document.getElementById('current_page').dataset.page
-
-    url.searchParams.set("selected_oid", selected_oid)
-    url.searchParams.set("page", current_page)
-  }
+  url.searchParams.set("page", page)
+  url.searchParams.set("selected_oid", selected_oid)
 
   evt.detail.parameters = {...prepare_data(url)}
+}
 
+function get_page(event_element){
+  let current_page = document.getElementById('current_page').dataset.page
+  
+  if (event_element.getAttribute("name") == "side_objects_btn"){
+    return event_element.dataset.next
+  }
+
+  return current_page
 }
 
 function prepare_data(url){
