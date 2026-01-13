@@ -152,7 +152,6 @@ def objects_table(
         if survey is not None:
             session = request.app.state.psql_session
             oid = _parse_oids_string_to_array(oid)
-
             n_det = ndet_build(n_det_min, n_det_max)
 
             ndets_validation(n_det)
