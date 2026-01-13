@@ -12,7 +12,7 @@
         <div class="tw-px-4 tw-text-black/60 tw-border-y tw-border-[#616161] dark:tw-text-white/70 tw-h-[45px] tw-flex tw-items-center tw-justify-start">Object List</div>
 
         {% for item in objects_list['items']%}
-            {% if item['oid']|string != selected_oid|string%}
+            {% if item['oid']|string != selected_oid|string %}
                 <div
                 data-oid='{{item["oid"]}}'
                 name="sidebar-row-element" 
