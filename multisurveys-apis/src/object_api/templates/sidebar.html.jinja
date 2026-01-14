@@ -12,17 +12,18 @@
         <div class="tw-px-4 tw-text-black/60 tw-border-y tw-border-[#616161] dark:tw-text-white/70 tw-h-[45px] tw-flex tw-items-center tw-justify-start">Object List</div>
 
         {% for item in objects_list['items']%}
-            {% if item['oid']|string != selected_oid|string%}
-                <div class="tw-flex tw-items-center tw-justify-start tw-h-[45px] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer">
-                    <span 
-                    id="sidebar-row-element"
-                    name="sidebar-row-element"
-                    data-oid='{{item["oid"]}}'
-                    hx-get="{{API_URL}}/htmx/side_objects"
-                    hx-trigger="click"
-                    hx-swap="innerHTML"
-                    hx-target="#sidebar-objects-htmx"
-                    hx-on::config-request="prepare_params(event)"
+            {% if item['oid']|string != selected_oid|string %}
+                <div
+                data-oid='{{item["oid"]}}'
+                name="sidebar-row-element" 
+                class="tw-flex tw-items-center tw-justify-start tw-h-[45px] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer"
+                hx-get="{{API_URL}}/htmx/side_objects"
+                hx-trigger="click"
+                hx-swap="innerHTML"
+                hx-target="#sidebar-objects-htmx"
+                hx-on::config-request="prepare_params(event)"
+                >
+                    <span
                     class="tw-px-4 tw-inline-block"
                     >
                     {{item['oid']}}
@@ -30,7 +31,7 @@
                 </div>
             
             {% else  %}
-                <div class="tw-flex tw-items-center tw-justify-start tw-h-[45px] tw-text-[#1976D2] tw-font-medium tw-bg-[#1976D2]/30">
+                <div name="sidebar-row-element" class="tw-flex tw-items-center tw-justify-start tw-h-[45px] tw-text-[#1976D2] tw-font-medium tw-bg-[#1976D2]/30">
                     <span class="tw-px-4 tw-inline-block">{{selected_oid}}</span>
                 </div>
             {% endif %}
