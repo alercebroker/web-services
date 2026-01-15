@@ -30,14 +30,19 @@ def create_conesearch_statement(args):
 def create_order_statement(query, order_args):
     statement = None
     cols = query.column_descriptions
-
-    for col in cols:
-        model = col["entity"]
+    if order_args.order_by == 'lastmjd':
+        model = cols[1]["entity"]
         attr = getattr(model, order_args.order_by, None)
         if attr is not None:
             statement = attr
-            break
-
+    else:
+        for col in cols:
+            model = col["entity"]
+            attr = getattr(model, order_args.order_by, None)
+            if attr is not None:
+                statement = attr
+                break
+    print('statement', statement, flush=True)
     if order_args.order_mode == "ASC":
         statement = attr.asc()
     elif order_args.order_mode == "DESC":
