@@ -5,6 +5,7 @@ import io
 from os import name
 import pprint
 import re
+from sre_parse import MAX_REPEAT
 import zipfile
 from core.repository.queries.objects import query_object_by_id
 import lightcurve_api.services.lightcurve_plot_service.plots_utils as plots_utils
@@ -83,7 +84,7 @@ SYMBOLS = {
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
     EMPTY: {
-        EMPTY: {"symbol": "none"}
+        EMPTY: {"symbol": "circle"}
     },
 }
 
@@ -252,6 +253,7 @@ def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., Con
         set_chart_options_non_detections,
         set_chart_options_forced_photometry,
         offset_bands,
+        set_chart_limits
     )
 
 def update_lightcurve_plot(
@@ -278,6 +280,7 @@ def update_lightcurve_plot(
         set_chart_options_non_detections,
         set_chart_options_forced_photometry,
         offset_bands,
+        set_chart_limits,
     )
 
 
@@ -362,6 +365,11 @@ def set_chart_options_detections(result: Result) -> Result:
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
+    return result_copy
+
+def set_chart_limits(result: Result):
+    result_copy = result.copy()
+
     #limits of detections errors
     pipe(
         result_copy.echart_options,
@@ -370,11 +378,13 @@ def set_chart_options_detections(result: Result) -> Result:
         lambda series_dict: [series_dict],
         lambda series: result_copy.echart_options["series"].extend(series),
     )
-        
+
+
     return result_copy
 
 
 def _find_chart_min_and_max_limits(echarts_options: dict[str, Any], config_state: ConfigState) -> List:
+
     if plots_utils._check_limits_conditions(config_state):
         limits_error_plots_arr = _get_min_and_max_errors(echarts_options)
 
@@ -777,12 +787,12 @@ def offset_bands(result: Result) -> Result:
     # Sort by metric in ascending order
     sorted_items.sort(key=lambda x: x[1])
 
-    pop_index = 0 
-    for index, item in enumerate(sorted_items):
-        if item[0][0]['band'] == 'empty':
-            pop_index = index
+    # pop_index = 0 
+    # for index, item in enumerate(sorted_items):
+    #     if item[0][0]['band'] == 'empty':
+    #         pop_index = index
     
-    sorted_items.pop(pop_index)
+    # sorted_items.pop(pop_index)
 
     for i, (sdata, _) in enumerate(sorted_items):
         for sseries in sdata:
@@ -795,7 +805,9 @@ def offset_bands(result: Result) -> Result:
                 )
             )
 
+
     result_copy.echart_options["series"] = new_series
+
     return result_copy
 
 
@@ -892,13 +904,19 @@ def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | No
 
     def offset_errors(points: List[dict], config_state: ConfigState) -> List[dict]:
         new_points = []
+        min_point = None
+        max_point = None
         for point in points:
             if config_state.flux:
-                new_points.append(_multiply_coord(i, point))
+                modify_point = _multiply_coord(i, point)
             else:
-                new_points.append(_add_constant_in_coord(i, point))
+                modify_point = _add_constant_in_coord(i, point)
+
+            new_points.append(modify_point)
+
+            min_point, max_point = _get_min_and_max_points(modify_point, min_point, max_point)
         
-        return new_points
+        return new_points, min_point, max_point
 
 
     error_tag_name = f"{error_bar['name']} + {i}"
@@ -917,16 +935,37 @@ def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | No
 
     outputs = [updated_series]
 
+    error_data, min_point, max_point = offset_errors(error_bar["markLine"]["data"], config_state)
+
+
+
     if error_bar is not None:
         updated_error = {
             **error_bar,
             "data": offset_points(error_bar["data"], config_state),
             "markLine": {
-                "data": offset_errors(error_bar["markLine"]["data"], config_state),
+                "data": error_data,
                 "lineStyle": error_bar["markLine"]["lineStyle"],
             },
             "name": error_tag_name,
         }
+
+        updated_error['min_plot_error'] = min_point
+        updated_error['max_plot_error'] = max_point
         outputs.append(updated_error)
 
     return outputs
+
+
+def _get_min_and_max_points(point, min, max):
+    if min == None and max == None:
+        min = point[0]['coord']
+        max = point[1]['coord']
+
+    if min[1] > point[0]['coord'][1]:
+        min = point[0]['coord']
+
+    if max[1] < point[1]['coord'][1]:
+        max = point[1]['coord']
+
+    return min, max
