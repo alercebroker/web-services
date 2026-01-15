@@ -18,15 +18,17 @@ function restore_survey(urlParams) {
 
 }
 
+function string_separation(oids_arr) {
+  return oids_arr[0].split(/[ .:;?!~,`"&|()<>{}\[\]\r\n/\\]+/)
+}
+
 function restore_object_id(urlParams) {
 
   let oids = urlParams.getAll('oid')
-
   if (oids.length === 1) {
-    oids = oids[0].split(",")
+    oids = string_separation(oids)
   }
   if (oids.length > 0) {
-
     draw_oids_tags(oids)
     document.getElementById("clear_oids_btn").classList.remove("tw-hidden")
   }
