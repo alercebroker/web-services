@@ -2,7 +2,7 @@
     <h1 class="tw-font-semibold tw-text-2xl tw-pt-[30px] tw-pl-[10px] tw-mb-[20px] dark:tw-text-white tw-text-black">Stamps</h1>
 </div>
 
-<div class="tw-flex tw-flex-col md:!tw-flex-row tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
+<div class="tw-flex tw-flex-col md:!tw-flex-row tw-items-center tw-mb-[20px] tw-max-w-[95%] sm:tw-max-w-[80%] tw-m-auto tw-gap-4">
     
     <div class="tw-whitespace-nowrap">
         <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
@@ -24,7 +24,7 @@
                             {% if detection.measurement_id|string == selected_measurement_id|string %}
                                 selected
                             {% endif %}
-                        >{{detection.greg}} ({{detection.band}}-band)</option>
+                        >{{detection.greg}} ({{detection.band}}-band) {% if not detection.has_stamp %} (no stamps) {% endif %}</option>
                     {% endfor %}
                 </select>
 
@@ -104,14 +104,15 @@
     {% endif %}
 </div>
 
-<div class="tw-w-[95%] tw-mx-auto tw-mb-6">
+<div class="tw-w-[95%] tw-mx-auto tw-mb-6 tw-flex tw-flex-col tw-items-center">
   {% if has_stamp_selected_measurement_id %}
     {% include "stamps_images.html.jinja" %}
+    <div class="tw-justify-center"> measurement id: {{ selected_measurement_id }} </div>
   {% else %}
     <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
       <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4 tw-mb-4">
           <strong class="tw-text-yellow-800 dark:tw-text-yellow-200">Info:</strong> 
-          <span class="tw-text-yellow-700 dark:tw-text-yellow-300">No stamps for this measurement_id: PONER MEASUREMENTID.</span>
+          <span class="tw-text-yellow-700 dark:tw-text-yellow-300">No stamps for this measurement id (candid): {{ selected_measurement_id }}.</span>
       </div>
     </div>
   {% endif%}
