@@ -5,7 +5,6 @@ import io
 from os import name
 import pprint
 import re
-from sre_parse import MAX_REPEAT
 import zipfile
 from core.repository.queries.objects import query_object_by_id
 import lightcurve_api.services.lightcurve_plot_service.plots_utils as plots_utils
@@ -16,8 +15,6 @@ from typing import Callable, ContextManager, List, Dict, Any, Tuple
 import httpx
 from lightcurve_api.models.periodogram import Periodogram
 from lightcurve_api.services.lightcurve_plot_service import plots_utils
-from pyarrow import null
-from pydantic.networks import MAX_EMAIL_LENGTH
 from sqlalchemy import true
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
