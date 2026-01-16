@@ -16,6 +16,7 @@ from typing import Callable, ContextManager, List, Dict, Any, Tuple
 import httpx
 from lightcurve_api.models.periodogram import Periodogram
 from lightcurve_api.services.lightcurve_plot_service import plots_utils
+from pyarrow import null
 from pydantic.networks import MAX_EMAIL_LENGTH
 from sqlalchemy import true
 from sqlalchemy.orm.session import Session
@@ -90,11 +91,11 @@ SYMBOLS = {
 
 
 def create_series(name: str, survey: str, band: str, data: List[List[float]]) -> dict:
-    
     z_index = 2 if survey == 'ztf dr' else 10
+    series_name = name + " " + survey.upper() + ": " + band if survey != 'empty' else ""
 
     return {
-        "name": name + " " + survey.upper() + ": " + band,
+        "name": series_name,
         "type": "scatter",
         "data": data,
         "color": COLORS[survey][band],
@@ -106,7 +107,7 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
     }
 
 def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
-    min_plot_error, max_plot_error = _get_min_and_max_error_bar(data)
+    min_point, max_point = _get_min_and_max_points_errors(data)
 
     return {
         "name": name + " " + survey.upper() + ": " + band,
@@ -131,35 +132,30 @@ def create_error_bar_series(name: str, survey: str, band: str, data: List[List[f
         "survey": survey,
         "band": band,
         "error_bar": True,
-        "min_plot_error": min_plot_error,
-        "max_plot_error": max_plot_error,
+        "min_plot_error": min_point,
+        "max_plot_error": max_point,
     }
 
-def _get_min_and_max_error_bar(data: List[List[float]]):
-    min_plot_error = []
-    max_plot_error = []
+def _get_min_and_max_points_errors(data: List[List[float]]):
+    min_plot_error = None
+    max_plot_error = None
 
-    for error_bar in data:
-        min_ = min(error_bar[1],error_bar[2])
-        max_ = max(error_bar[1],error_bar[2])
-        mjd = error_bar[0]
+    for point in data:
+        min_ = point[1]
+        max_ = point[2]
+        mjd = point[0]
 
-        if len(min_plot_error) == 0 and len(max_plot_error) == 0:
-            min_plot_error.append(error_bar[0])
-            min_plot_error.append(min_)
-            max_plot_error.append(error_bar[0])
-            max_plot_error.append(max_)
+        if min_plot_error == None and max_plot_error == None:
+            min_plot_error = [mjd, min_]
+            max_plot_error = [mjd, max_]
             continue
         
-
         if min_ < min_plot_error[1]:
-            min_plot_error[1] = min_
-            min_plot_error[0] = mjd 
+            min_plot_error = [mjd, min_]
 
         if max_ > max_plot_error[1]:
-            max_plot_error[1] = max_
-            max_plot_error[0] = mjd
-    
+            max_plot_error = [mjd, max_]
+
     
     return min_plot_error, max_plot_error
 
@@ -362,10 +358,16 @@ def set_chart_options_detections(result: Result) -> Result:
             config_state=result.config_state,
         ),
         curry(_transform_to_series, series_type=DETECTION, error_bar=True),
+        lambda series: set_max_and_min_points(series),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
     return result_copy
+
+def set_max_and_min_points(series):
+    pprint.pprint(series)
+
+    return series    
 
 def set_chart_limits(result: Result):
     result_copy = result.copy()
@@ -787,13 +789,6 @@ def offset_bands(result: Result) -> Result:
     # Sort by metric in ascending order
     sorted_items.sort(key=lambda x: x[1])
 
-    # pop_index = 0 
-    # for index, item in enumerate(sorted_items):
-    #     if item[0][0]['band'] == 'empty':
-    #         pop_index = index
-    
-    # sorted_items.pop(pop_index)
-
     for i, (sdata, _) in enumerate(sorted_items):
         for sseries in sdata:
             new_series.extend(
@@ -904,8 +899,7 @@ def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | No
 
     def offset_errors(points: List[dict], config_state: ConfigState) -> List[dict]:
         new_points = []
-        min_point = None
-        max_point = None
+        min_point, max_point = None, None
         for point in points:
             if config_state.flux:
                 modify_point = _multiply_coord(i, point)
