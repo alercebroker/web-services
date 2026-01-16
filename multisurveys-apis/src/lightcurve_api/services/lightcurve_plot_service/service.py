@@ -358,16 +358,10 @@ def set_chart_options_detections(result: Result) -> Result:
             config_state=result.config_state,
         ),
         curry(_transform_to_series, series_type=DETECTION, error_bar=True),
-        lambda series: set_max_and_min_points(series),
         lambda series: result_copy.echart_options["series"].extend(series),
     )
 
     return result_copy
-
-def set_max_and_min_points(series):
-    pprint.pprint(series)
-
-    return series    
 
 def set_chart_limits(result: Result):
     result_copy = result.copy()
