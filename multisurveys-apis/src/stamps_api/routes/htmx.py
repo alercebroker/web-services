@@ -41,7 +41,7 @@ async def get_stamp_card(
     survey_id: str,
 ):
     handler = handler_selector(survey_id)()
-
+    context = {}
     detections = get_detections(
         oid=oid,
         survey_id=survey_id,
@@ -49,20 +49,22 @@ async def get_stamp_card(
     )
     selected_measurement_id = detections[0].measurement_id
     next_measurement_id = detections[min(1, len(detections) - 1)].measurement_id
+    has_stamp_selected_measurement_id = has_stamp_for_measurement_id(detections, selected_measurement_id)
     
+    if has_stamp_for_measurement_id:
+        stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
+        stamps_fits = handler.get_all_stamps(oid, selected_measurement_id, "fits")
 
-    stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
-    stamps_fits = handler.get_all_stamps(oid, selected_measurement_id, "fits")
-
-    context = build_image_context(stamps, stamps_fits)
+        context = build_image_context(stamps, stamps_fits)
     context.update({
         "request": request,
         "oid": oid,
         "survey_id": survey_id,
         "detections": [d.to_json() for d in detections],
-        "selected_measurement_id": str(selected_measurement_id),
+        "selected_measurement_id": str(selected_measurement_id), 
         "prv_measurement_id": str(selected_measurement_id),
         "nxt_measurement_id": str(next_measurement_id),
+        "has_stamp_selected_measurement_id": has_stamp_selected_measurement_id,
     })
     return templates.TemplateResponse(
       name='stamps_layout.html.jinja',
@@ -76,16 +78,17 @@ async def post_stamp_card(
     post_input: PostRequestInputModel
 ):
     handler = handler_selector(post_input.survey_id)()
-
-    stamps = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "png")
-    stamps_fits = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "fits")
-
+    context = {}
+    has_stamp_selected_measurement_id = has_stamp_for_measurement_id(post_input.detections_list, post_input.measurement_id)
     prv_measurement_id, nxt_measurement_id = find_prv_and_nxt_measurement_ids(
         post_input.detections_list,
         selected_measurement_id=post_input.measurement_id,
     )
+    if has_stamp_selected_measurement_id:
+        stamps = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "png")
+        stamps_fits = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "fits")
+        context = build_image_context(stamps, stamps_fits)
 
-    context = build_image_context(stamps, stamps_fits)
     context.update({
         "request": request,
         "oid": post_input.oid,
@@ -94,6 +97,7 @@ async def post_stamp_card(
         "selected_measurement_id": str(post_input.measurement_id),
         "prv_measurement_id": str(prv_measurement_id),
         "nxt_measurement_id": str(nxt_measurement_id),
+        "has_stamp_selected_measurement_id": has_stamp_selected_measurement_id,
     })
 
     return templates.TemplateResponse(
@@ -130,3 +134,14 @@ def find_prv_and_nxt_measurement_ids(detections: list[dict], selected_measuremen
                 nxt_id = detections[idx + 1]["measurement_id"]
             break
     return prv_id, nxt_id
+
+def has_stamp_for_measurement_id(detections, selected_measurement_id):
+    if isinstance(detections[0], dict):
+        for det in detections:
+            if int(det['measurement_id']) == selected_measurement_id:
+                return det['has_stamp']
+    else:
+        for det in detections:
+            if det.__dict__['measurement_id'] == selected_measurement_id:
+                return det.__dict__['has_stamp']
+

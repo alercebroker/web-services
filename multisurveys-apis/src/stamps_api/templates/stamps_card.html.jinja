@@ -2,7 +2,7 @@
     <h1 class="tw-font-semibold tw-text-2xl tw-pt-[30px] tw-pl-[10px] tw-mb-[20px] dark:tw-text-white tw-text-black">Stamps</h1>
 </div>
 
-<div class="tw-flex tw-flex-col md:!tw-flex-row tw-items-center tw-mb-[20px] tw-max-w-[95%] tw-m-auto tw-gap-4">
+<div class="tw-flex tw-flex-col md:!tw-flex-row tw-items-center tw-mb-[20px] tw-max-w-[95%] sm:tw-max-w-[80%] tw-m-auto tw-gap-4">
     
     <div class="tw-whitespace-nowrap">
         <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
@@ -24,7 +24,7 @@
                             {% if detection.measurement_id|string == selected_measurement_id|string %}
                                 selected
                             {% endif %}
-                        >{{detection.greg}} ({{detection.band}}-band)</option>
+                        >{{detection.greg}} ({{detection.band}}-band) {% if not detection.has_stamp %} (no stamps) {% endif %}</option>
                     {% endfor %}
                 </select>
 
@@ -104,62 +104,18 @@
     {% endif %}
 </div>
 
-<div class="tw-w-[95%] tw-mx-auto tw-mb-6">
-    <div id='stampsContainer' class="tw-grid tw-grid-cols-3 tw-gap-4 tw-mb-4">
-        <div id="" class="tw-flex tw-flex-col tw-items-center">
-            <div class="tw-mb-2">
-                <button id="scienceDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-2 tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-1 md:tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                  <span> Science </span>
-                  <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3">
-                    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
-                  </svg>
-                </button>
-            </div>
-            <div id="scienceZoom" class="imageZoom crossHair tw-relative" style="
-              --url: url('data:image/{{ science_mime }};base64, {{ science_img }}');
-              --zoom-x: 0%; --zoom-y:0%;
-              --display: none; --z-index: -1;
-              ">
-              <img id="scienceImg" src="data:image/{{ science_mime }};base64, {{ science_img }}" content="data:{{ science_mime_fits }};base64, {{ science_img_fits }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
-            </div>
-        </div>
-        
-        <div class="tw-flex tw-flex-col tw-items-center">
-            <div class="tw-mb-2">
-                <button id="templateDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-2 tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-1 md:tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                  <span> Template </span>
-                  <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3">
-                    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
-                  </svg>
-                </button>
-            </div>
-            <div id="templateZoom" class="imageZoom crossHair tw-relative" style="
-              --url: url('data:image/{{ template_mime }};base64, {{ template_img }}');
-              --zoom-x: 0%; --zoom-y:0%;
-              --display: none; --z-index: -1;
-              ">
-              <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" content="data:{{ template_mime_fits }};base64, {{ template_img_fits }}"alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
-            </div>
-        </div>
-        
-        <div class="tw-flex tw-flex-col tw-items-center">
-            <div class="tw-mb-2">
-                <button id="differenceDownload" content="{{oid}}_{{selected_measurement_id}}" class="tw-w-full tw-flex tw-items-center tw-justify-center tw-gap-2 tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-1 md:tw-px-3 tw-py-2 tw-rounded tw-text-xs tw-font-medium tw-transition-colors tw-border-b-[1px] tw-border-b-solid tw-border-b-blue-600">
-                  <span> Difference </span>
-                  <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#e3e3e3">
-                    <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
-                  </svg>
-                </button>
-            </div>
-            <div id="differenceZoom" class="imageZoom crossHair tw-relative" style="
-              --url: url('data:image/{{ difference_mime }};base64, {{ difference_img }}');
-              --zoom-x: 0%; --zoom-y:0%;
-              --display: none; --z-index: -1;
-              ">
-              <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" content="data:{{ difference_mime_fits }};base64, {{ difference_img_fits }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
-            </div>
-        </div>
+<div class="tw-w-[95%] tw-mx-auto tw-mb-6 tw-flex tw-flex-col tw-items-center">
+  {% if has_stamp_selected_measurement_id %}
+    {% include "stamps_images.html.jinja" %}
+    <div class="tw-justify-center"> measurement id: {{ selected_measurement_id }} </div>
+  {% else %}
+    <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
+      <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4 tw-mb-4">
+          <strong class="tw-text-yellow-800 dark:tw-text-yellow-200">Info:</strong> 
+          <span class="tw-text-yellow-700 dark:tw-text-yellow-300">No stamps for this measurement id (candid): {{ selected_measurement_id }}.</span>
+      </div>
     </div>
+  {% endif%}
 </div>
 
 <div class="tw-w-[95%] tw-mx-auto tw-mb-6">

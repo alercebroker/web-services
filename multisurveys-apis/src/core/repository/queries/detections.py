@@ -92,8 +92,6 @@ def get_ordered_detections_sql(
             )
             .where(
                 detection_model.oid == oid
-            ).where(
-                detection_model.has_stamp == True
             ).order_by(desc(Detection.mjd))
         )
 

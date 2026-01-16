@@ -44,6 +44,7 @@ def parse_lightcurve(lightcurve_data):
             "greg": str(_mjd_to_date(detection_model_dict.get("mjd"))),
             "measurement_id": lsst_model_dict.get("measurement_id"),
             "band": parse_band(detection_model_dict.get("band")),
+            "has_stamp": lsst_model_dict.get("has_stamp")
         })
         parsed_lighturve.append(model_parsed)
     return parsed_lighturve
