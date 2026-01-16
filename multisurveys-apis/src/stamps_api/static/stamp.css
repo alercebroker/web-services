@@ -2109,6 +2109,10 @@
     max-width: 32rem
   }
 
+  .tw-preflight .sm\:tw-max-w-\[80\%\] {
+    max-width: 80%
+  }
+
   .tw-preflight .sm\:tw-flex-none {
     flex: none
   }
