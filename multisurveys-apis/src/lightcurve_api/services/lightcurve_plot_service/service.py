@@ -85,7 +85,7 @@ SYMBOLS = {
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
     EMPTY: {
-        EMPTY: {"symbol": "circle"}
+        EMPTY: {"symbol": "none"}
     },
 }
 
