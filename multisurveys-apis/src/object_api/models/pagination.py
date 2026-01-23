@@ -8,7 +8,7 @@ class PaginationArgs(BaseModel):
 
 
 class Order(BaseModel):
-    order_by: str | None = "probability"
+    order_by: str #| None = "probability"
     order_mode: str
 
 
