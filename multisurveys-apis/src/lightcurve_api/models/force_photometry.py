@@ -120,9 +120,17 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
         return values
 
     def magnitude2flux(self, total: bool, absolute: bool) -> float:
-        magnitude = self.flux2magnitude(total, absolute)
+        flux = self.scienceFlux if total else self.psfFlux
 
-        return 10**(-(magnitude - 31.4) / 2.5)
+        if absolute:
+            d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+            flux = self.scienceFlux if total else self.psfFlux
+            absflux = math.fabs(flux)
+            sign = absflux / flux
+            magnitude = 31.4 - 2.5 * math.log10(absflux) - d.distmod.value
+            flux = 10**(-(magnitude - 31.4) / 2.5) * sign
+            
+        return flux
 
     def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         flux = self.magnitude2flux(total, absolute)

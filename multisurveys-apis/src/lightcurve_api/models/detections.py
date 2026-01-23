@@ -1,5 +1,6 @@
 import math
 import traceback
+import pprint
 from typing import Optional
 
 from pydantic import model_validator
@@ -185,9 +186,18 @@ class LsstDetection(BaseDetection):
         Returns:
             Calculated flux value
         """
-        magnitude = self.flux2magnitude(total, absolute)
+        flux = self.scienceFlux if total else self.psfFlux
 
-        return 10**(-(magnitude - 31.4) / 2.5)
+        if absolute:
+            d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+            flux = self.scienceFlux if total else self.psfFlux
+            absflux = math.fabs(flux)
+            sign = absflux / flux
+            magnitude = 31.4 - 2.5 * math.log10(absflux) - d.distmod.value
+            flux = 10**(-(magnitude - 31.4) / 2.5) * sign
+
+        return flux
+
 
     def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
@@ -202,7 +212,7 @@ class LsstDetection(BaseDetection):
         flux = self.magnitude2flux(total, absolute)
         magnitude_error = self.flux2magnitude_err(total, absolute)
 
-        return math.log(10.0)  * flux / 2.5 * magnitude_error
+        return math.log(10.0)  * math.fabs(flux) / 2.5 * magnitude_error        
         
         
     def flux2magnitude(self, total: bool, absolute: bool) -> float:
@@ -228,6 +238,7 @@ class LsstDetection(BaseDetection):
                 raise ValueError("Flux no puede ser negativo para cálculo de magnitud")
                 
             mag = 31.4 - 2.5 * math.log10(flux)
+
         except ValueError as e:
             traceback.print_exc()
             return 0
