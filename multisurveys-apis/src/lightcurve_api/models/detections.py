@@ -189,9 +189,11 @@ class LsstDetection(BaseDetection):
         flux = self.scienceFlux if total else self.psfFlux
 
         if absolute:
-            magnitude = self.flux2magnitude(total, absolute)
-            sign = math.fabs(self.scienceFlux) / self.scienceFlux \
-            if total else math.fabs(self.psfFlux) / self.psfFlux
+            d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+            flux = self.scienceFlux if total else self.psfFlux
+            absflux = math.fabs(flux)
+            sign = absflux / flux
+            magnitude = 31.4 - 2.5 * math.log10(absflux) - d.distmod.value
             flux = 10**(-(magnitude - 31.4) / 2.5) * sign
 
         return flux
