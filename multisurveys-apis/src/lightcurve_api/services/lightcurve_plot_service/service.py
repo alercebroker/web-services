@@ -19,7 +19,7 @@ from sqlalchemy import true
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
-from lightcurve_api.models.detections import LsstDetection, ztfDetection
+from lightcurve_api.models.detections import LsstDetection, ztfDetection, ZTFDetectionCSV, LSSTDetectionCSV
 from lightcurve_api.models.force_photometry import (
     LsstForcedPhotometry,
     ZtfForcedPhotometry,
@@ -709,10 +709,51 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
             filtered_detections = [det for det in detections if det.oid == oid]
+            
+            data = []
+            for detection in filtered_detections:
+                detection_dict = detection.model_dump()
+                band_index = detection_dict['band']
+                band_name = detection_dict['band_map'][band_index]
+                detection_dict['band_mapped'] = band_name
+
+                data.append(LSSTDetectionCSV(**detection_dict))
+
+            
+            fieldnames_list = set(list(LSSTDetectionCSV.model_fields.keys()))
+            
+            priority_columns = [
+                "oid",
+                "surevey_id", 
+                "measurement_id",
+                "mjd",
+                "ra",
+                "dec",
+                "band",
+                "band_mapped",
+                "psfFlux",
+                "psfFluxErr",
+                "scienceFlux",
+                "scienceFluxErr",
+                "snr",
+                "visit",
+                "detector",
+                "diaObjectId",
+                "ssObjectId",
+                "has_stamp"
+            ]
+
+            priority = [col for col in priority_columns if col in fieldnames_list]
+            other_columns = sorted([col for col in fieldnames_list if col not in priority])
+
+            ordered_columns = priority + other_columns
+
+            pprint.pprint(ordered_columns)
+                    
 
             detections_csv = _data_to_csv(
-                filtered_detections,
-                set(list(ztfDetection.model_fields.keys()) + list(LsstDetection.model_fields.keys())),
+                data,
+                ordered_columns,
             )
             zip_file.writestr("detections.csv", detections_csv)
 
