@@ -3,7 +3,7 @@ import traceback
 import pprint
 from typing import Optional
 
-from pydantic import model_validator
+from pydantic import BaseModel, model_validator
 from toolz.functoolz import return_none
 from .lightcurve_item import BaseDetection
 from astropy.coordinates import Distance
@@ -12,6 +12,7 @@ import astropy.units as u
 REDSHIFT = (
     0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
 )
+
 
 
 class ztfDetection(BaseDetection):
@@ -332,3 +333,262 @@ class ZtfDataReleaseDetection(BaseDetection):
             Magnitude error value
         """
         return self.e_mag_corr_ext
+
+
+class ZTFDetectionCSV(BaseModel):
+    oid: int
+    survey_id: str
+    measurement_id: int
+    has_stamp: bool
+    mjd: float
+    ra: float  # Validación de rango
+    dec: float
+    band: int
+    @model_validator(mode="before")
+    @classmethod
+    def set_defaults(cls, values: dict) -> dict:
+        """Set default values for None fields to ensure data consistency."""
+
+        defaults = {
+            "has_stamp": False,
+        }
+
+        for field, default_value in defaults.items():
+            if field in values and values[field] is None:
+                values[field] = default_value
+
+        return values
+
+
+
+class LSSTDetection(BaseModel):
+    oid: int
+    sid: int
+    measurement_id: int
+    parentDiaSourceId: int | None = None
+    visit: int
+    detector: int
+    diaObjectId: int | None = None
+    ssObjectId: int | None = None
+    raErr: float | None = None
+    decErr: float | None = None
+    ra_dec_Cov: float | None = None
+    x: float
+    xErr: float | None = None
+    y: float
+    yErr: float | None = None
+    centroid_flag: bool | None = None
+    apFlux: float | None = None
+    apFluxErr: float | None = None
+    apFlux_flag: bool | None = None
+    apFlux_flag_apertureTruncated: bool | None = None
+    isNegative: bool | None = None
+    snr: float | None = None
+    psfFlux: float | None = None
+    psfFluxErr: float | None = None
+    psfLnL: float | None = None
+    psfChi2: float | None = None
+    psfNdata: int | None = None
+    psfFlux_flag: bool | None = None
+    psfFlux_flag_edge: bool | None = None
+    psfFlux_flag_noGoodPixels: bool | None = None
+    trailFlux: float | None = None
+    trailFluxErr: float | None = None
+    trailRa: float | None = None
+    trailRaErr: float | None = None
+    trailDec: float | None = None
+    trailDecErr: float | None = None
+    trailLength: float | None = None
+    trailLengthErr: float | None = None
+    trailAngle: float | None = None
+    trailAngleErr: float | None = None
+    trailChi2: float | None = None
+    trailNdata: int | None = None
+    trail_flag_edge: bool | None = None
+    dipoleMeanFlux: float | None = None
+    dipoleMeanFluxErr: float | None = None
+    dipoleFluxDiff: float | None = None
+    dipoleFluxDiffErr: float | None = None
+    dipoleLength: float | None = None
+    dipoleAngle: float | None = None
+    dipoleChi2: float | None = None
+    dipoleNdata: int | None = None
+    scienceFlux: float | None = None
+    scienceFluxErr: float | None = None
+    forced_PsfFlux_flag: bool | None = None
+    forced_PsfFlux_flag_edge: bool | None = None
+    forced_PsfFlux_flag_noGoodPixels: bool | None = None
+    templateFlux: float | None = None
+    templateFluxErr: float | None = None
+    ixx: float | None = None
+    iyy: float | None = None
+    ixy: float | None = None
+    ixxPSF: float | None = None
+    iyyPSF: float | None = None
+    ixyPSF: float | None = None
+    shape_flag: bool | None = None
+    shape_flag_no_pixels: bool | None = None
+    shape_flag_not_contained: bool | None = None
+    shape_flag_parent_source: bool | None = None
+    extendedness: float | None = None
+    reliability: float | None = None
+    isDipole: bool | None = None
+    dipoleFitAttempted: bool | None = None
+    timeProcessedMjdTai: float
+    timeWithdrawnMjdTai: float | None = None
+    bboxSize: int | None = None
+    pixelFlags: bool | None = None
+    pixelFlags_bad: bool | None = None
+    pixelFlags_cr: bool | None = None
+    pixelFlags_crCenter: bool | None = None
+    pixelFlags_edge: bool | None = None
+    pixelFlags_nodata: bool | None = None
+    pixelFlags_nodataCenter: bool | None = None
+    pixelFlags_interpolated: bool | None = None
+    pixelFlags_interpolatedCenter: bool | None = None
+    pixelFlags_offimage: bool | None = None
+    pixelFlags_saturated: bool | None = None
+    pixelFlags_saturatedCenter: bool | None = None
+    pixelFlags_suspect: bool | None = None
+    pixelFlags_suspectCenter: bool | None = None
+    pixelFlags_streak: bool | None = None
+    pixelFlags_streakCenter: bool | None = None
+    pixelFlags_injected: bool | None = None
+    pixelFlags_injectedCenter: bool | None = None
+    pixelFlags_injected_template: bool | None = None
+    pixelFlags_injected_templateCenter: bool | None = None
+    glint_trail: bool | None = None
+    has_stamp: bool | None = None
+    
+    @model_validator(mode="before")
+    @classmethod
+    def set_defaults(cls, values: dict) -> dict:
+        """Set default values for None fields to ensure data consistency."""
+        
+        defaults = {
+            # Identificadores
+            "parentDiaSourceId": 0,
+            "diaObjectId": 0,
+            "ssObjectId": 0,
+            
+            # Errores de posición
+            "raErr": 0.0,
+            "decErr": 0.0,
+            "ra_dec_Cov": 0.0,
+            "xErr": 0.0,
+            "yErr": 0.0,
+            
+            # Flags de centroide
+            "centroid_flag": False,
+            
+            # Flujo de apertura
+            "apFlux": 0.0,
+            "apFluxErr": 0.0,
+            "apFlux_flag": False,
+            "apFlux_flag_apertureTruncated": False,
+            "isNegative": False,
+            "snr": 0.0,
+            
+            # Flujo PSF
+            "psfFlux": 0.0,
+            "psfFluxErr": 0.0,
+            "psfLnL": 0.0,
+            "psfChi2": 0.0,
+            "psfNdata": 0,
+            "psfFlux_flag": False,
+            "psfFlux_flag_edge": False,
+            "psfFlux_flag_noGoodPixels": False,
+            
+            # Flujo de rastro
+            "trailFlux": 0.0,
+            "trailFluxErr": 0.0,
+            "trailRa": 0.0,
+            "trailRaErr": 0.0,
+            "trailDec": 0.0,
+            "trailDecErr": 0.0,
+            "trailLength": 0.0,
+            "trailLengthErr": 0.0,
+            "trailAngle": 0.0,
+            "trailAngleErr": 0.0,
+            "trailChi2": 0.0,
+            "trailNdata": 0,
+            "trail_flag_edge": False,
+            
+            # Flujo dipolo
+            "dipoleMeanFlux": 0.0,
+            "dipoleMeanFluxErr": 0.0,
+            "dipoleFluxDiff": 0.0,
+            "dipoleFluxDiffErr": 0.0,
+            "dipoleLength": 0.0,
+            "dipoleAngle": 0.0,
+            "dipoleChi2": 0.0,
+            "dipoleNdata": 0,
+            
+            # Flujos forzados y de plantilla
+            "scienceFlux": 0.0,
+            "scienceFluxErr": 0.0,
+            "forced_PsfFlux_flag": False,
+            "forced_PsfFlux_flag_edge": False,
+            "forced_PsfFlux_flag_noGoodPixels": False,
+            "templateFlux": 0.0,
+            "templateFluxErr": 0.0,
+            
+            # Momentos de forma
+            "ixx": 0.0,
+            "iyy": 0.0,
+            "ixy": 0.0,
+            "ixxPSF": 0.0,
+            "iyyPSF": 0.0,
+            "ixyPSF": 0.0,
+            
+            # Flags de forma
+            "shape_flag": False,
+            "shape_flag_no_pixels": False,
+            "shape_flag_not_contained": False,
+            "shape_flag_parent_source": False,
+            
+            # Clasificación
+            "extendedness": 0.0,
+            "reliability": 0.0,
+            "isDipole": False,
+            "dipoleFitAttempted": False,
+            
+            # Tiempos
+            "timeWithdrawnMjdTai": 0.0,
+            
+            # Bounding box
+            "bboxSize": 0,
+            
+            # Flags de píxeles (todos False por defecto)
+            "pixelFlags": False,
+            "pixelFlags_bad": False,
+            "pixelFlags_cr": False,
+            "pixelFlags_crCenter": False,
+            "pixelFlags_edge": False,
+            "pixelFlags_nodata": False,
+            "pixelFlags_nodataCenter": False,
+            "pixelFlags_interpolated": False,
+            "pixelFlags_interpolatedCenter": False,
+            "pixelFlags_offimage": False,
+            "pixelFlags_saturated": False,
+            "pixelFlags_saturatedCenter": False,
+            "pixelFlags_suspect": False,
+            "pixelFlags_suspectCenter": False,
+            "pixelFlags_streak": False,
+            "pixelFlags_streakCenter": False,
+            "pixelFlags_injected": False,
+            "pixelFlags_injectedCenter": False,
+            "pixelFlags_injected_template": False,
+            "pixelFlags_injected_templateCenter": False,
+            "glint_trail": False,
+            
+            # Metadatos
+            "has_stamp": False,
+        }
+        
+        # Aplicar defaults solo a campos que no están en values o son None
+        for field, default_value in defaults.items():
+            if field not in values or values[field] is None:
+                values[field] = default_value
+                
+        return values
