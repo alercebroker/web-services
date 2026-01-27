@@ -2,7 +2,7 @@ import math
 import traceback
 from typing import Optional
 
-from pydantic import model_validator
+from pydantic import BaseModel, model_validator
 from .lightcurve_item import BaseForcedPhotometry
 from astropy.coordinates import Distance
 import astropy.units as u
@@ -178,3 +178,22 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
 
         return magnitude_error
+
+
+class LsstForcedPhotometryCsv(BaseModel):
+    oid: int
+    survey_id: str
+    measurement_id: int
+    visit: int
+    detector: int
+    psfFlux: float
+    psfFluxErr: float
+    scienceFlux: float
+    scienceFluxErr: float
+    timeProcessedMjdTai: float | None = None
+    timeWithdrawnMjdTai: float | None = None
+    mjd: float
+    ra: float
+    dec: float
+    band: int
+    band_name: str

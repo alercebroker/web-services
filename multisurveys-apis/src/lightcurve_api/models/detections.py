@@ -452,7 +452,7 @@ class LsstDetectionCsv(BaseModel):
     ra: float  
     dec: float  
     band: int | None = None
-    band_mapped: str | None = None
+    band_name: str | None = None
     psfFlux: float | None = None
     psfFluxErr: float | None = None
     scienceFlux: float | None = None

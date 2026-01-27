@@ -22,6 +22,7 @@ from toolz import curry, pipe, reduce
 from lightcurve_api.models.detections import LsstDetection, ztfDetection, ZTFDetectionCSV, LsstDetectionCsv
 from lightcurve_api.models.force_photometry import (
     LsstForcedPhotometry,
+    LsstForcedPhotometryCsv,
     ZtfForcedPhotometry,
 )
 from lightcurve_api.models.lightcurve import Lightcurve
@@ -717,7 +718,7 @@ def _order_detections_columns_csv(fieldnames: set):
         "ra",
         "dec",
         "band",
-        "band_mapped",
+        "band_name",
         "psfFlux",
         "psfFluxErr",
         "scienceFlux",
@@ -736,15 +737,55 @@ def _order_detections_columns_csv(fieldnames: set):
     return priority + other_columns
 
 
+def _order_fp_columns_csv(fieldnames: set):
+    priority_columns = [
+    "oid",
+    "survey_id",
+    "measurement_id", 
+    "mjd",
+    "ra",
+    "dec",
+    "band",
+    "band_name",
+    "psfFlux",
+    "psfFluxErr",
+    "scienceFlux",
+    "scienceFluxErr",
+    "visit",
+    "detector",
+    "timeProcessedMjdTai",
+    "timeWithdrawnMjdTai"
+    ]
+
+    priority = [col for col in priority_columns if col in fieldnames]
+    other_columns = sorted([col for col in fieldnames if col not in priority])
+
+    return priority + other_columns
+
+
 def _parse_data_to_model_csv(data):
     parsed_data = []
     for detection in data:
         detection_dict = detection.model_dump()
         band_index = detection_dict['band']
         band_name = detection_dict['band_map'][band_index]
-        detection_dict['band_mapped'] = band_name
+        detection_dict['band_name'] = band_name
 
         parsed_data.append(LsstDetectionCsv(**detection_dict))
+
+
+    return parsed_data
+
+def _parse_fp_to_model_csv(fp_data):
+    parsed_data = []
+    for fp in fp_data:
+        fp_dict = fp.model_dump()
+        band_index = fp_dict['band']
+        band_name = fp_dict['band_map'][band_index]
+        fp_dict['band_name'] = band_name
+
+        parsed_data.append(LsstForcedPhotometryCsv(**fp_dict))
+
 
     return parsed_data
     
@@ -756,8 +797,11 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
             filtered_detections = [det for det in detections if det.oid == oid]
 
             data = _parse_data_to_model_csv(filtered_detections)
+            
             fieldnames_list = set(list(ZTFDetectionCSV.model_fields.keys()) + list(LsstDetectionCsv.model_fields.keys()))
+            
             ordered_columns = _order_detections_columns_csv(fieldnames_list)
+            
             detections_csv = _data_to_csv(
                 data,
                 ordered_columns,
@@ -771,10 +815,18 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
             zip_file.writestr("non_detections.csv", non_detections_csv)
 
         if forced_photometry:
+            parse_fp = _parse_fp_to_model_csv(forced_photometry)
+
+            fieldnames_list =  set(list(ZtfForcedPhotometry.model_fields.keys()) + list(LsstForcedPhotometryCsv.model_fields.keys()))
+
+            ordered_columns = _order_fp_columns_csv(fieldnames_list)
+
             forced_photometry_csv = _data_to_csv(
-                forced_photometry,
-                set(list(ZtfForcedPhotometry.model_fields.keys()) + list(LsstForcedPhotometry.model_fields.keys())),
+                parse_fp,
+                ordered_columns
             )
+
+
             zip_file.writestr("forced_photometry.csv", forced_photometry_csv)
 
     zip_buffer.seek(0)
