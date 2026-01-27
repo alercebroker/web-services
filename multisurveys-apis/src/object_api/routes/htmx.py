@@ -192,20 +192,15 @@ def objects_table(
             )
 
             object_list = get_objects_list(session_ms=session, search_params=search_params)
-            print(object_list, flush=True)
-            df = pd.DataFrame.from_records(object_list)
-            df["oid"] = [str(x["oid"]) for x in df["items"]]
-            df.set_index("oid", inplace=True)
+            
             if oid is not None:
-                oid_valid = [x for x in oid if x in df.index]
-                df = df.loc[oid_valid].copy()
-            object_list = df.to_dict()
-            for key in object_list.keys():
-                object_list[key] = list(object_list[key].values())
-                if key == "items":
-                    continue
-                object_list[key] = object_list[key][0]
-            print(object_list)
+                items = pd.DataFrame.from_records(object_list["items"])
+                items.set_index("oid", inplace=True)
+                items = items.loc[df.index.intersection(oid)].copy()
+                items = items.reset_index().to_dict(orient='index')
+                items = list(items.values())
+                object_list["items"] = items
+
         else:
             object_list = {
                 "next": False,
