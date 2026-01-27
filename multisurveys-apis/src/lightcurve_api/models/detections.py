@@ -445,14 +445,14 @@ class ZTFDetectionCSV(BaseModel):
 
 
 
-class LSSTDetectionCSV(BaseModel):
+class LsstDetectionCsv(BaseModel):
     oid: int
     measurement_id: int
-    mjd: float  # Note: Added this field based on your list
-    ra: float  # Note: Added this field based on your list
-    dec: float  # Note: Added this field based on your list
-    band: int | None = None  # Note: Added this field based on your list
-    band_mapped: str | None = None  # Note: Added this field based on your list
+    mjd: float 
+    ra: float  
+    dec: float  
+    band: int | None = None
+    band_mapped: str | None = None
     psfFlux: float | None = None
     psfFluxErr: float | None = None
     scienceFlux: float | None = None

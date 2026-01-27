@@ -19,7 +19,7 @@ from sqlalchemy import true
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
-from lightcurve_api.models.detections import LsstDetection, ztfDetection, ZTFDetectionCSV, LSSTDetectionCSV
+from lightcurve_api.models.detections import LsstDetection, ztfDetection, ZTFDetectionCSV, LsstDetectionCsv
 from lightcurve_api.models.force_photometry import (
     LsstForcedPhotometry,
     ZtfForcedPhotometry,
@@ -204,7 +204,10 @@ def default_echarts_options(config_state: ConfigState):
     y_axis_name = "Magnitude" if not config_state.flux else "Flux [nJy]"
     return {
         "title": {"show": True, "text": config_state.oid},
-        "tooltip": {},
+        "tooltip": {
+            "trigger": 'item',
+            "formatter": '{b0}: {c0}<br />{b1}: {c1}',
+        },
         "grid": {"left": "left", "top": "10%", "width": "75%", "height": "100%"},
         "legend": default_echarts_legend(config_state),
         "xAxis": {"type": "value", "name": "MJD", "scale": True, "splitLine": False},
@@ -704,57 +707,63 @@ def _data_to_csv(data_list, fieldnames: set):
     return output.getvalue()
 
 
+def _order_detections_columns_csv(fieldnames: set):
+
+    priority_columns = [
+        "oid",
+        "surevey_id", 
+        "measurement_id",
+        "mjd",
+        "ra",
+        "dec",
+        "band",
+        "band_mapped",
+        "psfFlux",
+        "psfFluxErr",
+        "scienceFlux",
+        "scienceFluxErr",
+        "snr",
+        "visit",
+        "detector",
+        "diaObjectId",
+        "ssObjectId",
+        "has_stamp"
+    ]
+
+    priority = [col for col in priority_columns if col in fieldnames]
+    other_columns = sorted([col for col in fieldnames if col not in priority])
+
+    return priority + other_columns
+
+
+def _parse_data_to_model_csv(data):
+    parsed_data = []
+    for detection in data:
+        detection_dict = detection.model_dump()
+        band_index = detection_dict['band']
+        band_name = detection_dict['band_map'][band_index]
+        detection_dict['band_mapped'] = band_name
+
+        parsed_data.append(LsstDetectionCsv(**detection_dict))
+
+    return parsed_data
+    
+
 def zip_lightcurve(detections, non_detections, forced_photometry, oid):
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
             filtered_detections = [det for det in detections if det.oid == oid]
-            
-            data = []
-            for detection in filtered_detections:
-                detection_dict = detection.model_dump()
-                band_index = detection_dict['band']
-                band_name = detection_dict['band_map'][band_index]
-                detection_dict['band_mapped'] = band_name
 
-                data.append(LSSTDetectionCSV(**detection_dict))
-
-            
-            fieldnames_list = set(list(LSSTDetectionCSV.model_fields.keys()))
-            
-            priority_columns = [
-                "oid",
-                "surevey_id", 
-                "measurement_id",
-                "mjd",
-                "ra",
-                "dec",
-                "band",
-                "band_mapped",
-                "psfFlux",
-                "psfFluxErr",
-                "scienceFlux",
-                "scienceFluxErr",
-                "snr",
-                "visit",
-                "detector",
-                "diaObjectId",
-                "ssObjectId",
-                "has_stamp"
-            ]
-
-            priority = [col for col in priority_columns if col in fieldnames_list]
-            other_columns = sorted([col for col in fieldnames_list if col not in priority])
-
-            ordered_columns = priority + other_columns
-
-            pprint.pprint(ordered_columns)
-                    
-
+            data = _parse_data_to_model_csv(filtered_detections)
+            fieldnames_list = set(list(ZTFDetectionCSV.model_fields.keys()) + list(LsstDetectionCsv.model_fields.keys()))
+            ordered_columns = _order_detections_columns_csv(fieldnames_list)
             detections_csv = _data_to_csv(
                 data,
                 ordered_columns,
             )
+
+            
             zip_file.writestr("detections.csv", detections_csv)
 
         if non_detections:
