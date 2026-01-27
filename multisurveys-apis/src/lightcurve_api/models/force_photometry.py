@@ -197,3 +197,47 @@ class LsstForcedPhotometryCsv(BaseModel):
     dec: float
     band: int
     band_name: str
+
+
+class ZtfForcedPhotometryCsv(BaseModel):
+    """Pydantic model for ztf_forced_photometry table."""
+    
+    oid: int
+    survey_id: int
+    measurement_id: int
+    pid: int
+    band: int
+    band_name: str
+    mag: float
+    e_mag: float
+    mag_corr: float
+    e_mag_corr: float
+    e_mag_corr_ext: float
+    isdiffpos: int
+    corrected: bool
+    dubious: bool
+    parent_candid: int
+    field: int
+    rcid: int
+    rfid: int
+    sciinpseeing: float
+    scibckgnd: float
+    scisigpix: float
+    magzpsci: float
+    magzpsciunc: float
+    magzpscirms: float
+    clrcoeff: float
+    clrcounc: float
+    exptime: float
+    adpctdif1: float
+    adpctdif2: float
+    diffmaglim: float
+    programid: int
+    procstatus: str
+    distnr: float
+    ranr: float
+    decnr: float
+    magnr: float
+    sigmagnr: float
+    chinr: float
+    sharpnr: float
