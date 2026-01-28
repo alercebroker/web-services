@@ -206,7 +206,7 @@ def default_echarts_options(config_state: ConfigState):
     y_axis_name = "Magnitude" if not config_state.flux else "Flux [nJy]"
     return {
         "title": {"show": True, "text": config_state.oid},
-        "tooltip": {"trigger": 'item'},
+        "tooltip": {},
         "grid": {"left": "left", "top": "10%", "width": "75%", "height": "100%"},
         "legend": default_echarts_legend(config_state),
         "xAxis": {"type": "value", "name": "MJD", "scale": True, "splitLine": False},
