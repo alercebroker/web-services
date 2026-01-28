@@ -19,10 +19,12 @@ from sqlalchemy import true
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
-from lightcurve_api.models.detections import LsstDetection, ztfDetection
+from lightcurve_api.models.detections import LsstDetection, ztfDetection, ZTFDetectionCSV, LsstDetectionCsv
 from lightcurve_api.models.force_photometry import (
     LsstForcedPhotometry,
+    LsstForcedPhotometryCsv,
     ZtfForcedPhotometry,
+    ZtfForcedPhotometryCsv,
 )
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.lightcurve_item import (
@@ -704,16 +706,205 @@ def _data_to_csv(data_list, fieldnames: set):
     return output.getvalue()
 
 
+def _get_priority_columns(survey:str, type:str):
+
+    if survey == 'lsst':
+        if type == 'detection':
+            return [
+                "oid",
+                "surevey_id", 
+                "measurement_id",
+                "mjd",
+                "ra",
+                "dec",
+                "band",
+                "band_name",
+                "psfFlux",
+                "psfFluxErr",
+                "scienceFlux",
+                "scienceFluxErr",
+                "snr",
+                "visit",
+                "detector",
+                "diaObjectId",
+                "ssObjectId",
+                "has_stamp"
+            ]
+        
+        if type == 'fp':
+            return [
+                "oid",
+                "survey_id",
+                "measurement_id", 
+                "mjd",
+                "ra",
+                "dec",
+                "band",
+                "band_name",
+                "psfFlux",
+                "psfFluxErr",
+                "scienceFlux",
+                "scienceFluxErr",
+                "visit",
+                "detector",
+                "timeProcessedMjdTai",
+                "timeWithdrawnMjdTai"
+            ]
+
+    if survey == 'ztf':
+        if type == 'detection':
+            return [
+                "oid",
+                "sid",
+                "measurement_id",
+                "mjd",
+                "ra",
+                "dec",
+                "band",
+                "band_name",
+                "isdiffpos",
+                "magpsf",
+                "sigmapsf",
+                "magpsf_corr",
+                "sigmapsf_corr",
+                "sigmapsf_corr_ext",
+                "has_stamp",
+                "pid",
+                "diffmaglim",
+                "nid",
+                "magap",
+                "sigmagap",
+                "distnr",
+                "rb",
+                "rbversion",
+                "drb",
+                "drbversion",
+                "magapbig",
+                "sigmagapbig",
+                "rfid",
+                "corrected",
+                "dubious",
+                "parent_candid"
+            ]
+        if type == 'fp':
+            return [
+                "oid",
+                "sid",
+                "measurement_id",
+                "mjd",
+                "ra",
+                "dec",
+                "band",
+                "band_name",
+                "isdiffpos",
+                "mag",
+                "e_mag",
+                "mag_corr",
+                "e_mag_corr",
+                "e_mag_corr_ext",
+                "pid",
+                "corrected",
+                "dubious",
+                "parent_candid",
+                "field",
+                "rcid",
+                "rfid",
+                "sciinpseeing",
+                "scibckgnd",
+                "scisigpix",
+                "magzpsci",
+                "magzpsciunc",
+                "magzpscirms",
+                "clrcoeff",
+                "clrcounc",
+                "exptime",
+                "adpctdif1",
+                "adpctdif2",
+                "diffmaglim",
+                "programid",
+                "procstatus",
+                "distnr",
+                "ranr",
+                "decnr",
+                "magnr",
+                "sigmagnr",
+                "chinr",
+                "sharpnr"
+            ]
+
+    
+    return None
+
+
+
+def _order_detections_columns_csv(fieldnames: set):
+
+    priority_columns = _get_priority_columns('lsst','detection')
+    priority = [col for col in priority_columns if col in fieldnames]
+    other_columns = sorted([col for col in fieldnames if col not in priority])
+
+    return priority + other_columns
+
+
+def _order_fp_columns_csv(fieldnames: set):
+    priority_columns = _get_priority_columns('lsst', 'fp')
+    priority = [col for col in priority_columns if col in fieldnames]
+    other_columns = sorted([col for col in fieldnames if col not in priority])
+
+    return priority + other_columns
+
+
+def _parse_data_to_model_csv(data):
+    parsed_data = []
+    for detection in data:
+        detection_dict = detection.model_dump()
+        band_index = detection_dict['band']
+        band_name = detection_dict['band_map'][band_index]
+        detection_dict['band_name'] = band_name
+
+        if detection.survey_id == 'lsst':
+            parsed_data.append(LsstDetectionCsv(**detection_dict))
+        # if detection.survey_id == 'ztf':
+        #     parsed_data.append(ZTFDetectionCSV(**detection_dict))
+
+
+    return parsed_data
+
+def _parse_fp_to_model_csv(fp_data):
+    parsed_data = []
+    for fp in fp_data:
+        fp_dict = fp.model_dump()
+        band_index = fp_dict['band']
+        band_name = fp_dict['band_map'][band_index]
+        fp_dict['band_name'] = band_name
+
+        if fp.survey_id == 'lsst':
+            parsed_data.append(LsstForcedPhotometryCsv(**fp_dict))
+        # if fp.survey_id == 'ztf':
+        #     parsed_data.append(ZtfForcedPhotometryCsv(**fp_dict))
+
+
+    return parsed_data
+    
+
 def zip_lightcurve(detections, non_detections, forced_photometry, oid):
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
             filtered_detections = [det for det in detections if det.oid == oid]
 
+            data = _parse_data_to_model_csv(filtered_detections)
+            
+            fieldnames_list = set(list(ZTFDetectionCSV.model_fields.keys()) + list(LsstDetectionCsv.model_fields.keys()))
+            
+            ordered_columns = _order_detections_columns_csv(fieldnames_list)
+            
             detections_csv = _data_to_csv(
-                filtered_detections,
-                set(list(ztfDetection.model_fields.keys()) + list(LsstDetection.model_fields.keys())),
+                data,
+                ordered_columns,
             )
+
+            
             zip_file.writestr("detections.csv", detections_csv)
 
         if non_detections:
@@ -721,10 +912,20 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
             zip_file.writestr("non_detections.csv", non_detections_csv)
 
         if forced_photometry:
+            filtered_ph = [ph for ph in forced_photometry if ph.oid == oid]
+
+            parse_fp = _parse_fp_to_model_csv(filtered_ph)
+
+            fieldnames_list =  set(list(ZtfForcedPhotometryCsv.model_fields.keys()) + list(LsstForcedPhotometryCsv.model_fields.keys()))
+
+            ordered_columns = _order_fp_columns_csv(fieldnames_list)
+
             forced_photometry_csv = _data_to_csv(
-                forced_photometry,
-                set(list(ZtfForcedPhotometry.model_fields.keys()) + list(LsstForcedPhotometry.model_fields.keys())),
+                parse_fp,
+                ordered_columns
             )
+
+
             zip_file.writestr("forced_photometry.csv", forced_photometry_csv)
 
     zip_buffer.seek(0)

@@ -2,7 +2,7 @@ import math
 import traceback
 from typing import Optional
 
-from pydantic import model_validator
+from pydantic import BaseModel, model_validator
 from .lightcurve_item import BaseForcedPhotometry
 from astropy.coordinates import Distance
 import astropy.units as u
@@ -178,3 +178,66 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
 
         return magnitude_error
+
+
+class LsstForcedPhotometryCsv(BaseModel):
+    oid: int
+    survey_id: str
+    measurement_id: int
+    visit: int
+    detector: int
+    psfFlux: float
+    psfFluxErr: float
+    scienceFlux: float
+    scienceFluxErr: float
+    timeProcessedMjdTai: float | None = None
+    timeWithdrawnMjdTai: float | None = None
+    mjd: float
+    ra: float
+    dec: float
+    band: int
+    band_name: str
+
+
+class ZtfForcedPhotometryCsv(BaseModel):
+    """Pydantic model for ztf_forced_photometry table."""
+    
+    oid: int
+    survey_id: int
+    measurement_id: int
+    pid: int
+    band: int
+    band_name: str
+    mag: float
+    e_mag: float
+    mag_corr: float
+    e_mag_corr: float
+    e_mag_corr_ext: float
+    isdiffpos: int
+    corrected: bool
+    dubious: bool
+    parent_candid: int
+    field: int
+    rcid: int
+    rfid: int
+    sciinpseeing: float
+    scibckgnd: float
+    scisigpix: float
+    magzpsci: float
+    magzpsciunc: float
+    magzpscirms: float
+    clrcoeff: float
+    clrcounc: float
+    exptime: float
+    adpctdif1: float
+    adpctdif2: float
+    diffmaglim: float
+    programid: int
+    procstatus: str
+    distnr: float
+    ranr: float
+    decnr: float
+    magnr: float
+    sigmagnr: float
+    chinr: float
+    sharpnr: float
