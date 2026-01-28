@@ -2,6 +2,8 @@
 <button id="toggle-theme-lc" class="tw-hidden"></button>
 <script type="module">
 import customDark from '{{API_URL}}/static/echarts-theme/customDark.js'
+import {jdToGregorian, jdToDate} from '{{API_URL}}/static/AstroDates.js'
+import {extractDate, extractTime, convertToDate,getUTCDate, formatDate} from '{{API_URL}}/static/time.js'
 
 
 // Initialize the echarts instance and use the current system theme
@@ -12,6 +14,68 @@ var chartDom = document.getElementById('chart')
 var myChart = echarts.init(chartDom, theme);
 var options = {{ options | tojson }};
 var toggleLcTheme = document.getElementById('toggle-theme-lc')
+
+var tooltip_options = {
+  "trigger" : "item",
+  formatter: params => {
+
+    const { seriesName, value } = params;
+    var slide_index = () => {
+      if (seriesName.includes('+') || seriesName.includes('*') || seriesName.includes('DR')) {
+        return -5
+      }
+
+      return -1
+    }
+    
+    var band = seriesName.slice(slide_index())
+    var plot_value = value[1].toFixed(3)
+    var MJD = value[0]
+    var utcDate = jdToDate(MJD).toUTCString().slice(0, -3) + "UTC";
+
+    var createTableHtml = () => {
+      var table_div = document.createElement('div')
+      var row = createRowItem(band, plot_value)
+      var row_mjd = createRowItem('MJD', MJD)
+      var row_UTC = createRowItem('Date', utcDate)
+
+      table_div.setAttribute('style', 'width: 100%');
+
+      table_div.appendChild(row)
+      table_div.appendChild(row_mjd)
+      table_div.appendChild(row_UTC)
+
+
+      return table_div
+    }
+
+
+    var createRowItem = (name, value) => {
+
+      var row = document.createElement('div')
+      row.setAttribute('style', 'display: flex; flex-direction: row; justify-content: flex-start; gap: 16px; font-size:13px; width: 100%;');
+
+      var band_div = document.createElement('div')
+      band_div.setAttribute('style', 'width: 10%;');
+      band_div.innerHTML = name + " : "
+
+      var band_value = document.createElement('div')
+      band_value.setAttribute('style', 'width: 30%; font-weight: bold');
+      band_value.innerText = value
+
+      row.appendChild(band_div)
+      row.appendChild(band_value)
+
+
+      return row
+    }
+
+    return createTableHtml()
+  }
+}
+
+options.tooltip = tooltip_options
+console.log(options)
 
 // Make chart responsive
 var plotGrid = document.getElementById('plot-grid');
@@ -32,4 +96,7 @@ toggleLcTheme.addEventListener('click', () => {
 
 // Display the chart using the configuration items and data just specified.
 myChart.setOption(options);
+
+var currentOption = myChart.getOption()
+
 </script>
