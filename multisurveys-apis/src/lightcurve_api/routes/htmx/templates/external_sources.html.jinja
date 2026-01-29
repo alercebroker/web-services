@@ -1,3 +1,4 @@
+<button id="toggle-theme-lc" class="tw-hidden"></button>
 <form id="dr-table"
   hx-post="{{API_URL}}/htmx/config_change"
   hx-target="#main-app"
@@ -6,6 +7,8 @@
   hx-indicator="#loading"
 >
   <input type="hidden" name="external_sources.enabled" value="true" {% if not config_state.external_sources.enabled %}disabled{% endif %}>
+
+
   <table class="tw-min-w-full tw-border tw-divide-y">
       <thead>
           <tr class="">
@@ -45,6 +48,12 @@
                   <td class="tw-text-right">{{ object.dec }}</td>
               </tr>
           {% endfor %}
+
+          <tr class="tw-hidden">
+            <td>
+              <input type="checkbox" name="external_sources.selected_objects[]" value="test"/>
+            </td>
+          </tr>
       </tbody>
   </table>
   <button type="submit">Ok</button>

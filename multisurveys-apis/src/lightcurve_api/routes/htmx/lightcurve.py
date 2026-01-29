@@ -87,6 +87,7 @@ def external_sources(request: Request, config_state: ConfigState):
         parse_non_detections(config_state.non_detections),
         parse_forced_photometry(config_state.forced_photometry),
     )
+
     return templates.TemplateResponse(
         name="external_sources.html.jinja",
         context={"request": request, "config_state": result.config_state},
