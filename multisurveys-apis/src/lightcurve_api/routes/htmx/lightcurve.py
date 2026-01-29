@@ -1,6 +1,8 @@
 import os
 import pprint
 
+from datetime import datetime
+
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
@@ -117,10 +119,14 @@ def download(oid: str, survey_id: str, db: db_dependency):
         int(oid)
     )
 
+    day = datetime.now()
+
+    filename_str = 'lightcurve' + ' ' + oid + ' ' + str(day) + '.zip' 
+
     return StreamingResponse(
         zip_buffer,
         media_type="application/zip",
         headers={
-            "Content-Disposition": "attachment; filename=lightcurve.zip",
+            "Content-Disposition": f"attachment; filename={filename_str}",
         },
     )
