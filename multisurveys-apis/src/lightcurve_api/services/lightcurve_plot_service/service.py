@@ -885,14 +885,21 @@ def _parse_fp_to_model_csv(fp_data):
 
 
     return parsed_data
+
+
+def filter_data_by_oid(data, oid):
+    filtered_data_by_oid = [item for item in data if item.oid == oid]
+    data_sorted_by_mjd = sorted(filtered_data_by_oid, key=lambda item: item.mjd)
+
+    return data_sorted_by_mjd
+
     
 
 def zip_lightcurve(detections, non_detections, forced_photometry, oid):
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
-            filtered_detections = [det for det in detections if det.oid == oid]
-            filtered_detections_sorted_by_mjd = sorted(filtered_detections, key=lambda det: det.mjd)
+            filtered_detections_sorted_by_mjd = filter_data_by_oid(detections, oid)
 
             data = _parse_data_to_model_csv(filtered_detections_sorted_by_mjd)
             
@@ -913,8 +920,7 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
             zip_file.writestr("non_detections.csv", non_detections_csv)
 
         if forced_photometry:
-            filtered_ph = [ph for ph in forced_photometry if ph.oid == oid]
-            filtered_ph_sorted_by_mjd = sorted(filtered_ph, key=lambda fp: fp.mjd)
+            filtered_ph_sorted_by_mjd = filter_data_by_oid(forced_photometry, oid)
 
             parse_fp = _parse_fp_to_model_csv(filtered_ph_sorted_by_mjd)
 
