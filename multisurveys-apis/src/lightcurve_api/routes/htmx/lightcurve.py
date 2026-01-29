@@ -1,7 +1,7 @@
 import os
 import pprint
 
-from datetime import datetime
+from datetime import date
 
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, StreamingResponse
@@ -119,9 +119,10 @@ def download(oid: str, survey_id: str, db: db_dependency):
         int(oid)
     )
 
-    day = datetime.now()
+    day = str(date.today())
+    day = day.replace('-', '')
 
-    filename_str = 'lightcurve' + ' ' + oid + ' ' + str(day) + '.zip' 
+    filename_str = oid + '_' + str(day) + '.zip' 
 
     return StreamingResponse(
         zip_buffer,
