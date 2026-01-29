@@ -892,8 +892,9 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
             filtered_detections = [det for det in detections if det.oid == oid]
+            filtered_detections_sorted_by_mjd = sorted(filtered_detections, key=lambda det: det.mjd)
 
-            data = _parse_data_to_model_csv(filtered_detections)
+            data = _parse_data_to_model_csv(filtered_detections_sorted_by_mjd)
             
             fieldnames_list = set(list(ZTFDetectionCSV.model_fields.keys()) + list(LsstDetectionCsv.model_fields.keys()))
             
@@ -913,8 +914,9 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
 
         if forced_photometry:
             filtered_ph = [ph for ph in forced_photometry if ph.oid == oid]
+            filtered_ph_sorted_by_mjd = sorted(filtered_ph, key=lambda fp: fp.mjd)
 
-            parse_fp = _parse_fp_to_model_csv(filtered_ph)
+            parse_fp = _parse_fp_to_model_csv(filtered_ph_sorted_by_mjd)
 
             fieldnames_list =  set(list(ZtfForcedPhotometryCsv.model_fields.keys()) + list(LsstForcedPhotometryCsv.model_fields.keys()))
 
