@@ -24,4 +24,4 @@ class SearchParams(BaseModel):
     filter_args: Filters
     conesearch_args: Consearch
     pagination_args: PaginationArgs
-    #order_args: Order
+    order_args: Order

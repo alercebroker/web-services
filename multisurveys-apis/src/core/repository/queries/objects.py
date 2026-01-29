@@ -88,9 +88,9 @@ def query_get_objects(session_ms, search_params, parsed_params):
             .where(*filters_statements["probability"])
         )
 
-        #order_statement = create_order_statement(stmt, search_params.order_args)
+        order_statement = create_order_statement(stmt, search_params.order_args)
 
-        #stmt = stmt.order_by(order_statement)
+        stmt = stmt.order_by(order_statement)
 
         stmt = add_limits_statements(stmt, pagination_args)
 

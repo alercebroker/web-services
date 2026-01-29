@@ -145,8 +145,8 @@ def objects_table(
     page: int | None = 1,
     page_size: int | None = 10,
     count: bool | None = False,
-    order_by: str | None = None,#Query(default="probability"),
-    order_mode: str | None = None#Query(default="DESC"),
+    order_by: str | None = Query(default="probability"),
+    order_mode: str | None = Query(default="DESC"),
 ):
     try:
         if survey is not None:
@@ -155,7 +155,7 @@ def objects_table(
             n_det = ndet_build(n_det_min, n_det_max)
 
             ndets_validation(n_det)
-            #order_mode_validation(order_mode)
+            order_mode_validation(order_mode)
             consearch_validation(ra, dec, radius)
             oids_format_validation(oid, survey)
             oid_lenght_validation(oid)
@@ -182,24 +182,28 @@ def objects_table(
 
             pagination = PaginationArgs(page=page, page_size=page_size, count=count)
 
-            #order = Order(order_by=order_by, order_mode=order_mode)
+            order = Order(order_by=order_by, order_mode=order_mode)
 
             search_params = SearchParams(
                 filter_args=filters,
                 conesearch_args=conesearch,
                 pagination_args=pagination,
-               # order_args=order,
+                order_args=order,
             )
 
             object_list = get_objects_list(session_ms=session, search_params=search_params)
             
-            if oid is not None:
+            if oid is not None and object_list["items"] != []:
                 items = pd.DataFrame.from_records(object_list["items"])
+                items["oid"] = items["oid"].astype(str)
                 items.set_index("oid", inplace=True)
-                items = items.loc[df.index.intersection(oid)].copy()
+                oid_valid = [x for x in oid if x in items.index]
+                items = items.loc[oid_valid].copy()
                 items = items.reset_index().to_dict(orient='index')
                 items = list(items.values())
                 object_list["items"] = items
+                order_by = None
+                order_mode = None
 
         else:
             object_list = {
