@@ -6,11 +6,13 @@ from db_plugins.db.sql.models import (
 )
 from sqlalchemy.orm import aliased
 from sqlalchemy import select, and_
+from object_api.services.parsers import serialize_items
 from object_api.services.statements_sql import (
     create_order_statement,
     add_limits_statements,
 )
 from object_api.models.pagination import Pagination
+import pandas as pd
 
 
 class ObjectsModels:
@@ -92,12 +94,34 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         stmt = stmt.order_by(order_statement)
 
-        stmt = add_limits_statements(stmt, pagination_args)
+        if order_statement is not None:
+            stmt = add_limits_statements(stmt, pagination_args)
 
         items = session.execute(stmt).all()
+        
+        if search_params.filter_args.oids is not None \
+            and search_params.order_args.order_by is None \
+                and len(items) > 0:
+            items = sort_by_oid_list_and_select_page(search_params, items)
 
         return Pagination(pagination_args.page, pagination_args.page_size, items)
 
+
+def sort_by_oid_list_and_select_page(search_params, items):
+    df_items = pd.DataFrame.from_records(items)
+    df_items["oid"] = [item["oid"] for item in serialize_items(items)]
+    df_items.set_index("oid", inplace=True)
+    oid_valid = [x for x in search_params.filter_args.oids if x in df_items.index]
+    df_items = df_items.loc[oid_valid].copy()
+    
+    page = search_params.pagination_args.page
+    page_size = search_params.pagination_args.page_size
+    idx_start = (page - 1) * page_size
+    idx_end = idx_start + page_size + 1
+    df_items = df_items.iloc[idx_start:idx_end].copy()
+    df_items = list(df_items.itertuples(index=False, name=None))
+    
+    return df_items
 
 def build_subquery_object(survey, filters, parsed_params):
     model_id = ObjectsModels(survey).get_model_by_survey()
