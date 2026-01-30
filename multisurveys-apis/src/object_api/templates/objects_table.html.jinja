@@ -278,17 +278,17 @@
 <script type="module">
     import {draw_arrow_order_table} from "{{API_URL}}/static/draw_elements.js"
 
-    let recived_order_by = '{{actual_order_by}}_column'
-    if(recived_order_by == 'oid_list_column'){
-        recived_order_by = 'firstmjd_column'
+    let received_order_by = '{{actual_order_by}}_column'
+    if(received_order_by == 'oid_list_column'){
+        received_order_by = 'firstmjd_column'
     }
-    let recived_order_mode = '{{actual_order_mode}}'
+    let received_order_mode = '{{actual_order_mode}}'
 
-    let icon = draw_arrow_order_table(recived_order_mode)
+    let icon = draw_arrow_order_table(received_order_mode)
 
-    if(document.getElementById(recived_order_by)){
-        document.getElementById(recived_order_by).appendChild(icon)
-        document.getElementById(recived_order_by).classList.add("tw-flex", "tw-items-center","tw-text-black" ,"dark:tw-text-white")
+    if(document.getElementById(received_order_by)){
+        document.getElementById(received_order_by).appendChild(icon)
+        document.getElementById(received_order_by).classList.add("tw-flex", "tw-items-center","tw-text-black" ,"dark:tw-text-white")
     }
 
 </script>
