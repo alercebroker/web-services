@@ -35,17 +35,23 @@ var tooltip_options = {
       return seriesName.slice(slide_index())
     }
     var plot_value = value[1].toFixed(3)
+    var measurement_id = value[2]
     var MJD = value[0]
     var utcDate = jdToDate(MJD).toUTCString().slice(0, -3) + "UTC";
 
     var createTableHtml = () => {
       var table_div = document.createElement('div')
+      var row_measurement_id = createRowItem('Measurement id', measurement_id)
       var row = createRowItem(band(), plot_value)
       var row_mjd = createRowItem('MJD', MJD)
       var row_UTC = createRowItem('Date', utcDate)
 
-      table_div.setAttribute('style', 'width: 100%; padding: 0 16px;');
+      table_div.setAttribute('style', 'min-width: 340px; padding: 0 16px;');
 
+      if (measurement_id != null) {
+        table_div.appendChild(row_measurement_id)
+      }
+      
       table_div.appendChild(row)
       table_div.appendChild(row_mjd)
       table_div.appendChild(row_UTC)
@@ -61,11 +67,11 @@ var tooltip_options = {
       row.setAttribute('style', 'display: flex; flex-direction: row; justify-content: flex-start; gap: 16px; font-size:13px; width: 100%; margin: 8px 0');
 
       var band_div = document.createElement('div')
-      band_div.setAttribute('style', 'width: 20%;');
+      band_div.setAttribute('style', 'width: 40%;');
       band_div.innerHTML = name + " : "
 
       var band_value = document.createElement('div')
-      band_value.setAttribute('style', 'width: 30%; font-weight: bold');
+      band_value.setAttribute('style', 'width: 60%; font-weight: bold');
       band_value.innerText = value
 
 
