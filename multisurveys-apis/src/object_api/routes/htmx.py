@@ -216,9 +216,6 @@ def objects_table(
                 "items": [],
                 "info_message": "Results will appear here",
             }
-        
-        #print(request)
-        #print(object_list)
 
         return templates.TemplateResponse(
             name="objects_table.html.jinja",
