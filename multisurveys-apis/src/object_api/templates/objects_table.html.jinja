@@ -181,8 +181,35 @@
                         </svg>
                     </div>
                     
-                    </th>
-                    <th class="tw-px-4">DeltaMJD (days)</th>
+                                        </th>
+                    <th 
+                    id="deltamjd_column"
+                    name="object_column_name"
+                    data-column = "deltamjd"
+                    class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
+                    hx-get="{{API_URL}}/htmx/list_objects"
+                    hx-trigger="click"
+                    hx-swap="outerHTML"
+                    hx-target="#objects_table"
+                    hx-vals='js:{
+                    ...send_form_Data(), 
+                    ...send_pagination_data(), 
+                    ...send_order_data("deltamjd", "{{actual_order_mode}}")}'
+                    >
+                    
+                    <div id="delta_mjd" class="tw-group tw-flex tw-items-center tw-gap-1.5 tw-cursor-pointer">
+                        <span class="placeholder-span">
+                            DeltaMJD (days)
+                        </span>
+                        <svg
+                            name="sort_arrow"
+                            data-direction="{% if actual_order_by == 'deltamjd' %}{{ 'down' if actual_order_mode == 'DESC' else 'up' }}{% else %}down{% endif %}"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="{% if actual_order_by == 'deltamjd' %}tw-visible{% else %}tw-invisible group-hover:tw-visible{% endif %} tw-h-4 tw-w-4 tw-fill-black dark:tw-fill-white"
+                            viewBox="0 -960 960 960"
+                            fill="#e3e3e3">
+                            <path d="{% if actual_order_by == 'deltamjd' and actual_order_mode == 'ASC' %}M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z{% else %}M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z{% endif %}"/>
+                        </svg>
                 </tr>
             </thead>
             <tbody class="tw-text-[0.875rem] tw-text-black dark:tw-text-white">
@@ -252,6 +279,9 @@
     import {draw_arrow_order_table} from "{{API_URL}}/static/draw_elements.js"
 
     let recived_order_by = '{{actual_order_by}}_column'
+    if(recived_order_by == 'oid_list_column'){
+        recived_order_by = 'firstmjd_column'
+    }
     let recived_order_mode = '{{actual_order_mode}}'
 
     let icon = draw_arrow_order_table(recived_order_mode)

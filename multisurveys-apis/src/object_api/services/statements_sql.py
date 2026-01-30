@@ -29,6 +29,9 @@ def create_conesearch_statement(args):
 
 def create_order_statement(query, order_args):
     statement = None
+    if order_args.order_by is None:
+        return statement
+    
     cols = query.column_descriptions
     if order_args.order_by == 'lastmjd':
         model = cols[1]["entity"]
