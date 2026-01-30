@@ -25,7 +25,7 @@ from object_api.services.object_services import (
     get_object_by_id,
 )
 from ..services.parsers import _parse_oids_string_to_array
-
+import pandas as pd
 router = APIRouter()
 
 templates = Jinja2Templates(directory="src/object_api/templates", autoescape=True, auto_reload=True)
@@ -145,7 +145,7 @@ def objects_table(
     page: int | None = 1,
     page_size: int | None = 10,
     count: bool | None = False,
-    order_by: str | None = Query(default="probability"),
+    order_by: str | None = None,#Query(default="probability"),
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
@@ -161,7 +161,9 @@ def objects_table(
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)
-
+            
+            if oid is None and order_by is None:
+                order_by = "probability"
 
             if oid is not None:
                 oid = encode_ids(survey, oid)
@@ -192,6 +194,18 @@ def objects_table(
             )
 
             object_list = get_objects_list(session_ms=session, search_params=search_params)
+            
+            if oid is not None and order_by is None and object_list["items"] != []:
+                items = pd.DataFrame.from_records(object_list["items"])
+                items["oid"] = items["oid"].astype(str)
+                items.set_index("oid", inplace=True)
+                oid_valid = [x for x in oid if x in items.index]
+                items = items.loc[oid_valid].copy()
+                items = items.reset_index().to_dict(orient='index')
+                items = list(items.values())
+                object_list["items"] = items
+                if order_by is None:
+                    order_by = "oid_list"
 
         else:
             object_list = {
@@ -244,7 +258,7 @@ def sidebar(
     page: int | None = 1,
     page_size: int | None = 10,
     count: bool | None = False,
-    order_by: str | None = Query(default="probability"),
+    order_by: str | None = None,#Query(default="probability"),
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
@@ -261,6 +275,9 @@ def sidebar(
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)
+            
+            if oid is None and order_by is None:
+                order_by = "probability"
 
             if oid is not None:
                 oid = encode_ids(survey, oid)
@@ -287,6 +304,18 @@ def sidebar(
             )
 
             object_list = get_objects_list(session_ms=session, search_params=search_params)
+            
+            if oid is not None and order_by is None and object_list["items"] != []:
+                items = pd.DataFrame.from_records(object_list["items"])
+                items["oid"] = items["oid"].astype(str)
+                items.set_index("oid", inplace=True)
+                oid_valid = [x for x in oid if x in items.index]
+                items = items.loc[oid_valid].copy()
+                items = items.reset_index().to_dict(orient='index')
+                items = list(items.values())
+                object_list["items"] = items
+                if order_by is None:
+                    order_by = "oid_list"
         else:
             object_list = {
                 "next": False,
