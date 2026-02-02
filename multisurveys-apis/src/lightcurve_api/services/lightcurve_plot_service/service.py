@@ -474,6 +474,8 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
         #filtro solo det de lsst
         if det.survey_id.lower() == LSST_SURVEY and det.oid != int(config_state.oid):
             continue
+
+        
         
         result.append(
             ChartPoint(
