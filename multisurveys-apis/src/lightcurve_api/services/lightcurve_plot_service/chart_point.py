@@ -21,8 +21,10 @@ class ChartPoint:
         self.field = field
 
 
-    def point(self) -> List[float]:
-        return [self.x, self.y, self.measurement_id, self.objectid, self.field]
+    def point(self, limit=1) -> List[float]:
+        err = self.error if self.error <= limit else limit
+
+        return [self.x, self.y, self.measurement_id, self.objectid, self.field, err]
 
     def error_bar(self, limit=1) -> List[float]:
         err = self.error if self.error <= limit else limit

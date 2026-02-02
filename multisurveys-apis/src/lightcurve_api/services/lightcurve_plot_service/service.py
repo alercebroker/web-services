@@ -573,10 +573,25 @@ def create_chart_forced_photometry(
                     if config_state.flux
                     else fphot.flux2magnitude_err(config_state.total, config_state.absolute)
                 ),
+                fphot.measurement_id if hasattr(fphot, 'measurement_id') else None,
+                fphot.objectid if hasattr(fphot, 'objectid') else None,
+                fphot.field if hasattr(fphot, 'field') else None
             )
         )
     if config_state.fold:
-        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
+        result.extend(
+            [ChartPoint(
+                point.survey, 
+                point.band, 
+                point.x + 1, 
+                point.y, 
+                point.error,
+                point.measurement_id,
+                point.objectid,
+                point.field
+            ) for point in result
+            ]
+        )
 
     return result
 
@@ -648,7 +663,7 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
 
     def _add_point_to_group(group: dict, point: ChartPoint):
         max_error = 99999 if config_state.flux else 1
-        point_value = point.point() if not error_bar else point.error_bar(max_error)
+        point_value = point.point(max_error) if not error_bar else point.error_bar(max_error)
         max_brightness, min_brightness = _get_max_and_min_brightness(config_state)
         if _valid_point(point_value, max_brightness, min_brightness):
             group[point.survey][point.band].append(point_value)
