@@ -27,24 +27,27 @@ var tooltip_options = {
       return -1
     }
     
-    var band = () => {
-      if (seriesName.includes('DR')) {
-        return seriesName.slice(slide_index()) + ' ' +'DR'
-      }
-      
-      return seriesName.slice(slide_index())
-    }
+    var band = seriesName.includes('DR') ?  seriesName.slice(slide_index()) + ' ' +'DR' : seriesName.slice(slide_index())
     var plot_value = value[1].toFixed(3)
+    var plot_error = value[5].toFixed(3)
+    var plot_value_sign = plot_value < 0 ? "(-)" : "(+)"
+    var plot_value_text = plot_value_sign + " " + `${plot_value}`+ ' ± '  + `${plot_error}`;
+
     var measurement_id = value[2]
     var MJD = value[0]
     var utcDate = jdToDate(MJD).toUTCString().slice(0, -3) + "UTC";
 
+    var DR_object_id = value[3]
+    var DR_field = value[4]
+
     var createTableHtml = () => {
       var table_div = document.createElement('div')
       var row_measurement_id = createRowItem('Measurement id', measurement_id)
-      var row = createRowItem(band(), plot_value)
+      var row_value = createRowItem(band, plot_value_text)
       var row_mjd = createRowItem('MJD', MJD)
       var row_UTC = createRowItem('Date', utcDate)
+      var row_DR_id = createRowItem('objectid', DR_object_id)
+      var row_DR_field = createRowItem('field', DR_field)
 
       table_div.setAttribute('style', 'min-width: 340px; padding: 0 16px;');
 
@@ -52,7 +55,15 @@ var tooltip_options = {
         table_div.appendChild(row_measurement_id)
       }
       
-      table_div.appendChild(row)
+      if (DR_object_id != null) {
+        table_div.appendChild(row_DR_id)
+      }
+
+      if (DR_field != null) {
+        table_div.appendChild(row_DR_field)
+      }
+
+      table_div.appendChild(row_value)
       table_div.appendChild(row_mjd)
       table_div.appendChild(row_UTC)
 
