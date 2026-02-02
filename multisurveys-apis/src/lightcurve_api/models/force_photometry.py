@@ -179,6 +179,11 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
         return magnitude_error
 
+    def flux_sign(self, total: bool) -> str:
+        flux = self.scienceFlux if total else self.psfFlux
+
+        return '-' if flux < 0 else '+'
+
 
 class LsstForcedPhotometryCsv(BaseModel):
     oid: int

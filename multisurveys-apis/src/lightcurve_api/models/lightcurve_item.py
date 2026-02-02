@@ -62,6 +62,7 @@ class BaseDetection(BaseModel):
         return (self.mjd % period) / period
 
 
+
 class BaseNonDetection(BaseModel):
     band_map: dict[int, str]
     band: int

@@ -19,6 +19,8 @@ var tooltip_options = {
   "trigger" : "item",
   formatter: params => {
     const { seriesName, value, color } = params;
+
+    
     var slide_index = () => {
       if (seriesName.includes('+') || seriesName.includes('*')) {
         return -5
@@ -30,7 +32,7 @@ var tooltip_options = {
     var band = seriesName.includes('DR') ?  seriesName.slice(slide_index()) + ' ' +'DR' : seriesName.slice(slide_index())
     var plot_value = value[1].toFixed(3)
     var plot_error = value[5].toFixed(3)
-    var plot_value_sign = plot_value < 0 ? "(-)" : "(+)"
+    var plot_value_sign = value[6] == '-' ? "(-)" : "(+)"
     var plot_value_text = plot_value_sign + " " + `${plot_value}`+ ' ± '  + `${plot_error}`;
 
     var measurement_id = value[2]

@@ -475,7 +475,6 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
         if det.survey_id.lower() == LSST_SURVEY and det.oid != int(config_state.oid):
             continue
         
-
         result.append(
             ChartPoint(
                 det.survey_id,
@@ -491,6 +490,7 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
                     if config_state.flux
                     else det.flux2magnitude_err(config_state.total, config_state.absolute)
                 ),
+                det.flux_sign(config_state.total, config_state.absolute),
                 det.measurement_id if hasattr(det, 'measurement_id') else None,
                 det.objectid if hasattr(det, 'objectid') else None,
                 det.field if hasattr(det, 'field') else None
@@ -509,6 +509,7 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
                     point.x + 1, 
                     point.y, 
                     point.error,
+                    point.flux_sign,
                     point.measurement_id,
                     point.objectid,
                     point.field
@@ -586,6 +587,7 @@ def create_chart_forced_photometry(
                 point.x + 1, 
                 point.y, 
                 point.error,
+                point.flux_sign,
                 point.measurement_id,
                 point.objectid,
                 point.field
