@@ -92,7 +92,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         order_statement = create_order_statement(stmt, search_params.order_args)
 
-        stmt = stmt.order_by(order_statement)
+        stmt = stmt.order_by(*order_statement)
 
         if order_statement is not None:
             stmt = add_limits_statements(stmt, pagination_args)

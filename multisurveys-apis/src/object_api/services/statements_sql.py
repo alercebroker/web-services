@@ -26,13 +26,14 @@ def create_conesearch_statement(args):
     else:
         return True
 
-
+import pprint
 def create_order_statement(query, order_args):
     statement = None
     if order_args.order_by is None:
         return statement
     
     cols = query.column_descriptions
+
     if order_args.order_by == 'lastmjd':
         model = cols[1]["entity"]
         attr = getattr(model, order_args.order_by, None)
@@ -45,11 +46,16 @@ def create_order_statement(query, order_args):
             if attr is not None:
                 statement = attr
                 break
-    print('statement', statement, flush=True)
+    
+    second_model = cols[1]['entity']
+    second_attr = getattr(second_model, 'oid', None)
+
+
     if order_args.order_mode == "ASC":
-        statement = attr.asc()
-    elif order_args.order_mode == "DESC":
-        statement = attr.desc()
+        statement = [attr.asc(), second_attr.asc()]
+    
+    if order_args.order_mode == "DESC":
+        statement = [attr.desc(), second_attr.desc()]
 
     return statement
 
