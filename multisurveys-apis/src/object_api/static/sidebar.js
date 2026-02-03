@@ -28,7 +28,7 @@ export function elementReady(selector) {
 function prepare_params(evt){
   let url = new URL(evt.detail.headers['HX-Current-URL'])
   let page = get_page(evt.detail.elt)
-  let selected_oid = evt.detail.elt.dataset.oid
+  let selected_oid = get_selected_oid(evt)
 
   url.searchParams.set("page", page)
   url.searchParams.set("selected_oid", selected_oid)
@@ -46,16 +46,26 @@ function get_page(event_element){
   return current_page
 }
 
-function prepare_data(url){
-    let dict_params = get_params_url(url)
+function get_selected_oid(evt){
+  if (evt.detail.elt.hasAttribute('data-oid')) {
+   return evt.detail.elt.dataset.oid
+  }
 
-    return  dict_params
+
+  return document.getElementById('selected_oid_cache').value
+}
+
+function prepare_data(url){
+  let dict_params = get_params_url(url)
+
+  return  dict_params
 }
 
 
 function get_params_url(url){
   let params = new URLSearchParams(url.search)
   let form_dict = {}
+
 
   params.forEach((value, key) => {
     if (key === 'oid' || key === 'n_det' || key === 'firstmjd') {

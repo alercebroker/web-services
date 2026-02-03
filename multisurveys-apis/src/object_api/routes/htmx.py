@@ -304,6 +304,7 @@ def sidebar(
             
             if oid is not None and order_by is None and object_list["items"] != []:
                 order_by = "oid_list"
+
         else:
             object_list = {
                 "next": False,

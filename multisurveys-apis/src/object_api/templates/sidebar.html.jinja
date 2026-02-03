@@ -6,6 +6,7 @@
 {% if objects_list['items']|length > 0 %}
 <div id="sidebar-objects-htmx" class="tw-preflight tw-text-black tw-bg-transparent dark:tw-bg-[#424242] dark:tw-text-[#EEEEEE]">
     <input id="objects-store" class="tw-hidden" data-objects="{{ objects_list['items'] }}">
+    <input id="selected_oid_cache" class="tw-hidden" value="{{selected_oid}}">
 
 
     <div class="tw-flex tw-flex-col tw-w-full tw-h-[95vh] tw-text-[0.875rem] dark:tw-bg-[#424242]">
