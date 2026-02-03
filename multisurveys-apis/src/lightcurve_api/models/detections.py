@@ -132,6 +132,9 @@ class ztfDetection(BaseDetection):
         """
         return self.sigmapsf_corr_ext if total else self.sigmapsf
 
+    def flux_sign(self, total: bool, absolute: bool) -> str:
+        return str(self.isdiffpos)
+
 
 class LsstDetection(BaseDetection):
     oid: int
@@ -358,6 +361,11 @@ class LsstDetection(BaseDetection):
 
         return magnitude_error
 
+    def flux_sign(self, total: bool, absolute: bool) -> str:
+        flux = self.scienceFlux if total else self.psfFlux
+
+        return '-' if flux < 0 else '+'
+
 
 class ZtfDataReleaseDetection(BaseDetection):
     mjd: float
@@ -417,6 +425,11 @@ class ZtfDataReleaseDetection(BaseDetection):
             Magnitude error value
         """
         return self.e_mag_corr_ext
+
+    def flux_sign(self, total: bool, absolute: bool) -> str:
+        flux = self.magnitude2flux(total, absolute)
+
+        return '-' if flux < 0 else '+'
 
 
 class ZTFDetectionCSV(BaseModel):
