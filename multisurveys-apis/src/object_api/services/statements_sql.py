@@ -60,7 +60,6 @@ def get_model_attribute(cols_meta_data, order_by):
             break
 
 
-
     return statement
 
 def add_order_mode(attributes, order_mode):

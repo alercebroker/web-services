@@ -94,7 +94,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         stmt = stmt.order_by(*order_statement)
 
-        if order_statement is not None:
+        if len(order_statement) > 0:
             stmt = add_limits_statements(stmt, pagination_args)
 
         items = session.execute(stmt).all()
