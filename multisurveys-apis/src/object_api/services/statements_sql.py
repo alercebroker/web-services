@@ -14,7 +14,6 @@ def convert_conesearch_args(args):
         radius /= 3600.0  # From arcsec to deg
     return {"ra": ra, "dec": dec, "radius": radius}
 
-
 def create_conesearch_statement(args):
     try:
         ra, dec, radius = args["ra"], args["dec"], args["radius"]
@@ -26,38 +25,49 @@ def create_conesearch_statement(args):
     else:
         return True
 
-import pprint
 def create_order_statement(query, order_args):
-    statement = None
+    
     if order_args.order_by is None:
-        return statement
+        return []
+    
     
     cols = query.column_descriptions
-
-    if order_args.order_by == 'lastmjd':
-        model = cols[1]["entity"]
-        attr = getattr(model, order_args.order_by, None)
-        if attr is not None:
-            statement = attr
-    else:
-        for col in cols:
-            model = col["entity"]
-            attr = getattr(model, order_args.order_by, None)
-            if attr is not None:
-                statement = attr
-                break
     
-    second_model = cols[1]['entity']
-    second_attr = getattr(second_model, 'oid', None)
+    first_attr = get_model_attribute(cols, order_args.order_by)
+    second_attr = get_model_attribute(cols, 'oid')
+    attributes = [first_attr, second_attr]
 
-
-    if order_args.order_mode == "ASC":
-        statement = [attr.asc(), second_attr.asc()]
-    
-    if order_args.order_mode == "DESC":
-        statement = [attr.desc(), second_attr.desc()]
+    statement = add_order_mode(attributes, order_args.order_mode)
 
     return statement
+
+def get_model_attribute(cols_meta_data, order_by):
+    statement = None
+
+    if order_by == 'lastmjd':
+        model = cols_meta_data[1]["entity"]
+        attr = getattr(model, order_by, None)
+        if attr is not None:
+            statement = attr
+
+        return statement
+
+    for col in cols_meta_data:
+        model = col["entity"]
+        attr = getattr(model, order_by, None)
+        if attr is not None:
+            statement = attr
+            break
+
+
+
+    return statement
+
+def add_order_mode(attributes, order_mode):
+    if order_mode == "ASC":
+        return [attributes[0].asc(), attributes[1].asc()]
+
+    return [attributes[0].desc(), attributes[1].desc()]
 
 
 def convert_filters_to_sqlalchemy_statement(args):
