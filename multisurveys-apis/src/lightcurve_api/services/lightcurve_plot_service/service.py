@@ -225,7 +225,7 @@ def default_echarts_options(config_state: ConfigState):
             "orient": "horizontal",
             "feature": {
                 "dataZoom": {"show": True},
-                "dataView": {"show": True},
+                "dataView": {"show": False},
                 "saveAsImage": {"show": True},
             },
         },
@@ -475,7 +475,8 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
         if det.survey_id.lower() == LSST_SURVEY and det.oid != int(config_state.oid):
             continue
 
-
+        
+        
         result.append(
             ChartPoint(
                 det.survey_id,
@@ -491,13 +492,32 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
                     if config_state.flux
                     else det.flux2magnitude_err(config_state.total, config_state.absolute)
                 ),
+                det.flux_sign(config_state.total, config_state.absolute),
+                det.measurement_id if hasattr(det, 'measurement_id') else None,
+                det.objectid if hasattr(det, 'objectid') else None,
+                det.field if hasattr(det, 'field') else None
             )
         )
 
 
+
     # Add second phase, repeating the same points when folding
     if config_state.fold:
-        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
+        result.extend(
+            [
+                ChartPoint(
+                    point.survey, 
+                    point.band, 
+                    point.x + 1, 
+                    point.y, 
+                    point.error,
+                    point.flux_sign,
+                    point.measurement_id,
+                    point.objectid,
+                    point.field
+                    ) for point in result
+            ]
+        )
 
     return result
 
@@ -556,10 +576,26 @@ def create_chart_forced_photometry(
                     if config_state.flux
                     else fphot.flux2magnitude_err(config_state.total, config_state.absolute)
                 ),
+                fphot.measurement_id if hasattr(fphot, 'measurement_id') else None,
+                fphot.objectid if hasattr(fphot, 'objectid') else None,
+                fphot.field if hasattr(fphot, 'field') else None
             )
         )
     if config_state.fold:
-        result.extend([ChartPoint(point.survey, point.band, point.x + 1, point.y, point.error) for point in result])
+        result.extend(
+            [ChartPoint(
+                point.survey, 
+                point.band, 
+                point.x + 1, 
+                point.y, 
+                point.error,
+                point.flux_sign,
+                point.measurement_id,
+                point.objectid,
+                point.field
+            ) for point in result
+            ]
+        )
 
     return result
 
@@ -631,7 +667,7 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
 
     def _add_point_to_group(group: dict, point: ChartPoint):
         max_error = 99999 if config_state.flux else 1
-        point_value = point.point() if not error_bar else point.error_bar(max_error)
+        point_value = point.point(max_error) if not error_bar else point.error_bar(max_error)
         max_brightness, min_brightness = _get_max_and_min_brightness(config_state)
         if _valid_point(point_value, max_brightness, min_brightness):
             group[point.survey][point.band].append(point_value)
@@ -1093,9 +1129,9 @@ def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | No
     def offset_points(points: List[List[float]], config_state: ConfigState) -> List[List[float]]:
 
         if config_state.flux:
-            return [[x, y * (i + 1)] for x, y in points]
+            return [[coords[0], coords[1] * (i + 1), *coords[2:]] for coords in points]
 
-        return [[x, y + i] for x, y in points]
+        return [[coords[0], coords[1] + i, *coords[2:]] for coords in points]
 
     def offset_errors(points: List[dict], config_state: ConfigState) -> List[dict]:
         new_points = []
