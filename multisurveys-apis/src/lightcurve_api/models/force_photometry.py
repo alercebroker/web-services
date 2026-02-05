@@ -27,7 +27,6 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     corrected: bool
     dubious: bool
     parent_candid: Optional[int] = None
-    has_stamp: bool
     field: int
     rcid: int
     rfid: int

@@ -742,10 +742,6 @@
   min-width: max-content
 }
 
-.tw-preflight .tw-min-w-\[300px\] {
-  min-width: 300px
-}
-
 .tw-preflight .tw-max-w-\[200px\] {
   max-width: 200px
 }
@@ -768,18 +764,6 @@
 
 .tw-preflight .tw-max-w-none {
   max-width: none
-}
-
-.tw-preflight .tw-max-w-\[100px\] {
-  max-width: 100px
-}
-
-.tw-preflight .tw-max-w-48 {
-  max-width: 12rem
-}
-
-.tw-preflight .tw-max-w-\[300px\] {
-  max-width: 300px
 }
 
 .tw-preflight .tw-flex-1 {
@@ -1012,20 +996,12 @@
   white-space: nowrap
 }
 
-.tw-preflight .tw-whitespace-normal {
-  white-space: normal
-}
-
 .tw-preflight .tw-whitespace-nowrap {
   white-space: nowrap
 }
 
 .tw-preflight .tw-text-wrap {
   text-wrap: wrap
-}
-
-.tw-preflight .tw-text-balance {
-  text-wrap: balance
 }
 
 .tw-preflight .tw-break-words {

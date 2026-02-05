@@ -262,7 +262,6 @@ def _generate_ztf_forced_photometry(faker: Faker, oid, idx):
         isdiffpos=faker.random_int(),
         corrected=faker.boolean(),
         dubious=faker.boolean(),
-        has_stamp=faker.boolean(),
         field=faker.random_int(),
         rcid=faker.random_int(),
         rfid=faker.random_int(),
