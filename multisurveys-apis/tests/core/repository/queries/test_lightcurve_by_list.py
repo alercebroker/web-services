@@ -231,7 +231,6 @@ def test_get_forced_photometry_by_list(db, faker: Faker):
                     isdiffpos=1,
                     corrected=True,
                     dubious=True,
-                    has_stamp=True,
                     field=1,
                     rcid=1,
                     rfid=1,
