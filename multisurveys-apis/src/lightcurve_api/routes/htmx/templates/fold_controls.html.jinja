@@ -1,7 +1,7 @@
 <div class="tw-row">
   <div class="tw-col-sm-12">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Fold</span>
-    {{ toggle.toggle("fold", "Off", "On", config_state.fold, "Toggle fold")}}
+    {{ toggle.toggle("fold", "Off", "On", config_state.fold, "The period folded light curve, where time is transformed to time modulo the period (phase). Calculated on click.")}}
   </div>
   <div class="tw-col-sm-12">
     <input id="period-slider" type="range" min="0.05" max="500" value="{{config_state.period}}" class="tw-my-2 tw-w-full tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">
@@ -13,7 +13,7 @@
   </div>
   <div class="tw-col-sm-12 tw-mt-2">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Periodogram</span>
-    {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled, "Toggle Periodogram", not config_state.fold)}}
+    {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled, "Show the light curve periodogram. Points on the periodogram can be clicked to update the folded light curve plot.", not config_state.fold)}}
   </div>
 </div>
 
