@@ -333,6 +333,7 @@ export function elementReady(selector) {
 
 function reset_values() {
   window.history.pushState({}, document.title, "/")
+  oids_arr = []
 }
 
 function restore_states(currentStates) {
