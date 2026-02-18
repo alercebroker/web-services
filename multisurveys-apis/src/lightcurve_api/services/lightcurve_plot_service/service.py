@@ -50,19 +50,19 @@ FORCED_PHOTOMETRY = "f. phot"
 ZTF_SURVEY = "ztf"
 LSST_SURVEY = "lsst"
 ZTF_DR_SURVEY = "ztf dr"
-EMPTY = "empty"
+EMPTY = 'empty'
 COLORS = {
     ZTF_SURVEY: {"g": "#56E03A", "r": "#D42F4B", "i": "#F4D617"},
     LSST_SURVEY: {
-        "u": "#56B4E9",  # sky blue
-        "g": "#009E73",  # bluish green
-        "r": "#D55E00",  # vermillion
-        "i": "#E69F00",  # orange
-        "z": "#CC79A7",  # reddish purple
-        "y": "#0072B2",  # blue
+        "u": "#56B4E9", # sky blue
+        "g": "#009E73", # bluish green
+        "r": "#D55E00", # vermillion
+        "i": "#E69F00", # orange
+        "z": "#CC79A7", # reddish purple
+        "y": "#0072B2", # blue
     },
     ZTF_DR_SURVEY: {"g": "#ADA3A3", "r": "#377EB8", "i": "#FF7F00"},
-    EMPTY: {"empty": "#00CBFF"},
+    EMPTY: {"empty" : "#00CBFF"}
 }
 SYMBOLS = {
     ZTF_SURVEY: {
@@ -83,13 +83,15 @@ SYMBOLS = {
         },
         FORCED_PHOTOMETRY: {"symbol": "square"},
     },
-    EMPTY: {EMPTY: {"symbol": "none"}},
+    EMPTY: {
+        EMPTY: {"symbol": "none"}
+    },
 }
 
 
 def create_series(name: str, survey: str, band: str, data: List[List[float]]) -> dict:
-    z_index = 2 if survey == "ztf dr" else 10
-    series_name = name + " " + survey.upper() + ": " + band if survey != "empty" else ""
+    z_index = 2 if survey == 'ztf dr' else 10
+    series_name = name + " " + survey.upper() + ": " + band if survey != 'empty' else ""
 
     return {
         "name": series_name,
@@ -102,7 +104,6 @@ def create_series(name: str, survey: str, band: str, data: List[List[float]]) ->
         "z": z_index,
         "band": band,
     }
-
 
 def create_error_bar_series(name: str, survey: str, band: str, data: List[List[float]]):
     min_point, max_point = _get_min_and_max_points_errors(data)
@@ -134,7 +135,6 @@ def create_error_bar_series(name: str, survey: str, band: str, data: List[List[f
         "max_plot_error": max_point,
     }
 
-
 def _get_min_and_max_points_errors(data: List[List[float]]):
     min_plot_error = None
     max_plot_error = None
@@ -148,13 +148,14 @@ def _get_min_and_max_points_errors(data: List[List[float]]):
             min_plot_error = [mjd, min_]
             max_plot_error = [mjd, max_]
             continue
-
+        
         if min_ < min_plot_error[1]:
             min_plot_error = [mjd, min_]
 
         if max_ > max_plot_error[1]:
             max_plot_error = [mjd, max_]
 
+    
     return min_plot_error, max_plot_error
 
 
@@ -247,9 +248,8 @@ def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., Con
         set_chart_options_non_detections,
         set_chart_options_forced_photometry,
         offset_bands,
-        set_chart_limits,
+        set_chart_limits
     )
-
 
 def update_lightcurve_plot(
     config_state: ConfigState,
@@ -310,10 +310,9 @@ def get_lightcurve(
         periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
 
-
 def get_object_coordinates(result: Result, session_factory: Callable[..., ContextManager[Session]]) -> Result:
     result_copy = result.copy()
-
+    
     object = query_object_by_id(session_factory, result_copy.config_state.oid, result_copy.config_state.survey_id)
     object_model = _parse_object_common(object)
 
@@ -328,7 +327,6 @@ def set_default_echart_options(result: Result) -> Result:
     chart_options = default_echarts_options(result.config_state)
     result_copy.echart_options = chart_options
     return result_copy
-
 
 def set_chart_options_detections(result: Result) -> Result:
     if "detections" not in result.config_state.data_types:
@@ -364,38 +362,39 @@ def set_chart_options_detections(result: Result) -> Result:
 
     return result_copy
 
-
 def set_chart_limits(result: Result):
     result_copy = result.copy()
 
-    # limits of detections errors
+    #limits of detections errors
     pipe(
         result_copy.echart_options,
         curry(_find_chart_min_and_max_limits, config_state=result.config_state),
-        lambda limits_arr: create_series(name="empty", survey="empty", band="empty", data=limits_arr),
+        lambda limits_arr: create_series(name='empty', survey='empty', band='empty', data=limits_arr),
         lambda series_dict: [series_dict],
         lambda series: result_copy.echart_options["series"].extend(series),
     )
+
 
     return result_copy
 
 
 def _find_chart_min_and_max_limits(echarts_options: dict[str, Any], config_state: ConfigState) -> List:
+
     if plots_utils._check_limits_conditions(config_state):
         limits_error_plots_arr = _get_min_and_max_errors(echarts_options)
 
         return limits_error_plots_arr
-
+    
     return []
 
 
 def _get_min_and_max_errors(echarts_options: dict[str, Any]) -> List:
     limits_error_plots_series = []
 
-    for serie in echarts_options["series"]:
-        if "error_bar" in serie:
-            limits_error_plots_series.append(serie["min_plot_error"])
-            limits_error_plots_series.append(serie["max_plot_error"])
+    for serie in echarts_options['series']:
+        if 'error_bar' in serie:
+            limits_error_plots_series.append(serie['min_plot_error'])
+            limits_error_plots_series.append(serie['max_plot_error'])
 
     if not limits_error_plots_series:
         raise ValueError("No error bars found in any series")
@@ -461,22 +460,23 @@ def set_chart_options_forced_photometry(result: Result) -> Result:
 
     return result_copy
 
-
 def create_chart_detections(detections: List[BaseDetection], config_state: ConfigState) -> List[ChartPoint]:
     result: list[ChartPoint] = []
 
     for det in detections:
-        if (det.survey_id.lower() == ZTF_SURVEY) and det.band_name() not in config_state.bands.ztf:
+        if ( det.survey_id.lower() == ZTF_SURVEY ) and det.band_name() not in config_state.bands.ztf:
             continue
         if det.survey_id.lower() == LSST_SURVEY and det.band_name() not in config_state.bands.lsst:
             continue
         if det.survey_id.lower() == ZTF_DR_SURVEY and det.band_name() not in config_state.bands.ztf_dr:
             continue
 
-        # filtro solo det de lsst
+        #filtro solo det de lsst
         if det.survey_id.lower() == LSST_SURVEY and det.oid != int(config_state.oid):
             continue
 
+        
+        
         result.append(
             ChartPoint(
                 det.survey_id,
@@ -493,28 +493,29 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
                     else det.flux2magnitude_err(config_state.total, config_state.absolute)
                 ),
                 det.flux_sign(config_state.total, config_state.absolute),
-                det.measurement_id if hasattr(det, "measurement_id") else None,
-                det.objectid if hasattr(det, "objectid") else None,
-                det.field if hasattr(det, "field") else None,
+                det.measurement_id if hasattr(det, 'measurement_id') else None,
+                det.objectid if hasattr(det, 'objectid') else None,
+                det.field if hasattr(det, 'field') else None
             )
         )
+
+
 
     # Add second phase, repeating the same points when folding
     if config_state.fold:
         result.extend(
             [
                 ChartPoint(
-                    point.survey,
-                    point.band,
-                    point.x + 1,
-                    point.y,
+                    point.survey, 
+                    point.band, 
+                    point.x + 1, 
+                    point.y, 
                     point.error,
                     point.flux_sign,
                     point.measurement_id,
                     point.objectid,
-                    point.field,
-                )
-                for point in result
+                    point.field
+                    ) for point in result
             ]
         )
 
@@ -529,16 +530,16 @@ def create_chart_non_detections(non_detections: List[BaseNonDetection], config_s
     for ndet in non_detections:
         if ndet.survey_id.lower() == ZTF_SURVEY and ndet.band_name() not in config_state.bands.ztf:
             continue
-
+        
         if ndet.survey_id.lower() == ZTF_DR_SURVEY and ndet.band_name() not in config_state.bands.ztf_dr:
             continue
 
         if ndet.survey_id.lower() == LSST_SURVEY and ndet.oid != int(config_state.oid):
             continue
 
-        result.append(
-            ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag(), 0, config_state.flux)
-        )  # Added flux parameter, not pretty surte if from config_state is right
+        
+
+        result.append(ChartPoint(ndet.survey_id, ndet.band_name(), ndet.mjd, ndet.get_mag(), 0))
 
     return result
 
@@ -547,88 +548,82 @@ def create_chart_forced_photometry(
     forced_photometry: List[BaseForcedPhotometry], config_state: ConfigState
 ) -> List[ChartPoint]:
     result = []
+
     for fphot in forced_photometry:
-        if (
-            fphot == LSST_SURVEY
-        ):  # This if statement probably has to be deleted in the future, for now when fphot is ztf we have error in some cases.
-            if fphot.survey_id.lower() == LSST_SURVEY and fphot.band_name() not in config_state.bands.lsst:
-                continue
-            if fphot.survey_id.lower() == ZTF_SURVEY and fphot.band_name() not in config_state.bands.ztf:
-                continue
-            if fphot.survey_id.lower() == ZTF_DR_SURVEY and fphot.band_name() not in config_state.bands.ztf_dr:
-                continue
+        if fphot.survey_id.lower() == LSST_SURVEY and fphot.band_name() not in config_state.bands.lsst:
+            continue
+        if fphot.survey_id.lower() == ZTF_SURVEY and fphot.band_name() not in config_state.bands.ztf:
+            continue
+        if fphot.survey_id.lower() == ZTF_DR_SURVEY and fphot.band_name() not in config_state.bands.ztf_dr:
+            continue
 
-            if fphot.survey_id.lower() == LSST_SURVEY and fphot.oid != int(config_state.oid):
-                continue
 
-            result.append(
-                ChartPoint(
-                    fphot.survey_id,
-                    fphot.band_name(),
-                    fphot.phase(config_state.period) if config_state.fold else fphot.mjd,
-                    (
-                        fphot.magnitude2flux(config_state.total, config_state.absolute)
-                        if config_state.flux
-                        else fphot.flux2magnitude(config_state.total, config_state.absolute)
-                    ),
-                    (
-                        fphot.magnitude2flux_err(config_state.total, config_state.absolute)
-                        if config_state.flux
-                        else fphot.flux2magnitude_err(config_state.total, config_state.absolute)
-                    ),
-                    fphot.measurement_id if hasattr(fphot, "measurement_id") else None,
-                    fphot.objectid if hasattr(fphot, "objectid") else None,
-                    fphot.field if hasattr(fphot, "field") else None,
-                )
+        if fphot.survey_id.lower() == LSST_SURVEY and fphot.oid != int(config_state.oid):
+            continue
+
+        result.append(
+            ChartPoint(
+                fphot.survey_id,
+                fphot.band_name(),
+                fphot.phase(config_state.period) if config_state.fold else fphot.mjd,
+                (
+                    fphot.magnitude2flux(config_state.total, config_state.absolute)
+                    if config_state.flux
+                    else fphot.flux2magnitude(config_state.total, config_state.absolute)
+                ),
+                (
+                    fphot.magnitude2flux_err(config_state.total, config_state.absolute)
+                    if config_state.flux
+                    else fphot.flux2magnitude_err(config_state.total, config_state.absolute)
+                ),
+                fphot.measurement_id if hasattr(fphot, 'measurement_id') else None,
+                fphot.objectid if hasattr(fphot, 'objectid') else None,
+                fphot.field if hasattr(fphot, 'field') else None
             )
+        )
     if config_state.fold:
         result.extend(
-            [
-                ChartPoint(
-                    point.survey,
-                    point.band,
-                    point.x + 1,
-                    point.y,
-                    point.error,
-                    point.flux_sign,
-                    point.measurement_id,
-                    point.objectid,
-                    point.field,
-                )
-                for point in result
+            [ChartPoint(
+                point.survey, 
+                point.band, 
+                point.x + 1, 
+                point.y, 
+                point.error,
+                point.flux_sign,
+                point.measurement_id,
+                point.objectid,
+                point.field
+            ) for point in result
             ]
         )
 
     return result
 
+def set_chart_options_external_sources(result: Result) -> Result:
+    result_copy = result.copy()
 
-# Apparently this function is not used
-#
-#
-# def set_chart_options_external_sources(result: Result) -> Result:
-#    result_copy = result.copy()
-#
-#    if len(result_copy.lightcurve.detections) == 0 or not result.config_state.external_sources.enabled:
-#        return result_copy
-#
-#    meanra = result.config_state.meanra
-#    meandec = result.config_state.meandec
-#
-#    with httpx.Client() as client:
-#        result_copy.lightcurve.detections.extend(
-#            pipe(
-#                client.get(
-#                    "https://api.alerce.online/ztf/dr/v1/light_curve/",
-#                    params={"ra": meanra, "dec": meandec, "radius": 1.5},
-#                ).json(),
-#                curry(
-#                    parse_ztf_dr_detection,
-#                    object_ids=result_copy.config_state.external_sources.selected_objects,
-#                ),
-#            )
-#        )
-#
-#    return result_copy
+    if len(result_copy.lightcurve.detections) == 0 or not result.config_state.external_sources.enabled:
+        return result_copy
+
+
+    meanra = result.config_state.meanra
+    meandec = result.config_state.meandec
+
+    with httpx.Client() as client:
+        result_copy.lightcurve.detections.extend(
+            pipe(
+                client.get(
+                    "https://api.alerce.online/ztf/dr/v1/light_curve/",
+                    params={"ra": meanra, "dec": meandec, "radius": 1.5},
+                ).json(),
+                curry(
+                    parse_ztf_dr_detection,
+                    object_ids=result_copy.config_state.external_sources.selected_objects,
+                ),
+            )
+        )
+
+    return result_copy
 
 
 def get_ztf_dr_objects(
@@ -681,17 +676,15 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
 
     return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
 
-
 def _get_max_and_min_brightness(config_state: ConfigState):
     max_brightness = 999999 if config_state.flux else 99
     min_brightness = -999999 if config_state.flux else 0
 
-    if config_state.survey_id == "lsst":
+    if config_state.survey_id == 'lsst':
         max_brightness = 9999999 if config_state.flux else 99
         min_brightness = -9999999 if config_state.flux else 0
 
     return max_brightness, min_brightness
-
 
 def _valid_point(point: List[float], max_brightness: float, min_brightness: float) -> bool:
     valid = True
@@ -701,6 +694,7 @@ def _valid_point(point: List[float], max_brightness: float, min_brightness: floa
 
     if point[1] <= min_brightness:
         valid = False
+
 
     return valid
 
@@ -724,6 +718,8 @@ def _transform_to_series(
         def _process_band(band_data: tuple[str, List[List[float]]]):
             band, data = band_data
 
+
+
             return (
                 create_series(series_type, survey, band, data)
                 if not error_bar
@@ -746,12 +742,13 @@ def _data_to_csv(data_list, fieldnames: set):
     return output.getvalue()
 
 
-def _get_priority_columns(survey: str, type: str):
-    if survey == "lsst":
-        if type == "detection":
+def _get_priority_columns(survey:str, type:str):
+
+    if survey == 'lsst':
+        if type == 'detection':
             return [
                 "oid",
-                "surevey_id",
+                "surevey_id", 
                 "measurement_id",
                 "mjd",
                 "ra",
@@ -767,14 +764,14 @@ def _get_priority_columns(survey: str, type: str):
                 "detector",
                 "diaObjectId",
                 "ssObjectId",
-                "has_stamp",
+                "has_stamp"
             ]
-
-        if type == "fp":
+        
+        if type == 'fp':
             return [
                 "oid",
                 "survey_id",
-                "measurement_id",
+                "measurement_id", 
                 "mjd",
                 "ra",
                 "dec",
@@ -787,11 +784,11 @@ def _get_priority_columns(survey: str, type: str):
                 "visit",
                 "detector",
                 "timeProcessedMjdTai",
-                "timeWithdrawnMjdTai",
+                "timeWithdrawnMjdTai"
             ]
 
-    if survey == "ztf":
-        if type == "detection":
+    if survey == 'ztf':
+        if type == 'detection':
             return [
                 "oid",
                 "sid",
@@ -823,9 +820,9 @@ def _get_priority_columns(survey: str, type: str):
                 "rfid",
                 "corrected",
                 "dubious",
-                "parent_candid",
+                "parent_candid"
             ]
-        if type == "fp":
+        if type == 'fp':
             return [
                 "oid",
                 "sid",
@@ -868,14 +865,17 @@ def _get_priority_columns(survey: str, type: str):
                 "magnr",
                 "sigmagnr",
                 "chinr",
-                "sharpnr",
+                "sharpnr"
             ]
 
+    
     return None
 
 
+
 def _order_detections_columns_csv(fieldnames: set):
-    priority_columns = _get_priority_columns("lsst", "detection")
+
+    priority_columns = _get_priority_columns('lsst','detection')
     priority = [col for col in priority_columns if col in fieldnames]
     other_columns = sorted([col for col in fieldnames if col not in priority])
 
@@ -883,7 +883,7 @@ def _order_detections_columns_csv(fieldnames: set):
 
 
 def _order_fp_columns_csv(fieldnames: set):
-    priority_columns = _get_priority_columns("lsst", "fp")
+    priority_columns = _get_priority_columns('lsst', 'fp')
     priority = [col for col in priority_columns if col in fieldnames]
     other_columns = sorted([col for col in fieldnames if col not in priority])
 
@@ -894,30 +894,31 @@ def _parse_data_to_model_csv(data):
     parsed_data = []
     for detection in data:
         detection_dict = detection.model_dump()
-        band_index = detection_dict["band"]
-        band_name = detection_dict["band_map"][band_index]
-        detection_dict["band_name"] = band_name
+        band_index = detection_dict['band']
+        band_name = detection_dict['band_map'][band_index]
+        detection_dict['band_name'] = band_name
 
-        if detection.survey_id == "lsst":
+        if detection.survey_id == 'lsst':
             parsed_data.append(LsstDetectionCsv(**detection_dict))
         # if detection.survey_id == 'ztf':
         #     parsed_data.append(ZTFDetectionCSV(**detection_dict))
 
-    return parsed_data
 
+    return parsed_data
 
 def _parse_fp_to_model_csv(fp_data):
     parsed_data = []
     for fp in fp_data:
         fp_dict = fp.model_dump()
-        band_index = fp_dict["band"]
-        band_name = fp_dict["band_map"][band_index]
-        fp_dict["band_name"] = band_name
+        band_index = fp_dict['band']
+        band_name = fp_dict['band_map'][band_index]
+        fp_dict['band_name'] = band_name
 
-        if fp.survey_id == "lsst":
+        if fp.survey_id == 'lsst':
             parsed_data.append(LsstForcedPhotometryCsv(**fp_dict))
         # if fp.survey_id == 'ztf':
         #     parsed_data.append(ZtfForcedPhotometryCsv(**fp_dict))
+
 
     return parsed_data
 
@@ -928,6 +929,7 @@ def filter_data_by_oid(data, oid):
 
     return data_sorted_by_mjd
 
+    
 
 def zip_lightcurve(detections, non_detections, forced_photometry, oid):
     zip_buffer = io.BytesIO()
@@ -936,18 +938,17 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
             filtered_detections_sorted_by_mjd = filter_data_by_oid(detections, oid)
 
             data = _parse_data_to_model_csv(filtered_detections_sorted_by_mjd)
-
-            fieldnames_list = set(
-                list(ZTFDetectionCSV.model_fields.keys()) + list(LsstDetectionCsv.model_fields.keys())
-            )
-
+            
+            fieldnames_list = set(list(ZTFDetectionCSV.model_fields.keys()) + list(LsstDetectionCsv.model_fields.keys()))
+            
             ordered_columns = _order_detections_columns_csv(fieldnames_list)
-
+            
             detections_csv = _data_to_csv(
                 data,
                 ordered_columns,
             )
 
+            
             zip_file.writestr("detections.csv", detections_csv)
 
         if non_detections:
@@ -959,13 +960,15 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
 
             parse_fp = _parse_fp_to_model_csv(filtered_ph_sorted_by_mjd)
 
-            fieldnames_list = set(
-                list(ZtfForcedPhotometryCsv.model_fields.keys()) + list(LsstForcedPhotometryCsv.model_fields.keys())
-            )
+            fieldnames_list =  set(list(ZtfForcedPhotometryCsv.model_fields.keys()) + list(LsstForcedPhotometryCsv.model_fields.keys()))
 
             ordered_columns = _order_fp_columns_csv(fieldnames_list)
 
-            forced_photometry_csv = _data_to_csv(parse_fp, ordered_columns)
+            forced_photometry_csv = _data_to_csv(
+                parse_fp,
+                ordered_columns
+            )
+
 
             zip_file.writestr("forced_photometry.csv", forced_photometry_csv)
 
@@ -1026,9 +1029,13 @@ def offset_bands(result: Result) -> Result:
         for sseries in sdata:
             new_series.extend(
                 _apply_offset(
-                    i * result.config_state.offset_num, sseries, error_bars.get(sseries["name"]), result.config_state
+                    i * result.config_state.offset_num,
+                    sseries,
+                    error_bars.get(sseries["name"]),
+                    result.config_state
                 )
             )
+
 
     result_copy.echart_options["series"] = new_series
 
@@ -1088,6 +1095,7 @@ def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dic
 
 
 def _multiply_coord(index: int, point: List) -> List:
+
     multiply_coord = [
         {
             "coord": [point[0]["coord"][0], point[0]["coord"][1] * (index + 1)],
@@ -1100,7 +1108,6 @@ def _multiply_coord(index: int, point: List) -> List:
     ]
 
     return multiply_coord
-
 
 def _add_constant_in_coord(index: int, point: List) -> List:
     add_constant = [
@@ -1116,13 +1123,11 @@ def _add_constant_in_coord(index: int, point: List) -> List:
 
     return add_constant
 
-
-def _apply_offset(
-    i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | None, config_state: ConfigState
-) -> List[Dict[str, Any]]:
+def _apply_offset(i: int, series: Dict[str, Any], error_bar: Dict[str, Any] | None, config_state: ConfigState) -> List[Dict[str, Any]]:
     """Return a list containing the offset series and optional error bar."""
 
     def offset_points(points: List[List[float]], config_state: ConfigState) -> List[List[float]]:
+
         if config_state.flux:
             return [[coords[0], coords[1] * (i + 1), *coords[2:]] for coords in points]
 
@@ -1140,15 +1145,17 @@ def _apply_offset(
             new_points.append(modify_point)
 
             min_point, max_point = _get_min_and_max_points(modify_point, min_point, max_point)
-
+        
         return new_points, min_point, max_point
+
 
     error_tag_name = f"{error_bar['name']} + {i}"
     tag_name = f"{series['name']} + {i}"
 
-    if config_state.flux:
+    if config_state.flux: 
         tag_name = f"{series['name']} * {(i + 1)}"
         error_tag_name = f"{error_bar['name']} * {(i + 1)}"
+
 
     updated_series = {
         **series,
@@ -1159,6 +1166,8 @@ def _apply_offset(
     outputs = [updated_series]
 
     error_data, min_point, max_point = offset_errors(error_bar["markLine"]["data"], config_state)
+
+
 
     if error_bar is not None:
         updated_error = {
@@ -1171,8 +1180,8 @@ def _apply_offset(
             "name": error_tag_name,
         }
 
-        updated_error["min_plot_error"] = min_point
-        updated_error["max_plot_error"] = max_point
+        updated_error['min_plot_error'] = min_point
+        updated_error['max_plot_error'] = max_point
         outputs.append(updated_error)
 
     return outputs
@@ -1180,13 +1189,13 @@ def _apply_offset(
 
 def _get_min_and_max_points(point, min, max):
     if min == None and max == None:
-        min = point[0]["coord"]
-        max = point[1]["coord"]
+        min = point[0]['coord']
+        max = point[1]['coord']
 
-    if min[1] > point[0]["coord"][1]:
-        min = point[0]["coord"]
+    if min[1] > point[0]['coord'][1]:
+        min = point[0]['coord']
 
-    if max[1] < point[1]["coord"][1]:
-        max = point[1]["coord"]
+    if max[1] < point[1]['coord'][1]:
+        max = point[1]['coord']
 
     return min, max
