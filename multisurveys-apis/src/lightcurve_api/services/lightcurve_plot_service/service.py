@@ -287,6 +287,11 @@ def validate_config_state(config_state: ConfigState) -> ConfigState:
 
     if config_state.fold:
         config_state.total = True
+    
+    # Redshift validation to avoid inf/NaN in plots
+    # Distance modulus is not defined for redshift <= 0
+    if config_state.redshift <= 0:
+        config_state.redshift = 0.0001
 
     return config_state
 
@@ -483,16 +488,16 @@ def create_chart_detections(detections: List[BaseDetection], config_state: Confi
                 det.band_name(),
                 det.phase(config_state.period) if config_state.fold else det.mjd,
                 (
-                    det.magnitude2flux(config_state.total, config_state.absolute)
+                    det.magnitude2flux(config_state.total, config_state.absolute, config_state.redshift)
                     if config_state.flux
-                    else det.flux2magnitude(config_state.total, config_state.absolute)
+                    else det.flux2magnitude(config_state.total, config_state.absolute, config_state.redshift)
                 ),
                 (
-                    det.magnitude2flux_err(config_state.total, config_state.absolute)
+                    det.magnitude2flux_err(config_state.total, config_state.absolute, config_state.redshift)
                     if config_state.flux
-                    else det.flux2magnitude_err(config_state.total, config_state.absolute)
+                    else det.flux2magnitude_err(config_state.total, config_state.absolute, config_state.redshift)
                 ),
-                det.flux_sign(config_state.total, config_state.absolute),
+                det.flux_sign(config_state.total, config_state.absolute, config_state.redshift),
                 det.measurement_id if hasattr(det, 'measurement_id') else None,
                 det.objectid if hasattr(det, 'objectid') else None,
                 det.field if hasattr(det, 'field') else None
@@ -567,15 +572,16 @@ def create_chart_forced_photometry(
                 fphot.band_name(),
                 fphot.phase(config_state.period) if config_state.fold else fphot.mjd,
                 (
-                    fphot.magnitude2flux(config_state.total, config_state.absolute)
+                    fphot.magnitude2flux(config_state.total, config_state.absolute, config_state.redshift)
                     if config_state.flux
-                    else fphot.flux2magnitude(config_state.total, config_state.absolute)
+                    else fphot.flux2magnitude(config_state.total, config_state.absolute, config_state.redshift)
                 ),
                 (
-                    fphot.magnitude2flux_err(config_state.total, config_state.absolute)
+                    fphot.magnitude2flux_err(config_state.total, config_state.absolute, config_state.redshift)
                     if config_state.flux
-                    else fphot.flux2magnitude_err(config_state.total, config_state.absolute)
+                    else fphot.flux2magnitude_err(config_state.total, config_state.absolute, config_state.redshift)
                 ),
+                fphot.flux_sign(config_state.total, config_state.absolute, config_state.redshift),
                 fphot.measurement_id if hasattr(fphot, 'measurement_id') else None,
                 fphot.objectid if hasattr(fphot, 'objectid') else None,
                 fphot.field if hasattr(fphot, 'field') else None
