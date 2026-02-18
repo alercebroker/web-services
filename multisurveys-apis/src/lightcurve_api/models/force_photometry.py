@@ -8,11 +8,6 @@ from astropy.coordinates import Distance
 import astropy.units as u
 
 
-REDSHIFT = (
-    0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
-)
-
-
 class ZtfForcedPhotometry(BaseForcedPhotometry):
     oid: int
     survey_id: str
@@ -73,20 +68,30 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
 
         return values
 
-    def magnitude2flux(self, total: bool) -> float:
+    def magnitude2flux(self, total: bool, absolute: bool, redshift: float) -> float:
         mag = self.mag_corr if total else self.mag
+        if absolute:
+            d = Distance(redshift, unit=u.lyr)  # type: ignore
+            mag = mag - d.distmod.value
         flux = 10 ** (-0.4 * (mag - 23.9))
         return flux * 1000  # convert to nJy
 
-    def magnitude2flux_err(self, total: bool) -> float:
+    def magnitude2flux_err(self, total: bool, absolute: bool, redshift: float) -> float:
         err = self.e_mag_corr if total else self.e_mag
-        return abs(err) * abs(self.magnitude2flux(total))
+        return abs(err) * abs(self.magnitude2flux(total, absolute, redshift))
 
-    def flux2magnitude(self, total: bool) -> float:
-        return self.mag_corr if total else self.mag
+    def flux2magnitude(self, total: bool, absolute: bool, redshift: float) -> float:
+        mag = self.mag_corr if total else self.mag
+        if absolute:
+            d = Distance(redshift, unit=u.lyr)  # type: ignore
+            mag = mag - d.distmod.value
+        return mag
 
-    def flux2magnitude_err(self, total: bool) -> float:
+    def flux2magnitude_err(self, total: bool, absolute: bool, redshift: float) -> float:
         return self.e_mag_corr if total else self.e_mag
+
+    def flux_sign(self, total: bool, absolute: bool, redshift: float) -> str:
+        return '+' if self.isdiffpos >= 0 else '-'
 
 
 class LsstForcedPhotometry(BaseForcedPhotometry):
@@ -118,11 +123,11 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
         return values
 
-    def magnitude2flux(self, total: bool, absolute: bool) -> float:
+    def magnitude2flux(self, total: bool, absolute: bool, redshift: float) -> float:
         flux = self.scienceFlux if total else self.psfFlux
 
         if absolute:
-            d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+            d = Distance(redshift, unit=u.lyr)  # type: ignore
             flux = self.scienceFlux if total else self.psfFlux
             absflux = math.fabs(flux)
             sign = absflux / flux
@@ -131,15 +136,15 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
             
         return flux
 
-    def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
-        flux = self.magnitude2flux(total, absolute)
-        magnitude_error = self.flux2magnitude_err(total, absolute)
+    def magnitude2flux_err(self, total: bool, absolute: bool, redshift: float) -> float:
+        flux = self.magnitude2flux(total, absolute, redshift)
+        magnitude_error = self.flux2magnitude_err(total, absolute, redshift)
 
         return math.log(10.0)  * flux / 2.5 * magnitude_error
 
-    def flux2magnitude(self, total: bool, absolute: bool) -> float:
+    def flux2magnitude(self, total: bool, absolute: bool, redshift: float) -> float:
         try:
-            d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
+            d = Distance(redshift, unit=u.lyr)  # type: ignore
             flux = self.scienceFlux if total else self.psfFlux
 
             if flux < 0:
@@ -158,7 +163,7 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
         return mag - d.distmod.value if absolute else mag
 
-    def flux2magnitude_err(self, total: bool, absolute: bool) -> float:
+    def flux2magnitude_err(self, total: bool, absolute: bool, redshift: float) -> float:
         try:
             flux = self.scienceFlux if total else self.psfFlux
             flux_err = self.scienceFluxErr if total else self.psfFluxErr
@@ -178,7 +183,7 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
         return magnitude_error
 
-    def flux_sign(self, total: bool) -> str:
+    def flux_sign(self, total: bool, absolute: bool, redshift: float) -> str:
         flux = self.scienceFlux if total else self.psfFlux
 
         return '-' if flux < 0 else '+'
