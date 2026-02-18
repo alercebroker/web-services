@@ -9,6 +9,7 @@
   hx-swap="innerHTML"
   hx-trigger="change delay:200ms"
   class="tw-max-h-fit tw-w-full"
+  onsubmit="return false;"
 >
   <input type="hidden" name="oid" value="{{ config_state.oid }}">
   <input type="hidden" name="survey_id" value="{{ config_state.survey_id }}">
@@ -47,15 +48,31 @@
     <div>
       {{ toggle.toggle("absolute", "Apparent", "Absolute", config_state.absolute, "Toggle absolute") }}
     </div>
+    <div class="tw-flex tw-items-center tw-gap-2">
+      <span class="tw-text-sm tw-font-semibold tw-text-gray-900 dark:tw-text-gray-100">Redshift</span>
+      <input 
+        name="redshift" 
+        type="number" 
+        step="0.01" 
+        min="-0.5" 
+        max="15" 
+        value="{{ config_state.redshift }}" 
+        class="tw-w-16 tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded-md tw-px-2 tw-py-1 tw-text-sm tw-bg-white dark:tw-bg-gray-800 tw-text-gray-900 dark:tw-text-gray-100"
+        onkeydown="if(event.key === 'Enter') { event.preventDefault(); this.blur(); return false; }"
+      >
+    </div>
     {% endif %}
 
     <div class="tw-flex tw-flex-wrap tw-justify-center tw-items-center">
       <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">External</span>
       {{ toggle.toggle("external_sources.enabled", "Off", "On", config_state.external_sources.enabled, "Show light curves from available external sets: ZTF Data Release 5.") }}
       <button 
+        type="button"
         class="tw-ml-2 tw-p-1.5 tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded-md hover:tw-bg-gray-50 dark:hover:tw-bg-gray-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2 dark:focus:tw-ring-offset-gray-800"
         aria-label="Filter external sources"
         hx-post="{{API_URL}}/htmx/external_sources"
+        hx-target="this"
+        hx-swap="outerHTML"
       >
         <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
