@@ -1,5 +1,5 @@
 {% if detections %}
-{% set not_corrected = detections[0].flux2magnitude(True, False) == 0 %}
+{% set not_corrected = detections[0].flux2magnitude(True, config_state.absolute, config_state.redshift) == 0 %}
 {% else %}
 {% set not_corrected = True %}
 {% endif %}
