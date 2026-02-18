@@ -37,6 +37,7 @@ class ConfigState(BaseModel):
     flux: bool = False
     absolute: bool = False
     total: bool = False
+    redshift: float = 0.3
     external_sources: ExternalSourceConfig = ExternalSourceConfig(enabled=False)
     fold: bool = False
     offset_bands: bool = False
