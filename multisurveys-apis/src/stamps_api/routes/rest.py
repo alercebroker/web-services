@@ -16,11 +16,11 @@ async def stamp(
     stamp_type: str,
     file_format: str,
     survey_id: str,
+    is_compressed: bool = True,
 ):
     handler = handler_selector(survey_id)()
-
     _, file_buffer, mime = handler.get_stamp(
-        oid, measurement_id, stamp_type, file_format
+        oid, measurement_id, stamp_type, file_format, is_compressed
     )
 
     return Response(content=file_buffer.getvalue(), media_type=mime)
