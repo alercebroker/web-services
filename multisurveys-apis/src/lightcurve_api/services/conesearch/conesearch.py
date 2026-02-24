@@ -86,14 +86,16 @@ def get_non_detections(session_factory: Callable[..., ContextManager[Session]]):
 def get_forced_photometry(session_factory: Callable[..., ContextManager[Session]]):
     def _get(args: Tuple[Lightcurve, dict]) -> Tuple[Lightcurve, dict]:
         result, object_ids_by_survey = args
-
         for survey_id, object_ids in object_ids_by_survey.items():
-            result.forced_photometry.extend(
-                lightcurve_service.get_forced_photometry_by_list(object_ids, survey_id, session_factory)
+            raw_data = lightcurve_service.get_forced_photometry_by_list(
+                object_ids, survey_id, session_factory
             )
-
+            filtered_data = [
+                obs for obs in raw_data 
+                if obs.psfFlux != 0.0
+            ]
+            result.forced_photometry.extend(filtered_data)
         return result, object_ids_by_survey
-
     return _get
 
 
