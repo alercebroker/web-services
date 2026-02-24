@@ -38,6 +38,18 @@ def conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
     return _conesearch
 
 
+
+def dummy_conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
+    def _conesearch(args: Tuple[int64, float, int]) -> List[Object]:
+        oid, radius, neighbors = args
+        stmt = select(Object).where(Object.oid == oid.item())
+        with session_factory() as session:
+            result = session.execute(stmt, {"radius": radius}).all()
+            return [row[0] for row in result]
+
+    return _conesearch
+
+
 def _build_statement_oid(oid: int64, neighbors: int):
     # Create aliases for the Object table
     center_obj = aliased(Object, name="center")
@@ -52,3 +64,5 @@ def _build_statement_oid(oid: int64, neighbors: int):
         .order_by(asc(text("q3c_dist(target.meanra, target.meandec, center.meanra, center.meandec)")))
         .limit(neighbors)
     )
+
+ 
