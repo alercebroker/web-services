@@ -47,39 +47,42 @@ async def get_stamp_card(
         survey_id=survey_id,
         session_factory=request.app.state.psql_session,
     )
+    detections.sort(key=lambda x: x.mjd)
     selected_measurement_id = detections[0].measurement_id
     next_measurement_id = detections[min(1, len(detections) - 1)].measurement_id
     has_stamp_selected_measurement_id = has_stamp_for_measurement_id(detections, selected_measurement_id)
-    
+
     if has_stamp_for_measurement_id:
         stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
         stamps_fits = handler.get_all_stamps(oid, selected_measurement_id, "fits")
 
         context = build_image_context(stamps, stamps_fits)
-    context.update({
-        "request": request,
-        "oid": oid,
-        "survey_id": survey_id,
-        "detections": [d.to_json() for d in detections],
-        "selected_measurement_id": str(selected_measurement_id), 
-        "prv_measurement_id": str(selected_measurement_id),
-        "nxt_measurement_id": str(next_measurement_id),
-        "has_stamp_selected_measurement_id": has_stamp_selected_measurement_id,
-    })
+
+    context.update(
+        {
+            "request": request,
+            "oid": oid,
+            "survey_id": survey_id,
+            "detections": [d.to_json() for d in detections],
+            "selected_measurement_id": str(selected_measurement_id),
+            "prv_measurement_id": str(selected_measurement_id),
+            "nxt_measurement_id": str(next_measurement_id),
+            "has_stamp_selected_measurement_id": has_stamp_selected_measurement_id,
+        }
+    )
     return templates.TemplateResponse(
-      name='stamps_layout.html.jinja',
-      context=context,
+        name="stamps_layout.html.jinja",
+        context=context,
     )
 
 
 @router.post("/update_stamp_card")
-async def post_stamp_card(
-    request: Request,
-    post_input: PostRequestInputModel
-):
+async def post_stamp_card(request: Request, post_input: PostRequestInputModel):
     handler = handler_selector(post_input.survey_id)()
     context = {}
-    has_stamp_selected_measurement_id = has_stamp_for_measurement_id(post_input.detections_list, post_input.measurement_id)
+    has_stamp_selected_measurement_id = has_stamp_for_measurement_id(
+        post_input.detections_list, post_input.measurement_id
+    )
     prv_measurement_id, nxt_measurement_id = find_prv_and_nxt_measurement_ids(
         post_input.detections_list,
         selected_measurement_id=post_input.measurement_id,
@@ -89,41 +92,47 @@ async def post_stamp_card(
         stamps_fits = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "fits")
         context = build_image_context(stamps, stamps_fits)
 
-    context.update({
-        "request": request,
-        "oid": post_input.oid,
-        "survey_id": post_input.survey_id,
-        "detections": post_input.detections_list,
-        "selected_measurement_id": str(post_input.measurement_id),
-        "prv_measurement_id": str(prv_measurement_id),
-        "nxt_measurement_id": str(nxt_measurement_id),
-        "has_stamp_selected_measurement_id": has_stamp_selected_measurement_id,
-    })
+    context.update(
+        {
+            "request": request,
+            "oid": post_input.oid,
+            "survey_id": post_input.survey_id,
+            "detections": post_input.detections_list,
+            "selected_measurement_id": str(post_input.measurement_id),
+            "prv_measurement_id": str(prv_measurement_id),
+            "nxt_measurement_id": str(nxt_measurement_id),
+            "has_stamp_selected_measurement_id": has_stamp_selected_measurement_id,
+        }
+    )
 
     return templates.TemplateResponse(
-      name='stamps_card.html.jinja',
-      context=context,
+        name="stamps_card.html.jinja",
+        context=context,
     )
+
 
 def build_image_context(stamps: dict, stamps_fits: dict) -> dict:
     return {
         # Images for explorer
-        "science_mime": stamps['cutoutScience']['mime'],
-        "science_img": base64.b64encode(stamps['cutoutScience']['file']).decode("utf-8"),
-        "template_mime": stamps['cutoutTemplate']['mime'],
-        "template_img": base64.b64encode(stamps['cutoutTemplate']['file']).decode("utf-8"),
-        "difference_mime": stamps['cutoutDifference']['mime'],
-        "difference_img": base64.b64encode(stamps['cutoutDifference']['file']).decode("utf-8"),
+        "science_mime": stamps["cutoutScience"]["mime"],
+        "science_img": base64.b64encode(stamps["cutoutScience"]["file"]).decode("utf-8"),
+        "template_mime": stamps["cutoutTemplate"]["mime"],
+        "template_img": base64.b64encode(stamps["cutoutTemplate"]["file"]).decode("utf-8"),
+        "difference_mime": stamps["cutoutDifference"]["mime"],
+        "difference_img": base64.b64encode(stamps["cutoutDifference"]["file"]).decode("utf-8"),
         # Images for download
-        "science_mime_fits": stamps_fits['cutoutScience']['mime'],
-        "science_img_fits": base64.b64encode(stamps_fits['cutoutScience']['file']).decode("utf-8"),
-        "template_mime_fits": stamps_fits['cutoutTemplate']['mime'],
-        "template_img_fits": base64.b64encode(stamps_fits['cutoutTemplate']['file']).decode("utf-8"),
-        "difference_mime_fits": stamps_fits['cutoutDifference']['mime'],
-        "difference_img_fits": base64.b64encode(stamps_fits['cutoutDifference']['file']).decode("utf-8"),
+        "science_mime_fits": stamps_fits["cutoutScience"]["mime"],
+        "science_img_fits": base64.b64encode(stamps_fits["cutoutScience"]["file"]).decode("utf-8"),
+        "template_mime_fits": stamps_fits["cutoutTemplate"]["mime"],
+        "template_img_fits": base64.b64encode(stamps_fits["cutoutTemplate"]["file"]).decode("utf-8"),
+        "difference_mime_fits": stamps_fits["cutoutDifference"]["mime"],
+        "difference_img_fits": base64.b64encode(stamps_fits["cutoutDifference"]["file"]).decode("utf-8"),
     }
 
-def find_prv_and_nxt_measurement_ids(detections: list[dict], selected_measurement_id: int) -> tuple[int | None, int | None]:
+
+def find_prv_and_nxt_measurement_ids(
+    detections: list[dict], selected_measurement_id: int
+) -> tuple[int | None, int | None]:
     prv_id = selected_measurement_id
     nxt_id = selected_measurement_id
     for idx, det in enumerate(detections):
@@ -135,13 +144,13 @@ def find_prv_and_nxt_measurement_ids(detections: list[dict], selected_measuremen
             break
     return prv_id, nxt_id
 
+
 def has_stamp_for_measurement_id(detections, selected_measurement_id):
     if isinstance(detections[0], dict):
         for det in detections:
-            if int(det['measurement_id']) == selected_measurement_id:
-                return det['has_stamp']
+            if int(det["measurement_id"]) == selected_measurement_id:
+                return det["has_stamp"]
     else:
         for det in detections:
-            if det.__dict__['measurement_id'] == selected_measurement_id:
-                return det.__dict__['has_stamp']
-
+            if det.__dict__["measurement_id"] == selected_measurement_id:
+                return det.__dict__["has_stamp"]
