@@ -47,7 +47,7 @@ def conesearch_oid(
         pipe(
             (oid, radius, neighbors),
             validate_oid_params,
-            queries.conesearch_oid(session_factory),
+            queries.dummy_conesearch_oid(session_factory),
             parsesapi_objects,
         ),
     )
