@@ -52,7 +52,7 @@ async def get_stamp_card(
     next_measurement_id = detections[min(1, len(detections) - 1)].measurement_id
     has_stamp_selected_measurement_id = has_stamp_for_measurement_id(detections, selected_measurement_id)
 
-    if has_stamp_for_measurement_id:
+    if has_stamp_selected_measurement_id:
         stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
         stamps_fits = handler.get_all_stamps(oid, selected_measurement_id, "fits")
 
