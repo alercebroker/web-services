@@ -71,7 +71,7 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     def magnitude2flux(self, total: bool, absolute: bool, redshift: float) -> float:
         mag = self.mag_corr if total else self.mag
         if absolute:
-            d = Distance(redshift, unit=u.lyr)  # type: ignore
+            d = Distance(z=redshift)
             mag = mag - d.distmod.value
         flux = 10 ** (-0.4 * (mag - 23.9))
         return flux * 1000  # convert to nJy
@@ -83,7 +83,7 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     def flux2magnitude(self, total: bool, absolute: bool, redshift: float) -> float:
         mag = self.mag_corr if total else self.mag
         if absolute:
-            d = Distance(redshift, unit=u.lyr)  # type: ignore
+            d = Distance(z=redshift)
             mag = mag - d.distmod.value
         return mag
 
@@ -127,7 +127,7 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
         flux = self.scienceFlux if total else self.psfFlux
 
         if absolute:
-            d = Distance(redshift, unit=u.lyr)  # type: ignore
+            d = Distance(z=redshift)
             flux = self.scienceFlux if total else self.psfFlux
             absflux = math.fabs(flux)
             sign = absflux / flux
@@ -144,7 +144,7 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
     def flux2magnitude(self, total: bool, absolute: bool, redshift: float) -> float:
         try:
-            d = Distance(redshift, unit=u.lyr)  # type: ignore
+            d = Distance(z=redshift)
             flux = self.scienceFlux if total else self.psfFlux
 
             if flux < 0:

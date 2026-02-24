@@ -83,7 +83,7 @@ class ztfDetection(BaseDetection):
         Returns:
             Calculated flux value
         """
-        d = Distance(redshift, unit=u.lyr)  # type: ignore
+        d = Distance(z=redshift)
         mag = self.magpsf_corr if total else self.magpsf
         # m = M + mu; where M is absolute magnitude
         mag = mag - d.distmod.value if absolute else mag
@@ -116,7 +116,7 @@ class ztfDetection(BaseDetection):
         Returns:
             Calculated magnitude value
         """
-        d = Distance(redshift, unit=u.lyr)  # type: ignore
+        d = Distance(z=redshift)
         mag = self.magpsf_corr if total else self.magpsf
         return mag - d.distmod.value if absolute else mag
 
@@ -280,7 +280,7 @@ class LsstDetection(BaseDetection):
         flux = self.scienceFlux if total else self.psfFlux
 
         if absolute:
-            d = Distance(redshift, unit=u.lyr)  # type: ignore
+            d = Distance(z=redshift)
             flux = self.scienceFlux if total else self.psfFlux
             absflux = math.fabs(flux)
             sign = absflux / flux
@@ -320,7 +320,7 @@ class LsstDetection(BaseDetection):
             Calculated magnitude value
         """
         try:
-            d = Distance(redshift, unit=u.lyr)  # type: ignore
+            d = Distance(z=redshift)
             flux = self.scienceFlux if total else self.psfFlux
 
             if flux < 0:
@@ -398,7 +398,7 @@ class ZtfDataReleaseDetection(BaseDetection):
         Returns:
             Calculated flux value
         """
-        d = Distance(redshift, unit=u.lyr)  # type: ignore
+        d = Distance(z=redshift)
         flux = 10 ** (-0.4 * (self.mag_corr - 23.9))
         flux = flux - d.distmod.value if absolute else flux
         return flux * 1000  # convert to nJy
@@ -427,7 +427,7 @@ class ZtfDataReleaseDetection(BaseDetection):
         Returns:
             Calculated magnitude value
         """
-        d = Distance(redshift, unit=u.lyr)  # type: ignore
+        d = Distance(z=redshift)
         return self.mag_corr - d.distmod.value if absolute else self.mag_corr
 
     def flux2magnitude_err(self, total: bool, absolute: bool, redshift: float) -> float:
