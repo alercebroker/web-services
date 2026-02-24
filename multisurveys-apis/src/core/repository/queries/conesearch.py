@@ -29,11 +29,12 @@ def _build_statement_coordinates(neighbors: int):
 
 def conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
     def _conesearch(args: Tuple[int64, float, int]) -> List[Object]:
-        oid, radius, neighbors = args
-        stmt = _build_statement_oid(oid, neighbors)
-        with session_factory() as session:
-            result = session.execute(stmt, {"radius": radius}).all()
-            return [row[0] for row in result]
+        # oid, radius, neighbors = args
+        # stmt = _build_statement_oid(oid, neighbors)
+        # with session_factory() as session:
+        #     result = session.execute(stmt, {"radius": radius}).all()
+        #     return [row[0] for row in result]
+        return []
 
     return _conesearch
 
