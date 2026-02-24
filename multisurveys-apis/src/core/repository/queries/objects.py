@@ -2,6 +2,7 @@ from db_plugins.db.sql.models import (
     Object,
     ZtfObject,
     LsstDiaObject,
+    LsstSsObject,
     Probability,
 )
 from sqlalchemy.orm import aliased
@@ -25,6 +26,8 @@ class ObjectsModels:
             return ZtfObject
         if s == "lsst":
             return LsstDiaObject
+        if s == "lsst":
+            return LsstSsObject
         # fallback to generic Object so callers don't break for unknown surveys
         return Object
 
@@ -61,8 +64,10 @@ def query_object_by_id(session_ms, oid, survey_id):
 
 def build_statement_object(model_id, oid):
     # Select both the survey-specific model and the common Object and join them by oid
+    specific_object = aliased(model_id, name="specific")
     stmt = (
-        select(model_id, Object)
+        select(specific_object, Object)
+        .select_from(specific_object, Object)
         .join(Object, and_(Object.oid == model_id.oid))
         .where(and_(model_id.oid == oid))
         .limit(1)
@@ -127,9 +132,11 @@ def build_subquery_object(survey, filters, parsed_params):
     model_id = ObjectsModels(survey).get_model_by_survey()
     consearch = parsed_params["consearch_statement"]
     consearch_args = parsed_params["consearch_args"]
+    specific_object = aliased(model_id, name="specific")
 
     stmt = (
-        select(Object, model_id)
+        select(Object, specific_object)
+        .select_from(Object, specific_object)
         .join(model_id, and_(model_id.oid == Object.oid))
         .where(*filters)
         .where(consearch)

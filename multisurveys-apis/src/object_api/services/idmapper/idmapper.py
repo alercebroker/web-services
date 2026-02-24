@@ -4,9 +4,10 @@ from .ztf import encode_ztf_to_masterid_without_survey, decode_masterid_for_ztf
 
 # Constants
 SURVEY_IDS = {
-    "ZTF": 1,
-    "ATLAS": 2,
-    "LSST": 3,
+    "ZTF": 0,
+    #"ATLAS": 2,
+    "LSST": 1,
+    "SSLSST": 2,
     "LS4": 4,
 }
 SURVEY_PREFIX_LEN_BITS = 8
@@ -67,7 +68,7 @@ def catalog_oid_to_masterid(
 
     if catalog == "ZTF":
         master_id += encode_ztf_to_masterid_without_survey(catalog_oid, validate)
-    elif catalog == "LSST":
+    elif catalog == "LSST" or catalog == "SSLSST":
         return catalog_oid
         # if db_cursor is None:
         #     raise ValueError("db_cursor must be provided for LSST catalog")

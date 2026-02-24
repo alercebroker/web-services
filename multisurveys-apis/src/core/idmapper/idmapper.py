@@ -56,6 +56,7 @@ def catalog_oid_to_masterid(
         The master ID.
     """
     catalog = catalog.upper()
+    print(f"HERE:\n---\n{SURVEY_IDS.keys()}")
     if catalog not in SURVEY_IDS.keys():
         raise ValueError(f"Unsupported catalog: {catalog}")
 
@@ -65,7 +66,7 @@ def catalog_oid_to_masterid(
 
     if catalog == "ZTF":
         master_id += encode_ztf_to_masterid_without_survey(str(catalog_oid), validate)
-    elif catalog == "LSST":
+    elif catalog == "LSST" or catalog == "SSLSST":
         return np.int64(catalog_oid)
 
     return master_id
