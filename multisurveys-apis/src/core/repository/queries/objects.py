@@ -26,7 +26,7 @@ class ObjectsModels:
             return ZtfObject
         if s == "lsst":
             return LsstDiaObject
-        if s == "lsst":
+        if s == "sslsst":
             return LsstSsObject
         # fallback to generic Object so callers don't break for unknown surveys
         return Object
@@ -87,13 +87,14 @@ def query_get_objects(session_ms, search_params, parsed_params):
         )
 
         stmt = (
-            select(Probability, object_alias, dinamic_model_alias)
+            select(Probability, object_alias)
             .join(
-                dinamic_model_alias,
-                and_(dinamic_model_alias.oid == Probability.oid),
+                object_alias,
+                and_(object_alias.oid == Probability.oid),
             )
             .where(*filters_statements["probability"])
         )
+        print(f"HERE:---- \n {stmt}\n")
 
         order_statement = create_order_statement(stmt, search_params.order_args)
 
@@ -135,9 +136,7 @@ def build_subquery_object(survey, filters, parsed_params):
     specific_object = aliased(model_id, name="specific")
 
     stmt = (
-        select(Object, specific_object)
-        .select_from(Object, specific_object)
-        .join(model_id, and_(model_id.oid == Object.oid))
+        select(Object)
         .where(*filters)
         .where(consearch)
         .params(**consearch_args)
@@ -145,9 +144,8 @@ def build_subquery_object(survey, filters, parsed_params):
     )
 
     object_alias = aliased(Object, stmt)
-    dinamic_model_alias = aliased(model_id, stmt)
 
-    return object_alias, dinamic_model_alias
+    return object_alias, None
 
 
 def check_pagination_args(pagination_args):

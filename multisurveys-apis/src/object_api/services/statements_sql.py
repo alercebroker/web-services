@@ -107,6 +107,15 @@ def object_filters(args):
             oids = Object.oid.in_(args["oids"])
         filters_dict.append(oids)
 
+    if args["survey"] is not None:
+        SURVEY_MAP = {
+            "ztf": 0,
+            "lsst": 1,
+            "sslsst": 2,
+        }
+        survey = Object.sid == SURVEY_MAP[args["survey"]]
+        filters_dict.append(survey)
+
     return filters_dict
 
 
