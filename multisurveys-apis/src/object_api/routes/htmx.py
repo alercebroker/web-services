@@ -143,7 +143,7 @@ def objects_table(
     ra: float | None = None,
     radius: float | None = None,
     page: int | None = 1,
-    page_size: int | None = 10,
+    page_size: int | None = 20,
     count: bool | None = False,
     order_by: str | None = None,#Query(default="probability"),
     order_mode: str | None = Query(default="DESC"),
