@@ -304,7 +304,7 @@ export function init() {
   window.send_order_data = send_order_data
 
   setTimeout(() => {
-    restore_form_from_url()
+    oids_arr = restore_form_from_url()
   }, 100)
 
 }
@@ -397,7 +397,7 @@ function restore_form_from_url() {
 
   restore_survey(urlParams)
 
-  restore_object_id(urlParams)
+  let oids = restore_object_id(urlParams)
 
   restore_classifier(urlParams)
 
@@ -411,5 +411,6 @@ function restore_form_from_url() {
 
   restore_conesearch(urlParams)
 
+  return oids
 }
 
