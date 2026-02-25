@@ -27,7 +27,7 @@ def create_conesearch_statement(args):
 
 def create_order_statement(query, order_args):
     
-    if order_args.order_by is None:
+    if order_args.order_by is None or order_args.order_by == "oid_list":
         return []
     
     
@@ -63,10 +63,15 @@ def get_model_attribute(cols_meta_data, order_by):
     return statement
 
 def add_order_mode(attributes, order_mode):
-    if order_mode == "ASC":
-        return [attributes[0].asc(), attributes[1].asc()]
+    attributes = [attr for attr in attributes if attr is not None]
 
-    return [attributes[0].desc(), attributes[1].desc()]
+    if not attributes:
+        return []
+
+    if order_mode == "ASC":
+        return [attr.asc() for attr in attributes]
+
+    return [attr.desc() for attr in attributes]
 
 
 def convert_filters_to_sqlalchemy_statement(args):
