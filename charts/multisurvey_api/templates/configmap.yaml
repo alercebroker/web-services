@@ -16,6 +16,7 @@ data:
   default.conf: |
     server {
       listen 80;
+      client_max_body_size 10M;
 
       location {{ .Values.ingress.path }}/ {
         proxy_pass http://localhost:8000/;

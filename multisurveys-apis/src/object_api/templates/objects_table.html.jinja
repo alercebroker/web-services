@@ -1,10 +1,19 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
+<link rel="stylesheet" href="{{API_URL}}/static/htmx_loader.css">
 
-<div id="objects_table" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
+<div id="objects_table" class="tw-relative tw-min-h-[500px] tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
+    
+    <div id="table-loader" class="htmx-indicator tw-hidden tw-flex-col tw-items-center tw-justify-start tw-w-full">
+        <div class="tw-flex tw-items-center tw-gap-4">
+            <div class="alerce-spinner"></div>
+            <span class="fetching-text">Fetching table ...</span>
+        </div>
+    </div>
 
-    <div id="pagination" class="tw-flex tw-justify-end tw-items-center tw-text-base  tw-h-[48px] tw-bg-white tw-text-black dark:tw-bg-[#1e1e1e]/95 dark:tw-text-white">
+    <div class="htmx-indicator-hide">
+        <div id="pagination" class="tw-flex tw-justify-end tw-items-center tw-text-base  tw-h-[48px] tw-bg-white tw-text-black dark:tw-bg-[#1e1e1e]/95 dark:tw-text-white">
         {% if has_prev %}
             <span 
             id="prev_page"
@@ -14,6 +23,7 @@
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#objects_table"
+            hx-indicator="#table-loader"
             hx-vals='js:{
             ...send_form_Data(), 
             ...send_pagination_data({{prev}}),
@@ -37,6 +47,7 @@
             hx-trigger="click"
             hx-swap="outerHTML"
             hx-target="#objects_table"
+            hx-indicator="#table-loader"
             hx-vals='js:{
             ...send_form_Data(), 
             ...send_pagination_data({{next}}),
@@ -66,6 +77,7 @@
                     hx-trigger="click"
                     hx-swap="outerHTML"
                     hx-target="#objects_table"
+                    hx-indicator="#table-loader"
                     hx-vals='js:{
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
@@ -96,6 +108,7 @@
                     hx-trigger="click"
                     hx-swap="outerHTML"
                     hx-target="#objects_table"
+                    hx-indicator="#table-loader"
                     hx-vals='js:{
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
@@ -127,6 +140,7 @@
                     hx-trigger="click"
                     hx-swap="outerHTML"
                     hx-target="#objects_table"
+                    hx-indicator="#table-loader"
                     hx-vals='js:{
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
@@ -160,6 +174,7 @@
                     hx-trigger="click"
                     hx-swap="outerHTML"
                     hx-target="#objects_table"
+                    hx-indicator="#table-loader"
                     hx-vals='js:{
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
@@ -191,6 +206,7 @@
                     hx-trigger="click"
                     hx-swap="outerHTML"
                     hx-target="#objects_table"
+                    hx-indicator="#table-loader"
                     hx-vals='js:{
                     ...send_form_Data(), 
                     ...send_pagination_data(), 
@@ -270,6 +286,7 @@
             {% endif %}
         </div>
     {% endif %}
+    </div>
 
 
 </div>

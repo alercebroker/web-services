@@ -31,7 +31,6 @@ def build_statement(model_id, oid):
             ),
         )
         .where(model_id.oid == oid)
-        .limit(10)
     )
 
     return stmt

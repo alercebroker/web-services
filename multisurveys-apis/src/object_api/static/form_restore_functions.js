@@ -31,8 +31,9 @@ function restore_object_id(urlParams) {
   if (oids.length > 0) {
     draw_oids_tags(oids)
     document.getElementById("clear_oids_btn").classList.remove("tw-hidden")
+    return oids
   }
-
+  return []
 }
 
 function restore_classifier(urlParams) {

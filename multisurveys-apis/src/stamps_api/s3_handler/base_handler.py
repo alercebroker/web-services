@@ -48,15 +48,20 @@ class BaseS3Handler:
         avro_data: dict,
         stamp_type: str,
         file_format: str,
+        is_compressed: bool,
     ):
         file_name = f"{avro_name}_{stamp_type}.{file_format}"
 
         fit_data = self._get_buffer_from_file(avro_data, stamp_type)
 
         if file_format == "fits":
-            compressed_fits = gzip.compress(fit_data)
-            file = io.BytesIO(compressed_fits)
-            mime = "application/gzip"
+            if is_compressed:
+                compressed_fits = gzip.compress(fit_data)
+                file = io.BytesIO(compressed_fits)
+                mime = "application/gzip"
+            else:
+                file = io.BytesIO(fit_data)
+                mime = "application/fits"
         elif file_format == "png":
             file = io.BytesIO(
                 transform(fit_data, stamp_type, 2, self.compressed)
@@ -77,25 +82,25 @@ class BaseS3Handler:
         pass
 
     def get_stamp(
-        self, oid: str, measurement_id: str, stamp_type: str, file_format: str
+        self, oid: str, measurement_id: str, stamp_type: str, file_format: str, is_compressed: bool = True
     ):
         avro_name = self._get_avro_name(oid, measurement_id)
         avro_data = self._get_file_from_s3(avro_name)
 
         file_name, file, mime = self._get_stamp(
-            avro_name, avro_data, stamp_type, file_format
+            avro_name, avro_data, stamp_type, file_format, is_compressed
         )
 
         return file_name, file, mime
 
-    def get_all_stamps(self, oid: str, measurement_id: str, file_format: str):
+    def get_all_stamps(self, oid: str, measurement_id: str, file_format: str, is_compressed: bool = True):
         avro_name = self._get_avro_name(oid, measurement_id)
         avro_data = self._get_file_from_s3(avro_name)
 
         result = {}
         for stamp_type in self.valid_stamp_types:
             file_name, file, mime = self._get_stamp(
-                avro_name, avro_data, stamp_type, file_format
+                avro_name, avro_data, stamp_type, file_format, is_compressed
             )
             result[stamp_type] = {
                 "file_name": file_name,

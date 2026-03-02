@@ -52,7 +52,7 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
             "forced_photometry": result.lightcurve.forced_photometry,
             "periodogram": result.periodogram,
             "periodogram_options": get_periodogram_chart(result.periodogram),
-            "use_absolute": os.getenv("USE_ABSOLUTE", "false").lower() == "true",
+            "use_absolute": False #os.getenv("USE_ABSOLUTE", "false").lower() == "true",
         },
     )
 
@@ -76,7 +76,7 @@ def config_change(request: Request, config_state: ConfigState):
             "forced_photometry": result.lightcurve.forced_photometry,
             "periodogram": result.periodogram,
             "periodogram_options": get_periodogram_chart(result.periodogram),
-            "use_absolute": os.getenv("USE_ABSOLUTE", "false").lower() == "true",
+            "use_absolute": False #os.getenv("USE_ABSOLUTE", "false").lower() == "true",
         },
     )
 

@@ -4,8 +4,8 @@ from .base_handler import BaseS3Handler
 
 class LSSTS3Handler(BaseS3Handler):
     def __init__(self):
-        bucket_region = 'us-east-1' #os.getenv("LSST_BUCKET_REGION")
-        bucket_name = 'lsst-stream-staging-bucket' #os.getenv("LSST_BUCKET_NAME")
+        bucket_region = os.getenv("LSST_BUCKET_REGION")
+        bucket_name = os.getenv("LSST_BUCKET_NAME")
         super().__init__(
             bucket_name,
             bucket_region,
