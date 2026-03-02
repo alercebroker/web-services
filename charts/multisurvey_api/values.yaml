@@ -19,6 +19,11 @@ podAnnotations: {}
 
 resources: {}
 
+command: []  # override entrypoint, e.g. uvicorn with --workers
+
+readinessProbe: {}
+livenessProbe: {}
+
 autoscaling:
   enabled: false
   minReplicas: 1
@@ -36,8 +41,6 @@ affinity:
               ## Override this value with the NodeGroup tag accordingly
               values: []
 
-nameOverride: ""
-
 service:
   type: ClusterIP
   port: 8000
@@ -46,6 +49,8 @@ configYaml:
   services: {}  # important, api port must be 8000.
 
 envVariables: {}
+
+nginxConfig: ""  # override entire nginx default.conf; if empty, chart default is used
 
 ingress:
   certificateArn: ""
