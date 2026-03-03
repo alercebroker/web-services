@@ -1,18 +1,13 @@
 import math
 import traceback
-import pprint
-from typing import Dict, Optional
+from typing import Optional
 
-from pydantic import BaseModel, computed_field, model_validator
-from toolz.functoolz import return_none
+from pydantic import BaseModel, model_validator
 from .lightcurve_item import BaseDetection
 from astropy.coordinates import Distance
 import astropy.units as u
 
-REDSHIFT = (
-    0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
-)
-
+REDSHIFT = 0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
 
 
 class ztfDetection(BaseDetection):
@@ -47,6 +42,7 @@ class ztfDetection(BaseDetection):
     dec: float
     band: int
     band_map: dict[int, str] = {1: "g", 2: "r", 3: "i"}
+
     @model_validator(mode="before")
     @classmethod
     def set_defaults(cls, values: dict) -> dict:
@@ -282,10 +278,9 @@ class LsstDetection(BaseDetection):
             absflux = math.fabs(flux)
             sign = absflux / flux
             magnitude = 31.4 - 2.5 * math.log10(absflux) - d.distmod.value
-            flux = 10**(-(magnitude - 31.4) / 2.5) * sign
+            flux = 10 ** (-(magnitude - 31.4) / 2.5) * sign
 
         return flux
-
 
     def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         """Calculate flux error from magnitude error.
@@ -300,9 +295,8 @@ class LsstDetection(BaseDetection):
         flux = self.magnitude2flux(total, absolute)
         magnitude_error = self.flux2magnitude_err(total, absolute)
 
-        return math.log(10.0)  * math.fabs(flux) / 2.5 * magnitude_error        
-        
-        
+        return math.log(10.0) * math.fabs(flux) / 2.5 * magnitude_error
+
     def flux2magnitude(self, total: bool, absolute: bool) -> float:
         """Convert flux to magnitude.
 
@@ -321,13 +315,12 @@ class LsstDetection(BaseDetection):
                 if total == True:
                     flux = flux * -1
 
-
             if flux < 0:
                 raise ValueError("Flux no puede ser negativo para cálculo de magnitud")
-                
+
             mag = 31.4 - 2.5 * math.log10(flux)
 
-        except ValueError as e:
+        except ValueError:
             traceback.print_exc()
             return 0
 
@@ -348,23 +341,22 @@ class LsstDetection(BaseDetection):
 
             if flux < 0:
                 flux = math.fabs(flux)
-            
-            if flux_err < 0: 
+
+            if flux_err < 0:
                 flux_err = math.fabs(flux_err)
-            
+
             magnitude_error = (2.5 * flux_err) / (math.log(10.0) * flux)
 
-        except ValueError as e:
+        except ValueError:
             traceback.print_exc()
             return 0
-
 
         return magnitude_error
 
     def flux_sign(self, total: bool, absolute: bool) -> str:
         flux = self.scienceFlux if total else self.psfFlux
 
-        return '-' if flux < 0 else '+'
+        return "-" if flux < 0 else "+"
 
 
 class ZtfDataReleaseDetection(BaseDetection):
@@ -429,7 +421,7 @@ class ZtfDataReleaseDetection(BaseDetection):
     def flux_sign(self, total: bool, absolute: bool) -> str:
         flux = self.magnitude2flux(total, absolute)
 
-        return '-' if flux < 0 else '+'
+        return "-" if flux < 0 else "+"
 
 
 class ZTFDetectionCSV(BaseModel):
@@ -441,6 +433,7 @@ class ZTFDetectionCSV(BaseModel):
     ra: float  # Validación de rango
     dec: float
     band: int
+
     @model_validator(mode="before")
     @classmethod
     def set_defaults(cls, values: dict) -> dict:
@@ -457,13 +450,12 @@ class ZTFDetectionCSV(BaseModel):
         return values
 
 
-
 class LsstDetectionCsv(BaseModel):
     oid: int
     measurement_id: int
-    mjd: float 
-    ra: float  
-    dec: float  
+    mjd: float
+    ra: float
+    dec: float
     band: int | None = None
     band_name: str | None = None
     psfFlux: float | None = None
@@ -560,4 +552,4 @@ class LsstDetectionCsv(BaseModel):
     pixelFlags_injected_templateCenter: bool | None = None
     glint_trail: bool | None = None
     has_stamp: bool | None = None
-    survey_id: str 
+    survey_id: str

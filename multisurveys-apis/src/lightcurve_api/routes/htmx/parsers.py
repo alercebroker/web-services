@@ -60,6 +60,7 @@ class ConfigState(BaseModel):
     meanra: float = None
     meandec: float = None
 
+
 def parse_detections(raw_detections: List[str]) -> List[BaseDetection]:
     detections: List[BaseDetection] = []
     for raw_det in raw_detections:

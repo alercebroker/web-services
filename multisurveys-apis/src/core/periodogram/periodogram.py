@@ -1,9 +1,7 @@
 from lightcurve_api.models.periodogram import Periodogram
 import numpy as np
 import pandas as pd
-import pprint
 from P4J import MultiBandPeriodogram
-from scipy.stats import f
 
 
 class PeriodogramComputer:
@@ -68,7 +66,6 @@ class PeriodogramComputer:
             errs=np.array(trimmed_lightcurve.e_brightness),
             fids=np.array(trimmed_lightcurve.fid),
         )
-
 
         self.periodogram_computer.optimal_frequency_grid_evaluation(
             smallest_period=self.smallest_period,

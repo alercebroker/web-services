@@ -117,5 +117,5 @@ def parse_ztf_dr_object(objects: list[dict]) -> list[ZtfDrObject]:
 
 def _parse_object_common(object_sql) -> CommonObject:
     object_model = CommonObject(**object_sql[1].__dict__)
-    
+
     return object_model
