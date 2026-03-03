@@ -3,6 +3,7 @@ from ..s3_handler import handler_selector
 
 router = APIRouter()
 
+
 @router.get("/")
 async def ping():
     return "This is the Stamps API"
@@ -19,20 +20,15 @@ async def stamp(
     is_compressed: bool = True,
 ):
     handler = handler_selector(survey_id)()
-    _, file_buffer, mime = handler.get_stamp(
-        oid, measurement_id, stamp_type, file_format, is_compressed
-    )
+    _, file_buffer, mime = handler.get_stamp(oid, measurement_id, stamp_type, file_format, is_compressed)
 
     return Response(content=file_buffer.getvalue(), media_type=mime)
 
 
 @router.get("/avro")
-async def stamp(
-    request: Request, oid: str, measurement_id: str, survey_id: str
-):
+async def stamp(request: Request, oid: str, measurement_id: str, survey_id: str):
     handler = handler_selector(survey_id)()
 
     avro_json = handler.get_avro(oid, measurement_id)
 
     return avro_json
-

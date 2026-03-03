@@ -53,6 +53,7 @@ def conesearch_oid(
         ),
     )
 
+
 def get_detections(
     session_factory: Callable[..., ContextManager[Session]],
     result: Lightcurve,
@@ -88,15 +89,11 @@ def get_forced_photometry(session_factory: Callable[..., ContextManager[Session]
     def _get(args: Tuple[Lightcurve, dict]) -> Tuple[Lightcurve, dict]:
         result, object_ids_by_survey = args
         for survey_id, object_ids in object_ids_by_survey.items():
-            raw_data = lightcurve_service.get_forced_photometry_by_list(
-                object_ids, survey_id, session_factory
-            )
-            filtered_data = [
-                obs for obs in raw_data 
-                if obs.psfFlux != 0.0
-            ]
+            raw_data = lightcurve_service.get_forced_photometry_by_list(object_ids, survey_id, session_factory)
+            filtered_data = [obs for obs in raw_data if obs.psfFlux != 0.0]
             result.forced_photometry.extend(filtered_data)
         return result, object_ids_by_survey
+
     return _get
 
 
@@ -130,16 +127,17 @@ def get_lightcurve_async(
     It mantains the functions intgerface for the get conesearch_oid_lightcurve pipe, but
     runs the get_detections, get_non_etections and get_forced_photometry queries with threads.
     """
+
     def _get(objects: List[ApiObject]) -> Tuple[Lightcurve, dict]:
         object_ids_by_survey = defaultdict(lambda: [])
-        
+
         # THIS ASUME THAT ONLY 1 OBJECT IS RETURNED, TO BE ABLE TO THE THE LIGHTCURVE
         # WITH MULTIPLE OBJECTS REQUIRES MORE REFACTORS. ITS TOTALLY POSIBLE BUTH
         # WITH OTHER IMPLEMENTATION OF ASYNC CALLS
         oids = [objects[0].objectId]
         survey_id = objects[0].survey_id
         object_ids_by_survey[survey_id].append(oids)
-        
+
         with ThreadPoolExecutor(max_workers=3) as executor:
             detections_executor = executor.submit(
                 lightcurve_service.get_detections_by_list, oids, survey_id, session_factory
@@ -148,23 +146,19 @@ def get_lightcurve_async(
                 lightcurve_service.get_non_detections_by_list, oids, survey_id, session_factory
             )
             forced_photometry_executor = executor.submit(
-                lightcurve_service.get_forced_photometry_by_list,
-                oids, survey_id, session_factory
+                lightcurve_service.get_forced_photometry_by_list, oids, survey_id, session_factory
             )
 
         detections_result = detections_executor.result()
         non_detections_result = non_detections_executor.result()
         forced_photometry_result_raw = forced_photometry_executor.result()
 
-        forced_photometry_result_filtered = [
-            obs for obs in forced_photometry_result_raw 
-            if obs.psfFlux != 0.0
-        ]
+        forced_photometry_result_filtered = [obs for obs in forced_photometry_result_raw if obs.psfFlux != 0.0]
 
         result.detections.extend(detections_result)
         result.non_detections.extend(non_detections_result)
         result.forced_photometry.extend(forced_photometry_result_filtered)
-            
 
         return result, object_ids_by_survey
+
     return _get

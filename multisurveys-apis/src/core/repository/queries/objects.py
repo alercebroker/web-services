@@ -33,11 +33,7 @@ def query_common_object(session_ms, oid, survey_id):
     with session_ms() as session:
         model = ObjectsModels(survey_id).get_model_by_survey()
 
-        stmt = (
-            select(model)
-            .where(and_(model.oid == oid))
-            .limit(1)
-        )
+        stmt = select(model).where(and_(model.oid == oid)).limit(1)
 
         object_row = session.execute(stmt).one()
 
@@ -98,10 +94,8 @@ def query_get_objects(session_ms, search_params, parsed_params):
             stmt = add_limits_statements(stmt, pagination_args)
 
         items = session.execute(stmt).all()
-        
-        if search_params.filter_args.oids is not None \
-            and search_params.order_args.order_by is None \
-                and len(items) > 0:
+
+        if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
             items = sort_by_oid_list_and_select_page(search_params, items)
 
         return Pagination(pagination_args.page, pagination_args.page_size, items)
@@ -113,15 +107,16 @@ def sort_by_oid_list_and_select_page(search_params, items):
     df_items.set_index("oid", inplace=True)
     oid_valid = [x for x in search_params.filter_args.oids if x in df_items.index]
     df_items = df_items.loc[oid_valid].copy()
-    
+
     page = search_params.pagination_args.page
     page_size = search_params.pagination_args.page_size
     idx_start = (page - 1) * page_size
     idx_end = idx_start + page_size + 1
     df_items = df_items.iloc[idx_start:idx_end].copy()
     df_items = list(df_items.itertuples(index=False, name=None))
-    
+
     return df_items
+
 
 def build_subquery_object(survey, filters, parsed_params):
     model_id = ObjectsModels(survey).get_model_by_survey()

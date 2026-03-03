@@ -11,6 +11,7 @@ def object_parser(sql_response):
 
     return jsonable_encoder(model_parsed)
 
+
 def loads_objects_list(objects):
 
     if _object_is_empty(objects):
@@ -27,15 +28,14 @@ def loads_objects_list(objects):
 
     return res
 
+
 def _parse_json_string(json_string):
-    json_parsed = (json_string
-        .replace("'", '"')
-        .replace("None", "null")
-        .replace("False", "false")
-        .replace("True", "true")
+    json_parsed = (
+        json_string.replace("'", '"').replace("None", "null").replace("False", "false").replace("True", "true")
     )
-    
+
     return json.loads(json_parsed)
+
 
 def _object_is_empty(objects):
     if objects is None or objects == "":

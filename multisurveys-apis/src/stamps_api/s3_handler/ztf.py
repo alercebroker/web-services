@@ -1,6 +1,5 @@
 import os
 from .base_handler import BaseS3Handler
-import json
 
 
 class ZTFS3Handler(BaseS3Handler):
@@ -28,9 +27,7 @@ class ZTFS3Handler(BaseS3Handler):
         if stamp_type in self.valid_stamp_types:
             return file_result[stamp_type]["stampData"]
         else:
-            raise Exception(
-                f"Type {stamp_type} not valid. Valid types are {self.valid_stamp_types}"
-            )
+            raise Exception(f"Type {stamp_type} not valid. Valid types are {self.valid_stamp_types}")
 
     def get_avro(self, oid: str, measurement_id: str):
         avro_name = self._get_avro_name(oid, measurement_id)
@@ -39,8 +36,6 @@ class ZTFS3Handler(BaseS3Handler):
         del avro_data["cutoutTemplate"]
         del avro_data["cutoutScience"]
         del avro_data["cutoutDifference"]
-        avro_data["candidate"]["candid"] = str(
-            avro_data["candidate"]["candid"]
-        )
+        avro_data["candidate"]["candid"] = str(avro_data["candidate"]["candid"])
 
         return avro_data

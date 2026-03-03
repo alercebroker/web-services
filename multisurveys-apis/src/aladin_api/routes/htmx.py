@@ -20,10 +20,10 @@ async def object_probability_app(request: Request, oid: str, objects_arr: Option
         objects_list = loads_objects_list(objects_arr)
         survey = ""
         selected_object = get_object_by_id(session_ms, oid, survey)
-    except HTTPException as e:
+    except HTTPException:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
-        
+
     return templates.TemplateResponse(
         name="layout.html.jinja",
         context={"request": request, "objects": objects_list, "selected_object": selected_object},
@@ -45,7 +45,7 @@ async def object_probability_app_get(
         selected_object = None
         if oid is not None:
             selected_object = get_object_by_id(session_ms, oid, survey)
-    except HTTPException as e:
+    except HTTPException:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
 

@@ -96,13 +96,14 @@ def format_classifiers_name(classifier_name):
 
     return classifier_name
 
+
 def lsst_classfiers_parser(classifier_list):
-    
+
     parsed_classifier = {}
 
     accepted_lsst_classifiers = ["stamp_classifier_rubin"]
-   
-    for k,v in classifier_list.items():
+
+    for k, v in classifier_list.items():
         if v in accepted_lsst_classifiers:
             parsed_classifier[k] = v
 
