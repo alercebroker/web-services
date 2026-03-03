@@ -136,22 +136,20 @@ def get_lightcurve_async(
         # THIS ASUME THAT ONLY 1 OBJECT IS RETURNED, TO BE ABLE TO THE THE LIGHTCURVE
         # WITH MULTIPLE OBJECTS REQUIRES MORE REFACTORS. ITS TOTALLY POSIBLE BUTH
         # WITH OTHER IMPLEMENTATION OF ASYNC CALLS
-        for obj in objects:
-            object_ids_by_survey[obj.survey_id].append(obj.objectId)
-        oid = object_ids_by_survey[0][1]
-        survey_id = object_ids_by_survey[0][0]
+        oids = [objects[0].objectId]
+        survey_id = objects[0].survey_id
+        object_ids_by_survey[survey_id].append(oids)
         
         with ThreadPoolExecutor(max_workers=3) as executor:
             detections_executor = executor.submit(
-                lightcurve_service.get_detections_by_list(oid, survey_id, session_factory)
+                lightcurve_service.get_detections_by_list, oids, survey_id, session_factory
             )
             non_detections_executor = executor.submit(
-                lightcurve_service.get_non_detections_by_list(oid, survey_id, session_factory)
+                lightcurve_service.get_non_detections_by_list, oids, survey_id, session_factory
             )
             forced_photometry_executor = executor.submit(
-                lightcurve_service.get_forced_photometry_by_list(
-                    oid, survey_id, session_factory
-                )
+                lightcurve_service.get_forced_photometry_by_list,
+                oids, survey_id, session_factory
             )
 
         detections_result = detections_executor.result()
@@ -169,3 +167,4 @@ def get_lightcurve_async(
             
 
         return result, object_ids_by_survey
+    return _get
