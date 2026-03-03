@@ -312,7 +312,7 @@ class LsstDetection(BaseDetection):
 
             if flux < 0:
                 flux = math.fabs(flux)
-                if total == True:
+                if total:
                     flux = flux * -1
 
             if flux < 0:

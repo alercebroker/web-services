@@ -98,7 +98,6 @@ def format_classifiers_name(classifier_name):
 
 
 def lsst_classfiers_parser(classifier_list):
-
     parsed_classifier = {}
 
     accepted_lsst_classifiers = ["stamp_classifier_rubin"]

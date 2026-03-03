@@ -30,7 +30,6 @@ def get_tns(ra, dec):
 
 
 def add_tns_link(data):
-
     if data["object_name"] != "-":
         return "https://www.wis-tns.org/object/" + data["object_name"]
     else:
@@ -38,21 +37,20 @@ def add_tns_link(data):
 
 
 def check_data(data):
-
     if "object_data" in data and len(data["object_data"]) > 25:
-        if data["object_data"]["redshift"] == None:
+        if data["object_data"]["redshift"] is None:
             data["object_data"]["redshift"] = "-"
     else:
         raise ValueError("Data does not meet the required condition")
 
     if "object_name" in data:
-        if data["object_name"] == None:
+        if data["object_name"] is None:
             data["object_name"] = "-"
     else:
         raise ValueError("Data does not meet the required condition")
 
     if "object_type" in data:
-        if data["object_type"] == None:
+        if data["object_type"] is None:
             data["object_type"] = "-"
     else:
         raise ValueError("Data does not meet the required condition")
