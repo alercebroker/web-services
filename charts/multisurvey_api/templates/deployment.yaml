@@ -27,12 +27,24 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.command }}
+          command:
+            {{- toYaml .Values.command | nindent 12 }}
+          {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           {{- if .Values.envVariables }}
           env:
             {{- toYaml .Values.envVariables | nindent 12 }}
-          {{- end}}
+          {{- end }}
+          {{- if .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml .Values.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml .Values.livenessProbe | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: api-config
               mountPath: /app/config.yaml
@@ -48,7 +60,7 @@ spec:
           resources:
             requests:
               memory: 64M
-              cpu: 50m  
+              cpu: 50m
       volumes:
         - name: nginx-conf
           configMap:

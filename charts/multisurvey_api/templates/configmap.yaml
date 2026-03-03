@@ -9,37 +9,72 @@ data:
     {{- toYaml .Values.configYaml | nindent 4 }}
 ---
 apiVersion: v1
+kind: ConfigMap
 metadata:
   name: {{ include "service.name" . }}-nginx-conf
   namespace: {{ .Values.namespace }}
 data:
   default.conf: |
+    {{- if .Values.nginxConfig }}
+    {{- .Values.nginxConfig | nindent 4 }}
+    {{- else }}
+    upstream api_backend {
+      server 127.0.0.1:8000;
+      keepalive 16;
+      keepalive_timeout 25s;
+    }
+
     server {
       listen 80;
+
+      set_real_ip_from  10.0.0.0/8;
+      real_ip_header    X-Forwarded-For;
+      real_ip_recursive on;
+
       client_max_body_size 10M;
+      client_body_buffer_size 256k;
+
+      location = / {
+        add_header Content-Type text/plain;
+        return 200 'ok';
+      }
 
       location {{ .Values.ingress.path }}/ {
-        proxy_pass http://localhost:8000/;
-        proxy_redirect off;
-        proxy_set_header X-Forwarded-Prefix {{ .Values.ingress.path }}/;
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Forwarded-Host $http_host;
+        proxy_pass          http://api_backend/;
+        proxy_http_version  1.1;
+        proxy_set_header    Connection          "";
+        proxy_redirect      off;
+        proxy_set_header    X-Forwarded-Prefix  {{ .Values.ingress.path }}/;
+        proxy_set_header    Host                $http_host;
+        proxy_set_header    X-Forwarded-Host    $http_host;
+        proxy_set_header    X-Real-IP           $remote_addr;
+        proxy_set_header    X-Forwarded-For     $remote_addr;
+        proxy_buffering     on;
+        proxy_buffer_size   16k;
+        proxy_buffers       8 64k;
+        proxy_busy_buffers_size 128k;
       }
 
       location {{ .Values.ingress.path }} {
-        proxy_pass http://localhost:8000/;
-        proxy_redirect off;
-        proxy_set_header X-Forwarded-Prefix {{ .Values.ingress.path }};
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Forwarded-Host $http_host;
-      }
-
-      location / {
-        proxy_pass http://localhost:8000/;
+        proxy_pass          http://api_backend/;
+        proxy_http_version  1.1;
+        proxy_set_header    Connection          "";
+        proxy_redirect      off;
+        proxy_set_header    X-Forwarded-Prefix  {{ .Values.ingress.path }};
+        proxy_set_header    Host                $http_host;
+        proxy_set_header    X-Forwarded-Host    $http_host;
+        proxy_set_header    X-Real-IP           $remote_addr;
+        proxy_set_header    X-Forwarded-For     $remote_addr;
+        proxy_buffering     on;
+        proxy_buffer_size   16k;
+        proxy_buffers       8 64k;
+        proxy_busy_buffers_size 128k;
       }
 
       location /metrics {
-        proxy_pass http://localhost:8000/metrics;
+        proxy_pass         http://api_backend/metrics;
+        proxy_http_version 1.1;
+        proxy_set_header   Connection "";
       }
     }
-kind: ConfigMap
+    {{- end }}
