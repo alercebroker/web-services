@@ -11,6 +11,7 @@ import { restore_survey, restore_object_id, restore_classifier, restore_class, r
 let oids_arr = []
 let currentStates = null
 
+
 export function init() {
 
   if (currentStates) {
@@ -28,6 +29,8 @@ export function init() {
 
   let ztf_btn = document.getElementById("ztf_btn")
   let lsst_btn = document.getElementById("lsst_btn")
+  let ss_btn = document.getElementById("ss_btn")
+  
 
   let general_filters = document.getElementById("general_filters")
   let discovery_date_filters = document.getElementById("discovery_date_filters")
@@ -198,6 +201,10 @@ export function init() {
 
   lsst_btn.addEventListener("click", () => {
     survey_emphasize(lsst_btn)
+  })
+
+  ss_btn.addEventListener("click", () => {
+    survey_emphasize(ss_btn)
   })
 
   radio_HMS.addEventListener("click", () => {
