@@ -2,6 +2,7 @@ from db_plugins.db.sql.models import (
     Object,
     ZtfObject,
     LsstDiaObject,
+    LsstSsObject,
     Probability,
 )
 from sqlalchemy.orm import aliased
@@ -25,6 +26,8 @@ class ObjectsModels:
             return ZtfObject
         if s == "lsst":
             return LsstDiaObject
+        if s == "ss":
+            return LsstSsObject
         # fallback to generic Object so callers don't break for unknown surveys
         return Object
 
@@ -96,7 +99,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         if len(order_statement) > 0:
             stmt = add_limits_statements(stmt, pagination_args)
-
+            
         items = session.execute(stmt).all()
         
         if search_params.filter_args.oids is not None \
@@ -127,7 +130,7 @@ def build_subquery_object(survey, filters, parsed_params):
     model_id = ObjectsModels(survey).get_model_by_survey()
     consearch = parsed_params["consearch_statement"]
     consearch_args = parsed_params["consearch_args"]
-
+    
     stmt = (
         select(Object, model_id)
         .join(model_id, and_(model_id.oid == Object.oid))
