@@ -149,9 +149,9 @@ def get_lightcurve_async(
                 lightcurve_service.get_forced_photometry_by_list, oids, survey_id, session_factory
             )
 
-        detections_result = detections_executor.result()
-        non_detections_result = non_detections_executor.result()
-        forced_photometry_result_raw = forced_photometry_executor.result()
+            detections_result = detections_executor.result()
+            non_detections_result = non_detections_executor.result()
+            forced_photometry_result_raw = forced_photometry_executor.result()
 
         forced_photometry_result_filtered = [obs for obs in forced_photometry_result_raw if obs.psfFlux != 0.0]
 
