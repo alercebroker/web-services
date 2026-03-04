@@ -338,7 +338,6 @@ def sidebar(
 
 
 def ndet_build(n_det_min, n_det_max):
-
     n_det = []
     if n_det_min is not None:
         n_det.append(n_det_min)

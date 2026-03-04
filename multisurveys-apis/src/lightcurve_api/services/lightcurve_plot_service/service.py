@@ -136,7 +136,7 @@ def _get_min_and_max_points_errors(data: List[List[float]]):
         max_ = point[2]
         mjd = point[0]
 
-        if min_plot_error == None and max_plot_error == None:
+        if min_plot_error is None and max_plot_error is None:
             min_plot_error = [mjd, min_]
             max_plot_error = [mjd, max_]
             continue
@@ -373,7 +373,6 @@ def set_chart_limits(result: Result):
 
 
 def _find_chart_min_and_max_limits(echarts_options: dict[str, Any], config_state: ConfigState) -> List:
-
     if plots_utils._check_limits_conditions(config_state):
         limits_error_plots_arr = _get_min_and_max_errors(echarts_options)
 
@@ -733,7 +732,6 @@ def _data_to_csv(data_list, fieldnames: set):
 
 
 def _get_priority_columns(survey: str, type: str):
-
     if survey == "lsst":
         if type == "detection":
             return [
@@ -862,7 +860,6 @@ def _get_priority_columns(survey: str, type: str):
 
 
 def _order_detections_columns_csv(fieldnames: set):
-
     priority_columns = _get_priority_columns("lsst", "detection")
     priority = [col for col in priority_columns if col in fieldnames]
     other_columns = sorted([col for col in fieldnames if col not in priority])
@@ -1076,7 +1073,6 @@ def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dic
 
 
 def _multiply_coord(index: int, point: List) -> List:
-
     multiply_coord = [
         {
             "coord": [point[0]["coord"][0], point[0]["coord"][1] * (index + 1)],
@@ -1112,7 +1108,6 @@ def _apply_offset(
     """Return a list containing the offset series and optional error bar."""
 
     def offset_points(points: List[List[float]], config_state: ConfigState) -> List[List[float]]:
-
         if config_state.flux:
             return [[coords[0], coords[1] * (i + 1), *coords[2:]] for coords in points]
 
@@ -1169,7 +1164,7 @@ def _apply_offset(
 
 
 def _get_min_and_max_points(point, min, max):
-    if min == None and max == None:
+    if min is None and max is None:
         min = point[0]["coord"]
         max = point[1]["coord"]
 

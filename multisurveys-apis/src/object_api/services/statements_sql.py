@@ -28,7 +28,6 @@ def create_conesearch_statement(args):
 
 
 def create_order_statement(query, order_args):
-
     if order_args.order_by is None or order_args.order_by == "oid_list":
         return []
 

@@ -133,7 +133,7 @@ def parse_to_json_classifiers(classifiers):
 
 
 def _parse_oids_string_to_array(oids_list):
-    if oids_list != None:
+    if oids_list is not None:
         oids_list = [item.strip() for item in oids_list.split(",")]
         oids_list = [oid for oid in oids_list if oid != ""]
 

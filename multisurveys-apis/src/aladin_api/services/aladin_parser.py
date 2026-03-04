@@ -13,7 +13,6 @@ def object_parser(sql_response):
 
 
 def loads_objects_list(objects):
-
     if _object_is_empty(objects):
         return []
 

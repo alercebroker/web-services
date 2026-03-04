@@ -36,7 +36,6 @@ async def object_probability_app_get(
     oid: Optional[str] = None,
     objects_arr: Optional[List[str]] = Query(None),
 ):
-
     try:
         session_ms = request.app.state.psql_session
 
