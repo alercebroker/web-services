@@ -99,8 +99,8 @@ def format_classifiers_name(classifier_name):
 def lsst_classfiers_parser(classifier_list):
     
     parsed_classifier = {}
-
-    accepted_lsst_classifiers = ["stamp_classifier_rubin"]
+    # stamp_classifier_rubin, stamp_classifier_2025_beta
+    accepted_lsst_classifiers = ["stamp_classifier_rubin", "stamp_classifier_rubin_beta"]
    
     for k,v in classifier_list.items():
         if v in accepted_lsst_classifiers:
@@ -117,6 +117,7 @@ async def object_probability_app(
     classifier_list = get_classifiers(
         session_factory=request.app.state.psql_session
     )  # classifier_list es un diccionario
+
     classifier_list = lsst_classfiers_parser(classifier_list)
     class_options = [{v: v} for k, v in classifier_list.items()]
     prob_list = get_probability(oid, classifier_list, session_factory=request.app.state.psql_session)
