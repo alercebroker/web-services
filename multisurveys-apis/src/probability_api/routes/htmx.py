@@ -101,7 +101,7 @@ def classifier_name_parser(classifier_dict):
         {name: name.replace("_", " ").title()} 
         for name in classifier_dict.values()
     ]
-    
+
 
 @router.get("/htmx/probabilities/{oid}", response_class=HTMLResponse)
 async def object_probability_app(

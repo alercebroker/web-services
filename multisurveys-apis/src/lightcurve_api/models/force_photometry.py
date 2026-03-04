@@ -8,9 +8,7 @@ from astropy.coordinates import Distance
 import astropy.units as u
 
 
-REDSHIFT = (
-    0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
-)
+REDSHIFT = 0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
 
 
 class ZtfForcedPhotometry(BaseForcedPhotometry):
@@ -127,15 +125,15 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
             absflux = math.fabs(flux)
             sign = absflux / flux
             magnitude = 31.4 - 2.5 * math.log10(absflux) - d.distmod.value
-            flux = 10**(-(magnitude - 31.4) / 2.5) * sign
-            
+            flux = 10 ** (-(magnitude - 31.4) / 2.5) * sign
+
         return flux
 
     def magnitude2flux_err(self, total: bool, absolute: bool) -> float:
         flux = self.magnitude2flux(total, absolute)
         magnitude_error = self.flux2magnitude_err(total, absolute)
 
-        return math.log(10.0)  * flux / 2.5 * magnitude_error
+        return math.log(10.0) * flux / 2.5 * magnitude_error
 
     def flux2magnitude(self, total: bool, absolute: bool) -> float:
         try:
@@ -144,15 +142,14 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
             if flux < 0:
                 flux = math.fabs(flux)
-                if total == True:
+                if total:
                     flux = flux * -1
-
 
             if flux < 0:
                 raise ValueError("Flux no puede ser negativo para cálculo de magnitud")
-                
+
             mag = 31.4 - 2.5 * math.log10(flux)
-        except ValueError as e:
+        except ValueError:
             traceback.print_exc()
             return 0
 
@@ -165,23 +162,22 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
             if flux < 0:
                 flux = math.fabs(flux)
-            
-            if flux_err < 0: 
+
+            if flux_err < 0:
                 flux_err = math.fabs(flux_err)
-            
+
             magnitude_error = (2.5 * flux_err) / (math.log(10.0) * flux)
 
-        except ValueError as e:
+        except ValueError:
             traceback.print_exc()
             return 0
-
 
         return magnitude_error
 
     def flux_sign(self, total: bool) -> str:
         flux = self.scienceFlux if total else self.psfFlux
 
-        return '-' if flux < 0 else '+'
+        return "-" if flux < 0 else "+"
 
 
 class LsstForcedPhotometryCsv(BaseModel):
@@ -205,7 +201,7 @@ class LsstForcedPhotometryCsv(BaseModel):
 
 class ZtfForcedPhotometryCsv(BaseModel):
     """Pydantic model for ztf_forced_photometry table."""
-    
+
     oid: int
     survey_id: int
     measurement_id: int

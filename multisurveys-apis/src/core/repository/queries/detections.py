@@ -67,6 +67,7 @@ def get_detections_by_list(
 
     return _get_detections_by_list
 
+
 def get_ordered_detections_sql(
     oid: str,
     survey_id: str,
@@ -89,10 +90,8 @@ def get_ordered_detections_sql(
                     Detection.measurement_id == detection_model.measurement_id,
                 ),
             )
-            .where(
-                detection_model.oid == oid
-            ).order_by(desc(Detection.mjd))
+            .where(detection_model.oid == oid)
+            .order_by(desc(Detection.mjd))
         )
 
         return session.execute(stmt).all()
-    

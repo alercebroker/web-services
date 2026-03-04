@@ -6,6 +6,7 @@ from .lightcurve_parser import parse_lightcurve
 # get ligitcurve with oid and survey
 # parse to get mjd, greg, and measurement_id
 
+
 def get_detections(
     oid: str,
     survey_id: str,

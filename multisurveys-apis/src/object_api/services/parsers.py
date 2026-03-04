@@ -38,6 +38,7 @@ def parse_params(search_params):
 
     return response
 
+
 def parse_unique_object_query(sql_response, survey, return_survey_extra=False):
     # Merge the dicts from the joined SQLAlchemy models (common Object + survey-specific)
     merged_dict = {}
@@ -132,8 +133,8 @@ def parse_to_json_classifiers(classifiers):
 
 
 def _parse_oids_string_to_array(oids_list):
-    if oids_list != None:
-        oids_list = [item.strip() for item in oids_list.split(',')]
-        oids_list = [oid for oid in oids_list if oid != '']
+    if oids_list is not None:
+        oids_list = [item.strip() for item in oids_list.split(",")]
+        oids_list = [oid for oid in oids_list if oid != ""]
 
     return oids_list
