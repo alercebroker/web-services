@@ -96,25 +96,11 @@ def format_classifiers_name(classifier_name):
 
     return classifier_name
 
-<<<<<<< HEAD
 def classifier_name_parser(classifier_dict):
     return [
         {name: name.replace("_", " ").title()} 
         for name in classifier_dict.values()
     ]
-=======
-
-def lsst_classfiers_parser(classifier_list):
-    parsed_classifier = {}
-
-    accepted_lsst_classifiers = ["stamp_classifier_rubin"]
-
-    for k, v in classifier_list.items():
-        if v in accepted_lsst_classifiers:
-            parsed_classifier[k] = v
-
-    return parsed_classifier
->>>>>>> cb6ff65b471113cf14d03ff11798a7a8f9517741
 
 
 @router.get("/htmx/probabilities/{oid}", response_class=HTMLResponse)
