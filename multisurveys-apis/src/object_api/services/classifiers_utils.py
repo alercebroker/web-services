@@ -11,22 +11,16 @@ def format_classifier_name(name):
 
 def sort_classifiers(classifiers):
     sort_arr_classifiers = [None] * 8
-
+    # priorities explanation: 
+    ## classifier_id:priority
     priorities = {
-        "lc_classifier": 0,
-        "lc_classifier_top": 1,
-        "stamp_classifier": 2,
-        "LC_classifier_ATAT_forced_phot": 3,
-        "LC_classifier_BHRF_forced_phot": 4,
-        "lc_classifier_lsst": 5,
-        "stamp_classifier_rubin": 6,
-        "stamp_classifier_rubin_beta": 7,
+        1: 0,
     }
 
     # insertar por prioridad
     for classifier in classifiers:
-        if classifier["classifier_name"] in priorities:
-            index = priorities[classifier["classifier_name"]]
+        if classifier["classifier_id"] in priorities:
+            index = priorities[classifier["classifier_id"]]
             sort_arr_classifiers[index] = classifier
 
     return sort_arr_classifiers
