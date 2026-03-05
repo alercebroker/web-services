@@ -4,25 +4,28 @@ from ..models.lightcurve import detection
 from datetime import datetime, timedelta, timezone
 
 BANDS = {
-    1: 'g',
-    2: 'r',
-    3: 'i',
-    4: 'z',
-    5: 'y',
-    6: 'u',
+    1: "g",
+    2: "r",
+    3: "i",
+    4: "z",
+    5: "y",
+    6: "u",
 }
 
-def parse_band(band):   
-    return BANDS[band]   
+
+def parse_band(band):
+    return BANDS[band]
+
 
 def _mjd_to_date(mjd):
-    if mjd is None or mjd == '':
+    if mjd is None or mjd == "":
         return None
-    
+
     days_from_epoch = float(mjd) - 40587
     date_obj = datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(days=days_from_epoch)
-    
-    return date_obj.strftime('%a, %d %b %Y %H:%M:%S UT')
+
+    return date_obj.strftime("%a, %d %b %Y %H:%M:%S UT")
+
 
 def parse_lightcurve(lightcurve_data):
     """
@@ -39,13 +42,14 @@ def parse_lightcurve(lightcurve_data):
     for row in lightcurve_data:
         lsst_model_dict = row[0].__dict__.copy()
         detection_model_dict = row[1].__dict__.copy()
-        model_parsed = detection(**{
-            "mjd": detection_model_dict.get("mjd"),
-            "greg": str(_mjd_to_date(detection_model_dict.get("mjd"))),
-            "measurement_id": lsst_model_dict.get("measurement_id"),
-            "band": parse_band(detection_model_dict.get("band")),
-            "has_stamp": lsst_model_dict.get("has_stamp")
-        })
+        model_parsed = detection(
+            **{
+                "mjd": detection_model_dict.get("mjd"),
+                "greg": str(_mjd_to_date(detection_model_dict.get("mjd"))),
+                "measurement_id": lsst_model_dict.get("measurement_id"),
+                "band": parse_band(detection_model_dict.get("band")),
+                "has_stamp": lsst_model_dict.get("has_stamp"),
+            }
+        )
         parsed_lighturve.append(model_parsed)
     return parsed_lighturve
-

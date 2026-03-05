@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Request
-from fastapi import APIRouter, HTTPException, Request, Response
 from ..s3_handler import handler_selector
 from ..services.lightcurve_service import get_detections
-from ..models.lightcurve import LightcurveModel, detection, PostRequestInputModel
+from ..models.lightcurve import PostRequestInputModel
 from fastapi.templating import Jinja2Templates
-from astropy.time import Time
 import os
 import base64
 

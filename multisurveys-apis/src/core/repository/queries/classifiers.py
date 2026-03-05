@@ -52,10 +52,10 @@ def get_all_classifiers(
                 Taxonomy,
                 Classifier.classifier_id == Taxonomy.classifier_id,
             )
-            .where(Classifier.classifier_id == 1) # 1 = lsst
+            .where(Classifier.tid == 1)  # 1 = lsst
             .order_by(Classifier.classifier_name.asc(), Taxonomy.order.asc())
         )
         result = session.execute(stmt)
         result = result.all()
-        
+
         return result

@@ -11,8 +11,18 @@ class ChartPoint:
     field: str
     flux_sign: str
 
-
-    def __init__(self, survey: str, band: str, x: float, y: float, error: float,  flux_sign: str, measurement_id: str = None, objectid: str = None, field: str = None):
+    def __init__(
+        self,
+        survey: str,
+        band: str,
+        x: float,
+        y: float,
+        error: float,
+        flux_sign: str,
+        measurement_id: str = None,
+        objectid: str = None,
+        field: str = None,
+    ):
         self.survey = survey
         self.band = band
         self.x = x
@@ -22,7 +32,6 @@ class ChartPoint:
         self.measurement_id = measurement_id
         self.objectid = objectid
         self.field = field
-
 
     def point(self, limit=1) -> List[float]:
         err = self.error if self.error <= limit else limit

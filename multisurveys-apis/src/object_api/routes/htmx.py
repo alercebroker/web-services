@@ -26,7 +26,7 @@ from object_api.services.object_services import (
     get_object_by_id,
 )
 from ..services.parsers import _parse_oids_string_to_array
-import pandas as pd
+
 router = APIRouter()
 
 templates = Jinja2Templates(directory="src/object_api/templates", autoescape=True, auto_reload=True)
@@ -145,7 +145,7 @@ def objects_table(
     page: int | None = 1,
     page_size: int | None = 20,
     count: bool | None = False,
-    order_by: str | None = None,#Query(default="probability"),
+    order_by: str | None = None,  # Query(default="probability"),
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
@@ -161,10 +161,10 @@ def objects_table(
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)
-            
+
             if oid is None and order_by is None:
                 order_by = "probability"
-            
+
             if oid is not None and order_by == "oid_list":
                 order_by = None
 
@@ -200,7 +200,7 @@ def objects_table(
             )
 
             object_list = get_objects_list(session_ms=session, search_params=search_params)
-            
+
             if oid is not None and order_by is None and object_list["items"] != []:
                 order_by = "oid_list"
 
@@ -255,7 +255,7 @@ def sidebar(
     page: int | None = 1,
     page_size: int | None = 20,
     count: bool | None = False,
-    order_by: str | None = None,#Query(default="probability"),
+    order_by: str | None = None,  # Query(default="probability"),
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
@@ -272,10 +272,10 @@ def sidebar(
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd)
-            
+
             if oid is None and order_by is None:
                 order_by = "probability"
-            
+
             if oid is not None and order_by == "oid_list":
                 order_by = None
 
@@ -307,7 +307,7 @@ def sidebar(
             )
 
             object_list = get_objects_list(session_ms=session, search_params=search_params)
-            
+
             if oid is not None and order_by is None and object_list["items"] != []:
                 order_by = "oid_list"
 
@@ -344,7 +344,6 @@ def sidebar(
 
 
 def ndet_build(n_det_min, n_det_max):
-
     n_det = []
     if n_det_min is not None:
         n_det.append(n_det_min)

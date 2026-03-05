@@ -1,9 +1,9 @@
 import matplotlib
-matplotlib.use('Agg')
+
+matplotlib.use("Agg")
 
 import asyncio
 import os
-from sqlalchemy import false
 import yaml
 
 import uvicorn
@@ -27,12 +27,14 @@ def config_from_yaml():
 
     return config
 
+
 def export_env_variables(config_dict: dict):
     if "environment" in config_dict:
         print("Exporting additional environment variables")
         for key, value in config_dict["environment"].items():
             os.environ[key] = str(value)
-    
+
+
 ###
 ### Define a single entry point for running the API services
 ### For each api service in the src folder.
@@ -78,6 +80,7 @@ def run_crossmatch():
     service_config = config_dict["services"]["crossmatch_api"]
     print(f"Running service: crossmatch_api with config: {service_config}")
     run_service(service_config)
+
 
 def run_stamp():
     config_dict = config_from_yaml()
@@ -149,7 +152,7 @@ async def async_run_service(
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
     os.environ["SCHEMA"] = db_config["psql_schema"]
-    
+
     export_env_variables(config_dict)
 
     await server.serve()
@@ -174,7 +177,7 @@ def run_service(
     os.environ["SCHEMA"] = db_config["psql_schema"]
 
     export_env_variables(config_dict)
-    
+
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",
         port=config_dict["port"],
