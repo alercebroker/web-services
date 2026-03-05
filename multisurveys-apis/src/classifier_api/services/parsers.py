@@ -18,6 +18,7 @@ def parse_classifiers(classifier_data: list) -> list:
         classifier_dict = row[0].__dict__.copy()
         taxonomy_dict = row[1].__dict__.copy()
         classifier_name = classifier_dict["classifier_name"]
+        classifier_id = classifier_dict["classifier_id"]
         class_name = taxonomy_dict["class_name"]
 
         if classifier_name not in grouped_classifiers.keys():
@@ -25,6 +26,7 @@ def parse_classifiers(classifier_data: list) -> list:
                 "classifier_name": classifier_name,
                 "classifier_version": classifier_dict["classifier_version"],
                 "classes": [class_name],
+                "classifier_id": classifier_id
             }
         else:
             grouped_classifiers[classifier_name]["classes"].append(class_name)
