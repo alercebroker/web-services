@@ -109,11 +109,11 @@ def sort_classifiers(classifiers):
     }
 
     sorted_items = sorted(
-        ((k, v) for k, v in classifiers.items() if k in priorities),
-        key=lambda item: priorities[item[0]]
+        ((k, v) for k, v in classifiers.items() if k in priorities), key=lambda item: priorities[item[0]]
     )
-    
+
     return dict(sorted_items)
+
 
 @router.get("/htmx/probabilities/{oid}", response_class=HTMLResponse)
 async def object_probability_app(
