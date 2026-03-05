@@ -26,7 +26,7 @@ def parse_classifiers(classifier_data: list) -> list:
                 "classifier_name": classifier_name,
                 "classifier_version": classifier_dict["classifier_version"],
                 "classes": [class_name],
-                "classifier_id": classifier_id
+                "classifier_id": classifier_id,
             }
         else:
             grouped_classifiers[classifier_name]["classes"].append(class_name)

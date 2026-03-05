@@ -11,7 +11,7 @@ def format_classifier_name(name):
 
 def sort_classifiers(classifiers):
     sort_arr_classifiers = [None] * 8
-    # priorities explanation: 
+    # priorities explanation:
     ## classifier_id:priority
     priorities = {
         1: 0,
