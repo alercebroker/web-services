@@ -14,6 +14,7 @@ def convert_conesearch_args(args):
         radius /= 3600.0  # From arcsec to deg
     return {"ra": ra, "dec": dec, "radius": radius}
 
+
 def create_conesearch_statement(args):
     try:
         ra, dec, radius = args["ra"], args["dec"], args["radius"]
@@ -25,26 +26,26 @@ def create_conesearch_statement(args):
     else:
         return True
 
+
 def create_order_statement(query, order_args):
-    
     if order_args.order_by is None or order_args.order_by == "oid_list":
         return []
-    
-    
+
     cols = query.column_descriptions
-    
+
     first_attr = get_model_attribute(cols, order_args.order_by)
-    second_attr = get_model_attribute(cols, 'oid')
+    second_attr = get_model_attribute(cols, "oid")
     attributes = [first_attr, second_attr]
 
     statement = add_order_mode(attributes, order_args.order_mode)
 
     return statement
 
+
 def get_model_attribute(cols_meta_data, order_by):
     statement = None
 
-    if order_by == 'lastmjd':
+    if order_by == "lastmjd":
         model = cols_meta_data[1]["entity"]
         attr = getattr(model, order_by, None)
         if attr is not None:
@@ -59,8 +60,8 @@ def get_model_attribute(cols_meta_data, order_by):
             statement = attr
             break
 
-
     return statement
+
 
 def add_order_mode(attributes, order_mode):
     attributes = [attr for attr in attributes if attr is not None]

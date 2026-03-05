@@ -10,7 +10,7 @@ from lightcurve_api.models.lightcurve_item import BaseDetection
 from ...models.periodogram import NoPeriodError, Periodogram
 from ..lightcurve_plot_service.result import Result
 
- 
+
 def compute_periodogram(result: Result) -> Result:
     """Compute periodogram for lightcurve data and update result with period information.
 
@@ -129,13 +129,7 @@ def default_echart_options():
             "height": "80%",
             "orient": "vertical",
         },
-        "xAxis": {
-            "type": "log", 
-            "name": "Period", 
-            "scale": True, 
-            "splitLine": False,
-            "min": "0.05",
-            "max": "500"},
+        "xAxis": {"type": "log", "name": "Period", "scale": True, "splitLine": False, "min": "0.05", "max": "500"},
         "yAxis": {
             "type": "value",
             "name": "Score",

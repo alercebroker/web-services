@@ -1,5 +1,4 @@
 import os
-import pprint
 
 from datetime import date
 
@@ -52,7 +51,7 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
             "forced_photometry": result.lightcurve.forced_photometry,
             "periodogram": result.periodogram,
             "periodogram_options": get_periodogram_chart(result.periodogram),
-            "use_absolute": False #os.getenv("USE_ABSOLUTE", "false").lower() == "true",
+            "use_absolute": False,  # os.getenv("USE_ABSOLUTE", "false").lower() == "true",
         },
     )
 
@@ -76,7 +75,7 @@ def config_change(request: Request, config_state: ConfigState):
             "forced_photometry": result.lightcurve.forced_photometry,
             "periodogram": result.periodogram,
             "periodogram_options": get_periodogram_chart(result.periodogram),
-            "use_absolute": False #os.getenv("USE_ABSOLUTE", "false").lower() == "true",
+            "use_absolute": False,  # os.getenv("USE_ABSOLUTE", "false").lower() == "true",
         },
     )
 
@@ -116,13 +115,13 @@ def download(oid: str, survey_id: str, db: db_dependency):
         service_result.lightcurve.detections,
         service_result.lightcurve.non_detections,
         service_result.lightcurve.forced_photometry,
-        int(oid)
+        int(oid),
     )
 
     day = str(date.today())
-    day = day.replace('-', '')
+    day = day.replace("-", "")
 
-    filename_str = oid + '_' + str(day) + '.zip' 
+    filename_str = oid + "_" + str(day) + ".zip"
 
     return StreamingResponse(
         zip_buffer,
