@@ -21,6 +21,7 @@ from ..services.tns_service import get_tns
 from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
+from core.idmapper.idmapper import get_survey_id
 from object_api.services.object_services import (
     get_object_by_id,
 )
@@ -100,6 +101,7 @@ async def objects_form(request: Request):
     try:
         session = request.app.state.psql_session
         classifiers = get_tidy_classifiers(session)
+        print(classifiers)
 
         return templates.TemplateResponse(
             name="form.html.jinja",
@@ -169,9 +171,12 @@ def objects_table(
             if oid is not None:
                 oid = encode_ids(survey, oid)
 
+            survey_mapped = get_survey_id(survey, session)
+
             filters = Filters(
                 oids=oid,
                 survey=survey,
+                survey_mapped=survey_mapped,
                 classifier=classifier,
                 class_name=class_name,
                 ranking=ranking,
@@ -277,9 +282,12 @@ def sidebar(
             if oid is not None:
                 oid = encode_ids(survey, oid)
 
+            survey_mapped = get_survey_id(survey, session)
+
             filters = Filters(
                 oids=oid,
                 survey=survey,
+                survey_mapped=survey_mapped,
                 classifier=classifier,
                 class_name=class_name,
                 ranking=ranking,

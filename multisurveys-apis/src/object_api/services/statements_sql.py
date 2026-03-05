@@ -86,7 +86,6 @@ def convert_filters_to_sqlalchemy_statement(args):
 def object_filters(args):
     filters_dict = []
 
-
     if args["n_det"] is not None:
         ndet = Object.n_det >= args["n_det"][0]
         if len(args["n_det"]) > 1:
@@ -107,24 +106,16 @@ def object_filters(args):
 
     if args["oids"] is not None:
         if len(args["oids"]) == 1:
-            # filtered_oid = args["oids"][0].replace("*", "%")
             oids = Object.oid == args["oids"][0]
         else:
             oids = Object.oid.in_(args["oids"])
         filters_dict.append(oids)
 
-    if args["survey"] is not None:
-
-        if args["survey"] == "ss":
-            survey = 2
-        if args["survey"] == "lsst":
-            survey = 1
-        if args["survey"] == "ztf":
-            survey = 0
-
-        survey_stmt = Object.sid == survey
+    if args["survey_mapped"] is not None:
+        survey_stmt = Object.sid == args["survey_mapped"]
 
         filters_dict.append(survey_stmt)
+
 
     return filters_dict
 

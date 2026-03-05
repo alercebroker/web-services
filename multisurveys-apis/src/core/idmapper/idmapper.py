@@ -1,6 +1,8 @@
 import numpy as np
+from pydantic import BaseModel
 
 from .ztf import encode_ztf_to_masterid_without_survey, decode_masterid_for_ztf
+from ..repository.queries.surveys import query_all_surveys
 
 # Constants
 SURVEY_IDS = {
@@ -8,6 +10,13 @@ SURVEY_IDS = {
     "ATLAS": 2,
     "LSST": 3,
     "LS4": 4,
+    "SS": 5
+}
+
+SURVEY_IDS_BDD = {
+    "ZTF": 0,
+    "LSST": 1,
+    "SS": 2
 }
 SURVEY_PREFIX_LEN_BITS = 8
 SURVEY_IDS["MAXSURVEY"] = 2**SURVEY_PREFIX_LEN_BITS - 1
@@ -88,3 +97,23 @@ def decode_masterid(masterid: np.int64) -> tuple[str, str | np.int64]:
 
     masterid_without_survey = np.bitwise_and(masterid, ((1 << (63 - SURVEY_PREFIX_LEN_BITS)) - 1))
     return "ZTF", decode_masterid_for_ztf(masterid_without_survey)
+
+
+class SurveyParser(BaseModel):
+    sid: int
+    survey_name: str
+
+
+def get_survey_id(survey: str, session) -> str:
+    survey_id_mapped = None
+    
+    raw_surveys = query_all_surveys(session)
+    
+    for row in raw_surveys:
+        survey_parsed = SurveyParser(**row[0].__dict__)
+
+        if survey.upper() in survey_parsed.survey_name:
+            survey_id_mapped = survey_parsed.sid
+            break
+        
+    return survey_id_mapped

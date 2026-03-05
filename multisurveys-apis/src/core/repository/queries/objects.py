@@ -18,6 +18,7 @@ import pandas as pd
 
 class ObjectsModels:
     def __init__(self, survey):
+        print(survey)
         self.survey = survey
 
     def get_model_by_survey(self):

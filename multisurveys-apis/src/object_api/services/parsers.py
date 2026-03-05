@@ -128,6 +128,7 @@ def parse_to_json_classifiers(classifiers):
         item["formated_name"] = format_classifier_name(item["classifier_name"])
         res.append(item)
 
+
     return res
 
 
