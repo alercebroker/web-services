@@ -101,6 +101,20 @@ def classifier_name_parser(classifier_dict):
     return [{name: name.replace("_", " ").title()} for name in classifier_dict.values()]
 
 
+def sort_classifiers(classifiers):
+    # priorities explanation:
+    ## classifier_id:priority
+    priorities = {
+        1: 0,
+    }
+
+    sorted_items = sorted(
+        ((k, v) for k, v in classifiers.items() if k in priorities),
+        key=lambda item: priorities[item[0]]
+    )
+    
+    return dict(sorted_items)
+
 @router.get("/htmx/probabilities/{oid}", response_class=HTMLResponse)
 async def object_probability_app(
     request: Request,
@@ -109,6 +123,7 @@ async def object_probability_app(
     classifier_list = get_classifiers(
         session_factory=request.app.state.psql_session
     )  # classifier_list es un diccionario
+    classifier_list = sort_classifiers(classifier_list)
     class_options = classifier_name_parser(classifier_list)
     prob_list = get_probability(oid, classifier_list, session_factory=request.app.state.psql_session)
     group_prob = probability_parser(prob_list)
