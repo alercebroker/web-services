@@ -96,11 +96,9 @@ def format_classifiers_name(classifier_name):
 
     return classifier_name
 
+
 def classifier_name_parser(classifier_dict):
-    return [
-        {name: name.replace("_", " ").title()} 
-        for name in classifier_dict.values()
-    ]
+    return [{name: name.replace("_", " ").title()} for name in classifier_dict.values()]
 
 
 @router.get("/htmx/probabilities/{oid}", response_class=HTMLResponse)
