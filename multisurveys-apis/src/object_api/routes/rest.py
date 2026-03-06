@@ -1,6 +1,8 @@
 import traceback
 from typing import Annotated
+from core.idmapper.idmapper import get_survey_id
 from fastapi import APIRouter, HTTPException, Query, Request
+from object_api.models.object import ObjectQueryInformation
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_objects_list, get_object_by_id
@@ -46,9 +48,12 @@ def list_objects(
         ndets_validation(n_det)
         order_mode_validation(order_mode)
 
+        survey_mapped = get_survey_id(survey, session)
+
         filters = Filters(
             oids=oid,
             survey=survey,
+            survey_mapped=survey_mapped,
             classifier=classifier,
             class_name=class_name,
             ranking=ranking,
@@ -86,11 +91,13 @@ def list_objects(
 def get_object(request: Request, oid: str, survey_id: str, return_survey_extra: bool = False):
     try:
         session = request.app.state.psql_session
+        survey_mapped = get_survey_id(survey_id, session)
+
+        object_filters = ObjectQueryInformation(oid=oid, survey_name=survey_id, survey_mapped=survey_mapped)
 
         response = get_object_by_id(
             session_ms=session,
-            oid=oid,
-            survey_id=survey_id,
+            object_filters=object_filters,
             return_survey_extra=return_survey_extra,
         )
 
