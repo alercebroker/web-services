@@ -1,4 +1,5 @@
 from fastapi.encoders import jsonable_encoder
+from object_api.models.filters import SearchParams
 from .statements_sql import (
     convert_conesearch_args,
     convert_filters_to_sqlalchemy_statement,
@@ -25,7 +26,7 @@ class ModelDataParser:
         return json_model
 
 
-def parse_params(search_params):
+def parse_params(search_params: SearchParams) -> dict:
     consearch_parse = convert_conesearch_args(search_params.conesearch_args.__dict__)
     consearch_statement = create_conesearch_statement(consearch_parse)
     filters_sqlalchemy_statement = convert_filters_to_sqlalchemy_statement(search_params.filter_args.__dict__)

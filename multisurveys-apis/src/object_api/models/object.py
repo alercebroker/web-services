@@ -1,6 +1,11 @@
 from pydantic import BaseModel
 from datetime import datetime
 
+class ObjectQueryInformation(BaseModel):
+    oid: str
+    survey_name: str
+    survey_mapped: int
+
 
 class ZtfObject(BaseModel):
     oid: int

@@ -5,6 +5,8 @@ from db_plugins.db.sql.models import (
     LsstSsObject,
     Probability,
 )
+from object_api.models.filters import SearchParams
+from object_api.models.object import ObjectQueryInformation
 from sqlalchemy.orm import aliased
 from sqlalchemy import select, and_
 from object_api.services.parsers import serialize_items
@@ -43,15 +45,15 @@ def query_common_object(session_ms, oid, survey_id):
         return object_row
 
 
-def query_object_by_id(session_ms, oid, survey_id):
+def query_object_by_id(object_filters: ObjectQueryInformation, session_ms):
     """Query a single object joining the common `Object` table and the survey-specific table.
 
     Returns the row containing (survey_model, Object) similar to detections' queries.
     """
     with session_ms() as session:
-        model = ObjectsModels(survey_id).get_model_by_survey()
+        model = ObjectsModels(object_filters.survey_name).get_model_by_survey()
 
-        stmt = build_statement_object(model, oid)
+        stmt = build_statement_object(model, object_filters.oid)
 
         object_row = session.execute(stmt).one()
 
@@ -70,7 +72,7 @@ def build_statement_object(model_id, oid):
     return stmt
 
 
-def query_get_objects(session_ms, search_params, parsed_params):
+def query_get_objects(session_ms, search_params: SearchParams, parsed_params: dict) -> Pagination:
     filter_args = search_params.filter_args
     filters_statements = parsed_params["filters_sqlalchemy_statement"]
     pagination_args = check_pagination_args(search_params.pagination_args)

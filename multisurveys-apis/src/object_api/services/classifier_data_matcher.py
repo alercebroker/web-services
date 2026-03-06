@@ -1,4 +1,7 @@
-def update_filters(search_params, classes_list):
+from object_api.models.filters import SearchParams
+
+
+def update_filters(search_params: SearchParams, classes_list: list) -> SearchParams:
     requested_classifier_name = search_params.filter_args.classifier
     requested_class_name = search_params.filter_args.class_name
 

@@ -1,5 +1,7 @@
 from core.repository.queries.classifiers import get_all_classifiers
 from classifier_api.services.classifiers import get_classifiers
+from object_api.models.filters import SearchParams
+from object_api.models.object import ObjectQueryInformation
 from .classifiers_utils import sort_classifiers
 from core.repository.queries.objects import (
     query_get_objects,
@@ -15,14 +17,15 @@ from .parsers import (
 )
 
 
-def get_object_by_id(oid, survey_id: str, session_ms, return_survey_extra: bool = False):
-    object_model = query_object_by_id(session_ms, oid, survey_id)
+def get_object_by_id(object_filters: ObjectQueryInformation, session_ms, return_survey_extra: bool = False):
+    object_model = query_object_by_id(object_filters, session_ms)
 
-    response = parse_unique_object_query(object_model, survey_id, return_survey_extra)
+    response = parse_unique_object_query(object_model, object_filters.survey_name, return_survey_extra)
+    
     return response
 
 
-def get_objects_list(session_ms, search_params):
+def get_objects_list(session_ms, search_params: SearchParams):
     classes_list = get_classes_list(session_ms)
     search_params = update_filters(search_params, classes_list)
     parsed_params = parse_params(search_params)
@@ -33,7 +36,7 @@ def get_objects_list(session_ms, search_params):
     return result
 
 
-def get_classes_list(session_ms):
+def get_classes_list(session_ms) -> list:
     classes_list = get_all_classifiers(session_ms)
     classes_list_parsed = parse_classifiers(classes_list)
 
