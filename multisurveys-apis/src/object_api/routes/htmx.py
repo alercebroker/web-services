@@ -19,10 +19,9 @@ from ..services.validations import (
     probability_validation,
 )
 from ..services.tns_service import get_tns
-from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
-from core.idmapper.idmapper import get_survey_id
+from core.idmapper.idmapper import get_survey_id, encode_ids
 from object_api.services.object_services import (
     get_object_by_id,
 )
@@ -130,7 +129,7 @@ async def select_classes_classifier(request: Request, classifier_classes: list[s
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
 
-
+import pprint
 @router.get("/htmx/list_objects", response_class=HTMLResponse)
 def objects_table(
     request: Request,
@@ -175,6 +174,7 @@ def objects_table(
 
             if oid is not None:
                 oid = encode_ids(survey, oid)
+                print(oid)
 
             survey_mapped = get_survey_id(survey, session)
 

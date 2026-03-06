@@ -25,6 +25,9 @@ REVERSE_SURVEY_IDS = dict((zip(SURVEY_IDS.values(), SURVEY_IDS.keys())))
 
 
 def encode_ids(survey, oids):
+    if "dia" in survey or "ss" in survey:
+        survey = "LSST"
+
     encode_array = []
     for id in oids:
         encode_id = catalog_oid_to_masterid(survey.upper(), id)
@@ -74,7 +77,7 @@ def catalog_oid_to_masterid(
     if catalog == "ZTF":
         master_id += encode_ztf_to_masterid_without_survey(str(catalog_oid), validate)
     elif catalog == "LSST":
-        return np.int64(catalog_oid)
+        return catalog_oid
 
     return master_id
 
