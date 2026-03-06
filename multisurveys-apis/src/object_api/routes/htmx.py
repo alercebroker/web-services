@@ -101,7 +101,7 @@ async def objects_form(request: Request):
     try:
         session = request.app.state.psql_session
         classifiers = get_tidy_classifiers(session)
-        print(classifiers)
+
 
         return templates.TemplateResponse(
             name="form.html.jinja",

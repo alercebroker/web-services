@@ -298,19 +298,19 @@ class ExportModel:
 
     def get_model(self):
         if self.model_variant == "probability":
-            if self.survey == "ztf":
+            if "ztf" in self.survey:
                 return ZtfObjectProbability
-            elif self.survey == "lsst":
+            elif "lsst" in self.survey:
                 return LsstObjectProbability
         elif self.model_variant == "basic":
-            if self.survey == "ztf":
+            if "ztf" in self.survey:
                 return Object
-            elif self.survey == "lsst":
+            elif "lsst" in self.survey:
                 return Object
         elif self.model_variant == "with_extra":
-            if self.survey == "ztf":
+            if "ztf" in self.survey:
                 return ObjectPlusZtfObject
-            elif self.survey == "lsst":
+            elif "lsst" in self.survey:
                 return ObjectPlusLsstObject
         else:
             raise ValueError("Invalid model variant")

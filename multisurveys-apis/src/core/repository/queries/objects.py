@@ -18,16 +18,15 @@ import pandas as pd
 
 class ObjectsModels:
     def __init__(self, survey):
-        print(survey)
         self.survey = survey
 
     def get_model_by_survey(self):
         s = (self.survey or "").lower()
         if s == "ztf":
             return ZtfObject
-        if s == "lsst":
+        if s == "lsst dia":
             return LsstDiaObject
-        if s == "ss":
+        if s == "lsst ss":
             return LsstSsObject
         # fallback to generic Object so callers don't break for unknown surveys
         return Object
