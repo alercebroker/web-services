@@ -105,6 +105,10 @@ class SurveyParser(BaseModel):
 
 
 def get_survey_id(survey: str, session) -> str:
+
+    if survey == 'lsst':
+        survey = 'lsst dia'
+
     survey_id_mapped = None
     
     raw_surveys = query_all_surveys(session)
