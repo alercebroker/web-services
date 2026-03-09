@@ -3,21 +3,21 @@
 <script src="{{API_URL}}/htmx/htmx.min.js"></script>
 
 <div id="sidebar-container" class="tw-preflight">
-    <!-- Loader: Se muestra cuando #sidebar-container tiene la clase .htmx-request -->
+    <!-- Loader: Aparece en la parte superior SIN ocultar lo de abajo -->
     <div id="sidebar-loader" class="htmx-indicator tw-w-full">
-        <div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-10 tw-gap-4">
+        <div class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-6 tw-gap-2">
             <div class="alerce-spinner"></div>
             <span class="fetching-text">Loading oids...</span>
         </div>
     </div>
 
-    <!-- Contenido: Se oculta cuando #sidebar-container tiene la clase .htmx-request -->
-    <div id="sidebar-objects-htmx" class="htmx-indicator-hide tw-text-black tw-bg-transparent dark:tw-bg-[#424242] dark:tw-text-[#EEEEEE]">
+    <!-- Contenido: YA NO tiene htmx-indicator-hide, así que permanece visible mientras carga -->
+    <div id="sidebar-content" class="tw-text-black tw-bg-transparent dark:tw-bg-[#424242] dark:tw-text-[#EEEEEE]">
         {% if objects_list['items']|length > 0 %}
             <input id="objects-store" class="tw-hidden" data-objects="{{ objects_list['items'] }}">
             <input id="selected_oid_cache" class="tw-hidden" value="{{selected_oid}}">
 
-            <div class="tw-flex tw-flex-col tw-w-full tw-h-[95vh] tw-text-[0.875rem] dark:tw-bg-[#424242]">
+            <div id="sidebar-objects-htmx" class="tw-flex tw-flex-col tw-w-full tw-h-[95vh] tw-text-[0.875rem] dark:tw-bg-[#424242]">
                 <div class="tw-px-4 tw-text-black/60 tw-border-y tw-border-[#616161] dark:tw-text-white/70 tw-h-[45px] tw-flex tw-items-center tw-justify-start">Object List</div>
 
                 {% for item in objects_list['items']%}
@@ -28,15 +28,13 @@
                         class="tw-flex tw-items-center tw-justify-start tw-h-[45px] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer"
                         hx-get="{{API_URL}}/htmx/side_objects"
                         hx-trigger="click"
-                        hx-swap="innerHTML"
-                        hx-target="#sidebar-objects-htmx"
-                        hx-indicator="closest #sidebar-container"
+                        hx-swap="outerHTML"
+                        hx-target="#sidebar-container"
+                        hx-indicator="#sidebar-container"
                         hx-on::config-request="prepare_params(event)"
                         >
-                            <span
-                            class="tw-px-4 tw-inline-block"
-                            >
-                            {{item['oid']}}
+                            <span class="tw-px-4 tw-inline-block">
+                                {{item['oid']}}
                             </span>
                         </div>
                     
@@ -48,8 +46,7 @@
                 {% endfor %}
             </div>
 
-
-            <div class=" tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[48px] dark:tw-bg-[#424242]">
+            <div class="tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[48px] dark:tw-bg-[#424242]">
                 {% if has_prev %}
                     <span 
                     id="prev_page"
@@ -57,21 +54,22 @@
                     data-next="{{prev}}"
                     hx-get="{{API_URL}}/htmx/side_objects"
                     hx-trigger="click"
-                    hx-swap="innerHTML"
-                    hx-target="#sidebar-objects-htmx"
-                    hx-indicator="closest #sidebar-container"
+                    hx-swap="outerHTML"
+                    hx-target="#sidebar-container"
+                    hx-indicator="#sidebar-container"
                     hx-on::config-request="prepare_params(event)"
                     class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     >
-                    <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960">
-                    <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/>
-                    </svg>
+                        <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960">
+                            <path d="M400-240 160-480l240-240 56 58-142 142h486v80H314l142 142-56 58Z"/>
+                        </svg>
                     </span>
                 {% endif %}
                 <span 
                 id="current_page" 
                 data-page="{{objects_list['current_page']}}" 
-                class="tw-inline-block tw-text-black dark:tw-text-white tw-text-sm tw-text-center tw-h-[28px] tw-w-[48px] tw-flex tw-items-center tw-justify-center">{{objects_list['current_page']}}
+                class="tw-inline-block tw-text-black dark:tw-text-white tw-text-sm tw-text-center tw-h-[28px] tw-w-[48px] tw-flex tw-items-center tw-justify-center">
+                    {{objects_list['current_page']}}
                 </span>
                 
                 {% if has_next %}
@@ -81,17 +79,21 @@
                     data-next="{{next}}"
                     hx-get="{{API_URL}}/htmx/side_objects"
                     hx-trigger="click"
-                    hx-swap="innerHTML"
-                    hx-target="#sidebar-objects-htmx"
-                    hx-indicator="closest #sidebar-container"
+                    hx-swap="outerHTML"
+                    hx-target="#sidebar-container"
+                    hx-indicator="#sidebar-container"
                     hx-on::config-request="prepare_params(event)"
                     class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
                     >
-                    <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960">
-                    <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/>
-                    </svg>
+                        <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960">
+                            <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z"/>
+                        </svg>
                     </span>
                 {%endif%}
+            </div>
+        {% else %}
+            <div id="sidebar-objects-htmx" class="tw-flex tw-items-center tw-justify-center tw-h-[100px] tw-text-black/50 dark:tw-text-white/50">
+                No results found
             </div>
         {% endif %}
     </div>
@@ -99,7 +101,6 @@
 
 <script type="module">
     import {init, elementReady} from "{{API_URL}}/static/sidebar.js"
-
 
     elementReady("#sidebar-objects-htmx").then((el) => {
         init();
