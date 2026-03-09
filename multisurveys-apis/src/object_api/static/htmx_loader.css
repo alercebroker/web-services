@@ -1,5 +1,5 @@
 .htmx-indicator {
-  display: none;
+  display: none !important;
 }
 
 .htmx-request .htmx-indicator,
