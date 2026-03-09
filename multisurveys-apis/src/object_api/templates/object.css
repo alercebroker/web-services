@@ -6,6 +6,15 @@
 
 /* inicio custom components*/
 @layer components{
+
+  .obj-selected-item{
+    @apply tw-text-[#1976D2] tw-font-medium tw-bg-[#1976D2]/30
+  }
+
+  .obj-unselected-item{
+    @apply hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer
+  }
+
   .htmx-indicator{
     opacity: 0;
   }

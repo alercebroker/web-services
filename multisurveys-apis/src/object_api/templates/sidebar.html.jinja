@@ -17,12 +17,8 @@
                 <div
                 data-oid='{{item["oid"]}}'
                 name="sidebar-row-element" 
-                class="tw-flex tw-items-center tw-justify-start tw-h-[45px] hover:tw-bg-[#b2b2b2]/50 hover:tw-cursor-pointer"
-                hx-get="{{API_URL}}/htmx/side_objects"
-                hx-trigger="click"
-                hx-swap="innerHTML"
-                hx-target="#sidebar-objects-htmx"
-                hx-on::config-request="prepare_params(event)"
+                class="tw-flex tw-items-center tw-justify-start tw-h-[45px] obj-unselected-item"
+                hx-on:click="highlight_new_object(event)"
                 >
                     <span
                     class="tw-px-4 tw-inline-block"
@@ -32,7 +28,11 @@
                 </div>
             
             {% else  %}
-                <div name="sidebar-row-element" class="tw-flex tw-items-center tw-justify-start tw-h-[45px] tw-text-[#1976D2] tw-font-medium tw-bg-[#1976D2]/30">
+                <div
+                 name="sidebar-row-element"
+                 class="tw-flex tw-items-center tw-justify-start tw-h-[45px] obj-selected-item"
+                 hx-on:click="highlight_new_object(event)"
+                 >
                     <span class="tw-px-4 tw-inline-block">{{selected_oid}}</span>
                 </div>
             {% endif %}

@@ -2,6 +2,26 @@
 
 export function init(){
   window.prepare_params = prepare_params
+  window.highlight_new_object = highlight_new_object
+}
+
+function highlight_new_object(event) {
+  let object_element = event.srcElement
+
+  unhighlight_selected_object()
+  toggle_class_in_element(object_element, 'obj-unselected-item')
+  toggle_class_in_element(object_element, 'obj-selected-item')
+}
+
+function unhighlight_selected_object(){
+  let selected_element = document.querySelector('.obj-selected-item')
+
+  toggle_class_in_element(selected_element, 'obj-selected-item')
+  toggle_class_in_element(selected_element, 'obj-unselected-item')
+}
+
+function toggle_class_in_element(element, class_name){
+  element.classList.toggle(class_name)
 }
 
 
