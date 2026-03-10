@@ -1,4 +1,22 @@
+export function elementReady(selector) {
+  return new Promise((resolve, reject) => {
+    const el = document.querySelector(selector);
+    if (el) {
+      resolve(el);
+    }
 
+    new MutationObserver((mutationRecords, observer) => {
+      Array.from(document.querySelectorAll(selector)).forEach(element => {
+        resolve(element);
+        observer.disconnect();
+      });
+    })
+    .observe(document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  });
+}
 
 export function init(){
   window.prepare_params = prepare_params
@@ -6,49 +24,38 @@ export function init(){
 }
 
 function highlight_new_object(event) {
-  let object_element = event.srcElement
+  let clicked_oid = event.srcElement
 
   unhighlight_selected_object()
-  toggle_class_in_element(object_element, 'obj-unselected-item')
-  toggle_class_in_element(object_element, 'obj-selected-item')
+  select_element(clicked_oid)
 }
 
 function unhighlight_selected_object(){
-  let selected_element = document.querySelector('.obj-selected-item')
+  let currently_selected = document.querySelector('.obj-selected-item')
 
-  toggle_class_in_element(selected_element, 'obj-selected-item')
-  toggle_class_in_element(selected_element, 'obj-unselected-item')
+  if (check_if_no_item_is_selected(currently_selected)) {
+    return
+  }
+
+  deselect_element(currently_selected)
 }
 
-function toggle_class_in_element(element, class_name){
-  element.classList.toggle(class_name)
+function select_element(element) {
+  element.classList.replace('obj-unselected-item', 'obj-selected-item',)
 }
 
+function deselect_element(element) {
+  element.classList.replace('obj-selected-item', 'obj-unselected-item')
+}
 
-export function elementReady(selector) {
-    return new Promise((resolve, reject) => {
-      const el = document.querySelector(selector);
-      if (el) {
-        resolve(el);
-      }
-  
-      new MutationObserver((mutationRecords, observer) => {
-        Array.from(document.querySelectorAll(selector)).forEach(element => {
-          resolve(element);
-          observer.disconnect();
-        });
-      })
-      .observe(document.documentElement, {
-        childList: true,
-        subtree: true
-      });
-    });
+function check_if_no_item_is_selected(object) {
+  return !object
 }
 
 function prepare_params(evt){
   let url = new URL(evt.detail.headers['HX-Current-URL'])
   let page = get_page(evt.detail.elt)
-  let selected_oid = get_selected_oid(evt)
+  let selected_oid = get_selected_oid()
 
   url.searchParams.set("page", page)
   url.searchParams.set("selected_oid", selected_oid)
@@ -66,13 +73,14 @@ function get_page(event_element){
   return current_page
 }
 
-function get_selected_oid(evt){
-  if (evt.detail.elt.hasAttribute('data-oid')) {
-   return evt.detail.elt.dataset.oid
+function get_selected_oid(){
+  let selected = document.querySelector('.obj-selected-item')
+
+  if(check_if_no_item_is_selected(selected)) {
+    return document.getElementById('selected_oid_cache').value
   }
 
-
-  return document.getElementById('selected_oid_cache').value
+  return selected.dataset.oid
 }
 
 function prepare_data(url){
