@@ -1,26 +1,26 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
+<link rel="stylesheet" href="{{API_URL}}/static/htmx_loader.css">
 <script src="{{API_URL}}/htmx/htmx.min.js"></script>
 
-<div id="sidebar-container" class="tw-preflight tw-w-full tw-text-black tw-bg-transparent dark:tw-bg-[#424242] dark:tw-text-[#EEEEEE]">
+<!-- El contenedor principal se mantiene ESTABLE, no se reemplaza -->
+<div id="sidebar-container" class="tw-preflight tw-w-full tw-text-black tw-bg-transparent dark:tw-bg-[#424242] dark:tw-text-white">
     
-    <!-- Loader: Div propio en el flujo (empuja el contenido sutilmente) -->
-    <div id="sidebar-loader" class="htmx-indicator tw-w-full tw-border-b tw-border-[#616161]/30">
-        <div class="tw-flex tw-items-center tw-justify-center tw-py-4 tw-gap-3">
-            <div class="alerce-spinner" style="width: 20px; height: 20px; border-width: 2px;"></div>
-            <span class="fetching-text" style="font-size: 13px;">Loading oids...</span>
-        </div>
+    <!-- Loader: Se activa con htmx-request -->
+    <div id="sidebar-loader" class="htmx-indicator tw-w-full tw-flex tw-flex-col tw-items-center tw-justify-center tw-py-6 tw-gap-2">
+        <div class="alerce-spinner"></div>
+        <span class="fetching-text">Loading oids...</span>
     </div>
 
-    <!-- Contenido -->
-    <div id="sidebar-content">
+    <!-- Este es el div que HTMX va a reemplazar usando outerHTML y hx-select -->
+    <div id="sidebar-inner" class="htmx-indicator-hide">
         {% if objects_list['items']|length > 0 %}
             <input id="objects-store" class="tw-hidden" data-objects="{{ objects_list['items'] }}">
             <input id="selected_oid_cache" class="tw-hidden" value="{{selected_oid}}">
 
             <div id="sidebar-objects-htmx" class="tw-flex tw-flex-col tw-w-full tw-h-[95vh] tw-text-[0.875rem]">
                 
-                <div class="tw-px-4 tw-text-black/60 dark:tw-text-white/70 tw-border-y tw-border-[#616161] tw-h-[45px] tw-flex tw-items-center tw-justify-start">
+                <div class="tw-px-4 tw-text-black dark:tw-text-white tw-border-y tw-border-[#616161] tw-h-[45px] tw-flex tw-items-center tw-justify-start">
                     Object List
                 </div>
 
@@ -33,7 +33,8 @@
                         hx-get="{{API_URL}}/htmx/side_objects"
                         hx-trigger="click"
                         hx-swap="outerHTML"
-                        hx-target="#sidebar-container"
+                        hx-target="#sidebar-inner"
+                        hx-select="#sidebar-inner"
                         hx-indicator="#sidebar-loader"
                         hx-on::config-request="prepare_params(event)"
                         >
@@ -47,8 +48,8 @@
                 {% endfor %}
             </div>
 
-            <!-- Paginación -->
-            <div class="tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[48px] tw-text-black dark:tw-text-[#EEEEEE]">
+            <!-- Paginación con estilos reforzados -->
+            <div class="tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[48px] tw-text-black dark:tw-text-white">
                 {% if has_prev %}
                     <span 
                     id="prev_page"
@@ -57,7 +58,8 @@
                     hx-get="{{API_URL}}/htmx/side_objects"
                     hx-trigger="click"
                     hx-swap="outerHTML"
-                    hx-target="#sidebar-container"
+                    hx-target="#sidebar-inner"
+                    hx-select="#sidebar-inner"
                     hx-indicator="#sidebar-loader"
                     hx-on::config-request="prepare_params(event)"
                     class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -80,7 +82,8 @@
                     hx-get="{{API_URL}}/htmx/side_objects"
                     hx-trigger="click"
                     hx-swap="outerHTML"
-                    hx-target="#sidebar-container"
+                    hx-target="#sidebar-inner"
+                    hx-select="#sidebar-inner"
                     hx-indicator="#sidebar-loader"
                     hx-on::config-request="prepare_params(event)"
                     class="tw-inline-block hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -92,7 +95,7 @@
                 {% endif %}
             </div>
         {% else %}
-            <div id="sidebar-objects-htmx" class="tw-flex tw-items-center tw-justify-center tw-h-[100px] tw-text-black/50 dark:tw-text-white/50">
+            <div id="sidebar-objects-htmx" class="tw-flex tw-items-center tw-justify-center tw-h-[100px] tw-text-black/50 dark:tw-text-white">
                 No results found
             </div>
         {% endif %}
