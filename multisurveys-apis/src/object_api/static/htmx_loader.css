@@ -1,19 +1,18 @@
 .htmx-indicator {
-  display: none;
+  display: none !important;
 }
 
 .htmx-request .htmx-indicator,
 .htmx-request.htmx-indicator {
-  display: flex;
+  display: flex !important;
 }
 
 .htmx-request .htmx-indicator-hide,
 .htmx-request.htmx-indicator-hide {
-  display: none;
+  display: none !important;
 }
 
 .htmx-request#table-loader {
-  display: flex !important;
   padding-top: 80px;
 }
 
