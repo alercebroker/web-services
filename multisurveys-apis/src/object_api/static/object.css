@@ -650,6 +650,26 @@
   height: 1px;
 }
 
+.tw-preflight .tw-h-\[90vh\]{
+  height: 90vh;
+}
+
+.tw-preflight .tw-h-screen{
+  height: 100vh;
+}
+
+.tw-preflight .tw-h-\[80\%\]{
+  height: 80%;
+}
+
+.tw-preflight .tw-h-\[10vh\]{
+  height: 10vh;
+}
+
+.tw-preflight .tw-h-\[5vh\]{
+  height: 5vh;
+}
+
 .tw-preflight .tw-max-h-\[200px\]{
   max-height: 200px;
 }
