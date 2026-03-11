@@ -56,6 +56,15 @@
   opacity: 1;
 }
 
+.astronomical-loading-indicator{
+  opacity: 0;
+}
+
+.htmx-request .astronomical-loading-indicator,
+  .htmx-request.astronomical-loading-indicator{
+  opacity: 1;
+}
+
 .placeholder-span:empty:before {
   content: attr(data-placeholder);
   color: rgba(0, 0, 0, 0.6)
@@ -581,6 +590,10 @@
   height: 20rem;
 }
 
+.tw-preflight .tw-h-\[0\.3vh\]{
+  height: 0.3vh;
+}
+
 .tw-preflight .tw-h-\[100\%\]{
   height: 100%;
 }
@@ -613,12 +626,12 @@
   height: 3px;
 }
 
-.tw-preflight .tw-h-\[40px\]{
-  height: 40px;
+.tw-preflight .tw-h-\[4\.7vh\]{
+  height: 4.7vh;
 }
 
-.tw-preflight .tw-h-\[45px\]{
-  height: 45px;
+.tw-preflight .tw-h-\[40px\]{
+  height: 40px;
 }
 
 .tw-preflight .tw-h-\[48px\]{
@@ -648,26 +661,6 @@
 
 .tw-preflight .tw-h-px{
   height: 1px;
-}
-
-.tw-preflight .tw-h-\[90vh\]{
-  height: 90vh;
-}
-
-.tw-preflight .tw-h-screen{
-  height: 100vh;
-}
-
-.tw-preflight .tw-h-\[80\%\]{
-  height: 80%;
-}
-
-.tw-preflight .tw-h-\[10vh\]{
-  height: 10vh;
-}
-
-.tw-preflight .tw-h-\[5vh\]{
-  height: 5vh;
 }
 
 .tw-preflight .tw-max-h-\[200px\]{

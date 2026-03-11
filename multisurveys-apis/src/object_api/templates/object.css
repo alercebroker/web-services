@@ -27,6 +27,14 @@
     opacity: 1;
   }
 
+  .astronomical-loading-indicator{
+    opacity: 0;
+  }
+  .htmx-request .astronomical-loading-indicator,
+  .htmx-request.astronomical-loading-indicator{
+      opacity: 1;
+  }
+
   .placeholder-span:empty:before {
     content: attr(data-placeholder);
     color: rgba(0, 0, 0, 0.6)

@@ -1,5 +1,6 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
+<link rel="stylesheet" href="{{API_URL}}/static/loading_indicators.css">
 <script src="{{API_URL}}/htmx/htmx.min.js"></script>
 
 
@@ -36,14 +37,18 @@
         {% endfor %}
     </div>
 
+    <div id="astronomical-loding-bar" class="tw-h-[0.3vh] loader astronomical-loading-indicator">
+        <div class="loaderBar"></div>
+    </div>
 
-    <div class=" tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[5vh] dark:tw-bg-[#424242]">
+    <div class=" tw-flex tw-justify-center tw-items-center tw-text-base tw-h-[4.7vh] dark:tw-bg-[#424242]">
         {% if has_prev %}
             <span 
             id="prev_page"
             name="side_objects_btn"
             data-next="{{prev}}"
             hx-get="{{API_URL}}/htmx/side_objects"
+            hx-indicator="#astronomical-loding-bar"
             hx-trigger="click"
             hx-swap="innerHTML"
             hx-target="#sidebar-objects-htmx"
@@ -67,6 +72,7 @@
             name="side_objects_btn"
             data-next="{{next}}"
             hx-get="{{API_URL}}/htmx/side_objects"
+            hx-indicator="#astronomical-loding-bar"
             hx-trigger="click"
             hx-swap="innerHTML"
             hx-target="#sidebar-objects-htmx"
