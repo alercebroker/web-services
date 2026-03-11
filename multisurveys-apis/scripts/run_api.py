@@ -134,14 +134,19 @@ async def run_async():
 async def async_run_service(
     config_dict: dict = {},
 ):
+    print("Running service (async)")
     db_config = config_dict.get("db_config", {})
+    uvicorn_config = config_dict.get("uvicorn_config", {})
 
     server_config = uvicorn.Config(
         # put the db config
         f"{config_dict['source_folder']}.api:app",
         port=config_dict["port"],
-        reload=config_dict.get("reload", True),
+        workers=uvicorn_config.get("workers", 2),
+        reload=config_dict.get("reload", False),
         reload_dirs=[".", "../libs"],
+        forwarded_allow_ips=uvicorn_config.get("forwarded_allow_ips", "*"),
+        timeout_keep_alive=uvicorn_config.get("timeout_keep_alive", 60),
     )
     server = uvicorn.Server(server_config)
     os.environ["API_URL"] = config_dict["url"]
@@ -165,6 +170,7 @@ def run_service(
     Synchronous version of run_service.
     This is useful for running the service in a synchronous context.
     """
+    print("Running service (sync)")
     db_config = config_dict.get("db_config", {})
 
     os.environ["API_URL"] = config_dict["url"]

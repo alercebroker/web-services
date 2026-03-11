@@ -21,7 +21,7 @@ class ApiDatabase:
                 "PORT": os.getenv("PSQL_PORT"),
                 "SCHEMA": os.getenv("SCHEMA"),
             }
-            cls._instance = PsqlDatabase(db_config)
+            cls._instance = PsqlDatabase(db_config, poolclass="NullPool")
         return cls._instance
 
 
