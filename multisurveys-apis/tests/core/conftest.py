@@ -27,8 +27,10 @@ def _wait_for_postgres(host, port, user, password, database, timeout=30):
     while time.time() < deadline:
         try:
             conn = psycopg2.connect(
-                host=host, port=port,
-                user=user, password=password,
+                host=host,
+                port=port,
+                user=user,
+                password=password,
                 database=database,
                 connect_timeout=2,
             )
@@ -37,9 +39,7 @@ def _wait_for_postgres(host, port, user, password, database, timeout=30):
         except psycopg2.OperationalError as exc:
             last_exc = exc
             time.sleep(0.5)
-    raise TimeoutError(
-        f"PostgreSQL did not become ready within {timeout}s"
-    ) from last_exc
+    raise TimeoutError(f"PostgreSQL did not become ready within {timeout}s") from last_exc
 
 
 @pytest.fixture(scope="session")

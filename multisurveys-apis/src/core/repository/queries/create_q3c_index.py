@@ -6,10 +6,7 @@ def create_q3c_idx(db: PsqlDatabase):
     # CREATE INDEX runs fine inside a transaction.
     with db.session() as session:
         session.execute(
-            text(
-                "CREATE INDEX IF NOT EXISTS object_q3c_ang2ipix_idx"
-                " ON object (q3c_ang2ipix(meanra, meandec));"
-            )
+            text("CREATE INDEX IF NOT EXISTS object_q3c_ang2ipix_idx ON object (q3c_ang2ipix(meanra, meandec));")
         )
         session.commit()
 
