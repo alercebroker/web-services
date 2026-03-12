@@ -4,6 +4,7 @@ This file will contian a list of services, one for each api the developer wish t
 
 The strcuture of this file will be.
 
+```yaml
 services:
   object_api:
     source_folder: object_api
@@ -31,6 +32,7 @@ services:
       psql_host: host
       psql_port: 5432
       psql_schema: schema
+```
 
 
 The run_all command will attempt to run all the apis that are included in the services list.
