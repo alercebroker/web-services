@@ -156,7 +156,11 @@ async def async_run_service(
     os.environ["PSQL_DATABASE"] = db_config["psql_database"]
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
-    os.environ["SCHEMA"] = db_config["psql_schema"]
+
+    # psql_schema is used to set the search_path for the database connection.
+    # This option is not compatible with pgbouncer in transaction mode.
+    if "psql_schema" in db_config:
+        os.environ["SCHEMA"] = db_config["psql_schema"]
 
     export_env_variables(config_dict)
 
@@ -180,7 +184,11 @@ def run_service(
     os.environ["PSQL_DATABASE"] = db_config["psql_database"]
     os.environ["PSQL_HOST"] = db_config["psql_host"]
     os.environ["PSQL_PORT"] = str(db_config["psql_port"])
-    os.environ["SCHEMA"] = db_config["psql_schema"]
+
+    # psql_schema is used to set the search_path for the database connection.
+    # This option is not compatible with pgbouncer in transaction mode.
+    if "psql_schema" in db_config:
+        os.environ["SCHEMA"] = db_config["psql_schema"]
 
     export_env_variables(config_dict)
 
