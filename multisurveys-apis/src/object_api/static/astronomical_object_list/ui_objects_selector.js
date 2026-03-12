@@ -2,7 +2,6 @@ import { check_if_no_item_is_selected } from "./conditions.js"
 
 
 export function highlight_new_object(event) {
-    console.log("hola desde highlight")
     unhighlight_selected_object()
     select_element(event.srcElement)
 }
