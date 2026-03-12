@@ -54,7 +54,6 @@
 
 .htmx-request.htmx-indicator{
   opacity: 1;
-<<<<<<< HEAD
 }
 
 .astronomical-loading-indicator{
@@ -64,8 +63,6 @@
 .htmx-request .astronomical-loading-indicator,
   .htmx-request.astronomical-loading-indicator{
   opacity: 1;
-=======
->>>>>>> develop
 }
 
 .placeholder-span:empty:before {
@@ -593,24 +590,14 @@
   height: 20rem;
 }
 
-<<<<<<< HEAD
 .tw-preflight .tw-h-\[0\.3vh\]{
   height: 0.3vh;
 }
 
-=======
->>>>>>> develop
 .tw-preflight .tw-h-\[100\%\]{
   height: 100%;
 }
 
-<<<<<<< HEAD
-=======
-.tw-preflight .tw-h-\[100px\]{
-  height: 100px;
-}
-
->>>>>>> develop
 .tw-preflight .tw-h-\[20px\]{
   height: 20px;
 }
@@ -639,24 +626,14 @@
   height: 3px;
 }
 
-<<<<<<< HEAD
 .tw-preflight .tw-h-\[4\.7vh\]{
   height: 4.7vh;
 }
 
-=======
->>>>>>> develop
 .tw-preflight .tw-h-\[40px\]{
   height: 40px;
 }
 
-<<<<<<< HEAD
-=======
-.tw-preflight .tw-h-\[45px\]{
-  height: 45px;
-}
-
->>>>>>> develop
 .tw-preflight .tw-h-\[48px\]{
   height: 48px;
 }
@@ -1213,32 +1190,18 @@
 }
 
 .tw-preflight .tw-border-gray-200{
-<<<<<<< HEAD
   --tw-border-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
 
 .tw-preflight .tw-border-gray-300{
-=======
->>>>>>> develop
   --tw-border-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .tw-border-gray-700{
   --tw-border-opacity: 1;
   border-color: rgb(55 65 81 / var(--tw-border-opacity));
-=======
-.tw-preflight .tw-border-gray-300{
-  --tw-border-opacity: 1;
-  border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
-}
-
-.tw-preflight .tw-border-gray-700{
-  --tw-border-opacity: 1;
-  border-color: rgb(55 65 81 / var(--tw-border-opacity, 1));
->>>>>>> develop
 }
 
 .tw-preflight .tw-border-transparent{
@@ -1266,32 +1229,18 @@
 }
 
 .tw-preflight .tw-border-b-blue-600{
-<<<<<<< HEAD
   --tw-border-opacity: 1;
   border-bottom-color: rgb(37 99 235 / var(--tw-border-opacity));
 }
 
 .tw-preflight .tw-border-r-gray-900{
-=======
->>>>>>> develop
   --tw-border-opacity: 1;
   border-bottom-color: rgb(37 99 235 / var(--tw-border-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .tw-border-t-gray-800{
   --tw-border-opacity: 1;
   border-top-color: rgb(31 41 55 / var(--tw-border-opacity));
-=======
-.tw-preflight .tw-border-r-gray-900{
-  --tw-border-opacity: 1;
-  border-right-color: rgb(17 24 39 / var(--tw-border-opacity, 1));
-}
-
-.tw-preflight .tw-border-t-gray-800{
-  --tw-border-opacity: 1;
-  border-top-color: rgb(31 41 55 / var(--tw-border-opacity, 1));
->>>>>>> develop
 }
 
 .tw-preflight .tw-border-t-transparent{
@@ -1352,11 +1301,7 @@
 
 .tw-preflight .tw-bg-gray-400{
   --tw-bg-opacity: 1;
-<<<<<<< HEAD
   background-color: rgb(156 163 175 / var(--tw-bg-opacity));
-=======
-  background-color: rgb(156 163 175 / var(--tw-bg-opacity, 1));
->>>>>>> develop
 }
 
 .tw-preflight .tw-bg-gray-500\/75{
@@ -1364,35 +1309,20 @@
 }
 
 .tw-preflight .tw-bg-gray-800{
-<<<<<<< HEAD
   --tw-bg-opacity: 1;
   background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 }
 
 .tw-preflight .tw-bg-gray-900{
-=======
->>>>>>> develop
   --tw-bg-opacity: 1;
   background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .tw-bg-green-500{
-=======
-.tw-preflight .tw-bg-gray-900{
->>>>>>> develop
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
 }
 
-<<<<<<< HEAD
-=======
-.tw-preflight .tw-bg-green-500{
-  --tw-bg-opacity: 1;
-  background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1));
-}
-
->>>>>>> develop
 .tw-preflight .tw-bg-transparent{
   background-color: transparent;
 }
@@ -1493,14 +1423,6 @@
   padding-bottom: 1rem;
 }
 
-<<<<<<< HEAD
-=======
-.tw-preflight .tw-py-6{
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-}
-
->>>>>>> develop
 .tw-preflight .tw-py-\[2px\]{
   padding-top: 2px;
   padding-bottom: 2px;
@@ -1660,13 +1582,6 @@
   color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 
-<<<<<<< HEAD
-=======
-.tw-preflight .tw-text-black\/50{
-  color: rgb(0 0 0 / 0.5);
-}
-
->>>>>>> develop
 .tw-preflight .tw-text-black\/60{
   color: rgb(0 0 0 / 0.6);
 }
@@ -2552,44 +2467,25 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 
 .tw-preflight .hover\:tw-bg-gray-100:hover{
-<<<<<<< HEAD
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
 .tw-preflight .hover\:tw-bg-gray-400:hover{
-=======
->>>>>>> develop
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .hover\:tw-bg-gray-50:hover{
-=======
-.tw-preflight .hover\:tw-bg-gray-400:hover{
->>>>>>> develop
   --tw-bg-opacity: 1;
   background-color: rgb(156 163 175 / var(--tw-bg-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .hover\:tw-bg-gray-600:hover{
-=======
-.tw-preflight .hover\:tw-bg-gray-50:hover{
->>>>>>> develop
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
 }
 
-<<<<<<< HEAD
-=======
-.tw-preflight .hover\:tw-bg-gray-600:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(75 85 99 / var(--tw-bg-opacity, 1));
-}
-
->>>>>>> develop
 .tw-preflight .hover\:tw-text-gray-600:hover{
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity, 1));
@@ -2675,77 +2571,43 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 
 .tw-preflight .dark\:tw-border-gray-300:is(.tw-dark *){
-<<<<<<< HEAD
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
 }
 
 .tw-preflight .dark\:tw-border-gray-600:is(.tw-dark *){
-=======
->>>>>>> develop
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .dark\:tw-border-white:is(.tw-dark *){
-=======
-.tw-preflight .dark\:tw-border-gray-600:is(.tw-dark *){
->>>>>>> develop
   --tw-border-opacity: 1;
   border-color: rgb(75 85 99 / var(--tw-border-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .dark\:tw-border-yellow-700:is(.tw-dark *){
-=======
-.tw-preflight .dark\:tw-border-white:is(.tw-dark *){
->>>>>>> develop
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .dark\:tw-border-b-\[\#757575\]:is(.tw-dark *){
-=======
-.tw-preflight .dark\:tw-border-yellow-700:is(.tw-dark *){
->>>>>>> develop
   --tw-border-opacity: 1;
   border-color: rgb(161 98 7 / var(--tw-border-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .dark\:tw-border-b-gray-600:is(.tw-dark *){
-=======
-.tw-preflight .dark\:tw-border-b-\[\#757575\]:is(.tw-dark *){
->>>>>>> develop
   --tw-border-opacity: 1;
   border-bottom-color: rgb(117 117 117 / var(--tw-border-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .dark\:tw-border-b-white:is(.tw-dark *){
-=======
-.tw-preflight .dark\:tw-border-b-gray-600:is(.tw-dark *){
->>>>>>> develop
   --tw-border-opacity: 1;
   border-bottom-color: rgb(75 85 99 / var(--tw-border-opacity, 1));
 }
 
-<<<<<<< HEAD
 .tw-preflight .dark\:tw-border-t-gray-900:is(.tw-dark *){
   --tw-border-opacity: 1;
   border-top-color: rgb(17 24 39 / var(--tw-border-opacity));
-=======
-.tw-preflight .dark\:tw-border-b-white:is(.tw-dark *){
-  --tw-border-opacity: 1;
-  border-bottom-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
-}
-
-.tw-preflight .dark\:tw-border-t-gray-900:is(.tw-dark *){
-  --tw-border-opacity: 1;
-  border-top-color: rgb(17 24 39 / var(--tw-border-opacity, 1));
->>>>>>> develop
 }
 
 .tw-preflight .dark\:tw-border-opacity-20:is(.tw-dark *){
@@ -2786,26 +2648,15 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 
 .tw-preflight .dark\:tw-bg-gray-900:is(.tw-dark *){
-<<<<<<< HEAD
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity));
 }
 
 .tw-preflight .dark\:tw-bg-yellow-900:is(.tw-dark *){
-=======
->>>>>>> develop
   --tw-bg-opacity: 1;
   background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1));
 }
 
-<<<<<<< HEAD
-=======
-.tw-preflight .dark\:tw-bg-yellow-900:is(.tw-dark *){
-  --tw-bg-opacity: 1;
-  background-color: rgb(113 63 18 / var(--tw-bg-opacity, 1));
-}
-
->>>>>>> develop
 .tw-preflight .dark\:tw-fill-\[\#1976d2\]:is(.tw-dark *){
   fill: #1976d2;
 }
@@ -2840,30 +2691,15 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 }
 
 .tw-preflight .dark\:tw-text-gray-600:is(.tw-dark *){
-<<<<<<< HEAD
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity));
 }
 
 .tw-preflight .dark\:tw-text-white:is(.tw-dark *){
-=======
->>>>>>> develop
   --tw-text-opacity: 1;
   color: rgb(75 85 99 / var(--tw-text-opacity, 1));
 }
 
-<<<<<<< HEAD
-=======
-.tw-preflight .dark\:tw-text-white:is(.tw-dark *){
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.tw-preflight .dark\:tw-text-white\/50:is(.tw-dark *){
-  color: rgb(255 255 255 / 0.5);
-}
-
->>>>>>> develop
 .tw-preflight .dark\:tw-text-white\/70:is(.tw-dark *){
   color: rgb(255 255 255 / 0.7);
 }
@@ -2912,11 +2748,7 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
 .tw-preflight .dark\:hover\:tw-bg-gray-800:hover:is(.tw-dark *){
   --tw-bg-opacity: 1;
-<<<<<<< HEAD
   background-color: rgb(31 41 55 / var(--tw-bg-opacity));
-=======
-  background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
->>>>>>> develop
 }
 
 .tw-preflight .dark\:hover\:tw-text-gray-300:hover:is(.tw-dark *){

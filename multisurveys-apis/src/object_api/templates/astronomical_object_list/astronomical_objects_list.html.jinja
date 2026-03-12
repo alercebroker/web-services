@@ -86,6 +86,9 @@
         {%endif%}
     </div>
 </div>
+{% else %}
+<div id="sidebar-objects-htmx"></div>
+{% endif %}
 
 <script type="module">
     import {init, elementReady} from "{{API_URL}}/static/astronomical_object_list/object_list.js"
