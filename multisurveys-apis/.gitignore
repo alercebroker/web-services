@@ -2,3 +2,5 @@ dummy_data/
 mise.toml
 node_modules/
 .envrc
+
+config_*.yaml
