@@ -1,0 +1,41 @@
+name: Add tag to GHCR image
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Image name (ghcr.io/org/image)"
+        required: true
+      digest:
+        description: "Digest (sha256:...)"
+        required: true
+      tag:
+        description: "Tag to add"
+        required: true
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - name: Install crane
+        run: |
+          curl -sL https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \
+            | tar -xz crane
+          sudo mv crane /usr/local/bin/
+
+      - name: Login to GHCR
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | crane auth login ghcr.io \
+            -u ${{ github.actor }} \
+            --password-stdin
+
+      - name: Add tag
+        run: |
+          crane tag \
+            ${{ inputs.image }}@${{ inputs.digest }} \
+            ${{ inputs.tag }}
