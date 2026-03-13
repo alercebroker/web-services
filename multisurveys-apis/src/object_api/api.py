@@ -20,6 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_middleware(GZipMiddleware, minimum_size=1000)
+
 app.include_router(rest.router)
 app.include_router(htmx.router)
 
