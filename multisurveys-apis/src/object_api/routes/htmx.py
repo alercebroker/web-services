@@ -316,7 +316,7 @@ def sidebar(
             }
 
         return templates.TemplateResponse(
-            name="sidebar.html.jinja",
+            name="astronomical_object_list/astronomical_objects_list.html.jinja",
             context={
                 "request": request,
                 "objects_list": object_list,
