@@ -34,6 +34,13 @@ data:
       client_max_body_size 10M;
       client_body_buffer_size 256k;
 
+      gzip on;
+      gzip_proxied any;
+      gzip_comp_level 5;
+      gzip_min_length 1024;
+      gzip_types application/json text/plain text/css application/javascript;
+      gzip_vary on;
+
       location = / {
         add_header Content-Type text/plain;
         return 200 'ok';
