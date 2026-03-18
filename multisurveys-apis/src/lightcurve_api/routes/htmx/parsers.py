@@ -48,12 +48,6 @@ class ConfigState(BaseModel):
     # data types
     data_types: List[str] = ["detections", "non_detections", "forced_photometry"]
 
-    # detections, non_detections and forced_photometry are sent as json strings
-    # that need to be parsed
-    detections: List[str] = []
-    non_detections: List[str] = []
-    forced_photometry: List[str] = []
-
     # additional context
     oid: str = ""
     survey_id: str = ""
