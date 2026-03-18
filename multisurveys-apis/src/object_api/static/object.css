@@ -638,6 +638,10 @@
   height: 48px;
 }
 
+.tw-preflight .tw-h-\[4px\]{
+  height: 4px;
+}
+
 .tw-preflight .tw-h-\[64px\]{
   height: 64px;
 }
@@ -663,12 +667,20 @@
   height: 1px;
 }
 
+.tw-preflight .tw-h-\[34px\]{
+  height: 34px;
+}
+
 .tw-preflight .tw-max-h-\[200px\]{
   max-height: 200px;
 }
 
 .tw-preflight .tw-max-h-\[304px\]{
   max-height: 304px;
+}
+
+.tw-preflight .tw-max-h-\[500px\]{
+  max-height: 500px;
 }
 
 .tw-preflight .tw-max-h-fit{
@@ -682,10 +694,6 @@
 
 .tw-preflight .tw-min-h-0{
   min-height: 0px;
-}
-
-.tw-preflight .tw-min-h-\[500px\]{
-  min-height: 500px;
 }
 
 .tw-preflight .tw-min-h-full{
