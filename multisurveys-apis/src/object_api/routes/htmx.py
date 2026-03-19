@@ -212,7 +212,7 @@ def objects_table(
             }
 
         return templates.TemplateResponse(
-            name="objects_table.html.jinja",
+            name="main_table_objects/objects_table.html.jinja",
             context={
                 "request": request,
                 "objects_list": object_list,
