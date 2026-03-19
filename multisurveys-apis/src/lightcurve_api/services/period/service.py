@@ -33,26 +33,24 @@ def compute_periodogram(result: Result) -> Result:
     if not result.config_state.fold:
         return result
 
-    result_copy = result.copy()
-
     computer = PeriodogramComputer()
     df = detections2dataframe(filter_survey_detections(result.lightcurve.detections, result.config_state.survey_id))
     computed = computer.compute(df)
-    result_copy.periodogram = computed
+    result.periodogram = computed
 
     try:
         if result.config_state.period == 0.05:  # if period is the default, set the computed period
-            result_copy.config_state.period = computed.get_best_period()
+            result.config_state.period = computed.get_best_period()
 
-        return result_copy
+        return result
     except NoPeriodError:
         # We set the periodogram to empty if no period is found
         # Otherwise, the arrays are filled with NaN values that occupy space
-        result_copy.periodogram.best_periods = []
-        result_copy.periodogram.best_periods_index = []
-        result_copy.periodogram.periods = []
-        result_copy.periodogram.scores = []
-        return result_copy
+        result.periodogram.best_periods = []
+        result.periodogram.best_periods_index = []
+        result.periodogram.periods = []
+        result.periodogram.scores = []
+        return result
 
 
 def filter_survey_detections(detections: List[BaseDetection], survey_id: str) -> List[BaseDetection]:

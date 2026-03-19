@@ -1,4 +1,3 @@
-import copy
 import csv
 import io
 import zipfile
@@ -289,87 +288,75 @@ def get_lightcurve(
     survey_id: str,
     session_factory: Callable[..., ContextManager[Session]],
 ):
-    return Result(
-        copy.deepcopy(result.echart_options),
-        conesearch_oid_lightcurve(
-            oid,
-            DEFAULT_RADIUS,
-            DEFAULT_NEIGHBORS,
-            survey_id,
-            session_factory,
-        ),
-        config_state=result.config_state.model_copy(deep=True),
-        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
+    result.lightcurve = conesearch_oid_lightcurve(
+        oid,
+        DEFAULT_RADIUS,
+        DEFAULT_NEIGHBORS,
+        survey_id,
+        session_factory,
     )
+    return result
 
 
 def get_object_coordinates(result: Result, session_factory: Callable[..., ContextManager[Session]]) -> Result:
-    result_copy = result.copy()
-
-    object = query_object_by_id(session_factory, result_copy.config_state.oid, result_copy.config_state.survey_id)
+    object = query_object_by_id(session_factory, result.config_state.oid, result.config_state.survey_id)
     object_model = _parse_object_common(object)
 
-    result_copy.config_state.meanra = object_model.meanra
-    result_copy.config_state.meandec = object_model.meandec
+    result.config_state.meanra = object_model.meanra
+    result.config_state.meandec = object_model.meandec
 
-    return result_copy
+    return result
 
 
 def set_default_echart_options(result: Result) -> Result:
-    result_copy = result.copy()
-    chart_options = default_echarts_options(result.config_state)
-    result_copy.echart_options = chart_options
-    return result_copy
+    result.echart_options = default_echarts_options(result.config_state)
+    return result
 
 
 def set_chart_options_detections(result: Result) -> Result:
     if "detections" not in result.config_state.data_types:
         return result
 
-    result_copy = result.copy()
+    chart_points = create_chart_detections(result.lightcurve.detections, result.config_state)
 
     # Chart points
     pipe(
-        result_copy.lightcurve.detections,
-        curry(create_chart_detections, config_state=result.config_state),
+        chart_points,
         curry(
             _group_chart_points_by_survey_band,
             error_bar=False,
             config_state=result.config_state,
         ),
         curry(_transform_to_series, series_type=DETECTION),
-        lambda series: result_copy.echart_options["series"].extend(series),
+        lambda series: result.echart_options["series"].extend(series),
     )
 
     # Error bars
     pipe(
-        result_copy.lightcurve.detections,
-        curry(create_chart_detections, config_state=result.config_state),
+        chart_points,
         curry(
             _group_chart_points_by_survey_band,
             error_bar=True,
             config_state=result.config_state,
         ),
         curry(_transform_to_series, series_type=DETECTION, error_bar=True),
-        lambda series: result_copy.echart_options["series"].extend(series),
+        lambda series: result.echart_options["series"].extend(series),
     )
 
-    return result_copy
+    return result
 
 
 def set_chart_limits(result: Result):
-    result_copy = result.copy()
-
     # limits of detections errors
     pipe(
-        result_copy.echart_options,
+        result.echart_options,
         curry(_find_chart_min_and_max_limits, config_state=result.config_state),
         lambda limits_arr: create_series(name="empty", survey="empty", band="empty", data=limits_arr),
         lambda series_dict: [series_dict],
-        lambda series: result_copy.echart_options["series"].extend(series),
+        lambda series: result.echart_options["series"].extend(series),
     )
 
-    return result_copy
+    return result
 
 
 def _find_chart_min_and_max_limits(echarts_options: dict[str, Any], config_state: ConfigState) -> List:
@@ -399,13 +386,11 @@ def set_chart_options_non_detections(result: Result) -> Result:
     if "non_detections" not in result.config_state.data_types:
         return result
 
-    result_copy = result.copy()
-
     if result.config_state.total:
-        return result_copy
+        return result
 
     series = pipe(
-        result_copy.lightcurve.non_detections,
+        result.lightcurve.non_detections,
         curry(create_chart_non_detections, config_state=result.config_state),
         curry(
             _group_chart_points_by_survey_band,
@@ -415,43 +400,41 @@ def set_chart_options_non_detections(result: Result) -> Result:
         curry(_transform_to_series, series_type=NON_DETECTION),
     )
 
-    result_copy.echart_options["series"].extend(series)
-    return result_copy
+    result.echart_options["series"].extend(series)
+    return result
 
 
 def set_chart_options_forced_photometry(result: Result) -> Result:
     if "forced_photometry" not in result.config_state.data_types:
         return result
 
-    result_copy = result.copy()
+    chart_points = create_chart_forced_photometry(result.lightcurve.forced_photometry, result.config_state)
 
     # Chart points
     pipe(
-        result_copy.lightcurve.forced_photometry,
-        curry(create_chart_forced_photometry, config_state=result.config_state),
+        chart_points,
         curry(
             _group_chart_points_by_survey_band,
             error_bar=False,
             config_state=result.config_state,
         ),
         curry(_transform_to_series, series_type=FORCED_PHOTOMETRY),
-        lambda series: result_copy.echart_options["series"].extend(series),
+        lambda series: result.echart_options["series"].extend(series),
     )
 
     # Error bars
     pipe(
-        result_copy.lightcurve.forced_photometry,
-        curry(create_chart_forced_photometry, config_state=result.config_state),
+        chart_points,
         curry(
             _group_chart_points_by_survey_band,
             error_bar=True,
             config_state=result.config_state,
         ),
         curry(_transform_to_series, series_type=FORCED_PHOTOMETRY, error_bar=True),
-        lambda series: result_copy.echart_options["series"].extend(series),
+        lambda series: result.echart_options["series"].extend(series),
     )
 
-    return result_copy
+    return result
 
 
 def create_chart_detections(detections: List[BaseDetection], config_state: ConfigState) -> List[ChartPoint]:
@@ -591,16 +574,14 @@ def create_chart_forced_photometry(
 
 
 def set_chart_options_external_sources(result: Result) -> Result:
-    result_copy = result.copy()
-
-    if len(result_copy.lightcurve.detections) == 0 or not result.config_state.external_sources.enabled:
-        return result_copy
+    if len(result.lightcurve.detections) == 0 or not result.config_state.external_sources.enabled:
+        return result
 
     meanra = result.config_state.meanra
     meandec = result.config_state.meandec
 
     with httpx.Client() as client:
-        result_copy.lightcurve.detections.extend(
+        result.lightcurve.detections.extend(
             pipe(
                 client.get(
                     "https://api.alerce.online/ztf/dr/v1/light_curve/",
@@ -608,12 +589,12 @@ def set_chart_options_external_sources(result: Result) -> Result:
                 ).json(),
                 curry(
                     parse_ztf_dr_detection,
-                    object_ids=result_copy.config_state.external_sources.selected_objects,
+                    object_ids=result.config_state.external_sources.selected_objects,
                 ),
             )
         )
 
-    return result_copy
+    return result
 
 
 def get_ztf_dr_objects(
@@ -654,14 +635,13 @@ def get_ztf_dr_objects(
 
 def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_state: ConfigState, error_bar=False):
     """Group chart points by survey and band in a functional style."""
+    max_error = 99999 if config_state.flux else 1
+    max_brightness, min_brightness = _get_max_and_min_brightness(config_state)
 
     def _add_point_to_group(group: dict, point: ChartPoint):
-        max_error = 99999 if config_state.flux else 1
         point_value = point.point(max_error) if not error_bar else point.error_bar(max_error)
-        max_brightness, min_brightness = _get_max_and_min_brightness(config_state)
         if _valid_point(point_value, max_brightness, min_brightness):
             group[point.survey][point.band].append(point_value)
-
         return group
 
     return reduce(_add_point_to_group, chart_points, defaultdict(lambda: defaultdict(list)))
@@ -992,8 +972,7 @@ def offset_bands(result: Result) -> Result:
     if not result.config_state.offset_bands:
         return result
 
-    result_copy = result.copy()
-    series_defs = result_copy.echart_options["series"]
+    series_defs = result.echart_options["series"]
 
     series, error_bars = _extract_series(series_defs, result.config_state.offset_metric)
 
@@ -1015,9 +994,9 @@ def offset_bands(result: Result) -> Result:
                 )
             )
 
-    result_copy.echart_options["series"] = new_series
+    result.echart_options["series"] = new_series
 
-    return result_copy
+    return result
 
 
 def _metric(name: str, values: List[float]) -> float:
