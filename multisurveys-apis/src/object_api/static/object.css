@@ -56,15 +56,6 @@
   opacity: 1;
 }
 
-.astronomical-loading-indicator{
-  opacity: 0;
-}
-
-.htmx-request .astronomical-loading-indicator,
-  .htmx-request.astronomical-loading-indicator{
-  opacity: 1;
-}
-
 .placeholder-span:empty:before {
   content: attr(data-placeholder);
   color: rgba(0, 0, 0, 0.6)
@@ -663,20 +654,12 @@
   height: 1px;
 }
 
-.tw-preflight .tw-h-\[43px\]{
-  height: 43px;
-}
-
 .tw-preflight .tw-max-h-\[200px\]{
   max-height: 200px;
 }
 
 .tw-preflight .tw-max-h-\[304px\]{
   max-height: 304px;
-}
-
-.tw-preflight .tw-max-h-\[43px\]{
-  max-height: 43px;
 }
 
 .tw-preflight .tw-max-h-fit{
@@ -692,12 +675,12 @@
   min-height: 0px;
 }
 
-.tw-preflight .tw-min-h-full{
-  min-height: 100%;
-}
-
 .tw-preflight .tw-min-h-\[43px\]{
   min-height: 43px;
+}
+
+.tw-preflight .tw-min-h-full{
+  min-height: 100%;
 }
 
 .tw-preflight .tw-w-0{
