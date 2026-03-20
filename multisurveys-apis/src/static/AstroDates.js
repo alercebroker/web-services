@@ -1,4 +1,4 @@
-import julian from 'https://cdn.skypack.dev/julian';;
+import julian from './julian.js';
 
 
 /**
