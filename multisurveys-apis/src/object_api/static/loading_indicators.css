@@ -21,7 +21,7 @@
 .astronomical-loading-indicator{
   opacity: 0;
 }
-.htmx-request .astronomical-loading-indicator,
+
 .htmx-request.astronomical-loading-indicator{
   opacity: 1;
 }
