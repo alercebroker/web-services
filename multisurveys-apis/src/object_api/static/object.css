@@ -48,20 +48,8 @@
   opacity: 0;
 }
 
-.htmx-request .htmx-indicator{
-  opacity: 1;
-}
-
-.htmx-request.htmx-indicator{
-  opacity: 1;
-}
-
-.astronomical-loading-indicator{
-  opacity: 0;
-}
-
-.htmx-request .astronomical-loading-indicator,
-  .htmx-request.astronomical-loading-indicator{
+.htmx-request .htmx-indicator,
+  .htmx-request.htmx-indicator{
   opacity: 1;
 }
 
@@ -614,12 +602,12 @@
   height: 30px;
 }
 
-.tw-preflight .tw-h-\[36px\]{
-  height: 36px;
+.tw-preflight .tw-h-\[34px\]{
+  height: 34px;
 }
 
-.tw-preflight .tw-h-\[384px\]{
-  height: 384px;
+.tw-preflight .tw-h-\[36px\]{
+  height: 36px;
 }
 
 .tw-preflight .tw-h-\[3px\]{
@@ -684,8 +672,8 @@
   min-height: 0px;
 }
 
-.tw-preflight .tw-min-h-\[500px\]{
-  min-height: 500px;
+.tw-preflight .tw-min-h-\[43px\]{
+  min-height: 43px;
 }
 
 .tw-preflight .tw-min-h-full{

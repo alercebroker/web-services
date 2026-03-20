@@ -11,14 +11,14 @@
 
 
     <div class="tw-w-full tw-h-[95vh] tw-text-[0.875rem] tw-flex tw-flex-col dark:tw-bg-[#424242]">
-        <div class="tw-px-4 tw-text-black/60 tw-border-y tw-border-[#616161] dark:tw-text-white/70 tw-grow tw-flex tw-items-center tw-justify-start">Object List</div>
+        <div class="tw-px-4 tw-text-black/60 tw-border-y tw-border-[#616161] dark:tw-text-white/70 tw-min-h-[43px] tw-flex tw-items-center tw-justify-start">Object List</div>
 
         {% for item in objects_list['items']%}
             {% if item['oid']|string != selected_oid|string %}
                 <div
                 data-oid='{{item["oid"]}}'
                 name="sidebar-row-element" 
-                class="tw-grow tw-flex tw-justify-center tw-items-center obj-unselected-item"
+                class="tw-min-h-[43px] tw-flex tw-justify-center tw-items-center obj-unselected-item"
                 hx-on:click="highlight_new_object(event)"
                 >
                 {{item['oid']}}
@@ -28,7 +28,7 @@
                 <div
                  name="sidebar-row-element"
                  data-oid='{{item["oid"]}}'
-                 class="tw-flex tw-justify-center tw-items-center tw-grow obj-selected-item"
+                 class="tw-flex tw-justify-center tw-items-center tw-min-h-[43px] obj-selected-item"
                  hx-on:click="highlight_new_object(event)"
                  >
                     {{selected_oid}}

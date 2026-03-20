@@ -19,20 +19,9 @@
     opacity: 0;
   }
   
-  .htmx-request .htmx-indicator{
-    opacity: 1;
-  }
-
+  .htmx-request .htmx-indicator,
   .htmx-request.htmx-indicator{
     opacity: 1;
-  }
-
-  .astronomical-loading-indicator{
-    opacity: 0;
-  }
-  .htmx-request .astronomical-loading-indicator,
-  .htmx-request.astronomical-loading-indicator{
-      opacity: 1;
   }
 
   .placeholder-span:empty:before {
