@@ -23,7 +23,7 @@
 }
 .htmx-request .astronomical-loading-indicator,
 .htmx-request.astronomical-loading-indicator{
-    opacity: 1;
+  opacity: 1;
 }
 
 @keyframes linear-loading {
