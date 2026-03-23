@@ -9,11 +9,11 @@
             </button>
         </div>
         <div id="scienceZoom" class="imageZoom crossHair tw-relative" style="
-          --url: url('data:image/{{ science_mime }};base64, {{ science_img }}');
+          --url: url('data:{{ science_mime }};base64, {{ science_img }}');
           --zoom-x: 0%; --zoom-y:0%;
           --display: none; --z-index: -1;
           ">
-          <img id="scienceImg" src="data:image/{{ science_mime }};base64, {{ science_img }}" content="data:{{ science_mime_fits }};base64, {{ science_img_fits }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+          <img id="scienceImg" src="data:{{ science_mime }};base64, {{ science_img }}" content="data:{{ science_mime_fits }};base64, {{ science_img_fits }}" alt="Science" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
         </div>
     </div>
     
@@ -27,11 +27,11 @@
             </button>
         </div>
         <div id="templateZoom" class="imageZoom crossHair tw-relative" style="
-          --url: url('data:image/{{ template_mime }};base64, {{ template_img }}');
+          --url: url('data:{{ template_mime }};base64, {{ template_img }}');
           --zoom-x: 0%; --zoom-y:0%;
           --display: none; --z-index: -1;
           ">
-          <img id="templateImg" src="data:image/{{ template_mime }};base64, {{ template_img }}" content="data:{{ template_mime_fits }};base64, {{ template_img_fits }}"alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+          <img id="templateImg" src="data:{{ template_mime }};base64, {{ template_img }}" content="data:{{ template_mime_fits }};base64, {{ template_img_fits }}"alt="Template" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
         </div>
     </div>
     
@@ -45,11 +45,11 @@
             </button>
         </div>
         <div id="differenceZoom" class="imageZoom crossHair tw-relative" style="
-          --url: url('data:image/{{ difference_mime }};base64, {{ difference_img }}');
+          --url: url('data:{{ difference_mime }};base64, {{ difference_img }}');
           --zoom-x: 0%; --zoom-y:0%;
           --display: none; --z-index: -1;
           ">
-          <img id="differenceImg" src="data:image/{{ difference_mime }};base64, {{ difference_img }}" content="data:{{ difference_mime_fits }};base64, {{ difference_img_fits }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
+          <img id="differenceImg" src="data:{{ difference_mime }};base64, {{ difference_img }}" content="data:{{ difference_mime_fits }};base64, {{ difference_img_fits }}" alt="Difference" class="tw-transition-transform tw-duration-300 tw-ease-in-out tw-origin-center tw-max-w-full tw-h-auto tw-block tw-rounded">
         </div>
     </div>
 </div>
