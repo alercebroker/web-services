@@ -47,10 +47,19 @@ export function init() {
   let crossHair = document.getElementById('crossHairStamps')
 
   // Download button eventListeners 
-  scienceDownload.addEventListener("click", () => downloadStamp("science", scienceDownload))
-  templateDownload.addEventListener("click", () => downloadStamp("template", templateDownload))
-  differenceDownload.addEventListener("click", () => downloadStamp("difference", differenceDownload))
+  if(scienceDownload){
+    scienceDownload.addEventListener("click", () => downloadStamp("science", scienceDownload))
+  }
 
+  if(templateDownload){
+    templateDownload.addEventListener("click", () => downloadStamp("template", templateDownload))
+  }
+
+  if(differenceDownload){
+    differenceDownload.addEventListener("click", () => downloadStamp("difference", differenceDownload))
+
+  }
+  
   // MJD dropdown arrow eventListeners
   selectElement.addEventListener("mousedown", () => {
     set_arrow_direction(mjdArrowWrapper);
@@ -60,7 +69,9 @@ export function init() {
   });
 
   // Function to connect mouseover functionality into the 3 stamps when zoom is activated.
-  makeZoomWork(imagesZoom)
+  if(!imagesZoom.includes(null)){
+    makeZoomWork(imagesZoom)
+  }
 
   // Zoom button eventListeners
   zoomStamps.addEventListener('click', () => {
