@@ -13,8 +13,7 @@ def get_probability_by_oid(
     with session_factory() as session:
         stmt = select(Probability, Taxonomy).join(
             Taxonomy,
-            (Taxonomy.class_id == Probability.class_id)
-            & (Taxonomy.classifier_id == Probability.classifier_id),
+            (Taxonomy.class_id == Probability.class_id) & (Taxonomy.classifier_id == Probability.classifier_id),
         )
 
         if classifier_id:
