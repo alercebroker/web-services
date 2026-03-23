@@ -29,7 +29,7 @@ class ChartPoint:
         self.y = y
         self.error = error
         self.flux_sign = flux_sign
-        self.measurement_id = measurement_id
+        self.measurement_id = str(measurement_id) if measurement_id is not None else None
         self.objectid = objectid
         self.field = field
 
