@@ -8,7 +8,6 @@ import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_f
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
 
 
-let oids_arr = []
 let currentStates = null
 
 export function init() {
@@ -162,12 +161,11 @@ export function init() {
   })
 
   clear_oids.addEventListener("click", () => {
-    oids_arr = []
-
     while (oids_container.firstChild) {
       oids_container.removeChild(oids_container.firstChild)
     }
 
+    oids_container.dataset.oids_list = "[]"
     clear_oids.classList.add("tw-hidden")
   })
 
@@ -253,7 +251,7 @@ export function init() {
   // changes events
   input_ids.addEventListener("change", () => {
     let oids_parsed = split_oids(input_ids.value)
-    
+
     set_oids_in_container(oids_parsed)
     draw_oids_tags(oids_parsed)
     
