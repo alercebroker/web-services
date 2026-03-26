@@ -1,5 +1,5 @@
 import { draw_oids_tags } from "./draw_elements.js";
-import { survey_emphasize } from "./ui_helpers.js";
+import { survey_emphasize, split_oids, set_oids_in_container } from "./ui_helpers.js";
 
 function restore_survey(urlParams) {
 
@@ -18,22 +18,19 @@ function restore_survey(urlParams) {
 
 }
 
-function string_separation(oids_arr) {
-  return oids_arr[0].split(/[ .:;?!~,`"&|()<>{}\[\]\r\n/\\]+/)
-}
-
 function restore_object_id(urlParams) {
-
   let oids = urlParams.getAll('oid')
+
   if (oids.length === 1) {
-    oids = string_separation(oids)
+    oids = split_oids(oids[0])
   }
+
   if (oids.length > 0) {
+    set_oids_in_container(oids)
     draw_oids_tags(oids)
     document.getElementById("clear_oids_btn").classList.remove("tw-hidden")
-    return oids
   }
-  return []
+
 }
 
 function restore_classifier(urlParams) {

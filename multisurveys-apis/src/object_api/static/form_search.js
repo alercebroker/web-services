@@ -2,7 +2,7 @@ import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "./AstroD
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "./time.js"
 import { handle_error } from "./error_handler.js";
 import { draw_oids_tags } from "./draw_elements.js";
-import { display, highlight_text, split_oids, format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon } from "./ui_helpers.js";
+import { display, highlight_text, split_oids, set_oids_in_container,format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon } from "./ui_helpers.js";
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
@@ -32,11 +32,6 @@ export function init() {
   let general_filters = document.getElementById("general_filters")
   let discovery_date_filters = document.getElementById("discovery_date_filters")
   let conesearch_filters = document.getElementById("conesearch_filters")
-
-  // let classifiers_list = document.getElementById("classifiers_list")
-  // let classifiers_options = document.getElementById("classifiers_options")
-  // let classes_list = document.getElementById("classes_list")
-  // let classes_options = document.getElementById("classes_options")
 
   let clear_oids = document.getElementById("clear_oids_btn")
   let oids_container = document.getElementById("oids_container")
@@ -257,8 +252,11 @@ export function init() {
 
   // changes events
   input_ids.addEventListener("change", () => {
-    oids_arr = split_oids(input_ids.value)
-    draw_oids_tags(oids_arr)
+    let oids_parsed = split_oids(input_ids.value)
+    
+    set_oids_in_container(oids_parsed)
+    draw_oids_tags(oids_parsed)
+    
     clear_oids.classList.remove("tw-hidden")
 
     input_ids.value = ""
@@ -304,8 +302,8 @@ export function init() {
   window.send_order_data = send_order_data
 
   setTimeout(() => {
-    oids_arr = restore_form_from_url()
-  }, 100)
+    restore_form_from_url()
+  }, 200)
 
 }
 
@@ -365,7 +363,7 @@ function send_form_Data() {
   let class_selected = document.getElementById("class")
   let classifier_selected = document.getElementById("classifier")
   let survey_id = document.getElementById('survey')
-  let list_oids = format_oids(oids_arr)
+  let list_oids = format_oids(JSON.parse(document.getElementById("oids_container").dataset.oids_list))
   let [ra_consearch, dec_consearch] = check_radio_consearch(
     document.getElementById('ra_consearch').value,
     document.getElementById('dec_consearch').value
@@ -394,10 +392,9 @@ function send_form_Data() {
 function restore_form_from_url() {
   const urlParams = new URLSearchParams(window.location.search)
 
+  restore_object_id(urlParams)
 
   restore_survey(urlParams)
-
-  let oids = restore_object_id(urlParams)
 
   restore_classifier(urlParams)
 
@@ -411,6 +408,5 @@ function restore_form_from_url() {
 
   restore_conesearch(urlParams)
 
-  return oids
 }
 

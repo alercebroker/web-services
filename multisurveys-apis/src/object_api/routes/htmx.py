@@ -125,7 +125,7 @@ async def select_classes_classifier(request: Request, classifier_classes: list[s
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
 
-
+import pprint
 @router.get("/htmx/list_objects", response_class=HTMLResponse)
 def objects_table(
     request: Request,
@@ -152,6 +152,7 @@ def objects_table(
         if survey is not None:
             session = request.app.state.psql_session
             oid = _parse_oids_string_to_array(oid)
+            pprint.pprint(oid)
             n_det = ndet_build(n_det_min, n_det_max)
 
             ndets_validation(n_det)

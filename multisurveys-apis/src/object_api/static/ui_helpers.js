@@ -86,7 +86,7 @@ function surveys_blur_items(){
 
 
 function split_oids(oids_values){
-  let regExp = /[,;]+\s*/;
+  let regExp = /[\s,;:]+/;
   return oids_values.split(regExp).filter(oid => oid.length > 0);
 }
 
@@ -97,6 +97,29 @@ function format_oids(listOfOids) {
   oids = oids.map((x) => x.trim())
   oids = Array.from(new Set(oids))
   return oids.toString()
+}
+
+function set_oids_in_container(oids_list) {
+  let oids_container = document.getElementById("oids_container")
+  let oids = []
+
+  if(oids_container.dataset.oids_list) {
+    oids = JSON.parse(oids_container.dataset.oids_list)
+  }
+
+  oids.push(...oids_list)
+  oids_container.dataset.oids_list = JSON.stringify(oids)
+}
+
+function delete_oid_in_container(oid) {
+  let oids_container = document.getElementById("oids_container")
+  let oids_list = JSON.parse(oids_container.dataset.oids_list)
+
+  if (oids_list.includes(oid)) {
+    oids_list = oids_list.filter(element => element !== oid)
+  }
+
+  oids_container.dataset.oids_list = JSON.stringify(oids_list)
 }
 
 
@@ -112,4 +135,4 @@ function check_radio_consearch(ra_consearch, dec_consearch){
   return [ra_consearch, dec_consearch]
 }
 
-export {display, highlight_text, split_oids, format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon}
+export {display, highlight_text, split_oids, set_oids_in_container, format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon, delete_oid_in_container}
