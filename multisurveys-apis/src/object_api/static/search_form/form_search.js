@@ -1,8 +1,8 @@
-import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "./AstroDates.js"
-import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "./time.js"
-import { handle_error } from "./error_handler.js";
-import { draw_oids_tags } from "./draw_elements.js";
-import { display, highlight_text, split_oids, set_oids_in_container,format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon } from "./ui_helpers.js";
+import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "/libraries/AstroDates/AstroDates.js"
+import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "/libraries/moment/time.js"
+import { handle_error } from "../error_handler.js";
+import { draw_oids_tags } from "../draw_elements.js";
+import { display, highlight_text, split_oids, set_oids_in_container,format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon } from "../ui_helpers.js";
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
@@ -329,7 +329,6 @@ export function elementReady(selector) {
 
 function reset_values() {
   window.history.pushState({}, document.title, "/")
-  oids_arr = []
 }
 
 function restore_states(currentStates) {

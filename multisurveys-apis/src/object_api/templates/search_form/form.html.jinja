@@ -37,7 +37,7 @@
                         <button type="button" id="clear_oids_btn" class="tw-self-end tw-hidden">
                             <svg class="tw-h-[24px] tw-w-[24px] tw-fill-[#1565C0]" viewBox="0 -960 960 960"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
                         </button>
-                        <div id="oids_container" class="tw-hidden tw-pb-2 tw-flex tw-gap-2 tw-flex-wrap"></div>
+                        <div id="oids_container" data-oids_list="[]" class="tw-hidden tw-pb-2 tw-flex tw-gap-2 tw-flex-wrap"></div>
                         {{customInput(id="objectIds", type="text", placeholder="Object ID")}}
                     </div>
 
@@ -261,7 +261,7 @@
 </div>
 
 <script type="module">
-import {init, elementReady} from "{{API_URL}}/static/form_search.js"
+import {init, elementReady} from "{{API_URL}}/static/search_form/form_search.js"
 
 
 elementReady("#form-search").then((el) => {

@@ -104,7 +104,7 @@ async def objects_form(request: Request):
         classifiers = get_tidy_classifiers(session)
 
         return templates.TemplateResponse(
-            name="form.html.jinja",
+            name="search_form/form.html.jinja",
             context={"request": request, "classifiers": classifiers},
         )
     except Exception:
@@ -118,7 +118,7 @@ async def select_classes_classifier(request: Request, classifier_classes: list[s
         classes = classifier_classes
 
         return templates.TemplateResponse(
-            name="dependent_select.html.jinja",
+            name="search_form/dependent_select.html.jinja",
             context={"request": request, "classes": classes},
         )
     except Exception:

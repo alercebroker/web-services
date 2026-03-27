@@ -1,5 +1,5 @@
-import { draw_oids_tags } from "./draw_elements.js";
-import { survey_emphasize, split_oids, set_oids_in_container } from "./ui_helpers.js";
+import { draw_oids_tags } from "../draw_elements.js";
+import { survey_emphasize, split_oids, set_oids_in_container } from "../ui_helpers.js";
 
 function restore_survey(urlParams) {
 

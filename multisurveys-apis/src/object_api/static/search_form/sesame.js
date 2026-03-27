@@ -1,4 +1,4 @@
-import {check_radio_consearch} from './ui_helpers.js'
+import {check_radio_consearch} from '../ui_helpers.js'
 
 
 export function get_sesame_object(object_name){

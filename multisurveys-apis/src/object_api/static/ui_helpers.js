@@ -1,4 +1,4 @@
-import { raDectoHMS, HMStoRa, DMStoDec } from "./AstroDates.js"
+import { raDectoHMS, HMStoRa, DMStoDec } from "/libraries/AstroDates/AstroDates.js"
 
 function display(item){
     item = document.getElementById(item)
