@@ -135,4 +135,26 @@ function check_radio_consearch(ra_consearch, dec_consearch){
   return [ra_consearch, dec_consearch]
 }
 
-export {display, highlight_text, split_oids, set_oids_in_container, format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon, delete_oid_in_container}
+function clean_oids_container(father_element){
+    while (father_element.lastChild) {
+      if (father_element.lastChild.id === "clear_oids_btn") {
+        break
+      }
+
+      father_element.removeChild(father_element.lastChild)
+    }
+}
+
+
+export {
+  display, 
+  highlight_text, 
+  split_oids, 
+  set_oids_in_container, 
+  format_oids, 
+  survey_emphasize, 
+  check_radio_consearch, 
+  switch_arrow_icon, 
+  delete_oid_in_container, 
+  clean_oids_container
+}

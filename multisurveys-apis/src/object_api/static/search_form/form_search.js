@@ -2,10 +2,11 @@ import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "/librari
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "/libraries/moment/time.js"
 import { handle_error } from "../error_handler.js";
 import { draw_oids_tags } from "../draw_elements.js";
-import { display, highlight_text, split_oids, set_oids_in_container,format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon } from "../ui_helpers.js";
+import { display, highlight_text, split_oids, set_oids_in_container,format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon, clean_oids_container } from "../ui_helpers.js";
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
+import { create_dinamic_dropdown } from "./dinamic_select.js";
 
 
 let currentStates = null
@@ -56,41 +57,8 @@ export function init() {
   let radio_degress = document.getElementById("degrees")
   let clear_btn_form = document.getElementById("clear_form")
 
-  // se seleccionan todos los dropdowns
-  for (const dropdown of document.querySelectorAll(".obj-select-wrapper")) {
-    dropdown.addEventListener('click', function () {
-      this.querySelector('.obj-select').classList.toggle('open');
-    })
-  }
-
-  // Se incorporan funcionalidad a las opciones de los dropdowns
-  for (const option of document.querySelectorAll(".obj-custom-option")) {
-    option.addEventListener('click', () => {
-      if (!option.classList.contains('obj-selected')) {
-
-        option.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
-
-        option.classList.add('obj-selected');
-
-        option.closest('.obj-select').querySelector('.obj-select__trigger span').textContent = option.textContent;
-
-        if (!option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.contains('dark:tw-text-[#EEEEEE]')) {
-          option.closest('.obj-select').querySelector('.obj-select__trigger span').classList.add('dark:tw-text-[#EEEEEE]')
-        }
-
-
-        option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classes", option.getAttribute("data-classes"));
-        option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-classifier", option.getAttribute("data-classifier"));
-        option.closest('.obj-select').querySelector('.obj-select__trigger span').setAttribute("data-version", option.getAttribute("data-version"));
-
-
-
-        if (option.closest('.obj-select').querySelector('.obj-select__trigger span').id == "classifier") {
-          document.getElementById("classifier").dispatchEvent(new Event("change"))
-        }
-      }
-    })
-  }
+  //dropdown
+  create_dinamic_dropdown()
 
   // handle errors
   handle_error()
@@ -161,12 +129,10 @@ export function init() {
   })
 
   clear_oids.addEventListener("click", () => {
-    while (oids_container.firstChild) {
-      oids_container.removeChild(oids_container.firstChild)
-    }
+    clean_oids_container(oids_container)
 
     oids_container.dataset.oids_list = "[]"
-    clear_oids.classList.add("tw-hidden")
+    oids_container.classList.add("tw-hidden")
   })
 
   date_min.addEventListener("click", () => {
@@ -255,8 +221,6 @@ export function init() {
     set_oids_in_container(oids_parsed)
     draw_oids_tags(oids_parsed)
     
-    clear_oids.classList.remove("tw-hidden")
-
     input_ids.value = ""
   })
 
