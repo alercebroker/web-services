@@ -2,9 +2,9 @@ import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "/librari
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "/libraries/moment/time.js"
 import { handle_error } from "../error_handler.js";
 import { draw_oids_tags } from "../draw_elements.js";
-import { display, highlight_text, split_oids, set_oids_in_container,format_oids, survey_emphasize, check_radio_consearch, switch_arrow_icon, clean_oids_container } from "../ui_helpers.js";
+import { display, highlight_text, split_oids, set_oids_in_container, survey_emphasize, switch_arrow_icon, clean_oids_container } from "../ui_helpers.js";
 import { get_sesame_object } from "./sesame.js"
-import { send_classes_data, send_pagination_data, send_order_data, clean_nulls_form, get_values_array_fields } from "./api_payload_helpers.js"
+import { send_classes_data, send_pagination_data, send_order_data, send_form_Data } from "./api_payload_helpers.js"
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
 import { create_dinamic_dropdown } from "./dinamic_select.js";
 
@@ -36,8 +36,6 @@ export function init() {
   let clear_oids = document.getElementById("clear_oids_btn")
   let oids_container = document.getElementById("oids_container")
   let prob_range = document.getElementById("prob_range")
-  let min_detections = document.getElementById("min_detections")
-  let max_detections = document.getElementById("max_detections")
   let input_ids = document.getElementById("objectIds")
 
   let min_mjd = document.getElementById("min_mjd")
@@ -56,12 +54,6 @@ export function init() {
   let radio_HMS = document.getElementById("HMS/DMS")
   let radio_degress = document.getElementById("degrees")
   let clear_btn_form = document.getElementById("clear_form")
-
-  //dropdown
-  create_dinamic_dropdown()
-
-  // handle errors
-  handle_error()
 
 
   // clicks events
@@ -257,6 +249,13 @@ export function init() {
   })
 
 
+  //dropdown
+  create_dinamic_dropdown()
+
+  // handle errors
+  handle_error()
+
+
   /**funciones publicas para usarlas con HTMX */
   window.send_classes_data = send_classes_data
   window.send_form_Data = send_form_Data
@@ -317,38 +316,6 @@ function get_states() {
   return currentStates
 }
 
-function send_form_Data() {
-  let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
-  let first_mjd_arr = get_values_array_fields(["min_mjd", "max_mjd"])
-  let probability_value = parseFloat(document.getElementById("prob_range").value);
-  let class_selected = document.getElementById("class")
-  let classifier_selected = document.getElementById("classifier")
-  let survey_id = document.getElementById('survey')
-  let list_oids = format_oids(JSON.parse(document.getElementById("oids_container").dataset.oids_list))
-  let [ra_consearch, dec_consearch] = check_radio_consearch(
-    document.getElementById('ra_consearch').value,
-    document.getElementById('dec_consearch').value
-  )
-  let radius_consearch = document.getElementById('radius_consearch').value
-
-  let response = {
-    oid: list_oids == '' ? null : list_oids,
-    classifier: classifier_selected.dataset.classifier == "" ? null : classifier_selected.dataset.classifier,
-    class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value,
-    survey: survey_id.dataset.survey,
-    probability: probability_value > 0 ? probability_value : null,
-    n_det_min: ndet_arr.length > 0 && ndet_arr[0] !== null ? parseInt(ndet_arr[0]) : null,
-    n_det_max: ndet_arr.length > 1 && ndet_arr[1] !== null ? parseInt(ndet_arr[1]) : null,
-    firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
-    ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
-    dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
-    radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch : null,
-  }
-
-  response = clean_nulls_form(response)
-
-  return response
-}
 
 function restore_form_from_url() {
   const urlParams = new URLSearchParams(window.location.search)

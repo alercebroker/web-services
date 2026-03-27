@@ -136,13 +136,13 @@ function check_radio_consearch(ra_consearch, dec_consearch){
 }
 
 function clean_oids_container(father_element){
-    while (father_element.lastChild) {
-      if (father_element.lastChild.id === "clear_oids_btn") {
-        break
-      }
-
-      father_element.removeChild(father_element.lastChild)
+  while (father_element.lastChild) {
+    if (father_element.lastChild.id === "clear_oids_btn") {
+      break
     }
+
+    father_element.removeChild(father_element.lastChild)
+  }
 }
 
 
