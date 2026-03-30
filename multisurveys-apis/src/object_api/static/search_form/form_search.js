@@ -1,5 +1,5 @@
-import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "/libraries/AstroDates/AstroDates.js"
-import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "/libraries/moment/time.js"
+import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "../../libraries/AstroDates/AstroDates.js"
+import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "../../libraries/moment/time.js"
 import { handle_error } from "../error_handler.js";
 import { draw_oids_tags } from "../draw_elements.js";
 import { display, highlight_text, split_oids, set_oids_in_container, survey_emphasize, switch_arrow_icon, clean_oids_container } from "../ui_helpers.js";
