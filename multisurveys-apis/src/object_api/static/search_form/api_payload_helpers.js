@@ -1,4 +1,38 @@
+import { format_oids, check_radio_consearch } from "../ui_helpers.js";
 
+
+function send_form_Data() {
+  let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
+  let first_mjd_arr = get_values_array_fields(["min_mjd", "max_mjd"])
+  let probability_value = parseFloat(document.getElementById("prob_range").value);
+  let class_selected = document.getElementById("class")
+  let classifier_selected = document.getElementById("classifier")
+  let survey_id = document.getElementById('survey')
+  let list_oids = format_oids(JSON.parse(document.getElementById("oids_container").dataset.oids_list))
+  let [ra_consearch, dec_consearch] = check_radio_consearch(
+    document.getElementById('ra_consearch').value,
+    document.getElementById('dec_consearch').value
+  )
+  let radius_consearch = document.getElementById('radius_consearch').value
+
+  let response = {
+    oid: list_oids == '' ? null : list_oids,
+    classifier: classifier_selected.dataset.classifier == "" ? null : classifier_selected.dataset.classifier,
+    class_name: class_selected.dataset.value == "" ? null : class_selected.dataset.value,
+    survey: survey_id.dataset.survey,
+    probability: probability_value > 0 ? probability_value : null,
+    n_det_min: ndet_arr.length > 0 && ndet_arr[0] !== null ? parseInt(ndet_arr[0]) : null,
+    n_det_max: ndet_arr.length > 1 && ndet_arr[1] !== null ? parseInt(ndet_arr[1]) : null,
+    firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
+    ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
+    dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
+    radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch : null,
+  }
+
+  response = clean_nulls_form(response)
+
+  return response
+}
 
 function send_classes_data(){
     let value_selected = document.getElementById("classifier").dataset.classes;
@@ -88,9 +122,10 @@ function get_values_array_fields(fields){
 }
 
 export {
-    send_classes_data, 
-    send_pagination_data, 
-    send_order_data, 
-    clean_nulls_form,
-    get_values_array_fields
+  send_classes_data, 
+  send_pagination_data, 
+  send_order_data, 
+  clean_nulls_form,
+  get_values_array_fields,
+  send_form_Data
 }
