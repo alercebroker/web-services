@@ -20,9 +20,6 @@ from lightcurve_api.services.parsers import parse_ztf_dr_detection
 
 from .parsers import (
     ConfigState,
-    parse_detections,
-    parse_forced_photometry,
-    parse_non_detections,
 )
 
 router = APIRouter(prefix="/htmx")
@@ -46,9 +43,7 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
     """
     result = lightcurve_plot_service.get_lightcurve_data(oid, survey_id, db.session)
 
-    config_data = result.config_state.model_dump(
-        exclude={"detections", "non_detections", "forced_photometry"}
-    )
+    config_data = result.config_state.model_dump(exclude={"detections", "non_detections", "forced_photometry"})
 
     return templates.TemplateResponse(
         name="layout.html.jinja",

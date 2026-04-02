@@ -241,7 +241,9 @@ def get_lightcurve_data(oid: str, survey_id: str, session_factory: Callable[...,
     )
 
 
-def get_periodogram_data(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Periodogram:
+def get_periodogram_data(
+    oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]
+) -> Periodogram:
     """Compute the periodogram for an object on demand.
 
     Called by the /htmx/periodogram endpoint when the user first enables fold
