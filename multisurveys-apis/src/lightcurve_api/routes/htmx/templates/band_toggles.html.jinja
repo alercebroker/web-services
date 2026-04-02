@@ -1,136 +1,80 @@
-<div class="">
-  <!-- ZTF -->
-  <div class="tw-flex tw-items-start">
-    <div class="tw-relative tw-group tw-mr-2">
-      <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">
-        ?
-      </span>
-      <div class="tw-absolute tw-top-full tw-left-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
-        <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-min-w-[200px] tw-rounded tw-py-1 tw-px-2 tw-text-balance">
-          Unclick individual ZTF bands to hide them in the light curve. By default, all available bands are shown.
-        </div>
-      </div>
-      <label class="tw-font-semibold tw-pt-1 tw-text-gray-900 dark:tw-text-gray-100 tw-mr-1">ZTF:</label>
-      <div class="tw-w-15"></div>
-    </div>
-    <div class="tw-grid tw-grid-cols-3 tw-gap-4">
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.ztf[]" value="g" {% if 'g' in config_state.bands.ztf %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">g</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.ztf[]" value="r" {% if 'r' in config_state.bands.ztf %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">r</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.ztf[]" value="i" {% if 'i' in config_state.bands.ztf %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">i</span>
-      </label>
+{# Reusable row macro: fixed-width label column + checkbox group #}
+{% macro band_row(label, tooltip) %}
+<div class="tw-relative tw-group tw-flex tw-items-center tw-gap-1 tw-w-16 tw-shrink-0">
+  <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-xs">?</span>
+  <div class="tw-absolute tw-top-full tw-left-0 tw-mt-1 tw-hidden group-hover:tw-block tw-z-10">
+    <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-min-w-[200px] tw-rounded tw-py-1 tw-px-2 tw-text-balance">{{ tooltip }}</div>
+  </div>
+  <span class="tw-font-semibold tw-text-gray-900 dark:tw-text-gray-100 tw-text-sm">{{ label }}</span>
+</div>
+{% endmacro %}
+
+{# Reusable checkbox macro #}
+{% macro cb(name, value, checked) %}
+<label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
+  <input type="checkbox" name="{{ name }}" value="{{ value }}" {% if checked %}checked{% endif %} class="tw-cursor-pointer">
+  <span class="tw-text-gray-900 dark:tw-text-gray-100">{{ value }}</span>
+</label>
+{% endmacro %}
+
+<div class="tw-flex tw-flex-col tw-gap-y-2">
+
+  <!-- ZTF bands -->
+  <div class="tw-flex tw-items-center tw-gap-x-3">
+    {{ band_row("ZTF", "Toggle individual ZTF bands in the light curve.") }}
+    <div class="tw-flex tw-gap-x-4">
+      {{ cb("bands.ztf[]", "g", 'g' in config.bands.ztf) }}
+      {{ cb("bands.ztf[]", "r", 'r' in config.bands.ztf) }}
+      {{ cb("bands.ztf[]", "i", 'i' in config.bands.ztf) }}
     </div>
   </div>
 
-  <!-- LSST row 1 -->
-  <div class="tw-flex tw-items-start">
-    <div class="tw-relative tw-group tw-mr-2">
-      <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">?</span>
-      <div class="tw-absolute tw-top-full tw-left-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
-        <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-min-w-[200px] tw-text-balance">
-          Unclick individual LSST bands to hide them in the light curve. By default, all available bands are shown.
-        </div>
-      </div>
-      <label class="tw-font-semibold tw-pt-1 tw-text-gray-900 dark:tw-text-gray-100 tw-mr-1">LSST:</label>
+  <!-- LSST bands (6 bands, wrap into 2 rows naturally) -->
+  <div class="tw-flex tw-items-start tw-gap-x-3">
+    <div class="tw-mt-0.5">
+      {{ band_row("LSST", "Toggle individual LSST bands in the light curve.") }}
     </div>
-    <div class="tw-grid tw-grid-cols-3 tw-gap-4">
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.lsst[]" value="u" {% if 'u' in config_state.bands.lsst %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">u</span>
+    <div class="tw-flex tw-flex-wrap tw-gap-x-4 tw-gap-y-1">
+      {% for b in ['u','g','r','i','z','y'] %}
+      <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
+        <input type="checkbox" name="bands.lsst[]" value="{{ b }}" {% if b in config.bands.lsst %}checked{% endif %} class="tw-cursor-pointer">
+        <span class="tw-text-gray-900 dark:tw-text-gray-100">{{ b }}</span>
       </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.lsst[]" value="g" {% if 'g' in config_state.bands.lsst %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">g</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.lsst[]" value="r" {% if 'r' in config_state.bands.lsst %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">r</span>
-      </label>
-    </div>
-
-    
-  </div>
-
-  <!-- LSST row 2 -->
-  <div class="tw-flex tw-items-start">
-    <div class="tw-w-16 "></div>
-    <div class="tw-grid tw-grid-cols-3 tw-gap-4">
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.lsst[]" value="i" {% if 'i' in config_state.bands.lsst %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">i</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.lsst[]" value="z" {% if 'z' in config_state.bands.lsst %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">z</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.lsst[]" value="y" {% if 'y' in config_state.bands.lsst %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">y</span>
-      </label>
+      {% endfor %}
     </div>
   </div>
 
-
-  <!-- ZTF Data release row -->
-  <div class="tw-flex tw-items-start {% if config_state['external_sources'].enabled %}tw-block{% else %}tw-hidden{% endif %}">
-    <div class="tw-relative tw-group tw-mr-2">
-      <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">
-        ?
-      </span>
-      <div class="tw-absolute tw-top-full tw-left-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
-        <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-min-w-[200px] tw-text-balance">
-          Unclick individual ZTF DR bands to hide them in the light curve. By default, all available bands are shown.
-        </div>
-      </div>
-      <label class="tw-font-semibold tw-pt-1 tw-text-gray-900 dark:tw-text-gray-100 tw-mr-1">ZTF DR:</label>
-      <div class="tw-w-15"></div>
-    </div>
-    <div class="tw-grid tw-grid-cols-3 tw-gap-4">
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.ztf_dr[]" value="g" {% if 'g' in config_state.bands.ztf_dr %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">g</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.ztf_dr[]" value="r" {% if 'r' in config_state.bands.ztf_dr %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">r</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="bands.ztf_dr[]" value="i" {% if 'i' in config_state.bands.ztf_dr %}checked{% endif %}>
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">i</span>
-      </label>
+  <!-- ZTF DR bands (shown only when external sources enabled) -->
+  <div class="tw-flex tw-items-center tw-gap-x-3 ztf-dr-bands-row {% if not config.external_sources.enabled %}tw-hidden{% endif %}">
+    {{ band_row("ZTF DR", "Toggle individual ZTF Data Release bands in the light curve.") }}
+    <div class="tw-flex tw-gap-x-4">
+      {{ cb("bands.ztf_dr[]", "g", 'g' in config.bands.ztf_dr) }}
+      {{ cb("bands.ztf_dr[]", "r", 'r' in config.bands.ztf_dr) }}
+      {{ cb("bands.ztf_dr[]", "i", 'i' in config.bands.ztf_dr) }}
     </div>
   </div>
 
-  <!-- Data types -->
-  <div class="tw-flex tw-items-start">
-    <div class="tw-relative tw-group tw-mr-2">
-      <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">?</span>
-      <div class="tw-absolute tw-top-full tw-left-0 tw-hidden group-hover:tw-block tw-z-10">
-        <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-min-w-[200px] tw-text-balance">
-          Unclick individual epoch types (detections, limiting magnitudes and forced photometry points) to hide them in the light curve. By default, all available epoch types are shown.
-        </div>
-      </div>
+  <div class="tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600"></div>
+
+  <!-- Data types (det / lim. mag / f. phot) -->
+  <div class="tw-flex tw-items-start tw-gap-x-3">
+    <div class="tw-mt-0.5">
+      {{ band_row("Type", "Toggle detections, limiting magnitudes, and forced photometry points.") }}
     </div>
-    <div class="tw-grid tw-grid-cols-3 tw-gap-4">
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="data_types[]" value="detections" {% if 'detections' in config_state.data_types %}checked{% endif %}>
+    <div class="tw-flex tw-flex-wrap tw-gap-x-4 tw-gap-y-1">
+      <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
+        <input type="checkbox" name="data_types[]" value="detections" {% if 'detections' in config.data_types %}checked{% endif %} class="tw-cursor-pointer">
         <span class="tw-text-gray-900 dark:tw-text-gray-100">det</span>
       </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="data_types[]" value="non_detections" {% if 'non_detections' in config_state.data_types %}checked{% endif %}>
+      <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
+        <input type="checkbox" name="data_types[]" value="non_detections" {% if 'non_detections' in config.data_types %}checked{% endif %} class="tw-cursor-pointer">
         <span class="tw-text-gray-900 dark:tw-text-gray-100">lim. mag</span>
       </label>
-      <label class="tw-flex tw-items-center tw-space-x-1">
-        <input type="checkbox" name="data_types[]" value="forced_photometry" {% if 'forced_photometry' in config_state.data_types %}checked{% endif %}>
+      <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
+        <input type="checkbox" name="data_types[]" value="forced_photometry" {% if 'forced_photometry' in config.data_types %}checked{% endif %} class="tw-cursor-pointer">
         <span class="tw-text-gray-900 dark:tw-text-gray-100">f. phot</span>
       </label>
     </div>
   </div>
+
 </div>

@@ -1,11 +1,25 @@
 
-<!-- Include the ECharts file you just downloaded -->
+<!-- Include ECharts and HTMX -->
 <script src="{{API_URL}}/static/echarts.min.js"></script>
 <script src="{{API_URL}}/static/htmx.min.js"></script>
-<script src="{{API_URL}}/static/form-json.js"></script>
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{{ API_URL }}/static/lightcurve.css">
 
+<!-- Embed raw lightcurve data for the client-side chart builder -->
+<script>
+window.__LC_DATA__ = {
+    detections:      {{ detections | tojson }},
+    nonDetections:   {{ non_detections | tojson }},
+    forcedPhotometry: {{ forced_photometry | tojson }},
+    periodogram:     {{ periodogram | tojson }},
+    config:          {{ config | tojson }},
+    apiUrl:          {{ API_URL | tojson }}
+};
+</script>
+
 <div id="main-app" class="tw-preflight">{% include "main.html.jinja" %}</div>
+
+<!-- Client-side chart application (ES module) -->
+<script type="module" src="{{ API_URL }}/static/lightcurve-app.js"></script>
 

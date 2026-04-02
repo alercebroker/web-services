@@ -31,4 +31,9 @@ values.*.override.yaml
 **/.envrc
 **/.direnv
 
+# VS Code workspace files
+*.code-workspace
+# Editor backup files
+*.bak
+
 **/config.yaml
