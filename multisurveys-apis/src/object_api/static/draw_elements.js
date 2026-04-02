@@ -1,3 +1,14 @@
+import { delete_oid_in_container } from './ui_helpers.js';
+
+
+function draw_oid_div(oid) {
+  let new_element = document.createElement("div")
+
+  new_element.id = oid
+  new_element.classList.add("custom-oid")
+
+  return new_element
+}
 
 export function draw_span(text) {
   let new_span = document.createElement("span")
@@ -7,10 +18,7 @@ export function draw_span(text) {
   return new_span
 }
 
-
-export function draw_close_tags(father_element, div_tag, oid, oids_arr) {
-  let newBtn = document.createElement("div")
-
+function draw_erase_icon() {
   let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("width", "18");
   svg.setAttribute("height", "18");
@@ -20,47 +28,39 @@ export function draw_close_tags(father_element, div_tag, oid, oids_arr) {
   let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute("d", "m336-280 144-144 144 144 56-56-144-144 144-144-56-56-144 144-144-144-56 56 144 144-144 144 56 56ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z");
 
-  svg.appendChild(path);
-  newBtn.appendChild(svg);
+  svg.appendChild(path)
+
+  return svg
+}
+
+export function draw_close_tags(erase_tag, oid) {
+  let newBtn = document.createElement("div")
+  let erase_icon = draw_erase_icon()
+
+  newBtn.appendChild(erase_icon);
   newBtn.classList.add("tw-inline-block")
 
   newBtn.addEventListener("click", () => {
-    let index = oids_arr.indexOf(oid)
-    let erase_tag = div_tag
-
-    //se modifica el arr original
-    if (index != -1) {
-      oids_arr.splice(index, 1)
-    }
-
-    father_element.removeChild(erase_tag)
+    delete_oid_in_container(oid)
+    document.getElementById("oids_container").removeChild(erase_tag)
   }, { once: true });
 
   return newBtn
 }
 
-function string_separation(oids_arr) {
-  return oids_arr[0].split(/[ .:;?!~,`"&|()<>{}\[\]\r\n/\\]+/)
-}
 
 export function draw_oids_tags(oids_arr) {
   let container = document.getElementById("oids_container")
 
-  if (oids_arr.length === 1) {
-    oids_arr = string_separation(oids_arr)
-  }
 
   for (let oid of oids_arr) {
-    let newDiv = document.createElement("div")
-    newDiv.id = oid
-    newDiv.classList.add("custom-oid")
-
+    let new_div = draw_oid_div(oid)
     let new_span = draw_span(oid)
-    let new_btn = draw_close_tags(container, newDiv, oid, oids_arr)
+    let new_btn = draw_close_tags(new_div, oid)
 
-    newDiv.appendChild(new_span)
-    newDiv.appendChild(new_btn)
-    container.appendChild(newDiv)
+    new_div.appendChild(new_span)
+    new_div.appendChild(new_btn)
+    container.appendChild(new_div)
   }
 
   container.classList.remove("tw-hidden")

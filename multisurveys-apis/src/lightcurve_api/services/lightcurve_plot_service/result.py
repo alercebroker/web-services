@@ -1,4 +1,3 @@
-import copy
 from typing import Any
 
 from lightcurve_api.routes.htmx.parsers import ConfigState
@@ -23,15 +22,3 @@ class Result:
         self.lightcurve = lightcurve
         self.config_state = config_state
         self.periodogram = periodogram
-
-    def copy(self):
-        return Result(
-            echart_options=copy.deepcopy(self.echart_options),
-            lightcurve=Lightcurve(
-                detections=copy.deepcopy(self.lightcurve.detections),
-                non_detections=copy.deepcopy(self.lightcurve.non_detections),
-                forced_photometry=copy.deepcopy(self.lightcurve.forced_photometry),
-            ),
-            config_state=self.config_state.model_copy(deep=True),
-            periodogram=copy.deepcopy(self.periodogram),
-        )
