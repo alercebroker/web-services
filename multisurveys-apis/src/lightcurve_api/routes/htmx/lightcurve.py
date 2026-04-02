@@ -57,12 +57,10 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
 
 
 @router.post("/config_change", response_class=HTMLResponse)
-def config_change(request: Request, config_state: ConfigState):
+def config_change(request: Request, config_state: ConfigState, db: db_dependency):
     result = lightcurve_plot_service.update_lightcurve_plot(
         config_state,
-        parse_detections(config_state.detections),
-        parse_non_detections(config_state.non_detections),
-        parse_forced_photometry(config_state.forced_photometry),
+        db.session
     )
     return templates.TemplateResponse(
         name="main.html.jinja",

@@ -10,7 +10,6 @@ var pChart = echarts.init(periodogramDom, theme);
 var pOptions = {{ periodogram_options | tojson }};
 var toggleLcTheme = document.getElementById('toggle-theme-lc')
 
-
 // we have to set the formatter here because it has to be a JavaScript function
 pOptions.tooltip.formatter = (params) => {
   return `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}`;

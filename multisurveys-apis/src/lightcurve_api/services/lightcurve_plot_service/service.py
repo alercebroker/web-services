@@ -244,21 +244,16 @@ def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., Con
 
 def update_lightcurve_plot(
     config_state: ConfigState,
-    detections: List[BaseDetection],
-    non_detections: List[BaseNonDetection],
-    forced_photometry: List[BaseForcedPhotometry],
+    session_factory: Callable[..., ContextManager[Session]]
 ) -> Result:
+    result = Result(
+        {},
+        Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+        config_state=validate_config_state(config_state),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
+    )
     return pipe(
-        Result(
-            {},
-            Lightcurve(
-                detections=detections,
-                non_detections=non_detections,
-                forced_photometry=forced_photometry,
-            ),
-            config_state=validate_config_state(config_state),
-            periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
-        ),
+        get_lightcurve(result, config_state.oid, config_state.survey_id, session_factory),
         compute_periodogram,
         set_default_echart_options,
         set_chart_options_external_sources,
