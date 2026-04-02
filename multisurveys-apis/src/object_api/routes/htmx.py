@@ -2,7 +2,7 @@ import os
 import traceback
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Request, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
@@ -346,3 +346,94 @@ def ndet_build(n_det_min, n_det_max):
     n_det = n_det if len(n_det) > 0 else None
 
     return n_det
+
+
+
+
+@router.get("/htmx/sn_hunter/table", response_class=HTMLResponse)
+def get_sn_hunter_table(
+    request: Request,
+    classifier: str | None = None,
+    time_window: int = 1, #time in days
+
+):
+    classifiers_list = {
+        "stamp_classifier_rubin_beta": "lsst"
+    }
+
+   
+    survey = classifiers_list[classifier]
+    oid = None
+    class_name = "SN"
+    ranking = 1
+    n_det_min = None
+    n_det_max = None
+    probability = None
+    firstmjd = [61131 - time_window, 61131] # set this to [now - timewindow, now] 61131 = 1 april
+    lastmjd = None
+    dec = None
+    ra = None
+    radius = None
+    page = 1
+    page_size = 1000
+    count = False
+    order_by = "probability"
+    order_mode = "DESC"
+
+    try:
+        session = request.app.state.psql_session
+        oid = _parse_oids_string_to_array(oid)
+
+        n_det = ndet_build(n_det_min, n_det_max)
+
+        ndets_validation(n_det)
+        order_mode_validation(order_mode)
+        consearch_validation(ra, dec, radius)
+        oids_format_validation(oid, survey)
+        oid_lenght_validation(oid)
+        probability_validation(probability, classifier, class_name)
+        date_validation(firstmjd)
+
+        if oid is None and order_by is None:
+            order_by = "probability"
+
+        if oid is not None and order_by == "oid_list":
+            order_by = None
+
+        if oid is not None:
+            oid = encode_ids(survey, oid)
+
+        filters = Filters(
+            oids=oid,
+            survey=survey,
+            classifier=classifier,
+            class_name=class_name,
+            ranking=ranking,
+            n_det=n_det,
+            probability=probability,
+            firstmjd=firstmjd,
+            lastmjd=lastmjd,
+        )
+        conesearch = Consearch(dec=dec, ra=ra, radius=radius)
+        pagination = PaginationArgs(page=page, page_size=page_size, count=count)
+        order = Order(order_by=order_by, order_mode=order_mode)
+        search_params = SearchParams(
+            filter_args=filters,
+            conesearch_args=conesearch,
+            pagination_args=pagination,
+            order_args=order,
+        )
+
+        object_list = get_objects_list(session_ms=session, search_params=search_params)
+        object_list = object_list["items"] # The query result will be here
+
+        if oid is not None and order_by is None and object_list["items"] != []:
+            order_by = "oid_list"
+
+        return JSONResponse(object_list)
+    except HTTPException as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=e.status_code, detail=e.detail)
+    except Exception:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="An error occurred")

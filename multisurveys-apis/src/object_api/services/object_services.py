@@ -46,3 +46,13 @@ def get_tidy_classifiers(session_ms):
     classifiers = sort_classifiers(classifiers)
 
     return classifiers
+
+def get_sn_objects_list(session_ms, search_params):
+    classes_list = get_classes_list(session_ms)
+    search_params = update_filters(search_params, classes_list)
+    parsed_params = parse_params(search_params)
+
+    result = query_get_objects(session_ms, search_params, parsed_params)
+    result = parse_objects_list_output(result, search_params.filter_args.survey, classes_list)
+
+    return result
