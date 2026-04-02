@@ -1,5 +1,6 @@
 import os
 import traceback
+import json
 from typing import Annotated
 from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -430,7 +431,13 @@ def get_sn_hunter_table(
         if oid is not None and order_by is None and object_list["items"] != []:
             order_by = "oid_list"
 
-        return JSONResponse(object_list)
+        return templates.TemplateResponse(
+            name="sn_hunter/sn_table/sn_table.html.jinja",
+            context={
+                "request": request,
+                "objects_list": json.dumps(object_list),
+            },
+        )
     except HTTPException as e:
         traceback.print_exc()
         raise HTTPException(status_code=e.status_code, detail=e.detail)
