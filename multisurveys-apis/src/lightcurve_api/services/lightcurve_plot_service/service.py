@@ -222,6 +222,46 @@ def default_echarts_options(config_state: ConfigState):
     }
 
 
+def get_lightcurve_data(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
+    """Fetch raw lightcurve data without computing the periodogram.
+
+    Intended for the browser-side rendering path: returns a Result with the raw
+    detections/non-detections/forced-photometry.  The periodogram is omitted here
+    and computed lazily via get_periodogram_data() when the user enables fold mode.
+    """
+    empty = Result(
+        {},
+        Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+        config_state=ConfigState(oid=oid, survey_id=survey_id),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
+    )
+    return pipe(
+        get_lightcurve(empty, oid, survey_id, session_factory),
+        lambda r: get_object_coordinates(r, session_factory=session_factory),
+    )
+
+
+def get_periodogram_data(
+    oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]
+) -> Periodogram:
+    """Compute the periodogram for an object on demand.
+
+    Called by the /htmx/periodogram endpoint when the user first enables fold
+    mode, keeping heavy LSomb-Scargle computation out of the initial page load.
+    """
+    empty = Result(
+        {},
+        Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+        config_state=ConfigState(oid=oid, survey_id=survey_id, fold=True),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
+    )
+    result = pipe(
+        get_lightcurve(empty, oid, survey_id, session_factory),
+        compute_periodogram,
+    )
+    return result.periodogram
+
+
 def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
     result = Result(
         {},
@@ -614,11 +654,14 @@ def get_ztf_dr_objects(
         periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
 
-    if len(result.lightcurve.detections) == 0:
-        return result
-
+    # Accept coordinates from config_state even when detections list is empty
+    # (browser-side rendering no longer sends detection data to this endpoint).
     meanra = result.config_state.meanra
     meandec = result.config_state.meandec
+
+    if meanra is None or meandec is None:
+        if len(result.lightcurve.detections) == 0:
+            return result
 
     with httpx.Client() as client:
         result.config_state.external_sources.objects.extend(

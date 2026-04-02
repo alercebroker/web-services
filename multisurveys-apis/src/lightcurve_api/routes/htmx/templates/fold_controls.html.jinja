@@ -1,19 +1,19 @@
 <div class="tw-row">
   <div class="tw-col-sm-12">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Fold</span>
-    {{ toggle.toggle("fold", "Off", "On", config_state.fold, "The period folded light curve, where time is transformed to time modulo the period (phase). Calculated on click.")}}
+    {{ toggle.toggle("fold", "Off", "On", config.fold, "The period folded light curve, where time is transformed to time modulo the period (phase). Calculated on click.")}}
   </div>
   <div class="tw-col-sm-12">
-    <input id="period-slider" type="range" min="0.05" max="500" value="{{config_state.period}}" class="tw-my-2 tw-w-full tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">
+    <input id="period-slider" type="range" min="0.05" max="500" value="{{config.period}}" class="tw-my-2 tw-w-full tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">
     <div class="tw-flex tw-items-center tw-gap-2 tw-mt-2">
-      <input name="period" value="{{config_state.period}}" class="tw-w-24 tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-2 tw-py-1 tw-bg-white dark:tw-bg-gray-800 tw-text-gray-900 dark:tw-text-gray-100">
+      <input name="period" value="{{config.period}}" class="tw-w-24 tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-px-2 tw-py-1 tw-bg-white dark:tw-bg-gray-800 tw-text-gray-900 dark:tw-text-gray-100">
       <span name="x2" class="tw-px-3 tw-py-1 tw-bg-blue-500 tw-text-white tw-rounded hover:tw-bg-blue-600 tw-transition-colors tw-cursor-pointer tw-select-none">X2</span>
       <span name="div2" class="tw-px-3 tw-py-1 tw-bg-blue-500 tw-text-white tw-rounded hover:tw-bg-blue-600 tw-transition-colors tw-cursor-pointer tw-select-none">/2</span>
     </div>
   </div>
   <div class="tw-col-sm-12 tw-mt-2">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Periodogram</span>
-    {{ toggle.toggle("periodogram_enabled", "Off", "On", config_state.periodogram_enabled, "Show the light curve periodogram. Points on the periodogram can be clicked to update the folded light curve plot.", not config_state.fold)}}
+    {{ toggle.toggle("periodogram_enabled", "Off", "On", config.periodogram_enabled, "Show the light curve periodogram. Points on the periodogram can be clicked to update the folded light curve plot.", not config.fold)}}
   </div>
 </div>
 
