@@ -1,0 +1,30 @@
+@tailwind components;
+@tailwind utilities;
+
+@layer components{
+
+    .padding-table-sn{
+        padding: 8px 10px;
+    }
+}
+
+.tw-preflight *,
+.tw-preflight ::before,
+.tw-preflight ::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e5e7eb;
+}
+
+.tw-preflight ::before,
+.tw-preflight ::after {
+  --tw-content: "";
+}
+
+.tw-preflight h1, h2, h3, h4, h5, h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.tw-preflight [hidden] { display: none; }

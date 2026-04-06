@@ -1,20 +1,26 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{{API_URL}}/static/loading_indicators.css">
+<link rel="stylesheet" href="{{API_URL}}/static/sn_hunter.css">
 
 <div id="sn_hunter_objects_table" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
     <div class="loader">
         <div id="table-objects-loading" class="loaderBar astronomical-loading-indicator"></div>
     </div>
-    {{ objects_list }}
+
     <table 
     id="sn_hunter_main_table"
-    class="tw-table-auto tw-border-collapse tw-bg-white tw-text-left tw-w-full dark:tw-bg-[#1e1e1e]"
+    class="tw-border-collapse tw-border tw-border-[#dee2e6] tw-bg-white tw-text-left tw-w-full dark:tw-bg-[#1e1e1e]"
     data-sn="{{ objects_list }}"
     >
-        <thead class="tw-text-[0.875rem] tw-text-black/60 dark:tw-text-white/70 sm:tw-table-header-group">
+        <thead class="tw-bg-[#fafafa] tw-text-[0.875rem] tw-text-black dark:tw-text-white/70 ">
             <tr class="tw-h-[34px]">
+                <th class="tw-p-[18px] tw-border tw-border-[#dee2e6]">ObjectID</th>
+                <th class="tw-p-[18px] tw-border tw-border-[#dee2e6]">Discovery Date</th>
+                <th class="tw-p-[18px] tw-border tw-border-[#dee2e6]">Score</th>
+                <th class="tw-p-[18px] tw-border tw-border-[#dee2e6]">#Obs</th>
+                <th class="tw-p-[18px] tw-border tw-border-[#dee2e6]">Reported</th>
             </tr>
         </thead>
 
@@ -22,18 +28,19 @@
         </tbody>
     </table>
 
+    <div id="sn_hunter_table_pagination" class="tw-flex ">
+        <button id="prev_btn_sn" class="tw-px-[14px] tw-py-[7px] tw-bg-transparent tw-cursor-pointer hover:tw-bg-[#3a3a3a] hover:tw-text-white">Previous</button>
+        <div id="page_container">
+            <span id="current_page" class="tw-px-[14px] tw-py-[7px] tw-border tw-border-[#979797]" style="background: linear-gradient(to bottom, #fff 0%, #dcdcdc 100%);">1</span>
+        </div>
+        <button id="next_btn_sn" class="tw-px-[14px] tw-py-[7px] tw-bg-transparent tw-cursor-pointer hover:tw-bg-[#3a3a3a] hover:tw-text-white">Next</button>
+    </div>
+
 </div>
 
 
 <script type="module">
-
-
-function init() {
-    let raw = document.getElementById('sn_hunter_main_table');
-    let data = JSON.parse(raw.dataset.sn);
-    console.log(data);
-}
-
+import { init } from "{{API_URL}}/static/sn_hunter/sn_table/sn_table.js";
 
 init();
 </script>
