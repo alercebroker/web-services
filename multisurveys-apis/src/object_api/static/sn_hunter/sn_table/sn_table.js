@@ -4,12 +4,20 @@ class Paginator {
     constructor(data, rows_per_page) {
         this.data = data;
         this.rows_per_page = rows_per_page;
-        this.current_page = 1;
-        this.total_pages = this.calculate_total_pages();
+        this._current_page = 1;
+        this._total_pages = this.calculate_total_pages();
+    }
+
+    set current_page(page) {
+        this._current_page = page
     }
 
     get page_data() {
         return this.data.slice(this.start_index(), this.end_index());
+    }
+
+    get total_pages() {
+        return this._total_pages
     }
 
     calculate_total_pages() {
@@ -17,7 +25,7 @@ class Paginator {
     }
 
     start_index() {
-        return (this.current_page - 1) * this.rows_per_page;
+        return (this._current_page - 1) * this.rows_per_page;
     }
 
     end_index() {
@@ -25,20 +33,20 @@ class Paginator {
     }
 
     is_valid_page(page) {
-        return page >= 1 && page <= this.total_pages;
+        return page >= 1 && page <= this._total_pages;
     }
 
     next_page() {
-        if (this.is_valid_page(this.current_page + 1)) {
-            this.current_page += 1;
+        if (this.is_valid_page(this._current_page + 1)) {
+            this._current_page += 1;
 
             return true;
         }
     }
 
     previous_page() {
-        if (this.is_valid_page(this.current_page - 1)) {
-            this.current_page -= 1;
+        if (this.is_valid_page(this._current_page - 1)) {
+            this._current_page -= 1;
 
             return true;
         }
@@ -55,23 +63,28 @@ export function init() {
     let next_button = document.getElementById('next_btn_sn');
     let paginator = new Paginator(data, 5);
 
-    console.log(paginator.page_data)
 
     previous_button.addEventListener('click', () => {
         if (paginator.previous_page()) {
             load_table_body(paginator.page_data);
-            document.getElementById('current_page').textContent = paginator.current_page;
+            
+            unselect_current_page()
+            select_next_page(paginator._current_page)
         }
     });
 
     next_button.addEventListener('click', () => {
         if (paginator.next_page()) {
             load_table_body(paginator.page_data);
-            document.getElementById('current_page').textContent = paginator.current_page;
+
+            unselect_current_page()
+            select_next_page(paginator._current_page)
         }
     });
 
     load_table_body(paginator.page_data);
+    draw_paginations_buttons(paginator)
+
 }
 
 
@@ -114,4 +127,57 @@ function get_discovery_date_text(date) {
 function pad(str, max) {
   str = str.toString();
   return str.length < max ? pad('0' + str, max) : str;
+}
+
+function draw_paginations_buttons(paginator) {
+    let page_container = document.getElementById('page_container')
+
+    for(let i = 0; i < paginator.total_pages; i++) {
+        let new_page_button =  build_button_sn_table(i, paginator)
+
+        page_container.appendChild(new_page_button)
+    }
+}
+
+function build_button_sn_table(index, paginator) {
+    let button =  document.createElement('span')
+
+    if(index == 0){
+        button.classList.add('current-page-style')
+    }
+    
+    if(index != 0){
+        button.classList.add('btn-page-hover')
+    }
+
+    button.classList.add('btn-page-style')
+
+    button.id = 'page_' + (index+1)
+    button.innerHTML = index + 1
+
+    button.addEventListener('click', (event) => {
+        paginator.current_page = parseInt(event.target.innerHTML)
+
+        load_table_body(paginator.page_data)
+        unselect_current_page()
+        select_next_page(paginator._current_page)
+    })
+
+    return button
+}
+
+
+function select_next_page(next_page) {
+    let page = document.getElementById(`page_${next_page}`)
+
+    page.classList.add('current-page-style')
+    page.classList.remove('btn-page-hover')
+}
+
+function unselect_current_page() {
+    let current_page = document.querySelector('span.current-page-style')
+
+    current_page.classList.remove('current-page-style')
+    current_page.classList.add('btn-page-hover')
+
 }

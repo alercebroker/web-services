@@ -36,6 +36,29 @@
   padding: 8px 10px;
 }
 
+.btn-page-style{
+  cursor: pointer;
+  border-width: 1px;
+  --tw-border-opacity: 1;
+  border-color: rgb(151 151 151 / var(--tw-border-opacity));
+  background-color: transparent;
+  padding-left: 14px;
+  padding-right: 14px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.btn-page-hover:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(58 58 58 / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.current-page-style{
+  background: linear-gradient(to bottom, #fff 0%, #dcdcdc 100%);
+}
+
 .tw-preflight .tw-sr-only{
   position: absolute;
   width: 1px;
@@ -324,6 +347,10 @@
 
 .tw-preflight .tw-mt-3{
   margin-top: 0.75rem;
+}
+
+.tw-preflight .tw-mt-4{
+  margin-top: 1rem;
 }
 
 .tw-preflight .tw-mt-5{
@@ -1005,6 +1032,11 @@
   border-color: rgb(117 117 117 / 0.7);
 }
 
+.tw-preflight .tw-border-\[\#979797\]{
+  --tw-border-opacity: 1;
+  border-color: rgb(151 151 151 / var(--tw-border-opacity));
+}
+
 .tw-preflight .tw-border-\[\#dee2e6\]{
   --tw-border-opacity: 1;
   border-color: rgb(222 226 230 / var(--tw-border-opacity));
@@ -1037,16 +1069,6 @@
 .tw-preflight .tw-border-yellow-200{
   --tw-border-opacity: 1;
   border-color: rgb(254 240 138 / var(--tw-border-opacity));
-}
-
-.tw-preflight .tw-border-black{
-  --tw-border-opacity: 1;
-  border-color: rgb(0 0 0 / var(--tw-border-opacity));
-}
-
-.tw-preflight .tw-border-\[\#979797\]{
-  --tw-border-opacity: 1;
-  border-color: rgb(151 151 151 / var(--tw-border-opacity));
 }
 
 .tw-preflight .tw-border-b-\[\#1e1e1e\]{
@@ -1238,6 +1260,11 @@
   padding-right: 1rem;
 }
 
+.tw-preflight .tw-px-\[14px\]{
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
 .tw-preflight .tw-px-\[8px\]{
   padding-left: 8px;
   padding-right: 8px;
@@ -1271,11 +1298,6 @@
 .tw-preflight .tw-py-\[2px\]{
   padding-top: 2px;
   padding-bottom: 2px;
-}
-
-.tw-preflight .tw-px-\[14px\]{
-  padding-left: 14px;
-  padding-right: 14px;
 }
 
 .tw-preflight .tw-py-\[7px\]{
@@ -1692,6 +1714,11 @@
   background-color: rgb(33 150 243 / 0.3);
 }
 
+.tw-preflight .hover\:tw-bg-\[\#3a3a3a\]:hover{
+  --tw-bg-opacity: 1;
+  background-color: rgb(58 58 58 / var(--tw-bg-opacity));
+}
+
 .tw-preflight .hover\:tw-bg-\[\#757575\]:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(117 117 117 / var(--tw-bg-opacity));
@@ -1739,11 +1766,6 @@
 .tw-preflight .hover\:tw-bg-gray-600:hover{
   --tw-bg-opacity: 1;
   background-color: rgb(75 85 99 / var(--tw-bg-opacity));
-}
-
-.tw-preflight .hover\:tw-bg-\[\#3a3a3a\]:hover{
-  --tw-bg-opacity: 1;
-  background-color: rgb(58 58 58 / var(--tw-bg-opacity));
 }
 
 .tw-preflight .hover\:tw-text-gray-600:hover{

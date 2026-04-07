@@ -3,9 +3,21 @@
 
 @layer components{
 
-    .padding-table-sn{
-        padding: 8px 10px;
-    }
+  .padding-table-sn{
+      padding: 8px 10px;
+  }
+
+  .btn-page-style {
+    @apply tw-px-[14px] tw-py-[7px] tw-border tw-border-[#979797] tw-bg-transparent tw-cursor-pointer 
+  }
+
+  .btn-page-hover{
+    @apply hover:tw-bg-[#3a3a3a] hover:tw-text-white
+  }
+
+  .current-page-style{
+    background: linear-gradient(to bottom, #fff 0%, #dcdcdc 100%);
+  }
 }
 
 .tw-preflight *,
