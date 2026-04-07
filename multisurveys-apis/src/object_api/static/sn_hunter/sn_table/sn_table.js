@@ -61,30 +61,28 @@ export function init() {
 
     let previous_button = document.getElementById('prev_btn_sn');
     let next_button = document.getElementById('next_btn_sn');
-    let paginator = new Paginator(data, 5);
+    let paginator = new Paginator(data, 1);
 
 
     previous_button.addEventListener('click', () => {
         if (paginator.previous_page()) {
-            load_table_body(paginator.page_data);
-            
-            unselect_current_page()
-            select_next_page(paginator._current_page)
+            render(paginator)
         }
     });
 
     next_button.addEventListener('click', () => {
         if (paginator.next_page()) {
-            load_table_body(paginator.page_data);
-
-            unselect_current_page()
-            select_next_page(paginator._current_page)
+            render(paginator)
         }
     });
 
+    render(paginator)
+
+}
+
+function render(paginator) {
     load_table_body(paginator.page_data);
     draw_paginations_buttons(paginator)
-
 }
 
 
@@ -131,53 +129,56 @@ function pad(str, max) {
 
 function draw_paginations_buttons(paginator) {
     let page_container = document.getElementById('page_container')
+    let pages_to_displays = pages_to_draw(paginator._current_page, paginator.total_pages)
 
-    for(let i = 0; i < paginator.total_pages; i++) {
-        let new_page_button =  build_button_sn_table(i, paginator)
 
-        page_container.appendChild(new_page_button)
-    }
+    clean_pages_container(page_container)
+
+    pages_to_displays.forEach((page) => {
+        let new_button = build_button_sn_table(page, paginator)
+
+        page_container.appendChild(new_button)
+    })
+}
+
+function clean_pages_container(element) {
+    element.innerHTML = ''
+}
+
+function pages_to_draw(current, total) {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  if (current <= 3) return [1, 2, 3, 4, "...", total];
+  if (current >= total - 2) return [1, "...", total-3, total-2, total-1, total];
+  return [1, "...", current - 1, current, current + 1, "...", total];
 }
 
 function build_button_sn_table(index, paginator) {
     let button =  document.createElement('span')
 
-    if(index == 0){
+    if (index === '...'){
+        button.innerHTML = '...'
+        
+        return button
+    }
+
+    if(index == paginator._current_page){
         button.classList.add('current-page-style')
     }
     
-    if(index != 0){
+    if(index != paginator._current_page){
         button.classList.add('btn-page-hover')
     }
 
     button.classList.add('btn-page-style')
+    button.id = 'page_' + (index)
+    button.innerHTML = index
 
-    button.id = 'page_' + (index+1)
-    button.innerHTML = index + 1
 
     button.addEventListener('click', (event) => {
         paginator.current_page = parseInt(event.target.innerHTML)
 
-        load_table_body(paginator.page_data)
-        unselect_current_page()
-        select_next_page(paginator._current_page)
+        render(paginator)
     })
 
     return button
-}
-
-
-function select_next_page(next_page) {
-    let page = document.getElementById(`page_${next_page}`)
-
-    page.classList.add('current-page-style')
-    page.classList.remove('btn-page-hover')
-}
-
-function unselect_current_page() {
-    let current_page = document.querySelector('span.current-page-style')
-
-    current_page.classList.remove('current-page-style')
-    current_page.classList.add('btn-page-hover')
-
 }
