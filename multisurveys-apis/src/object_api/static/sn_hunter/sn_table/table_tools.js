@@ -1,6 +1,11 @@
 import { jdToDate } from "../../../libraries/AstroDates/AstroDates.js";
 
 
+export function render(paginator) {
+    load_table_body(paginator.page_data);
+    draw_paginations_buttons(paginator)
+}
+
 export function load_table_body(data) {
     let table_body = document.querySelector('#sn_hunter_main_table tbody');
 

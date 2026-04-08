@@ -905,6 +905,10 @@
   align-self: flex-end;
 }
 
+.tw-preflight .tw-justify-self-end{
+  justify-self: end;
+}
+
 .tw-preflight .tw-overflow-auto{
   overflow: auto;
 }
