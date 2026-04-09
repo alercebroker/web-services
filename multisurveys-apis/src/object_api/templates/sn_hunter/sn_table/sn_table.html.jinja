@@ -1,5 +1,7 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+
 <link rel="stylesheet" href="{{API_URL}}/static/loading_indicators.css">
 <link rel="stylesheet" href="{{API_URL}}/static/sn_hunter.css">
 
@@ -11,12 +13,13 @@
         <div id="table-objects-loading" class="loaderBar astronomical-loading-indicator"></div>
     </div>
 
-    <div id="sn_table_filters" class="tw-my-4">
-        <div>
-            <span>Order by:</span>
-            {{render_dropdown(["oid", "firstmjd", "probability", "n_det", "reported_date"])}}
-        </div>
-        <div class="tw-flex tw-justify-self-end">
+    <div id="sn_table_filters" class="tw-my-4 tw-w-full">
+        <div class=""></div>
+        <div class="tw-flex tw-justify-between">
+            <div class="">
+                <div class="tw-min-w-[200px]">{{render_dropdown(["oid", "firstmjd", "probability", "n_det", "reported_date"])}}</div>
+            </div>
+
             <div>
                 <span>Search: </span>
                 <input id="sn_hunter_search_input" type="text" class="tw-border tw-border-[#dee2e6] tw-rounded tw-px-2 tw-py-1">

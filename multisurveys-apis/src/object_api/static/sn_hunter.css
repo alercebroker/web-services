@@ -809,6 +809,10 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
 
+.tw-preflight .tw-flex-row{
+  flex-direction: row;
+}
+
 .tw-preflight .tw-flex-col{
   flex-direction: column;
 }
@@ -888,6 +892,11 @@
 
 .tw-preflight .tw-gap-y-4{
   row-gap: 1rem;
+}
+
+.tw-preflight .tw-gap-x-2{
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
 }
 
 .tw-preflight :is(.tw-space-x-1 > :not([hidden]) ~ :not([hidden])){
