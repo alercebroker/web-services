@@ -3,6 +3,8 @@
 <link rel="stylesheet" href="{{API_URL}}/static/loading_indicators.css">
 <link rel="stylesheet" href="{{API_URL}}/static/sn_hunter.css">
 
+{% from 'sn_hunter/sn_table/dropdown.html.jinja' import render_dropdown %}
+
 <div id="sn_hunter_objects_table" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
     <div class="loader">
@@ -12,10 +14,7 @@
     <div id="sn_table_filters" class="tw-my-4">
         <div>
             <span>Order by:</span>
-            <button id="order_by_oid_element" data-ascendent="True">
-                <span>oid</span>
-                <span></span>
-            </button>
+            {{render_dropdown(["oid", "firstmjd", "probability", "n_det", "reported_date"])}}
         </div>
         <div class="tw-flex tw-justify-self-end">
             <div>

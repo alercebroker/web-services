@@ -35,40 +35,26 @@ function createIcon(name, { size = 24, color = '#1f1f1f', className = '' } = {})
   return svg;
 }
 
-function order_data_by_attribute(data, is_ascendent) {
-
+function order_data_by_attribute(data, attribute, is_ascendent) {
     let order_data = data.toSorted((a, b) => {
         if (is_ascendent) {
-            return a.oid - b.oid;
+            return a[attribute] - b[attribute];
         } else {
-            return b.oid - a.oid;
+            return b[attribute] - a[attribute];
         }
     });
 
     return order_data
 }
 
+function change_order_attribute(element, is_ascendent) {
+    element.dataset.ascendent = (!is_ascendent).toString();
+}
+
 export function init() {
     let raw = document.getElementById('sn_hunter_main_table');
     let data = JSON.parse(raw.dataset.sn);
-
     let search_input = document.getElementById('sn_hunter_search_input');
-    let order_by_id = document.getElementById('order_by_oid_element');
-
-    order_by_id.addEventListener('click', () => {
-        let is_ascendent = order_by_id.dataset.ascendent.toLowerCase() === 'true';
-        let icon_order = is_ascendent ? createIcon('upArrow', { size: 16 }) : createIcon('downArrow', { size: 16 });
-        let order_data = order_data_by_attribute(data, is_ascendent);
-
-        
-        order_by_id.lastChild.remove();
-        order_by_id.appendChild(icon_order);
-        order_by_id.dataset.ascendent = (!is_ascendent).toString();
-
-        paginator = new Paginator(order_data, rows_per_page);
-        render(paginator)
-    })
-
     let previous_button = document.getElementById('prev_btn_sn');
     let next_button = document.getElementById('next_btn_sn');
     let rows_per_page = 5;
@@ -96,6 +82,36 @@ export function init() {
 
         paginator = new Paginator(filtered_data, rows_per_page);
         render(paginator);
+    });
+    
+    document.querySelectorAll('el-dropdown').forEach(dropdown => {
+        let button = dropdown.querySelector('button');
+
+        dropdown.querySelectorAll('el-menu span').forEach(item => {
+
+            item.addEventListener('click', () => {
+            // Actualiza el innerHTML del botón (componente padre) conservando el ícono SVG
+            let is_ascendent = item.dataset.ascendent.toLowerCase() === 'true';
+            let icon_order = is_ascendent ? createIcon('upArrow', { size: 16 }) : createIcon('downArrow', { size: 16 });
+            let item_attribute = String(item.dataset.attribute);
+            let order_data = order_data_by_attribute(data, item_attribute, is_ascendent);
+
+
+            button.innerHTML = '';
+            button.appendChild(document.createTextNode(item.textContent.trim() + ' '));
+            button.appendChild(icon_order);
+
+            paginator = new Paginator(order_data, rows_per_page);
+            change_order_attribute(item, is_ascendent)
+            render(paginator)
+
+            // Cierra el menú luego de seleccionar
+            let menu = dropdown.querySelector('el-menu');
+            if (menu && typeof menu.hidePopover === 'function') {
+                menu.hidePopover();
+            }
+            });
+        });
     });
 
     render(paginator)

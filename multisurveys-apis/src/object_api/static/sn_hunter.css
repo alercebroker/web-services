@@ -273,6 +273,10 @@
   margin-bottom: 1rem;
 }
 
+.tw-preflight .-tw-mr-1{
+  margin-right: -0.25rem;
+}
+
 .tw-preflight .tw-mb-1{
   margin-bottom: 0.25rem;
 }
@@ -391,6 +395,11 @@
 
 .tw-preflight .tw-hidden{
   display: none;
+}
+
+.tw-preflight .tw-size-5{
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .tw-preflight .tw-size-auto{
@@ -584,6 +593,10 @@
   width: 1.25rem;
 }
 
+.tw-preflight .tw-w-56{
+  width: 14rem;
+}
+
 .tw-preflight .tw-w-6{
   width: 1.5rem;
 }
@@ -711,6 +724,10 @@
 
 .tw-preflight .tw-origin-center{
   transform-origin: center;
+}
+
+.tw-preflight .tw-origin-top-right{
+  transform-origin: top right;
 }
 
 .tw-preflight .-tw-translate-y-1{
@@ -862,6 +879,11 @@
 
 .tw-preflight .tw-gap-4{
   gap: 1rem;
+}
+
+.tw-preflight .tw-gap-x-1\.5{
+  -moz-column-gap: 0.375rem;
+       column-gap: 0.375rem;
 }
 
 .tw-preflight .tw-gap-y-4{
@@ -1496,6 +1518,11 @@
   color: rgb(156 163 175 / var(--tw-text-opacity));
 }
 
+.tw-preflight .tw-text-gray-700{
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
+}
+
 .tw-preflight .tw-text-gray-900{
   --tw-text-opacity: 1;
   color: rgb(17 24 39 / var(--tw-text-opacity));
@@ -1568,6 +1595,12 @@
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.tw-preflight .tw-shadow-sm{
+  --tw-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --tw-shadow-colored: 0 1px 2px 0 var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .tw-preflight .tw-shadow-xl{
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
@@ -1577,6 +1610,41 @@
 .tw-preflight .tw-outline-none{
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.tw-preflight .tw-outline{
+  outline-style: solid;
+}
+
+.tw-preflight .tw-outline-1{
+  outline-width: 1px;
+}
+
+.tw-preflight .tw-outline-black\/5{
+  outline-color: rgb(0 0 0 / 0.05);
+}
+
+.tw-preflight .tw-ring-1{
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+.tw-preflight .tw-ring-inset{
+  --tw-ring-inset: inset;
+}
+
+.tw-preflight .tw-ring-gray-300{
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(209 213 219 / var(--tw-ring-opacity));
+}
+
+.tw-preflight .tw-transition{
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }
 
 .tw-preflight .tw-transition-all{
@@ -1613,6 +1681,14 @@
 
 .tw-preflight .tw-ease-in-out{
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tw-preflight .\[--anchor-gap\:theme\(spacing\.2\)\]{
+  --anchor-gap: 0.5rem;
+}
+
+.tw-preflight .\[transition-behavior\:allow-discrete\]{
+  transition-behavior: allow-discrete;
 }
 
 .tw-preflight *,
@@ -1782,6 +1858,16 @@
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.tw-preflight .focus\:tw-bg-gray-100:focus{
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
+}
+
+.tw-preflight .focus\:tw-text-gray-900:focus{
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / var(--tw-text-opacity));
+}
+
 .tw-preflight .focus\:tw-outline-none:focus{
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -1850,6 +1936,36 @@
 .tw-preflight :is(.tw-peer:focus ~ .peer-focus\:tw-outline-none){
   outline: 2px solid transparent;
   outline-offset: 2px;
+}
+
+.tw-preflight .data-\[closed\]\:tw-scale-95[data-closed]{
+  --tw-scale-x: .95;
+  --tw-scale-y: .95;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.tw-preflight .data-\[closed\]\:tw-transform[data-closed]{
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.tw-preflight .data-\[closed\]\:tw-opacity-0[data-closed]{
+  opacity: 0;
+}
+
+.tw-preflight .data-\[enter\]\:tw-duration-100[data-enter]{
+  transition-duration: 100ms;
+}
+
+.tw-preflight .data-\[leave\]\:tw-duration-75[data-leave]{
+  transition-duration: 75ms;
+}
+
+.tw-preflight .data-\[enter\]\:tw-ease-out[data-enter]{
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+}
+
+.tw-preflight .data-\[leave\]\:tw-ease-in[data-leave]{
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
 }
 
 .tw-preflight .dark\:tw-border:is(.tw-dark *){

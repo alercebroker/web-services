@@ -1,0 +1,28 @@
+<!-- Include this script tag or install `@tailwindplus/elements` via npm: -->
+{% macro render_dropdown(items) %}
+<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+
+{% set label_map = {
+    "probability": "Score",
+    "firstmjd": "Discovery Date",
+    "n_det": "#Obs",
+} %}
+
+<el-dropdown class="tw-inline-block">
+  <button class="tw-inline-flex tw-w-full tw-justify-center tw-gap-x-1.5 tw-rounded-md tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-font-semibold tw-text-gray-900 tw-shadow-sm tw-ring-1 tw-ring-inset tw-ring-gray-300 hover:tw-bg-gray-50">
+    Options
+
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#1f1f1f"><path d="M480-80 240-320l57-57 183 183 183-183 57 57L480-80ZM298-584l-58-56 240-240 240 240-58 56-182-182-182 182Z"/></svg>
+  </button>
+
+  <el-menu anchor="bottom end" popover class="tw-m-0 tw-w-56 tw-origin-top-right tw-rounded-md tw-bg-white tw-p-0 tw-shadow-lg tw-outline tw-outline-1 tw-outline-black/5 tw-transition [--anchor-gap:theme(spacing.2)] [transition-behavior:allow-discrete] data-[closed]:tw-scale-95 data-[closed]:tw-transform data-[closed]:tw-opacity-0 data-[enter]:tw-duration-100 data-[leave]:tw-duration-75 data-[enter]:tw-ease-out data-[leave]:tw-ease-in">
+    <div class="tw-py-1">
+        {% for item in items %}
+            <span class="tw-block tw-px-4 tw-py-2 tw-text-sm tw-text-gray-700 focus:tw-bg-gray-100 tw-cursor-pointer hover:tw-bg-gray-100 focus:tw-text-gray-900 focus:tw-outline-none" data-ascendent="true" data-attribute="{{item}}">
+            {{ label_map[item] if item in label_map else item }}
+            </span>
+        {% endfor %}
+    </div>
+  </el-menu>
+</el-dropdown>
+{% endmacro %}
