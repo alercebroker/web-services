@@ -15,6 +15,10 @@
     @apply hover:tw-bg-[#3a3a3a] hover:tw-text-white
   }
 
+  .th-table-style{
+    @apply tw-p-[18px] tw-border tw-border-[#dee2e6] tw-cursor-pointer tw-flex tw-justify-between tw-items-center hover:tw-bg-gray-200
+  }
+
   .current-page-style{
     background: linear-gradient(to bottom, #fff 0%, #dcdcdc 100%);
   }

@@ -1,15 +1,62 @@
 import { jdToDate } from "../../../libraries/AstroDates/AstroDates.js";
+import { createIcon, default_icons_order, change_icon_order, draw_paginations_buttons } from '../draw_sn_tools.js';
+import { order_data_by_attribute, change_order_attribute } from './sn_table.js';
 
 
 export function render(paginator) {
+    load_table_header(paginator);
     load_table_body(paginator.page_data);
     draw_paginations_buttons(paginator)
 }
 
-export function load_table_body(data) {
+
+function load_table_header(paginator) {
+    let table_head = document.querySelector('#sn_hunter_main_table thead');
+    let header_data = paginator.header_data
+    let tr = document.createElement('tr');
+    
+    header_data.forEach((item) => {
+        let th = document.createElement('th');
+        let text_container = document.createElement('div');
+        
+        config_th_element_default(text_container, item);
+        add_listeners_th_element(text_container, paginator)
+
+        th.appendChild(text_container);
+        tr.appendChild(th);
+    });
+    
+    clear_table_element(table_head);
+    table_head.appendChild(tr);
+}
+
+function config_th_element_default(element, item) {
+    element.dataset.attribute = item;
+    element.dataset.ascendent = 'true';
+    element.classList.add('th-table-style');
+    element.innerHTML = item;
+    element.appendChild(createIcon('unfoldMoreLess', { size: 16, color: '#1f1f1f' }));
+}
+
+function add_listeners_th_element(element, paginator) {
+    element.addEventListener('click', () => {
+        let is_ascendent = element.dataset.ascendent === 'true';
+        let attribute = element.dataset.attribute;
+        let ordered_data = order_data_by_attribute(paginator._data, attribute, is_ascendent);
+
+        paginator._data = ordered_data;
+        default_icons_order(element)
+        change_icon_order(element, is_ascendent);
+        change_order_attribute(element, is_ascendent);
+       
+        load_table_body(paginator.page_data);
+    });
+}
+
+function load_table_body(data) {
     let table_body = document.querySelector('#sn_hunter_main_table tbody');
 
-    clear_table_body(table_body);
+    clear_table_element(table_body);
 
     data.forEach((row) => {
         let tr = document.createElement('tr');
@@ -27,7 +74,7 @@ export function load_table_body(data) {
     });
 }
 
-function clear_table_body(element) {
+function clear_table_element(element) {
     element.innerHTML = '';
 }
 
@@ -45,60 +92,4 @@ function get_discovery_date_text(date) {
 function pad(str, max) {
   str = str.toString();
   return str.length < max ? pad('0' + str, max) : str;
-}
-
-export function draw_paginations_buttons(paginator) {
-    let page_container = document.getElementById('page_container')
-    let pages_to_displays = pages_to_draw(paginator._current_page, paginator.total_pages)
-
-
-    clean_pages_container(page_container)
-
-    pages_to_displays.forEach((page) => {
-        let new_button = build_button_sn_table(page, paginator)
-
-        page_container.appendChild(new_button)
-    })
-}
-
-function clean_pages_container(element) {
-    element.innerHTML = ''
-}
-
-function pages_to_draw(current, total) {
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
-  if (current <= 3) return [1, 2, 3, 4, "...", total];
-  if (current >= total - 2) return [1, "...", total-3, total-2, total-1, total];
-  return [1, "...", current - 1, current, current + 1, "...", total];
-}
-
-function build_button_sn_table(index, paginator) {
-    let button =  document.createElement('span')
-
-    if (index === '...'){
-        button.innerHTML = '...'
-        
-        return button
-    }
-
-    if(index == paginator._current_page){
-        button.classList.add('current-page-style')
-    }
-    
-    if(index != paginator._current_page){
-        button.classList.add('btn-page-hover')
-    }
-
-    button.classList.add('btn-page-style')
-    button.id = 'page_' + (index)
-    button.innerHTML = index
-
-
-    button.addEventListener('click', (event) => {
-        paginator.current_page = parseInt(event.target.innerHTML)
-
-        render(paginator)
-    })
-
-    return button
 }

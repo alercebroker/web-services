@@ -1,8 +1,9 @@
 
 
 export class Paginator {
-    constructor(data, rows_per_page) {
-        this.data = data;
+    constructor(data, header_data, rows_per_page) {
+        this._data = data;
+        this._header_data = header_data;
         this.rows_per_page = rows_per_page;
         this._current_page = 1;
         this._total_pages = this.calculate_total_pages();
@@ -12,8 +13,12 @@ export class Paginator {
         this._current_page = page
     }
 
+    get header_data() {
+        return this._header_data;
+    }
+
     get page_data() {
-        return this.data.slice(this.start_index(), this.end_index());
+        return this._data.slice(this.start_index(), this.end_index());
     }
 
     get total_pages() {
@@ -21,7 +26,7 @@ export class Paginator {
     }
 
     calculate_total_pages() {
-        return Math.ceil(this.data.length / this.rows_per_page);
+        return Math.ceil(this._data.length / this.rows_per_page);
     }
 
     start_index() {
