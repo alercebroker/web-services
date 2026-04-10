@@ -7,7 +7,7 @@ export function init() {
     let raw = document.getElementById('sn_hunter_main_table');
     let data = JSON.parse(raw.dataset.sn);
     let header_data = ['oid', 'firstmjd', 'probability', 'n_det', 'Reported'];
-    // let dropdown = document.getElementById('sn_dropdown');
+    let dropdown = document.getElementById('sn_dropdown');
     let search_input = document.getElementById('sn_hunter_search_input');
     let previous_button = document.getElementById('prev_btn_sn');
     let next_button = document.getElementById('next_btn_sn');
@@ -38,10 +38,30 @@ export function init() {
         render(paginator);
     });
     
+    add_dropdown_classifier_functionality(dropdown)
     // add_dropdown_functionality(dropdown)
 
     render(paginator)
 
+}
+
+function add_dropdown_classifier_functionality(element) {
+        element.querySelectorAll('el-dropdown').forEach(dropdown => {
+        let button = dropdown.querySelector('button');
+
+        dropdown.querySelectorAll('el-menu span').forEach(item => {
+            item.addEventListener('click', () => {
+            button.innerHTML = '';
+            button.appendChild(document.createTextNode(item.textContent.trim() + ' '));
+
+            // Cierra el menú luego de seleccionar
+            let menu = dropdown.querySelector('el-menu');
+            if (menu && typeof menu.hidePopover === 'function') {
+                menu.hidePopover();
+            }
+            });
+        });
+    });
 }
 
 

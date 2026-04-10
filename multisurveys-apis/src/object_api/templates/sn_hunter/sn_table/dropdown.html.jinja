@@ -2,14 +2,13 @@
 {% macro render_dropdown(items) %}
 
 {% set label_map = {
-    "probability": "Score",
-    "firstmjd": "Discovery Date",
-    "n_det": "#Obs",
+    "stamp_classifier": "Stamp Classifier",
+    "stamp_classifier_2025_beta": "Stamp Classifier Full Beta",
 } %}
 
 <el-dropdown class="tw-inline-block tw-w-full">
   <button class="tw-inline-flex tw-w-full tw-justify-center tw-items-center tw-gap-x-1.5 tw-rounded-md tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-font-semibold tw-text-gray-900 tw-shadow-sm tw-border tw-border-gray-300 hover:tw-bg-gray-50">
-    Order by
+    Classifiers
 
     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="16px" fill="#1f1f1f"><path d="M480-80 240-320l57-57 183 183 183-183 57 57L480-80ZM298-584l-58-56 240-240 240 240-58 56-182-182-182 182Z"/></svg>
   </button>

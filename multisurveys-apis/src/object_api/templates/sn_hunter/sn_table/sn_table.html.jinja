@@ -15,10 +15,22 @@
 
     <div id="sn_table_filters" class="tw-my-4 tw-w-full">
         <div class=""></div>
-        <div class="tw-flex tw-justify-end tw-items-center">
-            {# <div id="sn_dropdown" class="">
-                <div class="tw-min-w-[200px]">{{render_dropdown(["oid", "firstmjd", "probability", "n_det", "reported_date"])}}</div>
-            </div> #}
+        <div class="tw-flex tw-justify-between tw-items-center">
+            <div id="sn_dropdown" class="tw-flex tw-items-center tw-gap-x-2">
+                <div class="tw-min-w-[200px]">{{render_dropdown(["stamp_classifier", "stamp_classifier_2025_beta"])}}</div>
+
+                <button class="tw-inline-block tw-bg-transparent tw-group tw-relative tw-cursor-pointer" id="">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="tw-size-8"  viewBox="0 -960 960 960" fill="#1f1f1f"><path d="M513.5-254.5Q528-269 528-290t-14.5-35.5Q499-340 478-340t-35.5 14.5Q428-311 428-290t14.5 35.5Q457-240 478-240t35.5-14.5ZM442-394h74q0-33 7.5-52t42.5-52q26-26 41-49.5t15-56.5q0-56-41-86t-97-30q-57 0-92.5 30T342-618l66 26q5-18 22.5-39t53.5-21q32 0 48 17.5t16 38.5q0 20-12 37.5T506-526q-44 39-54 59t-10 73Zm38 314q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+
+                    <div class="tw-absolute tw-bg-[#757575]/80 tw-text-[#FAFAFA] tw-mt-2 tw-invisible tw-min-w-[300px] tw-text-xs tw-text-left tw-text-wrap tw-rounded tw-px-4 tw-py-2 tw-z-[10] group-focus-within:tw-visible dark:tw-bg-[#757575]/60 dark:tw-text-[#FAFAFA]">
+                        <span class="tw-block">Stamp classifier (see <a href="https://ui.adsabs.harvard.edu/abs/2021AJ....162..231C/abstract" target="_blank" class="blue--text text--lighten-3">Carrasco-Davis et al. 2021</a> )</span>
+                        </br>
+                        <span class="tw-block">Beta version of full stamp classifier (see <a href="https://ui.adsabs.harvard.edu/abs/2023ApJ...952L..43R/abstract" target="_blank" class="blue--text text--lighten-3">Reyes-Jainaga et al. 2023</a> ) , stamp_classifier_2025_beta in ALeRCE database</span>
+                    </div>   
+
+                </button>
+   
+            </div>
 
             <div>
                 <span>Search: </span>

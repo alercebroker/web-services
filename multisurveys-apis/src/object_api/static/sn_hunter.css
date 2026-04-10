@@ -414,6 +414,16 @@
   height: auto;
 }
 
+.tw-preflight .tw-size-6{
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.tw-preflight .tw-size-8{
+  width: 2rem;
+  height: 2rem;
+}
+
 .tw-preflight .tw-h-0{
   height: 0px;
 }
@@ -693,6 +703,10 @@
   min-width: max-content;
 }
 
+.tw-preflight .tw-min-w-\[300px\]{
+  min-width: 300px;
+}
+
 .tw-preflight .tw-max-w-\[40\%\]{
   max-width: 40%;
 }
@@ -897,6 +911,11 @@
   row-gap: 1rem;
 }
 
+.tw-preflight .tw-gap-x-2{
+  -moz-column-gap: 0.5rem;
+       column-gap: 0.5rem;
+}
+
 .tw-preflight :is(.tw-space-x-1 > :not([hidden]) ~ :not([hidden])){
   --tw-space-x-reverse: 0;
   margin-right: calc(0.25rem * var(--tw-space-x-reverse));
@@ -966,6 +985,10 @@
 
 .tw-preflight .tw-text-balance{
   text-wrap: balance;
+}
+
+.tw-preflight .tw-text-pretty{
+  text-wrap: pretty;
 }
 
 .tw-preflight .tw-break-words{
@@ -1227,6 +1250,10 @@
 .tw-preflight .tw-bg-yellow-50{
   --tw-bg-opacity: 1;
   background-color: rgb(254 252 232 / var(--tw-bg-opacity));
+}
+
+.tw-preflight .tw-bg-\[\#757575\]\/80{
+  background-color: rgb(117 117 117 / 0.8);
 }
 
 .tw-preflight .tw-fill-\[\#1565C0\]{
@@ -1851,6 +1878,10 @@
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.tw-preflight .focus\:tw-visible:focus{
+  visibility: visible;
+}
+
 .tw-preflight .focus\:tw-bg-gray-100:focus{
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
@@ -1889,6 +1920,14 @@
   --tw-ring-offset-width: 2px;
 }
 
+.tw-preflight .active\:tw-visible:active{
+  visibility: visible;
+}
+
+.tw-preflight :is(.tw-group:focus-within .group-focus-within\:tw-visible){
+  visibility: visible;
+}
+
 .tw-preflight :is(.tw-group:hover .group-hover\:tw-visible){
   visibility: visible;
 }
@@ -1907,6 +1946,18 @@
 
 .tw-preflight :is(.tw-group:hover .group-hover\:tw-opacity-100){
   opacity: 1;
+}
+
+.tw-preflight :is(.tw-group:focus .group-focus\:tw-visible){
+  visibility: visible;
+}
+
+.tw-preflight :is(.tw-group:focus .group-focus\:tw-flex){
+  display: flex;
+}
+
+.tw-preflight :is(.tw-group:active .group-active\:tw-visible){
+  visibility: visible;
 }
 
 .tw-preflight :is(.tw-peer:checked ~ .peer-checked\:tw-bg-gray-600){
@@ -2055,6 +2106,10 @@
 .tw-preflight .dark\:tw-bg-yellow-900:is(.tw-dark *){
   --tw-bg-opacity: 1;
   background-color: rgb(113 63 18 / var(--tw-bg-opacity));
+}
+
+.tw-preflight .dark\:tw-bg-\[\#757575\]\/80:is(.tw-dark *){
+  background-color: rgb(117 117 117 / 0.8);
 }
 
 .tw-preflight .dark\:tw-fill-\[\#1976d2\]:is(.tw-dark *){
