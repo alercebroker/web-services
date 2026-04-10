@@ -1,6 +1,5 @@
 import { jdToDate } from "../../../libraries/AstroDates/AstroDates.js";
 import { createIcon, default_icons_order, change_icon_order, draw_paginations_buttons } from '../draw_sn_tools.js';
-import { order_data_by_attribute, change_order_attribute } from './sn_table.js';
 
 
 export function render(paginator) {
@@ -34,8 +33,20 @@ function config_th_element_default(element, item) {
     element.dataset.attribute = item;
     element.dataset.ascendent = 'true';
     element.classList.add('th-table-style');
-    element.innerHTML = item;
+    element.innerHTML = get_header_text(item);
     element.appendChild(createIcon('unfoldMoreLess', { size: 16, color: '#1f1f1f' }));
+}
+
+export function get_header_text(item) {
+    if (item === 'probability') {
+        return 'Score';
+    } else if (item === 'n_det') {
+        return '#Obs';
+    } else if (item === 'firstmjd') {
+        return 'Discovery Date';
+    }
+    
+    return item;
 }
 
 function add_listeners_th_element(element, paginator) {
@@ -92,4 +103,20 @@ function get_discovery_date_text(date) {
 function pad(str, max) {
   str = str.toString();
   return str.length < max ? pad('0' + str, max) : str;
+}
+
+export function order_data_by_attribute(data, attribute, is_ascendent) {
+    let order_data = data.toSorted((a, b) => {
+        if (is_ascendent) {
+            return a[attribute] - b[attribute];
+        } else {
+            return b[attribute] - a[attribute];
+        }
+    });
+
+    return order_data
+}
+
+export function change_order_attribute(element, is_ascendent) {
+    element.dataset.ascendent = (!is_ascendent).toString();
 }

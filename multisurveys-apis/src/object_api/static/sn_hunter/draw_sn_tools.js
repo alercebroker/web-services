@@ -1,5 +1,6 @@
 import { render } from "./sn_table/table_tools.js";
 
+
 const Icons = {
     unfoldMoreLess: {
         viewBox: '0 -960 960 960',
@@ -50,7 +51,7 @@ export function change_icon_order(element, is_ascendent) {
     let icon_name = is_ascendent ? 'upArrow' : 'downArrow';
     let icon = createIcon(icon_name, { size: 16, color: '#1f1f1f' });
 
-    element.innerHTML = element.dataset.attribute;
+    element.lastElementChild.remove()
     element.appendChild(icon);
 }
 

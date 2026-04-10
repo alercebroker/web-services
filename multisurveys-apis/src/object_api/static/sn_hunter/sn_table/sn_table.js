@@ -1,28 +1,13 @@
 import { Paginator } from "./paginator.js";
 import { render } from "./table_tools.js";
 import { createIcon } from '../draw_sn_tools.js';
-
-
-export function order_data_by_attribute(data, attribute, is_ascendent) {
-    let order_data = data.toSorted((a, b) => {
-        if (is_ascendent) {
-            return a[attribute] - b[attribute];
-        } else {
-            return b[attribute] - a[attribute];
-        }
-    });
-
-    return order_data
-}
-
-export function change_order_attribute(element, is_ascendent) {
-    element.dataset.ascendent = (!is_ascendent).toString();
-}
+import { order_data_by_attribute, change_order_attribute } from './table_tools.js'
 
 export function init() {
     let raw = document.getElementById('sn_hunter_main_table');
     let data = JSON.parse(raw.dataset.sn);
     let header_data = ['oid', 'firstmjd', 'probability', 'n_det', 'Reported'];
+    // let dropdown = document.getElementById('sn_dropdown');
     let search_input = document.getElementById('sn_hunter_search_input');
     let previous_button = document.getElementById('prev_btn_sn');
     let next_button = document.getElementById('next_btn_sn');
@@ -53,7 +38,16 @@ export function init() {
         render(paginator);
     });
     
-    document.querySelectorAll('el-dropdown').forEach(dropdown => {
+    // add_dropdown_functionality(dropdown)
+
+    render(paginator)
+
+}
+
+
+function add_dropdown_functionality(element) {
+    
+    element.querySelectorAll('el-dropdown').forEach(dropdown => {
         let button = dropdown.querySelector('button');
 
         dropdown.querySelectorAll('el-menu span').forEach(item => {
@@ -70,7 +64,7 @@ export function init() {
             button.appendChild(document.createTextNode(item.textContent.trim() + ' '));
             button.appendChild(icon_order);
 
-            paginator = new Paginator(order_data, rows_per_page);
+            paginator = new Paginator(order_data,['oid', 'firstmjd', 'probability', 'n_det', 'Reported'],rows_per_page);
             change_order_attribute(item, is_ascendent)
             render(paginator)
 
@@ -82,7 +76,4 @@ export function init() {
             });
         });
     });
-
-    render(paginator)
-
 }
