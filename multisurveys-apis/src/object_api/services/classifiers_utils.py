@@ -15,6 +15,7 @@ def sort_classifiers(classifiers):
     ## classifier_id:priority
     priorities = {
         1: 0,
+        3: 1,
     }
 
     # insertar por prioridad
