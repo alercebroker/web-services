@@ -1,3 +1,4 @@
+import pandas as pd
 from db_plugins.db.sql.models import (
     Object,
     ZtfObject,
@@ -6,14 +7,13 @@ from db_plugins.db.sql.models import (
 )
 from sqlalchemy.orm import aliased
 from sqlalchemy import select, and_
-from sqlalchemy.dialects import postgresql  
 from object_api.services.parsers import serialize_items
 from object_api.services.statements_sql import (
     create_order_statement,
     add_limits_statements,
 )
 from object_api.models.pagination import Pagination
-import pandas as pd
+
 
 
 class ObjectsModels:
@@ -89,7 +89,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         order_statement = create_order_statement(stmt, search_params.order_args)
 
-        stmt = stmt.order_by(*order_statement)# o el dialecto que uses
+        stmt = stmt.order_by(*order_statement)
 
         if len(order_statement) > 0:
             stmt = add_limits_statements(stmt, pagination_args)
