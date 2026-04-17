@@ -37,9 +37,7 @@ def parse_classifiers(classifiers_data):
         list: List of classifier IDs.
     """
     parsed_classifiers = {}
-
     for row in classifiers_data:
-        model_dict = row[0].__dict__.copy()
-        parsed_classifiers[model_dict["classifier_id"]] = model_dict["classifier_name"]
+        parsed_classifiers[row["classifier_id"]] = row["classifier_name"]
 
     return parsed_classifiers
