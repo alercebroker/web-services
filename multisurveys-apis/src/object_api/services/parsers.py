@@ -67,7 +67,6 @@ def parse_unique_object_query(sql_response, survey, return_survey_extra=False):
 
     return model_parsed
 
-
 def parse_objects_list_output(result, survey, classes_list):
     items = serialize_items(result.items_page)
     items_updated = match_and_update_item_class(items, classes_list)
@@ -109,14 +108,10 @@ def parse_items_probabilities(items, survey):
 
     return ret
 
-
 def parse_classifiers(classes_list):
     res = []
     for class_name in classes_list:
-        classifier_ms = jsonable_encoder(class_name[0], exclude={"_sa_instance_state"})
-        taxonomy_ms = jsonable_encoder(class_name[1], exclude={"_sa_instance_state"})
-        merged_dict = {**classifier_ms, **taxonomy_ms}
-
+        merged_dict = {**class_name}
         res.append(merged_dict)
 
     return res

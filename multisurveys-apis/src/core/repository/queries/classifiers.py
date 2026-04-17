@@ -47,15 +47,24 @@ def get_all_classifiers(
     """
     with session_factory() as session:
         stmt = (
-            select(Classifier, Taxonomy)
+            select(
+                Classifier.classifier_id,
+                Classifier.classifier_name,
+                Classifier.tid,
+                Classifier.classifier_version,
+                Taxonomy.classifier_id.label("taxonomy_classifier_id"),
+                Taxonomy.order,
+                Taxonomy.class_name,
+                Taxonomy.class_id
+            )
             .join(
                 Taxonomy,
                 Classifier.classifier_id == Taxonomy.classifier_id,
             )
-            .where(Classifier.tid == 1)  # 1 = lsst
+            .where(Classifier.tid == 1)
             .order_by(Classifier.classifier_name.asc(), Taxonomy.order.asc())
         )
         result = session.execute(stmt)
-        result = result.all()
+        result = result.mappings().all()
 
         return result

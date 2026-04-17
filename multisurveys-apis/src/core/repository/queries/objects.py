@@ -6,6 +6,7 @@ from db_plugins.db.sql.models import (
 )
 from sqlalchemy.orm import aliased
 from sqlalchemy import select, and_
+from sqlalchemy.dialects import postgresql  
 from object_api.services.parsers import serialize_items
 from object_api.services.statements_sql import (
     create_order_statement,
@@ -88,13 +89,13 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         order_statement = create_order_statement(stmt, search_params.order_args)
 
-        stmt = stmt.order_by(*order_statement)
+        stmt = stmt.order_by(*order_statement)# o el dialecto que uses
 
         if len(order_statement) > 0:
             stmt = add_limits_statements(stmt, pagination_args)
 
         items = session.execute(stmt).all()
-
+        
         if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
             items = sort_by_oid_list_and_select_page(search_params, items)
 
