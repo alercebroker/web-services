@@ -99,7 +99,6 @@ def serialize_items(data):
 
     return ret
 
-
 def parse_items_probabilities(items, survey):
     ret = []
     for item in items:

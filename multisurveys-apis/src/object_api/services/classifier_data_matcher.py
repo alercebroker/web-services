@@ -34,6 +34,8 @@ def match_and_update_item_class(items, classes_list):
             item["class_name"] = matched_class["class_name"]
             item["classifier_name"] = matched_class["classifier_name"]
             item["classifier_version"] = matched_class["classifier_version"]
+        
+        item["classifier_version"] = str(item["classifier_version"])
 
     return items
 
