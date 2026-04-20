@@ -30,7 +30,7 @@ def match_and_update_item_class(items, classes_list):
     for item in items:
         matched_class = find_match_class(item, classes_list)
 
-        if matched_class != None:
+        if matched_class is not None:
             item["class_name"] = matched_class["class_name"]
             item["classifier_name"] = matched_class["classifier_name"]
             item["classifier_version"] = matched_class["classifier_version"]
