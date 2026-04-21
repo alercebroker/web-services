@@ -106,7 +106,7 @@ def sort_classifiers(classifiers):
     ## classifier_id:priority
     priorities = {
         1: 0,
-        3:1,
+        3: 1,
     }
 
     sorted_items = sorted(

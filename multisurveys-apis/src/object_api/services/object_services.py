@@ -21,6 +21,7 @@ def get_object_by_id(oid, survey_id: str, session_ms, return_survey_extra: bool 
     response = parse_unique_object_query(object_model, survey_id, return_survey_extra)
     return response
 
+
 def get_objects_list(session_ms, search_params):
     classes_list = get_classes_list(session_ms)
     search_params = update_filters(search_params, classes_list)

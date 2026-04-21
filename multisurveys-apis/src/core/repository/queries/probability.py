@@ -15,8 +15,8 @@ def get_probability_by_oid(
 
         stmt = select(Probability, TaxonomyAlias).join(
             TaxonomyAlias,
-            (TaxonomyAlias.class_id == Probability.class_id) & 
-            (TaxonomyAlias.classifier_id == Probability.classifier_id),
+            (TaxonomyAlias.class_id == Probability.class_id)
+            & (TaxonomyAlias.classifier_id == Probability.classifier_id),
         )
 
         if classifier_id:

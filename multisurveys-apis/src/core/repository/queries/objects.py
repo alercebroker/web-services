@@ -15,7 +15,6 @@ from object_api.services.statements_sql import (
 from object_api.models.pagination import Pagination
 
 
-
 class ObjectsModels:
     def __init__(self, survey):
         self.survey = survey
@@ -95,7 +94,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
             stmt = add_limits_statements(stmt, pagination_args)
 
         items = session.execute(stmt).all()
-        
+
         if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
             items = sort_by_oid_list_and_select_page(search_params, items)
 

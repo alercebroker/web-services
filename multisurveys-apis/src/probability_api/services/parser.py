@@ -27,7 +27,6 @@ def parse_probability(probability_data, classifiers):
 
         parsed_probability.append(Probability(**model_dict))
 
-    
     return parsed_probability
 
 

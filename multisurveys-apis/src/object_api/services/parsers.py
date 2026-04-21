@@ -67,6 +67,7 @@ def parse_unique_object_query(sql_response, survey, return_survey_extra=False):
 
     return model_parsed
 
+
 def parse_objects_list_output(result, survey, classes_list):
     items = serialize_items(result.items_page)
     items_updated = match_and_update_item_class(items, classes_list)
@@ -99,6 +100,7 @@ def serialize_items(data):
 
     return ret
 
+
 def parse_items_probabilities(items, survey):
     ret = []
     for item in items:
@@ -106,6 +108,7 @@ def parse_items_probabilities(items, survey):
         ret.append(model_output)
 
     return ret
+
 
 def parse_classifiers(classes_list):
     res = []

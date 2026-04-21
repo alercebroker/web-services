@@ -55,7 +55,7 @@ def get_all_classifiers(
                 Taxonomy.classifier_id.label("taxonomy_classifier_id"),
                 Taxonomy.order,
                 Taxonomy.class_name,
-                Taxonomy.class_id
+                Taxonomy.class_id,
             )
             .join(
                 Taxonomy,
