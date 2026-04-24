@@ -1087,6 +1087,10 @@
   overflow-wrap: break-word;
 }
 
+.tw-preflight .tw-break-all{
+  word-break: break-all;
+}
+
 .tw-preflight .tw-rounded{
   border-radius: 0.25rem;
 }
@@ -2809,6 +2813,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
   .tw-preflight .sm\:tw-w-full{
     width: 100%;
+  }
+
+  .tw-preflight .sm\:tw-w-\[160px\]{
+    width: 160px;
   }
 
   .tw-preflight .sm\:tw-max-w-\[80\%\]{

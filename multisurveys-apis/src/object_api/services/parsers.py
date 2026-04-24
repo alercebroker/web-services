@@ -113,10 +113,7 @@ def parse_items_probabilities(items, survey):
 def parse_classifiers(classes_list):
     res = []
     for class_name in classes_list:
-        classifier_ms = jsonable_encoder(class_name[0], exclude={"_sa_instance_state"})
-        taxonomy_ms = jsonable_encoder(class_name[1], exclude={"_sa_instance_state"})
-        merged_dict = {**classifier_ms, **taxonomy_ms}
-
+        merged_dict = {**class_name}
         res.append(merged_dict)
 
     return res
