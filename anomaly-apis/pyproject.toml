@@ -1,0 +1,18 @@
+[project]
+name = "anomaly-apis"
+version = "0.1.0"
+description = "Web service with json api, htmx api and front routes to acces the anomalies scores generated in the alerce workflow"
+authors = [
+    {name = "Alex Alvarez",email = "otajla@hotmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+]
+
+[tool.poetry]
+packages = [{include = "anomaly_apis", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
