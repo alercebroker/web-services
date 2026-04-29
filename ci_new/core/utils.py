@@ -3,6 +3,7 @@ import pathlib
 import sys
 from enum import Enum
 from typing import TypedDict
+import datetime
 
 import dagger
 
@@ -246,3 +247,15 @@ def update_chart(container: dagger.Container, chart_name, app_version, dry_run: 
     if dry_run:
         script.append("--dry-run")
     return container.with_workdir("/build/ci").with_exec(script)
+
+
+async def get_new_mayor_version(client: dagger.Client, package_dir: str) -> str:
+    _, version = await get_tags(client, package_dir)
+    year = version.split(".")[0]
+    month = version.split(".")[1]
+    curr_year = datetime.datetime.now().year % 100
+    curr_month = datetime.datetime.now().month
+    if curr_year == int(year) and curr_month == int(month):
+        return "patch"
+    else:
+        return f"{curr_year}.{curr_month}.0"

@@ -4,7 +4,7 @@ import sys
 import anyio
 import dagger
 
-from core.utils import git_push, is_library, update_version
+from core.utils import git_push, is_library, update_version, get_new_mayor_version
 
 
 async def _update_package_version(packages: list[str], version: str, dry_run: bool):
@@ -50,6 +50,8 @@ async def _update_package_version(packages: list[str], version: str, dry_run: bo
                 ),
             )
         )
+        if version != "prerelease" and len(packages) == 1:
+            version = await get_new_mayor_version(client, packages[0])
         async with anyio.create_task_group() as tg:
             for package in packages:
                 also_update_chart = not is_library(package)
