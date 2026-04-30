@@ -231,7 +231,7 @@ def objects_table(
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
 
-
+import pprint
 @router.get("/htmx/side_objects", response_class=HTMLResponse)
 def sidebar(
     request: Request,
@@ -301,7 +301,7 @@ def sidebar(
             )
 
             object_list = get_objects_list(session_ms=session, search_params=search_params)
-
+            
             if oid is not None and order_by is None and object_list["items"] != []:
                 order_by = "oid_list"
 
