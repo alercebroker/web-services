@@ -49,8 +49,9 @@ export function draw_close_tags(erase_tag, oid) {
 }
 
 
-export function draw_oids_tags(oids_arr) {
+export function draw_oids_tags() {
   let container = document.getElementById("oids_container")
+  let oids_arr = JSON.parse(oids_container.dataset.oids_list)
 
 
   for (let oid of oids_arr) {
