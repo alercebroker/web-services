@@ -108,6 +108,7 @@ function set_oids_in_container(oids_list) {
   }
 
   oids.push(...oids_list)
+  oids = Array.from(new Set(oids))
   oids_container.dataset.oids_list = JSON.stringify(oids)
 }
 
