@@ -12,27 +12,20 @@
 
     <div class="tw-w-full tw-h-[95vh] tw-text-[0.875rem] tw-flex tw-flex-col dark:tw-bg-[#424242]">
         <div class="tw-px-4 tw-text-black/60 tw-border-y tw-border-[#616161] dark:tw-text-white/70 tw-min-h-[43px] tw-flex tw-items-center tw-justify-start">Object List</div>
-
-        {% for item in objects_list['items']%}
-            {% if item['oid']|string != selected_oid|string %}
-                <div
-                data-oid='{{item["oid"]}}'
-                name="sidebar-row-element" 
-                class="tw-min-h-[43px] tw-flex tw-justify-center tw-items-center obj-unselected-item"
+        {% set selected = namespace(found=False) %}
+        {% for item in objects_list['items'] %}
+            {% set is_selected = item['oid']|string == selected_oid|string %}
+            <div
+                name="sidebar-row-element"
+                data-oid="{{ item['oid'] }}"
+                class="tw-flex tw-justify-center tw-items-center tw-min-h-[43px] {{ 'obj-selected-item' if is_selected and not selected.found else 'obj-unselected-item' }}"
                 hx-on:click="highlight_new_object(event)"
-                >
-                {{item['oid']}}
-                </div>
-            
-            {% else  %}
-                <div
-                 name="sidebar-row-element"
-                 data-oid='{{item["oid"]}}'
-                 class="tw-flex tw-justify-center tw-items-center tw-min-h-[43px] obj-selected-item"
-                 hx-on:click="highlight_new_object(event)"
-                 >
-                    {{selected_oid}}
-                </div>
+            >
+                {{ item['oid'] }}
+            </div>
+
+            {% if is_selected and not selected.found %}
+                {% set selected.found = True %}
             {% endif %}
         {% endfor %}
     </div>
