@@ -32,6 +32,7 @@ difference_mime
     lightcurve and stamps
 """
 
+
 @router.get("/stamp_card")
 async def get_stamp_card(
     request: Request,
