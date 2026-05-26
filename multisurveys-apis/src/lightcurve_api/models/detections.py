@@ -310,17 +310,20 @@ class LsstDetection(BaseDetection):
             d = Distance(REDSHIFT, unit=u.lyr)  # type: ignore
             flux = self.scienceFlux if total else self.psfFlux
 
+            if flux == 0:
+                raise ZeroDivisionError("Flux cannot be zero")
+
+            if flux < 0:
+                raise ValueError("Flux no puede ser negativo para cálculo de magnitud")
+
             if flux < 0:
                 flux = math.fabs(flux)
                 if total:
                     flux = flux * -1
 
-            if flux < 0:
-                raise ValueError("Flux no puede ser negativo para cálculo de magnitud")
-
             mag = 31.4 - 2.5 * math.log10(flux)
 
-        except ValueError:
+        except (ValueError, ZeroDivisionError):
             traceback.print_exc()
             return 0
 
@@ -339,6 +342,9 @@ class LsstDetection(BaseDetection):
             flux = self.scienceFlux if total else self.psfFlux
             flux_err = self.scienceFluxErr if total else self.psfFluxErr
 
+            if flux == 0:
+                raise ZeroDivisionError("Flux cannot be zero")
+
             if flux < 0:
                 flux = math.fabs(flux)
 
@@ -347,7 +353,7 @@ class LsstDetection(BaseDetection):
 
             magnitude_error = (2.5 * flux_err) / (math.log(10.0) * flux)
 
-        except ValueError:
+        except (ValueError, ZeroDivisionError):
             traceback.print_exc()
             return 0
 
