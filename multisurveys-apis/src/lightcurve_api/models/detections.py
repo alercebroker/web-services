@@ -321,7 +321,6 @@ class LsstDetection(BaseDetection):
                 if total:
                     flux = flux * -1
 
-
             mag = 31.4 - 2.5 * math.log10(flux)
 
         except (ValueError, ZeroDivisionError):
