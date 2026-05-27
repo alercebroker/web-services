@@ -1,5 +1,3 @@
-
-
 def classifier_name_parser(classifier_dict):
     return [{name: name.replace("_", " ").title()} for name in classifier_dict.values()]
 

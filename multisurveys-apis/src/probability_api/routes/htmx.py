@@ -18,13 +18,12 @@ async def object_probability_app(
     request: Request,
     oid: str,
 ):
-    classifier_list = get_classifiers( session_factory=request.app.state.psql_session )
+    classifier_list = get_classifiers(session_factory=request.app.state.psql_session)
     classifier_list = sort_classifiers(classifier_list)
     class_options = classifier_name_parser(classifier_list)
-    
+
     prob_list = get_probability(oid, classifier_list, session_factory=request.app.state.psql_session)
     group_prob = parse_grouped_probabilities(prob_list)
-    
 
     return templates.TemplateResponse(
         name="prob.html.jinja",
