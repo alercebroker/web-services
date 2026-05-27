@@ -5,7 +5,7 @@ from ..services.probability import get_probability, get_classifiers
 from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from .test_prob import probability_parser
+from ..services.parser import parse_grouped_probabilities
 from ..services.lsst_service import classifier_name_parser, sort_classifiers
 
 router = APIRouter()
@@ -23,9 +23,9 @@ async def object_probability_app(
     class_options = classifier_name_parser(classifier_list)
     
     prob_list = get_probability(oid, classifier_list, session_factory=request.app.state.psql_session)
-    group_prob = probability_parser(prob_list)
+    group_prob = parse_grouped_probabilities(prob_list)
     
-    
+
     return templates.TemplateResponse(
         name="prob.html.jinja",
         context={
