@@ -9,10 +9,13 @@ from core.idmapper import idmapper
 from ...models.lightcurve import Lightcurve
 from ...models.object import ApiObject
 from ...services.conesearch import conesearch as service
-from ...services.validations import Survey
 
 router = APIRouter(prefix="/conesearch")
 
+SurveyQuery = Annotated[
+    str,
+    Query(description="Survey the object belongs to. Allowed values: `ztf`, `lsst` (case-insensitive)."),
+]
 RadiusQuery = Annotated[float, Query(description="Cone search radius, in degrees.", examples=[0.0083])]
 NeighborsQuery = Annotated[int, Query(description="Maximum number of neighboring sources to return.", examples=[2])]
 
@@ -27,7 +30,7 @@ NeighborsQuery = Annotated[int, Query(description="Maximum number of neighboring
 )
 def conesearch(
     oid: Annotated[str, Query(description="ALeRCE object identifier to center the search on.")],
-    survey: Annotated[Survey, Query(description="Survey the object belongs to.")],
+    survey: SurveyQuery,
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,
@@ -83,7 +86,7 @@ def conesearch_coordinates(
 )
 def conesearch_oid_lightcurve(
     oid: Annotated[str, Query(description="ALeRCE object identifier to center the search on.")],
-    survey: Annotated[Survey, Query(description="Survey the object belongs to.")],
+    survey: SurveyQuery,
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,

@@ -13,11 +13,14 @@ from ...services.lightcurve_service import (
     get_non_detections,
     get_non_detections_by_list,
 )
-from ...services.validations import Survey, survey_validate
+from ...services.validations import survey_validate
 
 router = APIRouter()
 
-SurveyQuery = Annotated[Survey, Query(description="Survey the object belongs to.")]
+SurveyQuery = Annotated[
+    str,
+    Query(description="Survey the object belongs to. Allowed values: `ztf`, `lsst`.", examples=["ztf"]),
+]
 OidQuery = Annotated[
     list[str],
     Query(

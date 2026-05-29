@@ -1,13 +1,3 @@
-from enum import Enum
-
-
-class Survey(str, Enum):
-    """Survey an object belongs to."""
-
-    ztf = "ztf"  # Zwicky Transient Facility
-    lsst = "lsst"  # Vera C. Rubin Observatory / LSST
-
-
 def survey_validate(survey_id):
     surveys = ["ztf", "lsst"]
 
