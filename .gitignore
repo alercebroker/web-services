@@ -1,4 +1,5 @@
 .idea/
+*.code-workspace
 __pycache__/
 tests/tests.out
 *.pyc
@@ -11,6 +12,7 @@ htmlcov/
 coverage.*
 .python-version
 tests/profiling/memray*
+*.prof
 .projectile
 .venv
 .editorconfig
