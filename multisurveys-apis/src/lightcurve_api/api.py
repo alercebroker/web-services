@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
@@ -53,7 +53,7 @@ TAGS_METADATA = [
 app = FastAPI(
     root_path="/lightcurve_api",
     title="ALeRCE Lightcurve API",
-    version="0.2.0",
+    version="0.2.2",
     description=API_DESCRIPTION,
     openapi_tags=TAGS_METADATA,
     contact={"name": "ALeRCE", "url": "https://alerce.science"},
@@ -73,8 +73,17 @@ app.include_router(json_lightcurve.router, tags=["Photometry"])
 app.include_router(conesearch.router, tags=["Cone search"])
 app.include_router(htmx_lightcurve.router, tags=["Browser UI (HTMX)"])
 
-app.mount(
-    "/static",
-    StaticFiles(directory="src/static"),
-    name="static",
-)
+# Static files are served via an explicit route rather than app.mount() because
+# the app sets root_path="/lightcurve_api" while the nginx sidecar strips that
+# prefix before forwarding. A StaticFiles *mount* resolves files against the
+# accumulated root_path ("/lightcurve_api/static"), so the stripped path
+# "/static/..." that actually arrives never matches and 404s. A normal route
+# matches on the post-strip path (like the other routers do); delegating to
+# StaticFiles.get_response keeps ETag/Last-Modified, conditional 304s, Range
+# requests, HEAD and traversal-safe lookups.
+_static = StaticFiles(directory="src/static")
+
+
+@app.get("/static/{path:path}", name="static", include_in_schema=False)
+async def static_files(path: str, request: Request):
+    return await _static.get_response(path, request.scope)
