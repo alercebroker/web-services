@@ -1,11 +1,11 @@
-<form id="dr-table"
-  hx-post="{{API_URL}}/htmx/config_change"
-  hx-target="#main-app"
-  hx-vals='{{config_state.model_dump_json(exclude=["external_sources"])}}'
-  hx-ext="form-json"
-  hx-indicator="#loading"
->
-  <input type="hidden" name="external_sources.enabled" value="true" {% if not config_state.external_sources.enabled %}disabled{% endif %}>
+<div class="tw-flex tw-items-center tw-justify-between tw-mb-4">
+  <h3 class="tw-font-semibold tw-text-gray-900 dark:tw-text-gray-100 tw-text-base">ZTF DR objects nearby</h3>
+  <button type="button" onclick="document.getElementById('dr-picker-container').classList.add('tw-hidden')"
+          class="tw-text-gray-400 hover:tw-text-gray-700 dark:hover:tw-text-gray-200 tw-text-xl tw-leading-none"
+          aria-label="Close">&times;</button>
+</div>
+
+<form id="dr-table">
   <table class="tw-min-w-full tw-border tw-divide-y">
       <thead>
           <tr class="">
@@ -23,14 +23,12 @@
           {% set selected_objects = config_state.external_sources.selected_objects %}
 
           {% for object in config_state.external_sources.objects %}
-          
               <tr class="hover:tw-bg-gray-400">
                   <td class="tw-text-center">
                       <input type="checkbox"
                               class="tw-form-checkbox tw-h-6 tw-w-6 tw-text-blue-600"
                               name="external_sources.selected_objects[]"
                               value="{{ object.objectId }}"
-
                               {% if object.objectId in selected_objects or selected_objects|length == 0 %}
                                 checked
                               {% endif %}
@@ -47,7 +45,6 @@
           {% endfor %}
       </tbody>
   </table>
-  <button type="submit">Ok</button>
-  <p id="loading" class="htmx-indicator">Loading...</p>
+  <button type="button" class="tw-mt-4 tw-px-4 tw-py-2 tw-bg-blue-600 tw-text-white tw-rounded hover:tw-bg-blue-700"
+          onclick="lcApplyDrSources(this.closest('form'))">Ok</button>
 </form>
-

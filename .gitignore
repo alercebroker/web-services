@@ -33,4 +33,7 @@ values.*.override.yaml
 **/.envrc
 **/.direnv
 
+# Editor backup files
+*.bak
+
 **/config.yaml

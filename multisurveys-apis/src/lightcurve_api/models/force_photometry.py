@@ -3,7 +3,7 @@ import traceback
 from typing import Optional
 
 from pydantic import BaseModel, model_validator
-from .lightcurve_item import BaseForcedPhotometry
+from .lightcurve_item import BaseForcedPhotometry, build_plot_variants
 from astropy.coordinates import Distance
 import astropy.units as u
 
@@ -85,6 +85,16 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
 
     def flux2magnitude_err(self, total: bool) -> float:
         return self.e_mag_corr if total else self.e_mag
+
+    def plot_variants(self) -> dict:
+        # ZTF forced photometry has no per-point sign; the chart always plots it positive.
+        return build_plot_variants(
+            self.flux2magnitude,
+            self.flux2magnitude_err,
+            self.magnitude2flux,
+            self.magnitude2flux_err,
+            lambda total: "+",
+        )
 
 
 class LsstForcedPhotometry(BaseForcedPhotometry):
@@ -178,6 +188,16 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
         flux = self.scienceFlux if total else self.psfFlux
 
         return "-" if flux < 0 else "+"
+
+    def plot_variants(self) -> dict:
+        # The chart historically plots forced photometry with a positive sign.
+        return build_plot_variants(
+            lambda total: self.flux2magnitude(total, False),
+            lambda total: self.flux2magnitude_err(total, False),
+            lambda total: self.magnitude2flux(total, False),
+            lambda total: self.magnitude2flux_err(total, False),
+            lambda total: "+",
+        )
 
 
 class LsstForcedPhotometryCsv(BaseModel):
