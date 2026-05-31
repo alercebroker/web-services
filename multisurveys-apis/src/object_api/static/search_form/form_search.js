@@ -210,8 +210,9 @@ export function init() {
   input_ids.addEventListener("change", () => {
     let oids_parsed = split_oids(input_ids.value)
 
+    clean_oids_container(oids_container)
     set_oids_in_container(oids_parsed)
-    draw_oids_tags(oids_parsed)
+    draw_oids_tags()
     
     input_ids.value = ""
   })

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+from ..services.detections_services import find_first_measurement_id
 from ..s3_handler import handler_selector
 from ..services.lightcurve_service import get_detections
 from ..models.lightcurve import PostRequestInputModel
@@ -46,7 +47,7 @@ async def get_stamp_card(
         session_factory=request.app.state.psql_session,
     )
     detections.sort(key=lambda x: x.mjd)
-    selected_measurement_id = detections[0].measurement_id
+    selected_measurement_id = find_first_measurement_id(detections)
     next_measurement_id = detections[min(1, len(detections) - 1)].measurement_id
     has_stamp_selected_measurement_id = has_stamp_for_measurement_id(detections, selected_measurement_id)
 

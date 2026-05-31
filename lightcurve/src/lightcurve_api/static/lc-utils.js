@@ -6,9 +6,9 @@ export class LightCurveOptions {
       1: { name: "g", color: "#56E03A" },
       2: { name: "r", color: "#D42F4B" },
       3: { name: "i", color: "#F4D617" },
-      101: { name: "g DR5", color: "#ADA3A3" },
-      102: { name: "r DR5", color: "#377EB8" },
-      103: { name: "i DR5", color: "#FF7F00" },
+      101: { name: "g DR24", color: "#ADA3A3" },
+      102: { name: "r DR24", color: "#377EB8" },
+      103: { name: "i DR24", color: "#FF7F00" },
       4: { name: "c", color: "#00FFFF" },
       5: { name: "o", color: "#FFA500" },
     };
@@ -196,7 +196,7 @@ export class LightCurveOptions {
       );
       table += rowTable("", "click to change stamp", "");
       return table + "</table>";
-    } else if (serie === "r DR5" || serie === "g DR5" || serie === "i DR5") {
+    } else if (serie === "r DR24" || serie === "g DR24" || serie === "i DR24") {
       table += dataReleaseTooltip(params);
       return table;
     } else if (

@@ -59,9 +59,7 @@ def list_objects(
         )
 
         conesearch = Consearch(dec=dec, ra=ra, radius=radius)
-
         pagination = PaginationArgs(page=page, page_size=page_size, count=count)
-
         order = Order(order_by=order_by, order_mode=order_mode)
 
         search_params = SearchParams(

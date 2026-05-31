@@ -416,9 +416,6 @@ def _get_min_and_max_errors(echarts_options: dict[str, Any]) -> List:
             limits_error_plots_series.append(serie["min_plot_error"])
             limits_error_plots_series.append(serie["max_plot_error"])
 
-    if not limits_error_plots_series:
-        raise ValueError("No error bars found in any series")
-
     return limits_error_plots_series
 
 

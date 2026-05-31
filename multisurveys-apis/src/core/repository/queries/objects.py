@@ -1,3 +1,4 @@
+import pandas as pd
 from db_plugins.db.sql.models import (
     Object,
     ZtfObject,
@@ -12,7 +13,6 @@ from object_api.services.statements_sql import (
     add_limits_statements,
 )
 from object_api.models.pagination import Pagination
-import pandas as pd
 
 
 class ObjectsModels:

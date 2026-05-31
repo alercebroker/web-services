@@ -15,16 +15,14 @@ def parse_classifiers(classifier_data: list) -> list:
     parsed_classifiers = []
 
     for row in classifier_data:
-        classifier_dict = row[0].__dict__.copy()
-        taxonomy_dict = row[1].__dict__.copy()
-        classifier_name = classifier_dict["classifier_name"]
-        classifier_id = classifier_dict["classifier_id"]
-        class_name = taxonomy_dict["class_name"]
+        classifier_name = row["classifier_name"]
+        classifier_id = row["classifier_id"]
+        class_name = row["class_name"]
 
         if classifier_name not in grouped_classifiers.keys():
             grouped_classifiers[classifier_name] = {
                 "classifier_name": classifier_name,
-                "classifier_version": classifier_dict["classifier_version"],
+                "classifier_version": row["classifier_version"],
                 "classes": [class_name],
                 "classifier_id": classifier_id,
             }
