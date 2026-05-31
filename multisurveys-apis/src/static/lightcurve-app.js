@@ -54,11 +54,6 @@ const SYMBOLS = {
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function bandName(item) {
-    const bm = item.band_map;
-    return bm[String(item.band)] ?? bm[item.band] ?? '?';
-}
-
 function phase(mjd, period) {
     return (mjd % period) / period;
 }
@@ -71,101 +66,22 @@ function currentTheme() {
     return isDark() ? customDarkTheme : 'light';
 }
 
-// ─── Per-survey value extraction ─────────────────────────────────────────────
-/**
- * Returns { y, err, sign } for a detection, or null if unrecognised survey.
- * Mirrors the Python flux2magnitude / magnitude2flux logic.
- */
-function detectionPoint(det, cfg) {
-    const survey = det.survey_id.toLowerCase();
-    const { flux, total } = cfg;
-    let y, err, sign;
-
-    if (survey === 'ztf') {
-        const mag = total ? det.magpsf_corr : det.magpsf;
-        if (flux) {
-            const rawF = Math.pow(10, -0.4 * (mag - 23.9));
-            y = (total ? rawF : rawF * det.isdiffpos) * 1000;
-            const errMag = total ? det.sigmapsf_corr_ext : det.sigmapsf;
-            err = Math.abs(errMag) * Math.abs(y);
-        } else {
-            y = mag;
-            err = total ? det.sigmapsf_corr_ext : det.sigmapsf;
-        }
-        sign = String(det.isdiffpos);
-
-    } else if (survey === 'lsst') {
-        const rawF    = total ? det.scienceFlux    : det.psfFlux;
-        const rawFErr = total ? det.scienceFluxErr  : det.psfFluxErr;
-        sign = rawF < 0 ? '-' : '+';
-        const absF    = Math.abs(rawF);
-        const absErr  = Math.abs(rawFErr);
-        const magErr  = absF > 0 ? (2.5 * absErr) / (Math.LN10 * absF) : 0;
-        if (flux) {
-            y = rawF;
-            err = Math.LN10 * Math.abs(y) / 2.5 * magErr;
-        } else {
-            let f = rawF;
-            if (f < 0) { f = Math.abs(f); if (total) f = -f; }
-            y   = f > 0 ? 31.4 - 2.5 * Math.log10(f) : 0;
-            err = magErr;
-        }
-
-    } else if (survey === 'ztf dr') {
-        if (flux) {
-            y = Math.pow(10, -0.4 * (det.mag_corr - 23.9)) * 1000;
-            err = Math.abs(det.e_mag_corr_ext) * Math.abs(y);
-        } else {
-            y = det.mag_corr;
-            err = Math.abs(det.e_mag_corr_ext);
-        }
-        sign = y < 0 ? '-' : '+';
-
-    } else {
-        return null;
-    }
-
-    return { y, err: Math.abs(err), sign };
+// ─── Photometry variant lookup ────────────────────────────────────────────────
+// The flux<->magnitude conversion lives entirely in the Python models
+// (see plot_variants() in models/, surfaced by *_plot_record in service.py). The
+// server precomputes all four flux/total combinations per point, so here we only
+// *select* the one matching the current toggles — no zero points or error
+// propagation are reimplemented in JS, and nothing can drift out of sync.
+function variantKey(cfg) {
+    return `${cfg.flux ? 'flux' : 'mag'}_${cfg.total ? 'total' : 'diff'}`;
 }
 
 /**
- * Returns { y, err } for a forced-photometry point, or null.
+ * Returns the precomputed { y, err, sign } for a detection or forced-photometry
+ * point under the current config, or null if the point has no variants.
  */
-function forcedPhotPoint(fp, cfg) {
-    const survey = fp.survey_id.toLowerCase();
-    const { flux, total } = cfg;
-    let y, err;
-
-    if (survey === 'ztf') {
-        const mag = total ? fp.mag_corr : fp.mag;
-        if (flux) {
-            y   = Math.pow(10, -0.4 * (mag - 23.9)) * 1000;
-            err = Math.abs(total ? fp.e_mag_corr : fp.e_mag) * Math.abs(y);
-        } else {
-            y   = mag;
-            err = Math.abs(total ? fp.e_mag_corr : fp.e_mag);
-        }
-
-    } else if (survey === 'lsst') {
-        const rawF    = total ? fp.scienceFlux    : fp.psfFlux;
-        const rawFErr = total ? fp.scienceFluxErr  : fp.psfFluxErr;
-        const absF    = Math.abs(rawF);
-        const absErr  = Math.abs(rawFErr);
-        const magErr  = absF > 0 ? (2.5 * absErr) / (Math.LN10 * absF) : 0;
-        if (flux) {
-            y   = rawF;
-            err = Math.LN10 * Math.abs(y) / 2.5 * magErr;
-        } else {
-            const f = rawF > 0 ? rawF : 0;
-            y   = f > 0 ? 31.4 - 2.5 * Math.log10(f) : 0;
-            err = magErr;
-        }
-
-    } else {
-        return null;
-    }
-
-    return { y, err: Math.abs(err) };
+function pointValue(item, cfg) {
+    return item.variants?.[variantKey(cfg)] ?? null;
 }
 
 // ─── Validity filter ──────────────────────────────────────────────────────────
@@ -261,13 +177,13 @@ function buildDetectionSeries(cfg) {
 
     for (const det of all) {
         const survey = det.survey_id.toLowerCase();
-        const bn     = bandName(det);
+        const bn     = det.band;
 
         if (survey === 'ztf'    && !cfg.bands.ztf.includes(bn))    continue;
         if (survey === 'lsst'   && !cfg.bands.lsst.includes(bn))   continue;
         if (survey === 'ztf dr' && !cfg.bands.ztf_dr.includes(bn)) continue;
 
-        const v = detectionPoint(det, cfg);
+        const v = pointValue(det, cfg);
         if (!v || !validPoint(v.y, survey, cfg)) continue;
 
         const x       = cfg.fold ? phase(det.mjd, cfg.period) : det.mjd;
@@ -299,12 +215,12 @@ function buildNonDetectionSeries(cfg) {
     const pts = [];
     for (const nd of rawNonDetections) {
         const survey = nd.survey_id.toLowerCase();
-        const bn     = bandName(nd);
+        const bn     = nd.band;
 
         if (survey === 'ztf'    && !cfg.bands.ztf.includes(bn))    continue;
         if (survey === 'ztf dr' && !cfg.bands.ztf_dr.includes(bn)) continue;
 
-        const y = nd.diffmaglim;
+        const y = nd.mag;
         if (!validPoint(y, survey, cfg)) continue;
 
         pts.push({ survey: nd.survey_id, band: bn, pt: [nd.mjd, y, null, null, null, 0, '+'] });
@@ -326,13 +242,13 @@ function buildForcedPhotSeries(cfg) {
 
     for (const fp of rawForcedPhotometry) {
         const survey = fp.survey_id.toLowerCase();
-        const bn     = bandName(fp);
+        const bn     = fp.band;
 
         if (survey === 'lsst'   && !cfg.bands.lsst.includes(bn))   continue;
         if (survey === 'ztf'    && !cfg.bands.ztf.includes(bn))     continue;
         if (survey === 'ztf dr' && !cfg.bands.ztf_dr.includes(bn)) continue;
 
-        const v = forcedPhotPoint(fp, cfg);
+        const v = pointValue(fp, cfg);
         if (!v || !validPoint(v.y, survey, cfg)) continue;
 
         const x      = cfg.fold ? phase(fp.mjd, cfg.period) : fp.mjd;
@@ -553,13 +469,10 @@ function buildPeriodogramOptions() {
 }
 
 // ─── Corrected detection check ────────────────────────────────────────────────
+// Computed server-side (see the /lightcurve route) using the same model conversion
+// the plot relies on, so the browser doesn't reimplement the "is it corrected" rule.
 function isNotCorrected() {
-    if (!rawDetections.length) return true;
-    const d = rawDetections[0];
-    const s = d.survey_id?.toLowerCase();
-    if (s === 'ztf')  return (d.magpsf_corr ?? 0) === 0;
-    if (s === 'lsst') return (d.scienceFlux  ?? 0) === 0;
-    return false;
+    return window.__LC_DATA__.notCorrected ?? false;
 }
 
 // ─── Chart instances ──────────────────────────────────────────────────────────

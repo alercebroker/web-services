@@ -45,15 +45,26 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
 
     config_data = result.config_state.model_dump(exclude={"detections", "non_detections", "forced_photometry"})
 
+    detections = result.lightcurve.detections
+    # "Total" (science) magnitude is only meaningful for corrected data. The server
+    # decides this once, using the same model conversion the plot relies on, so the
+    # browser doesn't need the raw photometry fields to make the call.
+    not_corrected = detections[0].flux2magnitude(True, False) == 0 if detections else True
+
     return templates.TemplateResponse(
         name="layout.html.jinja",
         context={
             "request": request,
-            "detections": [d.model_dump() for d in result.lightcurve.detections],
-            "non_detections": [d.model_dump() for d in result.lightcurve.non_detections],
-            "forced_photometry": [d.model_dump() for d in result.lightcurve.forced_photometry],
+            "detections": [lightcurve_plot_service.detection_plot_record(d) for d in detections],
+            "non_detections": [
+                lightcurve_plot_service.non_detection_plot_record(d) for d in result.lightcurve.non_detections
+            ],
+            "forced_photometry": [
+                lightcurve_plot_service.forced_photometry_plot_record(d) for d in result.lightcurve.forced_photometry
+            ],
             "periodogram": result.periodogram.model_dump(),
             "config": config_data,
+            "not_corrected": not_corrected,
         },
     )
 
@@ -107,7 +118,7 @@ def dr_detections(ra: float, dec: float, oids: str = ""):
             params={"ra": ra, "dec": dec, "radius": 1.5},
         ).json()
     detections = parse_ztf_dr_detection(raw, selected)
-    return [d.model_dump() for d in detections]
+    return [lightcurve_plot_service.detection_plot_record(d) for d in detections]
 
 
 @router.get("/download", response_class=HTMLResponse)

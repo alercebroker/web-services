@@ -222,6 +222,47 @@ def default_echarts_options(config_state: ConfigState):
     }
 
 
+def detection_plot_record(det: BaseDetection) -> dict:
+    """Compact, render-ready record for one detection.
+
+    Carries the band as a resolved name and every flux/total variant precomputed by
+    the model (see ``plot_variants``). The browser only looks these up -- it never
+    converts flux<->magnitude itself. This replaces dumping the full ORM model and
+    duplicating the conversion math in lightcurve-app.js.
+    """
+    return {
+        "survey_id": det.survey_id,
+        "band": det.band_name(),
+        "mjd": det.mjd,
+        "measurement_id": getattr(det, "measurement_id", None),
+        "objectid": getattr(det, "objectid", None),
+        "field": getattr(det, "field", None),
+        "variants": det.plot_variants(),
+    }
+
+
+def forced_photometry_plot_record(fphot: BaseForcedPhotometry) -> dict:
+    """Compact, render-ready record for one forced-photometry point. See detection_plot_record."""
+    return {
+        "survey_id": fphot.survey_id,
+        "band": fphot.band_name(),
+        "mjd": fphot.mjd,
+        "measurement_id": getattr(fphot, "measurement_id", None),
+        "field": getattr(fphot, "field", None),
+        "variants": fphot.plot_variants(),
+    }
+
+
+def non_detection_plot_record(ndet: BaseNonDetection) -> dict:
+    """Compact record for one non-detection (limiting magnitude); no flux/total variants."""
+    return {
+        "survey_id": ndet.survey_id,
+        "band": ndet.band_name(),
+        "mjd": ndet.mjd,
+        "mag": ndet.get_mag(),
+    }
+
+
 def get_lightcurve_data(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
     """Fetch raw lightcurve data without computing the periodogram.
 
