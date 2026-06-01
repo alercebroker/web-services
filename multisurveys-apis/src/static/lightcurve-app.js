@@ -821,6 +821,13 @@ function init() {
 // a new object — the browser evaluates this ES module only once per page load, so
 // without this hook a swapped-in object would never get its chart initialised.
 function boot() {
+    // An HTMX swap replaces the chart DOM nodes, so any existing ECharts instances are
+    // bound to detached nodes. Dispose and clear them both so init() (for the main
+    // chart) and updateVisibility() (for the lazily-built periodogram) rebuild against
+    // the fresh DOM. Without this the periodogram's `!pChart` guard would keep resizing
+    // the stale instance and never render on the new node.
+    myChart?.dispose(); myChart = null;
+    pChart?.dispose();  pChart  = null;
     loadState();
     init();
 }
