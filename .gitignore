@@ -37,3 +37,7 @@ values.*.override.yaml
 *.bak
 
 **/config.yaml
+
+# Local-only deploy values containing sensitive data.
+# Public repo: these must never be committed.
+.secrets/
