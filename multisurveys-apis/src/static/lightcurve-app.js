@@ -31,6 +31,16 @@ let rawPeriodogram = _initialPeriodogram;
 // Mutable config driven by the config panel controls.
 let config = JSON.parse(JSON.stringify(initialConfig));
 
+// True while the /htmx/periodogram fetch is in-flight.
+let periodogramLoading = false;
+// True once the user has manually changed the period (slider / input / X2 / /2 /
+// periodogram click). Once set, we stop overriding the period with the periodogram's
+// best candidate.
+let periodUserModified = false;
+// Guard so programmatic period updates (applyBestCandidatePeriod) don't trip the
+// user-modified flag via the form's input/change handlers.
+let settingPeriodProgrammatically = false;
+
 // ZTF Data-Release detections loaded on demand (external sources feature).
 let drDetections = [];
 
@@ -528,28 +538,37 @@ function reinitPeriodogram() {
 
 function updateChart() {
     if (!myChart) return;
+    // When fold is requested but the periodogram (and thus the period) isn't ready
+    // yet, don't render a fold at a meaningless period — leave the current chart in
+    // place and let updateVisibility() show the "Computing period…" spinner. Once the
+    // periodogram arrives, loadPeriodogram() calls updateChart() again and we render.
+    const foldPending = config.fold && !(rawPeriodogram?.periods?.length);
+    if (foldPending) return;
+
     const opts = buildOptions(config);
     opts.tooltip = buildTooltip();
     myChart.setOption(opts, true);
 }
 
 // ─── Visibility management ────────────────────────────────────────────────────
-// True while the /htmx/periodogram fetch is in-flight.
-let periodogramLoading = false;
-
 function updateVisibility() {
     const warning        = document.getElementById('not-corrected-warning');
     const plotGrid       = document.getElementById('plot-grid');
     const pdContainer    = document.getElementById('periodogram-container');
     const noperiodMsg    = document.getElementById('no-period-message');
     const loadingMsg     = document.getElementById('periodogram-loading');
+    const foldLoading    = document.getElementById('fold-loading');
 
     const showWarning  = config.total && isNotCorrected();
     warning?.classList.toggle('tw-hidden', !showWarning);
     plotGrid?.classList.toggle('tw-hidden', showWarning);
 
-    const hasPeriod    = (rawPeriodogram?.best_periods_index?.length ?? 0) > 0;
+    const hasPeriods   = (rawPeriodogram?.periods?.length ?? 0) > 0;
     const showPd       = config.fold && config.periodogram_enabled;
+
+    // Plot-area spinner while we wait for the period to fold the lightcurve.
+    const showFoldSpinner = config.fold && periodogramLoading && !hasPeriods;
+    foldLoading?.classList.toggle('tw-hidden', !showFoldSpinner);
 
     // Enable/disable the periodogram toggle based on fold state.
     const pdToggleEl = document.querySelector('[name="periodogram_enabled"]');
@@ -558,12 +577,16 @@ function updateVisibility() {
     if (pdContainer) {
         pdContainer.classList.toggle('tw-hidden', !showPd);
         if (showPd) {
-            // Loading spinner has priority over the chart or the "no period" message.
+            // The periodogram chart shows whenever there are periods to plot (even for
+            // non-periodic objects). The "no data" message only appears once a load has
+            // completed and there are genuinely no periods.
+            const emptyAfterLoad = !periodogramLoading && hasPeriods === false && rawPeriodogram?.periods != null;
+            // Loading spinner has priority over the chart or the "no data" message.
             loadingMsg?.classList.toggle('tw-hidden', !periodogramLoading);
-            document.getElementById('periodogram')?.classList.toggle('tw-hidden', !hasPeriod || periodogramLoading);
-            noperiodMsg?.classList.toggle('tw-hidden', hasPeriod || periodogramLoading);
-            if (hasPeriod && !pChart) initPeriodogram();
-            else if (hasPeriod && pChart) pChart.resize();
+            document.getElementById('periodogram')?.classList.toggle('tw-hidden', !hasPeriods || periodogramLoading);
+            noperiodMsg?.classList.toggle('tw-hidden', !emptyAfterLoad || periodogramLoading);
+            if (hasPeriods && !pChart) initPeriodogram();
+            else if (hasPeriods && pChart) pChart.resize();
         }
     }
 
@@ -638,8 +661,29 @@ window.lcApplyDrSources = async function (form) {
     updateChart();
 };
 
+// ─── Best-candidate period adoption ───────────────────────────────────────────
+// When fold is on and the user hasn't manually set a period, adopt the periodogram's
+// best candidate (formal best, or top-scoring candidate for non-periodic objects).
+// Updates the form controls programmatically without tripping periodUserModified.
+function applyBestCandidatePeriod() {
+    if (rawPeriodogram?.best_candidate_period == null) return;
+    if (!config.fold || periodUserModified) return;
+
+    config.period = rawPeriodogram.best_candidate_period;
+    settingPeriodProgrammatically = true;
+    try {
+        const periodEl = document.querySelector('[name="period"]');
+        const sliderEl = document.getElementById('period-slider');
+        if (periodEl) periodEl.value = config.period;
+        if (sliderEl) sliderEl.value  = config.period;
+    } finally {
+        settingPeriodProgrammatically = false;
+    }
+}
+
 // ─── Lazy periodogram loader ──────────────────────────────────────────────────
 async function loadPeriodogram() {
+    // One-shot: don't refetch if we already have the data or a fetch is in flight.
     if (rawPeriodogram?.periods?.length || periodogramLoading) return;
     periodogramLoading = true;
     updateVisibility();
@@ -648,15 +692,7 @@ async function loadPeriodogram() {
         const r = await fetch(`${apiUrl}/htmx/periodogram?oid=${config.oid}&survey_id=${config.survey_id}`);
         if (!r.ok) throw new Error(r.status);
         rawPeriodogram = await r.json();
-        // Adopt best period into the controls if the user hasn't changed it yet.
-        if (config.period === 0.05 && rawPeriodogram.best_periods_index?.length) {
-            const bestIdx = rawPeriodogram.best_periods_index[0];
-            config.period = parseFloat(rawPeriodogram.periods[bestIdx].toFixed(7));
-            const periodEl = document.querySelector('[name="period"]');
-            const sliderEl = document.getElementById('period-slider');
-            if (periodEl) periodEl.value = config.period;
-            if (sliderEl) sliderEl.value  = config.period;
-        }
+        applyBestCandidatePeriod();
     } catch (e) {
         console.error('Periodogram load failed:', e);
     } finally {
@@ -679,12 +715,34 @@ function init() {
     let prevExtEnabled       = config.external_sources?.enabled ?? false;
     let prevPeriodogramEnabled = config.periodogram_enabled;
 
-    function onFormChange() {
+    function onFormChange(e) {
+        // The period input fires a bubbling `change` for direct edits and for the
+        // X2 / /2 buttons (which dispatch change on the input). Treat those as manual
+        // period changes — unless we set the value programmatically.
+        if (e && (e.target?.name === 'period' || e.target?.id === 'period-slider') && !settingPeriodProgrammatically) {
+            periodUserModified = true;
+        }
+
         readConfigFromForm();
+
+        // Fold path: make sure the periodogram is loaded (fallback for touch/keyboard
+        // users who never fire mouseenter), and adopt the best candidate period.
+        if (config.fold) {
+            if (!(rawPeriodogram?.periods?.length)) {
+                // Not ready yet — kick off the (guarded) load. The spinner shows via
+                // updateVisibility/updateChart; updateChart re-runs when data arrives.
+                loadPeriodogram();
+            } else {
+                // Already have data — fold immediately at the best candidate.
+                applyBestCandidatePeriod();
+            }
+        }
+
         updateVisibility();
         updateChart();
 
-        // Lazy-load periodogram the first time the periodogram toggle is switched on.
+        // The periodogram chart still needs data when its toggle turns on. The
+        // loadPeriodogram() guard makes this harmless if fold already triggered it.
         const pdNow = config.periodogram_enabled;
         if (pdNow && !prevPeriodogramEnabled) loadPeriodogram();
         prevPeriodogramEnabled = pdNow;
@@ -704,6 +762,11 @@ function init() {
     }
     function onFormInput(e) {
         if (e.target.name === 'period' || e.target.id === 'period-slider' || e.target.name === 'offset_num') {
+            // A user-driven period change pins the period — stop auto-adopting the
+            // periodogram candidate. Programmatic updates set a guard so they don't.
+            if ((e.target.name === 'period' || e.target.id === 'period-slider') && !settingPeriodProgrammatically) {
+                periodUserModified = true;
+            }
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => { readConfigFromForm(); updateChart(); }, 80);
         }
@@ -712,13 +775,24 @@ function init() {
     form.addEventListener('change', onFormChange);
     form.addEventListener('input',  onFormInput);
 
-    // Period selection from periodogram click.
+    // Hover prefetch: warm the periodogram as soon as the pointer enters the Fold
+    // toggle. The loadPeriodogram() guard dedupes, so this fires the fetch at most once.
+    const foldToggleLabel = document.querySelector('[name="fold"]')?.closest('label');
+    foldToggleLabel?.addEventListener('mouseenter', () => loadPeriodogram());
+
+    // Period selection from periodogram click — counts as a manual change.
     document.addEventListener('periodogram:periodSelected', e => {
         config.period = parseFloat(e.detail.period);
-        const periodEl = document.querySelector('[name="period"]');
-        const sliderEl = document.getElementById('period-slider');
-        if (periodEl) periodEl.value = config.period;
-        if (sliderEl) sliderEl.value  = config.period;
+        periodUserModified = true;
+        settingPeriodProgrammatically = true;
+        try {
+            const periodEl = document.querySelector('[name="period"]');
+            const sliderEl = document.getElementById('period-slider');
+            if (periodEl) periodEl.value = config.period;
+            if (sliderEl) sliderEl.value  = config.period;
+        } finally {
+            settingPeriodProgrammatically = false;
+        }
         updateChart();
     });
 }

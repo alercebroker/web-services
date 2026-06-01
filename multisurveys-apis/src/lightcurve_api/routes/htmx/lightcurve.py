@@ -10,7 +10,7 @@ from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
 from lightcurve_api.models.lightcurve import Lightcurve
-from lightcurve_api.models.periodogram import Periodogram
+from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
 from lightcurve_api.services.lightcurve_plot_service import (
     service as lightcurve_plot_service,
 )
@@ -78,7 +78,12 @@ def periodogram(oid: str, survey_id: str, db: db_dependency):
     Lomb-Scargle computation on every view.
     """
     pd = get_periodogram_data(oid, survey_id, db.session)
-    return pd.model_dump()
+    payload = pd.model_dump()
+    try:
+        payload["best_candidate_period"] = pd.get_best_candidate_period()
+    except NoPeriodError:
+        payload["best_candidate_period"] = None
+    return payload
 
 
 @router.get("/external_sources", response_class=HTMLResponse)

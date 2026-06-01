@@ -19,6 +19,15 @@ class Periodogram(BaseModel):
 
         return round(self.periods[self.best_periods_index[0]], 7)
 
+    def get_best_candidate_period(self):
+        if len(self.best_periods_index) > 0:
+            return round(self.periods[self.best_periods_index[0]], 7)
+        elif len(self.scores) > 0 and len(self.periods) > 0:
+            best_index = max(range(len(self.scores)), key=lambda i: self.scores[i])
+            return round(self.periods[best_index], 7)
+        else:
+            raise NoPeriodError()
+
     def has_period(self):
         return len(self.best_periods_index) > 0
 
