@@ -17,20 +17,14 @@ const { jdToDate } = await import(`${_BASE}AstroDates.js`);
 const customDarkTheme = customDark();
 
 // ─── Data & initial config ────────────────────────────────────────────────────
-const {
-    detections: rawDetections,
-    nonDetections: rawNonDetections,
-    forcedPhotometry: rawForcedPhotometry,
-    periodogram: _initialPeriodogram,
-    config: initialConfig,
-} = window.__LC_DATA__;
-
+// All per-object state lives in these module-level bindings. loadState() (re)reads
+// them from window.__LC_DATA__ so the widget can be re-initialised in place when the
+// parent app swaps in a new object via HTMX — see boot() at the bottom of this file.
+let rawDetections, rawNonDetections, rawForcedPhotometry;
 // Periodogram data – populated lazily the first time the user enables fold mode.
-let rawPeriodogram = _initialPeriodogram;
-
+let rawPeriodogram;
 // Mutable config driven by the config panel controls.
-let config = JSON.parse(JSON.stringify(initialConfig));
-
+let config;
 // True while the /htmx/periodogram fetch is in-flight.
 let periodogramLoading = false;
 // True once the user has manually changed the period (slider / input / X2 / /2 /
@@ -40,9 +34,27 @@ let periodUserModified = false;
 // Guard so programmatic period updates (applyBestCandidatePeriod) don't trip the
 // user-modified flag via the form's input/change handlers.
 let settingPeriodProgrammatically = false;
-
 // ZTF Data-Release detections loaded on demand (external sources feature).
 let drDetections = [];
+
+// Load (or reload) all per-object state from the data the layout template embedded.
+// Called by boot() on first load and again on every HTMX swap of a new object.
+function loadState() {
+    const data = window.__LC_DATA__;
+    rawDetections       = data.detections;
+    rawNonDetections    = data.nonDetections;
+    rawForcedPhotometry = data.forcedPhotometry;
+    rawPeriodogram      = data.periodogram;
+    config              = JSON.parse(JSON.stringify(data.config));
+    // Reset interaction flags so a freshly-loaded object starts clean.
+    periodogramLoading            = false;
+    periodUserModified            = false;
+    settingPeriodProgrammatically = false;
+    drDetections                  = [];
+}
+
+// Bound to `document` exactly once per page (see init()); survives re-inits.
+let documentListenersBound = false;
 
 // ─── Visual constants ─────────────────────────────────────────────────────────
 const COLORS = {
@@ -781,20 +793,36 @@ function init() {
     foldToggleLabel?.addEventListener('mouseenter', () => loadPeriodogram());
 
     // Period selection from periodogram click — counts as a manual change.
-    document.addEventListener('periodogram:periodSelected', e => {
-        config.period = parseFloat(e.detail.period);
-        periodUserModified = true;
-        settingPeriodProgrammatically = true;
-        try {
-            const periodEl = document.querySelector('[name="period"]');
-            const sliderEl = document.getElementById('period-slider');
-            if (periodEl) periodEl.value = config.period;
-            if (sliderEl) sliderEl.value  = config.period;
-        } finally {
-            settingPeriodProgrammatically = false;
-        }
-        updateChart();
-    });
+    // Bound on `document` once per page: init() runs again on every HTMX swap, but
+    // this listener (unlike the form listeners above, whose elements are replaced by
+    // the swap) would otherwise stack up an extra copy per object change.
+    if (!documentListenersBound) {
+        documentListenersBound = true;
+        document.addEventListener('periodogram:periodSelected', e => {
+            config.period = parseFloat(e.detail.period);
+            periodUserModified = true;
+            settingPeriodProgrammatically = true;
+            try {
+                const periodEl = document.querySelector('[name="period"]');
+                const sliderEl = document.getElementById('period-slider');
+                if (periodEl) periodEl.value = config.period;
+                if (sliderEl) sliderEl.value  = config.period;
+            } finally {
+                settingPeriodProgrammatically = false;
+            }
+            updateChart();
+        });
+    }
 }
 
-init();
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+// (Re)initialise the whole widget from the current window.__LC_DATA__. Exposed
+// globally so the layout's inline script can re-run it after an HTMX swap brings in
+// a new object — the browser evaluates this ES module only once per page load, so
+// without this hook a swapped-in object would never get its chart initialised.
+function boot() {
+    loadState();
+    init();
+}
+window.__lcBoot = boot;
+boot();
