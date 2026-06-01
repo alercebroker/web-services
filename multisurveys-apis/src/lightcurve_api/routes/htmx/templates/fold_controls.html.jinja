@@ -1,7 +1,7 @@
 <div class="tw-row">
   <div class="tw-col-sm-12">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Fold</span>
-    {{ toggle.toggle("fold", "Off", "On", config.fold, "The period folded light curve, where time is transformed to time modulo the period (phase). Calculated on click.")}}
+    {{ toggle.toggle("fold", "Off", "On", config.fold, "The period folded light curve, where time is transformed to time modulo the period (phase). Period is computed automatically when you hover or enable Fold.")}}
   </div>
   <div class="tw-col-sm-12">
     <input id="period-slider" type="range" min="0.05" max="500" value="{{config.period}}" class="tw-my-2 tw-w-full tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">

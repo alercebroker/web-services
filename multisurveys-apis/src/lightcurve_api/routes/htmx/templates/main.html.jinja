@@ -14,7 +14,13 @@
       </div>
     </div>
 
-    <div id="plot-grid" class="tw-mx-4 tw-flex tw-flex-col tw-gap-4 tw-h-80 md:tw-h-full">
+    <div id="plot-grid" class="tw-relative tw-mx-4 tw-flex tw-flex-col tw-gap-4 tw-h-80 md:tw-h-full">
+
+      <!-- Plot-area spinner shown by JS while the period is being computed for a fold -->
+      <div id="fold-loading" class="tw-hidden tw-absolute tw-inset-0 tw-z-40 tw-flex tw-items-center tw-justify-center tw-bg-white/70 dark:tw-bg-[#1e1e1e]/70">
+        <span class="tw-text-gray-500 dark:tw-text-gray-400 tw-animate-pulse">Computing period…</span>
+      </div>
+
       <div id="lightcurve-container" class="tw-flex-1 tw-min-h-0 tw-w-full">
         {% include "lightcurve.html.jinja" %}
       </div>
