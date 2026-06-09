@@ -137,6 +137,14 @@ def probability_filters(args):
         ranking = Probability.ranking == 1
         filters_prob_dict.append(ranking)
 
+    if args['survey'] is not None:
+        if args['survey'] == 'ztf':
+            survey = Probability.sid == 0
+            filters_prob_dict.append(survey)
+        if args['survey'] == 'lsst':
+            survey = Probability.sid == 1
+            filters_prob_dict.append(survey)
+
     return filters_prob_dict
 
 
