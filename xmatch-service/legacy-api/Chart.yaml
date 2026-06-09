@@ -1,0 +1,13 @@
+apiVersion: v2
+name: legacy-ws-api
+description: |
+  Generic Helm chart for the three legacy ALeRCE web-services APIs: findingchart,
+  stamps-avro, and tns. This chart is intended ONLY for these three legacy APIs (not for
+  new ones) and exists to standardize their deployment. Each API is one Helm release of
+  this chart with its own values file. Every API gets: an app container + nginx sidecar
+  Deployment, a ClusterIP Service, an nginx ConfigMap, its own ALB Ingress (merged onto a
+  shared load balancer via group.name), an optional HorizontalPodAutoscaler, and optional
+  Secrets.
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
