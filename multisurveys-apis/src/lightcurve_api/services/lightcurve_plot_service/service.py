@@ -222,6 +222,87 @@ def default_echarts_options(config_state: ConfigState):
     }
 
 
+def detection_plot_record(det: BaseDetection) -> dict:
+    """Compact, render-ready record for one detection.
+
+    Carries the band as a resolved name and every flux/total variant precomputed by
+    the model (see ``plot_variants``). The browser only looks these up -- it never
+    converts flux<->magnitude itself. This replaces dumping the full ORM model and
+    duplicating the conversion math in lightcurve-app.js.
+    """
+    return {
+        "survey_id": det.survey_id,
+        "band": det.band_name(),
+        "mjd": det.mjd,
+        "measurement_id": getattr(det, "measurement_id", None),
+        "objectid": getattr(det, "objectid", None),
+        "field": getattr(det, "field", None),
+        "variants": det.plot_variants(),
+    }
+
+
+def forced_photometry_plot_record(fphot: BaseForcedPhotometry) -> dict:
+    """Compact, render-ready record for one forced-photometry point. See detection_plot_record."""
+    return {
+        "survey_id": fphot.survey_id,
+        "band": fphot.band_name(),
+        "mjd": fphot.mjd,
+        "measurement_id": getattr(fphot, "measurement_id", None),
+        "field": getattr(fphot, "field", None),
+        "variants": fphot.plot_variants(),
+    }
+
+
+def non_detection_plot_record(ndet: BaseNonDetection) -> dict:
+    """Compact record for one non-detection (limiting magnitude); no flux/total variants."""
+    return {
+        "survey_id": ndet.survey_id,
+        "band": ndet.band_name(),
+        "mjd": ndet.mjd,
+        "mag": ndet.get_mag(),
+    }
+
+
+def get_lightcurve_data(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
+    """Fetch raw lightcurve data without computing the periodogram.
+
+    Intended for the browser-side rendering path: returns a Result with the raw
+    detections/non-detections/forced-photometry.  The periodogram is omitted here
+    and computed lazily via get_periodogram_data() when the user enables fold mode.
+    """
+    empty = Result(
+        {},
+        Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+        config_state=ConfigState(oid=oid, survey_id=survey_id),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
+    )
+    return pipe(
+        get_lightcurve(empty, oid, survey_id, session_factory),
+        lambda r: get_object_coordinates(r, session_factory=session_factory),
+    )
+
+
+def get_periodogram_data(
+    oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]
+) -> Periodogram:
+    """Compute the periodogram for an object on demand.
+
+    Called by the /htmx/periodogram endpoint when the user first enables fold
+    mode, keeping heavy LSomb-Scargle computation out of the initial page load.
+    """
+    empty = Result(
+        {},
+        Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+        config_state=ConfigState(oid=oid, survey_id=survey_id, fold=True),
+        periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
+    )
+    result = pipe(
+        get_lightcurve(empty, oid, survey_id, session_factory),
+        compute_periodogram,
+    )
+    return result.periodogram
+
+
 def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:
     result = Result(
         {},
@@ -375,9 +456,6 @@ def _get_min_and_max_errors(echarts_options: dict[str, Any]) -> List:
         if "error_bar" in serie:
             limits_error_plots_series.append(serie["min_plot_error"])
             limits_error_plots_series.append(serie["max_plot_error"])
-
-    if not limits_error_plots_series:
-        raise ValueError("No error bars found in any series")
 
     return limits_error_plots_series
 
@@ -614,11 +692,14 @@ def get_ztf_dr_objects(
         periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
 
-    if len(result.lightcurve.detections) == 0:
-        return result
-
+    # Accept coordinates from config_state even when detections list is empty
+    # (browser-side rendering no longer sends detection data to this endpoint).
     meanra = result.config_state.meanra
     meandec = result.config_state.meandec
+
+    if meanra is None or meandec is None:
+        if len(result.lightcurve.detections) == 0:
+            return result
 
     with httpx.Client() as client:
         result.config_state.external_sources.objects.extend(

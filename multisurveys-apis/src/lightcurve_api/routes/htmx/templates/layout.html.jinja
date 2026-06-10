@@ -1,11 +1,38 @@
 
-<!-- Include the ECharts file you just downloaded -->
+<!-- Include ECharts and HTMX -->
 <script src="{{API_URL}}/static/echarts.min.js"></script>
 <script src="{{API_URL}}/static/htmx.min.js"></script>
-<script src="{{API_URL}}/static/form-json.js"></script>
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="{{ API_URL }}/static/lightcurve.css">
 
+<!-- Embed raw lightcurve data for the client-side chart builder -->
+<script>
+window.__LC_DATA__ = {
+    detections:      {{ detections | tojson }},
+    nonDetections:   {{ non_detections | tojson }},
+    forcedPhotometry: {{ forced_photometry | tojson }},
+    periodogram:     {{ periodogram | tojson }},
+    config:          {{ config | tojson }},
+    notCorrected:    {{ not_corrected | tojson }},
+    apiUrl:          {{ API_URL | tojson }}
+};
+</script>
+
 <div id="main-app" class="tw-preflight">{% include "main.html.jinja" %}</div>
+
+<!-- Client-side chart application (ES module). Evaluated once per page load. -->
+<script type="module" src="{{ API_URL }}/static/lightcurve-app.js"></script>
+
+<!--
+  Re-initialise the chart when this widget is swapped in again for a new object.
+  The browser runs the ES module above only once per page (it refuses to re-run a
+  module with the same URL), and HTMX does not re-execute module scripts on a swap —
+  so on its own the chart would never re-initialise after the first object.
+  This plain (non-module) script, however, IS re-run by HTMX on every swap, so it
+  re-boots the already-loaded module against the fresh window.__LC_DATA__ above.
+  On the very first page load __lcBoot isn't defined yet (the module is still
+  loading and boots itself), so the optional call here is a harmless no-op.
+-->
+<script>window.__lcBoot && window.__lcBoot();</script>
 

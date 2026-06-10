@@ -314,9 +314,6 @@ class LsstDetection(BaseDetection):
                 raise ZeroDivisionError("Flux cannot be zero")
 
             if flux < 0:
-                raise ValueError("Flux no puede ser negativo para cálculo de magnitud")
-
-            if flux < 0:
                 flux = math.fabs(flux)
                 if total:
                     flux = flux * -1

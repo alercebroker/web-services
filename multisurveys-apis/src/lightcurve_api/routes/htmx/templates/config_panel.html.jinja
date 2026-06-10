@@ -2,33 +2,11 @@
 
 <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-mb-3"></div>
 
-<form 
-  hx-ext="form-json"
-  hx-post="{{API_URL}}/htmx/config_change"
-  hx-target="#main-app"
-  hx-swap="innerHTML"
-  hx-trigger="change"
-  class="tw-max-h-fit tw-w-full"
->
-  <input type="hidden" name="oid" value="{{ config_state.oid }}">
-  <input type="hidden" name="survey_id" value="{{ config_state.survey_id }}">
-  <input type="hidden" name="meanra" value="{{ config_state.meanra }}">
-  <input type="hidden" name="meandec" value="{{ config_state.meandec }}">
-  {% for detection in detections %}
-  <input type="hidden" name="detections[]" value="{{ detection.model_dump_json() }}">
-  {% endfor %}
-
-  {% for non_detection in non_detections %}
-  <input type="hidden" name="non_detections[]" value="{{ non_detection.model_dump_json() }}">
-  {% endfor %}
-
-  {% for forced_photometry in forced_photometry %}
-  <input type="hidden" name="forced_photometry[]" value="{{ forced_photometry.model_dump_json() }}">
-  {% endfor %}
-
-  {% for selected_object in config_state.external_sources.selected_objects %}
-  <input type="hidden" name="external_sources.selected_objects[]" value="{{ selected_object }}">
-  {% endfor %}
+<!--
+  Config form – all changes are handled client-side by lightcurve-app.js.
+  No server POST on change; the form has no action/method.
+-->
+<form id="config-form" class="tw-max-h-fit tw-w-full" autocomplete="off">
 
   <div class="tw-flex tw-justify-center">
     {% include "band_toggles.html.jinja" %}
@@ -36,34 +14,34 @@
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
 
-  <div class="tw-flex tw-flex-col tw-flex-wrap tw-items-center tw-gap-4">
-    <div>
-    {{ toggle.toggle("flux", "Magnitude", "Flux", config_state.flux, "Toggle between magnitude and flux.") }}
-    </div>
-    <div>
-      {{ toggle.toggle("total", "Difference", "Total", config_state.total, "Toggle between difference and total (science) magnitude.") }}
-    </div>
-    {% if use_absolute %}
-    <div>
-      {{ toggle.toggle("absolute", "Apparent", "Absolute", config_state.absolute, "Toggle absolute") }}
-    </div>
-    {% endif %}
+  <div class="tw-flex tw-flex-col tw-items-start tw-gap-y-3">
 
-    <div class="tw-flex tw-flex-wrap tw-justify-center tw-items-center">
-      <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">External</span>
-      {{ toggle.toggle("external_sources.enabled", "Off", "On", config_state.external_sources.enabled, "Show light curves from available external sets: ZTF Data Release 24.") }}
-      <button 
-        class="tw-ml-2 tw-p-1.5 tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded-md hover:tw-bg-gray-50 dark:hover:tw-bg-gray-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2 dark:focus:tw-ring-offset-gray-800"
+    <!-- Magnitude / Flux -->
+    {{ toggle.toggle("flux", "Mag", "Flux", config.flux, "Toggle between magnitude and flux.", left_w="3rem") }}
+
+    <!-- Difference / Total -->
+    {{ toggle.toggle("total", "Diff", "Total", config.total, "Toggle between difference and total (science) magnitude.", left_w="3rem") }}
+
+    <!-- External sources -->
+    <div class="tw-flex tw-items-center tw-gap-x-2">
+      {{ toggle.toggle("external_sources.enabled", "Ext", "On", config.external_sources.enabled, "Show light curves from available external sets: ZTF Data Release 24.", left_w="3rem") }}
+      <button
+        type="button"
+        class="tw-ml-2 tw-h-6 tw-w-6 tw-flex tw-items-center tw-justify-center tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded hover:tw-bg-gray-50 dark:hover:tw-bg-gray-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2 dark:focus:tw-ring-offset-gray-800 tw-shrink-0"
         aria-label="Filter external sources"
-        hx-post="{{API_URL}}/htmx/external_sources"
+        hx-get="{{ API_URL }}/htmx/external_sources"
+        hx-target="#dr-picker-container"
+        hx-swap="innerHTML"
+        hx-on::after-request="document.getElementById('dr-picker-container').classList.remove('tw-hidden')"
+        hx-vals='{"oid": "{{ config.oid }}", "survey_id": "{{ config.survey_id }}", "meanra": {{ config.meanra }}, "meandec": {{ config.meandec }}}'
       >
         <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
         </svg>
       </button>
     </div>
-  </div>
 
+  </div>
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
 
@@ -73,25 +51,24 @@
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
 
-  <div class="tw-mt-2 tw-flex tw-justify-center tw-items-center">
-    <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Offset</span>
-    {{ toggle.toggle("offset_bands", "Off", "On", config_state.offset_bands, "Apply a magnitude or flux offset between bands.") }}
-  </div>
-  
-  <div class="tw-mt-2 tw-flex tw-items-center tw-gap-3">
-    <input name="offset_num" type="range" min="1" max="10" value="{{config_state.offset_num}}" class="tw-w-32 tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">
-    <select name="offset_metric" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded-md tw-px-2 tw-py-1 tw-text-sm tw-bg-white dark:tw-bg-gray-800 tw-text-gray-900 dark:tw-text-gray-100">
-      <option value="avg" {% if config_state.offset_metric == "avg" %}selected{% endif %} class="tw-bg-white dark:tw-bg-gray-800 tw-text-gray-900 dark:tw-text-gray-100">avg</option>
-      <option value="min" {% if config_state.offset_metric == "min" %}selected{% endif %}>min</option>
-      <option value="max" {% if config_state.offset_metric == "max" %}selected{% endif %}>max</option>
-      <option value="median" {% if config_state.offset_metric == "median" %}selected{% endif %}>median</option>
-    </select>
+  <div class="tw-flex tw-flex-col tw-items-start tw-gap-y-2">
+    {{ toggle.toggle("offset_bands", "Offset", "On", config.offset_bands, "Apply a magnitude or flux offset between bands.") }}
+    <div class="tw-flex tw-items-center tw-gap-x-2 tw-mt-2 tw-ml-1">
+      <input name="offset_num" type="range" min="1" max="10" value="{{ config.offset_num }}"
+             class="tw-w-24 tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">
+      <select name="offset_metric" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded-md tw-px-2 tw-py-1 tw-text-sm tw-bg-white dark:tw-bg-gray-800 tw-text-gray-900 dark:tw-text-gray-100">
+        <option value="avg"    {% if config.offset_metric == "avg"    %}selected{% endif %}>avg</option>
+        <option value="min"    {% if config.offset_metric == "min"    %}selected{% endif %}>min</option>
+        <option value="max"    {% if config.offset_metric == "max"    %}selected{% endif %}>max</option>
+        <option value="median" {% if config.offset_metric == "median" %}selected{% endif %}>median</option>
+      </select>
+    </div>
   </div>
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
 
   <a
-    href="{{API_URL}}/htmx/download?oid={{config_state.oid}}&survey_id={{config_state.survey_id}}"
+    href="{{ API_URL }}/htmx/download?oid={{ config.oid }}&survey_id={{ config.survey_id }}"
     class="tw-flex tw-items-center tw-justify-center tw-gap-2 tw-px-3 tw-py-1.5 tw-bg-blue-600 tw-text-white tw-rounded-md hover:tw-bg-blue-700 dark:hover:tw-bg-blue-800 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2 dark:focus:tw-ring-offset-gray-800 tw-transition-colors tw-duration-200 tw-text-sm"
     download
   >
@@ -100,4 +77,5 @@
     </svg>
     Download
   </a>
+
 </form>

@@ -1,4 +1,5 @@
 .idea/
+*.code-workspace
 __pycache__/
 tests/tests.out
 *.pyc
@@ -11,6 +12,7 @@ htmlcov/
 coverage.*
 .python-version
 tests/profiling/memray*
+*.prof
 .projectile
 .venv
 .editorconfig
@@ -31,4 +33,11 @@ values.*.override.yaml
 **/.envrc
 **/.direnv
 
+# Editor backup files
+*.bak
+
 **/config.yaml
+
+# Local-only deploy values containing sensitive data.
+# Public repo: these must never be committed.
+.secrets/
