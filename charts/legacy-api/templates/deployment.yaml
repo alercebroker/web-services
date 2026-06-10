@@ -36,6 +36,8 @@ spec:
                 values:
                 - {{ .Values.nodegroup }}
       {{- end }}
+      imagePullSecrets:
+        - name: image-pull-access
       containers:
       - name: {{ include "ws-api.name" . }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -62,12 +64,6 @@ spec:
         - mountPath: /etc/nginx/conf.d/default.conf
           name: nginx-conf
           subPath: default.conf
-      {{- end }}
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
-      {{- range . }}
-      - name: {{ . }}
-      {{- end }}
       {{- end }}
       restartPolicy: Always
       {{- if .Values.nginx.enabled }}

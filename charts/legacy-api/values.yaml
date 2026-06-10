@@ -24,8 +24,10 @@ image:
   pullPolicy: Always
 
 # Names of pre-existing image pull secrets in the namespace.
-imagePullSecrets:
-  - ws-image-pull-access
+imageCredentials:
+  registry: ""
+  username: ""
+  password: ""
 
 # Used only when autoscaling.enabled is false.
 replicaCount: 1
