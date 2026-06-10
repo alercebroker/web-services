@@ -17,24 +17,24 @@
 </label>
 {% endmacro %}
 
-<div class="tw-flex tw-flex-col tw-gap-y-2">
+<div class="tw-flex tw-flex-col tw-gap-2">
 
   <!-- ZTF bands -->
   <div class="tw-flex tw-items-center tw-gap-x-3">
     {{ band_row("ZTF", "Toggle individual ZTF bands in the light curve.") }}
-    <div class="tw-flex tw-gap-x-4">
+    <div class="tw-grid tw-grid-cols-3 tw-gap-2">
       {{ cb("bands.ztf[]", "g", 'g' in config.bands.ztf) }}
       {{ cb("bands.ztf[]", "r", 'r' in config.bands.ztf) }}
       {{ cb("bands.ztf[]", "i", 'i' in config.bands.ztf) }}
     </div>
   </div>
 
-  <!-- LSST bands (6 bands, wrap into 2 rows naturally) -->
+  <!-- LSST bands (6 bands in a fixed 3-column grid: u g r / i z y) -->
   <div class="tw-flex tw-items-start tw-gap-x-3">
     <div class="tw-mt-0.5">
       {{ band_row("LSST", "Toggle individual LSST bands in the light curve.") }}
     </div>
-    <div class="tw-flex tw-flex-wrap tw-gap-x-4 tw-gap-y-1">
+    <div class="tw-grid tw-grid-cols-3 tw-gap-2">
       {% for b in ['u','g','r','i','z','y'] %}
       <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
         <input type="checkbox" name="bands.lsst[]" value="{{ b }}" {% if b in config.bands.lsst %}checked{% endif %} class="tw-cursor-pointer">
@@ -47,7 +47,7 @@
   <!-- ZTF DR bands (shown only when external sources enabled) -->
   <div class="tw-flex tw-items-center tw-gap-x-3 ztf-dr-bands-row {% if not config.external_sources.enabled %}tw-hidden{% endif %}">
     {{ band_row("ZTF DR", "Toggle individual ZTF Data Release bands in the light curve.") }}
-    <div class="tw-flex tw-gap-x-4">
+    <div class="tw-grid tw-grid-cols-3 tw-gap-2">
       {{ cb("bands.ztf_dr[]", "g", 'g' in config.bands.ztf_dr) }}
       {{ cb("bands.ztf_dr[]", "r", 'r' in config.bands.ztf_dr) }}
       {{ cb("bands.ztf_dr[]", "i", 'i' in config.bands.ztf_dr) }}
