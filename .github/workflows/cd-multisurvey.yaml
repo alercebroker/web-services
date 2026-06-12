@@ -9,8 +9,8 @@ on:
       - 'multisurveys-apis/**'
       - '!multisurveys-apis/README.md'
       - '!multisurveys-apis/.gitignore'
-      - 'charts/multisurvey/**'
-      - '!charts/multisurvey/.helmignore'
+      - 'charts/multisurvey_api/**'
+      - '!charts/multisurvey_api/.helmignore'
 
 jobs:
   build:

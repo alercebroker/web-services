@@ -14,7 +14,9 @@ Monorepo of ALeRCE web service APIs.
 ## Shared infra
 
 - `charts/` — Helm charts. The active one is `charts/multisurvey_api/`.
-- `ci_new/` — current build/deploy tooling. `ci/` is the old path.
+- `ci_new/` — current build/deploy tooling. `ci/` is the old path. For deploying the
+  multisurvey image (manual build + push + rollout), see
+  [`multisurveys-apis/DEPLOYMENT.md`](multisurveys-apis/DEPLOYMENT.md).
 
 ## Conventions (from CI)
 
