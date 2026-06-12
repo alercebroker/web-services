@@ -86,4 +86,11 @@ _static = StaticFiles(directory="src/static")
 
 @app.get("/static/{path:path}", name="static", include_in_schema=False)
 async def static_files(path: str, request: Request):
-    return await _static.get_response(path, request.scope)
+    response = await _static.get_response(path, request.scope)
+    # Without a Cache-Control header browsers fall back to *heuristic* caching and may
+    # keep serving a stale asset (e.g. an old lightcurve-app.js) without checking the
+    # server, so a deploy silently fails to take effect until a hard refresh. "no-cache"
+    # still lets the browser store the file but forces revalidation against the ETag on
+    # every request: a cheap 304 when unchanged, fresh bytes immediately after a deploy.
+    response.headers["Cache-Control"] = "no-cache"
+    return response
