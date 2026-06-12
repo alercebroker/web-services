@@ -17,30 +17,33 @@
   <div class="tw-flex tw-flex-col tw-items-start tw-gap-y-3">
 
     <!-- Magnitude / Flux -->
-    {{ toggle.toggle("flux", "Mag", "Flux", config.flux, "Toggle between magnitude and flux.", left_w="3rem") }}
+    {{ toggle.toggle("flux", "Mag", "Flux", config.flux, "Toggle between magnitude and flux.", left_w="3rem", neutral=True) }}
 
     <!-- Difference / Total -->
-    {{ toggle.toggle("total", "Diff", "Total", config.total, "Toggle between difference and total (science) magnitude.", left_w="3rem") }}
+    {{ toggle.toggle("total", "Diff", "Total", config.total, "Toggle between difference and total (science) magnitude.", left_w="3rem", neutral=True) }}
 
-    <!-- External sources -->
-    <div class="tw-flex tw-items-center tw-gap-x-2">
-      {{ toggle.toggle("external_sources.enabled", "Ext", "On", config.external_sources.enabled, "Show light curves from available external sets: ZTF Data Release 24.", left_w="3rem") }}
-      <button
-        type="button"
-        class="tw-ml-2 tw-h-6 tw-w-6 tw-flex tw-items-center tw-justify-center tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded hover:tw-bg-gray-50 dark:hover:tw-bg-gray-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2 dark:focus:tw-ring-offset-gray-800 tw-shrink-0"
-        aria-label="Filter external sources"
-        hx-get="{{ API_URL }}/htmx/external_sources"
-        hx-target="#dr-picker-container"
-        hx-swap="innerHTML"
-        hx-on::after-request="document.getElementById('dr-picker-container').classList.remove('tw-hidden')"
-        hx-vals='{"oid": "{{ config.oid }}", "survey_id": "{{ config.survey_id }}", "meanra": {{ config.meanra }}, "meandec": {{ config.meandec }}}'
-      >
-        <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
-        </svg>
-      </button>
-    </div>
+  </div>
 
+  <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
+
+  <!-- External sources -->
+  <div class="tw-flex tw-items-center tw-gap-x-2">
+    <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">External</span>
+    {{ toggle.toggle("external_sources.enabled", "Off", "On", config.external_sources.enabled, "Show light curves from available external sets: ZTF Data Release 24.") }}
+    <button
+      type="button"
+      class="tw-ml-2 tw-h-6 tw-w-6 tw-flex tw-items-center tw-justify-center tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded hover:tw-bg-gray-50 dark:hover:tw-bg-gray-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2 dark:focus:tw-ring-offset-gray-800 tw-shrink-0"
+      aria-label="Filter external sources"
+      hx-get="{{ API_URL }}/htmx/external_sources"
+      hx-target="#dr-picker-container"
+      hx-swap="innerHTML"
+      hx-on::after-request="document.getElementById('dr-picker-container').classList.remove('tw-hidden')"
+      hx-vals='{"oid": "{{ config.oid }}", "survey_id": "{{ config.survey_id }}", "meanra": {{ config.meanra }}, "meandec": {{ config.meandec }}}'
+    >
+      <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+      </svg>
+    </button>
   </div>
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
@@ -52,7 +55,10 @@
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
 
   <div class="tw-flex tw-flex-col tw-items-start tw-gap-y-2">
-    {{ toggle.toggle("offset_bands", "Offset", "On", config.offset_bands, "Apply a magnitude or flux offset between bands.") }}
+    <div>
+      <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Offset</span>
+      {{ toggle.toggle("offset_bands", "Off", "On", config.offset_bands, "Apply a magnitude or flux offset between bands.") }}
+    </div>
     <div class="tw-flex tw-items-center tw-gap-x-2 tw-mt-2 tw-ml-1">
       <input name="offset_num" type="range" min="1" max="10" value="{{ config.offset_num }}"
              class="tw-w-24 tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">

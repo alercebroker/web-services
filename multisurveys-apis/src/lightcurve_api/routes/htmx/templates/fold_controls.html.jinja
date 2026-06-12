@@ -34,7 +34,6 @@ input.addEventListener('change', function(e) {
 x2.addEventListener('click', function(e) {
   input.value = input.value * 2;
   if (input.value > 500) input.value = 500
-  if (input.value < 0.05) input.value = 0.05
 
   input.dispatchEvent(new Event('change', { bubbles: true }));
 })
@@ -42,7 +41,6 @@ x2.addEventListener('click', function(e) {
 div2.addEventListener('click', function(e) {
   input.value = input.value / 2;
   if (input.value > 500) input.value = 500
-  if (input.value < 0.05) input.value = 0.05
   input.dispatchEvent(new Event('change', { bubbles: true }));
 })
 
