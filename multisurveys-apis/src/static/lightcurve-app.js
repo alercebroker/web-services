@@ -784,6 +784,12 @@ function init() {
         }
     }
 
+    // This form is purely client-side (no action/method). Pressing Enter in a text
+    // field (e.g. the period box) would otherwise trigger the browser's implicit
+    // submit — a GET navigation to the current URL without oid/survey_id, which 422s
+    // and tears down the widget. Block it; the period change already applied via `change`.
+    form.addEventListener('submit', e => e.preventDefault());
+
     form.addEventListener('change', onFormChange);
     form.addEventListener('input',  onFormInput);
 
