@@ -126,49 +126,12 @@ def query_get_objects(session_ms, search_params, parsed_params):
         if len(order_statement) > 0:
             stmt = add_limits_statements(stmt, pagination_args)
 
-        # print(stmt.compile(session.bind, compile_kwargs={"literal_binds": True}))
-
         items = session.execute(stmt).all()
 
         # if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
         #     items = sort_by_oid_list_and_select_page(search_params, items)
 
         return Pagination(pagination_args.page, pagination_args.page_size, items)
-
-
-
-# def query_get_objects(session_ms, search_params, parsed_params):
-#     filter_args = search_params.filter_args
-#     filters_statements = parsed_params["filters_sqlalchemy_statement"]
-#     pagination_args = check_pagination_args(search_params.pagination_args)
-
-#     with session_ms() as session:
-#         object_alias, dinamic_model_alias = build_subquery_object(
-#             filter_args.survey, filters_statements["objects"], parsed_params
-#         )
-
-#         stmt = (
-#             select(Probability, object_alias, dinamic_model_alias)
-#             .join(
-#                 dinamic_model_alias,
-#                 and_(dinamic_model_alias.oid == Probability.oid),
-#             )
-#             .where(*filters_statements["probability"])
-#         )
-
-#         order_statement = create_order_statement(stmt, search_params.order_args)
-
-#         stmt = stmt.order_by(*order_statement)
-
-#         if len(order_statement) > 0:
-#             stmt = add_limits_statements(stmt, pagination_args)
-
-#         items = session.execute(stmt).all()
-
-#         if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
-#             items = sort_by_oid_list_and_select_page(search_params, items)
-
-#         return Pagination(pagination_args.page, pagination_args.page_size, items)
 
 
 def sort_by_oid_list_and_select_page(search_params, items):
@@ -186,26 +149,6 @@ def sort_by_oid_list_and_select_page(search_params, items):
     df_items = list(df_items.itertuples(index=False, name=None))
 
     return df_items
-
-
-def build_subquery_object(survey, filters, parsed_params):
-    model_id = ObjectsModels(survey).get_model_by_survey()
-    consearch = parsed_params["consearch_statement"]
-    consearch_args = parsed_params["consearch_args"]
-
-    stmt = (
-        select(Object, model_id)
-        .join(model_id, and_(model_id.oid == Object.oid))
-        .where(*filters)
-        .where(consearch)
-        .params(**consearch_args)
-        .subquery()
-    )
-
-    object_alias = aliased(Object, stmt)
-    dinamic_model_alias = aliased(model_id, stmt)
-
-    return object_alias, dinamic_model_alias
 
 
 def check_pagination_args(pagination_args):
