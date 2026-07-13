@@ -113,6 +113,16 @@ def object_filters(args):
             oids = Object.oid.in_(args["oids"])
         filters_dict.append(oids)
 
+    if args["survey"] is not None:
+        if args["survey"] == "ztf":
+            survey = Object.sid == 0
+            filters_dict.append(survey)
+        if args["survey"] == "lsst":
+            survey = Object.sid == 1
+            filters_dict.append(survey)
+
+    
+
     return filters_dict
 
 
