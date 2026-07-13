@@ -66,37 +66,6 @@ def build_statement_object(model_id, oid):
 
     return stmt
 
-def subquery_probability(filters):
-
-    stmt = (
-        select(Probability)
-        .where(*filters)
-        .subquery()
-    )
-
-    probability_alias = aliased(Probability, stmt)
-
-    return probability_alias
-
-def subquery_object(filters, parsed_params):
-    consearch = parsed_params["consearch_statement"]
-    consearch_args = parsed_params["consearch_args"]
-
-    stmt = (
-        select(Object)
-        .where(*filters)
-        .where(consearch)
-        .params(**consearch_args)
-        .subquery()
-    )
-
-    object_alias = aliased(Object, stmt)
-
-    return object_alias
-
-def dinamic_object_model(survey):
-    model_id = ObjectsModels(survey).get_model_by_survey()
-    return model_id
 
 def query_get_objects(session_ms, search_params, parsed_params):
     filters_objects = parsed_params["filters_sqlalchemy_statement"]["objects"]
@@ -132,6 +101,39 @@ def query_get_objects(session_ms, search_params, parsed_params):
         #     items = sort_by_oid_list_and_select_page(search_params, items)
 
         return Pagination(pagination_args.page, pagination_args.page_size, items)
+    
+
+def subquery_probability(filters):
+
+    stmt = (
+        select(Probability)
+        .where(*filters)
+        .subquery()
+    )
+
+    probability_alias = aliased(Probability, stmt)
+
+    return probability_alias
+
+def subquery_object(filters, parsed_params):
+    consearch = parsed_params["consearch_statement"]
+    consearch_args = parsed_params["consearch_args"]
+
+    stmt = (
+        select(Object)
+        .where(*filters)
+        .where(consearch)
+        .params(**consearch_args)
+        .subquery()
+    )
+
+    object_alias = aliased(Object, stmt)
+
+    return object_alias
+
+def dinamic_object_model(survey):
+    model_id = ObjectsModels(survey).get_model_by_survey()
+    return model_id
 
 
 def sort_by_oid_list_and_select_page(search_params, items):
