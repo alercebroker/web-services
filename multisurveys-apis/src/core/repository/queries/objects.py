@@ -78,7 +78,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
     with session_ms() as session:
         stmt = (
-            select(probability_alias, object_alias)
+            select(probability_alias, object_alias, dynamic_object_alias)
             .join(
                 object_alias,
                 and_(object_alias.oid == probability_alias.oid),
@@ -105,7 +105,7 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
 
 def subquery_probability(filters):
-    stmt = select(Probability).where(*filters).subquery()
+    stmt = select(Probability).where(*filters).cte("tprobability")
 
     probability_alias = aliased(Probability, stmt)
 
@@ -116,7 +116,7 @@ def subquery_object(filters, parsed_params):
     consearch = parsed_params["consearch_statement"]
     consearch_args = parsed_params["consearch_args"]
 
-    stmt = select(Object).where(*filters).where(consearch).params(**consearch_args).subquery()
+    stmt = select(Object).where(*filters).where(consearch).params(**consearch_args).cte("tobject")
 
     object_alias = aliased(Object, stmt)
 
