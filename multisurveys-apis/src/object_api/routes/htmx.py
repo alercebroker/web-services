@@ -18,11 +18,7 @@ from ..services.tns_service import get_tns
 from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
-from object_api.services.object_services import (
-    get_object_by_id,
-    get_objects_list,
-    get_tidy_classifiers
-)
+from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
 from ..services.parsers import (
     _parse_oids_string_to_array,
     save_date_in_array,
@@ -126,7 +122,6 @@ async def select_classes_classifier(request: Request, classifier_classes: list[s
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
-
 
 
 @router.get("/htmx/list_objects", response_class=HTMLResponse)

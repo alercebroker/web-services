@@ -140,5 +140,5 @@ def _parse_oids_string_to_array(oids_list):
 def save_date_in_array(date) -> list[float]:
     if date is not None:
         return [date]
-    
+
     return None

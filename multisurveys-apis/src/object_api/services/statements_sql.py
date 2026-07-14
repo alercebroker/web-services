@@ -120,8 +120,6 @@ def object_filters(args):
             survey = Object.sid == 1
             filters_dict.append(survey)
 
-    
-
     return filters_dict
 
 
