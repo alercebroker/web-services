@@ -116,17 +116,17 @@ function restore_n_det(urlParams) {
 }
 
 function restore_mjd(urlParams) {
+  let firstmjd = urlParams.getAll('firstmjd')
+  let lastmjd = urlParams.getAll('lastmjd')
 
-  const firstmjds = urlParams.getAll('firstmjd')
-  if (firstmjds.length > 0) {
-    if (firstmjds[0]) {
-      document.getElementById('min_mjd').value = firstmjds[0]
-      document.getElementById('min_mjd').dispatchEvent(new Event('input'))
-    }
-    if (firstmjds[1]) {
-      document.getElementById('max_mjd').value = firstmjds[1]
-      document.getElementById('max_mjd').dispatchEvent(new Event('input'))
-    }
+  if (firstmjd.length > 0) {
+    document.getElementById('min_mjd').value = firstmjd
+    document.getElementById('min_mjd').dispatchEvent(new Event('input'))
+  }
+
+  if (lastmjd.length > 0) {
+    document.getElementById('max_mjd').value = lastmjd
+    document.getElementById('max_mjd').dispatchEvent(new Event('input'))
   }
 
 }
