@@ -97,8 +97,8 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         items = session.execute(stmt).all()
 
-        # if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
-        #     items = sort_by_oid_list_and_select_page(search_params, items)
+        if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
+            items = sort_by_oid_list_and_select_page(search_params, items)
 
         return Pagination(pagination_args.page, pagination_args.page_size, items)
     
