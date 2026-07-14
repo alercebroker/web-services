@@ -1,13 +1,10 @@
 import os
 import traceback
-from typing import Annotated
 from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from ..services.object_services import get_tidy_classifiers
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
-from ..services.object_services import get_objects_list
 from ..services.validations import (
     ndets_validation,
     order_mode_validation,
@@ -21,10 +18,11 @@ from ..services.tns_service import get_tns
 from ..services.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
-from object_api.services.object_services import (
-    get_object_by_id,
+from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
+from ..services.parsers import (
+    _parse_oids_string_to_array,
+    save_date_in_array,
 )
-from ..services.parsers import _parse_oids_string_to_array
 
 router = APIRouter()
 
@@ -137,15 +135,15 @@ def objects_table(
     n_det_min: int | None = None,
     n_det_max: int | None = None,
     probability: float | None = None,
-    firstmjd: Annotated[list[float] | None, Query()] = None,
-    lastmjd: Annotated[list[float] | None, Query()] = None,
+    firstmjd: float | None = None,
+    lastmjd: float | None = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
     page: int | None = 1,
     page_size: int | None = 20,
     count: bool | None = False,
-    order_by: str | None = None,  # Query(default="probability"),
+    order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
@@ -160,7 +158,7 @@ def objects_table(
             oids_format_validation(oid, survey)
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
-            date_validation(firstmjd)
+            date_validation(firstmjd, lastmjd)
 
             if oid is None and order_by is None:
                 order_by = "probability"
@@ -170,6 +168,9 @@ def objects_table(
 
             if oid is not None:
                 oid = encode_ids(survey, oid)
+
+            firstmjd = save_date_in_array(firstmjd)
+            lastmjd = save_date_in_array(lastmjd)
 
             filters = Filters(
                 oids=oid,
@@ -244,15 +245,15 @@ def sidebar(
     n_det_min: int | None = None,
     n_det_max: int | None = None,
     probability: float | None = None,
-    firstmjd: Annotated[list[float] | None, Query()] = None,
-    lastmjd: Annotated[list[float] | None, Query()] = None,
+    firstmjd: float | None = None,
+    lastmjd: float | None = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
     page: int | None = 1,
     page_size: int | None = 20,
     count: bool | None = False,
-    order_by: str | None = None,  # Query(default="probability"),
+    order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
 ):
     try:
@@ -268,7 +269,7 @@ def sidebar(
             oids_format_validation(oid, survey)
             oid_lenght_validation(oid)
             probability_validation(probability, classifier, class_name)
-            date_validation(firstmjd)
+            date_validation(firstmjd, lastmjd)
 
             if oid is None and order_by is None:
                 order_by = "probability"
@@ -278,6 +279,9 @@ def sidebar(
 
             if oid is not None:
                 oid = encode_ids(survey, oid)
+
+            firstmjd = save_date_in_array(firstmjd)
+            lastmjd = save_date_in_array(lastmjd)
 
             filters = Filters(
                 oids=oid,

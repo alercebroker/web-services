@@ -68,22 +68,25 @@ def build_statement_object(model_id, oid):
 
 
 def query_get_objects(session_ms, search_params, parsed_params):
-    filter_args = search_params.filter_args
-    filters_statements = parsed_params["filters_sqlalchemy_statement"]
+    filters_objects = parsed_params["filters_sqlalchemy_statement"]["objects"]
+    filters_probability = parsed_params["filters_sqlalchemy_statement"]["probability"]
     pagination_args = check_pagination_args(search_params.pagination_args)
 
-    with session_ms() as session:
-        object_alias, dinamic_model_alias = build_subquery_object(
-            filter_args.survey, filters_statements["objects"], parsed_params
-        )
+    probability_alias = subquery_probability(filters_probability)
+    object_alias = subquery_object(filters_objects, parsed_params)
+    dynamic_object_alias = dinamic_object_model(search_params.filter_args.survey)
 
+    with session_ms() as session:
         stmt = (
-            select(Probability, object_alias, dinamic_model_alias)
+            select(probability_alias, object_alias, dynamic_object_alias)
             .join(
-                dinamic_model_alias,
-                and_(dinamic_model_alias.oid == Probability.oid),
+                object_alias,
+                and_(object_alias.oid == probability_alias.oid),
             )
-            .where(*filters_statements["probability"])
+            .join(
+                dynamic_object_alias,
+                and_(dynamic_object_alias.oid == probability_alias.oid),
+            )
         )
 
         order_statement = create_order_statement(stmt, search_params.order_args)
@@ -101,6 +104,30 @@ def query_get_objects(session_ms, search_params, parsed_params):
         return Pagination(pagination_args.page, pagination_args.page_size, items)
 
 
+def subquery_probability(filters):
+    stmt = select(Probability).where(*filters).cte("tprobability")
+
+    probability_alias = aliased(Probability, stmt)
+
+    return probability_alias
+
+
+def subquery_object(filters, parsed_params):
+    consearch = parsed_params["consearch_statement"]
+    consearch_args = parsed_params["consearch_args"]
+
+    stmt = select(Object).where(*filters).where(consearch).params(**consearch_args).cte("tobject")
+
+    object_alias = aliased(Object, stmt)
+
+    return object_alias
+
+
+def dinamic_object_model(survey):
+    model_id = ObjectsModels(survey).get_model_by_survey()
+    return model_id
+
+
 def sort_by_oid_list_and_select_page(search_params, items):
     df_items = pd.DataFrame.from_records(items)
     df_items["oid"] = [item["oid"] for item in serialize_items(items)]
@@ -116,26 +143,6 @@ def sort_by_oid_list_and_select_page(search_params, items):
     df_items = list(df_items.itertuples(index=False, name=None))
 
     return df_items
-
-
-def build_subquery_object(survey, filters, parsed_params):
-    model_id = ObjectsModels(survey).get_model_by_survey()
-    consearch = parsed_params["consearch_statement"]
-    consearch_args = parsed_params["consearch_args"]
-
-    stmt = (
-        select(Object, model_id)
-        .join(model_id, and_(model_id.oid == Object.oid))
-        .where(*filters)
-        .where(consearch)
-        .params(**consearch_args)
-        .subquery()
-    )
-
-    object_alias = aliased(Object, stmt)
-    dinamic_model_alias = aliased(model_id, stmt)
-
-    return object_alias, dinamic_model_alias
 
 
 def check_pagination_args(pagination_args):

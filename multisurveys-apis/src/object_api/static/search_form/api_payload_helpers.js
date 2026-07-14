@@ -3,7 +3,8 @@ import { format_oids, check_radio_consearch } from "../ui_helpers.js";
 
 function send_form_Data() {
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
-  let first_mjd_arr = get_values_array_fields(["min_mjd", "max_mjd"])
+  let first_mjd = document.getElementById("min_mjd").value
+  let last_mjd = document.getElementById("max_mjd").value
   let probability_value = parseFloat(document.getElementById("prob_range").value);
   let class_selected = document.getElementById("class")
   let classifier_selected = document.getElementById("classifier")
@@ -23,7 +24,8 @@ function send_form_Data() {
     probability: probability_value > 0 ? probability_value : null,
     n_det_min: ndet_arr.length > 0 && ndet_arr[0] !== null ? parseInt(ndet_arr[0]) : null,
     n_det_max: ndet_arr.length > 1 && ndet_arr[1] !== null ? parseInt(ndet_arr[1]) : null,
-    firstmjd: first_mjd_arr.length > 0 ? first_mjd_arr : null,
+    firstmjd: first_mjd != '' ? parseFloat(first_mjd) : null,
+    lastmjd: last_mjd != '' ? parseFloat(last_mjd) : null,
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
     dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
     radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch : null,
@@ -94,14 +96,6 @@ function _check_is_empty(value){
   return false
 }
 
-function _check_max_arr_position(index, response_array){
-  if (index == 1 && response_array.length == 0 ){
-    return true
-  }
-
-  return false
-}
-
 function get_values_array_fields(fields){
   let response_array = []
 
@@ -119,6 +113,14 @@ function get_values_array_fields(fields){
 
   
   return response_array
+}
+
+function _check_max_arr_position(index, response_array){
+  if (index == 1 && response_array.length == 0 ){
+    return true
+  }
+
+  return false
 }
 
 export {
