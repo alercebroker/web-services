@@ -100,7 +100,9 @@ def object_filters(args):
         filters_dict.append(firstmjd)
 
     if args["lastmjd"] is not None:
-        lastmjd = Object.lastmjd <= args["lastmjd"][0]
+        lastmjd = Object.lastmjd >= args["lastmjd"][0]
+        if len(args["lastmjd"]) > 1:
+            lastmjd = lastmjd & (Object.lastmjd <= args["lastmjd"][1])
         filters_dict.append(lastmjd)
 
     if args["oids"] is not None:
