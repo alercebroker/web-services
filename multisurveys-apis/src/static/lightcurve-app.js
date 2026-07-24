@@ -726,6 +726,7 @@ function init() {
     let debounceTimer = null;
     let prevExtEnabled       = config.external_sources?.enabled ?? false;
     let prevPeriodogramEnabled = config.periodogram_enabled;
+    let prevFold             = config.fold;
 
     function onFormChange(e) {
         // The period input fires a bubbling `change` for direct edits and for the
@@ -737,9 +738,12 @@ function init() {
 
         readConfigFromForm();
 
-        // Fold path: make sure the periodogram is loaded (fallback for touch/keyboard
-        // users who never fire mouseenter), and adopt the best candidate period.
-        if (config.fold) {
+        // Fold path: fetch the periodogram exactly once, only on the OFF→ON
+        // transition of the Fold toggle. Toggling fold back off and on won't refetch
+        // (loadPeriodogram is one-shot guarded anyway), and other form changes while
+        // fold stays on never trigger the endpoint.
+        const foldNow = config.fold;
+        if (foldNow && !prevFold) {
             if (!(rawPeriodogram?.periods?.length)) {
                 // Not ready yet — kick off the (guarded) load. The spinner shows via
                 // updateVisibility/updateChart; updateChart re-runs when data arrives.
@@ -749,6 +753,7 @@ function init() {
                 applyBestCandidatePeriod();
             }
         }
+        prevFold = foldNow;
 
         updateVisibility();
         updateChart();
@@ -792,11 +797,6 @@ function init() {
 
     form.addEventListener('change', onFormChange);
     form.addEventListener('input',  onFormInput);
-
-    // Hover prefetch: warm the periodogram as soon as the pointer enters the Fold
-    // toggle. The loadPeriodogram() guard dedupes, so this fires the fetch at most once.
-    const foldToggleLabel = document.querySelector('[name="fold"]')?.closest('label');
-    foldToggleLabel?.addEventListener('mouseenter', () => loadPeriodogram());
 
     // Period selection from periodogram click — counts as a manual change.
     // Bound on `document` once per page: init() runs again on every HTMX swap, but
