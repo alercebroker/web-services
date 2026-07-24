@@ -500,6 +500,9 @@ function isNotCorrected() {
 // ─── Chart instances ──────────────────────────────────────────────────────────
 let myChart = null;
 let pChart  = null;
+// The periodogram's window-resize listener is bound once per page. initPeriodogram()
+// can now run many times (every render), so guard it to avoid stacking listeners.
+let pdResizeBound = false;
 
 function initChart() {
     const dom = document.getElementById('chart');
@@ -520,10 +523,16 @@ function initChart() {
         const o = buildOptions(config);
         o.tooltip = buildTooltip();
         myChart.setOption(o);
-        reinitPeriodogram();
+        // Rebuild the scatter so it picks up the new theme (and re-binds its click
+        // handler — the single builder below guarantees the handler survives).
+        initPeriodogram();
     });
 }
 
+// Canonical periodogram builder. Safe to call repeatedly: every call disposes any
+// existing instance and re-applies the current rawPeriodogram, so the scatter always
+// reflects the freshly loaded data (and never keeps stale points or loses its click
+// handler). Requires the container to be visible so ECharts can size it.
 function initPeriodogram() {
     const dom = document.getElementById('periodogram');
     if (!dom || !(rawPeriodogram?.periods?.length)) return;
@@ -537,15 +546,10 @@ function initPeriodogram() {
             bubbles: true,
         }));
     });
-    window.addEventListener('resize', () => pChart?.resize());
-}
-
-function reinitPeriodogram() {
-    const dom = document.getElementById('periodogram');
-    if (!dom) return;
-    pChart?.dispose();
-    pChart = echarts.init(dom, currentTheme());
-    pChart.setOption(buildPeriodogramOptions());
+    if (!pdResizeBound) {
+        pdResizeBound = true;
+        window.addEventListener('resize', () => pChart?.resize());
+    }
 }
 
 function updateChart() {
@@ -597,8 +601,10 @@ function updateVisibility() {
             loadingMsg?.classList.toggle('tw-hidden', !periodogramLoading);
             document.getElementById('periodogram')?.classList.toggle('tw-hidden', !hasPeriods || periodogramLoading);
             noperiodMsg?.classList.toggle('tw-hidden', !emptyAfterLoad || periodogramLoading);
-            if (hasPeriods && !pChart) initPeriodogram();
-            else if (hasPeriods && pChart) pChart.resize();
+            // Always rebuild against the current data whenever the scatter is shown,
+            // rather than resizing a possibly-stale instance. initPeriodogram() is a
+            // no-op flicker-wise (animation is off) and keeps the plot in sync.
+            if (hasPeriods) initPeriodogram();
         }
     }
 
