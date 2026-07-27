@@ -17,6 +17,34 @@ Monorepo of ALeRCE web service APIs.
 - `ci_new/` — current build/deploy tooling. `ci/` is the old path. For deploying the
   multisurvey image (manual build + push + rollout), see
   [`multisurveys-apis/DEPLOYMENT.md`](multisurveys-apis/DEPLOYMENT.md).
+- `scripts/` — ops tooling run by hand, not from CI.
+
+## After recreating an Ingress or TargetGroupBinding
+
+The `hybrid_webservices_health` CloudWatch dashboard keys every series on the ALB **target
+group** dimension, whose name is a truncated hash of the k8s object
+(`k8s-multisur-multisur-213937299c` — all 8 multisurvey APIs share that prefix). Recreating an
+Ingress or TargetGroupBinding mints a new hash, so the dashboard keeps plotting the *old*
+target group: a permanently flat series that reads as a healthy zero rather than as broken
+monitoring. Repair it with
+[`scripts/heal_dashboard_labels.py`](scripts/heal_dashboard_labels.py) (dry-run by default):
+
+```sh
+python3 scripts/heal_dashboard_labels.py hybrid_webservices_health           # report drift
+python3 scripts/heal_dashboard_labels.py hybrid_webservices_health --apply   # fix it
+```
+
+It resolves each series via TargetGroupBinding → Service selector → Deployment/StatefulSet
+using the current kubectl context, then repoints stale dimensions, fixes labels after a
+Deployment rename, and repoints the ALB dimension if the ingress group was recreated. Runs are
+idempotent, and it saves the previous dashboard body to `<dashboard>.backup.json` in the
+working directory (don't commit that file).
+
+The per-series **`label` is the stable identity** (`namespace/workload`, collapsed to one token
+when the two match) and the target group hash is derived from it — so don't hand-edit labels in
+the CloudWatch console, or the script can no longer find that series' workload and will report
+it as an orphan. Orphans are reported, never auto-deleted: retired workloads need the widget
+row removed by hand.
 
 ## Conventions (from CI)
 
