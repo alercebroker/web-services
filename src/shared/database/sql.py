@@ -3,6 +3,7 @@ from typing import Callable
 from flask import current_app
 from sqlalchemy import create_engine, orm
 from sqlalchemy.orm import Session
+from sqlalchemy.pool import NullPool
 from db_plugins.db.sql import models
 from math import ceil
 
@@ -11,7 +12,7 @@ class Database:
     def __init__(self, db_config: dict) -> None:
         self.base = models.Base
         url = f"postgresql://{db_config['USER']}:{db_config['PASSWORD']}@{db_config['HOST']}:{db_config['PORT']}/{db_config['DATABASE']}"
-        self._engine = create_engine(url)
+        self._engine = create_engine(url, poolclass=NullPool)
         self._session_factory = orm.scoped_session(
             orm.sessionmaker(
                 autocommit=False,
