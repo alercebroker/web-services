@@ -148,6 +148,18 @@ spec:
             items:
               - key: "default.conf"
                 path: "default.conf"
+      {{- if .Values.topologySpread.enabled }}
+      {{- /* Selector from the helper, not hand-written: nameOverride is not
+             uniform across releases, so a copied selector matches zero pods
+             and the spreading silently does nothing. */}}
+      topologySpreadConstraints:
+        - maxSkew: {{ .Values.topologySpread.maxSkew }}
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: {{ .Values.topologySpread.whenUnsatisfiable }}
+          labelSelector:
+            matchLabels:
+              {{- include "alerts-api.selectorLabels" . | nindent 14 }}
+      {{- end }}
       {{- if or .Values.affinity .Values.podAntiAffinity.enabled }}
       affinity:
         {{- with .Values.affinity }}
