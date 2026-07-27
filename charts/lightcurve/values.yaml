@@ -11,6 +11,15 @@ image:
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+  # Immutable pin. When set (e.g. "sha256:..."), the image is referenced by
+  # digest (repository@digest) and `tag` is ignored. Empty = use tag.
+  digest: ""
+
+# App-container health probes (target the app on :8000). Empty {} = no probe
+# (preserves current behavior for services that don't set them).
+startupProbe: {}
+livenessProbe: {}
+readinessProbe: {}
 
 imagePullSecrets:
   - name: "image-pull-access"
@@ -42,12 +51,20 @@ affinity:
               ## Override this value with the NodeGroup tag accordingly
               values: []
 
+# Soft (preferred) anti-affinity so a release's replicas spread across nodes
+# instead of stacking on one. Merged into `affinity` above when enabled.
+podAntiAffinity:
+  enabled: false
+
 nameOverride: ""
 
 configmap:
   port: ""
   apiUrl: ""
   service: ""
+  # Full nginx server block for the sidecar. Empty = the chart's default
+  # (vanilla) config. Set this to ship the hardened upstream/keepalive config.
+  nginxConf: ""
 
 ingress:
   certificateArn: ""

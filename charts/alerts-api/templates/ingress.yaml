@@ -34,4 +34,3 @@ spec:
                 name: ws-alerts-api
                 port:
                   number: {{ .Values.service.port }}
-	

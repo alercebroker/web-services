@@ -14,7 +14,12 @@ metadata:
   name: {{ include "service.name" . }}-nginx-conf
   namespace: {{ .Values.namespace }}
 data:
-  default.conf: '{{ .Values.configmap.nginxConf }}'
+{{- if .Values.configmap.nginxConf }}
+  # Service-supplied config (e.g. the hardened upstream/keepalive block). See values.
+  default.conf: |-
+{{ .Values.configmap.nginxConf | indent 4 }}
+{{- else }}
+  # Default (vanilla) config: bare proxy_pass to localhost:8000, no upstream/keepalive.
   default.conf: |
     server {
       listen 80;
@@ -43,4 +48,5 @@ data:
         proxy_pass http://localhost:8000/metrics;
       }
     }
+{{- end }}
 kind: ConfigMap

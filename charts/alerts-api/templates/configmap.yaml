@@ -16,6 +16,12 @@ metadata:
   name: alerts-api-nginx-conf
   namespace: {{ .Values.namespace }}
 data:
+{{- if .Values.configmap.nginxConf }}
+  # Service-supplied config (e.g. the hardened upstream/keepalive block). See values.
+  default.conf: |-
+{{ .Values.configmap.nginxConf | indent 4 }}
+{{- else }}
+  # Default (vanilla) config: bare proxy_pass to localhost:5000, no upstream/keepalive.
   default.conf: |
     server {
       listen 80;
@@ -58,4 +64,5 @@ data:
         proxy_pass http://localhost:5000/;
       }
     }
+{{- end }}
 kind: ConfigMap
