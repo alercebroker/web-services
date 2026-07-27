@@ -56,6 +56,17 @@ affinity:
 podAntiAffinity:
   enabled: false
 
+# Node spreading, complementing podAntiAffinity. The anti-affinity preference
+# alone proved too weak: at 512Mi requests the scheduler's least-allocated
+# scoring dominated it and stacked 10 of 16 replicas onto one nearly-empty node.
+# whenUnsatisfiable stays ScheduleAnyway on purpose -- DoNotSchedule would let
+# pods go Pending under node pressure and block HPA scale-up, which is the worst
+# time to lose capacity. Inert unless enabled.
+topologySpread:
+  enabled: false
+  maxSkew: 2
+  whenUnsatisfiable: ScheduleAnyway
+
 configmap:
   port: ""
   apiUrl: ""
