@@ -5,6 +5,7 @@ from typing import Generator
 
 from sqlalchemy.engine import Engine, create_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
+from sqlalchemy.pool import NullPool
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +19,10 @@ db_url = f"postgresql://{user}:{pwd}@{host}:{port}/{db}"
 
 
 def connect() -> Engine:
-    engine: Engine = create_engine(db_url, echo=False)
+    # NullPool: pgbouncer already does transaction pooling in front of
+    # Postgres, so an app-side pool would double-pool. This is not "a new
+    # connection per request per Postgres" -- it means no *second* pool.
+    engine: Engine = create_engine(db_url, echo=False, poolclass=NullPool)
     return engine
 
 
