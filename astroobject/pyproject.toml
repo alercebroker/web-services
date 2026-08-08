@@ -10,7 +10,7 @@ packages = [{include = "core"}, {include = "api"}]
 python = "^3.11"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.19"}
 dependency-injector = {extras = ["yaml"], version = "^4.41.0"}
-fastapi = "^0.100.0"
+fastapi = "^0.109.1"
 uvicorn = "^0.23.1"
 psycopg2-binary = "^2.9.6"
 asyncpg = "^0.28.0"
