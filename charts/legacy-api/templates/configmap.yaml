@@ -1,0 +1,29 @@
+{{- if .Values.nginx.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ws-api.nginxConfigMapName" . }}
+  namespace: {{ .Values.namespace }}
+data:
+  default.conf: |
+    {{- if .Values.nginx.config }}
+    {{- /* Full verbatim override, for APIs whose nginx config does not fit the default template */}}
+    {{- .Values.nginx.config | nindent 4 }}
+    {{- else }}
+    {{- /* Standard template: proxies the API path prefix and root to the app container */}}
+    server {
+      listen {{ .Values.nginx.port }};
+
+      location {{ .Values.nginx.pathPrefix }} {
+        proxy_pass http://localhost:{{ .Values.containerPort }}/;
+        proxy_redirect off;
+        proxy_set_header X-Forwarded-Prefix {{ .Values.nginx.pathPrefix }};
+      }
+
+      location / {
+        proxy_pass http://localhost:{{ .Values.containerPort }}/;
+        proxy_redirect off;
+      }
+    }
+    {{- end }}
+{{- end }}
