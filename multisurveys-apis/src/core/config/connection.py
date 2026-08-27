@@ -1,7 +1,7 @@
 import logging
 import os
 
-from db_plugins.db.sql._connection import PsqlDatabase
+from db_plugins.db.sql._connection_pipeline import PsqlDatabase
 
 logger = logging.getLogger(__name__)
 

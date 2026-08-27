@@ -1,5 +1,5 @@
 from typing import Callable, ContextManager, List, Tuple
-from db_plugins.db.sql.models import Object
+from db_plugins.db.sql.models_pipeline import Object
 from numpy import int64
 from sqlalchemy import asc, select, text
 from sqlalchemy.orm import Session, aliased

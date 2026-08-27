@@ -1,4 +1,4 @@
-from db_plugins.db.sql.models import Object, Probability
+from db_plugins.db.sql.models_pipeline import Object, Probability
 from sqlalchemy import text
 
 

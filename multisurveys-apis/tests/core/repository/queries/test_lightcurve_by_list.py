@@ -3,7 +3,7 @@ from core.repository.queries import non_detections as non_detection_repository
 from core.repository.queries import (
     forced_photometry as forced_photometry_repository,
 )
-from db_plugins.db.sql.models import (
+from db_plugins.db.sql.models_pipeline import (
     Detection,
     ForcedPhotometry,
     ZtfDetection,

@@ -1,5 +1,5 @@
 from typing import Callable, ContextManager, List, Tuple
-from db_plugins.db.sql.models import ZtfDetection, Detection, LsstDetection
+from db_plugins.db.sql.models_pipeline import ZtfDetection, Detection, LsstDetection
 from sqlalchemy.orm import Session
 from sqlalchemy import select, text, and_, desc
 

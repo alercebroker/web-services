@@ -1,5 +1,5 @@
 from typing import Any
-from db_plugins.db.sql.models import Object
+from db_plugins.db.sql.models_pipeline import Object
 from lightcurve_api.models.object import ApiObject
 from lightcurve_api.services.conesearch import conesearch as conesearch_service
 from numpy import int64

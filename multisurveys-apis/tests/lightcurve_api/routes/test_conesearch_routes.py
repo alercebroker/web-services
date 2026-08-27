@@ -1,5 +1,5 @@
 from core.idmapper.idmapper import catalog_oid_to_masterid
-from db_plugins.db.sql.models import Object
+from db_plugins.db.sql.models_pipeline import Object
 from fastapi.testclient import TestClient
 from sqlalchemy import select
 

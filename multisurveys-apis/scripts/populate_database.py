@@ -5,7 +5,7 @@ from typing import cast
 import sys
 
 import yaml
-from db_plugins.db.sql import models
+from db_plugins.db.sql import models_pipeline
 from faker import Faker
 from faker.providers import BaseProvider
 
@@ -84,7 +84,7 @@ def generate_object(faker: Faker):
         oid = faker.ztf_oid()
     else:
         oid = faker.unique.random_int()
-    return models.Object(
+    return models_pipeline.Object(
         oid=oid,
         tid=sid,
         sid=sid,
@@ -103,8 +103,8 @@ def generate_object(faker: Faker):
     )
 
 
-def generate_detection(faker: Faker, obj: models.Object):
-    return models.Detection(
+def generate_detection(faker: Faker, obj: models_pipeline.Object):
+    return models_pipeline.Detection(
         oid=obj.oid,
         sid=obj.sid,
         measurement_id=faker.measurement_id(),
@@ -115,8 +115,8 @@ def generate_detection(faker: Faker, obj: models.Object):
     )
 
 
-def generate_ztf_detection(faker: Faker, det: models.Detection):
-    return models.ZtfDetection(
+def generate_ztf_detection(faker: Faker, det: models_pipeline.Detection):
+    return models_pipeline.ZtfDetection(
         oid=det.oid,
         sid=det.sid,
         measurement_id=det.measurement_id,
@@ -146,8 +146,8 @@ def generate_ztf_detection(faker: Faker, det: models.Detection):
     )
 
 
-def generate_lsst_detection(faker: Faker, det: models.Detection):
-    return models.LsstDetection(
+def generate_lsst_detection(faker: Faker, det: models_pipeline.Detection):
+    return models_pipeline.LsstDetection(
         oid=det.oid,
         sid=det.sid,
         measurement_id=det.measurement_id,
@@ -164,8 +164,8 @@ def generate_lsst_detection(faker: Faker, det: models.Detection):
     )
 
 
-def generate_ztf_non_detection(faker: Faker, obj: models.Object):
-    return models.ZtfNonDetection(
+def generate_ztf_non_detection(faker: Faker, obj: models_pipeline.Object):
+    return models_pipeline.ZtfNonDetection(
         oid=obj.oid,
         sid=obj.sid,
         band=faker.band(obj.sid),
@@ -174,8 +174,8 @@ def generate_ztf_non_detection(faker: Faker, obj: models.Object):
     )
 
 
-def generate_forced_photometry(faker: Faker, obj: models.Object):
-    return models.ForcedPhotometry(
+def generate_forced_photometry(faker: Faker, obj: models_pipeline.Object):
+    return models_pipeline.ForcedPhotometry(
         oid=obj.oid,
         sid=obj.sid,
         measurement_id=faker.measurement_id(),
@@ -186,8 +186,8 @@ def generate_forced_photometry(faker: Faker, obj: models.Object):
     )
 
 
-def generate_ztf_forced_photometry(faker: Faker, det: models.Detection):
-    return models.ZtfForcedPhotometry(
+def generate_ztf_forced_photometry(faker: Faker, det: models_pipeline.Detection):
+    return models_pipeline.ZtfForcedPhotometry(
         oid=det.oid,
         sid=det.sid,
         measurement_id=det.measurement_id,
@@ -227,8 +227,8 @@ def generate_ztf_forced_photometry(faker: Faker, det: models.Detection):
     )
 
 
-def generate_lsst_forced_photometry(faker: Faker, fphot: models.ForcedPhotometry):
-    return models.LsstForcedPhotometry(
+def generate_lsst_forced_photometry(faker: Faker, fphot: models_pipeline.ForcedPhotometry):
+    return models_pipeline.LsstForcedPhotometry(
         oid=fphot.oid,
         sid=fphot.sid,
         measurement_id=fphot.measurement_id,
@@ -270,7 +270,7 @@ def export_db_secrets(config: dict):
     os.environ["SCHEMA"] = config["psql_schema"]
 
 
-def generate_lightcurve(faker: Faker, obj: models.Object):
+def generate_lightcurve(faker: Faker, obj: models_pipeline.Object):
     detections = []
     survey_detections = []
     non_detections = []
