@@ -72,3 +72,27 @@ dr_detections
 download
 
     - Funciona.
+
+
+## Magstats api
+### Fix field types in model:
+File: multisurveys-apis/src/magstat_api/models/magstats.py
+
+Change the type of this fields to float
+```
+    dmdt_first: Optional[int] = None
+    dm_first: Optional[int] = None
+    sigmadm_first: Optional[int] = None
+    ...
+    dt_first: Optional[int] = None
+    maglast: Optional[int] = None
+    magfirst: Optional[int] = None
+```
+
+
+## Add the ztf string id to marset if into the endpoint. Using core idmapper idemapper decode id
+File: multisurveys-apis/src/object_api/routes/rest.py, multisurveys-apis/src/object_api/routes/htmx.py
+using
+```
+from ..services.idmapper.idmapper import encode_ids
+in the routes functions to decode the id.
