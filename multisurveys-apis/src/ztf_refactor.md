@@ -1,4 +1,4 @@
-
+# Adaptacion de API's para ztf
 
 ## Object API
 
@@ -21,16 +21,16 @@ Classes_select
 
 list_object
 
-    - Problema con clasificador, esto esta mencionado en Search_objects endpoint.
+    - Problema con clasificador, se menciona en Search_objects endpoint.
 
     - Cambios en oid tipo str, el valor de un oid str cambia al transformarlo a int.
     ValueError: Invalid ZTF object ID: 36028941602879580
-
-    - La funcion encode de ztf no reconoce el oid 36028941602879580, es un error al transformar. 
-    Una posible razon puede ser que solo acepta oid con el formato 'ZTFxxxxxx'.
     
     - Timeout en consulta sobre bdd, la razon es porque el indice (clasificador, class, ranking == 1) no se encuentra en
     el schema 'multisurvey_ztf'.
+
+    Observacion: Al ingresar el oid en la request tiene que ir con el siguiente formato 'ZTFxxxxx' respecto a ztf.
+    Ingresar un oid de la siguiente manera '36028941602879580' genera error en la request.
 
 side_objects
 
@@ -46,12 +46,13 @@ Oid para testear: 36028941596001817
 
 lightcurve
 
-    - Error de transformacion de object ztf, esto es mencionado en los problemas de list_object.
-
     - Llamada a bdd, la tabla ztf_dectection no tiene la columna sid debido a una actualizacion del repo pipeline. 
     La solucion consiste en actualizar 'db_plugins' junto con los imports en el repo 'multisurvey'.
 
     Cambiar import de 'db_plugins.db.sql.models' a 'db_plugins.db.sql.models_pipeline'.
+
+    Observacion: Al ingresar el oid en la request tiene que ir con el siguiente formato 'ZTFxxxxx' respecto a ztf.
+    Ingresar un oid de la siguiente manera '36028941602879580' genera error en la request.
 
 
 periodogram
