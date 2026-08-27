@@ -1,78 +1,73 @@
-# Adaptacion de API's para ztf
+# Adaptación de APIs para ZTF
 
 ## Object API
 
-Oid para testear: 36028941602879580
+OID para testear: `36028941602879580`
 
 ### Fix endpoints
 
-Seach_objects
+**Search_objects**
 
-    - El listado de clasificadores solo regresa a los que estan relacionados con LSST, la razon es porque el survey esta hardcodeado. 
-    Revisar la funcion get_all_classifiers().
+- El listado de clasificadores solo regresa a los que están relacionados con LSST. La razón es porque el survey está hardcodeado.  
+  Revisar la función `get_all_classifiers()`.
 
-object_information
+**object_information**
 
-    - El endpoint y el template funciona con ZTF.
+- El endpoint y el template funcionan con ZTF.
 
-Classes_select
+**Classes_select**
 
-    - Refactor, se puede eliminar este endpoint debido a que no procesa los datos, solo ordena datos.
+- Refactor. Se puede eliminar este endpoint debido a que no procesa los datos, solo ordena datos.
 
-list_object
+**list_object**
 
-    - Problema con clasificador, se menciona en Search_objects endpoint.
+- Problema con clasificador, se menciona en el endpoint `Search_objects`.
 
-    - Cambios en oid tipo str, el valor de un oid str cambia al transformarlo a int.
-    ValueError: Invalid ZTF object ID: 36028941602879580
-    
-    - Timeout en consulta sobre bdd, la razon es porque el indice (clasificador, class, ranking == 1) no se encuentra en
-    el schema 'multisurvey_ztf'.
+- Cambios en OID tipo `str`. El valor de un OID `str` cambia al transformarlo a `int`.
 
-    Observacion: Al ingresar el oid en la request tiene que ir con el siguiente formato 'ZTFxxxxx' respecto a ztf.
-    Ingresar un oid de la siguiente manera '36028941602879580' genera error en la request.
+  `ValueError: Invalid ZTF object ID: 36028941602879580`
 
-side_objects
+- Timeout en consulta sobre BDD. La razón es porque el índice `(clasificador, class, ranking == 1)` no se encuentra en el schema `multisurvey_ztf`.
 
-    - Refactorizar endpoint, es el mismo codigo de list_object solo con un template distinto.
+**Observación:** Al ingresar el OID en la request, tiene que ir con el siguiente formato: `'ZTFxxxxx'` respecto a ZTF.  
+Ingresar un OID de la siguiente manera: `'36028941602879580'` genera un error en la request.
+
+**side_objects**
+
+- Refactorizar endpoint. Es el mismo código de `list_object`, solo con un template distinto.
 
 
 ## Lightcurve API
 
-Oid para testear: 36028941596001817
+OID para testear: `36028941596001817`
 
 ### Fix endpoints
 
+**lightcurve**
 
-lightcurve
+- Llamada a BDD. La tabla `ztf_detection` no tiene la columna `sid` debido a una actualización del repo `pipeline`.  
+  La solución consiste en actualizar `db_plugins` junto con los imports en el repo `multisurvey`.
 
-    - Llamada a bdd, la tabla ztf_dectection no tiene la columna sid debido a una actualizacion del repo pipeline. 
-    La solucion consiste en actualizar 'db_plugins' junto con los imports en el repo 'multisurvey'.
+- Cambiar import de `db_plugins.db.sql.models` a `db_plugins.db.sql.models_pipeline`.
 
-    Cambiar import de 'db_plugins.db.sql.models' a 'db_plugins.db.sql.models_pipeline'.
+**Observación:** Al ingresar el OID en la request, tiene que ir con el siguiente formato: `'ZTFxxxxx'` respecto a ZTF.  
+Ingresar un OID de la siguiente manera: `'36028941602879580'` genera un error en la request.
 
-    Observacion: Al ingresar el oid en la request tiene que ir con el siguiente formato 'ZTFxxxxx' respecto a ztf.
-    Ingresar un oid de la siguiente manera '36028941602879580' genera error en la request.
+**periodogram**
 
+- La tabla `ztf_forced_photometry` no tiene entre sus atributos `psfFlux`. Esto causa problemas para procesar los datos de FP.
 
-periodogram
+**external_sources**
 
-    - La tabla ztf forced photometry no tiene en sus atributos psfFlux, esto causa problema para procesar los datos de fp. 
+- El listado de objetos sobre DR se vuelve a reiniciar, dejando los checklists marcados.
 
+**dr_detections**
 
-external_sources
+- Funciona.
 
-    - El listado de objects sobre DR se vuelve a reinciar dejando los checklist marcados.
+**download**
 
-
-dr_detections
-
-    - Funciona.
-
-
-download
-
-    - Funciona.
+- Funciona.
 
 
 ## Magstats api
