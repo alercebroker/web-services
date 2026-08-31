@@ -96,10 +96,10 @@ async def tns_info(request: Request, ra: float, dec: float):
 
 
 @router.get("/htmx/search_objects/", response_class=HTMLResponse)
-async def objects_form(request: Request):
+async def objects_form(request: Request, survey_id: str):
     try:
         session = request.app.state.psql_session
-        classifiers = get_tidy_classifiers(session)
+        classifiers = get_tidy_classifiers(session, survey_id)
 
         return templates.TemplateResponse(
             name="search_form/form.html.jinja",
