@@ -30,3 +30,29 @@ def get_survey_id(survey_name: str):
         raise ValueError(f"Unsupported survey: {survey_name}")
 
     return SURVEY_IDS[survey_name]
+
+
+def get_survey_name(survey_id: int):
+    """
+    Get the survey name for a given survey ID.
+
+    Parameters
+    ----------
+    survey_id : int
+        The ID of the survey (e.g., 0 for "ztf", 1 for "lsst").
+
+    Returns
+    -------
+    str
+        The survey name.
+
+    Raises
+    ------
+    ValueError
+        If the survey ID is not supported.
+    """
+    for name, id in SURVEY_IDS.items():
+        if id == survey_id:
+            return name
+
+    raise ValueError(f"Unsupported survey ID: {survey_id}")

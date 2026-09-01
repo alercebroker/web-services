@@ -18,6 +18,7 @@ def parse_classifiers(classifier_data: list) -> list:
         classifier_name = row["classifier_name"]
         classifier_id = row["classifier_id"]
         class_name = row["class_name"]
+        survey_id = row["tid"]    
 
         if classifier_name not in grouped_classifiers.keys():
             grouped_classifiers[classifier_name] = {
@@ -25,6 +26,7 @@ def parse_classifiers(classifier_data: list) -> list:
                 "classifier_version": row["classifier_version"],
                 "classes": [class_name],
                 "classifier_id": classifier_id,
+                "survey_id": survey_id,
             }
         else:
             grouped_classifiers[classifier_name]["classes"].append(class_name)

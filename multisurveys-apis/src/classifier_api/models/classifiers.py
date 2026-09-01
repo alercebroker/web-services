@@ -10,3 +10,4 @@ class Classifiers(BaseModel):
     classifier_version: str
     classes: list[str]
     classifier_id: int
+    survey_id: int

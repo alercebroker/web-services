@@ -63,7 +63,6 @@ def get_all_classifiers(
                 Taxonomy,
                 Classifier.classifier_id == Taxonomy.classifier_id,
             )
-            .where(Classifier.tid == survey_id)
             .order_by(Classifier.classifier_name.asc(), Taxonomy.order.asc())
         )
         result = session.execute(stmt)

@@ -46,7 +46,7 @@ def get_tidy_classifiers(session_ms, survey_id: str):
 
     classifiers = get_classifiers(session_ms, survey_id_mapped)
     classifiers = parse_to_json_classifiers(classifiers)
-    classifiers = sort_classifiers(classifiers, survey_id)
+    #classifiers = sort_classifiers(classifiers, survey_id)
 
 
     return classifiers

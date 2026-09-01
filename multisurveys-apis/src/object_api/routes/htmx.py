@@ -96,9 +96,13 @@ async def tns_info(request: Request, ra: float, dec: float):
 
 
 @router.get("/htmx/search_objects/", response_class=HTMLResponse)
-async def objects_form(request: Request, survey_id: str):
+async def objects_form(request: Request, survey_id: str = None):
     try:
         session = request.app.state.psql_session
+
+        if survey_id is None:
+            survey_id = 'lsst'
+
         classifiers = get_tidy_classifiers(session, survey_id)
 
         return templates.TemplateResponse(
