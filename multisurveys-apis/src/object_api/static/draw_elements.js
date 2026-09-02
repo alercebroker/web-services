@@ -131,12 +131,6 @@ export function draw_close_button(element) {
 
 
 export function draw_dropdown_options(options, node_container) {
-
-  let base_option = document.createElement("a")
-  base_option.classList.add("obj-custom-option", "obj-selected")
-  base_option.dataset.value = ""
-  node_container.appendChild(base_option)
-
   options.forEach(option => {
     let new_option = document.createElement("a")
     
@@ -148,4 +142,20 @@ export function draw_dropdown_options(options, node_container) {
   
     node_container.appendChild(new_option)
   })
+}
+
+
+export function draw_classes_options(classes_arr) {
+    let classes_options = document.getElementById("classes_options")
+
+    classes_arr.forEach((class_name, index) => {
+        let new_option = document.createElement("a")
+        new_option.href = "#"
+        new_option.textContent = class_name
+        new_option.dataset.value = class_name
+        new_option.classList.add("obj-custom-option", "hover:tw-bg-[#b2b2b2]")
+
+        classes_options.appendChild(new_option)
+    })
+    
 }

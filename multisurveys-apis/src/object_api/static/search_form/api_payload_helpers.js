@@ -6,8 +6,8 @@ function send_form_Data() {
   let first_mjd = document.getElementById("min_mjd").value
   let last_mjd = document.getElementById("max_mjd").value
   let probability_value = parseFloat(document.getElementById("prob_range").value);
-  let class_selected = document.getElementById("class")
-  let classifier_selected = document.getElementById("classifier")
+  let class_selected = document.getElementById("class_selected")
+  let classifier_selected = document.getElementById("classifiers_selected")
   let survey_id = document.getElementById('survey')
   let list_oids = format_oids(JSON.parse(document.getElementById("oids_container").dataset.oids_list))
   let [ra_consearch, dec_consearch] = check_radio_consearch(

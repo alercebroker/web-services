@@ -1,4 +1,5 @@
 import { clean_nodes_in_dom } from "../ui_helpers.js";
+import { draw_classes_options } from "../draw_elements.js";
 
 
 export function create_dinamic_dropdown() {
@@ -54,7 +55,8 @@ export function add_classifiers_items_functionality(selected, options) {
             selected.setAttribute("data-classes", item.getAttribute("data-classes"));
             selected.setAttribute("data-classifier", item.getAttribute("data-classifier"));
             
-            dropdown_class_configure(item.getAttribute("data-classes"))
+            dropdown_classes_configure(item.getAttribute("data-classes"))
+
         })
     }
 
@@ -62,26 +64,9 @@ export function add_classifiers_items_functionality(selected, options) {
 }
 
 
-function draw_classes_options(classes) {
-    let classes_options = document.getElementById("classes_options")
-    let classes_arr = classes.split(",")
-
-    classes_arr.forEach((class_name, index) => {
-        let new_option = document.createElement("a")
-        new_option.href = "#"
-        new_option.textContent = class_name
-        new_option.dataset.value = class_name
-        new_option.classList.add("obj-custom-option", "hover:tw-bg-[#b2b2b2]")
-
-        classes_options.appendChild(new_option)
-    })
-    
-}
-
-
-function dropdown_class_configure(classes) {
+function dropdown_classes_configure(classes) {
     clean_nodes_in_dom(document.getElementById("classes_options"))
-    draw_classes_options(classes)
+    draw_classes_options(classes.split(","))
     add_class_items_functionality(document.getElementById("classes_options"))
 }
 
