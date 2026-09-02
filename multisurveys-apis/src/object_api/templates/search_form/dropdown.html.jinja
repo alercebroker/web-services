@@ -1,0 +1,17 @@
+
+
+{% macro dropdown(placeholder, selected_id, options_id)%}
+<el-dropdown class="tw-inline-block">
+  <button class="tw-inline-flex tw-w-full tw-justify-center tw-gap-x-1.5 tw-rounded-md tw-bg-white tw-px-3 tw-py-2 tw-text-sm tw-font-semibold tw-text-gray-900 tw-shadow-xs tw-inset-ring-1 tw-inset-ring-gray-300 hover:tw-bg-gray-50">
+
+    <span id="{{ selected_id }}" >{{ placeholder }}</span>
+    <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="-tw-mr-1 tw-size-5 tw-text-gray-400">
+      <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+    </svg>
+  </button>
+
+  <el-menu anchor="bottom" popover class="tw-w-full tw-m-0 tw-rounded-md tw-bg-white tw-shadow-lg tw-outline-1 tw-outline-black/5 tw-transition tw-transition-discrete data-closed:tw-scale-95 data-closed:tw-transform data-closed:tw-opacity-0 data-enter:tw-duration-100 data-enter:tw-ease-out data-leave:tw-duration-75 data-leave:tw-ease-in">
+    <div id="{{ options_id }}" class=""></div>
+  </el-menu>
+</el-dropdown>
+{% endmacro %}

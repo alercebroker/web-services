@@ -128,3 +128,24 @@ export function draw_close_button(element) {
 
   return btn
 }
+
+
+export function draw_dropdown_options(options, node_container) {
+
+  let base_option = document.createElement("a")
+  base_option.classList.add("obj-custom-option", "obj-selected")
+  base_option.dataset.value = ""
+  node_container.appendChild(base_option)
+
+  options.forEach(option => {
+    let new_option = document.createElement("a")
+    
+    new_option.textContent = option.formated_name
+    new_option.href = "#"
+    new_option.dataset.classes = option.classes
+    new_option.dataset.classifier = option.classifier_name
+    new_option.classList.add("obj-custom-option", "hover:tw-bg-[#b2b2b2]")
+  
+    node_container.appendChild(new_option)
+  })
+}

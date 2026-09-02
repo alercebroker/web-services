@@ -2,10 +2,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="{{API_URL}}/htmx/htmx.min.js"></script>
 <script src="https://unpkg.com/htmx-ext-response-targets@2.0.2" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 <link rel="stylesheet" href="{{API_URL}}/static/object.css">
 
 <div id="form-search" hx-ext="response-targets" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-[#EEEEEE]">
     {% from "input.html.jinja" import input as customInput %}
+    {% from "search_form/dropdown.html.jinja" import dropdown %}
 
     <div class="tw-flex tw-w-full">
         <div id="form-container" class="tw-p-4 tw-flex tw-flex-col tw-gap-y-4 tw-w-full tw-shadow-md dark:tw-border dark:tw-border-black lg:tw-max-w-[458px]">
@@ -44,8 +46,8 @@
                     </div>
 
                     <!--select classifiers-->
-                    <div id="classifiers_wrapper" class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        <div id="classifiers_list_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
+                    <div id="classifiers_wrapper" class="tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
+                        {# <div id="classifiers_list_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
                             <div id="classifiers_list" class="obj-select__trigger tw-flex tw-items-center tw-justify-between">
                                 <span
                                 id="classifier"
@@ -73,12 +75,15 @@
                                     </span>
                                 {% endfor %}
                             </div>
-                        </div>
+                        </div> #}
+                        {{dropdown(
+                            placeholder="Classifier", selected_id="classifiers_selected", options_id="classifiers_options"
+                        )}}
                     </div>
 
                     <!--select classes-->
                     <div class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        <div id="classes_list_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
+                        {# <div id="classes_list_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
                             <div id="classes_list" class="obj-select__trigger tw-flex tw-items-center tw-justify-between">
                                 <span
                                 id="class"                   
@@ -91,7 +96,11 @@
                             <div id="classes_options" class="">
                             <!--HTMX CLASSES OPTIONS--->
                             </div>
-                        </div>
+                        </div> #}
+
+                        {{dropdown(
+                            placeholder="Class",
+                            selected_id="class_selected", options_id="classes_options")}}
                     </div>
                     
                     <div id="probability_container" class="tw-col-span-12">

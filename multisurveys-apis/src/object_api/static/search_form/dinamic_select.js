@@ -35,3 +35,46 @@ export function create_dinamic_dropdown() {
         })
     }
 }
+
+
+export function add_items_functionality() {
+
+    let classifiers_button = document.getElementById("classifiers_selected")
+    let classifiers_options = document.getElementById("classifiers_options")
+
+    for (let item of classifiers_options.querySelectorAll(".obj-custom-option")) {
+
+        item.addEventListener('click', () => {
+            if (!item.classList.contains('obj-selected')) {
+
+            item.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
+            item.classList.add('obj-selected');
+
+            classifiers_button.textContent = item.textContent;
+
+            classifiers_button.setAttribute("data-classes", item.getAttribute("data-classes"));
+            classifiers_button.setAttribute("data-classifier", item.getAttribute("data-classifier"));
+            }
+
+            draw_classes_options(item.getAttribute("data-classes"))
+        })
+    }
+
+
+}
+
+
+function draw_classes_options(classes) {
+    let classes_options = document.getElementById("classes_options")
+    let classes_arr = classes.split(",")
+
+    classes_arr.forEach((class_name, index) => {
+        let new_option = document.createElement("a")
+        new_option.href = "#"
+        new_option.textContent = class_name
+        new_option.dataset.value = class_name
+
+        classes_options.appendChild(new_option)
+    })
+    
+}

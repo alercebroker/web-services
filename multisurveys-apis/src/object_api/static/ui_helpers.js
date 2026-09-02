@@ -160,6 +160,13 @@ function clean_oids_container(father_element){
 }
 
 
+function clean_nodes_in_dom(father_element){
+  while (father_element.lastChild) {
+    father_element.removeChild(father_element.lastChild)
+  }
+}
+
+
 export {
   display, 
   highlight_text, 
@@ -170,5 +177,6 @@ export {
   check_radio_consearch, 
   switch_arrow_icon, 
   delete_oid_in_container, 
-  clean_oids_container
+  clean_oids_container,
+  clean_nodes_in_dom
 }

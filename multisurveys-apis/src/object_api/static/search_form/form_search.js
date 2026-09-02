@@ -1,12 +1,13 @@
 import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "../../libraries/AstroDates/AstroDates.js"
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "../../libraries/moment/time.js"
 import { handle_error } from "../error_handler.js";
-import { draw_oids_tags } from "../draw_elements.js";
-import { display, highlight_text, split_oids, set_oids_in_container, survey_emphasize, switch_arrow_icon, clean_oids_container } from "../ui_helpers.js";
+import { draw_dropdown_options, draw_oids_tags } from "../draw_elements.js";
+import { display, highlight_text, split_oids, set_oids_in_container, survey_emphasize, switch_arrow_icon, clean_oids_container, clean_nodes_in_dom } from "../ui_helpers.js";
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, send_form_Data } from "./api_payload_helpers.js"
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
-import { create_dinamic_dropdown } from "./dinamic_select.js";
+import { create_dinamic_dropdown, add_items_functionality } from "./dinamic_select.js";
+import { Dropdown } from "./dropdown_filters.js";
 
 
 let currentStates = null
@@ -20,6 +21,10 @@ export function init() {
     }, 100)
     currentStates = null
   }
+
+  let classifiers_data = JSON.parse(document.getElementById("form-data").textContent);
+  let Dropdown_classifiers = new Dropdown(classifiers_data.classifiers)
+
 
   let item_name = ""
   let minDate = ""
@@ -78,29 +83,29 @@ export function init() {
     display(item_name)
   })
 
-  classifiers_list.addEventListener("click", () => {
-    item_name = classifiers_list.id + "_container"
-    switch_arrow_icon(classifiers_list)
-    highlight_text(classifiers_list)
-  })
+  // classifiers_list.addEventListener("click", () => {
+  //   item_name = classifiers_list.id + "_container"
+  //   switch_arrow_icon(classifiers_list)
+  //   highlight_text(classifiers_list)
+  // })
 
-  classifiers_options.addEventListener("click", () => {
-    item_name = classifiers_list.id + "_container"
-    switch_arrow_icon(classifiers_list)
-    highlight_text(classifiers_list)
-  })
+  // classifiers_options.addEventListener("click", () => {
+  //   item_name = classifiers_list.id + "_container"
+  //   switch_arrow_icon(classifiers_list)
+  //   highlight_text(classifiers_list)
+  // })
 
-  classes_list.addEventListener("click", () => {
-    item_name = classes_list.id + "_container"
-    switch_arrow_icon(classes_list)
-    highlight_text(classes_list)
-  })
+  // classes_list.addEventListener("click", () => {
+  //   item_name = classes_list.id + "_container"
+  //   switch_arrow_icon(classes_list)
+  //   highlight_text(classes_list)
+  // })
 
-  classes_options.addEventListener("click", () => {
-    item_name = classes_list.id + "_container"
-    switch_arrow_icon(classes_list)
-    highlight_text(classes_list)
-  })
+  // classes_options.addEventListener("click", () => {
+  //   item_name = classes_list.id + "_container"
+  //   switch_arrow_icon(classes_list)
+  //   highlight_text(classes_list)
+  // })
 
   min_date_time_text.addEventListener("click", () => {
     item_name = min_date_time_text.id + "_container"
@@ -145,10 +150,28 @@ export function init() {
 
   ztf_btn.addEventListener("click", () => {
     survey_emphasize(ztf_btn)
+    clean_nodes_in_dom(document.getElementById("classifiers_options"))
+
+    Dropdown_classifiers.priorities_by_survey = "ztf"
+    Dropdown_classifiers.filter_classifiers_by_survey("ztf")
+    Dropdown_classifiers.order_by_priority(Array(8))
+
+    draw_dropdown_options(Dropdown_classifiers.filtered_classifiers, document.getElementById("classifiers_options"))
+
+    add_items_functionality()
   })
 
   lsst_btn.addEventListener("click", () => {
     survey_emphasize(lsst_btn)
+    clean_nodes_in_dom(document.getElementById("classifiers_options"))
+
+    Dropdown_classifiers.priorities_by_survey = "lsst"
+    Dropdown_classifiers.filter_classifiers_by_survey("lsst")
+    Dropdown_classifiers.order_by_priority(Array(8))
+
+    draw_dropdown_options(Dropdown_classifiers.filtered_classifiers, document.getElementById("classifiers_options"))
+
+    add_items_functionality()
   })
 
   radio_HMS.addEventListener("click", () => {
