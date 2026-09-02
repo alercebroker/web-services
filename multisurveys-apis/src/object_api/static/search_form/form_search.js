@@ -6,7 +6,7 @@ import { display, highlight_text, split_oids, set_oids_in_container, survey_emph
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, send_form_Data } from "./api_payload_helpers.js"
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
-import { create_dinamic_dropdown, add_items_functionality } from "./dinamic_select.js";
+import { create_dinamic_dropdown, add_classifiers_items_functionality } from "./dinamic_select.js";
 import { Dropdown } from "./dropdown_filters.js";
 
 
@@ -158,7 +158,7 @@ export function init() {
 
     draw_dropdown_options(Dropdown_classifiers.filtered_classifiers, document.getElementById("classifiers_options"))
 
-    add_items_functionality()
+    add_classifiers_items_functionality(document.getElementById("classifiers_selected"), document.getElementById("classifiers_options"))
   })
 
   lsst_btn.addEventListener("click", () => {
@@ -171,7 +171,7 @@ export function init() {
 
     draw_dropdown_options(Dropdown_classifiers.filtered_classifiers, document.getElementById("classifiers_options"))
 
-    add_items_functionality()
+    add_classifiers_items_functionality(document.getElementById("classifiers_selected"), document.getElementById("classifiers_options"))
   })
 
   radio_HMS.addEventListener("click", () => {
@@ -274,7 +274,7 @@ export function init() {
 
 
   //dropdown
-  create_dinamic_dropdown()
+  // create_dinamic_dropdown()
 
   // handle errors
   handle_error()

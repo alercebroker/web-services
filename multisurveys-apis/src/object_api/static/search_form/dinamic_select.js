@@ -1,3 +1,6 @@
+import { clean_nodes_in_dom } from "../ui_helpers.js";
+
+
 export function create_dinamic_dropdown() {
     // se seleccionan todos los dropdowns
     for (const dropdown of document.querySelectorAll(".obj-select-wrapper")) {
@@ -37,26 +40,21 @@ export function create_dinamic_dropdown() {
 }
 
 
-export function add_items_functionality() {
+export function add_classifiers_items_functionality(selected, options) {
 
-    let classifiers_button = document.getElementById("classifiers_selected")
-    let classifiers_options = document.getElementById("classifiers_options")
-
-    for (let item of classifiers_options.querySelectorAll(".obj-custom-option")) {
+    for (let item of options.querySelectorAll(".obj-custom-option")) {
 
         item.addEventListener('click', () => {
-            if (!item.classList.contains('obj-selected')) {
 
-            item.parentNode.querySelector('.obj-custom-option.obj-selected').classList.remove('obj-selected');
-            item.classList.add('obj-selected');
+            withdraw_selected_item(options)
+            change_selected_item(item)
 
-            classifiers_button.textContent = item.textContent;
+            selected.textContent = item.textContent;
 
-            classifiers_button.setAttribute("data-classes", item.getAttribute("data-classes"));
-            classifiers_button.setAttribute("data-classifier", item.getAttribute("data-classifier"));
-            }
-
-            draw_classes_options(item.getAttribute("data-classes"))
+            selected.setAttribute("data-classes", item.getAttribute("data-classes"));
+            selected.setAttribute("data-classifier", item.getAttribute("data-classifier"));
+            
+            dropdown_class_configure(item.getAttribute("data-classes"))
         })
     }
 
@@ -73,8 +71,45 @@ function draw_classes_options(classes) {
         new_option.href = "#"
         new_option.textContent = class_name
         new_option.dataset.value = class_name
+        new_option.classList.add("obj-custom-option", "hover:tw-bg-[#b2b2b2]")
 
         classes_options.appendChild(new_option)
     })
     
+}
+
+
+function dropdown_class_configure(classes) {
+    clean_nodes_in_dom(document.getElementById("classes_options"))
+    draw_classes_options(classes)
+    add_class_items_functionality(document.getElementById("classes_options"))
+}
+
+
+function add_class_items_functionality(options) {
+
+    let selected = document.getElementById("class_selected")
+
+    for (let item of options.querySelectorAll(".obj-custom-option")) {
+
+        item.addEventListener('click', () => { 
+            withdraw_selected_item(options)
+            change_selected_item(item)
+            selected.textContent = item.textContent;
+            selected.setAttribute("data-value", item.getAttribute("data-value"));
+        })
+    }
+}
+
+function withdraw_selected_item(options) {
+    for (let item of options.querySelectorAll(".obj-custom-option")) {
+        if (item.classList.contains('obj-selected')) {
+            item.classList.remove('obj-selected');
+        }
+    }
+}
+
+
+function change_selected_item(item) {
+    item.classList.add('obj-selected');
 }
