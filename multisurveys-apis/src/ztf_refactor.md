@@ -92,3 +92,15 @@ using
 ```
 from ..services.idmapper.idmapper import encode_ids
 in the routes functions to decode the id.
+
+
+
+## Services
+
+Listado de los servicios que se verán afectados por los cambios a implementar:
+
+1. Explorer
+
+2. Cliente de Python
+
+3. SN Hunter
