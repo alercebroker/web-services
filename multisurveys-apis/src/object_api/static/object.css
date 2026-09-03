@@ -207,6 +207,15 @@
   color-scheme: light;
 }
 
+html {
+  /* Tailwind Plus Elements locks background scroll (overflow:hidden)
+       and adds a compensating padding-right to html whenever a popover/
+       el-menu/el-dialog opens. Both applied incorrectly here, so force
+       them off. */
+  overflow: visible !important;
+  padding-right: 0 !important;
+}
+
 .tw-preflight .tw-sr-only{
   position: absolute;
   width: 1px;
@@ -425,10 +434,6 @@
   margin-bottom: 1rem;
 }
 
-.tw-preflight .-tw-mr-1{
-  margin-right: -0.25rem;
-}
-
 .tw-preflight .tw-mb-1{
   margin-bottom: 0.25rem;
 }
@@ -551,11 +556,6 @@
 
 .tw-preflight .tw-hidden{
   display: none;
-}
-
-.tw-preflight .tw-size-5{
-  width: 1.25rem;
-  height: 1.25rem;
 }
 
 .tw-preflight .tw-size-auto{
@@ -825,6 +825,10 @@
   width: 100%;
 }
 
+.tw-preflight .tw-w-52{
+  width: 13rem;
+}
+
 .tw-preflight .tw-min-w-\[200px\]{
   min-width: 200px;
 }
@@ -836,6 +840,14 @@
 .tw-preflight .tw-min-w-max{
   min-width: -moz-max-content;
   min-width: max-content;
+}
+
+.tw-preflight .tw-min-w-52{
+  min-width: 13rem;
+}
+
+.tw-preflight .tw-max-w-52{
+  max-width: 13rem;
 }
 
 .tw-preflight .tw-max-w-\[40\%\]{
@@ -856,6 +868,10 @@
 
 .tw-preflight .tw-max-w-none{
   max-width: none;
+}
+
+.tw-preflight .tw-max-w-md{
+  max-width: 28rem;
 }
 
 .tw-preflight .tw-flex-1{
@@ -880,10 +896,6 @@
 
 .tw-preflight .tw-origin-center{
   transform-origin: center;
-}
-
-.tw-preflight .tw-origin-top-right{
-  transform-origin: top right;
 }
 
 .tw-preflight .-tw-translate-y-1{
@@ -1031,11 +1043,6 @@
 
 .tw-preflight .tw-gap-4{
   gap: 1rem;
-}
-
-.tw-preflight .tw-gap-x-1\.5{
-  -moz-column-gap: 0.375rem;
-       column-gap: 0.375rem;
 }
 
 .tw-preflight .tw-gap-x-2{
@@ -1744,14 +1751,6 @@
 .tw-preflight .tw-outline-none{
   outline: 2px solid transparent;
   outline-offset: 2px;
-}
-
-.tw-preflight .tw-outline-1{
-  outline-width: 1px;
-}
-
-.tw-preflight .tw-outline-black\/5{
-  outline-color: rgb(0 0 0 / 0.05);
 }
 
 .tw-preflight .tw-transition{
@@ -3002,6 +3001,10 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
 
   .tw-preflight .lg\:tw-w-\[85\%\]{
     width: 85%;
+  }
+
+  .tw-preflight .lg\:tw-w-52{
+    width: 13rem;
   }
 
   .tw-preflight .lg\:tw-max-w-\[458px\]{
