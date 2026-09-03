@@ -672,10 +672,6 @@ html {
   height: 1px;
 }
 
-.tw-preflight .tw-max-h-60{
-  max-height: 15rem;
-}
-
 .tw-preflight .tw-max-h-\[200px\]{
   max-height: 200px;
 }
@@ -691,6 +687,10 @@ html {
 
 .tw-preflight .tw-max-h-none{
   max-height: none;
+}
+
+.tw-preflight .tw-max-h-60{
+  max-height: 15rem;
 }
 
 .tw-preflight .tw-min-h-0{
@@ -829,6 +829,10 @@ html {
   width: 100%;
 }
 
+.tw-preflight .tw-w-52{
+  width: 13rem;
+}
+
 .tw-preflight .tw-min-w-\[200px\]{
   min-width: 200px;
 }
@@ -840,6 +844,14 @@ html {
 .tw-preflight .tw-min-w-max{
   min-width: -moz-max-content;
   min-width: max-content;
+}
+
+.tw-preflight .tw-min-w-52{
+  min-width: 13rem;
+}
+
+.tw-preflight .tw-max-w-52{
+  max-width: 13rem;
 }
 
 .tw-preflight .tw-max-w-\[40\%\]{
@@ -860,6 +872,10 @@ html {
 
 .tw-preflight .tw-max-w-none{
   max-width: none;
+}
+
+.tw-preflight .tw-max-w-md{
+  max-width: 28rem;
 }
 
 .tw-preflight .tw-flex-1{
@@ -1109,6 +1125,10 @@ html {
 
 .tw-preflight .tw-overflow-y-auto{
   overflow-y: auto;
+}
+
+.tw-preflight .tw-overscroll-contain{
+  overscroll-behavior: contain;
 }
 
 .tw-preflight .tw-truncate{
@@ -2987,12 +3007,12 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
     width: 25%;
   }
 
-  .tw-preflight .lg\:tw-w-52{
-    width: 13rem;
-  }
-
   .tw-preflight .lg\:tw-w-\[85\%\]{
     width: 85%;
+  }
+
+  .tw-preflight .lg\:tw-w-52{
+    width: 13rem;
   }
 
   .tw-preflight .lg\:tw-max-w-\[458px\]{

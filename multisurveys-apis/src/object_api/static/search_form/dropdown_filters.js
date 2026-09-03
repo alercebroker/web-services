@@ -60,7 +60,7 @@ export class Dropdown {
 
 
 export function restart_dropdown(selected_element, options_container) {
-    selected_element.textContent = selected_element.dataset.placeholder;
+    selected_element.textContent = "";
     selected_element.dataset.value = "";
     clean_nodes_in_dom(options_container)
 }   
