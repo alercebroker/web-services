@@ -77,7 +77,8 @@
                             </div>
                         </div> #}
                         {{dropdown(
-                            placeholder="Classifier", selected_id="classifiers_selected", options_id="classifiers_options"
+                            placeholder="Classifier", selected_id="classifiers_selected", options_id="classifiers_options",
+                            classifier_container_id="classifier_container"
                         )}}
                     </div>
 
@@ -100,7 +101,9 @@
 
                         {{dropdown(
                             placeholder="Class",
-                            selected_id="class_selected", options_id="classes_options")}}
+                            selected_id="class_selected", options_id="classes_options",
+                            classifier_container_id="class_container"
+                        )}}
                     </div>
                     
                     <div id="probability_container" class="tw-col-span-12">

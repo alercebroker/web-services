@@ -1,6 +1,6 @@
 import { clean_nodes_in_dom } from "../ui_helpers.js";
 import { draw_classes_options } from "../draw_elements.js";
-
+import { switch_arrow_icon } from "../ui_helpers.js";
 
 export function create_dinamic_dropdown() {
     // se seleccionan todos los dropdowns
@@ -48,7 +48,8 @@ export function add_classifiers_items_functionality(selected, options) {
         item.addEventListener('click', () => {
 
             withdraw_selected_item(options)
-            change_selected_item(item)
+            change_selected_item(item) 
+            switch_arrow_icon(document.getElementById("classifier_container"))
 
             selected.textContent = item.textContent;
 
@@ -80,6 +81,7 @@ function add_class_items_functionality(options) {
         item.addEventListener('click', () => { 
             withdraw_selected_item(options)
             change_selected_item(item)
+            switch_arrow_icon(document.getElementById("class_container"))
             selected.textContent = item.textContent;
             selected.setAttribute("data-value", item.getAttribute("data-value"));
         })

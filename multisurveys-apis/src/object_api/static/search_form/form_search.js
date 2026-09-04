@@ -277,7 +277,7 @@ export function init() {
   window.send_form_Data = send_form_Data
   window.send_pagination_data = send_pagination_data
   window.send_order_data = send_order_data
-
+  window.switch_arrow_icon = switch_arrow_icon
   setTimeout(() => {
     restore_form_from_url()
   }, 200)
