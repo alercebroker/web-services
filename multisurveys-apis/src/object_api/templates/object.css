@@ -46,7 +46,7 @@
 
   }
 
-  .obj-surveys-unselect{
+  .obj-survey-unselect{
     opacity: 0.5;
     text-align: center;
   }
@@ -176,6 +176,15 @@
   
   .tw-scheme-light {
     color-scheme: light;
+  }
+
+  html {
+    /* Tailwind Plus Elements locks background scroll (overflow:hidden)
+       and adds a compensating padding-right to html whenever a popover/
+       el-menu/el-dialog opens. Both applied incorrectly here, so force
+       them off. */
+    overflow: visible !important;
+    padding-right: 0 !important;
   }
 
 }

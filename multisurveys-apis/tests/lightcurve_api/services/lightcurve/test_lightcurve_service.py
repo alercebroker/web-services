@@ -1,5 +1,5 @@
 from lightcurve_api.services import lightcurve_service
-from db_plugins.db.sql._connection import PsqlDatabase
+from db_plugins.db.sql._connection_pipeline import PsqlDatabase
 from conftest import _generate_lsst_detection
 
 

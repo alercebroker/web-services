@@ -1,5 +1,5 @@
 from sqlalchemy import text
-from db_plugins.db.sql._connection import PsqlDatabase
+from db_plugins.db.sql._connection_pipeline import PsqlDatabase
 
 
 def create_q3c_idx(db: PsqlDatabase):

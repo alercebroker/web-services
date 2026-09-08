@@ -1,6 +1,6 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import MagStat, LsstDiaObject
+from db_plugins.db.sql.models_pipeline import MagStat, LsstDiaObject
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 

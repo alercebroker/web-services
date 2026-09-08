@@ -1,6 +1,6 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import Classifier, Taxonomy
+from db_plugins.db.sql.models_pipeline import Classifier, Taxonomy
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -34,13 +34,14 @@ def get_classifier_by_name(
 
 
 def get_all_classifiers(
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None, survey_id: str | None = None
 ):
     """
     Retrieves all classifiers.
 
     Args:
         session_factory (Callable[..., AbstractContextManager[Session]] | None, optional): A factory function to create a database session. Defaults to None.
+        survey_id (str | None, optional): The survey ID to filter classifiers. Defaults to None.
 
     Returns:
         list: List of all classifiers.
@@ -61,7 +62,6 @@ def get_all_classifiers(
                 Taxonomy,
                 Classifier.classifier_id == Taxonomy.classifier_id,
             )
-            .where(Classifier.tid == 1)  # 1 = lsst
             .order_by(Classifier.classifier_name.asc(), Taxonomy.order.asc())
         )
         result = session.execute(stmt)

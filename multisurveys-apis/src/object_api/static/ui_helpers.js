@@ -66,20 +66,33 @@ function switch_arrow_icon(item){
 
 
 function survey_emphasize(btn){
-  document.getElementById("survey").dataset.survey = btn.textContent.toLowerCase()
-  document.querySelector('.obj-survey-selected').classList.remove('obj-survey-selected')
-  btn.classList.add('obj-survey-selected')
-  btn.classList.remove('obj-surveys-unselect')
-
-  surveys_blur_items()
+  update_survey_container_value(btn)
+  blur_all_surveys_items()
+  emphasize_survey_item(btn)
 }
 
-function surveys_blur_items(){
+
+function update_survey_container_value(btn){
+  document.getElementById("survey").dataset.survey = btn.textContent.toLowerCase()
+}
+
+
+function emphasize_survey_item(btn){
+  btn.classList.add('obj-survey-selected')
+  btn.classList.remove('obj-survey-unselect')
+}
+
+function blur_all_surveys_items(){
   let surveys_items = [...document.querySelectorAll('#survey span')]
 
   surveys_items.forEach((e) => {
-    if(!e.classList.contains('obj-survey-selected') && !e.classList.contains('obj-surveys-unselect')){
-      e.classList.add('obj-surveys-unselect')
+
+    if(e.classList.contains('obj-survey-selected')){
+      e.classList.remove('obj-survey-selected')
+    }
+
+    if(!e.classList.contains('obj-survey-unselect')){
+      e.classList.add('obj-survey-unselect')
     }
   })
 }
@@ -147,6 +160,13 @@ function clean_oids_container(father_element){
 }
 
 
+function clean_nodes_in_dom(father_element){
+  while (father_element.lastChild) {
+    father_element.removeChild(father_element.lastChild)
+  }
+}
+
+
 export {
   display, 
   highlight_text, 
@@ -157,5 +177,6 @@ export {
   check_radio_consearch, 
   switch_arrow_icon, 
   delete_oid_in_container, 
-  clean_oids_container
+  clean_oids_container,
+  clean_nodes_in_dom
 }

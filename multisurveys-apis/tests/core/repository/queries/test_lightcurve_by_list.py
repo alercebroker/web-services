@@ -3,7 +3,7 @@ from core.repository.queries import non_detections as non_detection_repository
 from core.repository.queries import (
     forced_photometry as forced_photometry_repository,
 )
-from db_plugins.db.sql.models import (
+from db_plugins.db.sql.models_pipeline import (
     Detection,
     ForcedPhotometry,
     ZtfDetection,
@@ -75,7 +75,7 @@ def test_get_detections_by_list(db, faker: Faker):
                     band=1,
                 )
             )
-            dets.append(ZtfDetection(oid=oid, sid=1, measurement_id=i + 1))
+            dets.append(ZtfDetection(oid=oid, measurement_id=i + 1))
         # have one additional detection from other survey
         dets.append(
             LsstDetection(
@@ -163,7 +163,6 @@ def test_get_non_detections_by_list(db, faker: Faker):
             session.add(
                 ZtfNonDetection(
                     oid=123,
-                    sid=1,
                     band=1,
                     mjd=faker.unique.pyfloat(min_value=59000, max_value=60000),
                     diffmaglim=faker.pyfloat(min_value=20, max_value=25),
@@ -216,7 +215,6 @@ def test_get_forced_photometry_by_list(db, faker: Faker):
             session.add(
                 ZtfForcedPhotometry(
                     oid=123,
-                    sid=1,
                     measurement_id=i + 1,
                     mag=1,
                     e_mag=1,

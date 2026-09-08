@@ -246,7 +246,7 @@ class ZtfObjectProbability(BaseModel):
     stellar: bool
     class_name: str
     classifier_name: str
-    classfier_version: str | None = None
+    classifier_version: str | None = None
     probability: float
     ranking: int
 

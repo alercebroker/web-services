@@ -1,6 +1,6 @@
 from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import Taxonomy, Probability
+from db_plugins.db.sql.models_pipeline import Taxonomy, Probability
 from sqlalchemy.orm import Session, aliased
 from sqlalchemy import select
 
