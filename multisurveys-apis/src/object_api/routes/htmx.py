@@ -15,7 +15,6 @@ from ..services.validations import (
     probability_validation,
 )
 from ..services.tns_service import get_tns
-# from ..services.idmapper.idmapper import encode_ids
 from core.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
