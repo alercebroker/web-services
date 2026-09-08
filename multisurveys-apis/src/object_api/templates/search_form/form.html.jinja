@@ -47,35 +47,6 @@
 
                     <!--select classifiers-->
                     <div id="classifiers_wrapper" class="tw-col-span-12 lg:tw-col-span-6">
-                        {# <div id="classifiers_list_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
-                            <div id="classifiers_list" class="obj-select__trigger tw-flex tw-items-center tw-justify-between">
-                                <span
-                                id="classifier"
-                                contenteditable="true"
-                                class="placeholder-span"
-                                data-placeholder="Classifier"
-                                data-classes=""
-                                data-classifier=''
-                                hx-get="{{API_URL}}/htmx/classes_select"
-                                hx-trigger="change"
-                                hx-target="#classes_options"
-                                hx-swap="innerHTML"
-                                hx-vals='js:{...send_classes_data()}'></span>
-                                <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
-                            </div>
-                            <div id="classifiers_options" class="obj-custom-options">
-                                <span class="obj-custom-option obj-selected"  data-value=""></span>
-                                {% for value in classifiers%}
-                                    <span 
-                                    class="obj-custom-option hover:tw-bg-[#b2b2b2]" 
-                                    data-classes='{{value.classes}}'
-                                    data-classifier='{{value.classifier_name}}'
-                                    >
-                                    {{value.formated_name}}
-                                    </span>
-                                {% endfor %}
-                            </div>
-                        </div> #}
                         {{dropdown(
                             placeholder="Classifier", selected_id="classifiers_selected", options_id="classifiers_options",
                             classifier_container_id="classifier_container"
@@ -84,21 +55,6 @@
 
                     <!--select classes-->
                     <div class="obj-select-wrapper tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12 sm:tw-col-span-12">
-                        {# <div id="classes_list_container" class="obj-select tw-border-b tw-border-b-[#757575] hover:tw-border-b-white">
-                            <div id="classes_list" class="obj-select__trigger tw-flex tw-items-center tw-justify-between">
-                                <span
-                                id="class"                   
-                                class="placeholder-span"
-                                data-placeholder="Class"
-                                data-value=""></span>
-                                <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
-                            </div>
-                            
-                            <div id="classes_options" class="">
-                            <!--HTMX CLASSES OPTIONS--->
-                            </div>
-                        </div> #}
-
                         {{dropdown(
                             placeholder="Class",
                             selected_id="class_selected", options_id="classes_options",
