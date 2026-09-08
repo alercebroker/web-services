@@ -60,8 +60,6 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
             "corrected": "=",
             "stellar": "-",
             "detections": object_data["n_det"],
-            # "corrected": "Yes" if object_data["corrected"] else "No",
-            # "stellar": "Yes" if object_data["stellar"] else "No",
             "nonDetections": object_data["n_non_det"],
             "discoveryDateMJD": object_data["firstmjd"],
             "lastDetectionMJD": object_data["lastmjd"],
@@ -108,20 +106,6 @@ async def objects_form(request: Request, survey_id: str = None):
         return templates.TemplateResponse(
             name="search_form/form.html.jinja",
             context={"request": request, "classifiers": classifiers},
-        )
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
-
-
-@router.get("/htmx/classes_select", response_class=HTMLResponse)
-async def select_classes_classifier(request: Request, classifier_classes: list[str] = Query(...)):
-    try:
-        classes = classifier_classes
-
-        return templates.TemplateResponse(
-            name="search_form/dependent_select.html.jinja",
-            context={"request": request, "classes": classes},
         )
     except Exception:
         traceback.print_exc()
