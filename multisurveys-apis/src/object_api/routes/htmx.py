@@ -127,7 +127,7 @@ async def select_classes_classifier(request: Request, classifier_classes: list[s
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
 
-import pprint
+
 @router.get("/htmx/list_objects", response_class=HTMLResponse)
 def objects_table(
     request: Request,
@@ -187,7 +187,7 @@ def objects_table(
                 firstmjd=firstmjd,
                 lastmjd=lastmjd,
             )
-            pprint.pprint(filters)
+
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
 
             pagination = PaginationArgs(page=page, page_size=page_size, count=count)

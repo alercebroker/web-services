@@ -1,6 +1,6 @@
 import { draw_dropdown_options } from "../draw_elements.js";
-import { clean_nodes_in_dom } from "../ui_helpers.js";
-import { add_classifiers_items_functionality } from "./dinamic_select.js";
+import { clean_nodes_in_dom, switch_arrow_icon } from "../ui_helpers.js";
+import { draw_classes_options } from "../draw_elements.js";
 
 
 export class Dropdown {
@@ -81,4 +81,64 @@ function dropdown_classifiers_options_configure(classifiers) {
     draw_dropdown_options(classifiers, document.getElementById("classifiers_options"));
     
     add_classifiers_items_functionality(document.getElementById("classifiers_selected"), document.getElementById("classifiers_options"));
+}
+
+function add_classifiers_items_functionality(selected, options) {
+
+    for (let item of options.querySelectorAll(".obj-custom-option")) {
+
+        item.addEventListener('click', () => {
+
+            withdraw_selected_item(options)
+            change_selected_item(item) 
+            switch_arrow_icon(document.getElementById("classifier_container"))
+
+            selected.textContent = item.textContent;
+
+            selected.setAttribute("data-classes", item.getAttribute("data-classes"));
+            selected.setAttribute("data-classifier", item.getAttribute("data-classifier"));
+            
+            dropdown_classes_configure(item.getAttribute("data-classes"))
+
+        })
+    }
+
+
+}
+
+
+function dropdown_classes_configure(classes) {
+    clean_nodes_in_dom(document.getElementById("classes_options"))
+    draw_classes_options(classes.split(","))
+    add_class_items_functionality(document.getElementById("classes_options"))
+}
+
+
+function add_class_items_functionality(options) {
+
+    let selected = document.getElementById("class_selected")
+
+    for (let item of options.querySelectorAll(".obj-custom-option")) {
+
+        item.addEventListener('click', () => { 
+            withdraw_selected_item(options)
+            change_selected_item(item)
+            switch_arrow_icon(document.getElementById("class_container"))
+            selected.textContent = item.textContent;
+            selected.setAttribute("data-value", item.getAttribute("data-value"));
+        })
+    }
+}
+
+function withdraw_selected_item(options) {
+    for (let item of options.querySelectorAll(".obj-custom-option")) {
+        if (item.classList.contains('obj-selected')) {
+            item.classList.remove('obj-selected');
+        }
+    }
+}
+
+
+function change_selected_item(item) {
+    item.classList.add('obj-selected');
 }

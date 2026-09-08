@@ -6,8 +6,7 @@ import { display, highlight_text, split_oids, set_oids_in_container, survey_emph
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, send_form_Data } from "./api_payload_helpers.js"
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
-import { create_dinamic_dropdown, add_classifiers_items_functionality } from "./dinamic_select.js";
-import { Dropdown, restart_dropdown,init_classifiers_dropdown } from "./dropdown_filters.js";
+import { Dropdown, restart_dropdown, init_classifiers_dropdown } from "./dropdown_config.js";
 
 
 let currentStates = null
@@ -82,30 +81,6 @@ export function init() {
     highlight_text(conesearch_filters)
     display(item_name)
   })
-
-  // classifiers_list.addEventListener("click", () => {
-  //   item_name = classifiers_list.id + "_container"
-  //   switch_arrow_icon(classifiers_list)
-  //   highlight_text(classifiers_list)
-  // })
-
-  // classifiers_options.addEventListener("click", () => {
-  //   item_name = classifiers_list.id + "_container"
-  //   switch_arrow_icon(classifiers_list)
-  //   highlight_text(classifiers_list)
-  // })
-
-  // classes_list.addEventListener("click", () => {
-  //   item_name = classes_list.id + "_container"
-  //   switch_arrow_icon(classes_list)
-  //   highlight_text(classes_list)
-  // })
-
-  // classes_options.addEventListener("click", () => {
-  //   item_name = classes_list.id + "_container"
-  //   switch_arrow_icon(classes_list)
-  //   highlight_text(classes_list)
-  // })
 
   min_date_time_text.addEventListener("click", () => {
     item_name = min_date_time_text.id + "_container"
