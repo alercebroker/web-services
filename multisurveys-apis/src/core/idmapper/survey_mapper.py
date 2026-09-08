@@ -1,9 +1,8 @@
-
-
 SURVEY_IDS = {
     "ztf": 0,
     "lsst": 1,
 }
+
 
 def get_survey_id(survey_name: str):
     """
@@ -25,7 +24,7 @@ def get_survey_id(survey_name: str):
         If the survey name is not supported.
     """
     survey_name = survey_name.lower()
-    
+
     if survey_name not in SURVEY_IDS:
         raise ValueError(f"Unsupported survey: {survey_name}")
 

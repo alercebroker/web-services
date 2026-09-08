@@ -9,8 +9,7 @@ from .parsers import parse_classifiers
 
 
 def get_classifiers(
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
-    survey_id: str | None = None
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None, survey_id: str | None = None
 ):
     """Retrieves all classifiers from the database
 

@@ -99,7 +99,7 @@ async def objects_form(request: Request, survey_id: str = None):
         session = request.app.state.psql_session
 
         if survey_id is None:
-            survey_id = 'lsst'
+            survey_id = "lsst"
 
         classifiers = get_tidy_classifiers(session, survey_id)
 

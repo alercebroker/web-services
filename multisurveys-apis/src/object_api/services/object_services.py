@@ -1,7 +1,6 @@
 from core.repository.queries.classifiers import get_all_classifiers
 from classifier_api.services.classifiers import get_classifiers
 from src.core.idmapper.survey_mapper import get_survey_id
-from .classifiers_utils import sort_classifiers
 from core.repository.queries.objects import (
     query_get_objects,
     query_object_by_id,
@@ -18,7 +17,6 @@ from .parsers import (
 
 
 def get_object_by_id(oid, survey_id: str, session_ms, return_survey_extra: bool = False):
-
     oid_encode = encode_ids(survey_id, [oid])
     object_model = query_object_by_id(session_ms, int(oid_encode[0]), survey_id)
 
@@ -49,7 +47,5 @@ def get_tidy_classifiers(session_ms, survey_id: str):
 
     classifiers = get_classifiers(session_ms, survey_id_mapped)
     classifiers = parse_to_json_classifiers(classifiers)
-    #classifiers = sort_classifiers(classifiers, survey_id)
-
 
     return classifiers
