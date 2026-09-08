@@ -1,12 +1,12 @@
 import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "../../libraries/AstroDates/AstroDates.js"
 import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "../../libraries/moment/time.js"
 import { handle_error } from "../error_handler.js";
-import { draw_oids_tags } from "../draw_elements.js";
-import { display, highlight_text, split_oids, set_oids_in_container, survey_emphasize, switch_arrow_icon, clean_oids_container } from "../ui_helpers.js";
+import { draw_dropdown_options, draw_oids_tags } from "../draw_elements.js";
+import { display, highlight_text, split_oids, set_oids_in_container, survey_emphasize, switch_arrow_icon, clean_oids_container, clean_nodes_in_dom } from "../ui_helpers.js";
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, send_form_Data } from "./api_payload_helpers.js"
 import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
-import { create_dinamic_dropdown } from "./dinamic_select.js";
+import { Dropdown, restart_dropdown, init_classifiers_dropdown } from "./dropdown_config.js";
 
 
 let currentStates = null
@@ -20,6 +20,10 @@ export function init() {
     }, 100)
     currentStates = null
   }
+
+  let classifiers_data = JSON.parse(document.getElementById("form-data").textContent);
+  let Dropdown_classifiers = new Dropdown(classifiers_data.classifiers)
+
 
   let item_name = ""
   let minDate = ""
@@ -78,30 +82,6 @@ export function init() {
     display(item_name)
   })
 
-  classifiers_list.addEventListener("click", () => {
-    item_name = classifiers_list.id + "_container"
-    switch_arrow_icon(classifiers_list)
-    highlight_text(classifiers_list)
-  })
-
-  classifiers_options.addEventListener("click", () => {
-    item_name = classifiers_list.id + "_container"
-    switch_arrow_icon(classifiers_list)
-    highlight_text(classifiers_list)
-  })
-
-  classes_list.addEventListener("click", () => {
-    item_name = classes_list.id + "_container"
-    switch_arrow_icon(classes_list)
-    highlight_text(classes_list)
-  })
-
-  classes_options.addEventListener("click", () => {
-    item_name = classes_list.id + "_container"
-    switch_arrow_icon(classes_list)
-    highlight_text(classes_list)
-  })
-
   min_date_time_text.addEventListener("click", () => {
     item_name = min_date_time_text.id + "_container"
     display(item_name)
@@ -145,10 +125,20 @@ export function init() {
 
   ztf_btn.addEventListener("click", () => {
     survey_emphasize(ztf_btn)
+    restart_dropdown(document.getElementById("classifiers_selected"), document.getElementById("classifiers_options"))
+
+    restart_dropdown(document.getElementById("class_selected"), document.getElementById("classes_options"))
+
+    init_classifiers_dropdown(Dropdown_classifiers, "ztf")
   })
 
   lsst_btn.addEventListener("click", () => {
     survey_emphasize(lsst_btn)
+    restart_dropdown(document.getElementById("classifiers_selected"), document.getElementById("classifiers_options"))
+
+    restart_dropdown(document.getElementById("class_selected"), document.getElementById("classes_options"))
+
+    init_classifiers_dropdown(Dropdown_classifiers, "lsst")
   })
 
   radio_HMS.addEventListener("click", () => {
@@ -251,7 +241,7 @@ export function init() {
 
 
   //dropdown
-  create_dinamic_dropdown()
+  init_classifiers_dropdown(Dropdown_classifiers, document.getElementById("survey").dataset.survey)
 
   // handle errors
   handle_error()
@@ -262,7 +252,7 @@ export function init() {
   window.send_form_Data = send_form_Data
   window.send_pagination_data = send_pagination_data
   window.send_order_data = send_order_data
-
+  window.switch_arrow_icon = switch_arrow_icon
   setTimeout(() => {
     restore_form_from_url()
   }, 200)

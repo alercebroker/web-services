@@ -1,5 +1,5 @@
 from typing import List, cast
-from db_plugins.db.sql.models import Object
+from db_plugins.db.sql.models_pipeline import Object
 
 from lightcurve_api.models.object import ApiObject
 from core.idmapper.idmapper import decode_masterid

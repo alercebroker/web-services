@@ -15,7 +15,7 @@ from ..services.validations import (
     probability_validation,
 )
 from ..services.tns_service import get_tns
-from ..services.idmapper.idmapper import encode_ids
+from core.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
 from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
@@ -55,13 +55,11 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
-            "object": str(object_data["oid"]),
+            "object": str(oid),
             "survey_id": survey_id,
             "corrected": "=",
             "stellar": "-",
             "detections": object_data["n_det"],
-            # "corrected": "Yes" if object_data["corrected"] else "No",
-            # "stellar": "Yes" if object_data["stellar"] else "No",
             "nonDetections": object_data["n_non_det"],
             "discoveryDateMJD": object_data["firstmjd"],
             "lastDetectionMJD": object_data["lastmjd"],
@@ -96,28 +94,18 @@ async def tns_info(request: Request, ra: float, dec: float):
 
 
 @router.get("/htmx/search_objects/", response_class=HTMLResponse)
-async def objects_form(request: Request):
+async def objects_form(request: Request, survey_id: str = None):
     try:
         session = request.app.state.psql_session
-        classifiers = get_tidy_classifiers(session)
+
+        if survey_id is None:
+            survey_id = "lsst"
+
+        classifiers = get_tidy_classifiers(session, survey_id)
 
         return templates.TemplateResponse(
             name="search_form/form.html.jinja",
             context={"request": request, "classifiers": classifiers},
-        )
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
-
-
-@router.get("/htmx/classes_select", response_class=HTMLResponse)
-async def select_classes_classifier(request: Request, classifier_classes: list[str] = Query(...)):
-    try:
-        classes = classifier_classes
-
-        return templates.TemplateResponse(
-            name="search_form/dependent_select.html.jinja",
-            context={"request": request, "classes": classes},
         )
     except Exception:
         traceback.print_exc()

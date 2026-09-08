@@ -1,4 +1,4 @@
-from db_plugins.db.sql.models import Taxonomy
+from db_plugins.db.sql.models_pipeline import Taxonomy
 from sqlalchemy import select
 
 

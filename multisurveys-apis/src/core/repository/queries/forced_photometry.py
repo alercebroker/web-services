@@ -1,5 +1,5 @@
 from typing import Any, Callable, ContextManager, List, Tuple, Sequence
-from db_plugins.db.sql.models import (
+from db_plugins.db.sql.models_pipeline import (
     LsstForcedPhotometry,
     ZtfForcedPhotometry,
     ForcedPhotometry,

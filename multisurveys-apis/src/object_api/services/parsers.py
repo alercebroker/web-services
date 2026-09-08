@@ -1,4 +1,5 @@
 from fastapi.encoders import jsonable_encoder
+from core.idmapper.survey_mapper import get_survey_name
 from .statements_sql import (
     convert_conesearch_args,
     convert_filters_to_sqlalchemy_statement,
@@ -8,7 +9,7 @@ from .classifier_data_matcher import match_and_update_item_class
 from .classifiers_utils import format_classifier_name
 from ..models.object import ExportModel
 from .information_messages import get_info_message
-from .idmapper.idmapper import decode_ids
+from core.idmapper.idmapper import decode_ids
 
 
 class ModelDataParser:
@@ -124,6 +125,7 @@ def parse_to_json_classifiers(classifiers):
     for classifier in classifiers:
         item = jsonable_encoder(classifier)
         item["formated_name"] = format_classifier_name(item["classifier_name"])
+        item["survey_id"] = get_survey_name(item["survey_id"])
         res.append(item)
 
     return res

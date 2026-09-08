@@ -1,6 +1,6 @@
 from typing import Any, Callable, List, Sequence, Tuple
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models import ZtfNonDetection
+from db_plugins.db.sql.models_pipeline import ZtfNonDetection
 from sqlalchemy.orm import Session
 from sqlalchemy import Row, select
 

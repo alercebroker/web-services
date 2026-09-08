@@ -2,8 +2,8 @@ import os
 from typing import Tuple
 
 import pytest
-from db_plugins.db.sql._connection import PsqlDatabase
-from db_plugins.db.sql.models import (
+from db_plugins.db.sql._connection_pipeline import PsqlDatabase
+from db_plugins.db.sql.models_pipeline import (
     Detection,
     LsstDetection,
     Object,
@@ -185,7 +185,6 @@ def _generate_ztf_detection(faker: Faker, oid, idx) -> Tuple[Detection, ZtfDetec
         band=1,
     ), ZtfDetection(
         oid=oid,
-        sid=0,
         measurement_id=idx,
         magpsf=faker.pyfloat(min_value=15, max_value=25),
         sigmapsf=faker.pyfloat(min_value=0, max_value=10),
@@ -237,7 +236,6 @@ def _generate_lsst_detection(faker: Faker, oid, idx) -> Tuple[Detection, LsstDet
 def _generate_non_detection(faker: Faker, oid, idx):
     return ZtfNonDetection(
         oid=oid,
-        sid=0,
         band=1,
         mjd=faker.unique.pyfloat(min_value=59000, max_value=61000),
         diffmaglim=faker.pyfloat(min_value=0, max_value=10),
@@ -255,7 +253,6 @@ def _generate_ztf_forced_photometry(faker: Faker, oid, idx):
         band=1,
     ), ZtfForcedPhotometry(
         oid=oid,
-        sid=0,
         measurement_id=idx,
         mag=faker.pyfloat(min_value=15, max_value=25),
         e_mag=faker.pyfloat(min_value=0, max_value=10),
