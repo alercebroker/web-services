@@ -1,5 +1,5 @@
 from fastapi.encoders import jsonable_encoder
-from src.core.idmapper.survey_mapper import get_survey_name
+from core.idmapper.survey_mapper import get_survey_name
 from .statements_sql import (
     convert_conesearch_args,
     convert_filters_to_sqlalchemy_statement,
