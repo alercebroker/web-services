@@ -15,7 +15,8 @@ from ..services.validations import (
     probability_validation,
 )
 from ..services.tns_service import get_tns
-from ..services.idmapper.idmapper import encode_ids
+# from ..services.idmapper.idmapper import encode_ids
+from core.idmapper.idmapper import encode_ids
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
 from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
@@ -55,7 +56,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
-            "object": str(object_data["oid"]),
+            "object": str(oid),
             "survey_id": survey_id,
             "corrected": "=",
             "stellar": "-",

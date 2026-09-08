@@ -9,7 +9,7 @@ from .classifier_data_matcher import match_and_update_item_class
 from .classifiers_utils import format_classifier_name
 from ..models.object import ExportModel
 from .information_messages import get_info_message
-from .idmapper.idmapper import decode_ids
+from core.idmapper.idmapper import decode_ids
 
 
 class ModelDataParser:
