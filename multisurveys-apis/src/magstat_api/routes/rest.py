@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi import HTTPException
+from core.idmapper.idmapper import catalog_oid_to_masterid
 from ..services.magstats import get_magstats
 from .temporal_utils import mag_parser, parse_lsst_dia_objects_to_dict
 
@@ -13,7 +14,12 @@ async def ping():
 
 @router.get("/magstats")
 async def magstats(request: Request, oid: str, survey_id: str):
-    mag_stats_raw = get_magstats(oid, survey_id, session_factory=request.app.state.psql_session)
+    try:
+        master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    mag_stats_raw = get_magstats(master_id, survey_id, session_factory=request.app.state.psql_session)
 
     if survey_id == "ztf":
         magstats = mag_parser(mag_stats_raw)

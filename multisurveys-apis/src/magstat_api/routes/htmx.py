@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 from core.exceptions import ObjectNotFound
+from core.idmapper.idmapper import catalog_oid_to_masterid
 
 # from core.repository.queries.magstats import get_magstats_by_oid
 from ..services.magstats import get_magstats
@@ -37,7 +38,12 @@ async def object_mag_app(request: Request, oid: str, survey_id=None):
         )
 
     try:
-        mag_stats_raw = get_magstats(oid, survey_id, session_factory=request.app.state.psql_session)
+        master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
+    try:
+        mag_stats_raw = get_magstats(master_id, survey_id, session_factory=request.app.state.psql_session)
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object not found")
     if survey_id == "ztf":
