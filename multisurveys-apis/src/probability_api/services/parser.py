@@ -23,7 +23,7 @@ def parse_probability(probability_data, classifiers):
             "classifier_version": probability.classifier_version,
         }
 
-        if classifier_name != None:
+        if classifier_name is not None:
             parsed_probability.append(Probability(**model_dict))
 
     return parsed_probability
