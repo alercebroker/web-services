@@ -6,7 +6,8 @@ from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from ..services.parser import parse_grouped_probabilities
-from ..services.lsst_service import classifier_name_parser, sort_classifiers
+from ..services.lsst_service import classifier_name_parser, sort_classifiers, priorities_by_survey
+from core.idmapper.idmapper import encode_ids
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/probability_api/templates", autoescape=True, auto_reload=True)
@@ -17,12 +18,16 @@ templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8004")
 async def object_probability_app(
     request: Request,
     oid: str,
+    survey: str,
 ):
+    master_id = encode_ids(survey, [oid])
+
     classifier_list = get_classifiers(session_factory=request.app.state.psql_session)
-    classifier_list = sort_classifiers(classifier_list)
+    priorities = priorities_by_survey(survey)
+    classifier_list = sort_classifiers(classifier_list, priorities)
     class_options = classifier_name_parser(classifier_list)
 
-    prob_list = get_probability(oid, classifier_list, session_factory=request.app.state.psql_session)
+    prob_list = get_probability(int(master_id[0]), classifier_list, session_factory=request.app.state.psql_session)
     group_prob = parse_grouped_probabilities(prob_list)
 
     return templates.TemplateResponse(
