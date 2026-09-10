@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Probability(BaseModel):
-    classifier_name: str
+    classifier_name: str | None = None
     classifier_version: int
     class_name: str
     probability: float

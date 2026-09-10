@@ -14,18 +14,17 @@ def parse_probability(probability_data, classifiers):
     parsed_probability = []
 
     for probability, taxonomy in probability_data:
+        classifier_name = classifiers.get(probability.classifier_id)
         model_dict = {
-            "oid": probability.oid,
-            "class_id": probability.class_id,
-            "classifier_id": probability.classifier_id,
             "probability": probability.probability,
             "ranking": probability.ranking,
             "class_name": taxonomy.class_name,
-            "classifier_name": classifiers[probability.classifier_id],
+            "classifier_name": classifier_name,
             "classifier_version": probability.classifier_version,
         }
 
-        parsed_probability.append(Probability(**model_dict))
+        if classifier_name is not None:
+            parsed_probability.append(Probability(**model_dict))
 
     return parsed_probability
 
