@@ -4,14 +4,21 @@ from core.idmapper.idmapper import encode_ids
 from core.repository.queries.objects import (
     query_object_by_id,
 )
-from ..models.object import Object
+from ..models.object import Object, ObjectInformation
 from .parsers import parse_object
 
 
-def get_cross_data(oid:str, survey_id:str, session: Session):
+def get_cross_data(object_details: ObjectInformation, session: Session):
 
-    object = get_object_data(oid, survey_id, session)
+    object = get_object_data(object_details, session)
     cross = get_alerce_data(object.meanra, object.meandec, 20)
+
+
+    return cross
+
+
+def get_cross_for_frontend(object_details: ObjectInformation, session: Session):
+    cross = get_cross_data(object_details, session)
     cross_keys = get_keys(cross)
 
 
@@ -19,11 +26,12 @@ def get_cross_data(oid:str, survey_id:str, session: Session):
 
 
 
-def get_object_data(oid: str, survey: str, session: Session) -> Object:
-    master_oid = encode_ids(survey, [oid])[0]
+def get_object_data(object_details: ObjectInformation, session: Session) -> Object:
+    master_oid = encode_ids(object_details.survey, [object_details.oid])[0]
 
-    object_ztf, object = query_object_by_id(session, int(master_oid), survey)
+    object_ztf, object = query_object_by_id(session, int(master_oid), object_details.survey)
     object = parse_object(object)
+
 
     return object
 
@@ -48,5 +56,6 @@ def get_keys(data) -> list:
     response = []
     for i in range(len(data)):
         response.append(next(iter(data[i].keys())))
+
 
     return response
