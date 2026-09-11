@@ -25,6 +25,6 @@ def get_alerce_data(ra: float, dec: float, radius: int) -> list[dict]:
     try:
         response = requests.get(base_url, params=params)
         return response.json()
-    
+
     except requests.RequestException as e:
         return f"Error: {str(e)}"

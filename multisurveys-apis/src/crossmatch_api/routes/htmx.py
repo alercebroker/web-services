@@ -19,7 +19,6 @@ async def object_mag_app(request: Request, oid: str, survey_id: str):
 
     cross, cross_keys = get_cross_for_frontend(object_details, session)
 
-
     return templates.TemplateResponse(
         name="crossmatch.html.jinja",
         context={
@@ -28,4 +27,3 @@ async def object_mag_app(request: Request, oid: str, survey_id: str):
             "crossKeys": cross_keys,
         },
     )
-

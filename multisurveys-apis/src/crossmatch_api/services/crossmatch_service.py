@@ -9,10 +9,8 @@ from .parsers import parse_object
 
 
 def get_cross_data(object_details: ObjectInformation, session: Session):
-
     object = get_object_data(object_details, session)
     cross = get_alerce_data(object.meanra, object.meandec, 20)
-
 
     return cross
 
@@ -21,9 +19,7 @@ def get_cross_for_frontend(object_details: ObjectInformation, session: Session):
     cross = get_cross_data(object_details, session)
     cross_keys = get_keys(cross)
 
-
     return cross, cross_keys
-
 
 
 def get_object_data(object_details: ObjectInformation, session: Session) -> Object:
@@ -31,7 +27,6 @@ def get_object_data(object_details: ObjectInformation, session: Session) -> Obje
 
     object_ztf, object = query_object_by_id(session, int(master_oid), object_details.survey)
     object = parse_object(object)
-
 
     return object
 
@@ -56,6 +51,5 @@ def get_keys(data) -> list:
     response = []
     for i in range(len(data)):
         response.append(next(iter(data[i].keys())))
-
 
     return response
