@@ -54,6 +54,7 @@ export function init() {
   // clicks events
   setup_filters_toggles()
   setup_time_toggles()
+  setup_time_pickers()
 
   clear_oids.addEventListener("click", () => {
     clean_oids_container(oids_container)
@@ -62,21 +63,6 @@ export function init() {
     oids_container.classList.add("tw-hidden")
   })
 
-  date_min.addEventListener("click", () => {
-    date_min.showPicker()
-  })
-
-  time_min.addEventListener("click", () => {
-    time_min.showPicker()
-  })
-
-  date_max.addEventListener("click", () => {
-    date_max.showPicker()
-  })
-
-  time_max.addEventListener("click", () => {
-    time_max.showPicker()
-  })
 
   ztf_btn.addEventListener("click", () => {
     survey_emphasize(ztf_btn)
@@ -291,6 +277,32 @@ function setup_time_toggles() {
     display("max_date_time_text_container")
   })
 }
+
+
+function setup_time_pickers() {
+  let date_min = document.getElementById("date_min")
+  let time_min = document.getElementById("time_min")
+  let date_max = document.getElementById("date_max")
+  let time_max = document.getElementById("time_max")
+
+
+  date_min.addEventListener("click", () => {
+    date_min.showPicker()
+  })
+
+  time_min.addEventListener("click", () => {
+    time_min.showPicker()
+  })
+
+  date_max.addEventListener("click", () => {
+    date_max.showPicker()
+  })
+
+  time_max.addEventListener("click", () => {
+    time_max.showPicker()
+  })
+}
+
 
 
 function reset_values() {
