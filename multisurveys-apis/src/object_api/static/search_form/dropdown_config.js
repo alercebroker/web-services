@@ -94,8 +94,6 @@ function add_classifiers_items_functionality(selected, options) {
             switch_arrow_icon(document.getElementById("classifier_container"))
 
             selected.textContent = item.textContent;
-
-            selected.setAttribute("data-classes", item.getAttribute("data-classes"));
             selected.setAttribute("data-classifier", item.getAttribute("data-classifier"));
             
             dropdown_classes_configure(item.getAttribute("data-classes"))
