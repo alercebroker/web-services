@@ -25,7 +25,6 @@ export function init() {
   let Dropdown_classifiers = new Dropdown(classifiers_data.classifiers)
 
 
-  let item_name = ""
   let minDate = ""
   let minDatetime = ""
   let dateUTC = ""
@@ -33,26 +32,18 @@ export function init() {
   let ztf_btn = document.getElementById("ztf_btn")
   let lsst_btn = document.getElementById("lsst_btn")
 
-  let general_filters = document.getElementById("general_filters")
-  let discovery_date_filters = document.getElementById("discovery_date_filters")
-  let conesearch_filters = document.getElementById("conesearch_filters")
-
   let clear_oids = document.getElementById("clear_oids_btn")
   let oids_container = document.getElementById("oids_container")
   let prob_range = document.getElementById("prob_range")
   let input_ids = document.getElementById("objectIds")
 
   let min_mjd = document.getElementById("min_mjd")
-  let min_date_time_text = document.getElementById("min_date_time_text")
   let date_min = document.getElementById("date_min")
   let time_min = document.getElementById("time_min")
-  let save_date = document.getElementById("save_date")
 
   let max_mjd = document.getElementById("max_mjd")
-  let max_date_time_text = document.getElementById("max_date_time_text")
   let date_max = document.getElementById("date_max")
   let time_max = document.getElementById("time_max")
-  let save_date_max = document.getElementById("save_date_max")
 
   let resolve_btn = document.getElementById("resolve_btn")
   let radio_HMS = document.getElementById("HMS/DMS")
@@ -61,44 +52,8 @@ export function init() {
 
 
   // clicks events
-  general_filters.addEventListener("click", () => {
-    item_name = general_filters.id + "_container"
-    switch_arrow_icon(general_filters)
-    highlight_text(general_filters)
-    display(item_name)
-  })
-
-  discovery_date_filters.addEventListener("click", () => {
-    item_name = discovery_date_filters.id + "_container"
-    switch_arrow_icon(discovery_date_filters)
-    highlight_text(discovery_date_filters)
-    display(item_name)
-  })
-
-  conesearch_filters.addEventListener("click", () => {
-    item_name = conesearch_filters.id + "_container"
-    switch_arrow_icon(conesearch_filters)
-    highlight_text(conesearch_filters)
-    display(item_name)
-  })
-
-  min_date_time_text.addEventListener("click", () => {
-    item_name = min_date_time_text.id + "_container"
-    display(item_name)
-  })
-
-  max_date_time_text.addEventListener("click", () => {
-    item_name = max_date_time_text.id + "_container"
-    display(item_name)
-  })
-
-  save_date.addEventListener("click", () => {
-    display("min_date_time_text_container")
-  })
-
-  save_date_max.addEventListener("click", () => {
-    display("max_date_time_text_container")
-  })
+  setup_filters_toggles()
+  setup_time_toggles()
 
   clear_oids.addEventListener("click", () => {
     clean_oids_container(oids_container)
@@ -281,9 +236,67 @@ export function elementReady(selector) {
 }
 
 
+function setup_filters_toggles() {
+  let general_filters = document.getElementById("general_filters")
+  let discovery_date_filters = document.getElementById("discovery_date_filters")
+  let conesearch_filters = document.getElementById("conesearch_filters")
+  let item_name = ""
+
+
+  general_filters.addEventListener("click", () => {
+    item_name = general_filters.id + "_container"
+    switch_arrow_icon(general_filters)
+    highlight_text(general_filters)
+    display(item_name)
+  })
+
+  discovery_date_filters.addEventListener("click", () => {
+    item_name = discovery_date_filters.id + "_container"
+    switch_arrow_icon(discovery_date_filters)
+    highlight_text(discovery_date_filters)
+    display(item_name)
+  })
+
+  conesearch_filters.addEventListener("click", () => {
+    item_name = conesearch_filters.id + "_container"
+    switch_arrow_icon(conesearch_filters)
+    highlight_text(conesearch_filters)
+    display(item_name)
+  })
+}
+
+
+function setup_time_toggles() {
+  let max_date_time_text = document.getElementById("max_date_time_text")
+  let min_date_time_text = document.getElementById("min_date_time_text")
+  let save_date_max = document.getElementById("save_date_max")
+  let save_date = document.getElementById("save_date")
+  let item_name = ""
+  
+  min_date_time_text.addEventListener("click", () => {
+    item_name = min_date_time_text.id + "_container"
+    display(item_name)
+  })
+
+  max_date_time_text.addEventListener("click", () => {
+    item_name = max_date_time_text.id + "_container"
+    display(item_name)
+  })
+
+  save_date.addEventListener("click", () => {
+    display("min_date_time_text_container")
+  })
+
+  save_date_max.addEventListener("click", () => {
+    display("max_date_time_text_container")
+  })
+}
+
+
 function reset_values() {
   window.history.pushState({}, document.title, "/")
 }
+
 
 function restore_states(currentStates) {
   let discoveryDate = document.getElementById('discovery_date_filters_container')
@@ -295,6 +308,7 @@ function restore_states(currentStates) {
     conesearch.classList.remove('tw-hidden')
   }
 }
+
 
 function get_states() {
   let discoveryDate = document.getElementById('discovery_date_filters_container')
