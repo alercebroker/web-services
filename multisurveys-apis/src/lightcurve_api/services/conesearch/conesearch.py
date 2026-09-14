@@ -144,20 +144,29 @@ def get_lightcurve_async(
             non_detections_executor = executor.submit(
                 lightcurve_service.get_non_detections_by_list, oids, survey_id, session_factory
             )
-            # forced_photometry_executor = executor.submit(
-            #     lightcurve_service.get_forced_photometry_by_list, oids, survey_id, session_factory
-            # )
+            forced_photometry_executor = executor.submit(
+                lightcurve_service.get_forced_photometry_by_list, oids, survey_id, session_factory
+            )
 
             detections_result = detections_executor.result()
             non_detections_result = non_detections_executor.result()
-            # forced_photometry_result_raw = forced_photometry_executor.result()
+            forced_photometry_result_raw = forced_photometry_executor.result()
 
-        # forced_photometry_result_filtered = [obs for obs in forced_photometry_result_raw if obs.psfFlux != 0.0]
+
+        forced_photometry_filtered = get_forced_photometry_filtered(forced_photometry_result_raw, survey_id)
 
         result.detections.extend(detections_result)
         result.non_detections.extend(non_detections_result)
-        # result.forced_photometry.extend(forced_photometry_result_filtered)
+        result.forced_photometry.extend(forced_photometry_filtered)
 
         return result, object_ids_by_survey
 
     return _get
+
+
+def get_forced_photometry_filtered(raw_forced_photometry, survey):
+
+    if survey != 'ztf':
+        return  [obs for obs in raw_forced_photometry if obs.psfFlux != 0.0]
+
+    return raw_forced_photometry
