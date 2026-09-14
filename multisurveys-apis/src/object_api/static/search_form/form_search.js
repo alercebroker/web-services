@@ -240,9 +240,6 @@ export function init() {
   })
 
 
-  //dropdown
-  init_classifiers_dropdown(Dropdown_classifiers, document.getElementById("survey").dataset.survey)
-
   // handle errors
   handle_error()
 
@@ -253,8 +250,11 @@ export function init() {
   window.send_pagination_data = send_pagination_data
   window.send_order_data = send_order_data
   window.switch_arrow_icon = switch_arrow_icon
+
+
   setTimeout(() => {
     restore_form_from_url()
+    init_classifiers_dropdown(Dropdown_classifiers, document.getElementById("survey").dataset.survey)
   }, 200)
 
 }

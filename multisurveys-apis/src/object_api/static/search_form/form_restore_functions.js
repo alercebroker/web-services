@@ -7,12 +7,10 @@ function restore_survey(urlParams) {
 
   if (survey) {
 
-    document.getElementById('survey').dataset.survey = survey
-
     if (survey === 'ztf') {
-      survey_emphasize(document.getElementById('ztf_btn'))
+      document.getElementById('ztf_btn').dispatchEvent(new Event('click'))
     } else if (survey === 'lsst') {
-      survey_emphasize(document.getElementById('lsst_btn'))
+      document.getElementById('lsst_btn').dispatchEvent(new Event('click'))
     }
   }
 
@@ -35,55 +33,31 @@ function restore_object_id(urlParams) {
 
 function restore_classifier(urlParams) {
 
-  const classifier = urlParams.get('classifier')
+  let classifier = urlParams.get('classifier')
 
   if (classifier) {
-    const classifierElement = document.getElementById('classifier')
+    let options = document.querySelectorAll('#classifiers_options .obj-custom-option')
 
-    const classifierOptions = document.querySelectorAll('#classifiers_options .obj-custom-option')
-    classifierOptions.forEach(option => {
-      if (option.dataset.classifier === classifier) {
 
-        classifierElement.setAttribute('data-classifier', option.dataset.classifier)
-        classifierElement.setAttribute('data-classes', option.dataset.classes)
-        classifierElement.textContent = option.textContent.trim()
-
-        document.querySelector('#classifiers_options .obj-custom-option.obj-selected')?.classList.remove('obj-selected')
-        option.classList.add('obj-selected')
-
-        classifierElement.dispatchEvent(new Event('change'))
+    options.forEach((option) => {
+      if (option.getAttribute('data-classifier') === classifier){
+        option.click()
       }
+
     })
   }
 }
 
 function restore_class(urlParams) {
 
-  const className = urlParams.get('class_name')
-  let classes_options = document.getElementById('classes_options')
+  let className = urlParams.get('class_name')
   if (className) {
-    classes_options.addEventListener('htmx:afterSwap', function handleClassesLoaded(event) {
-      if (event.detail.target.id === 'classes_options') {
-        const classOptions = document.querySelectorAll('#classes_options .obj-custom-option')
-        const classElement = document.getElementById('class')
 
-        classOptions.forEach(option => {
-          if (option.dataset.value === className) {
-            const previousSelected = document.querySelector('#classes_options .obj-custom-option.obj-selected')
-            if (previousSelected) {
-              previousSelected.classList.remove('obj-selected')
-            }
+    let options = document.querySelectorAll('#classes_options .obj-custom-option')
 
-            option.classList.add('obj-selected')
-
-            if (classElement) {
-              classElement.textContent = option.textContent.trim()
-              classElement.setAttribute('data-value', option.dataset.value)
-            }
-          }
-        })
-
-        classes_options.removeEventListener('htmx:afterSwap', handleClassesLoaded)
+    options.forEach((option) => {
+      if (option.getAttribute('data-value') === className){
+        option.click()
       }
     })
   }
