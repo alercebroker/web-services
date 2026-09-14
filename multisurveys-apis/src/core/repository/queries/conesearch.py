@@ -41,7 +41,7 @@ def conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
 def dummy_conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
     def _conesearch(args: Tuple[int64, float, int]) -> List[Object]:
         oid, radius, neighbors = args
-        stmt = select(Object).where(Object.oid == oid.item())
+        stmt = select(Object).where(Object.oid == oid)
         with session_factory() as session:
             result = session.execute(stmt, {"radius": radius}).all()
             return [row[0] for row in result]

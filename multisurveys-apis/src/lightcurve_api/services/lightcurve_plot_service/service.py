@@ -31,6 +31,7 @@ from lightcurve_api.services.period.service import compute_periodogram
 from ..conesearch.conesearch import conesearch_oid_lightcurve
 from .chart_point import ChartPoint
 from .result import Result
+from core.idmapper.idmapper import encode_ids
 
 
 DEFAULT_RADIUS = 30 / 3600
@@ -270,6 +271,9 @@ def get_lightcurve_data(oid: str, survey_id: str, session_factory: Callable[...,
     detections/non-detections/forced-photometry.  The periodogram is omitted here
     and computed lazily via get_periodogram_data() when the user enables fold mode.
     """
+    oid = encode_ids(survey_id, [oid])
+    oid = str(oid[0])
+
     empty = Result(
         {},
         Lightcurve(detections=[], non_detections=[], forced_photometry=[]),

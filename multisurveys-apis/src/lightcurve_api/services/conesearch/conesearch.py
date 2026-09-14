@@ -107,8 +107,7 @@ def conesearch_oid_lightcurve(
     return cast(
         Lightcurve,
         pipe(
-            idmapper.catalog_oid_to_masterid(survey_id, oid, True),
-            lambda oid: conesearch_oid(oid, radius, neighbors, session_factory),
+            conesearch_oid(oid, radius, neighbors, session_factory),
             get_lightcurve_async(
                 session_factory,
                 Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
@@ -145,19 +144,19 @@ def get_lightcurve_async(
             non_detections_executor = executor.submit(
                 lightcurve_service.get_non_detections_by_list, oids, survey_id, session_factory
             )
-            forced_photometry_executor = executor.submit(
-                lightcurve_service.get_forced_photometry_by_list, oids, survey_id, session_factory
-            )
+            # forced_photometry_executor = executor.submit(
+            #     lightcurve_service.get_forced_photometry_by_list, oids, survey_id, session_factory
+            # )
 
             detections_result = detections_executor.result()
             non_detections_result = non_detections_executor.result()
-            forced_photometry_result_raw = forced_photometry_executor.result()
+            # forced_photometry_result_raw = forced_photometry_executor.result()
 
-        forced_photometry_result_filtered = [obs for obs in forced_photometry_result_raw if obs.psfFlux != 0.0]
+        # forced_photometry_result_filtered = [obs for obs in forced_photometry_result_raw if obs.psfFlux != 0.0]
 
         result.detections.extend(detections_result)
         result.non_detections.extend(non_detections_result)
-        result.forced_photometry.extend(forced_photometry_result_filtered)
+        # result.forced_photometry.extend(forced_photometry_result_filtered)
 
         return result, object_ids_by_survey
 
