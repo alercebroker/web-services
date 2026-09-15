@@ -13,7 +13,6 @@ from lightcurve_api.services.conesearch.validation import (
     validate_coordinates_params,
     validate_oid_params,
 )
-from lightcurve_api.services.lightcurve_service import idmapper
 
 from .parser import parsesapi_objects
 from lightcurve_api.services import lightcurve_service
@@ -152,7 +151,6 @@ def get_lightcurve_async(
             non_detections_result = non_detections_executor.result()
             forced_photometry_result_raw = forced_photometry_executor.result()
 
-
         forced_photometry_filtered = get_forced_photometry_filtered(forced_photometry_result_raw, survey_id)
 
         result.detections.extend(detections_result)
@@ -165,8 +163,7 @@ def get_lightcurve_async(
 
 
 def get_forced_photometry_filtered(raw_forced_photometry, survey):
-
-    if survey != 'ztf':
-        return  [obs for obs in raw_forced_photometry if obs.psfFlux != 0.0]
+    if survey != "ztf":
+        return [obs for obs in raw_forced_photometry if obs.psfFlux != 0.0]
 
     return raw_forced_photometry
