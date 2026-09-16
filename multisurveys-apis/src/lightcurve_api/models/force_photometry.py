@@ -74,6 +74,8 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     def magnitude2flux(self, total: bool) -> float:
         mag = self.mag_corr if total else self.mag
         flux = 10 ** (-0.4 * (mag - 23.9))
+        if not total:
+            flux = flux * self.isdiffpos
         return flux * 1000  # convert to nJy
 
     def magnitude2flux_err(self, total: bool) -> float:
@@ -89,10 +91,10 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     def plot_variants(self) -> dict:
         # ZTF forced photometry has no per-point sign; the chart always plots it positive.
         return build_plot_variants(
-            self.flux2magnitude,
-            self.flux2magnitude_err,
-            self.magnitude2flux,
-            self.magnitude2flux_err,
+            lambda total: self.flux2magnitude(total),
+            lambda total: self.flux2magnitude_err(total),
+            lambda total: self.magnitude2flux(total),
+            lambda total: self.magnitude2flux_err(total),
             lambda total: "+",
         )
 
