@@ -16,6 +16,7 @@ from lightcurve_api.services.conesearch.validation import (
 
 from .parser import parsesapi_objects
 from lightcurve_api.services import lightcurve_service
+from core.idmapper import idmapper
 
 
 def conesearch_coordinates(
@@ -106,7 +107,8 @@ def conesearch_oid_lightcurve(
     return cast(
         Lightcurve,
         pipe(
-            conesearch_oid(oid, radius, neighbors, session_factory),
+            idmapper.catalog_oid_to_masterid(survey_id, oid, True),
+            lambda oid: conesearch_oid(oid, radius, neighbors, session_factory),
             get_lightcurve_async(
                 session_factory,
                 Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
