@@ -4,6 +4,15 @@ import re
 from fastapi import HTTPException
 
 
+def ndets_validation_front(n_det_min: int, n_det_max: int):
+    if n_det_min is not None and n_det_max is not None:
+        if n_det_min > n_det_max:
+            raise HTTPException(
+                status_code=422,
+                detail={"detections_container": "Min value can't be greater than max."},
+            )
+
+
 def ndets_validation(ndets: list[int]):
     if ndets is not None and len(ndets) == 2:
         if ndets[0] > ndets[1]:

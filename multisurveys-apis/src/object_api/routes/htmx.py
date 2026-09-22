@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.validations import (
-    ndets_validation,
+    ndets_validation_front,
     order_mode_validation,
     consearch_validation,
     oids_format_validation,
@@ -23,6 +23,8 @@ from ..services.parsers import (
     _parse_oids_string_to_array,
     save_date_in_array,
 )
+
+from ..services.parameters_parser import *
 
 router = APIRouter()
 
@@ -137,31 +139,24 @@ def objects_table(
     try:
         if survey is not None:
             session = request.app.state.psql_session
-            oid = _parse_oids_string_to_array(oid)
-            n_det = ndet_build(n_det_min, n_det_max)
+            oids = _parse_oids_string_to_array(oid)
 
-            ndets_validation(n_det)
+            ndets_validation_front(n_det_min, n_det_max)
             order_mode_validation(order_mode)
             consearch_validation(ra, dec, radius)
-            oids_format_validation(oid, survey)
-            oid_lenght_validation(oid)
+            oids_format_validation(oids, survey)
+            oid_lenght_validation(oids)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd, lastmjd)
 
-            if oid is None and order_by is None:
-                order_by = "probability"
-
-            if oid is not None and order_by == "oid_list":
-                order_by = None
-
-            if oid is not None:
-                oid = encode_ids(survey, oid)
-
+            order_by = search_order_state(oids, order_by)
+            oids = parse_oids_to_int(oids, survey)
+            n_det = ndet_build(n_det_min, n_det_max)
             firstmjd = save_date_in_array(firstmjd)
             lastmjd = save_date_in_array(lastmjd)
 
             filters = Filters(
-                oids=oid,
+                oids=oids,
                 survey=survey,
                 classifier=classifier,
                 class_name=class_name,
@@ -247,32 +242,24 @@ def sidebar(
     try:
         if survey is not None:
             session = request.app.state.psql_session
-            oid = _parse_oids_string_to_array(oid)
+            oids = _parse_oids_string_to_array(oid)
 
-            n_det = ndet_build(n_det_min, n_det_max)
-
-            ndets_validation(n_det)
+            ndets_validation_front(n_det_min, n_det_max)
             order_mode_validation(order_mode)
             consearch_validation(ra, dec, radius)
-            oids_format_validation(oid, survey)
-            oid_lenght_validation(oid)
+            oids_format_validation(oids, survey)
+            oid_lenght_validation(oids)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd, lastmjd)
 
-            if oid is None and order_by is None:
-                order_by = "probability"
-
-            if oid is not None and order_by == "oid_list":
-                order_by = None
-
-            if oid is not None:
-                oid = encode_ids(survey, oid)
-
+            order_by = search_order_state(oids, order_by)
+            oids = parse_oids_to_int(oids, survey)
+            n_det = ndet_build(n_det_min, n_det_max)
             firstmjd = save_date_in_array(firstmjd)
             lastmjd = save_date_in_array(lastmjd)
 
             filters = Filters(
-                oids=oid,
+                oids=oids,
                 survey=survey,
                 classifier=classifier,
                 class_name=class_name,
@@ -327,14 +314,3 @@ def sidebar(
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
-
-
-def ndet_build(n_det_min, n_det_max):
-    n_det = []
-    if n_det_min is not None:
-        n_det.append(n_det_min)
-    if n_det_max is not None:
-        n_det.append(n_det_max)
-    n_det = n_det if len(n_det) > 0 else None
-
-    return n_det
