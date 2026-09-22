@@ -184,7 +184,7 @@ def test_ztf_detection_variants():
     assert v["flux_total"]["err"] == pytest.approx(18240.216787118174, **APPROX)
 
     # ZTF carries the raw isdiffpos as its sign in every variant.
-    assert {variant["sign"] for variant in v.values()} == {"1"}
+    assert {variant["sign"] for variant in v.values()} == {"+"}
 
 
 def test_lsst_detection_variants():
