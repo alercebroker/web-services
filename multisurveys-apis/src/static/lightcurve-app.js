@@ -277,7 +277,7 @@ function buildForcedPhotSeries(cfg) {
         const capped = Math.min(v.err, maxErr);
         const measId = fp.measurement_id ?? null;
 
-        const ptArr  = [x, v.y, measId, null, fp.field ?? null, capped, '+'];
+        const ptArr  = [x, v.y, measId, null, fp.field ?? null, capped, v.sign ?? '+'];
         const errArr = [x, v.y - capped, v.y + capped];
 
         pts.push(   { survey: fp.survey_id, band: bn, pt: ptArr  });

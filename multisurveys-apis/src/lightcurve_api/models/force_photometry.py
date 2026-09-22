@@ -89,13 +89,12 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
         return self.e_mag_corr if total else self.e_mag
 
     def plot_variants(self) -> dict:
-        # ZTF forced photometry has no per-point sign; the chart always plots it positive.
         return build_plot_variants(
             lambda total: self.flux2magnitude(total),
             lambda total: self.flux2magnitude_err(total),
             lambda total: self.magnitude2flux(total),
             lambda total: self.magnitude2flux_err(total),
-            lambda total: "+",
+            lambda total: "+" if self.isdiffpos > 0 else "-",
         )
 
 
@@ -188,17 +187,15 @@ class LsstForcedPhotometry(BaseForcedPhotometry):
 
     def flux_sign(self, total: bool) -> str:
         flux = self.scienceFlux if total else self.psfFlux
-
         return "-" if flux < 0 else "+"
 
     def plot_variants(self) -> dict:
-        # The chart historically plots forced photometry with a positive sign.
         return build_plot_variants(
             lambda total: self.flux2magnitude(total, False),
             lambda total: self.flux2magnitude_err(total, False),
             lambda total: self.magnitude2flux(total, False),
             lambda total: self.magnitude2flux_err(total, False),
-            lambda total: "+",
+            lambda total: self.flux_sign(total),
         )
 
 
