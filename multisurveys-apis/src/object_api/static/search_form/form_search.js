@@ -184,6 +184,8 @@ export function init() {
   // handle errors
   handle_error()
 
+  init_classifiers_dropdown(Dropdown_classifiers, document.getElementById("survey").dataset.survey)
+
 
   /**funciones publicas para usarlas con HTMX */
   window.send_classes_data = send_classes_data
@@ -195,7 +197,6 @@ export function init() {
 
   setTimeout(() => {
     restore_form_from_url()
-    init_classifiers_dropdown(Dropdown_classifiers, document.getElementById("survey").dataset.survey)
   }, 200)
 
 }

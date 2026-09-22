@@ -129,7 +129,7 @@ class ztfDetection(BaseDetection):
         return self.sigmapsf_corr_ext if total else self.sigmapsf
 
     def flux_sign(self, total: bool, absolute: bool) -> str:
-        return str(self.isdiffpos)
+        return "+" if self.isdiffpos > 0 else "-"
 
 
 class LsstDetection(BaseDetection):
