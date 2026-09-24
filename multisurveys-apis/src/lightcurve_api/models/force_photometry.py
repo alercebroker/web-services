@@ -221,10 +221,13 @@ class LsstForcedPhotometryCsv(BaseModel):
 class ZtfForcedPhotometryCsv(BaseModel):
     """Pydantic model for ztf_forced_photometry table."""
 
-    oid: int
-    survey_id: int
+    oid: str  # the ZTF object name (e.g. ZTF26abrmehv), not the internal master id
+    survey_id: str
     measurement_id: int
     pid: int
+    mjd: float
+    ra: float
+    dec: float
     band: int
     band_name: str
     mag: float
@@ -235,7 +238,7 @@ class ZtfForcedPhotometryCsv(BaseModel):
     isdiffpos: int
     corrected: bool
     dubious: bool
-    parent_candid: int
+    parent_candid: Optional[int] = None
     field: int
     rcid: int
     rfid: int

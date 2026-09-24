@@ -428,7 +428,7 @@ class ZtfDataReleaseDetection(BaseDetection):
 
 
 class ZTFDetectionCSV(BaseModel):
-    oid: int
+    oid: str  # the ZTF object name (e.g. ZTF26abrmehv), not the internal master id
     survey_id: str
     measurement_id: int
     has_stamp: bool
@@ -436,6 +436,29 @@ class ZTFDetectionCSV(BaseModel):
     ra: float  # Validación de rango
     dec: float
     band: int
+    band_name: str
+    isdiffpos: int
+    magpsf: float
+    sigmapsf: float
+    magpsf_corr: float
+    sigmapsf_corr: float
+    sigmapsf_corr_ext: float
+    pid: int
+    diffmaglim: float
+    nid: int
+    magap: float
+    sigmagap: float
+    distnr: float
+    rb: float
+    rbversion: str
+    drb: float | None = None
+    drbversion: str | None = None
+    magapbig: float
+    sigmagapbig: float
+    rfid: int | None = None
+    corrected: bool
+    dubious: bool
+    parent_candid: Optional[int] = None
 
     @model_validator(mode="before")
     @classmethod

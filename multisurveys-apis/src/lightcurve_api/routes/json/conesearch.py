@@ -4,6 +4,7 @@ from typing import Annotated, List
 from fastapi import APIRouter, HTTPException, Query
 
 from core.config.dependencies import db_dependency
+from core.exceptions import ObjectNotFound
 from core.idmapper import idmapper
 
 from ...models.lightcurve import Lightcurve
@@ -95,6 +96,8 @@ def conesearch_oid_lightcurve(
         return service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)
     except ValueError as ve:
         raise HTTPException(status_code=400, detail=str(ve))
+    except ObjectNotFound:
+        raise HTTPException(status_code=404, detail="Object not found")
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")

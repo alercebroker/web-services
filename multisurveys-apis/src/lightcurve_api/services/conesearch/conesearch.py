@@ -16,6 +16,7 @@ from lightcurve_api.services.conesearch.validation import (
 
 from .parser import parsesapi_objects
 from lightcurve_api.services import lightcurve_service
+from core.exceptions import ObjectNotFound
 from core.idmapper import idmapper
 
 
@@ -112,6 +113,7 @@ def conesearch_oid_lightcurve(
             get_lightcurve_async(
                 session_factory,
                 Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+                oid,
             ),
             lambda result: result[0],  # here we only care about result object, and discard the object ids dictionary
         ),
@@ -121,6 +123,7 @@ def conesearch_oid_lightcurve(
 def get_lightcurve_async(
     session_factory: Callable[..., ContextManager[Session]],
     result: Lightcurve,
+    oid: str,
 ):
     """
     This is a synchronous function thay run 3 sync funciontions in an asynchronous way.
@@ -130,6 +133,9 @@ def get_lightcurve_async(
 
     def _get(objects: List[ApiObject]) -> Tuple[Lightcurve, dict]:
         object_ids_by_survey = defaultdict(lambda: [])
+
+        if not objects:
+            raise ObjectNotFound(oid)
 
         # THIS ASUME THAT ONLY 1 OBJECT IS RETURNED, TO BE ABLE TO THE THE LIGHTCURVE
         # WITH MULTIPLE OBJECTS REQUIRES MORE REFACTORS. ITS TOTALLY POSIBLE BUTH
