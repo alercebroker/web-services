@@ -1,4 +1,5 @@
 import boto3
+from fastapi import HTTPException
 from fastavro import reader
 import io
 from abc import abstractmethod
@@ -22,15 +23,17 @@ class BaseS3Handler:
         valid_stamps_type: list[str],
         compressed,
     ):
-        print(f"config {bucket_name} --- {bucket_region}")
         self.valid_stamp_types = valid_stamps_type
         self.bucket_name = bucket_name
         self.compressed = compressed
         self.client = s3_client(bucket_region)
 
     def _get_file_from_s3(self, file_name: str) -> dict:
-        print("\n\n\nget_stamp avro_name:", file_name, "\n\n\n")
-        file = self.client.get_object(Bucket=self.bucket_name, Key=f"{file_name}.avro")
+        key = f"{file_name}.avro"
+        try:
+            file = self.client.get_object(Bucket=self.bucket_name, Key=key)
+        except self.client.exceptions.NoSuchKey:
+            raise HTTPException(status_code=404, detail=f"Alert file {key} not found")
         file_io = io.BytesIO(file["Body"].read())
         avro_data = next(reader(file_io))
         return avro_data
