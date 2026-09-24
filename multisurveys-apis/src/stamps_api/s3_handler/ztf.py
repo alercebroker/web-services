@@ -18,9 +18,7 @@ class ZTFS3Handler(BaseS3Handler):
         )
 
     def _get_avro_name(self, oid, measurement_id):
-        file_name = measurement_id[::-1]
-        print(f"HERE! ZTF\n{measurement_id}")
-        print(f"HERE! ZTF\n{file_name}")
+        file_name = str(measurement_id)[::-1]
         return file_name
 
     def _get_buffer_from_file(self, file_result, stamp_type):
