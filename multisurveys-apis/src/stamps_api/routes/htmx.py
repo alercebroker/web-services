@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
+from core.idmapper.idmapper import catalog_oid_to_masterid
 from ..services.detections_services import find_first_measurement_id
 from ..s3_handler import handler_selector
 from ..services.lightcurve_service import get_detections
@@ -41,11 +42,19 @@ async def get_stamp_card(
 ):
     handler = handler_selector(survey_id)()
     context = {}
+    try:
+        master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
+    except ValueError as error:
+        raise HTTPException(status_code=400, detail=str(error))
+
     detections = get_detections(
-        oid=oid,
+        oid=master_id,
         survey_id=survey_id,
         session_factory=request.app.state.psql_session,
     )
+    if not detections:
+        raise HTTPException(status_code=404, detail=f"No detections found for {oid}")
+
     detections.sort(key=lambda x: x.mjd)
     selected_measurement_id = find_first_measurement_id(detections)
     next_measurement_id = detections[min(1, len(detections) - 1)].measurement_id

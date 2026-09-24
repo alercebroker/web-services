@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "multisurveys-apis"
-version = "0.2.8"
+version = "0.2.9"
 description = ""
 authors = ["Demurest <eric.apolonio@hotmail.com>"]
 readme = "README.md"
@@ -46,7 +46,7 @@ requests = "^2.32.5"
 [tool.poetry.group.stamps.dependencies]
 boto3 = "^1.39.14"
 matplotlib = "^3.10.3"
-fastavro = "^1.11.1"
+fastavro = { extras = ["snappy"], version = "^1.11.1" }
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
