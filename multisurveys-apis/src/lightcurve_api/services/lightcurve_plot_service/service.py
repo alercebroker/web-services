@@ -9,6 +9,7 @@ from typing import Callable, ContextManager, List, Dict, Any, Tuple
 
 import httpx
 from lightcurve_api.models.periodogram import Periodogram
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
@@ -23,7 +24,7 @@ from lightcurve_api.models.lightcurve_item import (
     BaseForcedPhotometry,
     BaseNonDetection,
 )
-from lightcurve_api.models.non_detections import ZtfNonDetections
+from lightcurve_api.models.non_detections import ZtfNonDetectionsCsv
 from lightcurve_api.routes.htmx.parsers import ConfigState
 from lightcurve_api.services.parsers import parse_ztf_dr_detection, parse_ztf_dr_object, _parse_object_common
 from lightcurve_api.services.period.service import compute_periodogram
@@ -31,6 +32,7 @@ from lightcurve_api.services.period.service import compute_periodogram
 from ..conesearch.conesearch import conesearch_oid_lightcurve
 from .chart_point import ChartPoint
 from .result import Result
+from core.exceptions import ObjectNotFound
 from core.idmapper import idmapper
 
 
@@ -384,7 +386,10 @@ def get_lightcurve(
 def get_object_coordinates(result: Result, session_factory: Callable[..., ContextManager[Session]]) -> Result:
     oid = int(idmapper.catalog_oid_to_masterid(result.config_state.survey_id, result.config_state.oid, True))
 
-    object = query_object_by_id(session_factory, oid, result.config_state.survey_id)
+    try:
+        object = query_object_by_id(session_factory, oid, result.config_state.survey_id)
+    except NoResultFound:
+        raise ObjectNotFound(result.config_state.oid)
     object_model = _parse_object_common(object)
 
     result.config_state.meanra = object_model.meanra
@@ -801,7 +806,7 @@ def _get_priority_columns(survey: str, type: str):
         if type == "detection":
             return [
                 "oid",
-                "surevey_id",
+                "survey_id",
                 "measurement_id",
                 "mjd",
                 "ra",
@@ -844,7 +849,7 @@ def _get_priority_columns(survey: str, type: str):
         if type == "detection":
             return [
                 "oid",
-                "sid",
+                "survey_id",
                 "measurement_id",
                 "mjd",
                 "ra",
@@ -878,7 +883,7 @@ def _get_priority_columns(survey: str, type: str):
         if type == "fp":
             return [
                 "oid",
-                "sid",
+                "survey_id",
                 "measurement_id",
                 "mjd",
                 "ra",
@@ -924,23 +929,37 @@ def _get_priority_columns(survey: str, type: str):
     return None
 
 
-def _order_detections_columns_csv(fieldnames: set):
-    priority_columns = _get_priority_columns("lsst", "detection")
+def _order_detections_columns_csv(fieldnames: set, survey_id: str):
+    priority_columns = _get_priority_columns(survey_id, "detection")
     priority = [col for col in priority_columns if col in fieldnames]
     other_columns = sorted([col for col in fieldnames if col not in priority])
 
     return priority + other_columns
 
 
-def _order_fp_columns_csv(fieldnames: set):
-    priority_columns = _get_priority_columns("lsst", "fp")
+def _order_fp_columns_csv(fieldnames: set, survey_id: str):
+    priority_columns = _get_priority_columns(survey_id, "fp")
     priority = [col for col in priority_columns if col in fieldnames]
     other_columns = sorted([col for col in fieldnames if col not in priority])
 
     return priority + other_columns
 
 
-def _parse_data_to_model_csv(data):
+def _detections_csv_fieldnames(survey_id: str) -> set:
+    if survey_id == ZTF_SURVEY:
+        return set(ZTFDetectionCSV.model_fields.keys())
+
+    return set(LsstDetectionCsv.model_fields.keys())
+
+
+def _fp_csv_fieldnames(survey_id: str) -> set:
+    if survey_id == ZTF_SURVEY:
+        return set(ZtfForcedPhotometryCsv.model_fields.keys())
+
+    return set(LsstForcedPhotometryCsv.model_fields.keys())
+
+
+def _parse_data_to_model_csv(data, catalog_oid: str):
     parsed_data = []
     for detection in data:
         detection_dict = detection.model_dump()
@@ -950,13 +969,15 @@ def _parse_data_to_model_csv(data):
 
         if detection.survey_id == "lsst":
             parsed_data.append(LsstDetectionCsv(**detection_dict))
-        # if detection.survey_id == 'ztf':
-        #     parsed_data.append(ZTFDetectionCSV(**detection_dict))
+        if detection.survey_id == "ztf":
+            # the file identifies the object by the name the user knows, not the master id
+            detection_dict["oid"] = catalog_oid
+            parsed_data.append(ZTFDetectionCSV(**detection_dict))
 
     return parsed_data
 
 
-def _parse_fp_to_model_csv(fp_data):
+def _parse_fp_to_model_csv(fp_data, catalog_oid: str):
     parsed_data = []
     for fp in fp_data:
         fp_dict = fp.model_dump()
@@ -966,8 +987,20 @@ def _parse_fp_to_model_csv(fp_data):
 
         if fp.survey_id == "lsst":
             parsed_data.append(LsstForcedPhotometryCsv(**fp_dict))
-        # if fp.survey_id == 'ztf':
-        #     parsed_data.append(ZtfForcedPhotometryCsv(**fp_dict))
+        if fp.survey_id == "ztf":
+            fp_dict["oid"] = catalog_oid
+            parsed_data.append(ZtfForcedPhotometryCsv(**fp_dict))
+
+    return parsed_data
+
+
+def _parse_non_detections_to_model_csv(non_detections, catalog_oid: str):
+    parsed_data = []
+    for ndet in non_detections:
+        ndet_dict = ndet.model_dump()
+        ndet_dict["band_name"] = ndet.band_name()
+        ndet_dict["oid"] = catalog_oid
+        parsed_data.append(ZtfNonDetectionsCsv(**ndet_dict))
 
     return parsed_data
 
@@ -979,19 +1012,21 @@ def filter_data_by_oid(data, oid):
     return data_sorted_by_mjd
 
 
-def zip_lightcurve(detections, non_detections, forced_photometry, oid):
+def zip_lightcurve(detections, non_detections, forced_photometry, master_id: int, catalog_oid: str, survey_id: str):
+    """Build the lightcurve ZIP (detections, non-detections, forced photometry CSVs).
+
+    ``master_id`` is the internal id the rows carry (used to keep only the requested
+    object); ``catalog_oid`` is the id the caller sent (e.g. the ZTF name), which the
+    CSVs show in their ``oid`` column.
+    """
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
         if detections:
-            filtered_detections_sorted_by_mjd = filter_data_by_oid(detections, oid)
+            filtered_detections_sorted_by_mjd = filter_data_by_oid(detections, master_id)
 
-            data = _parse_data_to_model_csv(filtered_detections_sorted_by_mjd)
+            data = _parse_data_to_model_csv(filtered_detections_sorted_by_mjd, catalog_oid)
 
-            fieldnames_list = set(
-                list(ZTFDetectionCSV.model_fields.keys()) + list(LsstDetectionCsv.model_fields.keys())
-            )
-
-            ordered_columns = _order_detections_columns_csv(fieldnames_list)
+            ordered_columns = _order_detections_columns_csv(_detections_csv_fieldnames(survey_id), survey_id)
 
             detections_csv = _data_to_csv(
                 data,
@@ -1001,19 +1036,20 @@ def zip_lightcurve(detections, non_detections, forced_photometry, oid):
             zip_file.writestr("detections.csv", detections_csv)
 
         if non_detections:
-            non_detections_csv = _data_to_csv(non_detections, set(list(ZtfNonDetections.model_fields.keys())))
+            # only ZTF has non-detections
+            filtered_non_detections_sorted_by_mjd = filter_data_by_oid(non_detections, master_id)
+
+            data = _parse_non_detections_to_model_csv(filtered_non_detections_sorted_by_mjd, catalog_oid)
+
+            non_detections_csv = _data_to_csv(data, list(ZtfNonDetectionsCsv.model_fields.keys()))
             zip_file.writestr("non_detections.csv", non_detections_csv)
 
         if forced_photometry:
-            filtered_ph_sorted_by_mjd = filter_data_by_oid(forced_photometry, oid)
+            filtered_ph_sorted_by_mjd = filter_data_by_oid(forced_photometry, master_id)
 
-            parse_fp = _parse_fp_to_model_csv(filtered_ph_sorted_by_mjd)
+            parse_fp = _parse_fp_to_model_csv(filtered_ph_sorted_by_mjd, catalog_oid)
 
-            fieldnames_list = set(
-                list(ZtfForcedPhotometryCsv.model_fields.keys()) + list(LsstForcedPhotometryCsv.model_fields.keys())
-            )
-
-            ordered_columns = _order_fp_columns_csv(fieldnames_list)
+            ordered_columns = _order_fp_columns_csv(_fp_csv_fieldnames(survey_id), survey_id)
 
             forced_photometry_csv = _data_to_csv(parse_fp, ordered_columns)
 
