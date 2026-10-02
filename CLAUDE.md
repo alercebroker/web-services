@@ -15,8 +15,13 @@ Monorepo of ALeRCE web service APIs.
 
 - `charts/` — Helm charts. The active one is `charts/multisurvey_api/`.
 - `ci_new/` — current build/deploy tooling. `ci/` is the old path. For deploying the
-  multisurvey image (manual build + push + rollout), see
+  multisurvey image (manual build + push + Helm upgrade), see
   [`multisurveys-apis/DEPLOYMENT.md`](multisurveys-apis/DEPLOYMENT.md).
+- **Deploy with Helm, never by patching live deployments with `kubectl`.** Each service's
+  Helm values live in AWS SSM Parameter Store; change them there, review with
+  `helm diff upgrade`, then `helm upgrade`. `kubectl set image` / `set resources` / `edit`
+  drift from SSM and are reverted by the next Helm upgrade. Read-only `kubectl` (get, logs,
+  rollout status) is fine.
 - `scripts/` — ops tooling run by hand, not from CI.
 
 ## After recreating an Ingress or TargetGroupBinding

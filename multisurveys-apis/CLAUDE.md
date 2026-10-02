@@ -17,9 +17,14 @@ time, in short:
   the real image, name it explicitly:
   `build direct multisurvey-api --package-dir multisurveys-apis` (run from `ci_new/`,
   needs `GH_TOKEN` for the build-arg **and** `GHCR_TOKEN` for the push).
-- **Deploy is manual.** `cd-multisurvey.yaml` only builds; it does not deploy, and
-  `ci_new`'s deploy is broken. Deploy via `kubectl set image` + rollout (drifts from
-  SSM) or the old `ci/` Helm+SSM path.
+- **Deploy is manual, with Helm, from the values in SSM.** `cd-multisurvey.yaml` only
+  builds, and `ci_new`'s deploy is broken. Edit the API's SSM parameter
+  `/multisurvey-api/<release>-helm-values`, check with `helm diff upgrade`, then
+  `helm upgrade multisurvey-api-<release> charts/multisurvey_api -n default` with those
+  values (steps in [DEPLOYMENT.md](DEPLOYMENT.md#deploy)). **Don't use `kubectl set
+  image` / `set resources` / `edit` on live deployments:** it drifts from SSM and the next
+  Helm upgrade reverts it. Gotchas: Helm releases sit in namespace `default`, and
+  magstat's release and parameter are `magstats`.
 - **Version.** Bump [`pyproject.toml`](pyproject.toml) before every build — it is the only
   place that holds the version (the app reads it via [`core/version.py`](src/core/version.py)),
   the image tag = that version, and reusing a tag affects all 8 services. Locally, re-run
