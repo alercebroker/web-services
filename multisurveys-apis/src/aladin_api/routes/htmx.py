@@ -4,9 +4,8 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
-from ..services.aladin_services import get_object_by_id
-from ..services.aladin_parser import loads_objects_list
-from core.idmapper.idmapper import encode_ids
+from ..services.aladin_services import prepare_aladin_data
+from ..models.object import RawObjectsRequest
 
 
 router = APIRouter(prefix="/htmx")
@@ -19,11 +18,9 @@ async def object_probability_app(request: Request, oid: str, survey: str, object
     try:
         session_ms = request.app.state.psql_session
 
-        master_oid = encode_ids(survey, [oid])
+        raw_objects_request = RawObjectsRequest(selected_oid=oid, sid=survey, objects=objects_arr)
 
-        objects_list = loads_objects_list(objects_arr)
-
-        selected_object = get_object_by_id(session_ms, int(master_oid[0]), "")
+        objects_list, selected_object = prepare_aladin_data(session_ms, raw_objects_request)
     except HTTPException:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="An error occurred")
