@@ -18,10 +18,12 @@ time, in short:
   `build direct multisurvey-api --package-dir multisurveys-apis` (run from `ci_new/`,
   needs `GH_TOKEN` for the build-arg **and** `GHCR_TOKEN` for the push).
 - **Deploy is manual, with Helm, from the values in SSM.** `cd-multisurvey.yaml` only
-  builds, and `ci_new`'s deploy is broken. Edit the API's SSM parameter
-  `/multisurvey-api/<release>-helm-values`, check with `helm diff upgrade`, then
-  `helm upgrade multisurvey-api-<release> charts/multisurvey_api -n default` with those
-  values (steps in [DEPLOYMENT.md](DEPLOYMENT.md#deploy)). **Don't use `kubectl set
+  builds, and `ci_new`'s deploy is broken. Use
+  [`scripts/upgrade_multisurvey_hybrid.sh`](../scripts/upgrade_multisurvey_hybrid.sh)
+  `--profile <aws profile> <api>...`: it edits the API's SSM parameter
+  `/multisurvey-api/<release>-helm-values`, shows `helm diff`, then runs `helm upgrade` from
+  SSM (details in [DEPLOYMENT.md](DEPLOYMENT.md#deploy)). AWS profile and kubectl context
+  names are local to each developer, so never hard-code them. **Don't use `kubectl set
   image` / `set resources` / `edit` on live deployments:** it drifts from SSM and the next
   Helm upgrade reverts it. Gotchas: Helm releases sit in namespace `default`, and
   magstat's release and parameter are `magstats`.

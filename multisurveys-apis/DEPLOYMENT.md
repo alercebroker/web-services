@@ -149,32 +149,49 @@ the SSM parameter first, then out through `helm upgrade`.
 | probability | `multisurvey-api-probability` | `/multisurvey-api/probability-helm-values` | `multisurvey-api-probability` |
 | stamp | `multisurvey-api-stamp` | `/multisurvey-api/stamp-helm-values` | `multisurvey-api-stamp` |
 
-### Deploy one API
+### Deploy: `scripts/upgrade_multisurvey_hybrid.sh`
 
-Run from the repo root, one API at a time (start with a low-traffic one, e.g.
-probability, and check it before the rest). Needs `helm` with the
-[`helm-diff`](https://github.com/databus23/helm-diff) plugin.
+The script follows the rules above and prints each step as it goes. Name the APIs to
+deploy (there is no "all"); it handles them one at a time, in the order given, so put a
+low-traffic one first (e.g. probability) and check it before it moves on:
 
 ```bash
-export AWS_PROFILE=alerce-production AWS_REGION=us-east-1
-svc=probability                   # the release suffix from the table (magstat → magstats)
-ns=multisurvey-api-probability    # the k8s namespace from the table
-param=/multisurvey-api/$svc-helm-values
+aws sso login --profile <your production profile>
+scripts/upgrade_multisurvey_hybrid.sh --profile <your production profile> probability lightcurve magstat
+```
 
-# 1. Fetch the current values into a private temp file (they include sensitive data).
-umask 077; f=$(mktemp --suffix=.yaml)
+The AWS profile name is whatever you called it in `~/.aws/config`, so pass yours with
+`--profile` or `AWS_PROFILE`. The kubectl context name doesn't matter either: the script
+checks that your current context is EKS cluster `hybrid`, in the same account as your AWS
+credentials, and stops otherwise. Needs `aws`, `kubectl`, and `helm` with the
+[`helm-diff`](https://github.com/databus23/helm-diff) plugin.
+
+For each API it:
+
+1. reads the values from SSM into a private temp file (deleted on exit), and checks with
+   `helm diff --three-way-merge` that the cluster still matches them. If not, it shows the
+   drift and asks before going on;
+2. sets `image.tag` (default: the version in `pyproject.toml`; `--tag` to choose another);
+3. shows the `helm diff` of the change and asks for confirmation;
+4. writes the values to SSM, reads them back, and runs `helm upgrade` with exactly what
+   SSM holds;
+5. waits for `kubectl rollout status`, prints the image digests the pods run, checks that
+   Helm, SSM and the cluster agree, and prints the commands to undo it.
+
+Options: `--dry-run` stops after the diff; `--edit` opens the values in `$EDITOR` before
+the diff, for other changes (e.g. a memory limit); `--keep-tag` with `--edit` changes
+values without touching the image. `--help` has the details.
+
+The manual equivalent, for one API (`svc` is the release suffix from the table, `ns` the
+namespace):
+
+```bash
+export AWS_PROFILE=<your production profile> AWS_REGION=us-east-1
+svc=probability; ns=multisurvey-api-probability; param=/multisurvey-api/$svc-helm-values
+umask 077; f=$(mktemp --suffix=.yaml)   # the values include sensitive data
 aws ssm get-parameter --name $param --with-decryption --query Parameter.Value --output text > $f
-
-# 2. Edit them: the image tag, plus anything else this release changes.
-sed -i -E '/^image:/,/^[^ ]/ s/^(  tag: ).*/\10.2.11/' $f
-# e.g. a memory limit: sed -i -E '/^resources:/,/^[^ ]/ { /^  limits:/,/^  [^ ]/ s/^(    memory: ).*/\1512M/ }' $f
-# (or open $f in an editor)
-
-# 3. Review what will change in the cluster. Expect only your edits (plus any chart
-#    changes merged since the last deploy).
-helm diff upgrade multisurvey-api-$svc charts/multisurvey_api -n default -f $f
-
-# 4. Save to SSM, then deploy what SSM now holds.
+sed -i -E '/^image:/,/^[^ ]/ s/^(  tag: ).*/\10.2.11/' $f   # or edit $f by hand
+helm diff upgrade multisurvey-api-$svc charts/multisurvey_api -n default -f $f --three-way-merge
 aws ssm put-parameter --name $param --value file://$f --overwrite
 helm upgrade multisurvey-api-$svc charts/multisurvey_api -n default \
   -f <(aws ssm get-parameter --name $param --with-decryption --query Parameter.Value --output text)
@@ -237,6 +254,9 @@ _As of 02/10/2026. These are documented, not yet fixed — see the table/notes i
    YAML reads them as top-level keys and the pods get neither. Fixing the indentation
    adds them to the pods, which changes what Prometheus scrapes; do it as its own
    change, not inside a release.
+7. **The staging script is still the old kind.** `scripts/upgrade_multisurvey_staging.sh`
+   upgrades all eight releases from git-ignored local values files
+   (`values_<name>_staging.yaml`), not from SSM, and restarts every Deployment.
 
 ## Reference
 
