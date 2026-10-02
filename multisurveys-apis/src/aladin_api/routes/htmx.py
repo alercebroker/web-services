@@ -8,7 +8,6 @@ from ..services.aladin_services import prepare_aladin_data
 from ..models.object import RawObjectsRequest
 
 
-
 router = APIRouter(prefix="/htmx")
 templates = Jinja2Templates(directory="src/aladin_api/templates", autoescape=True, auto_reload=True)
 templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8006")
@@ -19,11 +18,7 @@ async def object_probability_app(request: Request, oid: str, survey: str, object
     try:
         session_ms = request.app.state.psql_session
 
-        raw_objects_request = RawObjectsRequest(
-            selected_oid=oid,
-            sid=survey,
-            objects=objects_arr
-        )
+        raw_objects_request = RawObjectsRequest(selected_oid=oid, sid=survey, objects=objects_arr)
 
         objects_list, selected_object = prepare_aladin_data(session_ms, raw_objects_request)
     except HTTPException:

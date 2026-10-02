@@ -19,11 +19,9 @@ def prepare_aladin_data(session_ms, raw_objects_request) -> tuple[list, dict]:
 
     selected_oid_data = get_object_by_id(session_ms=session_ms, oid=encode_selected_oid, survey="")
 
-
     return objects_list, selected_oid_data
 
 
 def get_encode_oid(survey, oid) -> int:
-
     oid = encode_ids(survey, [oid])
     return int(oid[0])
