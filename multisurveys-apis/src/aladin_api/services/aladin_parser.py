@@ -12,7 +12,7 @@ def object_parser(sql_response):
     return jsonable_encoder(model_parsed)
 
 
-def loads_objects_list(objects):
+def loads_objects_list(objects) -> list:
     if _object_is_empty(objects):
         return []
 

@@ -41,20 +41,24 @@ class creatorAladin {
 
 
 export async function init(A) {
-  let raw_data = JSON.parse(document.getElementById("aladin-data").text);
+  let raw_data = JSON.parse(document.getElementById("aladin-data").text)
   let objects = raw_data.objects
   let selected_object = raw_data.selected_object
   let catalog = null
   let new_object = null
   let aladin = null
   let aladin_instance = null
-  let pan_starrs = 'P/PanSTARRS/DR1/color-z-zg-g'
-  let hips_2_fits = 'CDS/P/DESI-Legacy-Surveys/DR10/color'
+  let SURVEY_HIPS = {
+    0: 'P/PanSTARRS/DR1/color-z-zg-g',            // ZTF (northern sky)
+    1: 'CDS/P/DESI-Legacy-Surveys/DR10/color',    // LSST (southern sky)
+  }
 
+  
   await A.init
   aladin = A.aladin('#aladin-lite-div', 
       {
-          survey: hips_2_fits,
+          // survey: hips_2_fits,
+          survey: SURVEY_HIPS[selected_object.sid],
           fov: 0.01, 
           cooFrame: 'J2000d', 
           showReticle: true,
@@ -80,7 +84,6 @@ export async function init(A) {
 
   on_selected_object_change(selected_object, aladin_instance)
   document.getElementById("aladin-loader").classList.add("tw-hidden")
-  // aladin.addEventListener('wheel', customZoom, {passive: false });
 
 }
 
@@ -158,25 +161,6 @@ function add_catalogs_information(aladin, coordinates){
   aladin.add_catalog_information(vizier_catalog)
 
 }
-
-function customZoom(event){
-  event.preventDefault()
-  event.stopPropagation()
-
-  let level = aladin.view.zoomLevel
-  let delta = -event.deltaY
-
-  if(delta > 0){
-      level += 1
-  } else {
-      level -= 1
-  }
-
-  aladin.view.setZoomLevel(level)
-
-  return false
-}
-
 
 export function elementReady(selector) {
     return new Promise((resolve, reject) => {
