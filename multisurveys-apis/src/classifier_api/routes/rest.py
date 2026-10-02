@@ -6,12 +6,12 @@ router = APIRouter()
 
 
 @router.get("/")
-async def ping():
+def ping():
     return "This is the classifier API"
 
 
 @router.get("/classifiers")
-async def classifiers(
+def classifiers(
     request: Request,
     classifier_name: str | None = None,
 ):

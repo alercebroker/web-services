@@ -1,10 +1,10 @@
 
 <!-- Include ECharts and HTMX -->
-<script src="{{API_URL}}/static/echarts.min.js"></script>
-<script src="{{API_URL}}/static/htmx.min.js"></script>
+<script src="{{ ASSETS_URL }}/static/echarts.min.js"></script>
+<script src="{{ ASSETS_URL }}/static/htmx.min.js"></script>
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="{{ API_URL }}/static/lightcurve.css">
+<link rel="stylesheet" href="{{ ASSETS_URL }}/static/lightcurve.css">
 
 <!-- Embed raw lightcurve data for the client-side chart builder -->
 <script>
@@ -22,7 +22,7 @@ window.__LC_DATA__ = {
 <div id="main-app" class="tw-preflight">{% include "main.html.jinja" %}</div>
 
 <!-- Client-side chart application (ES module). Evaluated once per page load. -->
-<script type="module" src="{{ API_URL }}/static/lightcurve-app.js"></script>
+<script type="module" src="{{ ASSETS_URL }}/static/lightcurve-app.js"></script>
 
 <!--
   Re-initialise the chart when this widget is swapped in again for a new object.

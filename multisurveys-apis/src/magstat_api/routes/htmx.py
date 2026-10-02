@@ -3,6 +3,7 @@ import os
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from core.static_files import configure_templates
 
 from core.exceptions import ObjectNotFound
 from core.idmapper.idmapper import catalog_oid_to_masterid
@@ -19,11 +20,11 @@ templates = Jinja2Templates(
     autoescape=True,
     auto_reload=True,
 )
-templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8002")
+configure_templates(templates, "http://localhost:8002")
 
 
 @router.get("/htmx/mag", response_class=HTMLResponse)
-async def object_mag_app(request: Request, oid: str, survey_id=None):
+def object_mag_app(request: Request, oid: str, survey_id=None):
     bandMapping = {
         1: "g",
         2: "r",

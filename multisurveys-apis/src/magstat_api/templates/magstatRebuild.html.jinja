@@ -1,5 +1,5 @@
-<script type="module" src="{{API_URL}}/static/magstats.js"></script>
-<link rel="stylesheet" href="{{API_URL}}/static/magstats.css">
+<script type="module" src="{{ ASSETS_URL }}/static/magstats.js"></script>
+<link rel="stylesheet" href="{{ ASSETS_URL }}/static/magstats.css">
 
 <div id='magstats-app' class="tw-preflight tw-text-[#1e1e1e] dark:tw-text-white tw-bg-white tw-shadow-2xl dark:tw-bg-[#1e1e1e] tw-rounded-[6px] tw-w-full tw-text-sm">
     <div class="tw-flex tw-flex-col  tw-font-roboto tw-py-4">
@@ -69,7 +69,7 @@
     </div>
 </div>
 <script type="module">
-import { initMagstats, elementReady, arrowsControl } from "{{API_URL}}/static/magstats.js";
+import { initMagstats, elementReady, arrowsControl } from "{{ ASSETS_URL }}/static/magstats.js";
 
 
 elementReady("#magstats-app").then(() => {

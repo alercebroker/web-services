@@ -5,12 +5,12 @@ router = APIRouter()
 
 
 @router.get("/")
-async def ping():
+def ping():
     return "This is the Stamps API"
 
 
 @router.get("/stamp")
-async def stamp(
+def stamp(
     request: Request,
     oid: str,
     measurement_id: str,
@@ -26,7 +26,7 @@ async def stamp(
 
 
 @router.get("/avro")
-async def avro(request: Request, oid: str, measurement_id: str, survey_id: str):
+def avro(request: Request, oid: str, measurement_id: str, survey_id: str):
     handler = handler_selector(survey_id)()
 
     avro_json = handler.get_avro(oid, measurement_id)

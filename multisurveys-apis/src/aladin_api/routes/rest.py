@@ -5,7 +5,7 @@ router = APIRouter()
 
 
 @router.get("/")
-async def ping():
+def ping():
     return "This is the Aladin API"
 
 
