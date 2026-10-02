@@ -57,7 +57,6 @@ export async function init(A) {
   await A.init
   aladin = A.aladin('#aladin-lite-div', 
       {
-          // survey: hips_2_fits,
           survey: SURVEY_HIPS[selected_object.sid],
           fov: 0.01, 
           cooFrame: 'J2000d', 
