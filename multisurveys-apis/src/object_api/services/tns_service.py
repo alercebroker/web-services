@@ -1,6 +1,10 @@
 import json
 import requests
 
+# 3 s to connect, 10 s to wait for data. TNS answers in about 1 s (measured from a crossmatch pod, 01/10/2026).
+# A timeout is a RequestException, so it shows the "-" card like any other TNS failure.
+TNS_TIMEOUT = (3, 10)
+
 
 def get_tns(ra, dec):
     try:
@@ -8,7 +12,9 @@ def get_tns(ra, dec):
         payload = {"ra": ra, "dec": dec}
         payload_dump = json.dumps(payload)
 
-        response = requests.post("https://tns.alerce.online/search", data=payload_dump, headers=headersSend)
+        response = requests.post(
+            "https://tns.alerce.online/search", data=payload_dump, headers=headersSend, timeout=TNS_TIMEOUT
+        )
 
         data = response.json()
 

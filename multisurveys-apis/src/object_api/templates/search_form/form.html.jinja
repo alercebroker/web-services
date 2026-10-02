@@ -1,9 +1,9 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="{{API_URL}}/htmx/htmx.min.js"></script>
+<script src="{{ ASSETS_URL }}/htmx/htmx.min.js"></script>
 <script src="https://unpkg.com/htmx-ext-response-targets@2.0.2" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-<link rel="stylesheet" href="{{API_URL}}/static/object.css">
+<link rel="stylesheet" href="{{ ASSETS_URL }}/static/object.css">
 
 <div id="form-search" hx-ext="response-targets" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-[#EEEEEE]">
     {% from "input.html.jinja" import input as customInput %}
@@ -231,7 +231,7 @@
 </div>
 
 <script type="module">
-import {init, elementReady} from "{{API_URL}}/static/search_form/form_search.js"
+import {init, elementReady} from "{{ ASSETS_URL }}/static/search_form/form_search.js"
 
 
 elementReady("#form-search").then((el) => {

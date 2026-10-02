@@ -1,10 +1,12 @@
 from fastapi import FastAPI
+from core.concurrency import add_concurrency_limit
+from core.static_files import mount_static
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 from .routes import rest, htmx
 from core.config.connection import psql_entity
 
 app = FastAPI(openapi_url="/stamps/openapi.json")
+add_concurrency_limit(app)
 psql = psql_entity()
 app.state.psql_session = psql.session
 
@@ -20,8 +22,8 @@ app.include_router(rest.router)
 app.include_router(htmx.router, prefix="/htmx")
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="src/stamps_api/static"), name="static")
-app.mount("/htmx-static", StaticFiles(directory="src/core/htmx"), name="htmx-static")
+mount_static(app, "/static", "src/stamps_api/static", "static")
+mount_static(app, "/htmx-static", "src/core/htmx", "htmx-static")
 
 
 @app.get("/openapi.json")

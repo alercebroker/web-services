@@ -2,17 +2,28 @@ import boto3
 from fastapi import HTTPException
 from fastavro import reader
 import io
+import threading
 from abc import abstractmethod
 from .fits_to_png import transform
 import gzip
 
+_clients = {}
+_clients_lock = threading.Lock()
+
 
 def s3_client(bucket_region: str):
-    s3_client = boto3.client(
-        "s3",
-        region_name=bucket_region,
-    )
-    return s3_client
+    """
+    One S3 client per region, created once and shared by every request.
+
+    A client, once created, is safe to share between threads; creating one is not, because boto3.client() goes
+    through boto3's shared default session. So clients are built from their own Session, under a lock.
+    """
+    with _clients_lock:
+        client = _clients.get(bucket_region)
+        if client is None:
+            client = boto3.session.Session().client("s3", region_name=bucket_region)
+            _clients[bucket_region] = client
+        return client
 
 
 class BaseS3Handler:

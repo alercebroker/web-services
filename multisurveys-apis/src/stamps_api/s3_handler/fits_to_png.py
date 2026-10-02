@@ -2,7 +2,7 @@ import gzip
 import io
 
 import astropy.io.fits as fio
-import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
 import numpy as np
 from scipy import ndimage
 
@@ -37,7 +37,9 @@ def transform(compressed_fits_file, file_type, window, compressed):
 
     buf = io.BytesIO()
 
-    fig = plt.figure()
+    # A Figure built directly, not through pyplot: pyplot keeps a global "current figure", so two threads
+    # rendering at once could draw into each other's image. This figure belongs to this call only.
+    fig = Figure()
     ax = fig.add_subplot()
 
     opts = dict(cmap="Greys_r", interpolation="nearest", vmin=vmin, vmax=vmax)
@@ -50,9 +52,6 @@ def transform(compressed_fits_file, file_type, window, compressed):
 
     ax.axis("off")
     fig.savefig(buf, format="png", bbox_inches="tight", transparent=True)
-    ax.clear()
-    fig.clear()
-    plt.close(fig=fig)
 
     buf.seek(0)
     return buf.read()

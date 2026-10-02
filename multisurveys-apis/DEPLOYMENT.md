@@ -64,12 +64,16 @@ build direct multisurvey-api --package-dir multisurveys-apis
 
 ## Versioning
 
-- The version lives in [`pyproject.toml`](pyproject.toml) (`[tool.poetry] version`)
-  and is mirrored in the FastAPI `version=` field in
-  [`src/lightcurve_api/api.py`](src/lightcurve_api/api.py). Keep them in sync.
+- The version lives only in [`pyproject.toml`](pyproject.toml) (`[tool.poetry] version`).
+  The app reads it from the installed package ([`src/core/version.py`](src/core/version.py))
+  for lightcurve's OpenAPI `version=` and for the versioned static-asset paths
+  (`/v/<version>/static/...`), so a bump also makes browsers fetch the new JS and CSS.
 - The build tags the image `["rc", "<pyproject version>"]` (see
   `get_tags` in [`ci_new/core/utils.py`](../ci_new/core/utils.py)). `rc` is a
   moving tag; the version tag should be treated as **immutable**.
+- **Per-API tuning without a release.** `MAX_CONCURRENT_REQUESTS` (default 5) and
+  `QUEUE_WAIT_SECONDS` (default 2) can be set in the `environment:` block of an API's
+  `config.yaml`; see [CLAUDE.md](CLAUDE.md#concurrency-handlers-are-plain-def-and-each-pod-caps-requests).
 - **Always bump `pyproject.toml` before building** so you don't overwrite a tag
   that is already deployed. All 8 services share this image, so reusing a tag can
   affect any of them on their next pull.

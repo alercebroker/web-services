@@ -1,9 +1,9 @@
-import os
 from fastapi import Request
 
 from ..services.probability import get_probability, get_classifiers
 from fastapi import APIRouter
 from fastapi.templating import Jinja2Templates
+from core.static_files import configure_templates
 from fastapi.responses import HTMLResponse
 from ..services.parser import parse_grouped_probabilities
 from ..services.lsst_service import classifier_name_parser, sort_classifiers, priorities_by_survey
@@ -11,11 +11,11 @@ from core.idmapper.idmapper import encode_ids
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/probability_api/templates", autoescape=True, auto_reload=True)
-templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8004")
+configure_templates(templates, "http://localhost:8004")
 
 
 @router.get("/htmx/probabilities/{oid}", response_class=HTMLResponse)
-async def object_probability_app(
+def object_probability_app(
     request: Request,
     oid: str,
     survey: str,

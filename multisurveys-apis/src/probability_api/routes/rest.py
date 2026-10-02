@@ -7,12 +7,12 @@ router = APIRouter()
 
 
 @router.get("/")
-async def ping():
+def ping():
     return "This is the probability API"
 
 
 @router.get("/probability")
-async def probability(
+def probability(
     request: Request,
     oid: str,
     classifier: str | None = None,

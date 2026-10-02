@@ -5,7 +5,7 @@ from ..s3_handler import handler_selector
 from ..services.lightcurve_service import get_detections
 from ..models.lightcurve import PostRequestInputModel
 from fastapi.templating import Jinja2Templates
-import os
+from core.static_files import configure_templates
 import base64
 
 router = APIRouter()
@@ -15,7 +15,7 @@ templates = Jinja2Templates(
     autoescape=True,
     auto_reload=True,
 )
-templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8007")
+configure_templates(templates, "http://localhost:8007")
 
 """
 Service
@@ -35,7 +35,7 @@ difference_mime
 
 
 @router.get("/stamp_card")
-async def get_stamp_card(
+def get_stamp_card(
     request: Request,
     oid: str,
     survey_id: str,
@@ -85,7 +85,7 @@ async def get_stamp_card(
 
 
 @router.post("/update_stamp_card")
-async def post_stamp_card(request: Request, post_input: PostRequestInputModel):
+def post_stamp_card(request: Request, post_input: PostRequestInputModel):
     handler = handler_selector(post_input.survey_id)()
     context = {}
     has_stamp_selected_measurement_id = has_stamp_for_measurement_id(

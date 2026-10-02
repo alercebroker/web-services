@@ -1,11 +1,10 @@
-import os
-
 from datetime import date
 
 import httpx
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from fastapi.templating import Jinja2Templates
+from core.static_files import configure_templates
 from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
@@ -32,7 +31,7 @@ templates = Jinja2Templates(
     auto_reload=True,
 )
 
-templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8001")
+configure_templates(templates, "http://localhost:8001")
 
 
 def _validate_oid(oid: str, survey_id: str) -> int:
