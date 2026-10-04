@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "catshtm-api.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "catshtm-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  {{- with .Values.strategyType }}
+  strategy:
+    type: {{ . }}
+    {{- if eq . "Recreate" }}
+    # null deletes the live rollingUpdate block; the API rejects Recreate while it is still set
+    rollingUpdate: null
+    {{- end }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "catshtm-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "catshtm-api.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ include "catshtm-api.name" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 5001
+          volumeMounts:
+            - name: catshtm-catalogs
+              mountPath: {{ .Values.configmap.data_path }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: CATALOGS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "catshtm-api.fullname" . }}
+                  key: catalogs
+            - name: DATA_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "catshtm-api.fullname" . }}
+                  key: data-path
+            - name: ROOT_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "catshtm-api.fullname" . }}
+                  key: root-path
+        - name: nginx-sidecar
+          image: "{{ .Values.nginx.image }}:{{ .Values.nginx.tag }}"
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+          resources:
+            requests:
+              memory: 64M
+              cpu: 50m
+      volumes:
+        - name: catshtm-catalogs
+          persistentVolumeClaim:
+            claimName: {{ include "catshtm-api.fullname" . }}
+        - name: nginx-conf
+          configMap:
+            name: {{ include "catshtm-api.fullname" . }}-nginx-conf
+            items:
+              - key: "default.conf"
+                path: "default.conf"
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
