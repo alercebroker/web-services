@@ -1,0 +1,64 @@
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: nodegroup
+          operator: In
+          values:
+          - hybrid-ws
+        - key: topology.kubernetes.io/zone
+          operator: In
+          values:
+          - us-east-1a
+autoscaling:
+  enabled: false
+  maxReplicas: 1
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 80
+configmap:
+  catalogs: FIRST,TMASS,TMASSxsc,DECaLS,GAIADR1,GAIADR2,GALEX,HSCv2,IPHAS,NEDz,SDSSDR10,SDSSoffset,SpecSDSS,SAGE,IRACgc,UKIDSS,VISTAviking,VSTatlas,VSTkids,AKARI,APASS,NVSS,Cosmos,PTFpc,ROSATfsc,SkyMapper,UCAC4,WISE,XMM,AAVSO_VSX,unWISE,SWIREz,Simbad_PM200,CRTS_per_var
+  data_path: /usr/local/catalogsHTM
+  root_path: ''
+fullnameOverride: ''
+image:
+  pullPolicy: IfNotPresent
+  repository: ghcr.io/alercebroker/catshtm_api
+  tag: 1.2.0
+imageCredentials:
+  email: ''
+  password: ''
+  registry: ghcr.io
+  username: alerceadmin
+imagePullSecrets:
+- name: image-pull-access
+ingress:
+  certificateArn: arn:aws:acm:us-east-1:031864545038:certificate/860afd79-aabd-447b-8fcc-1d2222d2fbeb
+  hosts:
+  - host: catshtm.alerce.online
+    path: /
+  - host: api.alerce.online
+    path: /catshtm/v1
+  k8sGroupName: web-services-hybrid
+  k8sTags: Environment=Hybrid
+nameOverride: ''
+namespace: ws-catshtm-old
+nginx:
+  image: nginx
+  pathPrefix: /catshtm/v1
+  tag: 1.31.1-alpine
+podAnnotations:
+  prometheus.io/scrape: 'true'
+replicaCount: 1
+resources: {}
+# Deployment strategy type. Leave empty for the Kubernetes default (RollingUpdate). Set "Recreate" when the
+# pod mounts a ReadWriteOnce volume: a rolling update starts the new pod first, and if it lands on another
+# node it can never attach the volume the old pod still holds.
+strategyType: ""
+service:
+  port: 80
+  type: ClusterIP
+volume:
+  handle: vol-06c697cf48b1f0877
+  storage: 1850Gi
+  zone: us-east-1a

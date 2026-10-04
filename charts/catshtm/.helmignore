@@ -1,0 +1,12 @@
+# Patterns to ignore when building packages.
+.DS_Store
+.git/
+.gitignore
+.vscode/
+*.tmp
+*.bak
+*.swp
+*.orig
+# Deploy values (they hold sensitive data and live in SSM), never part of the chart
+values_*.yaml
+*-values.yaml
