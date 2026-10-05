@@ -3,9 +3,9 @@ import { draw } from "./ui_tools.js";
 
 class creatorAladin {
 
-  constructor(aladin, catalog, objects = []){
+  constructor(aladin, objects = []){
     this._aladin = aladin
-    this._catalog = catalog
+    this._catalog = null
     this._objects = objects
     this.sources = []
   }
@@ -41,21 +41,18 @@ class creatorAladin {
 
 
 export async function init(A) {
+  await A.init
+  
+  
   let raw_data = JSON.parse(document.getElementById("aladin-data").text)
-  let objects = raw_data.objects
+  let objects = check_objects_array(raw_data.objects, raw_data.selected_object)
   let selected_object = raw_data.selected_object
-  let catalog = null
   let new_object = null
-  let aladin = null
-  let aladin_instance = null
   let SURVEY_HIPS = {
     0: 'P/PanSTARRS/DR1/color-z-zg-g',            // ZTF (northern sky)
     1: 'CDS/P/DESI-Legacy-Surveys/DR10/color',    // LSST (southern sky)
   }
-
-  
-  await A.init
-  aladin = A.aladin('#aladin-lite-div', 
+  let aladin = A.aladin('#aladin-lite-div', 
       {
           survey: SURVEY_HIPS[selected_object.sid],
           fov: 0.01, 
@@ -63,27 +60,30 @@ export async function init(A) {
           showReticle: true,
       }
   );
+  let catalog_config = A.catalog({ sourceSize: 10, shape: draw})
+  let aladin_instance = new creatorAladin(aladin, objects)
+  let new_source = create_source(aladin_instance)
 
-  aladin_instance = new creatorAladin(aladin, catalog, objects)
+  
+  aladin_instance.set_sources(new_source)
+  aladin_instance.create_catalog(catalog_config)
 
-  if(objects){
-    let catalog_config = A.catalog({ sourceSize: 10, shape: draw})
-    let new_source = create_source(aladin_instance)
+  aladin_instance.aladin.on('objectClicked', (event) => {
+    if(event?.catalog?.name == "catalog"){
+      new_object = find_object_in_catalog(event, aladin_instance)
+      on_selected_object_change(new_object, aladin_instance)
+    }
+  })
 
-    aladin_instance.set_sources(new_source)
-    aladin_instance.create_catalog(catalog_config)
-
-    aladin_instance.aladin.on('objectClicked', (event) => {
-      if(event?.catalog?.name == "catalog"){
-        new_object = find_object_in_catalog(event, aladin_instance)
-        on_selected_object_change(new_object, aladin_instance)
-      }
-    })
-  }
 
   on_selected_object_change(selected_object, aladin_instance)
   document.getElementById("aladin-loader").classList.add("tw-hidden")
 
+}
+
+
+function check_objects_array(objects, selected_object){
+  return objects.some(o => o.oid === selected_object.oid) ? objects : [selected_object, ...objects]
 }
 
 function create_source(aladin){
