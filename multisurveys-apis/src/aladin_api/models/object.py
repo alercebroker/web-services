@@ -16,4 +16,4 @@ class Object(BaseModel):
 class RawObjectsRequest(BaseModel):
     selected_oid: str
     sid: str
-    objects: str
+    objects: str | None = None
