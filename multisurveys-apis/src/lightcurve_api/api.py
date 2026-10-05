@@ -2,6 +2,9 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
+from core.concurrency import add_concurrency_limit
+from core.static_files import VERSIONED_PREFIX, VersionedStaticFiles
+from core.version import APP_VERSION
 from .routes.htmx import lightcurve as htmx_lightcurve
 from .routes.json import conesearch, lightcurve as json_lightcurve
 
@@ -53,11 +56,12 @@ TAGS_METADATA = [
 app = FastAPI(
     root_path="/lightcurve_api",
     title="ALeRCE Lightcurve API",
-    version="0.2.10",
+    version=APP_VERSION,
     description=API_DESCRIPTION,
     openapi_tags=TAGS_METADATA,
     contact={"name": "ALeRCE", "url": "https://alerce.science"},
 )
+add_concurrency_limit(app)
 instrumentator = Instrumentator().instrument(app).expose(app)
 
 
@@ -81,9 +85,16 @@ app.include_router(htmx_lightcurve.router, tags=["Browser UI (HTMX)"])
 # matches on the post-strip path (like the other routers do); delegating to
 # StaticFiles.get_response keeps ETag/Last-Modified, conditional 304s, Range
 # requests, HEAD and traversal-safe lookups.
+# The versioned twin, /v/<version>/static/..., carries an immutable Cache-Control (see core/static_files.py).
 _static = StaticFiles(directory="src/static")
+_versioned_static = VersionedStaticFiles(directory="src/static")
 
 
 @app.get("/static/{path:path}", name="static", include_in_schema=False)
 async def static_files(path: str, request: Request):
     return await _static.get_response(path, request.scope)
+
+
+@app.get(VERSIONED_PREFIX + "/static/{path:path}", name="static-versioned", include_in_schema=False)
+async def versioned_static_files(path: str, request: Request):
+    return await _versioned_static.get_response(path, request.scope)

@@ -18,7 +18,7 @@ def healthcheck():
 
 
 @router.get("/crossmatch")
-async def object_mag_app(request: Request, oid: str, survey_id: str):
+def object_mag_app(request: Request, oid: str, survey_id: str):
     session = request.app.state.psql_session
 
     object_details = ObjectInformation(oid=oid, survey=survey_id)

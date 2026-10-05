@@ -1,7 +1,7 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
-<link rel="stylesheet" href="{{API_URL}}/static/object.css">
-<link rel="stylesheet" href="{{API_URL}}/static/loading_indicators.css">
-<script src="{{API_URL}}/htmx/htmx.min.js"></script>
+<link rel="stylesheet" href="{{ ASSETS_URL }}/static/object.css">
+<link rel="stylesheet" href="{{ ASSETS_URL }}/static/loading_indicators.css">
+<script src="{{ ASSETS_URL }}/htmx/htmx.min.js"></script>
 
 
 {% if objects_list['items']|length > 0 %}
@@ -84,7 +84,7 @@
 {% endif %}
 
 <script type="module">
-    import {init, elementReady} from "{{API_URL}}/static/astronomical_object_list/object_list.js"
+    import {init, elementReady} from "{{ ASSETS_URL }}/static/astronomical_object_list/object_list.js"
 
 
     elementReady("#sidebar-objects-htmx").then((el) => {

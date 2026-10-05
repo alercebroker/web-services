@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "catshtm-api.fullname" . }}-nginx-conf
+  namespace: {{ .Values.namespace }}
+data:
+  default.conf: |
+    server {
+      listen 80;
+
+      location {{ .Values.nginx.pathPrefix }} {
+        proxy_pass http://localhost:5001/;
+        proxy_redirect off;
+        proxy_set_header X-Forwarded-Prefix {{ .Values.nginx.pathPrefix }};
+      }
+
+      location / {
+        proxy_pass http://localhost:5001/;
+        proxy_redirect off;
+      }
+    }

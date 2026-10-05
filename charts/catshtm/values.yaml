@@ -1,0 +1,56 @@
+# Environment-specific values are left empty here on purpose: each release sets them in its SSM parameter
+# (see README.md). Defaults that pointed at production would let any other install of this chart claim the
+# production EBS volume and hostnames.
+
+# Pin the pod to the volume's zone and node group.
+affinity: {}
+autoscaling:
+  enabled: false
+  maxReplicas: 1
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 80
+configmap:
+  # Comma-separated catsHTM catalog names to serve.
+  catalogs: ''
+  data_path: /usr/local/catalogsHTM
+  root_path: ''
+fullnameOverride: ''
+image:
+  pullPolicy: IfNotPresent
+  repository: ghcr.io/alercebroker/catshtm_api
+  tag: ''
+imageCredentials:
+  email: ''
+  password: ''
+  registry: ghcr.io
+  username: ''
+imagePullSecrets:
+- name: image-pull-access
+ingress:
+  certificateArn: ''
+  # List of {host, path}.
+  hosts: []
+  k8sGroupName: ''
+  k8sTags: ''
+nameOverride: ''
+namespace: ''
+nginx:
+  image: nginx
+  pathPrefix: /catshtm/v1
+  tag: 1.31.1-alpine
+podAnnotations:
+  prometheus.io/scrape: 'true'
+replicaCount: 1
+resources: {}
+# Deployment strategy type. Leave empty for the Kubernetes default (RollingUpdate). Set "Recreate" when the
+# pod mounts a ReadWriteOnce volume: a rolling update starts the new pod first, and if it lands on another
+# node it can never attach the volume the old pod still holds.
+strategyType: ""
+service:
+  port: 80
+  type: ClusterIP
+# Pre-existing EBS volume holding the catalogs: volume ID, size and availability zone.
+volume:
+  handle: ''
+  storage: ''
+  zone: ''

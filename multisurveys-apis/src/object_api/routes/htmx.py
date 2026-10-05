@@ -1,8 +1,8 @@
-import os
 import traceback
 from fastapi import APIRouter, HTTPException, Request, Query
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from core.static_files import configure_templates
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.validations import (
@@ -28,13 +28,13 @@ from ..services.parameters_parser import ndet_build, search_order_state, parse_o
 router = APIRouter()
 
 templates = Jinja2Templates(directory="src/object_api/templates", autoescape=True, auto_reload=True)
-templates.env.globals["API_URL"] = os.getenv("API_URL", "http://localhost:8000")
+configure_templates(templates, "http://localhost:8000")
 
 templates.env.filters["truncate"] = truncate_float
 
 
 @router.get("/htmx/object_information", response_class=HTMLResponse)
-async def object_info_app(request: Request, oid: str, survey_id: str):
+def object_info_app(request: Request, oid: str, survey_id: str):
     try:
         object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
 
@@ -73,7 +73,7 @@ async def object_info_app(request: Request, oid: str, survey_id: str):
 
 
 @router.get("/htmx/tns/", response_class=HTMLResponse)
-async def tns_info(request: Request, ra: float, dec: float):
+def tns_info(request: Request, ra: float, dec: float):
     try:
         tns_data, tns_link = get_tns(ra, dec)
     except ObjectNotFound:
@@ -95,7 +95,7 @@ async def tns_info(request: Request, ra: float, dec: float):
 
 
 @router.get("/htmx/search_objects/", response_class=HTMLResponse)
-async def objects_form(request: Request, survey_id: str = None):
+def objects_form(request: Request, survey_id: str = None):
     try:
         session = request.app.state.psql_session
 

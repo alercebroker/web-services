@@ -8,12 +8,12 @@ router = APIRouter()
 
 
 @router.get("/")
-async def ping():
+def ping():
     return "This is the magstats API"
 
 
 @router.get("/magstats")
-async def magstats(request: Request, oid: str, survey_id: str):
+def magstats(request: Request, oid: str, survey_id: str):
     try:
         master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
     except ValueError as error:

@@ -1,7 +1,7 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="{{API_URL}}/static/object.css">
-<link rel="stylesheet" href="{{API_URL}}/static/loading_indicators.css">
+<link rel="stylesheet" href="{{ ASSETS_URL }}/static/object.css">
+<link rel="stylesheet" href="{{ ASSETS_URL }}/static/loading_indicators.css">
 
 <div id="objects_table" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
@@ -324,7 +324,7 @@
 
 
 <script type="module">
-    import {draw_arrow_order_table} from "{{API_URL}}/static/draw_elements.js"
+    import {draw_arrow_order_table} from "{{ ASSETS_URL }}/static/draw_elements.js"
 
     let received_order_by = '{{actual_order_by}}_column'
     if(received_order_by == 'oid_list_column'){

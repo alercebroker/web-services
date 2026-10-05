@@ -1,0 +1,7 @@
+name: catshtm-api
+version: 0.1.1
+description: A Helm chart for the ALeRCE catsHTM API (FastAPI + nginx sidecar over
+  an EBS-backed catalog volume)
+apiVersion: v2
+appVersion: 1.2.0
+type: application

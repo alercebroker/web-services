@@ -15,8 +15,13 @@ Monorepo of ALeRCE web service APIs.
 
 - `charts/` — Helm charts. The active one is `charts/multisurvey_api/`.
 - `ci_new/` — current build/deploy tooling. `ci/` is the old path. For deploying the
-  multisurvey image (manual build + push + rollout), see
+  multisurvey image (manual build + push + Helm upgrade), see
   [`multisurveys-apis/DEPLOYMENT.md`](multisurveys-apis/DEPLOYMENT.md).
+- **Deploy with Helm, never by patching live deployments with `kubectl`.** Each service's
+  Helm values live in AWS SSM Parameter Store; change them there, review with
+  `helm diff upgrade`, then `helm upgrade`. `kubectl set image` / `set resources` / `edit`
+  drift from SSM and are reverted by the next Helm upgrade. Read-only `kubectl` (get, logs,
+  rollout status) is fine.
 - `scripts/` — ops tooling run by hand, not from CI.
 
 ## After recreating an Ingress or TargetGroupBinding
@@ -68,20 +73,14 @@ Python 3.11, Poetry, [`ruff`](https://docs.astral.sh/ruff/). For `multisurveys-a
 - **Never commit directly to `main`.** Branch and open a PR (PRs target `main` or `staging`).
 - **Bump the multisurvey API version before approving a PR.** The deployed image tag is
   the `pyproject.toml` version, so any PR touching `multisurveys-apis/**` must increase it
-  relative to `main` — in both [`multisurveys-apis/pyproject.toml`](multisurveys-apis/pyproject.toml)
-  and the mirrored `version=` in [`src/lightcurve_api/api.py`](multisurveys-apis/src/lightcurve_api/api.py).
+  relative to `main` in [`multisurveys-apis/pyproject.toml`](multisurveys-apis/pyproject.toml),
+  the only place that holds it (the app reads it back from the installed package).
   Reusing a tag means the deploy ships stale code (and affects all 8 services).
 
 ## Future improvements
 
-- **Cache-bust browser-served static assets on deploy.** Any API in the repo that serves
-  static front-end assets (JS/CSS) references them by a fixed filename, so browsers keep
-  serving a cached copy and don't pick up a deploy until they bypass their cache — a fix can
-  be live yet invisible. Append a version query (`?v={{ APP_VERSION }}`, with the deployed
-  version exposed as a template/render global) to each asset reference so every release
-  forces a re-fetch. The lightcurve htmx widget is the known instance today (entry
-  `<script>` in `layout.html.jinja` → [`lightcurve-app.js`](multisurveys-apis/src/static/lightcurve-app.js)),
-  but apply the same rule to any service that grows a static front-end. Caveat for
-  ES-module entries: chained dynamic `import()`s that derive their base via
-  `new URL('.', import.meta.url)` drop the query string, so sub-modules need their own
-  busting if they change.
+- **Cache-bust static assets in any other API that grows a browser front-end.** Browsers keep a
+  fixed-name JS/CSS file cached across deploys, so a fix can be live yet invisible. The multisurvey
+  APIs solve it by serving assets under a versioned path (`{{ ASSETS_URL }}/static/...`, see
+  [`core/static_files.py`](multisurveys-apis/src/core/static_files.py)); reuse that pattern rather
+  than a `?v=` query, which ES-module relative imports drop.
