@@ -3,16 +3,13 @@ from fastapi.encoders import jsonable_encoder
 from ..models.object import Object
 
 
-def object_parser(sql_response):
-    for model in sql_response:
-        model_dict = model.__dict__
-        model_dict["oid"] = str(model_dict["oid"])
-        model_parsed = Object(**model_dict)
+def object_parser(sql_response) -> dict:
+    parsed_object = Object.model_validate(sql_response[0], from_attributes=True)
 
-    return jsonable_encoder(model_parsed)
+    return jsonable_encoder(parsed_object)
 
 
-def loads_objects_list(objects):
+def loads_objects_list(objects) -> list:
     if _object_is_empty(objects):
         return []
 
