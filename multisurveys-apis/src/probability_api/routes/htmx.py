@@ -13,7 +13,7 @@ router = APIRouter()
 templates = Jinja2Templates(directory="src/probability_api/templates", autoescape=True, auto_reload=True)
 configure_templates(templates, "http://localhost:8004")
 
-
+import pprint
 @router.get("/htmx/probabilities/{oid}", response_class=HTMLResponse)
 def object_probability_app(
     request: Request,
@@ -23,18 +23,33 @@ def object_probability_app(
     master_id = encode_ids(survey, [oid])
 
     classifier_list = get_classifiers(session_factory=request.app.state.psql_session)
-    priorities = priorities_by_survey(survey)
-    classifier_list = sort_classifiers(classifier_list, priorities)
-    class_options = classifier_name_parser(classifier_list)
-
     prob_list = get_probability(int(master_id[0]), classifier_list, session_factory=request.app.state.psql_session)
     group_prob = parse_grouped_probabilities(prob_list)
 
+    priorities = priorities_by_survey(survey)
+
+    classifiers_sorted = [None] * 10
+    for priority, index in priorities.items():
+        if priority in classifier_list:
+            classifiers_sorted[index] = classifier_list[priority]
+
+    clean_classifiers = [classifier for classifier in classifiers_sorted if classifier is not None]
+
+
+    filter_classifiers = [c for c in clean_classifiers if c in group_prob.keys()]
+
+    result_arr = []
+    for classifier_name in filter_classifiers:
+        parsed_name = classifier_name.replace("_", " ").title()
+        aux_dict = {classifier_name: parsed_name}
+        result_arr.append(aux_dict)
+
+    print("result_arr: ", result_arr)
     return templates.TemplateResponse(
         name="prob.html.jinja",
         context={
             "request": request,
             "group_prob_dict": group_prob,
-            "class_dict": class_options,
+            "class_dict": result_arr,
         },
     )
