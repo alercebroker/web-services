@@ -36,6 +36,6 @@ def object_probability_app(
         context={
             "request": request,
             "group_prob_dict": probabilities,
-            "class_dict": classifiers_names,
+            "classifiers_names": classifiers_names,
         },
     )

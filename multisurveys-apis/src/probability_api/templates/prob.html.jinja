@@ -17,12 +17,12 @@
             <div class="select-wrapper">
                 <div class="select">
                     <div class="select__trigger">
-                        {% for value in class_dict[0].values()%}
+                        {% for value in classifiers_names[0].values()%}
                             <span>{{value}}</span>
                         {% endfor %}
                     </div>
                     <div class="custom-options">
-                        {% for y in class_dict %}
+                        {% for y in classifiers_names %}
                             {% if loop.first %}
                                 {% for key, value in y.items() %}
                                     <span class="custom-option selected" data-value="{{key}}"> {{value}}</span>
