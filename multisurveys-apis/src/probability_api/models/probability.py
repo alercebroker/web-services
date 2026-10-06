@@ -7,3 +7,9 @@ class Probability(BaseModel):
     class_name: str
     probability: float
     ranking: int
+
+
+class ObjectProbability(BaseModel):
+    oid: int
+    survey: str
+    classifiers: dict
