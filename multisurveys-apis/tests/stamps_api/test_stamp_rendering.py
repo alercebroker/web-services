@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import astropy.io.fits as fio
 import numpy as np
 
-from stamps_api.s3_handler.base_handler import s3_client
+# from stamps_api.s3_handler.base_handler import s3_client
 from stamps_api.s3_handler.fits_to_png import transform
 
 
