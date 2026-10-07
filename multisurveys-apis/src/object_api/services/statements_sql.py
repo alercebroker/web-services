@@ -34,8 +34,7 @@ def create_order_statement(query, order_args):
     cols = query.column_descriptions
 
     first_attr = get_model_attribute(cols, order_args.order_by)
-    second_attr = get_model_attribute(cols, "oid")
-    attributes = [first_attr, second_attr]
+    attributes = [first_attr]
 
     statement = add_order_mode(attributes, order_args.order_mode)
 

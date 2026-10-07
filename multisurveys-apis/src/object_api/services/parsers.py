@@ -1,5 +1,7 @@
 from fastapi.encoders import jsonable_encoder
 from core.idmapper.survey_mapper import get_survey_name
+from src.object_api.models.filters import SearchParams
+from src.object_api.models.pagination import Pagination
 from .statements_sql import (
     convert_conesearch_args,
     convert_filters_to_sqlalchemy_statement,
@@ -69,9 +71,10 @@ def parse_unique_object_query(sql_response, survey, return_survey_extra=False):
     return model_parsed
 
 
-def parse_objects_list_output(result, survey, classes_list):
+def parse_objects_list_output(result: Pagination, search_params: SearchParams, classes: list):
+    survey = search_params.filter_args.survey
     items = serialize_items(result.items_page)
-    items_updated = match_and_update_item_class(items, classes_list)
+    items_updated = match_and_update_item_class(items, classes)
     items_output = parse_items_probabilities(items_updated, survey)
     if survey == "ztf":
         items_output = decode_ids(items_output)

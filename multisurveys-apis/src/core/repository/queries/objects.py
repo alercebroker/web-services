@@ -1,3 +1,5 @@
+from itertools import groupby
+
 import pandas as pd
 from db_plugins.db.sql.models_pipeline import (
     Object,
@@ -98,10 +100,40 @@ def query_get_objects(session_ms, search_params, parsed_params):
 
         items = session.execute(stmt).all()
 
+        items = order_by_oid(items, search_params.order_args)
+
         if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
             items = sort_by_oid_list_and_select_page(search_params, items)
 
         return Pagination(pagination_args.page, pagination_args.page_size, items)
+
+
+def order_by_oid(items, order_args):
+    """Complementary oid desc order applied to the rows already fetched.
+
+    The main order is preserved: only consecutive rows with the same value in the
+    order column are reordered among themselves. Does nothing when there is no
+    main order or it is "oid_list" (defined by the user-supplied oid list).
+    """
+    order_by = order_args.order_by
+    if order_by is None or order_by == "oid_list":
+        return items
+
+    ordered = []
+    for _, group in groupby(items, key=lambda row: order_value(row, order_by)):
+        ordered.extend(sorted(group, key=lambda row: row[0].oid, reverse=True))
+
+    return ordered
+
+
+def order_value(row, order_by):
+    """Value of the order column in a row of models (probability, object, survey object)."""
+    models = [row[1]] if order_by == "lastmjd" else row
+    for model in models:
+        if hasattr(model, order_by):
+            return getattr(model, order_by)
+
+    return None
 
 
 def subquery_probability(filters):
