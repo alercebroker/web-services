@@ -1,7 +1,7 @@
 from fastapi.encoders import jsonable_encoder
 from core.idmapper.survey_mapper import get_survey_name
-from src.object_api.models.filters import SearchParams
-from src.object_api.models.pagination import Pagination
+from ..models.filters import SearchParams
+from ..models.pagination import Pagination
 from .statements_sql import (
     convert_conesearch_args,
     convert_filters_to_sqlalchemy_statement,

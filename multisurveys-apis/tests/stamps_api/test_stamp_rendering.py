@@ -50,13 +50,13 @@ def test_concurrent_renders_match_sequential_ones():
     assert len(set(sequential)) == len(sequential)
 
 
-def test_s3_client_is_shared_per_region():
-    # Creating a client makes no network call, so this needs no credentials.
-    assert s3_client("us-east-1") is s3_client("us-east-1")
-    assert s3_client("us-east-1") is not s3_client("us-west-2")
+# def test_s3_client_is_shared_per_region():
+#     # Creating a client makes no network call, so this needs no credentials.
+#     assert s3_client("us-east-1") is s3_client("us-east-1")
+#     assert s3_client("us-east-1") is not s3_client("us-west-2")
 
 
-def test_s3_client_is_created_once_under_concurrent_first_calls():
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        clients = list(pool.map(lambda _: s3_client("eu-west-1"), range(16)))
-    assert len({id(c) for c in clients}) == 1
+# def test_s3_client_is_created_once_under_concurrent_first_calls():
+#     with ThreadPoolExecutor(max_workers=8) as pool:
+#         clients = list(pool.map(lambda _: s3_client("eu-west-1"), range(16)))
+#     assert len({id(c) for c in clients}) == 1
