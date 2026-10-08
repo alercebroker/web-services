@@ -1786,6 +1786,10 @@
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1)
 }
 
+.tw-preflight .backdrop\:tw-bg-transparent::backdrop {
+  background-color: transparent
+}
+
 .tw-preflight .after\:tw-absolute::after {
   content: var(--tw-content);
   position: absolute
@@ -1993,6 +1997,31 @@
 .tw-preflight :is(.tw-peer:focus ~ .peer-focus\:tw-outline-none) {
   outline: 2px solid transparent;
   outline-offset: 2px
+}
+
+.tw-preflight .data-\[closed\]\:tw-translate-y-4[data-closed] {
+  --tw-translate-y: 1rem;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+}
+
+.tw-preflight .data-\[closed\]\:tw-opacity-0[data-closed] {
+  opacity: 0
+}
+
+.tw-preflight .data-\[enter\]\:tw-duration-300[data-enter] {
+  transition-duration: 300ms
+}
+
+.tw-preflight .data-\[leave\]\:tw-duration-200[data-leave] {
+  transition-duration: 200ms
+}
+
+.tw-preflight .data-\[enter\]\:tw-ease-out[data-enter] {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1)
+}
+
+.tw-preflight .data-\[leave\]\:tw-ease-in[data-leave] {
+  transition-timing-function: cubic-bezier(0.4, 0, 1, 1)
 }
 
 .tw-preflight .dark\:tw-border:is(.tw-dark *) {
@@ -2299,6 +2328,17 @@
   .tw-preflight .sm\:tw-px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem
+  }
+
+  .tw-preflight .data-\[closed\]\:sm\:tw-translate-y-0[data-closed] {
+    --tw-translate-y: 0px;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
+  }
+
+  .tw-preflight .data-\[closed\]\:sm\:tw-scale-95[data-closed] {
+    --tw-scale-x: .95;
+    --tw-scale-y: .95;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))
   }
 }
 
