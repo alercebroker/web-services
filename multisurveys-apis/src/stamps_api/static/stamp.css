@@ -770,6 +770,14 @@
   width: 75%
 }
 
+.tw-preflight .tw-w-\[100px\] {
+  width: 100px
+}
+
+.tw-preflight .tw-w-\[200px\] {
+  width: 200px
+}
+
 .tw-preflight .tw-min-w-\[200px\] {
   min-width: 200px
 }
@@ -1068,6 +1076,10 @@
 
 .tw-preflight .tw-text-balance {
   text-wrap: balance
+}
+
+.tw-preflight .tw-text-pretty {
+  text-wrap: pretty
 }
 
 .tw-preflight .tw-break-words {
