@@ -1,0 +1,24 @@
+<div class="tw-preflight">
+
+  <div class="tw-w-[90%] tw-mx-auto tw-mb-4">
+    <span class="tw-block tw-my-[10px] tw-text-2xl tw-font-normal tw-text-dark dark:tw-text-white">Alert Information</span>
+    <span class="tw-text-sm tw-font-normal tw-text-black/70 dark:tw-text-white/70">For more information read <a href="https://zwickytransientfacility.github.io/ztf-avro-alert/schema.html" class="tw-text-[#1976d2]">the ZTF Schema</a>.</span>
+  </div>
+
+
+  <div id="avro_table" class="tw-w-[90%] tw-mx-auto">
+    <div id="avro_head" class="tw-flex tw-text-xs tw-text-left tw-text-black/70 tw-border tw-border-solid tw-border-transparent tw-border-b-white/20 dark:tw-text-white/70">
+      <span class="tw-inline-block tw-w-1/4 ">Key</span>
+      <span class="tw-inline-block tw-w-3/4 ">Value</span>
+    </div>
+
+    <div id="avro_body">
+    {% for key, value in avro['candidate']|dictsort%}
+        <div class="tw-flex tw-text-sm tw-border tw-border-solid tw-border-transparent tw-border-b-white/20 dark:tw-text-white">
+          <span class="tw-inline-block tw-w-1/4">{{key}}</span>
+          <span class="tw-inline-block tw-w-3/4">{{value}}</span>
+        </div>
+    {% endfor %}
+    </div>
+  </div>
+</div>

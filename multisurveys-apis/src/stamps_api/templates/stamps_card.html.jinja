@@ -84,7 +84,17 @@
     </div>
     
     {% if survey_id == "ztf" %}
-    <button id="avroBtn" class="tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium tw-transition-colors tw-mt-5 md:tw-mt-6 tw-ml-20 md:tw-ml-2">
+    {% include "avro/avro_popup.html.jinja" %}
+    <button
+     id="avro-btn-modal"
+     command="show-modal"
+     commandfor="avro-dialog"
+     class="tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium tw-transition-colors tw-mt-5 md:tw-mt-6 tw-ml-20 md:tw-ml-2"
+     hx-get="{{ API_URL }}/htmx/avro"
+     hx-vals='{"oid": "{{oid}}", "measurement_id": "{{selected_measurement_id}}", "survey_id": "{{survey_id}}"}'
+     hx-trigger="click"
+     hx-target="#avro-modal"
+     >
         AVRO
     </button>
     {% endif %}
