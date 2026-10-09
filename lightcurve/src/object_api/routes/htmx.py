@@ -29,7 +29,7 @@ async def object_info_app(request: Request, oid: str):
         candid = get_first_det_candid(oid, request.app.state.psql_session)
         count_ndet = get_count_ndet(oid, request.app.state.psql_session)
 
-        other_archives = ['DESI Legacy Survey DR10', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
+        other_archives = ['DESI Legacy Survey DR11', 'NED', 'PanSTARRS', 'SDSS DR18', 'SIMBAD', 'TNS', 'Vizier', 'VSX']
 
     except ObjectNotFound:
         raise HTTPException(status_code=404, detail="Object ID not found")
