@@ -84,6 +84,21 @@ def get_stamp_card(
     )
 
 
+@router.get("/avro")
+def avro(request: Request, oid: str, measurement_id: str, survey_id: str):
+    handler = handler_selector(survey_id)()
+
+    avro_json = handler.get_avro(oid, measurement_id)
+
+    return templates.TemplateResponse(
+        name="avro/table_data.html.jinja",
+        context={
+            "request": request,
+            "avro": avro_json,
+        },
+    )
+
+
 @router.post("/update_stamp_card")
 def post_stamp_card(request: Request, post_input: PostRequestInputModel):
     handler = handler_selector(post_input.survey_id)()
