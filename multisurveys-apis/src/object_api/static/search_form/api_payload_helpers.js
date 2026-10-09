@@ -18,8 +18,8 @@ function send_form_Data() {
 
   let response = {
     oid: list_oids == '' ? null : list_oids,
-    classifier: classifier_selected.dataset.classifier ?? null,
-    class_name: class_selected.dataset.value ?? null ,
+    classifier: classifier_selected.dataset.classifier || null,
+    class_name: class_selected.dataset.value || null ,
     survey: survey_id.dataset.survey,
     probability: probability_value > 0 ? probability_value : null,
     n_det_min: ndet_arr.length > 0 && ndet_arr[0] !== null ? parseInt(ndet_arr[0]) : null,
