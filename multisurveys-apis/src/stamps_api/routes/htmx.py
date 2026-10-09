@@ -95,7 +95,7 @@ def avro(request: Request, oid: str, measurement_id: str, survey_id: str):
         context={
             "request": request,
             "avro": avro_json,
-            },
+        },
     )
 
 
