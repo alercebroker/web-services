@@ -1,17 +1,17 @@
-<div class="tw-inline tw-mb-[5px]">
-    <h1 class="tw-font-semibold tw-text-2xl tw-pt-[30px] tw-pl-[10px] tw-mb-[20px] dark:tw-text-white tw-text-black">Stamps</h1>
+<div class="tw-inline">
+    <h1 class="tw-font-semibold tw-text-2xl tw-my-[20px] dark:tw-text-white tw-text-black">Stamps</h1>
 </div>
 
-<div class="tw-flex tw-flex-col md:!tw-flex-row tw-items-center tw-mb-[20px] tw-max-w-[95%] sm:tw-max-w-[80%] tw-gap-1">
-    
+<span class="tw-block tw-w-full tw-text-black dark:tw-text-white tw-mb-1">Date:</span>
+<div class="tw-flex tw-justify-start tw-items-center tw-mb-[20px] tw-max-w-[95%] sm:tw-max-w-[80%] tw-gap-1">
+
     <div class="tw-whitespace-nowrap">
-        <p class="tw-text-black dark:tw-text-white tw-mb-1">Date:</p>
-        <div class="tw-cursor-pointer">
+        <div class="tw-inline-block tw-cursor-pointer tw-w-[60%]">
             <button id="mid_arrow" class="tw-relative tw-cursor-pointer">
                 <select 
                     id="measurement_id" 
                     name="measurement_id" 
-                    class="tw-appearance-none tw-cursor-pointer tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-pl-3 tw-pr-10 tw-py-2 tw-bg-white dark:hover:tw-bg-gray-800 dark:tw-bg-[#1e1e1e] dark:hover:tw-bg-gray-800 tw-cursor-pointer tw-text-black dark:tw-text-white tw-text-sm tw-min-w-[200px]"
+                    class="tw-appearance-none tw-cursor-pointer tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded tw-pl-3 tw-pr-10 tw-py-2 tw-bg-white dark:hover:tw-bg-gray-800 dark:tw-bg-[#1e1e1e] dark:hover:tw-bg-gray-800 tw-cursor-pointer tw-text-black dark:tw-text-white tw-text-sm tw-max-w-[290px]"
                     hx-on::config-request="event.detail.headers['Content-Type'] = 'application/json'"
                     hx-post="{{ API_URL }}/htmx/update_stamp_card"
                     hx-trigger="change"
@@ -37,10 +37,10 @@
         </div> 
     </div>
 
-    <div class="tw-flex tw-gap-1 tw-mt-2 md:!tw-mt-7">
+    <div class="tw-flex tw-gap-1">
         <button id="prevDate" 
             data-measurement-id="{{ prv_measurement_id }}"
-            class="tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded tw-transition-all tw-duration-200 tw-border
+            class="tw-inline-flex tw-justify-center tw-items-center tw-w-[24px] tw-h-[24px] tw-rounded tw-transition-all tw-duration-200 tw-border
             {% if prv_measurement_id == selected_measurement_id %}
                 tw-bg-gray-100 dark:tw-bg-gray-800 tw-text-gray-400 dark:tw-text-gray-600 tw-cursor-not-allowed tw-border-gray-200 dark:tw-border-gray-600
             {% else %}
@@ -62,7 +62,7 @@
 
         <button id="nextDate" 
             data-measurement-id="{{ nxt_measurement_id }}"
-            class="tw-w-8 tw-h-8 tw-flex tw-items-center tw-justify-center tw-rounded tw-transition-all tw-duration-200 tw-border
+            class="tw-inline-flex tw-justify-center tw-items-center  tw-w-[24px] tw-h-[24px] tw-rounded tw-transition-all tw-duration-200 tw-border
             {% if nxt_measurement_id == selected_measurement_id %}
                 tw-bg-gray-100 dark:tw-bg-gray-800 tw-text-gray-400 dark:tw-text-gray-600 tw-cursor-not-allowed tw-border-gray-200 dark:tw-border-gray-600
             {% else %}
@@ -89,18 +89,16 @@
      id="avro-btn-modal"
      command="show-modal"
      commandfor="avro-dialog"
-     class="tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-px-4 tw-py-2 tw-rounded tw-text-sm tw-font-medium tw-transition-colors tw-mt-5 md:tw-mt-6 tw-ml-20 md:tw-ml-2"
+     class="tw-inline-flex tw-justify-center tw-items-center tw-w-[61px] tw-h-[28px] tw-p-2 tw-bg-blue-600 hover:tw-bg-blue-700 tw-text-white tw-rounded tw-font-medium tw-transition-colors"
      hx-get="{{ API_URL }}/htmx/avro"
      hx-vals='{"oid": "{{oid}}", "measurement_id": "{{selected_measurement_id}}", "survey_id": "{{survey_id}}"}'
      hx-trigger="click"
      hx-target="#avro-modal"
      >
-        AVRO
+        <span>AVRO</span>
     </button>
-    {% endif %}
 
-    {% if survey_id == "ztf" %}
-    <div class="tw-relative tw-group tw-mt-5 md:tw-mt-6">
+    <div class="tw-relative tw-group">
         <span class="tw-w-6 tw-h-6 tw-bg-gray-400 dark:tw-bg-gray-600 tw-text-white tw-rounded-full tw-text-xs tw-flex tw-items-center tw-justify-center tw-cursor-help">
             <svg class="tw-w-3 tw-h-3" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"></path>
