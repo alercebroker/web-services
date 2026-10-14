@@ -227,7 +227,11 @@ deploy_api() {
   confirm "Write these values to SSM and upgrade ${release}?" || { info "Skipped ${api}"; return 0; }
 
   step "Writing the new values to SSM (${param})"
-  aws ssm put-parameter --name "${param}" --value "file://${values}" --overwrite \
+  # `--output text` ends what it prints with a newline that isn't in SSM. Store the values without trailing
+  # newlines, so the read-back below matches the file and each deploy doesn't add a blank line to SSM.
+  printf '%s\n' "$(cat "${values}")" >"${values}.new"; mv "${values}.new" "${values}"
+  printf '%s' "$(cat "${values}")" >"${values}.put"
+  aws ssm put-parameter --name "${param}" --value "file://${values}.put" --overwrite \
     --region "${AWS_REGION_PROD}" --query Version --output text | sed 's/^/    New SSM version: /'
 
   step "Reading the values back from SSM, to deploy exactly what it holds"
