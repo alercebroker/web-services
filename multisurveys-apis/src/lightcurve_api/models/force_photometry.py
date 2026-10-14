@@ -79,14 +79,14 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
         return flux * 1000  # convert to nJy
 
     def magnitude2flux_err(self, total: bool) -> float:
-        err = self.e_mag_corr if total else self.e_mag
+        err = self.e_mag_corr_ext if total else self.e_mag
         return abs(err) * abs(self.magnitude2flux(total))
 
     def flux2magnitude(self, total: bool) -> float:
         return self.mag_corr if total else self.mag
 
     def flux2magnitude_err(self, total: bool) -> float:
-        return self.e_mag_corr if total else self.e_mag
+        return self.e_mag_corr_ext if total else self.e_mag
 
     def plot_variants(self) -> dict:
         return build_plot_variants(
