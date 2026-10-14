@@ -70,6 +70,11 @@ Python 3.11, Poetry, [`ruff`](https://docs.astral.sh/ruff/). For `multisurveys-a
 
 ## Workflow
 
+- **This repo is public: never commit sensitive data.** That includes credentials, passwords,
+  tokens, private hostnames or IPs, connection strings, AWS account details, and anything
+  copied from SSM, Kubernetes secrets or a local `config.yaml` (git ignores it, so keep secrets
+  there). Scripts that need credentials take them at run time, from env vars or a file path
+  passed as an argument, never as defaults in code. Check the diff for these before every commit.
 - **Never commit directly to `main`.** Branch and open a PR (PRs target `main` or `staging`).
 - **Bump the multisurvey API version before approving a PR.** The deployed image tag is
   the `pyproject.toml` version, so any PR touching `multisurveys-apis/**` must increase it

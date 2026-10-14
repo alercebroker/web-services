@@ -6,6 +6,22 @@ Helm chart** ([`charts/multisurvey_api/`](../charts/multisurvey_api/)); each run
 its own deployment in namespace `multisurvey-api-<service>` on EKS, behind an nginx
 sidecar that strips the per-service path prefix before forwarding to the app.
 
+## ⚠️ WARNING — Light-curve classifier lists: `n_det >= 2` is hard-coded
+
+**The object API's lists drop every object with fewer than 2 detections when the classifier
+is a light-curve one.** The ids are hard-coded in `LC_CLASSIFIER_IDS` in
+[`object_api/services/statements_sql.py`](src/object_api/services/statements_sql.py): 5–9,
+which are `lc_classifier_BHRF_forced_phot` and its `_top`, `_transient`, `_stochastic` and
+`_periodic` parts in production. It drops nothing today, because the light-curve step only
+classifies objects with at least 2 detections. It exists because, without it, sorted lists
+walk through ZTF's one-detection objects (80% of them) and time out at 55 s.
+
+**Check that set whenever a classifier is added, retrained, replaced or renumbered.** If a
+classifier with one of those ids starts classifying objects with 1 detection, or an id is
+reused for another classifier, those objects **silently disappear from the lists**. No error
+and no test will tell you. A new light-curve classifier with a new id gets no filter, which
+is correct but slow until its id is added.
+
 ## Build & deploy → see [DEPLOYMENT.md](DEPLOYMENT.md)
 
 Full runbook lives in [`DEPLOYMENT.md`](DEPLOYMENT.md). The traps that cost the most

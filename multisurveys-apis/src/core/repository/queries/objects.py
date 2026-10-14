@@ -78,25 +78,36 @@ def query_get_objects(session_ms, search_params, parsed_params):
     object_alias = subquery_object(filters_objects, parsed_params)
     dynamic_object_alias = dinamic_object_model(search_params.filter_args.survey)
 
+    page = select(probability_alias, object_alias).join(
+        object_alias,
+        and_(object_alias.oid == probability_alias.oid),
+    )
+    page_order = create_order_statement(page, search_params.order_args)
+
     with session_ms() as session:
-        stmt = (
-            select(probability_alias, object_alias, dynamic_object_alias)
-            .join(
-                object_alias,
-                and_(object_alias.oid == probability_alias.oid),
+        if len(page_order) > 0:
+            stmt = page_then_survey_statement(
+                page, page_order, dynamic_object_alias, search_params.order_args, pagination_args
             )
-            .join(
-                dynamic_object_alias,
-                and_(dynamic_object_alias.oid == probability_alias.oid),
+        else:
+            stmt = (
+                select(probability_alias, object_alias, dynamic_object_alias)
+                .join(
+                    object_alias,
+                    and_(object_alias.oid == probability_alias.oid),
+                )
+                .join(
+                    dynamic_object_alias,
+                    and_(dynamic_object_alias.oid == probability_alias.oid),
+                )
             )
-        )
 
-        order_statement = create_order_statement(stmt, search_params.order_args)
+            order_statement = create_order_statement(stmt, search_params.order_args)
 
-        stmt = stmt.order_by(*order_statement)
+            stmt = stmt.order_by(*order_statement)
 
-        if len(order_statement) > 0:
-            stmt = add_limits_statements(stmt, pagination_args)
+            if len(order_statement) > 0:
+                stmt = add_limits_statements(stmt, pagination_args)
 
         items = session.execute(stmt).all()
 
@@ -106,6 +117,29 @@ def query_get_objects(session_ms, search_params, parsed_params):
             items = sort_by_oid_list_and_select_page(search_params, items)
 
         return Pagination(pagination_args.page, pagination_args.page_size, items)
+
+
+def page_then_survey_statement(page, page_order, survey_model, order_args, pagination_args):
+    """Pick the page's rows from probability and object, then join the survey table to those rows only.
+
+    In one flat query Postgres joins the survey table before ORDER BY ... LIMIT, so while it walks objects
+    in sort order looking for matches it may look up the survey row of every object it passes, not just of
+    the page's (63,785 ztf_object lookups for a 21-row TDE page). It can't defer the join itself: without
+    foreign keys it can't know the inner join drops no rows. The pipeline keeps every object with exactly
+    one survey row, so joining after the LIMIT returns the same rows.
+
+    The outer ORDER BY only re-sorts the page's rows; the LIMIT and OFFSET stay inside.
+    """
+    page = add_limits_statements(page.order_by(*page_order), pagination_args).subquery("tpage")
+    probability_page = aliased(Probability, page)
+    object_page = aliased(Object, page)
+
+    stmt = select(probability_page, object_page, survey_model).join(
+        survey_model,
+        and_(survey_model.oid == probability_page.oid),
+    )
+
+    return stmt.order_by(*create_order_statement(stmt, order_args))
 
 
 def order_by_oid(items, order_args):

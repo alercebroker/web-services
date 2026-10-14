@@ -1,6 +1,21 @@
 from db_plugins.db.sql.models_pipeline import Object, Probability
 from sqlalchemy import text
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# WARNING: object lists filtered by these classifiers only return objects with n_det >= 2.
+#
+# These are the classifier_ids of lc_classifier_BHRF_forced_phot and its _top, _transient, _stochastic
+# and _periodic parts in the production multisurvey database. The light-curve step only classifies objects
+# with at least 2 detections, so the extra filter drops nothing today. It exists for speed: 80% of ZTF
+# objects have 1 detection, and without it Postgres walks through them while sorting (lists over 55 s).
+#
+# If a new or retrained classifier with one of these ids classifies objects with 1 detection, or the ids
+# are reassigned, those objects silently disappear from the lists. Whenever a classifier is added,
+# replaced or renumbered, check this set (and multisurveys-apis/CLAUDE.md, "Light-curve classifier lists").
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+LC_CLASSIFIER_IDS = frozenset({5, 6, 7, 8, 9})
+LC_CLASSIFIER_MIN_N_DET = 2
+
 
 def convert_conesearch_args(args):
     try:
@@ -91,6 +106,10 @@ def object_filters(args):
         if len(args["n_det"]) > 1:
             ndet = ndet & (Object.n_det <= args["n_det"][1])
         filters_dict.append(ndet)
+
+    # See the warning on LC_CLASSIFIER_IDS.
+    if args["classifier"] in LC_CLASSIFIER_IDS:
+        filters_dict.append(Object.n_det >= LC_CLASSIFIER_MIN_N_DET)
 
     if args["firstmjd"] is not None:
         firstmjd = Object.firstmjd >= args["firstmjd"][0]
