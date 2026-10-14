@@ -12,6 +12,9 @@ def mag_parser(mag_list):
         "maglast": "maglast",
         "magfirst": "magfirst",
         "step_id_corr": "step_id_corr",
+        "n_det": "ndet",
+        "firstmjd": "firstmjd",
+        "lastmjd": "lastmjd",
     }
 
     result = []
@@ -26,10 +29,6 @@ def mag_parser(mag_list):
                     new_mag_dict[n_mag] = d.__dict__[o_mag]
             else:
                 new_mag_dict[n_mag] = "-"
-
-        new_mag_only_keys = ["ndet", "firstmjd", "lastmjd"]
-        for key in new_mag_only_keys:
-            new_mag_dict[key] = "-"
 
         result.append(new_mag_dict)
     return result
