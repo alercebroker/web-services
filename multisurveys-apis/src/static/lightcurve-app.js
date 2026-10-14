@@ -446,7 +446,7 @@ function buildOptions(cfg) {
     return {
         title:  { show: true, text: cfg.oid },
         tooltip: {},
-        grid:   { left: 'left', top: '10%', width: '75%', height: '100%' },
+        grid:   { left: 70, right: '25%', top: 60, bottom: 40 },
         legend: buildLegend(cfg),
         xAxis:  { type: 'value', name: cfg.fold ? 'Phase' : 'MJD', scale: true, splitLine: false },
         yAxis:  {
@@ -477,7 +477,7 @@ function buildPeriodogramOptions() {
 
     const opts = {
         tooltip:  { axisPointer: { type: 'cross' }, formatter: params => `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}` },
-        grid:     { left: 'left', top: '10%', width: '75%', height: '100%' },
+        grid:     { left: 70, right: '25%', top: 60, bottom: 40 },
         legend:   { left: 'right', top: 'middle', height: '80%', orient: 'vertical' },
         xAxis:    { type: 'log', name: 'Period', scale: true, splitLine: false, min: '0.05', max: '500' },
         yAxis:    { type: 'value', name: 'Score', scale: true, splitLine: false },
