@@ -130,6 +130,18 @@ export function draw_close_button(element) {
 }
 
 
+export function draw_empty_option(placeholder, node_container) {
+  let new_option = document.createElement("a")
+
+  new_option.textContent = placeholder
+  new_option.href = "#"
+  new_option.dataset.empty = "true"
+  new_option.classList.add("obj-custom-option", "obj-empty-option", "hover:tw-bg-[#b2b2b2]")
+
+  node_container.appendChild(new_option)
+}
+
+
 export function draw_dropdown_options(options, node_container) {
   options.forEach(option => {
     let new_option = document.createElement("a")

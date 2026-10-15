@@ -1,6 +1,6 @@
 import { draw_dropdown_options } from "../draw_elements.js";
 import { clean_nodes_in_dom, switch_arrow_icon } from "../ui_helpers.js";
-import { draw_classes_options } from "../draw_elements.js";
+import { draw_classes_options, draw_empty_option } from "../draw_elements.js";
 
 
 export class Dropdown {
@@ -60,9 +60,14 @@ export class Dropdown {
 
 
 export function restart_dropdown(selected_element, options_container) {
-    selected_element.textContent = "";
-    selected_element.dataset.value = "";
+    clear_selected(selected_element);
     clean_nodes_in_dom(options_container)
+}
+
+function clear_selected(selected_element) {
+    selected_element.textContent = "";
+    delete selected_element.dataset.value;
+    delete selected_element.dataset.classifier;
 }   
 
 export function init_classifiers_dropdown(classifiers_dropdown, survey_id) {
@@ -78,6 +83,8 @@ function configure_dropdown_by_survey(classifiers_dropdown, survey_id) {
 }
 
 function dropdown_classifiers_options_configure(classifiers) {
+    let selected = document.getElementById("classifiers_selected");
+    draw_empty_option(selected.dataset.placeholder, document.getElementById("classifiers_options"));
     draw_dropdown_options(classifiers, document.getElementById("classifiers_options"));
     
     add_classifiers_items_functionality(document.getElementById("classifiers_selected"), document.getElementById("classifiers_options"));
@@ -90,9 +97,16 @@ function add_classifiers_items_functionality(selected, options) {
         item.addEventListener('click', () => {
 
             withdraw_selected_item(options)
-            change_selected_item(item) 
             switch_arrow_icon(document.getElementById("classifier_container"))
 
+            restart_dropdown(document.getElementById("class_selected"), document.getElementById("classes_options"))
+
+            if (item.dataset.empty) {
+                clear_selected(selected)
+                return
+            }
+
+            change_selected_item(item) 
             selected.textContent = item.textContent;
             selected.setAttribute("data-classifier", item.getAttribute("data-classifier"));
             
@@ -107,6 +121,7 @@ function add_classifiers_items_functionality(selected, options) {
 
 function dropdown_classes_configure(classes) {
     clean_nodes_in_dom(document.getElementById("classes_options"))
+    draw_empty_option(document.getElementById("class_selected").dataset.placeholder, document.getElementById("classes_options"))
     draw_classes_options(classes.split(","))
     add_class_items_functionality(document.getElementById("classes_options"))
 }
@@ -120,8 +135,14 @@ function add_class_items_functionality(options) {
 
         item.addEventListener('click', () => { 
             withdraw_selected_item(options)
-            change_selected_item(item)
             switch_arrow_icon(document.getElementById("class_container"))
+
+            if (item.dataset.empty) {
+                clear_selected(selected)
+                return
+            }
+
+            change_selected_item(item)
             selected.textContent = item.textContent;
             selected.setAttribute("data-value", item.getAttribute("data-value"));
         })
