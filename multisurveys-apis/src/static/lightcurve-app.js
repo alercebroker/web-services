@@ -231,8 +231,9 @@ function buildDetectionSeries(cfg) {
 
 function buildNonDetectionSeries(cfg) {
     if (!(cfg.data_types ?? ['non_detections']).includes('non_detections')) return [];
-    // Non-detections are only shown in difference mode (not total) and not when folded.
-    if (cfg.total || cfg.fold) return [];
+    // Non-detections are limiting magnitudes, so they are only shown in magnitude view,
+    // in difference mode (not total) and not when folded.
+    if (cfg.flux || cfg.total || cfg.fold) return [];
 
     const pts = [];
     for (const nd of rawNonDetections) {
@@ -614,6 +615,32 @@ function updateVisibility() {
     );
 }
 
+// ─── Non-detections toggle ────────────────────────────────────────────────────
+// Non-detections are limiting magnitudes, so their checkbox is unavailable in flux view:
+// unticked, greyed out and disabled. Going back to magnitude restores its previous state.
+function syncNonDetectionsToggle(form) {
+    const el = form.querySelector('[name="data_types[]"][value="non_detections"]');
+    if (!el) return;
+    const fluxOn = form.querySelector('[name="flux"]')?.checked ?? false;
+
+    if (fluxOn && !el.disabled) {
+        el.dataset.checkedBeforeFlux = String(el.checked);
+        el.checked  = false;
+        el.disabled = true;
+    } else if (!fluxOn && el.disabled) {
+        el.checked  = el.dataset.checkedBeforeFlux !== 'false';
+        el.disabled = false;
+    }
+
+    const label = el.closest('label');
+    for (const node of [label, el]) {
+        node?.classList.toggle('tw-cursor-pointer', !fluxOn);
+        node?.classList.toggle('tw-cursor-not-allowed', fluxOn);
+    }
+    label?.classList.toggle('tw-opacity-50', fluxOn);
+    if (label) label.title = fluxOn ? 'Limiting magnitudes are only shown in magnitude view.' : '';
+}
+
 // ─── Read config from form ────────────────────────────────────────────────────
 function readConfigFromForm() {
     const form = document.getElementById('config-form');
@@ -641,6 +668,7 @@ function readConfigFromForm() {
     config.bands.ztf    = [...form.querySelectorAll('[name="bands.ztf[]"]:checked')]   .map(el => el.value);
     config.bands.lsst   = [...form.querySelectorAll('[name="bands.lsst[]"]:checked')]  .map(el => el.value);
     config.bands.ztf_dr = [...form.querySelectorAll('[name="bands.ztf_dr[]"]:checked')].map(el => el.value);
+    syncNonDetectionsToggle(form);
     config.data_types   = [...form.querySelectorAll('[name="data_types[]"]:checked')]  .map(el => el.value);
 
     // Validate: fold/external sources force total mode.
@@ -727,6 +755,7 @@ function init() {
 
     const form = document.getElementById('config-form');
     if (!form) return;
+    syncNonDetectionsToggle(form);
 
     // Debounce continuous inputs (sliders) slightly to avoid rebuilding on every tick.
     let debounceTimer = null;
