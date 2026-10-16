@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 from core.config.connection import psql_entity
 from .routes import rest, htmx
+from .pipeline_status.router import router as pipeline_status_router  # pipeline status (removable)
 
 app = FastAPI()
 add_concurrency_limit(app)
@@ -24,6 +25,7 @@ app.add_middleware(
 
 app.include_router(rest.router)
 app.include_router(htmx.router)
+app.include_router(pipeline_status_router)  # pipeline status (removable)
 
 
 static_path = Path(__file__).resolve().parent / "static"
