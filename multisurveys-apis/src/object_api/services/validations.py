@@ -124,3 +124,20 @@ def date_validation(firstmjd, lastmjd):
                 status_code=422,
                 detail={"discovery_date_filters_container": "Min MJD must be lower than max MJD."},
             )
+
+
+def prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier):
+    if prob_lastmjd_min is None and prob_lastmjd_max is None:
+        return
+
+    if classifier is None:
+        raise HTTPException(
+            status_code=422,
+            detail={"classifier_date_filters_container": "Select a classifier to filter by this date."},
+        )
+
+    if prob_lastmjd_min is not None and prob_lastmjd_max is not None and prob_lastmjd_min >= prob_lastmjd_max:
+        raise HTTPException(
+            status_code=422,
+            detail={"classifier_date_filters_container": "Min MJD must be lower than max MJD."},
+        )

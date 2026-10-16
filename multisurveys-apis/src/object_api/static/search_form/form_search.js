@@ -5,7 +5,7 @@ import { draw_dropdown_options, draw_oids_tags } from "../draw_elements.js";
 import { display, highlight_text, split_oids, set_oids_in_container, survey_emphasize, switch_arrow_icon, clean_oids_container, clean_nodes_in_dom } from "../ui_helpers.js";
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, send_form_Data } from "./api_payload_helpers.js"
-import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_conesearch } from "./form_restore_functions.js";
+import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_prob_lastmjd, restore_conesearch } from "./form_restore_functions.js";
 import { Dropdown, restart_dropdown, init_classifiers_dropdown } from "./dropdown_config.js";
 
 
@@ -55,6 +55,7 @@ export function init() {
   setup_filters_toggles()
   setup_time_toggles()
   setup_time_pickers()
+  setup_prob_lastmjd_inputs()
 
   clear_oids.addEventListener("click", () => {
     clean_oids_container(oids_container)
@@ -224,16 +225,24 @@ export function elementReady(selector) {
 
 
 function setup_filters_toggles() {
-  let general_filters = document.getElementById("general_filters")
+  let classification_filters = document.getElementById("classification_filters")
+  let object_filters = document.getElementById("object_filters")
   let discovery_date_filters = document.getElementById("discovery_date_filters")
   let conesearch_filters = document.getElementById("conesearch_filters")
   let item_name = ""
 
 
-  general_filters.addEventListener("click", () => {
-    item_name = general_filters.id + "_container"
-    switch_arrow_icon(general_filters)
-    highlight_text(general_filters)
+  classification_filters.addEventListener("click", () => {
+    item_name = classification_filters.id + "_container"
+    switch_arrow_icon(classification_filters)
+    highlight_text(classification_filters)
+    display(item_name)
+  })
+
+  object_filters.addEventListener("click", () => {
+    item_name = object_filters.id + "_container"
+    switch_arrow_icon(object_filters)
+    highlight_text(object_filters)
     display(item_name)
   })
 
@@ -306,6 +315,27 @@ function setup_time_pickers() {
 
 
 
+// Each MJD box and its date picker (UTC midnight) follow each other.
+function setup_prob_lastmjd_inputs() {
+  for (let bound of ["min", "max"]) {
+    let mjd = document.getElementById(`${bound}_prob_lastmjd`)
+    let date = document.getElementById(`${bound}_prob_lastmjd_date`)
+
+    mjd.addEventListener("input", () => {
+      date.value = mjd.value != '' ? extractDate(getUTCDate(jdToDate(mjd.value))) : ''
+    })
+
+    date.addEventListener("change", () => {
+      mjd.value = date.value != '' ? gregorianToJd(convertToDate(date.value, "00:00")) : ''
+    })
+
+    date.addEventListener("click", () => {
+      date.showPicker()
+    })
+  }
+}
+
+
 function reset_values() {
   window.history.pushState({}, document.title, "/")
 }
@@ -351,6 +381,8 @@ function restore_form_from_url() {
   restore_n_det(urlParams)
 
   restore_mjd(urlParams)
+
+  restore_prob_lastmjd(urlParams)
 
   restore_conesearch(urlParams)
 

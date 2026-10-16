@@ -5,6 +5,8 @@ function send_form_Data() {
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
   let first_mjd = document.getElementById("min_mjd").value
   let last_mjd = document.getElementById("max_mjd").value
+  let min_prob_lastmjd = document.getElementById("min_prob_lastmjd").value
+  let max_prob_lastmjd = document.getElementById("max_prob_lastmjd").value
   let probability_value = parseFloat(document.getElementById("prob_range").value);
   let class_selected = document.getElementById("class_selected")
   let classifier_selected = document.getElementById("classifiers_selected")
@@ -26,6 +28,8 @@ function send_form_Data() {
     n_det_max: ndet_arr.length > 1 && ndet_arr[1] !== null ? parseInt(ndet_arr[1]) : null,
     firstmjd: first_mjd != '' ? parseFloat(first_mjd) : null,
     lastmjd: last_mjd != '' ? parseFloat(last_mjd) : null,
+    prob_lastmjd_min: min_prob_lastmjd != '' ? parseFloat(min_prob_lastmjd) : null,
+    prob_lastmjd_max: max_prob_lastmjd != '' ? parseFloat(max_prob_lastmjd) : null,
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
     dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
     radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch : null,

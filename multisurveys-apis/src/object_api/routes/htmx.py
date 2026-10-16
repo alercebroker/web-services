@@ -13,6 +13,7 @@ from ..services.validations import (
     oid_lenght_validation,
     date_validation,
     probability_validation,
+    prob_lastmjd_validation,
 )
 from ..services.tns_service import get_tns
 from ..services.jinja_tools import truncate_float
@@ -134,6 +135,8 @@ def objects_table(
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
+    prob_lastmjd_min: float | None = None,
+    prob_lastmjd_max: float | None = None,
 ):
     try:
         if survey is not None:
@@ -147,6 +150,7 @@ def objects_table(
             oid_lenght_validation(oids)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd, lastmjd)
+            prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
 
             order_by = search_order_state(oids, order_by)
             oids = parse_oids_to_int(oids, survey)
@@ -156,6 +160,8 @@ def objects_table(
 
             filters = Filters(
                 oids=oids,
+                prob_lastmjd_min=prob_lastmjd_min,
+                prob_lastmjd_max=prob_lastmjd_max,
                 survey=survey,
                 classifier=classifier,
                 class_name=class_name,
@@ -237,6 +243,8 @@ def sidebar(
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
+    prob_lastmjd_min: float | None = None,
+    prob_lastmjd_max: float | None = None,
 ):
     try:
         if survey is not None:
@@ -250,6 +258,7 @@ def sidebar(
             oid_lenght_validation(oids)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd, lastmjd)
+            prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
 
             order_by = search_order_state(oids, order_by)
             oids = parse_oids_to_int(oids, survey)
@@ -259,6 +268,8 @@ def sidebar(
 
             filters = Filters(
                 oids=oids,
+                prob_lastmjd_min=prob_lastmjd_min,
+                prob_lastmjd_max=prob_lastmjd_max,
                 survey=survey,
                 classifier=classifier,
                 class_name=class_name,

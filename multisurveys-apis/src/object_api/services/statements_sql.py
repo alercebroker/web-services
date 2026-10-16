@@ -151,7 +151,32 @@ def probability_filters(args):
             survey = Probability.sid == 1
             filters_prob_dict.append(survey)
 
+    filters_prob_dict.extend(probability_lastmjd_filters(args))
+
     return filters_prob_dict
+
+
+def probability_lastmjd_filters(args):
+    """Bounds on probability.lastmjd: the user's, plus the ones the object's dates imply.
+
+    probability.lastmjd is the date of the latest detection the classifier used, so it lies between the
+    object's firstmjd and lastmjd. A lower bound on firstmjd is then also one on probability.lastmjd, and so is
+    an upper bound on lastmjd. Repeating them changes no result, but lets Postgres find a class's objects in a
+    date range through ix_prob_clf_class_lastmjd_rank1 instead of checking every object of the class.
+    """
+    filters = []
+    if args["prob_lastmjd_min"] is not None:
+        filters.append(Probability.lastmjd >= args["prob_lastmjd_min"])
+    if args["prob_lastmjd_max"] is not None:
+        filters.append(Probability.lastmjd <= args["prob_lastmjd_max"])
+
+    if args["classifier"] is not None:
+        if args["firstmjd"] is not None:
+            filters.append(Probability.lastmjd >= args["firstmjd"][0])
+        if args["lastmjd"] is not None and len(args["lastmjd"]) > 1:
+            filters.append(Probability.lastmjd <= args["lastmjd"][1])
+
+    return filters
 
 
 def add_limits_statements(stmt, pagination_args):
