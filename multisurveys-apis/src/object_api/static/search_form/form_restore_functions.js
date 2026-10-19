@@ -105,6 +105,21 @@ function restore_mjd(urlParams) {
 
 }
 
+function restore_last_alert_date(urlParams) {
+  const min = urlParams.get('lastmjd_min')
+  const max = urlParams.get('lastmjd_max')
+
+  if (min) {
+    document.getElementById('min_lastmjd').value = min
+    document.getElementById('min_lastmjd').dispatchEvent(new Event('input'))
+  }
+
+  if (max) {
+    document.getElementById('max_lastmjd').value = max
+    document.getElementById('max_lastmjd').dispatchEvent(new Event('input'))
+  }
+}
+
 function restore_prob_lastmjd(urlParams) {
   const min = urlParams.get('prob_lastmjd_min')
   const max = urlParams.get('prob_lastmjd_max')
@@ -131,4 +146,4 @@ function restore_conesearch(urlParams) {
   if (radius) document.getElementById('radius_consearch').value = radius
 }
 
-export { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_prob_lastmjd, restore_conesearch }
+export { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_last_alert_date, restore_prob_lastmjd, restore_conesearch }

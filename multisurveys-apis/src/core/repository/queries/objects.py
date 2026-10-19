@@ -13,6 +13,7 @@ from object_api.services.parsers import serialize_items
 from object_api.services.statements_sql import (
     create_order_statement,
     add_limits_statements,
+    add_order_mode,
 )
 from object_api.models.pagination import Pagination
 
@@ -119,6 +120,68 @@ def query_get_objects(session_ms, search_params, parsed_params):
         return Pagination(pagination_args.page, pagination_args.page_size, items)
 
 
+def query_objects_with_prediction(session_ms, search_params, parsed_params, classifier_id):
+    """One row per object: the objects matching the object filters, each with the given classifier's top class.
+
+    The page is chosen from the object table alone, sorted and cut there, so the classifier never drops an
+    object: an object it has no prediction for comes with None instead of a probability row. Only the page's
+    rows then look up their survey row and their prediction (one primary key lookup each).
+
+    Rows are (probability or None, object, survey object), like query_get_objects's.
+    """
+    filters_objects = parsed_params["filters_sqlalchemy_statement"]["objects"]
+    pagination_args = check_pagination_args(search_params.pagination_args)
+    order_args = search_params.order_args
+
+    object_alias = subquery_object(filters_objects, parsed_params)
+    survey_model = dinamic_object_model(search_params.filter_args.survey)
+
+    page = select(object_alias)
+    page_order = object_order_statement(object_alias, order_args)
+    # Only an oid list, sorted afterwards in its own order, may come whole: else this could read every object.
+    if len(page_order) > 0 or search_params.filter_args.oids is None:
+        page = add_limits_statements(page.order_by(*page_order), pagination_args)
+    page = page.subquery("tpage")
+    object_page = aliased(Object, page)
+
+    prediction = and_(
+        Probability.oid == object_page.oid,
+        Probability.sid == object_page.sid,
+        Probability.classifier_id == classifier_id,
+        Probability.ranking == 1,
+    )
+    stmt = (
+        select(Probability, object_page, survey_model)
+        .select_from(object_page)
+        .join(survey_model, and_(survey_model.oid == object_page.oid))
+        .outerjoin(Probability, prediction)
+        .order_by(*object_order_statement(object_page, order_args))
+    )
+
+    with session_ms() as session:
+        items = session.execute(stmt).all()
+
+    items = order_by_oid(items, order_args)
+
+    if search_params.filter_args.oids is not None and order_args.order_by is None and len(items) > 0:
+        items = sort_by_oid_list_and_select_page(search_params, items)
+
+    return Pagination(pagination_args.page, pagination_args.page_size, items)
+
+
+def object_order_statement(object_model, order_args):
+    """ORDER BY on a column of the object table; none for the oid list's order or a column it doesn't have.
+
+    Many objects share a value (every alert of an exposure has its lastmjd), so oid breaks ties: without it
+    Postgres may order tied rows differently for each page, and an object shows on two pages or on none.
+    """
+    if order_args.order_by is None or order_args.order_by == "oid_list":
+        return []
+
+    order = add_order_mode([getattr(object_model, order_args.order_by, None)], order_args.order_mode)
+    return order + [object_model.oid.desc()] if order else []
+
+
 def page_then_survey_statement(page, page_order, survey_model, order_args, pagination_args):
     """Pick the page's rows from probability and object, then join the survey table to those rows only.
 
@@ -155,7 +218,7 @@ def order_by_oid(items, order_args):
 
     ordered = []
     for _, group in groupby(items, key=lambda row: order_value(row, order_by)):
-        ordered.extend(sorted(group, key=lambda row: row[0].oid, reverse=True))
+        ordered.extend(sorted(group, key=lambda row: row[1].oid, reverse=True))
 
     return ordered
 

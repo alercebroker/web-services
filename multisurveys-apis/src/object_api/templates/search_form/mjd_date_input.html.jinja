@@ -1,0 +1,18 @@
+{% from "input.html.jinja" import input as customInput %}
+
+{# One bound of a date range: an MJD box, and the same instant as DD/MM/YYYY HH:MM (UTC) with a calendar to pick it.
+   The date part goes under the MJD box, both full width, when the panel is too narrow for both.
+   form_search.js keeps them in sync through the ids {id}, {id}_date, {id}_calendar and {id}_picker. #}
+{% macro mjd_date_input(id, placeholder) %}
+    <div class="tw-col-span-12 tw-flex tw-flex-wrap tw-items-center tw-gap-2">
+        {{customInput(id=id, type="number", placeholder=placeholder ~ " MJD", width="", min="0", step="0.01", style="flex: 1 1 80px; min-width: 0")}}
+
+        <div class="tw-relative tw-flex tw-items-center tw-gap-1" style="flex: 2 1 150px" title="Date and time in UTC">
+            <svg id="{{id}}_calendar" class="tw-h-[24px] tw-w-[24px] tw-shrink-0 tw-cursor-pointer tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+
+            {{customInput(id=id ~ "_date", type="text", placeholder="dd/mm/yyyy hh:mm", width="tw-w-full tw-text-sm", style="min-width: 0")}}
+
+            <input id="{{id}}_picker" type="datetime-local" tabindex="-1" aria-hidden="true" class="tw-absolute tw-left-0 tw-bottom-0 tw-w-0 tw-h-0 tw-opacity-0 tw-pointer-events-none tw-scheme-light dark:tw-scheme-dark">
+        </div>
+    </div>
+{% endmacro %}

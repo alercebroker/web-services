@@ -18,10 +18,16 @@ from ..services.validations import (
 from ..services.tns_service import get_tns
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
-from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
+from object_api.services.object_services import (
+    get_object_by_id,
+    get_objects_list,
+    get_tidy_classifiers,
+    get_survey_classifiers,
+    choose_shown_classifier,
+)
 from ..services.parsers import _parse_oids_string_to_array
 
-from ..services.parameters_parser import ndet_build, firstmjd_build, search_order_state, parse_oids_to_int
+from ..services.parameters_parser import ndet_build, mjd_range_build, search_order_state, parse_oids_to_int
 
 router = APIRouter()
 
@@ -124,6 +130,8 @@ def objects_table(
     probability: float | None = None,
     firstmjd_min: float | None = None,
     firstmjd_max: float | None = None,
+    lastmjd_min: float | None = None,
+    lastmjd_max: float | None = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
@@ -134,8 +142,10 @@ def objects_table(
     order_mode: str | None = Query(default="DESC"),
     prob_lastmjd_min: float | None = None,
     prob_lastmjd_max: float | None = None,
+    shown_classifier: str | None = None,
 ):
     try:
+        survey_classifiers = []
         if survey is not None:
             session = request.app.state.psql_session
             oids = _parse_oids_string_to_array(oid)
@@ -147,12 +157,16 @@ def objects_table(
             oid_lenght_validation(oids)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd_min, firstmjd_max)
+            date_validation(lastmjd_min, lastmjd_max, "last_alert_date_filters_container")
             prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
 
-            order_by = search_order_state(oids, order_by)
+            order_by = search_order_state(oids, order_by, classifier)
+            survey_classifiers = get_survey_classifiers(session, survey)
+            shown_classifier = choose_shown_classifier(survey_classifiers, classifier, shown_classifier)
             oids = parse_oids_to_int(oids, survey)
             n_det = ndet_build(n_det_min, n_det_max)
-            firstmjd = firstmjd_build(firstmjd_min, firstmjd_max)
+            firstmjd = mjd_range_build(firstmjd_min, firstmjd_max)
+            lastmjd = mjd_range_build(lastmjd_min, lastmjd_max)
 
             filters = Filters(
                 oids=oids,
@@ -165,6 +179,7 @@ def objects_table(
                 n_det=n_det,
                 probability=probability,
                 firstmjd=firstmjd,
+                lastmjd=lastmjd,
             )
 
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
@@ -180,7 +195,9 @@ def objects_table(
                 order_args=order,
             )
 
-            object_list = get_objects_list(session_ms=session, search_params=search_params)
+            object_list = get_objects_list(
+                session_ms=session, search_params=search_params, shown_classifier=shown_classifier
+            )
 
             if oid is not None and order_by is None and object_list["items"] != []:
                 order_by = "oid_list"
@@ -206,6 +223,9 @@ def objects_table(
                 "has_prev": object_list["has_prev"],
                 "actual_order_by": order_by,
                 "actual_order_mode": order_mode,
+                "shown_classifiers": survey_classifiers,
+                "shown_classifier": shown_classifier,
+                "classifier_filtered": classifier is not None,
             },
         )
     except HTTPException as e:
@@ -230,6 +250,8 @@ def sidebar(
     probability: float | None = None,
     firstmjd_min: float | None = None,
     firstmjd_max: float | None = None,
+    lastmjd_min: float | None = None,
+    lastmjd_max: float | None = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
@@ -240,8 +262,10 @@ def sidebar(
     order_mode: str | None = Query(default="DESC"),
     prob_lastmjd_min: float | None = None,
     prob_lastmjd_max: float | None = None,
+    shown_classifier: str | None = None,
 ):
     try:
+        survey_classifiers = []
         if survey is not None:
             session = request.app.state.psql_session
             oids = _parse_oids_string_to_array(oid)
@@ -253,12 +277,16 @@ def sidebar(
             oid_lenght_validation(oids)
             probability_validation(probability, classifier, class_name)
             date_validation(firstmjd_min, firstmjd_max)
+            date_validation(lastmjd_min, lastmjd_max, "last_alert_date_filters_container")
             prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
 
-            order_by = search_order_state(oids, order_by)
+            order_by = search_order_state(oids, order_by, classifier)
+            survey_classifiers = get_survey_classifiers(session, survey)
+            shown_classifier = choose_shown_classifier(survey_classifiers, classifier, shown_classifier)
             oids = parse_oids_to_int(oids, survey)
             n_det = ndet_build(n_det_min, n_det_max)
-            firstmjd = firstmjd_build(firstmjd_min, firstmjd_max)
+            firstmjd = mjd_range_build(firstmjd_min, firstmjd_max)
+            lastmjd = mjd_range_build(lastmjd_min, lastmjd_max)
 
             filters = Filters(
                 oids=oids,
@@ -271,6 +299,7 @@ def sidebar(
                 n_det=n_det,
                 probability=probability,
                 firstmjd=firstmjd,
+                lastmjd=lastmjd,
             )
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
             pagination = PaginationArgs(page=page, page_size=page_size, count=count)
@@ -282,7 +311,9 @@ def sidebar(
                 order_args=order,
             )
 
-            object_list = get_objects_list(session_ms=session, search_params=search_params)
+            object_list = get_objects_list(
+                session_ms=session, search_params=search_params, shown_classifier=shown_classifier
+            )
 
             if oid is not None and order_by is None and object_list["items"] != []:
                 order_by = "oid_list"

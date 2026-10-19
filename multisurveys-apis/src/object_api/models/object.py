@@ -244,11 +244,11 @@ class ZtfObjectProbability(BaseModel):
     n_non_det: int
     corrected: bool
     stellar: bool
-    class_name: str
-    classifier_name: str
+    class_name: str | None = None
+    classifier_name: str | None = None
     classifier_version: str | None = None
-    probability: float
-    ranking: int
+    probability: float | None = None
+    ranking: int | None = None
 
 
 class LsstObjectProbability(BaseModel):

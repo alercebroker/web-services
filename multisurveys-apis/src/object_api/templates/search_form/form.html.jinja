@@ -8,6 +8,7 @@
 <div id="form-search" hx-ext="response-targets" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-[#EEEEEE]">
     {% from "input.html.jinja" import input as customInput %}
     {% from "search_form/dropdown.html.jinja" import dropdown %}
+    {% from "search_form/mjd_date_input.html.jinja" import mjd_date_input %}
 
     <div class="tw-flex tw-w-full">
         <div id="form-container" class="tw-p-4 tw-flex tw-flex-col tw-gap-y-4 tw-w-full tw-shadow-md dark:tw-border dark:tw-border-black lg:tw-max-w-[458px]">
@@ -52,8 +53,6 @@
                 </div>
 
                 <div id="object_filters_container" class="tw-mx-auto tw-mt-4 tw-grid tw-grid-cols-12 tw-gap-4">
-                    <p class="tw-col-span-12 tw-text-sm">These filters can be slow when combined with classification filters.</p>
-
                     <div id="detections range" class="tw-col-span-12 tw-w-full">
                         <p class="tw-font-medium">Number of detections range</p>
                         <div id="detections_container" class="tw-flex tw-justify-between">
@@ -71,51 +70,24 @@
                             <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                         </div>
 
-                
                         <div id="discovery_date_filters_container" class="tw-hidden tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
-                            <!--min mjd and date greg-->
-                            {{customInput(id="min_mjd", type="number", placeholder="Min MJD", width="tw-col-span-12 lg:tw-col-span-6 md:tw-col-span-12", min="0", step="0.01")}}
+                            {{mjd_date_input("min_mjd", "Min")}}
 
-                            <div class="tw-container tw-relative tw-z-[11] tw-col-span-12 lg:tw-col-span-6">
+                            {{mjd_date_input("max_mjd", "Max")}}
+                        </div>
+                    </div>
 
-                                <div class="tw-flex tw-w-full tw-gap-2">
-                                    <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+                    <!--Last alert date filters: object.lastmjd-->
+                    <div class="tw-col-span-12 tw-w-full">
+                        <div id="last_alert_date_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
+                            <p>Last alert date</p>
+                            <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                        </div>
 
-                                    <span 
-                                    id="min_date_time_text" 
-                                    class="tw-inline-block tw-w-full tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-cursor-pointer lg:tw-w-[85%] hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Min first greg date</span>
-                                </div>
+                        <div id="last_alert_date_filters_container" class="tw-hidden tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
+                            {{mjd_date_input("min_lastmjd", "Min")}}
 
-                                <div id="min_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-shadow-lg tw-bg-white dark:tw-bg-[#424242] tw-scheme-light dark:tw-scheme-dark">
-                                    {{customInput(id="date_min", type="date",width="tw-w-[90%]")}}
-
-                                    {{customInput(id="time_min", type="time", value="00:00",width="tw-w-[90%]")}}
-
-                                    <div class="tw-container tw-flex tw-justify-end tw-gap-4">
-                                        <button id="save_date" class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-[30%] tw-self-end">Save</button>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <!--max mjd and date greg-->
-                            {{customInput(id="max_mjd", type="number", placeholder="Max MJD", width="tw-col-span-12 lg:tw-col-span-6")}}
-                    
-                            <div class="tw-container tw-relative tw-z-[10] tw-col-span-12 lg:tw-col-span-6 ">
-                                <div class="tw-flex tw-gap-2 tw-w-full">
-                                    <svg class="tw-h-[24px] tw-w-[24px] tw-fill-black dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M580-240q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
-
-                                    <span id="max_date_time_text" class="tw-inline-block tw-w-full lg:tw-w-[85%] tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-cursor-pointer hover:tw-border-b-white dark:tw-border-b-[#757575] dark:hover:tw-border-b-white">Max first greg date</span>
-                                </div>
-
-                                <div id="max_date_time_text_container" class="tw-container tw-w-[290px] tw-flex tw-flex-col tw-items-center tw-p-4 tw-gap-4 tw-hidden tw-absolute tw-shadow-lg tw-bg-white dark:tw-bg-[#424242] tw-scheme-light dark:tw-scheme-dark">
-                                    {{customInput(id="date_max", type="date", width="tw-w-[90%]")}}
-
-                                    {{customInput(id="time_max", type="time", value="00:00",width="tw-w-[90%]")}}
-
-                                    <button id="save_date_max" class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-1/4 tw-self-end">Save</button>
-                                </div>
-                            </div>
+                            {{mjd_date_input("max_lastmjd", "Max")}}
                         </div>
                     </div>
 
@@ -223,47 +195,47 @@
 
                     <!--probability.lastmjd-->
                     <div class="tw-col-span-12 tw-w-full">
-                        <div class="tw-flex tw-items-center tw-gap-2">
-                            <p class="tw-font-medium">Last detection used by the classifier</p>
+                        <div id="classifier_date_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
+                            <div class="tw-flex tw-items-center tw-gap-2">
+                                <p>Last detection used by the classifier</p>
 
-                            <div class="tw-relative tw-group tw-flex tw-items-center">
-                                <svg class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960">
-                                    <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
-                                </svg>
+                                <div class="tw-relative tw-group tw-flex tw-items-center">
+                                    <svg class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960">
+                                        <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                                    </svg>
 
-                                <div class="tw-absolute tw-left-[100%] tw-top-1/2 -tw-translate-y-1/2 tw-ml-2
-                                        tw-min-w-max tw-whitespace-nowrap
-                                        tw-px-3 tw-py-2
-                                        tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded
-                                        tw-opacity-0 tw-invisible
-                                        group-hover:tw-opacity-100 group-hover:tw-visible
-                                        tw-transition-all tw-duration-300 tw-z-50 tw-pointer-events-none">
+                                    <div class="tw-absolute tw-left-[100%] tw-top-1/2 -tw-translate-y-1/2 tw-ml-2
+                                            tw-min-w-max tw-whitespace-nowrap
+                                            tw-px-3 tw-py-2
+                                            tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded
+                                            tw-opacity-0 tw-invisible
+                                            group-hover:tw-opacity-100 group-hover:tw-visible
+                                            tw-transition-all tw-duration-300 tw-z-50 tw-pointer-events-none">
 
-                                        The date of the latest detection the selected classifier used for its prediction.
-                                        <br>
-                                        Light curve classifiers use all of an object's detections, so it is usually the last detection.
-                                        <br>
-                                        Stamp classifiers use only the first one, so it is usually the discovery date.
-                                        <br>
-                                        It is not when the classification was made: a new classifier run today on a 2018 object gives a 2018 date.
-                                        <br>
-                                        Combined with a class, this filter is much faster than the Discovery Date.
+                                            The date of the latest detection the selected classifier used for its prediction.
+                                            <br>
+                                            Light curve classifiers use all of an object's detections, so it is usually the last detection.
+                                            <br>
+                                            Stamp classifiers use only the first one, so it is usually the discovery date.
+                                            <br>
+                                            It is not when the classification was made: a new classifier run today on a 2018 object gives a 2018 date.
+                                            <br>
+                                            Combined with a class, this filter is much faster than the Discovery Date.
 
-                                    <div class="tw-absolute tw-right-[100%] tw-top-1/2 -tw-translate-y-1/2
-                                            tw-border-4 tw-border-transparent tw-border-r-gray-900">
+                                        <div class="tw-absolute tw-right-[100%] tw-top-1/2 -tw-translate-y-1/2
+                                                tw-border-4 tw-border-transparent tw-border-r-gray-900">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                         </div>
 
-                        <div id="classifier_date_filters_container" class="tw-grid tw-grid-cols-12 tw-gap-4">
-                            {{customInput(id="min_prob_lastmjd", type="number", placeholder="Min MJD", width="tw-col-span-12 lg:tw-col-span-6", min="0", step="0.01")}}
+                        <div id="classifier_date_filters_container" class="tw-hidden tw-mx-auto tw-my-4 tw-grid tw-grid-cols-12 tw-gap-4">
+                            {{mjd_date_input("min_prob_lastmjd", "Min")}}
 
-                            {{customInput(id="min_prob_lastmjd_date", type="date", width="tw-col-span-12 lg:tw-col-span-6 tw-scheme-light dark:tw-scheme-dark")}}
-
-                            {{customInput(id="max_prob_lastmjd", type="number", placeholder="Max MJD", width="tw-col-span-12 lg:tw-col-span-6", min="0", step="0.01")}}
-
-                            {{customInput(id="max_prob_lastmjd_date", type="date", width="tw-col-span-12 lg:tw-col-span-6 tw-scheme-light dark:tw-scheme-dark")}}
+                            {{mjd_date_input("max_prob_lastmjd", "Max")}}
                         </div>
                     </div>
                 </div>

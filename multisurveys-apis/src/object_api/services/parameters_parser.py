@@ -1,9 +1,15 @@
 from core.idmapper.idmapper import encode_ids
 
 
-def search_order_state(oids: list, order_by: str) -> str:
+def search_order_state(oids: list, order_by: str, classifier: str | None = None) -> str:
+    # Without classification filters the newest alerts come first: sorting by probability there is slow, and
+    # mixes the predictions of every classifier.
     if oids is None and order_by is None:
-        order_by = "probability"
+        order_by = "probability" if classifier is not None else "lastmjd"
+
+    # Without a classifier filter each row shows one classifier's prediction, or none: probability is not sortable.
+    if classifier is None and order_by == "probability":
+        order_by = "lastmjd"
 
     if oids is not None and order_by == "oid_list":
         order_by = None
@@ -22,13 +28,13 @@ def ndet_build(n_det_min: int, n_det_max: int) -> list:
     return n_det
 
 
-def firstmjd_build(firstmjd_min: float, firstmjd_max: float) -> list:
-    # object_filters reads [min] as firstmjd >= min and [min, max] as a range,
+def mjd_range_build(mjd_min: float, mjd_max: float) -> list:
+    # object_filters reads [min] as mjd >= min and [min, max] as a range (for firstmjd and lastmjd),
     # so "max only" needs a lower bound: 0 is before any MJD.
-    if firstmjd_max is not None:
-        return [firstmjd_min if firstmjd_min is not None else 0, firstmjd_max]
-    if firstmjd_min is not None:
-        return [firstmjd_min]
+    if mjd_max is not None:
+        return [mjd_min if mjd_min is not None else 0, mjd_max]
+    if mjd_min is not None:
+        return [mjd_min]
 
     return None
 

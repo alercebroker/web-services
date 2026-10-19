@@ -107,6 +107,31 @@ export function draw_error_message(message) {
   return new_Div
 }
 
+// An error message with its own id, so the handler of failed requests leaves it alone. The message is text, not HTML.
+export function draw_notice_message(message, id) {
+  const new_Div = draw_error_message("")
+
+  new_Div.id = id
+  new_Div.classList.add("custom-bg-error")
+  new_Div.querySelector("span").textContent = message
+  // A long name must wrap, not squeeze the close button out.
+  new_Div.querySelector("span").style.overflowWrap = "anywhere"
+  new_Div.querySelector("svg").classList.add("tw-shrink-0")
+  new_Div.querySelector("svg").id = id + "_btn"
+
+  return new_Div
+}
+
+// A notice in the warning color.
+export function draw_warning_message(message, id) {
+  const new_Div = draw_notice_message(message, id)
+
+  new_Div.classList.add("custom-warning")
+  new_Div.querySelector("svg").setAttribute("fill", "currentColor")
+
+  return new_Div
+}
+
 export function draw_close_button(element) {
   const btn = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   btn.id = "error_message_btn"

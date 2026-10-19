@@ -207,6 +207,15 @@
   background-color: rgb(190 40 40 / 0.2);
 }
 
+.custom-warning{
+  color: #8D6E00;
+  background-color: rgb(255 193 7 / 0.2);
+}
+
+.tw-dark .custom-warning{
+  color: #FFCA28;
+}
+
 .tw-scheme-dark {
   color-scheme: dark;
 }

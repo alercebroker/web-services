@@ -1,11 +1,10 @@
 import { jdToDate, gregorianToJd, raDectoHMS, HMStoRa, DMStoDec } from "../../libraries/AstroDates/AstroDates.js"
-import { getUTCDate, extractDate, extractTime, convertToDate, formatDate } from "../../libraries/moment/time.js"
 import { handle_error } from "../error_handler.js";
-import { draw_dropdown_options, draw_oids_tags } from "../draw_elements.js";
+import { draw_dropdown_options, draw_oids_tags, draw_warning_message } from "../draw_elements.js";
 import { display, highlight_text, split_oids, set_oids_in_container, survey_emphasize, switch_arrow_icon, clean_oids_container, clean_nodes_in_dom } from "../ui_helpers.js";
 import { get_sesame_object } from "./sesame.js"
 import { send_classes_data, send_pagination_data, send_order_data, send_form_Data } from "./api_payload_helpers.js"
-import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_prob_lastmjd, restore_conesearch } from "./form_restore_functions.js";
+import { restore_survey, restore_object_id, restore_classifier, restore_class, restore_probability, restore_n_det, restore_mjd, restore_last_alert_date, restore_prob_lastmjd, restore_conesearch } from "./form_restore_functions.js";
 import { Dropdown, restart_dropdown, init_classifiers_dropdown } from "./dropdown_config.js";
 
 
@@ -25,10 +24,6 @@ export function init() {
   let Dropdown_classifiers = new Dropdown(classifiers_data.classifiers)
 
 
-  let minDate = ""
-  let minDatetime = ""
-  let dateUTC = ""
-
   let ztf_btn = document.getElementById("ztf_btn")
   let lsst_btn = document.getElementById("lsst_btn")
 
@@ -36,14 +31,6 @@ export function init() {
   let oids_container = document.getElementById("oids_container")
   let prob_range = document.getElementById("prob_range")
   let input_ids = document.getElementById("objectIds")
-
-  let min_mjd = document.getElementById("min_mjd")
-  let date_min = document.getElementById("date_min")
-  let time_min = document.getElementById("time_min")
-
-  let max_mjd = document.getElementById("max_mjd")
-  let date_max = document.getElementById("date_max")
-  let time_max = document.getElementById("time_max")
 
   let resolve_btn = document.getElementById("resolve_btn")
   let radio_HMS = document.getElementById("HMS/DMS")
@@ -53,9 +40,8 @@ export function init() {
 
   // clicks events
   setup_filters_toggles()
-  setup_time_toggles()
-  setup_time_pickers()
-  setup_prob_lastmjd_inputs()
+  setup_mjd_date_inputs()
+  setup_combined_filters_notice()
 
   clear_oids.addEventListener("click", () => {
     clean_oids_container(oids_container)
@@ -119,24 +105,6 @@ export function init() {
     document.getElementById("prob_number").innerHTML = prob_range.value
   })
 
-  min_mjd.addEventListener("input", () => {
-    minDate = jdToDate(min_mjd.value)
-    min_date_time_text.innerHTML = formatDate(minDate)
-
-    minDatetime = getUTCDate(minDate)
-    date_min.value = extractDate(minDatetime)
-    time_min.value = extractTime(minDatetime)
-  })
-
-  max_mjd.addEventListener("input", () => {
-    let maxDate = jdToDate(max_mjd.value)
-    max_date_time_text.innerHTML = formatDate(maxDate)
-
-    let maxDatetime = getUTCDate(maxDate)
-    date_max.value = extractDate(maxDatetime)
-    time_max.value = extractTime(maxDatetime)
-  })
-
 
   // changes events
   input_ids.addEventListener("change", () => {
@@ -148,39 +116,6 @@ export function init() {
     
     input_ids.value = ""
   })
-
-  date_min.addEventListener("change", () => {
-    dateUTC = convertToDate(date_min.value, time_min.value)
-    dateUTC = gregorianToJd(dateUTC)
-
-    min_mjd.value = dateUTC
-    min_mjd.dispatchEvent(new Event('input'))
-  })
-
-  time_min.addEventListener("change", () => {
-    dateUTC = convertToDate(date_min.value, time_min.value)
-    dateUTC = gregorianToJd(dateUTC)
-
-    min_mjd.value = dateUTC
-    min_mjd.dispatchEvent(new Event('input'))
-  })
-
-  date_max.addEventListener("change", () => {
-    dateUTC = convertToDate(date_max.value, time_max.value)
-    dateUTC = gregorianToJd(dateUTC)
-
-    max_mjd.value = dateUTC
-    max_mjd.dispatchEvent(new Event('input'))
-  })
-
-  time_max.addEventListener("change", () => {
-    dateUTC = convertToDate(date_max.value, time_max.value)
-    dateUTC = gregorianToJd(dateUTC)
-
-    max_mjd.value = dateUTC
-    max_mjd.dispatchEvent(new Event('input'))
-  })
-
 
   // handle errors
   handle_error()
@@ -224,115 +159,149 @@ export function elementReady(selector) {
 }
 
 
+// Collapsible sections: clicking a header shows or hides its "<id>_container".
+const SECTIONS = ["classification_filters", "object_filters", "discovery_date_filters", "last_alert_date_filters", "classifier_date_filters", "conesearch_filters"]
+
+// Sections that start collapsed and stay open across CLEAR.
+const SUBSECTIONS = ["discovery_date_filters", "last_alert_date_filters", "classifier_date_filters", "conesearch_filters"]
+
+
 function setup_filters_toggles() {
-  let classification_filters = document.getElementById("classification_filters")
-  let object_filters = document.getElementById("object_filters")
-  let discovery_date_filters = document.getElementById("discovery_date_filters")
-  let conesearch_filters = document.getElementById("conesearch_filters")
-  let item_name = ""
+  for (let id of SECTIONS) {
+    let header = document.getElementById(id)
 
-
-  classification_filters.addEventListener("click", () => {
-    item_name = classification_filters.id + "_container"
-    switch_arrow_icon(classification_filters)
-    highlight_text(classification_filters)
-    display(item_name)
-  })
-
-  object_filters.addEventListener("click", () => {
-    item_name = object_filters.id + "_container"
-    switch_arrow_icon(object_filters)
-    highlight_text(object_filters)
-    display(item_name)
-  })
-
-  discovery_date_filters.addEventListener("click", () => {
-    item_name = discovery_date_filters.id + "_container"
-    switch_arrow_icon(discovery_date_filters)
-    highlight_text(discovery_date_filters)
-    display(item_name)
-  })
-
-  conesearch_filters.addEventListener("click", () => {
-    item_name = conesearch_filters.id + "_container"
-    switch_arrow_icon(conesearch_filters)
-    highlight_text(conesearch_filters)
-    display(item_name)
-  })
-}
-
-
-function setup_time_toggles() {
-  let max_date_time_text = document.getElementById("max_date_time_text")
-  let min_date_time_text = document.getElementById("min_date_time_text")
-  let save_date_max = document.getElementById("save_date_max")
-  let save_date = document.getElementById("save_date")
-  let item_name = ""
-  
-  min_date_time_text.addEventListener("click", () => {
-    item_name = min_date_time_text.id + "_container"
-    display(item_name)
-  })
-
-  max_date_time_text.addEventListener("click", () => {
-    item_name = max_date_time_text.id + "_container"
-    display(item_name)
-  })
-
-  save_date.addEventListener("click", () => {
-    display("min_date_time_text_container")
-  })
-
-  save_date_max.addEventListener("click", () => {
-    display("max_date_time_text_container")
-  })
-}
-
-
-function setup_time_pickers() {
-  let date_min = document.getElementById("date_min")
-  let time_min = document.getElementById("time_min")
-  let date_max = document.getElementById("date_max")
-  let time_max = document.getElementById("time_max")
-
-
-  date_min.addEventListener("click", () => {
-    date_min.showPicker()
-  })
-
-  time_min.addEventListener("click", () => {
-    time_min.showPicker()
-  })
-
-  date_max.addEventListener("click", () => {
-    date_max.showPicker()
-  })
-
-  time_max.addEventListener("click", () => {
-    time_max.showPicker()
-  })
-}
-
-
-
-// Each MJD box and its date picker (UTC midnight) follow each other.
-function setup_prob_lastmjd_inputs() {
-  for (let bound of ["min", "max"]) {
-    let mjd = document.getElementById(`${bound}_prob_lastmjd`)
-    let date = document.getElementById(`${bound}_prob_lastmjd_date`)
-
-    mjd.addEventListener("input", () => {
-      date.value = mjd.value != '' ? extractDate(getUTCDate(jdToDate(mjd.value))) : ''
-    })
-
-    date.addEventListener("change", () => {
-      mjd.value = date.value != '' ? gregorianToJd(convertToDate(date.value, "00:00")) : ''
-    })
-
-    date.addEventListener("click", () => {
-      date.showPicker()
+    header.addEventListener("click", () => {
+      switch_arrow_icon(header)
+      highlight_text(header)
+      display(id + "_container")
     })
   }
+}
+
+
+const MJD_DATE_INPUTS = ["min_mjd", "max_mjd", "min_lastmjd", "max_lastmjd", "min_prob_lastmjd", "max_prob_lastmjd"]
+
+// Each MJD box follows its DD/MM/YYYY HH:MM box and its calendar, all in UTC, to the minute.
+function setup_mjd_date_inputs() {
+  for (let id of MJD_DATE_INPUTS) {
+    let mjd = document.getElementById(id)
+    let text = document.getElementById(`${id}_date`)
+    let picker = document.getElementById(`${id}_picker`)
+    let calendar = document.getElementById(`${id}_calendar`)
+
+    let show_date = () => {
+      let date = mjd.value != '' ? to_minute(jdToDate(mjd.value)) : null
+      let valid = date !== null && !isNaN(date.getTime())
+
+      text.value = valid ? format_date_time(date) : ''
+      picker.value = valid ? date.toISOString().slice(0, 16) : ''
+    }
+
+    // 6 decimals of MJD are below a tenth of a second, and drop the float noise of the conversion.
+    let set_mjd = (date) => {
+      mjd.value = date !== null ? Number(gregorianToJd(date).toFixed(6)) : ''
+      show_date()
+    }
+
+    mjd.addEventListener("input", show_date)
+
+    // An unreadable date puts back the one the MJD box holds.
+    text.addEventListener("change", () => {
+      if (text.value.trim() == '') {
+        set_mjd(null)
+        return
+      }
+
+      let date = parse_date_time(text.value)
+      date !== null ? set_mjd(date) : show_date()
+    })
+
+    picker.addEventListener("change", () => {
+      set_mjd(picker.value != '' ? new Date(picker.value + "Z") : null)
+    })
+
+    calendar.addEventListener("click", () => {
+      picker.showPicker()
+    })
+  }
+}
+
+
+function to_minute(date) {
+  return date === null ? null : new Date(Math.round(date.getTime() / 60000) * 60000)
+}
+
+
+function format_date_time(date) {
+  let pad = (n) => String(n).padStart(2, '0')
+  return `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)}/${date.getUTCFullYear()} `
+    + `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}`
+}
+
+
+// DD/MM/YYYY, optionally followed by HH:MM (00:00 when left out).
+function parse_date_time(text) {
+  let match = text.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?$/)
+  if (match === null) return null
+
+  let [day, month, year, hour, minute] = match.slice(1).map((n) => Number(n ?? 0))
+  if (hour > 23 || minute > 59) return null
+
+  let date = new Date(Date.UTC(year, month - 1, day, hour, minute))
+
+  // Date.UTC rolls 31/02 over to March: such a date does not exist.
+  if (date.getUTCDate() != day || date.getUTCMonth() != month - 1) return null
+
+  return date
+}
+
+
+// Object properties and classification filters can each be fast alone but slow together, so warn when
+// both are set. The notice shows each time they become combined, and goes away when they no longer are.
+const COMBINED_FILTERS_NOTICE = "combined_filters_notice"
+let combined_filters_were_set = false
+
+function setup_combined_filters_notice() {
+  combined_filters_were_set = false
+  let form = document.getElementById("form-container")
+
+  // Dropdowns update their selection on click, after the event: check once they have.
+  for (let event of ["input", "change", "click"]) {
+    form.addEventListener(event, () => setTimeout(update_combined_filters_notice, 0))
+  }
+}
+
+
+function update_combined_filters_notice() {
+  let filled = (ids) => ids.some((id) => document.getElementById(id).value != '')
+
+  let object_filters = filled([
+    "min_detections", "max_detections", "min_mjd", "max_mjd", "min_lastmjd", "max_lastmjd",
+    "ra_consearch", "dec_consearch", "radius_consearch",
+  ])
+  let classification_filters = (
+    Boolean(document.getElementById("classifiers_selected").dataset.classifier)
+    || Boolean(document.getElementById("class_selected").dataset.value)
+    || parseFloat(document.getElementById("prob_range").value) > 0
+    || filled(["min_prob_lastmjd", "max_prob_lastmjd"])
+  )
+  let combined = object_filters && classification_filters
+  let notice = document.getElementById(COMBINED_FILTERS_NOTICE)
+
+  if (combined && !combined_filters_were_set && notice === null) {
+    let message = draw_warning_message(
+      "Object Properties combined with Classification filters can make the search slow. "
+      + "To narrow a class by date, \"Last detection used by the classifier\" is much faster.",
+      COMBINED_FILTERS_NOTICE
+    )
+    document.getElementById("search_filters").after(message)
+  }
+
+  if (!combined && notice !== null) {
+    notice.remove()
+  }
+
+  combined_filters_were_set = combined
 }
 
 
@@ -341,27 +310,18 @@ function reset_values() {
 }
 
 
+// Reopen the sections that were open, through their header so the arrow and color follow.
 function restore_states(currentStates) {
-  let discoveryDate = document.getElementById('discovery_date_filters_container')
-  let conesearch = document.getElementById('conesearch_filters_container')
-  if (currentStates[0]) {
-    discoveryDate.classList.remove('tw-hidden')
-  }
-  if (currentStates[1]) {
-    conesearch.classList.remove('tw-hidden')
-  }
+  SUBSECTIONS.forEach((id, i) => {
+    if (currentStates[i]) {
+      document.getElementById(id).click()
+    }
+  })
 }
 
 
 function get_states() {
-  let discoveryDate = document.getElementById('discovery_date_filters_container')
-  let conesearch = document.getElementById('conesearch_filters_container')
-  let currentStates = [
-    !discoveryDate.classList.contains('tw-hidden'),
-    !conesearch.classList.contains('tw-hidden')
-  ]
-
-  return currentStates
+  return SUBSECTIONS.map((id) => !document.getElementById(id + "_container").classList.contains('tw-hidden'))
 }
 
 
@@ -382,9 +342,12 @@ function restore_form_from_url() {
 
   restore_mjd(urlParams)
 
+  restore_last_alert_date(urlParams)
+
   restore_prob_lastmjd(urlParams)
 
   restore_conesearch(urlParams)
 
+  update_combined_filters_notice()
 }
 

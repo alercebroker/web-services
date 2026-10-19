@@ -29,6 +29,10 @@ def update_filters(search_params, classes_list):
 
 def match_and_update_item_class(items, classes_list):
     for item in items:
+        # An object the shown classifier has no prediction for.
+        if item.get("classifier_id") is None:
+            continue
+
         matched_class = find_match_class(item, classes_list)
 
         if matched_class is not None:
