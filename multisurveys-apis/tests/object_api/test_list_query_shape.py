@@ -1,9 +1,12 @@
 from contextlib import contextmanager
 
 import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from sqlalchemy.dialects import postgresql
 
 from core.repository.queries.objects import query_get_objects
+from object_api.routes import htmx, rest
 from object_api.models.filters import Consearch, Filters, SearchParams
 from object_api.models.pagination import Order, PaginationArgs
 from object_api.services.classifier_data_matcher import update_filters
@@ -75,6 +78,87 @@ def test_sort_on_a_survey_column_or_no_sort_keeps_the_single_query(order_by):
     assert "JOIN ztf_object ON ztf_object.oid = tprobability.oid" in sql
 
 
+def compiled_sql(search_params):
+    search_params = update_filters(search_params, CLASSES_LIST)
+
+    with pytest.raises(Captured) as captured:
+        query_get_objects(capturing_session, search_params, parse_params(search_params))
+
+    stmt = captured.value.args[0]
+    return str(stmt.compile(dialect=postgresql.dialect(), compile_kwargs={"literal_binds": True}))
+
+
+def object_api_client():
+    app = FastAPI()
+    app.include_router(htmx.router)
+    app.include_router(rest.router)
+    app.state.psql_session = None
+    return TestClient(app)
+
+
+@pytest.fixture
+def route_sql(monkeypatch):
+    """GET a route of the object API and return the SQL it would run."""
+    sqls = []
+
+    def fake_get_objects_list(session_ms, search_params):
+        sqls.append(compiled_sql(search_params))
+        return {"next": False, "has_next": False, "prev": False, "has_prev": False, "items": []}
+
+    monkeypatch.setattr(htmx, "get_objects_list", fake_get_objects_list)
+    monkeypatch.setattr(rest, "get_objects_list", fake_get_objects_list)
+    client = object_api_client()
+
+    def get(path, **params):
+        response = client.get(
+            path,
+            params={"survey": "ztf", "classifier": CLASSES_LIST[0]["classifier_name"], "class_name": "TDE", **params},
+        )
+        assert response.status_code == 200, response.text
+        return sqls[-1]
+
+    return get
+
+
+@pytest.mark.parametrize("path", ["/htmx/list_objects", "/htmx/side_objects"])
+@pytest.mark.parametrize(
+    "params, expected",
+    [
+        ({"firstmjd_min": 60000}, "object.firstmjd >= 60000.0 AND object.sid"),
+        ({"firstmjd_max": 60100}, "object.firstmjd >= 0.0 AND object.firstmjd <= 60100.0"),
+        ({"firstmjd_min": 60000, "firstmjd_max": 60100}, "object.firstmjd >= 60000.0 AND object.firstmjd <= 60100.0"),
+    ],
+    ids=["min_only", "max_only", "both"],
+)
+def test_website_discovery_date_bounds_firstmjd(route_sql, path, params, expected):
+    sql = route_sql(path, **params)
+
+    assert expected in sql
+    assert "object.lastmjd >=" not in sql
+
+
+def test_website_ignores_the_old_lastmjd_parameter(route_sql):
+    sql = route_sql("/htmx/list_objects", lastmjd=60100)
+
+    assert "WHERE object.sid = 0)" in sql
+
+
+def test_website_rejects_min_after_max():
+    response = object_api_client().get(
+        "/htmx/list_objects", params={"survey": "ztf", "firstmjd_min": 60100, "firstmjd_max": 60000}
+    )
+
+    assert response.status_code == 422
+    assert "discovery_date_filters_container" in response.json()["detail"]
+
+
+def test_rest_keeps_firstmjd_and_lastmjd_lists(route_sql):
+    sql = route_sql("/list_objects", firstmjd=[60000, 60100], lastmjd=[60200])
+
+    assert "object.firstmjd >= 60000.0 AND object.firstmjd <= 60100.0" in sql
+    assert "object.lastmjd >= 60200.0" in sql
+
+
 def probability_where(**filter_args):
     """The WHERE clause of the probability CTE, for a TDE list with these extra filters."""
     filter_args = {"survey": "ztf", "classifier": "lc_classifier_BHRF_forced_phot", "class_name": "TDE", **filter_args}
@@ -84,12 +168,7 @@ def probability_where(**filter_args):
         pagination_args=PaginationArgs(page=1, page_size=20, count=False),
         order_args=Order(order_by="probability", order_mode="DESC"),
     )
-    search_params = update_filters(search_params, CLASSES_LIST)
-
-    with pytest.raises(Captured) as captured:
-        query_get_objects(capturing_session, search_params, parse_params(search_params))
-
-    sql = str(captured.value.args[0].compile(dialect=postgresql.dialect(), compile_kwargs={"literal_binds": True}))
+    sql = compiled_sql(search_params)
     cte = sql.split("WITH tprobability AS", 1)[1].split("tobject AS", 1)[0]
     return cte.split("WHERE", 1)[1]
 

@@ -110,16 +110,16 @@ def probability_validation(probability, classifier, class_name):
                 )
 
 
-def date_validation(firstmjd, lastmjd):
-    if firstmjd is not None:
-        if not isinstance(firstmjd, float):
+def date_validation(firstmjd_min, firstmjd_max):
+    if firstmjd_min is not None:
+        if not isinstance(firstmjd_min, float):
             raise HTTPException(
                 status_code=422,
                 detail={"discovery_date_filters_container": "The date must be a float."},
             )
 
-    if lastmjd is not None and firstmjd is not None:
-        if firstmjd >= lastmjd:
+    if firstmjd_max is not None and firstmjd_min is not None:
+        if firstmjd_min >= firstmjd_max:
             raise HTTPException(
                 status_code=422,
                 detail={"discovery_date_filters_container": "Min MJD must be lower than max MJD."},

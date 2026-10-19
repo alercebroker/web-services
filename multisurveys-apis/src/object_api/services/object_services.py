@@ -1,6 +1,6 @@
 from core.repository.queries.classifiers import get_all_classifiers
 from classifier_api.services.classifiers import get_classifiers
-from src.core.idmapper.survey_mapper import get_survey_id
+from core.idmapper.survey_mapper import get_survey_id
 from core.repository.queries.objects import (
     query_get_objects,
     query_object_by_id,

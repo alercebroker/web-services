@@ -3,8 +3,8 @@ import { format_oids, check_radio_consearch } from "../ui_helpers.js";
 
 function send_form_Data() {
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
-  let first_mjd = document.getElementById("min_mjd").value
-  let last_mjd = document.getElementById("max_mjd").value
+  let min_mjd = document.getElementById("min_mjd").value
+  let max_mjd = document.getElementById("max_mjd").value
   let min_prob_lastmjd = document.getElementById("min_prob_lastmjd").value
   let max_prob_lastmjd = document.getElementById("max_prob_lastmjd").value
   let probability_value = parseFloat(document.getElementById("prob_range").value);
@@ -26,8 +26,8 @@ function send_form_Data() {
     probability: probability_value > 0 ? probability_value : null,
     n_det_min: ndet_arr.length > 0 && ndet_arr[0] !== null ? parseInt(ndet_arr[0]) : null,
     n_det_max: ndet_arr.length > 1 && ndet_arr[1] !== null ? parseInt(ndet_arr[1]) : null,
-    firstmjd: first_mjd != '' ? parseFloat(first_mjd) : null,
-    lastmjd: last_mjd != '' ? parseFloat(last_mjd) : null,
+    firstmjd_min: min_mjd != '' ? parseFloat(min_mjd) : null,
+    firstmjd_max: max_mjd != '' ? parseFloat(max_mjd) : null,
     prob_lastmjd_min: min_prob_lastmjd != '' ? parseFloat(min_prob_lastmjd) : null,
     prob_lastmjd_max: max_prob_lastmjd != '' ? parseFloat(max_prob_lastmjd) : null,
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
