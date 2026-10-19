@@ -35,6 +35,23 @@ def export_env_variables(config_dict: dict):
             os.environ[key] = str(value)
 
 
+def export_db_config(db_config: dict):
+    # APIs without a database (status_api) have no db_config.
+    if not db_config:
+        return
+    # export db secrets
+    os.environ["PSQL_USER"] = db_config["psql_user"]
+    os.environ["PSQL_PASSWORD"] = db_config["psql_password"]
+    os.environ["PSQL_DATABASE"] = db_config["psql_database"]
+    os.environ["PSQL_HOST"] = db_config["psql_host"]
+    os.environ["PSQL_PORT"] = str(db_config["psql_port"])
+
+    # psql_schema is used to set the search_path for the database connection.
+    # This option is not compatible with pgbouncer in transaction mode.
+    if "psql_schema" in db_config:
+        os.environ["SCHEMA"] = db_config["psql_schema"]
+
+
 ###
 ### Define a single entry point for running the API services
 ### For each api service in the src folder.
@@ -100,6 +117,14 @@ def run_aladin():
     run_service(service_config)
 
 
+def run_status():
+    config_dict = config_from_yaml()
+    service_config = config_dict["services"]["status_api"]
+    # Not printed: its environment holds the Prometheus password.
+    print("Running service: status_api")
+    run_service(service_config)
+
+
 ###
 ### A function to run all the services configured in the yaml file
 ###
@@ -150,17 +175,7 @@ async def async_run_service(
     )
     server = uvicorn.Server(server_config)
     os.environ["API_URL"] = config_dict["url"]
-    # export db secrets
-    os.environ["PSQL_USER"] = db_config["psql_user"]
-    os.environ["PSQL_PASSWORD"] = db_config["psql_password"]
-    os.environ["PSQL_DATABASE"] = db_config["psql_database"]
-    os.environ["PSQL_HOST"] = db_config["psql_host"]
-    os.environ["PSQL_PORT"] = str(db_config["psql_port"])
-
-    # psql_schema is used to set the search_path for the database connection.
-    # This option is not compatible with pgbouncer in transaction mode.
-    if "psql_schema" in db_config:
-        os.environ["SCHEMA"] = db_config["psql_schema"]
+    export_db_config(db_config)
 
     export_env_variables(config_dict)
 
@@ -178,17 +193,7 @@ def run_service(
     db_config = config_dict.get("db_config", {})
 
     os.environ["API_URL"] = config_dict["url"]
-    # export db secrets
-    os.environ["PSQL_USER"] = db_config["psql_user"]
-    os.environ["PSQL_PASSWORD"] = db_config["psql_password"]
-    os.environ["PSQL_DATABASE"] = db_config["psql_database"]
-    os.environ["PSQL_HOST"] = db_config["psql_host"]
-    os.environ["PSQL_PORT"] = str(db_config["psql_port"])
-
-    # psql_schema is used to set the search_path for the database connection.
-    # This option is not compatible with pgbouncer in transaction mode.
-    if "psql_schema" in db_config:
-        os.environ["SCHEMA"] = db_config["psql_schema"]
+    export_db_config(db_config)
 
     export_env_variables(config_dict)
 
