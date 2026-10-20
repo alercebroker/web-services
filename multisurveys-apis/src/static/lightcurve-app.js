@@ -255,7 +255,9 @@ function buildNonDetectionSeries(cfg) {
     const out = [];
     for (const [surv, bands] of Object.entries(groupByBand(pts))) {
         for (const [band, data] of Object.entries(bands)) {
-            out.push(makeSeries('lim. mag', surv, band, data));
+            // Fainter than the detections (ECharts' default 0.8), as in alerce.online, which drew
+            // them in a 50% transparent band color: 0.5 × 0.8.
+            out.push({ ...makeSeries('lim. mag', surv, band, data), itemStyle: { opacity: 0.4 } });
         }
     }
     return out;
