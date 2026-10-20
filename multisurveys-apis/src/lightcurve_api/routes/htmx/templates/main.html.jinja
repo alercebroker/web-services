@@ -33,9 +33,6 @@
         {% include "lightcurve.html.jinja" %}
       </div>
 
-      <!-- Shown by JS in Total when some points have no total magnitude and are left out -->
-      <div id="total-hidden-note" class="tw-hidden tw-text-xs tw-text-center tw-text-gray-400 dark:tw-text-gray-300"></div>
-
       <!-- Periodogram container – hidden until fold + periodogram_enabled are on -->
       <div id="periodogram-container" class="tw-hidden tw-flex-1 tw-min-h-0 tw-max-h-[200px] tw-w-full">
         {% include "periodogram.html.jinja" %}

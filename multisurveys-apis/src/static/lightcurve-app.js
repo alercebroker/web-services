@@ -596,7 +596,7 @@ function updateVisibility() {
         'Turn on Fold to see the periodogram.');
 
     updateFoldNoPeriod();
-    updateTotalHiddenNote();
+    updateTotalHiddenHint();
 
     if (pdContainer) {
         pdContainer.classList.toggle('tw-hidden', !showPd);
@@ -650,10 +650,12 @@ function updateFoldNoPeriod() {
 
 // ─── Points without total magnitude ───────────────────────────────────────────
 // In Total, points without a total magnitude (uncorrected ZTF) are left out of the chart.
-// Say how many, so they don't silently disappear.
-function updateTotalHiddenNote() {
-    const note = document.getElementById('total-hidden-note');
-    if (!note) return;
+// Say how many in a "?" next to the Diff/Total switch, shown only when some are hidden, so
+// they don't silently disappear.
+function updateTotalHiddenHint() {
+    const hint = document.getElementById('total-hidden-hint');
+    const text = document.getElementById('total-hidden-hint-text');
+    if (!hint || !text) return;
     const parts = [];
     if (config.total && !isNotCorrected()) {
         for (const [items, type, label] of [
@@ -665,8 +667,8 @@ function updateTotalHiddenNote() {
             if (missing) parts.push(`${missing} of ${items.length} ${label}`);
         }
     }
-    note.textContent = parts.length ? `${parts.join(' and ')} have no total magnitude, so they are not shown.` : '';
-    note.classList.toggle('tw-hidden', !parts.length);
+    text.textContent = parts.length ? `${parts.join(' and ')} have no total magnitude, so they are not shown.` : '';
+    hint.classList.toggle('tw-hidden', !parts.length);
 }
 
 // ─── Locked toggles ───────────────────────────────────────────────────────────
@@ -677,7 +679,10 @@ function setToggleLocked(el, locked, reason) {
     el.disabled = locked;
     const label = el.closest('label');
     if (!label) return;
-    label.classList.toggle('tw-opacity-50', locked);
+    // Fade everything but the "?" help, so its tooltip stays readable.
+    for (const child of label.children) {
+        if (!child.classList.contains('tw-group')) child.classList.toggle('tw-opacity-50', locked);
+    }
     label.classList.toggle('tw-cursor-pointer', !locked);
     label.classList.toggle('tw-cursor-not-allowed', locked);
     label.title = locked ? reason : '';
