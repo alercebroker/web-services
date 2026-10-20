@@ -18,6 +18,7 @@ from ..services.tns_service import get_tns
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
 from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
+from probability_api.services.lsst_service import priorities_by_survey
 from ..services.parsers import _parse_oids_string_to_array
 
 from ..services.parameters_parser import ndet_build, firstmjd_build, search_order_state, parse_oids_to_int
@@ -154,6 +155,7 @@ def objects_table(
                 oids=oids,
                 survey=survey,
                 classifier=classifier,
+                classifier_ids=list(priorities_by_survey(survey)),
                 class_name=class_name,
                 ranking=ranking,
                 n_det=n_det,
@@ -255,6 +257,7 @@ def sidebar(
                 oids=oids,
                 survey=survey,
                 classifier=classifier,
+                classifier_ids=list(priorities_by_survey(survey)),
                 class_name=class_name,
                 ranking=ranking,
                 n_det=n_det,
