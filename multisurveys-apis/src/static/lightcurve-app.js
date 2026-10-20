@@ -555,11 +555,12 @@ function initPeriodogram() {
 
 function updateChart() {
     if (!myChart) return;
-    // When fold is requested but the periodogram (and thus the period) isn't ready
-    // yet, don't render a fold at a meaningless period — leave the current chart in
-    // place and let updateVisibility() show the "Computing period…" spinner. Once the
-    // periodogram arrives, loadPeriodogram() calls updateChart() again and we render.
-    const foldPending = config.fold && !(rawPeriodogram?.periods?.length);
+    // While the periodogram (and thus the period) is being fetched, don't render a fold
+    // at a meaningless period — leave the current chart in place and let
+    // updateVisibility() show the "Computing period…" spinner. Once the fetch ends,
+    // loadPeriodogram() calls updateChart() again and we render. Only while it is in
+    // flight: an object with no periodogram still folds, at the period in the form.
+    const foldPending = config.fold && periodogramLoading;
     if (foldPending) return;
 
     const opts = buildOptions(config);
