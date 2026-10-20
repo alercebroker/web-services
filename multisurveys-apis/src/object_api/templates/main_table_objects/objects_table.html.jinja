@@ -24,15 +24,22 @@
             class="tw-flex tw-items-center tw-gap-2 tw-px-4 tw-text-sm"
             >
                 <label for="shown_classifier" class="tw-text-black/60 dark:tw-text-white/70">Predictions from</label>
-                <select
-                id="shown_classifier"
-                {% if classifier_filtered %}disabled title="Set by the Classifier filter"{% endif %}
-                class="tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-scheme-light dark:tw-scheme-dark"
-                >
-                    {% for c in shown_classifiers %}
-                        <option value="{{c['classifier_name']}}" {% if c['classifier_name'] == shown_classifier %}selected{% endif %}>{{c['formated_name']}} ({{c['classifier_version']}})</option>
-                    {% endfor %}
-                </select>
+                <!--Own arrow: the host page's styles can hide the native one. Shown only when the user can change it.-->
+                <span class="tw-relative tw-inline-flex tw-items-center">
+                    <select
+                    id="shown_classifier"
+                    {% if classifier_filtered %}disabled title="Set by the Classifier filter"{% endif %}
+                    class="tw-appearance-none tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-scheme-light dark:tw-scheme-dark {% if not classifier_filtered %}tw-cursor-pointer{% endif %}"
+                    {% if not classifier_filtered %}style="padding-right: 22px"{% endif %}
+                    >
+                        {% for c in shown_classifiers %}
+                            <option value="{{c['classifier_name']}}" {% if c['classifier_name'] == shown_classifier %}selected{% endif %}>{{c['formated_name']}} ({{c['classifier_version']}})</option>
+                        {% endfor %}
+                    </select>
+                    {% if not classifier_filtered %}
+                        <svg class="tw-absolute tw-right-0 tw-top-1/2 -tw-translate-y-1/2 tw-w-[20px] tw-h-[20px] tw-pointer-events-none tw-fill-current dark:tw-fill-white" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    {% endif %}
+                </span>
             </span>
         {% else %}
             <span></span>

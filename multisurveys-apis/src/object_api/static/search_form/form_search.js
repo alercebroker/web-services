@@ -107,14 +107,27 @@ export function init() {
 
 
   // changes events
-  input_ids.addEventListener("change", () => {
-    let oids_parsed = split_oids(input_ids.value)
+  let add_typed_oids = (text) => {
+    let oids_parsed = split_oids(text)
 
     clean_oids_container(oids_container)
     set_oids_in_container(oids_parsed)
     draw_oids_tags()
-    
+
     input_ids.value = ""
+  }
+
+  input_ids.addEventListener("change", () => add_typed_oids(input_ids.value))
+
+  // A single-line box can drop the line breaks of a pasted column of IDs and join them into one,
+  // so a pasted list becomes tags right away (never through the box's value, which drops them too).
+  // A single pasted ID is left in the box to edit.
+  input_ids.addEventListener("paste", (event) => {
+    let pasted = event.clipboardData?.getData("text") ?? ""
+    if (split_oids(pasted).length < 2) return
+
+    event.preventDefault()
+    add_typed_oids(`${input_ids.value} ${pasted}`)
   })
 
   // handle errors
@@ -220,7 +233,13 @@ function setup_mjd_date_inputs() {
       set_mjd(picker.value != '' ? new Date(picker.value + "Z") : null)
     })
 
+    // An empty datetime-local keeps no value until its time is set too, so picking only a day wrote
+    // nothing. Opening it at today 00:00 UTC (the time a typed date gets too) makes a day click enough.
     calendar.addEventListener("click", () => {
+      if (picker.value == '') {
+        let now = new Date()
+        picker.value = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString().slice(0, 16)
+      }
       picker.showPicker()
     })
   }
