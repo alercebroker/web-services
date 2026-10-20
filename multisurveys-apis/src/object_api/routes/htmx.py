@@ -18,12 +18,10 @@ from ..services.tns_service import get_tns
 from ..services.jinja_tools import truncate_float
 from core.exceptions import ObjectNotFound
 from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
-from ..services.parsers import (
-    _parse_oids_string_to_array,
-    save_date_in_array,
-)
+from probability_api.services.lsst_service import priorities_by_survey
+from ..services.parsers import _parse_oids_string_to_array
 
-from ..services.parameters_parser import ndet_build, search_order_state, parse_oids_to_int
+from ..services.parameters_parser import ndet_build, firstmjd_build, search_order_state, parse_oids_to_int
 
 router = APIRouter()
 
@@ -124,8 +122,8 @@ def objects_table(
     n_det_min: int | None = None,
     n_det_max: int | None = None,
     probability: float | None = None,
-    firstmjd: float | None = None,
-    lastmjd: float | None = None,
+    firstmjd_min: float | None = None,
+    firstmjd_max: float | None = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
@@ -146,24 +144,23 @@ def objects_table(
             oids_format_validation(oids, survey)
             oid_lenght_validation(oids)
             probability_validation(probability, classifier, class_name)
-            date_validation(firstmjd, lastmjd)
+            date_validation(firstmjd_min, firstmjd_max)
 
             order_by = search_order_state(oids, order_by)
             oids = parse_oids_to_int(oids, survey)
             n_det = ndet_build(n_det_min, n_det_max)
-            firstmjd = save_date_in_array(firstmjd)
-            lastmjd = save_date_in_array(lastmjd)
+            firstmjd = firstmjd_build(firstmjd_min, firstmjd_max)
 
             filters = Filters(
                 oids=oids,
                 survey=survey,
                 classifier=classifier,
+                classifier_ids=list(priorities_by_survey(survey)),
                 class_name=class_name,
                 ranking=ranking,
                 n_det=n_det,
                 probability=probability,
                 firstmjd=firstmjd,
-                lastmjd=lastmjd,
             )
 
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
@@ -227,8 +224,8 @@ def sidebar(
     n_det_min: int | None = None,
     n_det_max: int | None = None,
     probability: float | None = None,
-    firstmjd: float | None = None,
-    lastmjd: float | None = None,
+    firstmjd_min: float | None = None,
+    firstmjd_max: float | None = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
@@ -249,24 +246,23 @@ def sidebar(
             oids_format_validation(oids, survey)
             oid_lenght_validation(oids)
             probability_validation(probability, classifier, class_name)
-            date_validation(firstmjd, lastmjd)
+            date_validation(firstmjd_min, firstmjd_max)
 
             order_by = search_order_state(oids, order_by)
             oids = parse_oids_to_int(oids, survey)
             n_det = ndet_build(n_det_min, n_det_max)
-            firstmjd = save_date_in_array(firstmjd)
-            lastmjd = save_date_in_array(lastmjd)
+            firstmjd = firstmjd_build(firstmjd_min, firstmjd_max)
 
             filters = Filters(
                 oids=oids,
                 survey=survey,
                 classifier=classifier,
+                classifier_ids=list(priorities_by_survey(survey)),
                 class_name=class_name,
                 ranking=ranking,
                 n_det=n_det,
                 probability=probability,
                 firstmjd=firstmjd,
-                lastmjd=lastmjd,
             )
             conesearch = Consearch(dec=dec, ra=ra, radius=radius)
             pagination = PaginationArgs(page=page, page_size=page_size, count=count)

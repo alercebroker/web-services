@@ -27,6 +27,8 @@ let rawPeriodogram;
 let config;
 // True while the /htmx/periodogram fetch is in-flight.
 let periodogramLoading = false;
+// Outcome of the last periodogram fetch that brought no periods: 'empty' or 'failed'.
+let periodogramStatus = null;
 // True once the user has manually changed the period (slider / input / X2 / /2 /
 // periodogram click). Once set, we stop overriding the period with the periodogram's
 // best candidate.
@@ -48,6 +50,7 @@ function loadState() {
     config              = JSON.parse(JSON.stringify(data.config));
     // Reset interaction flags so a freshly-loaded object starts clean.
     periodogramLoading            = false;
+    periodogramStatus             = null;
     periodUserModified            = false;
     settingPeriodProgrammatically = false;
     drDetections                  = [];
@@ -231,8 +234,9 @@ function buildDetectionSeries(cfg) {
 
 function buildNonDetectionSeries(cfg) {
     if (!(cfg.data_types ?? ['non_detections']).includes('non_detections')) return [];
-    // Non-detections are only shown in difference mode (not total) and not when folded.
-    if (cfg.total || cfg.fold) return [];
+    // Non-detections are limiting magnitudes, so they are only shown in magnitude view,
+    // in difference mode (not total) and not when folded.
+    if (cfg.flux || cfg.total || cfg.fold) return [];
 
     const pts = [];
     for (const nd of rawNonDetections) {
@@ -251,7 +255,9 @@ function buildNonDetectionSeries(cfg) {
     const out = [];
     for (const [surv, bands] of Object.entries(groupByBand(pts))) {
         for (const [band, data] of Object.entries(bands)) {
-            out.push(makeSeries('lim. mag', surv, band, data));
+            // Fainter than the detections (ECharts' default 0.8), as in alerce.online, which drew
+            // them in a 50% transparent band color: 0.5 × 0.8.
+            out.push({ ...makeSeries('lim. mag', surv, band, data), itemStyle: { opacity: 0.4 } });
         }
     }
     return out;
@@ -558,7 +564,8 @@ function updateChart() {
     // yet, don't render a fold at a meaningless period — leave the current chart in
     // place and let updateVisibility() show the "Computing period…" spinner. Once the
     // periodogram arrives, loadPeriodogram() calls updateChart() again and we render.
-    const foldPending = config.fold && !(rawPeriodogram?.periods?.length);
+    // A period typed by the user is never meaningless, so it folds right away.
+    const foldPending = config.fold && !(rawPeriodogram?.periods?.length) && !periodUserModified;
     if (foldPending) return;
 
     const opts = buildOptions(config);
@@ -587,8 +594,11 @@ function updateVisibility() {
     foldLoading?.classList.toggle('tw-hidden', !showFoldSpinner);
 
     // Enable/disable the periodogram toggle based on fold state.
-    const pdToggleEl = document.querySelector('[name="periodogram_enabled"]');
-    if (pdToggleEl) pdToggleEl.disabled = !config.fold;
+    setToggleLocked(document.querySelector('[name="periodogram_enabled"]'), !config.fold,
+        'Turn on Fold to see the periodogram.');
+
+    updateFoldNoPeriod();
+    updateTotalHiddenHint();
 
     if (pdContainer) {
         pdContainer.classList.toggle('tw-hidden', !showPd);
@@ -614,6 +624,116 @@ function updateVisibility() {
     );
 }
 
+// ─── Fold without a period ────────────────────────────────────────────────────
+// When the periodogram finds no period (or fails), the fold has nothing to use. Say so
+// over the plot instead of leaving the previous chart on screen, until the user types
+// a period of their own.
+function updateFoldNoPeriod() {
+    const box       = document.getElementById('fold-no-period');
+    const text      = document.getElementById('fold-no-period-text');
+    const container = document.getElementById('lightcurve-container');
+    const hasPeriods = (rawPeriodogram?.periods?.length ?? 0) > 0;
+    const show = config.fold && !hasPeriods && !periodogramLoading && periodogramStatus != null && !periodUserModified;
+
+    if (show && text) {
+        const manual = 'Type a period to fold the light curve manually.';
+        if (periodogramStatus === 'failed') {
+            text.textContent = `The period could not be computed. ${manual}`;
+        } else {
+            const survey = config.survey_id.toLowerCase();
+            const n = rawDetections.filter(d => d.survey_id.toLowerCase() === survey && d.variants?.mag_total).length;
+            text.textContent = `No period found for this object (${n} detection${n === 1 ? '' : 's'} with total magnitude). ${manual}`;
+        }
+    }
+    box?.classList.toggle('tw-hidden', !show);
+    // Hide the previous (unfolded) chart behind the message rather than show it as if folded.
+    container?.classList.toggle('tw-invisible', show);
+}
+
+// ─── Points without total magnitude ───────────────────────────────────────────
+// In Total, points without a total magnitude (uncorrected ZTF) are left out of the chart.
+// Say how many in a "?" next to the Diff/Total switch, shown only when some are hidden, so
+// they don't silently disappear.
+function updateTotalHiddenHint() {
+    const hint = document.getElementById('total-hidden-hint');
+    const text = document.getElementById('total-hidden-hint-text');
+    if (!hint || !text) return;
+    const parts = [];
+    if (config.total && !isNotCorrected()) {
+        for (const [items, type, label] of [
+            [rawDetections,       'detections',        'detections'],
+            [rawForcedPhotometry, 'forced_photometry', 'forced photometry points'],
+        ]) {
+            if (!(config.data_types ?? [type]).includes(type)) continue;
+            const missing = items.filter(p => !pointValue(p, config)).length;
+            if (missing) parts.push(`${missing} of ${items.length} ${label}`);
+        }
+    }
+    text.textContent = parts.length ? `${parts.join(' and ')} have no total magnitude, so they are not shown.` : '';
+    hint.classList.toggle('tw-hidden', !parts.length);
+}
+
+// ─── Locked toggles ───────────────────────────────────────────────────────────
+// A disabled switch looks the same as an enabled one, so fade it, show a "not allowed"
+// cursor and explain why on hover.
+function setToggleLocked(el, locked, reason) {
+    if (!el) return;
+    el.disabled = locked;
+    const label = el.closest('label');
+    if (!label) return;
+    // Fade everything but the "?" help, so its tooltip stays readable.
+    for (const child of label.children) {
+        if (!child.classList.contains('tw-group')) child.classList.toggle('tw-opacity-50', locked);
+    }
+    label.classList.toggle('tw-cursor-pointer', !locked);
+    label.classList.toggle('tw-cursor-not-allowed', locked);
+    label.title = locked ? reason : '';
+}
+
+// ─── Diff/Total toggle ────────────────────────────────────────────────────────
+// Fold and external sources only work with total magnitude, so while either is on the
+// switch is forced to Total and locked. Turning both off restores the user's choice.
+function syncTotalToggle(form) {
+    const el = form.querySelector('[name="total"]');
+    if (!el) return;
+    const needsTotal = (form.querySelector('[name="fold"]')?.checked ?? false)
+        || (form.querySelector('[name="external_sources.enabled"]')?.checked ?? false);
+
+    if (needsTotal && !el.disabled) {
+        el.dataset.checkedBeforeLock = String(el.checked);
+        el.checked = true;
+    } else if (!needsTotal && el.disabled) {
+        el.checked = el.dataset.checkedBeforeLock !== 'false';
+    }
+    setToggleLocked(el, needsTotal, 'Fold and external sources use total magnitude. Turn them off to switch back to Diff.');
+}
+
+// ─── Non-detections toggle ────────────────────────────────────────────────────
+// Non-detections are limiting magnitudes, so their checkbox is unavailable in flux view:
+// unticked, greyed out and disabled. Going back to magnitude restores its previous state.
+function syncNonDetectionsToggle(form) {
+    const el = form.querySelector('[name="data_types[]"][value="non_detections"]');
+    if (!el) return;
+    const fluxOn = form.querySelector('[name="flux"]')?.checked ?? false;
+
+    if (fluxOn && !el.disabled) {
+        el.dataset.checkedBeforeFlux = String(el.checked);
+        el.checked  = false;
+        el.disabled = true;
+    } else if (!fluxOn && el.disabled) {
+        el.checked  = el.dataset.checkedBeforeFlux !== 'false';
+        el.disabled = false;
+    }
+
+    const label = el.closest('label');
+    for (const node of [label, el]) {
+        node?.classList.toggle('tw-cursor-pointer', !fluxOn);
+        node?.classList.toggle('tw-cursor-not-allowed', fluxOn);
+    }
+    label?.classList.toggle('tw-opacity-50', fluxOn);
+    if (label) label.title = fluxOn ? 'Limiting magnitudes are only shown in magnitude view.' : '';
+}
+
 // ─── Read config from form ────────────────────────────────────────────────────
 function readConfigFromForm() {
     const form = document.getElementById('config-form');
@@ -621,6 +741,7 @@ function readConfigFromForm() {
 
     const bool = name => form.querySelector(`[name="${name}"]`)?.checked ?? false;
 
+    syncTotalToggle(form);
     config.flux               = bool('flux');
     config.total              = bool('total');
     config.fold               = bool('fold');
@@ -641,14 +762,8 @@ function readConfigFromForm() {
     config.bands.ztf    = [...form.querySelectorAll('[name="bands.ztf[]"]:checked')]   .map(el => el.value);
     config.bands.lsst   = [...form.querySelectorAll('[name="bands.lsst[]"]:checked')]  .map(el => el.value);
     config.bands.ztf_dr = [...form.querySelectorAll('[name="bands.ztf_dr[]"]:checked')].map(el => el.value);
+    syncNonDetectionsToggle(form);
     config.data_types   = [...form.querySelectorAll('[name="data_types[]"]:checked')]  .map(el => el.value);
-
-    // Validate: fold/external sources force total mode.
-    if (config.fold || config.external_sources.enabled) {
-        config.total = true;
-        const totalEl = form.querySelector('[name="total"]');
-        if (totalEl) totalEl.checked = true;
-    }
 }
 
 // ─── External sources: load ZTF DR detections via fetch ──────────────────────
@@ -710,9 +825,11 @@ async function loadPeriodogram() {
         const r = await fetch(`${apiUrl}/htmx/periodogram?oid=${config.oid}&survey_id=${config.survey_id}`);
         if (!r.ok) throw new Error(r.status);
         rawPeriodogram = await r.json();
+        periodogramStatus = rawPeriodogram?.periods?.length ? null : 'empty';
         applyBestCandidatePeriod();
     } catch (e) {
         console.error('Periodogram load failed:', e);
+        periodogramStatus = 'failed';
     } finally {
         periodogramLoading = false;
         updateVisibility();
@@ -727,6 +844,8 @@ function init() {
 
     const form = document.getElementById('config-form');
     if (!form) return;
+    syncNonDetectionsToggle(form);
+    syncTotalToggle(form);
 
     // Debounce continuous inputs (sliders) slightly to avoid rebuilding on every tick.
     let debounceTimer = null;
@@ -791,7 +910,7 @@ function init() {
                 periodUserModified = true;
             }
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => { readConfigFromForm(); updateChart(); }, 80);
+            debounceTimer = setTimeout(() => { readConfigFromForm(); updateFoldNoPeriod(); updateChart(); }, 80);
         }
     }
 
@@ -822,6 +941,7 @@ function init() {
             } finally {
                 settingPeriodProgrammatically = false;
             }
+            updateFoldNoPeriod();
             updateChart();
         });
     }

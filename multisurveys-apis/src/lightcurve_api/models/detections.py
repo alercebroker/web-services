@@ -131,6 +131,10 @@ class ztfDetection(BaseDetection):
     def flux_sign(self, total: bool, absolute: bool) -> str:
         return "+" if self.isdiffpos > 0 else "-"
 
+    def has_total(self) -> bool:
+        # Uncorrected detections have a NULL magpsf_corr, which set_defaults turns into 0.
+        return self.magpsf_corr > 0
+
 
 class LsstDetection(BaseDetection):
     oid: int

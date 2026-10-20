@@ -90,16 +90,16 @@ function restore_n_det(urlParams) {
 }
 
 function restore_mjd(urlParams) {
-  let firstmjd = urlParams.getAll('firstmjd')
-  let lastmjd = urlParams.getAll('lastmjd')
+  let firstmjd_min = urlParams.get('firstmjd_min')
+  let firstmjd_max = urlParams.get('firstmjd_max')
 
-  if (firstmjd.length > 0) {
-    document.getElementById('min_mjd').value = firstmjd
+  if (firstmjd_min) {
+    document.getElementById('min_mjd').value = firstmjd_min
     document.getElementById('min_mjd').dispatchEvent(new Event('input'))
   }
 
-  if (lastmjd.length > 0) {
-    document.getElementById('max_mjd').value = lastmjd
+  if (firstmjd_max) {
+    document.getElementById('max_mjd').value = firstmjd_max
     document.getElementById('max_mjd').dispatchEvent(new Event('input'))
   }
 

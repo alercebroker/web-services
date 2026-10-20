@@ -20,7 +20,16 @@
     {{ toggle.toggle("flux", "Mag", "Flux", config.flux, "Toggle between magnitude and flux.", left_w="3rem", neutral=True) }}
 
     <!-- Difference / Total -->
-    {{ toggle.toggle("total", "Diff", "Total", config.total, "Toggle between difference and total (science) magnitude.", left_w="3rem", neutral=True) }}
+    <div class="tw-flex tw-items-center">
+      {{ toggle.toggle("total", "Diff", "Total", config.total, "Toggle between difference and total (science) magnitude.", left_w="3rem", neutral=True) }}
+      <!-- Shown by JS in Total when some points have no total magnitude and are left out -->
+      <div id="total-hidden-hint" class="tw-hidden tw-relative tw-group tw-ml-2">
+        <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">?</span>
+        <div class="tw-absolute tw-bottom-full tw-right-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
+          <div id="total-hidden-hint-text" class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-min-w-[200px] tw-text-balance"></div>
+        </div>
+      </div>
+    </div>
 
   </div>
 
