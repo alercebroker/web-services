@@ -22,6 +22,17 @@ def ndet_build(n_det_min: int, n_det_max: int) -> list:
     return n_det
 
 
+def firstmjd_build(firstmjd_min: float, firstmjd_max: float) -> list:
+    # object_filters reads [min] as firstmjd >= min and [min, max] as a range,
+    # so "max only" needs a lower bound: 0 is before any MJD.
+    if firstmjd_max is not None:
+        return [firstmjd_min if firstmjd_min is not None else 0, firstmjd_max]
+    if firstmjd_min is not None:
+        return [firstmjd_min]
+
+    return None
+
+
 def parse_oids_to_int(oids: list, survey: str) -> list:
     if oids is not None:
         encode_oids = encode_ids(survey, oids)

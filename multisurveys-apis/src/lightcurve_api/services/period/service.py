@@ -1,6 +1,7 @@
 import copy
 from typing import List
 
+import numpy as np
 import pandas as pd
 from toolz import curry, pipe
 
@@ -85,6 +86,10 @@ def detections2dataframe(detections: List[BaseDetection]):
     Total magnitude is used instead of difference, since folded lightcurve also uses corrected magnitudes.
     Detections without a corrected magnitude are left out, as they have no total magnitude to use.
 
+    Detections without a usable magnitude are left out: an uncorrected ZTF detection has no corrected
+    magnitude and comes as 0 with error 0, and a single error of 0 gets an infinite weight in the
+    periodogram, turning every score into NaN.
+
     Args:
         detections: List of lightcurve detections
 
@@ -104,7 +109,15 @@ def detections2dataframe(detections: List[BaseDetection]):
         df_dict["brightness"].append(det.flux2magnitude(True, False))
         df_dict["e_brightness"].append(det.flux2magnitude_err(True, False))
         df_dict["fid"].append(det.band)
-    return pd.DataFrame(df_dict)
+    df = pd.DataFrame(df_dict, columns=list(df_dict)).astype(float)
+    df["fid"] = df["fid"].astype(int)
+    usable = (
+        np.isfinite(df["brightness"])
+        & (df["brightness"] != 0)
+        & np.isfinite(df["e_brightness"])
+        & (df["e_brightness"] > 0)
+    )
+    return df[usable].reset_index(drop=True)
 
 
 def default_echart_options():
