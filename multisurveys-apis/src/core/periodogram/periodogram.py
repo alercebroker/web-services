@@ -58,7 +58,8 @@ class PeriodogramComputer:
         return lightcurve.iloc[best_starting : (best_ending + 1)]
 
     def compute(self, lightcurve: pd.DataFrame):
-        trimmed_lightcurve = self.trim_lightcurve(lightcurve)
+        # trim_lightcurve walks the times in order: unsorted, it keeps the whole light curve.
+        trimmed_lightcurve = self.trim_lightcurve(lightcurve.sort_values("mjd", kind="stable"))
 
         self.periodogram_computer.set_data(
             mjds=np.array(trimmed_lightcurve.mjd),
