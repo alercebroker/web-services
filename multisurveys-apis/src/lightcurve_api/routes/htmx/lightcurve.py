@@ -1,7 +1,7 @@
 from datetime import date
 
 import httpx
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from toolz import curry, pipe
@@ -90,6 +90,8 @@ def periodogram(oid: str, survey_id: str, db: db_dependency):
 @router.get("/external_sources", response_class=HTMLResponse)
 def external_sources(request: Request, oid: str, survey_id: str, meanra: float = None, meandec: float = None):
     """Return an HTML picker of nearby ZTF DR objects for the external-sources feature."""
+    if meanra is None or meandec is None:
+        raise HTTPException(status_code=400, detail="meanra and meandec are required")
     config_state = ConfigState(
         oid=oid,
         survey_id=survey_id,
