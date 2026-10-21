@@ -108,7 +108,7 @@ def conesearch_oid_lightcurve(
     return cast(
         Lightcurve,
         pipe(
-            idmapper.catalog_oid_to_masterid(survey_id, oid, True),
+            idmapper.parse_oid(survey_id, oid),
             lambda oid: conesearch_oid(oid, radius, neighbors, session_factory),
             get_lightcurve_async(
                 session_factory,

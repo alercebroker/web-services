@@ -34,7 +34,7 @@ def conesearch(
     neighbors: NeighborsQuery,
     db: db_dependency,
 ) -> list[ApiObject]:
-    id = idmapper.catalog_oid_to_masterid(survey, oid, True)
+    id = idmapper.parse_oid(survey, oid)
     return service.conesearch_oid(id, radius, neighbors, db.session)
 
 

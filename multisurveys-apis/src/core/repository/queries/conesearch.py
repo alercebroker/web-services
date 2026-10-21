@@ -41,7 +41,7 @@ def conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
 def dummy_conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
     def _conesearch(args: Tuple[int64, float, int]) -> List[Object]:
         oid, radius, neighbors = args
-        stmt = select(Object).where(Object.oid == oid.item())
+        stmt = select(Object).where(Object.oid == int(oid))
         with session_factory() as session:
             result = session.execute(stmt, {"radius": radius}).all()
             return [row[0] for row in result]
@@ -58,7 +58,7 @@ def _build_statement_oid(oid: int64, neighbors: int):
     return (
         select(target_obj)
         .select_from(center_obj, target_obj)
-        .where(center_obj.oid == oid.item())
+        .where(center_obj.oid == int(oid))
         .where(text("q3c_radial_query(target.meanra, target.meandec, center.meanra, center.meandec, :radius)"))
         .order_by(asc(text("q3c_dist(target.meanra, target.meandec, center.meanra, center.meandec)")))
         .limit(neighbors)

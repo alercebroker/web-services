@@ -6,6 +6,7 @@ from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_object_by_id, get_objects_list
 from ..services.validations import ndets_validation, order_mode_validation, survey_validation
+from ..services.parameters_parser import parse_oids_to_int
 
 router = APIRouter()
 
@@ -48,7 +49,7 @@ def list_objects(
     order_mode_validation(order_mode)
 
     filters = Filters(
-        oids=oid,
+        oids=parse_oids_to_int(oid, survey),
         survey=survey,
         classifier=classifier,
         class_name=class_name,

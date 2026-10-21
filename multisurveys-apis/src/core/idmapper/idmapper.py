@@ -15,13 +15,28 @@ SURVEY_IDS["MAXSURVEY"] = 2**SURVEY_PREFIX_LEN_BITS - 1
 REVERSE_SURVEY_IDS = dict((zip(SURVEY_IDS.values(), SURVEY_IDS.keys())))
 
 
-def encode_ids(survey, oids):
-    encode_array = []
-    for id in oids:
-        encode_id = catalog_oid_to_masterid(survey.upper(), id)
-        encode_array.append(encode_id)
+def parse_oid(survey: str | None, oid: str | int) -> int:
+    """Turn an oid from a request into the multisurvey id stored in the database.
 
-    return encode_array
+    Accepts a numeric id (a ZTF multisurvey id such as ``36028941599716634``, or an LSST
+    diaObjectId) or a ZTF name (``ZTF18aarwvbm``). Without a survey, a ``ZTF…`` name is read
+    as ZTF. Raises ValueError for anything else, so routes can answer 400.
+    """
+    text = str(oid).strip()
+    if survey is not None and survey.upper() not in SURVEY_IDS:
+        raise ValueError(f"Unsupported catalog: {survey.upper()}")
+    if text.isdigit():
+        return int(text)
+    if survey is None and text.startswith("ZTF"):
+        survey = "ztf"
+    if survey is not None and survey.upper() == "ZTF":
+        # Raises "Invalid ZTF object ID: ..." for anything that isn't a ZTF name
+        return int(catalog_oid_to_masterid("ZTF", text, validate=True))
+    raise ValueError(f"Invalid oid '{text}': expected a numeric id.")
+
+
+def encode_ids(survey, oids):
+    return [parse_oid(survey, oid) for oid in oids]
 
 
 def decode_ids(items):

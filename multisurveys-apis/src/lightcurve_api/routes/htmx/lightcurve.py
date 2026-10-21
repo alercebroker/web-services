@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
-from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.idmapper.idmapper import parse_oid
 from core.static_files import configure_templates
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
@@ -42,7 +42,7 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
     provides the raw data as JSON embedded in the page.
     """
     survey_id = survey_id.lower()
-    catalog_oid_to_masterid(survey_id, oid, validate=True)
+    parse_oid(survey_id, oid)
     result = lightcurve_plot_service.get_lightcurve_data(oid, survey_id, db.session)
 
     config_data = result.config_state.model_dump(exclude={"detections", "non_detections", "forced_photometry"})
@@ -77,7 +77,7 @@ def periodogram(oid: str, survey_id: str, db: db_dependency):
     Lomb-Scargle computation on every view.
     """
     survey_id = survey_id.lower()
-    catalog_oid_to_masterid(survey_id, oid, validate=True)
+    parse_oid(survey_id, oid)
     pd = get_periodogram_data(oid, survey_id, db.session)
     payload = pd.model_dump()
     try:
@@ -140,7 +140,7 @@ def download(oid: str, survey_id: str, db: db_dependency):
     id the caller sent.
     """
     survey_id = survey_id.lower()
-    master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
+    master_id = parse_oid(survey_id, oid)
 
     service_result = pipe(
         Result(
