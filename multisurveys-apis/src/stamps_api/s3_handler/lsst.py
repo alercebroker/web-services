@@ -1,4 +1,5 @@
 import os
+from fastapi import HTTPException
 from .base_handler import BaseS3Handler
 
 
@@ -27,4 +28,4 @@ class LSSTS3Handler(BaseS3Handler):
             raise Exception(f"Type {stamp_type} not valid. Valid types are {self.valid_stamp_types}")
 
     def get_avro(self, oid: str, measurement_id: str):
-        raise Exception("No avro stored for LSST Alerts")
+        raise HTTPException(status_code=404, detail="No avro stored for LSST alerts")
