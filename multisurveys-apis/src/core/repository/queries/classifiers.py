@@ -68,3 +68,23 @@ def get_all_classifiers(
         result = result.mappings().all()
 
         return result
+
+
+def get_classes(
+    classifier_name: str,
+    classifier_version: str,
+    session_factory: Callable[..., AbstractContextManager[Session]],
+) -> list[str] | None:
+    """The class names of one classifier version, in taxonomy order. None if that classifier version doesn't exist."""
+    with session_factory() as session:
+        classifier_id = session.execute(
+            select(Classifier.classifier_id).where(
+                Classifier.classifier_name == classifier_name,
+                Classifier.classifier_version == classifier_version,
+            )
+        ).scalar_one_or_none()
+        if classifier_id is None:
+            return None
+
+        stmt = select(Taxonomy.class_name).where(Taxonomy.classifier_id == classifier_id).order_by(Taxonomy.order.asc())
+        return list(session.execute(stmt).scalars().all())

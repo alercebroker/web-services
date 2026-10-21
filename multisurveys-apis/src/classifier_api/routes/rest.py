@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi import HTTPException
+from core.repository.queries.classifiers import get_classes
 from ..services.classifiers import get_classifier_by_name, get_classifiers
 
 router = APIRouter()
@@ -30,3 +31,17 @@ def classifiers(
         classifiers = get_classifiers(session_factory=request.app.state.psql_session)
 
     return classifiers
+
+
+@router.get("/classes", summary="Classes of a classifier version")
+def classes(request: Request, classifier_name: str, classifier_version: str):
+    """The classes a classifier version can assign, in taxonomy order, as `[{"name": ...}]`."""
+    class_names = get_classes(classifier_name, classifier_version, session_factory=request.app.state.psql_session)
+
+    if class_names is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Classifier '{classifier_name}' version '{classifier_version}' not found",
+        )
+
+    return [{"name": class_name} for class_name in class_names]

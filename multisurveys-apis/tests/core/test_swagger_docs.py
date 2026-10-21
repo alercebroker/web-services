@@ -1,4 +1,4 @@
-"""SW-1: the /docs page of each API loads its OpenAPI schema from behind the nginx prefix.
+"""SW-1: the /docs page of each API (the 8, and features) loads its OpenAPI schema from behind the nginx prefix.
 
 nginx strips /<api>_api before forwarding, so these requests use the stripped paths, as the app sees them in
 production. /docs must then ask for /<api>_api/openapi.json (the browser goes through the prefix), and the
@@ -19,6 +19,7 @@ APIS = [
     ("crossmatch_api", "/htmx/htmx.min.js"),
     ("stamps_api", "/htmx-static/htmx.min.js"),
     ("aladin_api", "/htmx/htmx.min.js"),
+    ("features_api", None),
 ]
 
 
