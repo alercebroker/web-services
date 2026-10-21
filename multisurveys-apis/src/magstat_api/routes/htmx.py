@@ -38,10 +38,11 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
     master_id = parse_oid(survey_id, oid)
     mag_stats_raw = get_magstats(master_id, survey_id, session_factory=request.app.state.psql_session)
 
+    bands = None
     if survey_id == "ztf":
         mag_stats = mag_parser(mag_stats_raw)
-        for d in mag_stats:
-            del d["fid"]
+        # Each row's band labels its column; out of the rows, so it isn't listed as a stat
+        bands = [d.pop("fid") for d in mag_stats]
     elif survey_id == "lsst":
         mag_stats = parse_lsst_dia_objects_to_dict(mag_stats_raw)
         if mag_stats:
@@ -59,5 +60,6 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
             "stat_r": mag_stats,
             "stat_r_keys": mag_keys,
             "band_mapping": bandMapping,
+            "bands": bands,
         },
     )
