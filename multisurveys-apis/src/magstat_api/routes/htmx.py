@@ -1,7 +1,7 @@
 import os
 import warnings
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
@@ -44,7 +44,11 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
             del d["fid"]
     elif survey_id == "lsst":
         mag_stats = parse_lsst_dia_objects_to_dict(mag_stats_raw)
-        del mag_stats[0]["created_date"]
+        if mag_stats:
+            del mag_stats[0]["created_date"]
+
+    if not mag_stats:
+        raise HTTPException(status_code=404, detail="Object not found")
 
     mag_keys = list(mag_stats[0].keys())
 

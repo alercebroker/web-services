@@ -24,7 +24,8 @@ def magstats(request: Request, oid: str, survey_id: str):
             del d["fid"]
     elif survey_id == "lsst":
         magstats = parse_lsst_dia_objects_to_dict(mag_stats_raw)
-        del magstats[0]["created_date"]
+        if magstats:
+            del magstats[0]["created_date"]
 
     if not magstats:
         raise HTTPException(status_code=404, detail="Magstats not found for the given OID")

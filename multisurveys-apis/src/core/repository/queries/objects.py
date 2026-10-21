@@ -15,6 +15,7 @@ from object_api.services.statements_sql import (
     add_limits_statements,
 )
 from object_api.models.pagination import Pagination
+from core.exceptions import ObjectNotFound
 
 
 class ObjectsModels:
@@ -37,9 +38,13 @@ def query_common_object(session_ms, oid, survey_id):
 
         stmt = select(model).where(and_(model.oid == oid)).limit(1)
 
-        object_row = session.execute(stmt).one()
+        object_row = session.execute(stmt).one_or_none()
 
-        return object_row
+    # Raised after the session closes: db-plugins' session() re-raises anything raised inside it as a bare
+    # Exception, which would turn this 404 into a 500
+    if object_row is None:
+        raise ObjectNotFound(oid)
+    return object_row
 
 
 def query_object_by_id(session_ms, oid, survey_id):
@@ -52,9 +57,13 @@ def query_object_by_id(session_ms, oid, survey_id):
 
         stmt = build_statement_object(model, oid)
 
-        object_row = session.execute(stmt).one()
+        object_row = session.execute(stmt).one_or_none()
 
-        return object_row
+    # Raised after the session closes: db-plugins' session() re-raises anything raised inside it as a bare
+    # Exception, which would turn this 404 into a 500
+    if object_row is None:
+        raise ObjectNotFound(oid)
+    return object_row
 
 
 def build_statement_object(model_id, oid):
