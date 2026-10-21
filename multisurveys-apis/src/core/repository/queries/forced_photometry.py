@@ -16,7 +16,7 @@ def get_unique_forced_photometry_sql(
     with session_factory() as session:
         if survey_id == "ztf":
             stmt = build_query(ZtfForcedPhotometry, oid)
-        if survey_id == "lsst":
+        elif survey_id == "lsst":
             stmt = build_query(LsstForcedPhotometry, oid)
         else:
             raise ValueError(f"Survey not supported {survey_id}")
@@ -37,7 +37,6 @@ def build_query(model_id, oid):
             ),
         )
         .where(model_id.oid == oid)
-        .limit(10)
     )
 
     return stmt

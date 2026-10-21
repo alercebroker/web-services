@@ -24,7 +24,7 @@ def get_all_unique_non_detections_sql(
 
 
 def build_statement(model_id, oid):
-    stmt = select(model_id).where(model_id.oid == oid).order_by(model_id.mjd.desc()).limit(10)
+    stmt = select(model_id).where(model_id.oid == oid).order_by(model_id.mjd.desc())
 
     return stmt
 
