@@ -21,6 +21,7 @@ def client_for(db):
         ("crossmatch_api", "/htmx/crossmatch", {"oid": "ZTF99zzzzzzz", "survey_id": "ztf"}, 404),
         ("crossmatch_api", "/htmx/crossmatch", {"oid": "abc", "survey_id": "ztf"}, 400),
         ("lightcurve_api", "/htmx/external_sources", {"oid": "ZTF20aaelulu", "survey_id": "ztf"}, 400),
+        ("object_api", "/htmx/search_objects/", {"survey_id": "foo"}, 400),
     ],
 )
 def test_card_errors(client_for, api, path, params, status):
