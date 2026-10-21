@@ -22,6 +22,11 @@ def ndets_validation(ndets: list[int]):
             )
 
 
+def survey_validation(survey: str | None):
+    if survey not in ("ztf", "lsst"):
+        raise HTTPException(status_code=400, detail="survey is required: ztf or lsst.")
+
+
 def order_mode_validation(order: str):
     available_orders = ["DESC", "ASC"]
 
