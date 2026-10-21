@@ -1,4 +1,7 @@
+import logging
+
 import boto3
+from botocore.exceptions import BotoCoreError, ClientError, ConnectTimeoutError, ReadTimeoutError
 from fastapi import HTTPException
 from fastavro import reader
 import io
@@ -6,6 +9,8 @@ import threading
 from abc import abstractmethod
 from .fits_to_png import transform
 import gzip
+
+logger = logging.getLogger(__name__)
 
 _clients = {}
 _clients_lock = threading.Lock()
@@ -43,9 +48,17 @@ class BaseS3Handler:
         key = f"{file_name}.avro"
         try:
             file = self.client.get_object(Bucket=self.bucket_name, Key=key)
+            body = file["Body"].read()
         except self.client.exceptions.NoSuchKey:
             raise HTTPException(status_code=404, detail=f"Alert file {key} not found")
-        file_io = io.BytesIO(file["Body"].read())
+        # Any other S3 failure is S3's, not the caller's: 504 if it was too slow, 502 otherwise
+        except (ConnectTimeoutError, ReadTimeoutError) as error:
+            logger.warning("S3 timed out reading %s: %s", key, error)
+            raise HTTPException(status_code=504, detail="S3 did not answer in time")
+        except (ClientError, BotoCoreError) as error:
+            logger.warning("S3 failed reading %s: %s", key, error)
+            raise HTTPException(status_code=502, detail="Could not read the alert file from S3")
+        file_io = io.BytesIO(body)
         avro_data = next(reader(file_io))
         return avro_data
 
