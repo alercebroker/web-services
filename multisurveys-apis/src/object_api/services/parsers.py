@@ -81,7 +81,7 @@ def parse_objects_list_output(result: Pagination, search_params: SearchParams, c
     info_message = get_info_message(items_output)
 
     return {
-        "total": result.total_items,
+        "total": result.total,
         "next": result.next_num,
         "has_next": result.has_next,
         "prev": result.prev_num,

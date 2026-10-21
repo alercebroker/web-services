@@ -8,7 +8,7 @@ from db_plugins.db.sql.models_pipeline import (
     Probability,
 )
 from sqlalchemy.orm import aliased
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func
 from object_api.services.parsers import serialize_items
 from object_api.services.statements_sql import (
     create_order_statement,
@@ -127,7 +127,11 @@ def query_get_objects(session_ms, search_params, parsed_params):
         ):
             items = sort_by_oid_list_and_select_page(search_params, items)
 
-        return Pagination(pagination_args.page, pagination_args.page_size, items)
+        total = None
+        if pagination_args.count:
+            total = session.execute(select(func.count()).select_from(page.subquery())).scalar_one()
+
+        return Pagination(pagination_args.page, pagination_args.page_size, items, total)
 
 
 def page_then_survey_statement(page, page_order, survey_model, order_args, pagination_args):

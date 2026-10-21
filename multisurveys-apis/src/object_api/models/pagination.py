@@ -18,12 +18,17 @@ class Pagination:
 
     """
 
-    def __init__(self, page, per_page, items):
-        """Set attributes from args."""
+    def __init__(self, page, per_page, items, total=None):
+        """Set attributes from args.
+
+        total_items is the number of rows fetched (the page plus one look-ahead row), used for
+        has_next. total is the number of matching rows, counted only when the caller asks (count=true).
+        """
         self.page = page
         self.per_page = per_page
         self.items = items
         self.total_items = len(items)
+        self.total = total
 
     @property
     def prev_num(self):
