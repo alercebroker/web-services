@@ -7,7 +7,8 @@ from core.error_handlers import add_error_handlers
 
 from .routes import rest
 
-app = FastAPI()
+# root_path: the prefix nginx strips, so /docs fetches /classifier_api/openapi.json (static files: core/static_files.py)
+app = FastAPI(root_path="/classifier_api")
 add_concurrency_limit(app)
 add_error_handlers(app)
 psql_engine = psql_entity()

@@ -11,7 +11,8 @@ from core.static_files import mount_static
 
 from .routes import htmx, rest
 
-app = FastAPI()
+# root_path: the prefix nginx strips, so /docs fetches /object_api/openapi.json (static files: core/static_files.py)
+app = FastAPI(root_path="/object_api")
 add_concurrency_limit(app)
 add_error_handlers(app)
 

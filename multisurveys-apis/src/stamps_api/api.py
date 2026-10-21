@@ -8,7 +8,8 @@ from core.static_files import mount_static
 
 from .routes import htmx, rest
 
-app = FastAPI(openapi_url="/stamps/openapi.json")
+# root_path: the prefix nginx strips, so /docs fetches /stamps_api/openapi.json (static files: core/static_files.py)
+app = FastAPI(root_path="/stamps_api")
 add_concurrency_limit(app)
 add_error_handlers(app)
 psql = psql_entity()
@@ -19,12 +20,6 @@ app.include_router(htmx.router, prefix="/htmx")
 
 mount_static(app, "/static", "src/stamps_api/static", "static")
 mount_static(app, "/htmx-static", "src/core/htmx", "htmx-static")
-
-
-@app.get("/openapi.json")
-def custom_swagger_route():
-    return app.openapi()
-
 
 app = CORSMiddleware(
     app,

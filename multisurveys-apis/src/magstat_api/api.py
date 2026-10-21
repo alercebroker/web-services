@@ -9,7 +9,8 @@ from core.static_files import mount_static
 
 from .routes import htmx, rest
 
-app = FastAPI()
+# root_path: the prefix nginx strips, so /docs fetches /magstat_api/openapi.json (static files: core/static_files.py)
+app = FastAPI(root_path="/magstat_api")
 add_concurrency_limit(app)
 add_error_handlers(app)
 psql_engine = psql_entity()
