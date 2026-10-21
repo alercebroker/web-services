@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from fastapi import HTTPException
+from core.idmapper.survey_mapper import get_survey_id
 from core.repository.queries.classifiers import get_classes
 from ..services.classifiers import get_classifier_by_name, get_classifiers
 
@@ -15,20 +16,24 @@ def ping():
 def classifiers(
     request: Request,
     classifier_name: str | None = None,
+    survey_id: str | None = None,
 ):
+    """Every classifier with its classes, as a list. Filter by `classifier_name` and by `survey_id` (`ztf` or `lsst`)."""
+    session = request.app.state.psql_session
     if classifier_name:
-        classifiers = get_classifier_by_name(classifier_name, session_factory=request.app.state.psql_session)
-
+        classifiers = get_classifier_by_name(classifier_name, session_factory=session)
         if len(classifiers) == 0:
-            raise HTTPException(
-                status_code=404,
-                detail="Classifier not found for the given OID",
-            )
-
-        classifiers = classifiers[0]  # Assuming get_classifier_by_name returns a list, we take the first one
-
+            raise HTTPException(status_code=404, detail=f"Classifier '{classifier_name}' not found")
     else:
-        classifiers = get_classifiers(session_factory=request.app.state.psql_session)
+        classifiers = get_classifiers(session_factory=session)
+
+    if survey_id is not None:
+        try:
+            tid = get_survey_id(survey_id)
+        except ValueError as error:
+            raise HTTPException(status_code=400, detail=str(error))
+        # the response's survey_id is the classifier's tid (0 for ZTF, 1 for LSST)
+        classifiers = [classifier for classifier in classifiers if classifier.survey_id == tid]
 
     return classifiers
 
