@@ -75,8 +75,6 @@
 
                             {% call help_tip() %}
                                 How many times the survey detected the object.
-                                <br>
-                                A minimum leaves out objects seen only once or twice.
                             {% endcall %}
                         </div>
                         <div id="detections_container" class="tw-flex tw-justify-between">
@@ -109,11 +107,11 @@
                         </div>
                     </div>
 
-                    <!--Last alert date filters: object.lastmjd-->
+                    <!--Last detection date filters: object.lastmjd-->
                     <div class="tw-col-span-12 tw-w-full">
                         <div id="last_alert_date_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
                             <div class="tw-flex tw-items-center tw-gap-2">
-                                <p>Last alert date</p>
+                                <p>Last detection date</p>
 
                                 {% call help_tip() %}
                                     The date of the object's latest detection.
@@ -143,7 +141,7 @@
                                 {% call help_tip() %}
                                     Conesearch is a coordinate search tool with a search radius.
                                     <br>
-                                    You can input RA/DEC manually or, optionally, give a target name and let Sesame fill in the coordinates.
+                                    You can input RA/Dec manually or, optionally, give a target name and let Sesame fill in the coordinates.
                                     <br>
                                     Formats accepted for HMS/DMS: "23:14:56.3" or "23 14 56.3".
                                 {% endcall %}
@@ -172,7 +170,7 @@
                                 <label>HMS/DMS</label>
                             </div>
 
-                            {{customInput(id="ra_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Ra (Deg)", step="1")}}
+                            {{customInput(id="ra_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="RA (deg)", step="1")}}
 
                             {{customInput(id="dec_consearch", type="number", width="tw-col-span-12 lg:tw-col-span-6 sm:tw-col-span-12", placeholder="Dec (deg)", step="1")}}
 

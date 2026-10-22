@@ -26,7 +26,7 @@ export function get_sesame_object(object_name){
 
         // Sesame answers an unknown name with a document without coordinates.
         if (ra_node === undefined || dec_node === undefined) {
-            show_sesame_notice(`Sesame could not resolve "${object_name}". Check the name, or enter RA/DEC by hand.`)
+            show_sesame_notice(`Sesame could not resolve "${object_name}". Check the name, or enter RA/Dec by hand.`)
             return
         }
 
@@ -40,7 +40,7 @@ export function get_sesame_object(object_name){
         document.getElementById("radius_consearch").value = 1.5
     }).catch((error) => {
         console.error('Error fetching data:', error);
-        show_sesame_notice("Sesame could not be reached. Try again later, or enter RA/DEC by hand.")
+        show_sesame_notice("Sesame could not be reached. Try again later, or enter RA/Dec by hand.")
     });
 }
 
