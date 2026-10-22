@@ -1,12 +1,15 @@
-from fastapi import APIRouter, HTTPException, Request
-from core.idmapper.idmapper import catalog_oid_to_masterid
-from ..services.detections_services import find_first_measurement_id
-from ..s3_handler import handler_selector
-from ..services.lightcurve_service import get_detections
-from ..models.lightcurve import PostRequestInputModel
-from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
 import base64
+
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.templating import Jinja2Templates
+
+from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.static_files import configure_templates
+
+from ..models.lightcurve import PostRequestInputModel
+from ..s3_handler import handler_selector
+from ..services.detections_services import find_first_measurement_id
+from ..services.lightcurve_service import get_detections
 
 router = APIRouter()
 
@@ -17,22 +20,6 @@ templates = Jinja2Templates(
 )
 configure_templates(templates, "http://localhost:8007")
 
-"""
-Service
-    - get lightcurve ordered by date dect
-    - get stamps for oid and measurement id
-
-Functions
-    - get (no measurement_id no detections list) 
-        Get the lightcurve and de stamps for the fist measurement id
-        in the list of detections
-    - post (with measurement_id with detections list)
-        Get the stamps for the oid and measruement id
-difference_mime
-    bot return the template whith whe
-    lightcurve and stamps
-"""
-
 
 @router.get("/stamp_card")
 def get_stamp_card(
@@ -42,10 +29,7 @@ def get_stamp_card(
 ):
     handler = handler_selector(survey_id)()
     context = {}
-    try:
-        master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
-    except ValueError as error:
-        raise HTTPException(status_code=400, detail=str(error))
+    master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
 
     detections = get_detections(
         oid=master_id,

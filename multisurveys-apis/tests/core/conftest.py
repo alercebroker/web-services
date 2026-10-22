@@ -74,6 +74,7 @@ def db_setup():
 
             _wait_for_postgres(host, port, "alerce", "alerce", "multistream")
 
+            os.environ.pop("SCHEMA", None)
             db = psql_entity()
             db.create_db()
             create_q3c_idx(db)

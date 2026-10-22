@@ -1,18 +1,15 @@
 import os
-
-from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
-
-from core.exceptions import ObjectNotFound
-from core.idmapper.idmapper import catalog_oid_to_masterid
-
-# from core.repository.queries.magstats import get_magstats_by_oid
-from ..services.magstats import get_magstats
-from .temporal_utils import mag_parser, parse_lsst_dia_objects_to_dict
 import warnings
 
+from fastapi import APIRouter, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
+from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.static_files import configure_templates
+
+from ..services.magstats import get_magstats
+from .temporal_utils import mag_parser, parse_lsst_dia_objects_to_dict
 
 router = APIRouter()
 templates = Jinja2Templates(
@@ -38,15 +35,9 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
             DeprecationWarning,
         )
 
-    try:
-        master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
-    except ValueError as error:
-        raise HTTPException(status_code=400, detail=str(error))
+    master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
+    mag_stats_raw = get_magstats(master_id, survey_id, session_factory=request.app.state.psql_session)
 
-    try:
-        mag_stats_raw = get_magstats(master_id, survey_id, session_factory=request.app.state.psql_session)
-    except ObjectNotFound:
-        raise HTTPException(status_code=404, detail="Object not found")
     if survey_id == "ztf":
         mag_stats = mag_parser(mag_stats_raw)
         for d in mag_stats:

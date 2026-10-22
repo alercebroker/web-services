@@ -28,8 +28,6 @@ lightcurve/tests/profiling/flamegraph*
 
 values.*.override.yaml
 
-**/flake.nix
-**/flake.lock
 **/.envrc
 **/.direnv
 

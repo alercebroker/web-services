@@ -1,10 +1,8 @@
-import traceback
-from typing import Annotated, List
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 
 from core.config.dependencies import db_dependency
-from core.exceptions import ObjectNotFound
 from core.idmapper import idmapper
 
 from ...models.lightcurve import Lightcurve
@@ -35,20 +33,9 @@ def conesearch(
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,
-) -> List[ApiObject]:
-    try:
-        id = idmapper.catalog_oid_to_masterid(survey, oid, True)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-    try:
-        result = service.conesearch_oid(id, radius, neighbors, db.session)
-        return result
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+) -> list[ApiObject]:
+    id = idmapper.catalog_oid_to_masterid(survey, oid, True)
+    return service.conesearch_oid(id, radius, neighbors, db.session)
 
 
 @router.get(
@@ -66,14 +53,7 @@ def conesearch_coordinates(
     neighbors: NeighborsQuery,
     db: db_dependency,
 ):
-    try:
-        result = service.conesearch_coordinates(ra, dec, radius, neighbors, db.session)
-        return result
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+    return service.conesearch_coordinates(ra, dec, radius, neighbors, db.session)
 
 
 @router.get(
@@ -92,12 +72,4 @@ def conesearch_oid_lightcurve(
     neighbors: NeighborsQuery,
     db: db_dependency,
 ) -> Lightcurve:
-    try:
-        return service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)
-    except ValueError as ve:
-        raise HTTPException(status_code=400, detail=str(ve))
-    except ObjectNotFound:
-        raise HTTPException(status_code=404, detail="Object not found")
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+    return service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)

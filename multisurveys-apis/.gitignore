@@ -4,3 +4,6 @@ node_modules/
 .envrc
 
 config_*.yaml
+config.*.yaml
+
+process-compose.yaml
