@@ -1,10 +1,11 @@
 import os
 import warnings
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
+from core.exceptions import ObjectNotFound
 from core.idmapper.idmapper import parse_oid
 from core.static_files import configure_templates
 
@@ -49,7 +50,7 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
             del mag_stats[0]["created_date"]
 
     if not mag_stats:
-        raise HTTPException(status_code=404, detail="Object not found")
+        raise ObjectNotFound(oid)  # answered as 404 by the central handler
 
     mag_keys = list(mag_stats[0].keys())
 
