@@ -1,7 +1,6 @@
-import traceback
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 
 from core.config.dependencies import db_dependency
 
@@ -56,27 +55,12 @@ def detections(
     db: db_dependency,
     oid: OidQuery,
 ):
-    try:
-        survey_validate(survey_id)
+    survey_validate(survey_id)
 
-        if len(oid) == 1:
-            return get_detections(
-                oid=oid[0],
-                survey_id=survey_id,
-                session_factory=db.session,
-            )
-        else:
-            return get_detections_by_list(oid, survey_id, db.session)
-
-    except HTTPException as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
-    except ValueError as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+    if len(oid) == 1:
+        return get_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+    else:
+        return get_detections_by_list(oid, survey_id, db.session)
 
 
 @router.get(
@@ -94,24 +78,12 @@ def non_detections(
     db: db_dependency,
     oid: OidQuery,
 ):
-    try:
-        survey_validate(survey_id)
+    survey_validate(survey_id)
 
-        if len(oid) == 1:
-            return get_non_detections(
-                oid=oid[0],
-                survey_id=survey_id,
-                session_factory=db.session,
-            )
-        else:
-            return get_non_detections_by_list(oid, survey_id, db.session)
-
-    except ValueError as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+    if len(oid) == 1:
+        return get_non_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+    else:
+        return get_non_detections_by_list(oid, survey_id, db.session)
 
 
 @router.get(
@@ -129,27 +101,12 @@ def forced_photometry(
     db: db_dependency,
     oid: OidQuery,
 ):
-    try:
-        survey_validate(survey_id)
+    survey_validate(survey_id)
 
-        if len(oid) == 1:
-            return get_forced_photometry(
-                oid=oid[0],
-                survey_id=survey_id,
-                session_factory=db.session,
-            )
-        else:
-            return get_forced_photometry_by_list(oid, survey_id, db.session)
-
-    except HTTPException as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
-    except ValueError as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+    if len(oid) == 1:
+        return get_forced_photometry(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+    else:
+        return get_forced_photometry_by_list(oid, survey_id, db.session)
 
 
 @router.get(
@@ -166,30 +123,19 @@ def lightcurve(
     db: db_dependency,
     oid: OidQuery,
 ):
-    try:
-        survey_validate(survey_id)
-        response = {
-            "detections": [],
-            "non_detections": [],
-            "forced_photometry": [],
-        }
-        if len(oid) == 1:
-            response["detections"] = get_detections(oid[0], survey_id, db.session)
-            response["non_detections"] = get_non_detections(oid[0], survey_id, db.session)
-            response["forced_photometry"] = get_forced_photometry(oid[0], survey_id, db.session)
-        else:
-            response["detections"] = get_detections_by_list(oid, survey_id, db.session)
-            response["non_detections"] = get_non_detections_by_list(oid, survey_id, db.session)
-            response["forced_photometry"] = get_forced_photometry_by_list(oid, survey_id, db.session)
+    survey_validate(survey_id)
+    response = {
+        "detections": [],
+        "non_detections": [],
+        "forced_photometry": [],
+    }
+    if len(oid) == 1:
+        response["detections"] = get_detections(oid[0], survey_id, db.session)
+        response["non_detections"] = get_non_detections(oid[0], survey_id, db.session)
+        response["forced_photometry"] = get_forced_photometry(oid[0], survey_id, db.session)
+    else:
+        response["detections"] = get_detections_by_list(oid, survey_id, db.session)
+        response["non_detections"] = get_non_detections_by_list(oid, survey_id, db.session)
+        response["forced_photometry"] = get_forced_photometry_by_list(oid, survey_id, db.session)
 
-        return response
-
-    except HTTPException as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
-    except ValueError as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=400, detail=str(e))
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+    return response

@@ -1,22 +1,21 @@
 from datetime import date
 
 import httpx
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
 from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
-from core.exceptions import ObjectNotFound
 from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.static_files import configure_templates
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
 from lightcurve_api.services.lightcurve_plot_service import (
     service as lightcurve_plot_service,
 )
-from lightcurve_api.services.lightcurve_plot_service.service import get_periodogram_data
 from lightcurve_api.services.lightcurve_plot_service.result import Result
+from lightcurve_api.services.lightcurve_plot_service.service import get_periodogram_data
 from lightcurve_api.services.parsers import parse_ztf_dr_detection
 
 from .parsers import (
@@ -34,14 +33,6 @@ templates = Jinja2Templates(
 configure_templates(templates, "http://localhost:8001")
 
 
-def _validate_oid(oid: str, survey_id: str) -> int:
-    """Return the master id for ``oid``, or answer 400 when it is not a valid id for the survey."""
-    try:
-        return catalog_oid_to_masterid(survey_id, oid, validate=True).item()
-    except ValueError as error:
-        raise HTTPException(status_code=400, detail=str(error))
-
-
 @router.get("/lightcurve", response_class=HTMLResponse)
 def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
     """Return a self-contained HTML widget.
@@ -51,18 +42,12 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
     provides the raw data as JSON embedded in the page.
     """
     survey_id = survey_id.lower()
-    _validate_oid(oid, survey_id)
-    try:
-        result = lightcurve_plot_service.get_lightcurve_data(oid, survey_id, db.session)
-    except ObjectNotFound:
-        raise HTTPException(status_code=404, detail="Object not found")
+    catalog_oid_to_masterid(survey_id, oid, validate=True)
+    result = lightcurve_plot_service.get_lightcurve_data(oid, survey_id, db.session)
 
     config_data = result.config_state.model_dump(exclude={"detections", "non_detections", "forced_photometry"})
 
     detections = result.lightcurve.detections
-    # "Total" (science) magnitude is only meaningful for corrected data. The server
-    # decides this once, using the same model conversion the plot relies on, so the
-    # browser doesn't need the raw photometry fields to make the call.
     not_corrected = detections[0].flux2magnitude(True, False) == 0 if detections else True
 
     return templates.TemplateResponse(
@@ -92,11 +77,8 @@ def periodogram(oid: str, survey_id: str, db: db_dependency):
     Lomb-Scargle computation on every view.
     """
     survey_id = survey_id.lower()
-    _validate_oid(oid, survey_id)
-    try:
-        pd = get_periodogram_data(oid, survey_id, db.session)
-    except ObjectNotFound:
-        raise HTTPException(status_code=404, detail="Object not found")
+    catalog_oid_to_masterid(survey_id, oid, validate=True)
+    pd = get_periodogram_data(oid, survey_id, db.session)
     payload = pd.model_dump()
     try:
         payload["best_candidate_period"] = pd.get_best_candidate_period()
@@ -158,25 +140,22 @@ def download(oid: str, survey_id: str, db: db_dependency):
     id the caller sent.
     """
     survey_id = survey_id.lower()
-    master_id = _validate_oid(oid, survey_id)
+    master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
 
-    try:
-        service_result = pipe(
-            Result(
-                {},
-                Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
-                config_state=ConfigState(),
-                periodogram=Periodogram(periods=[], scores=[], best_periods=[], best_periods_index=[]),
-            ),
-            curry(
-                lightcurve_plot_service.get_lightcurve,
-                oid=oid,
-                survey_id=survey_id,
-                session_factory=db.session,
-            ),
-        )
-    except ObjectNotFound:
-        raise HTTPException(status_code=404, detail="Object not found")
+    service_result = pipe(
+        Result(
+            {},
+            Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
+            config_state=ConfigState(),
+            periodogram=Periodogram(periods=[], scores=[], best_periods=[], best_periods_index=[]),
+        ),
+        curry(
+            lightcurve_plot_service.get_lightcurve,
+            oid=oid,
+            survey_id=survey_id,
+            session_factory=db.session,
+        ),
+    )
 
     zip_buffer = lightcurve_plot_service.zip_lightcurve(
         service_result.lightcurve.detections,

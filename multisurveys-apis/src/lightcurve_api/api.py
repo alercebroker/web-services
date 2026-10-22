@@ -2,11 +2,15 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
+
 from core.concurrency import add_concurrency_limit
+from core.error_handlers import add_error_handlers
 from core.static_files import VERSIONED_PREFIX, VersionedStaticFiles
 from core.version import APP_VERSION
+
 from .routes.htmx import lightcurve as htmx_lightcurve
-from .routes.json import conesearch, lightcurve as json_lightcurve
+from .routes.json import conesearch
+from .routes.json import lightcurve as json_lightcurve
 
 API_DESCRIPTION = """
 Serves **lightcurves** — the time series of brightness measurements of an
@@ -62,16 +66,9 @@ app = FastAPI(
     contact={"name": "ALeRCE", "url": "https://alerce.science"},
 )
 add_concurrency_limit(app)
+add_error_handlers(app)
 instrumentator = Instrumentator().instrument(app).expose(app)
 
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 app.include_router(json_lightcurve.router, tags=["Photometry"])
 app.include_router(conesearch.router, tags=["Cone search"])
@@ -98,3 +95,12 @@ async def static_files(path: str, request: Request):
 @app.get(VERSIONED_PREFIX + "/static/{path:path}", name="static-versioned", include_in_schema=False)
 async def versioned_static_files(path: str, request: Request):
     return await _versioned_static.get_response(path, request.scope)
+
+
+app = CORSMiddleware(
+    app,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

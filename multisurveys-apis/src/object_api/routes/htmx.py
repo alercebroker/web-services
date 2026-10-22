@@ -1,33 +1,32 @@
-import traceback
-from fastapi import APIRouter, HTTPException, Request, Query
+from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+
 from core.static_files import configure_templates
-from ..models.filters import Consearch, Filters, SearchParams
-from ..models.pagination import Order, PaginationArgs
-from ..services.validations import (
-    ndets_validation_front,
-    order_mode_validation,
-    consearch_validation,
-    oids_format_validation,
-    oid_lenght_validation,
-    date_validation,
-    probability_validation,
-    prob_lastmjd_validation,
-)
-from ..services.tns_service import get_tns
-from ..services.jinja_tools import truncate_float
-from core.exceptions import ObjectNotFound
 from object_api.services.object_services import (
+    choose_shown_classifier,
     get_object_by_id,
     get_objects_list,
-    get_website_classifiers,
     get_survey_classifiers,
-    choose_shown_classifier,
+    get_website_classifiers,
 )
-from ..services.parsers import _parse_oids_string_to_array
 
-from ..services.parameters_parser import ndet_build, mjd_range_build, search_order_state, parse_oids_to_int
+from ..models.filters import Consearch, Filters, SearchParams
+from ..models.pagination import Order, PaginationArgs
+from ..services.jinja_tools import truncate_float
+from ..services.parameters_parser import mjd_range_build, ndet_build, parse_oids_to_int, search_order_state
+from ..services.parsers import _parse_oids_string_to_array
+from ..services.tns_service import get_tns
+from ..services.validations import (
+    consearch_validation,
+    date_validation,
+    ndets_validation_front,
+    oid_lenght_validation,
+    oids_format_validation,
+    order_mode_validation,
+    prob_lastmjd_validation,
+    probability_validation,
+)
 
 router = APIRouter()
 
@@ -39,22 +38,18 @@ templates.env.filters["truncate"] = truncate_float
 
 @router.get("/htmx/object_information", response_class=HTMLResponse)
 def object_info_app(request: Request, oid: str, survey_id: str):
-    try:
-        object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
+    object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
 
-        other_archives = [
-            "DESI Legacy Survey DR11",
-            "NED",
-            "PanSTARRS",
-            "SDSS DR19",
-            "SIMBAD",
-            "TNS",
-            "Vizier",
-            "VSX",
-        ]
-
-    except ObjectNotFound:
-        raise HTTPException(status_code=404, detail="Object ID not found")
+    other_archives = [
+        "DESI Legacy Survey DR11",
+        "NED",
+        "PanSTARRS",
+        "SDSS DR19",
+        "SIMBAD",
+        "TNS",
+        "Vizier",
+        "VSX",
+    ]
 
     return templates.TemplateResponse(
         name="basic_information/basicInformationPreview.html.jinja",
@@ -78,10 +73,7 @@ def object_info_app(request: Request, oid: str, survey_id: str):
 
 @router.get("/htmx/tns/", response_class=HTMLResponse)
 def tns_info(request: Request, ra: float, dec: float):
-    try:
-        tns_data, tns_link = get_tns(ra, dec)
-    except ObjectNotFound:
-        raise HTTPException(status_code=404, detail="Object ID not found")
+    tns_data, tns_link = get_tns(ra, dec)
 
     return templates.TemplateResponse(
         name="basic_information/oldTnsInformation.html.jinja",
@@ -100,21 +92,17 @@ def tns_info(request: Request, ra: float, dec: float):
 
 @router.get("/htmx/search_objects/", response_class=HTMLResponse)
 def objects_form(request: Request, survey_id: str = None):
-    try:
-        session = request.app.state.psql_session
+    session = request.app.state.psql_session
 
-        if survey_id not in ("lsst", "ztf"):
-            survey_id = "lsst"
+    if survey_id not in ("lsst", "ztf"):
+        survey_id = "lsst"
 
-        classifiers = get_website_classifiers(session, survey_id)
+    classifiers = get_website_classifiers(session, survey_id)
 
-        return templates.TemplateResponse(
-            name="search_form/form.html.jinja",
-            context={"request": request, "classifiers": classifiers, "survey": survey_id},
-        )
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+    return templates.TemplateResponse(
+        name="search_form/form.html.jinja",
+        context={"request": request, "classifiers": classifiers, "survey": survey_id},
+    )
 
 
 @router.get("/htmx/list_objects", response_class=HTMLResponse)
@@ -144,96 +132,89 @@ def objects_table(
     prob_lastmjd_max: float | None = None,
     shown_classifier: str | None = None,
 ):
-    try:
-        survey_classifiers = []
-        if survey is not None:
-            session = request.app.state.psql_session
-            oids = _parse_oids_string_to_array(oid)
+    survey_classifiers = []
+    if survey is not None:
+        session = request.app.state.psql_session
+        oids = _parse_oids_string_to_array(oid)
 
-            ndets_validation_front(n_det_min, n_det_max)
-            order_mode_validation(order_mode)
-            consearch_validation(ra, dec, radius)
-            oids_format_validation(oids, survey)
-            oid_lenght_validation(oids)
-            probability_validation(probability, classifier, class_name)
-            date_validation(firstmjd_min, firstmjd_max)
-            date_validation(lastmjd_min, lastmjd_max, "last_alert_date_filters_container")
-            prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
+        ndets_validation_front(n_det_min, n_det_max)
+        order_mode_validation(order_mode)
+        consearch_validation(ra, dec, radius)
+        oids_format_validation(oids, survey)
+        oid_lenght_validation(oids)
+        probability_validation(probability, classifier, class_name)
+        date_validation(firstmjd_min, firstmjd_max)
+        date_validation(lastmjd_min, lastmjd_max, "last_alert_date_filters_container")
+        prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
 
-            order_by = search_order_state(oids, order_by, classifier)
-            survey_classifiers = get_survey_classifiers(session, survey)
-            shown_classifier = choose_shown_classifier(survey_classifiers, classifier, shown_classifier)
-            oids = parse_oids_to_int(oids, survey)
-            n_det = ndet_build(n_det_min, n_det_max)
-            firstmjd = mjd_range_build(firstmjd_min, firstmjd_max)
-            lastmjd = mjd_range_build(lastmjd_min, lastmjd_max)
+        order_by = search_order_state(oids, order_by, classifier)
+        survey_classifiers = get_survey_classifiers(session, survey)
+        shown_classifier = choose_shown_classifier(survey_classifiers, classifier, shown_classifier)
+        oids = parse_oids_to_int(oids, survey)
+        n_det = ndet_build(n_det_min, n_det_max)
+        firstmjd = mjd_range_build(firstmjd_min, firstmjd_max)
+        lastmjd = mjd_range_build(lastmjd_min, lastmjd_max)
 
-            filters = Filters(
-                oids=oids,
-                prob_lastmjd_min=prob_lastmjd_min,
-                prob_lastmjd_max=prob_lastmjd_max,
-                survey=survey,
-                classifier=classifier,
-                class_name=class_name,
-                ranking=ranking,
-                n_det=n_det,
-                probability=probability,
-                firstmjd=firstmjd,
-                lastmjd=lastmjd,
-            )
-
-            conesearch = Consearch(dec=dec, ra=ra, radius=radius)
-
-            pagination = PaginationArgs(page=page, page_size=page_size, count=count)
-
-            order = Order(order_by=order_by, order_mode=order_mode)
-
-            search_params = SearchParams(
-                filter_args=filters,
-                conesearch_args=conesearch,
-                pagination_args=pagination,
-                order_args=order,
-            )
-
-            object_list = get_objects_list(
-                session_ms=session, search_params=search_params, shown_classifier=shown_classifier
-            )
-
-            if oid is not None and order_by is None and object_list["items"] != []:
-                order_by = "oid_list"
-
-        else:
-            object_list = {
-                "next": False,
-                "has_next": False,
-                "prev": False,
-                "has_prev": False,
-                "items": [],
-                "info_message": "Results will appear here",
-            }
-
-        return templates.TemplateResponse(
-            name="main_table_objects/objects_table.html.jinja",
-            context={
-                "request": request,
-                "objects_list": object_list,
-                "next": object_list["next"],
-                "has_next": object_list["has_next"],
-                "prev": object_list["prev"],
-                "has_prev": object_list["has_prev"],
-                "actual_order_by": order_by,
-                "actual_order_mode": order_mode,
-                "shown_classifiers": survey_classifiers,
-                "shown_classifier": shown_classifier,
-                "classifier_filtered": classifier is not None,
-            },
+        filters = Filters(
+            oids=oids,
+            prob_lastmjd_min=prob_lastmjd_min,
+            prob_lastmjd_max=prob_lastmjd_max,
+            survey=survey,
+            classifier=classifier,
+            class_name=class_name,
+            ranking=ranking,
+            n_det=n_det,
+            probability=probability,
+            firstmjd=firstmjd,
+            lastmjd=lastmjd,
         )
-    except HTTPException as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+
+        conesearch = Consearch(dec=dec, ra=ra, radius=radius)
+
+        pagination = PaginationArgs(page=page, page_size=page_size, count=count)
+
+        order = Order(order_by=order_by, order_mode=order_mode)
+
+        search_params = SearchParams(
+            filter_args=filters,
+            conesearch_args=conesearch,
+            pagination_args=pagination,
+            order_args=order,
+        )
+
+        object_list = get_objects_list(
+            session_ms=session, search_params=search_params, shown_classifier=shown_classifier
+        )
+
+        if oid is not None and order_by is None and object_list["items"] != []:
+            order_by = "oid_list"
+
+    else:
+        object_list = {
+            "next": False,
+            "has_next": False,
+            "prev": False,
+            "has_prev": False,
+            "items": [],
+            "info_message": "Results will appear here",
+        }
+
+    return templates.TemplateResponse(
+        name="main_table_objects/objects_table.html.jinja",
+        context={
+            "request": request,
+            "objects_list": object_list,
+            "next": object_list["next"],
+            "has_next": object_list["has_next"],
+            "prev": object_list["prev"],
+            "has_prev": object_list["has_prev"],
+            "actual_order_by": order_by,
+            "actual_order_mode": order_mode,
+            "shown_classifiers": survey_classifiers,
+            "shown_classifier": shown_classifier,
+            "classifier_filtered": classifier is not None,
+        },
+    )
 
 
 @router.get("/htmx/side_objects", response_class=HTMLResponse)
@@ -264,87 +245,80 @@ def sidebar(
     prob_lastmjd_max: float | None = None,
     shown_classifier: str | None = None,
 ):
-    try:
-        survey_classifiers = []
-        if survey is not None:
-            session = request.app.state.psql_session
-            oids = _parse_oids_string_to_array(oid)
+    survey_classifiers = []
+    if survey is not None:
+        session = request.app.state.psql_session
+        oids = _parse_oids_string_to_array(oid)
 
-            ndets_validation_front(n_det_min, n_det_max)
-            order_mode_validation(order_mode)
-            consearch_validation(ra, dec, radius)
-            oids_format_validation(oids, survey)
-            oid_lenght_validation(oids)
-            probability_validation(probability, classifier, class_name)
-            date_validation(firstmjd_min, firstmjd_max)
-            date_validation(lastmjd_min, lastmjd_max, "last_alert_date_filters_container")
-            prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
+        ndets_validation_front(n_det_min, n_det_max)
+        order_mode_validation(order_mode)
+        consearch_validation(ra, dec, radius)
+        oids_format_validation(oids, survey)
+        oid_lenght_validation(oids)
+        probability_validation(probability, classifier, class_name)
+        date_validation(firstmjd_min, firstmjd_max)
+        date_validation(lastmjd_min, lastmjd_max, "last_alert_date_filters_container")
+        prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
 
-            order_by = search_order_state(oids, order_by, classifier)
-            survey_classifiers = get_survey_classifiers(session, survey)
-            shown_classifier = choose_shown_classifier(survey_classifiers, classifier, shown_classifier)
-            oids = parse_oids_to_int(oids, survey)
-            n_det = ndet_build(n_det_min, n_det_max)
-            firstmjd = mjd_range_build(firstmjd_min, firstmjd_max)
-            lastmjd = mjd_range_build(lastmjd_min, lastmjd_max)
+        order_by = search_order_state(oids, order_by, classifier)
+        survey_classifiers = get_survey_classifiers(session, survey)
+        shown_classifier = choose_shown_classifier(survey_classifiers, classifier, shown_classifier)
+        oids = parse_oids_to_int(oids, survey)
+        n_det = ndet_build(n_det_min, n_det_max)
+        firstmjd = mjd_range_build(firstmjd_min, firstmjd_max)
+        lastmjd = mjd_range_build(lastmjd_min, lastmjd_max)
 
-            filters = Filters(
-                oids=oids,
-                prob_lastmjd_min=prob_lastmjd_min,
-                prob_lastmjd_max=prob_lastmjd_max,
-                survey=survey,
-                classifier=classifier,
-                class_name=class_name,
-                ranking=ranking,
-                n_det=n_det,
-                probability=probability,
-                firstmjd=firstmjd,
-                lastmjd=lastmjd,
-            )
-            conesearch = Consearch(dec=dec, ra=ra, radius=radius)
-            pagination = PaginationArgs(page=page, page_size=page_size, count=count)
-            order = Order(order_by=order_by, order_mode=order_mode)
-            search_params = SearchParams(
-                filter_args=filters,
-                conesearch_args=conesearch,
-                pagination_args=pagination,
-                order_args=order,
-            )
-
-            object_list = get_objects_list(
-                session_ms=session, search_params=search_params, shown_classifier=shown_classifier
-            )
-
-            if oid is not None and order_by is None and object_list["items"] != []:
-                order_by = "oid_list"
-
-        else:
-            object_list = {
-                "next": False,
-                "has_next": False,
-                "prev": False,
-                "has_prev": False,
-                "items": [],
-                "info_message": "Results will appear here",
-            }
-
-        return templates.TemplateResponse(
-            name="astronomical_object_list/astronomical_objects_list.html.jinja",
-            context={
-                "request": request,
-                "objects_list": object_list,
-                "next": object_list["next"],
-                "has_next": object_list["has_next"],
-                "prev": object_list["prev"],
-                "has_prev": object_list["has_prev"],
-                "actual_order_by": order_by,
-                "actual_order_mode": order_mode,
-                "selected_oid": selected_oid,
-            },
+        filters = Filters(
+            oids=oids,
+            prob_lastmjd_min=prob_lastmjd_min,
+            prob_lastmjd_max=prob_lastmjd_max,
+            survey=survey,
+            classifier=classifier,
+            class_name=class_name,
+            ranking=ranking,
+            n_det=n_det,
+            probability=probability,
+            firstmjd=firstmjd,
+            lastmjd=lastmjd,
         )
-    except HTTPException as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=e.status_code, detail=e.detail)
-    except Exception:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred")
+        conesearch = Consearch(dec=dec, ra=ra, radius=radius)
+        pagination = PaginationArgs(page=page, page_size=page_size, count=count)
+        order = Order(order_by=order_by, order_mode=order_mode)
+        search_params = SearchParams(
+            filter_args=filters,
+            conesearch_args=conesearch,
+            pagination_args=pagination,
+            order_args=order,
+        )
+
+        object_list = get_objects_list(
+            session_ms=session, search_params=search_params, shown_classifier=shown_classifier
+        )
+
+        if oid is not None and order_by is None and object_list["items"] != []:
+            order_by = "oid_list"
+
+    else:
+        object_list = {
+            "next": False,
+            "has_next": False,
+            "prev": False,
+            "has_prev": False,
+            "items": [],
+            "info_message": "Results will appear here",
+        }
+
+    return templates.TemplateResponse(
+        name="astronomical_object_list/astronomical_objects_list.html.jinja",
+        context={
+            "request": request,
+            "objects_list": object_list,
+            "next": object_list["next"],
+            "has_next": object_list["has_next"],
+            "prev": object_list["prev"],
+            "has_prev": object_list["has_prev"],
+            "actual_order_by": order_by,
+            "actual_order_mode": order_mode,
+            "selected_oid": selected_oid,
+        },
+    )
