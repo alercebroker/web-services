@@ -324,8 +324,9 @@ function update_combined_filters_notice() {
 }
 
 
+// The cleared form keeps the survey, and so does the URL it leaves.
 function reset_values() {
-  window.history.pushState({}, document.title, "/")
+  window.history.pushState({}, document.title, `/?survey=${document.getElementById("survey").dataset.survey}`)
 }
 
 

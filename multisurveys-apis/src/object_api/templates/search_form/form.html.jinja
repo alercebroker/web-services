@@ -9,6 +9,7 @@
     {% from "input.html.jinja" import input as customInput %}
     {% from "search_form/dropdown.html.jinja" import dropdown %}
     {% from "search_form/mjd_date_input.html.jinja" import mjd_date_input %}
+    {% from "search_form/help_tip.html.jinja" import help_tip %}
 
     <div class="tw-flex tw-w-full">
         <div id="form-container" class="tw-p-4 tw-flex tw-flex-col tw-gap-y-4 tw-w-full tw-shadow-md dark:tw-border dark:tw-border-black lg:tw-max-w-[458px]">
@@ -19,11 +20,19 @@
 
             <!--Survey filters-->
             <div id="survey_container" class="obj-form-section tw-w-full">
-                <p class="tw-font-medium tw-text-lg">Surveys</p>
+                <div class="tw-flex tw-items-center tw-gap-2">
+                    <p class="tw-font-medium tw-text-lg">Surveys</p>
 
-                <div id="survey" data-survey="lsst" class="tw-w-full tw-mt-4 tw-flex tw-justify-start tw-gap-4">
-                    <span id="lsst_btn" class="obj-survey-selected tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">LSST</span>
-                    <span id="ztf_btn" class="obj-survey-unselect tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ZTF</span>
+                    {% call help_tip() %}
+                        LSST: Vera C. Rubin Observatory. ZTF: Zwicky Transient Facility.
+                        <br>
+                        Each survey has its own objects and classifiers.
+                    {% endcall %}
+                </div>
+
+                <div id="survey" data-survey="{{survey}}" class="tw-w-full tw-mt-4 tw-flex tw-justify-start tw-gap-4">
+                    <span id="lsst_btn" class="{{'obj-survey-selected' if survey == 'lsst' else 'obj-survey-unselect'}} tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">LSST</span>
+                    <span id="ztf_btn" class="{{'obj-survey-selected' if survey == 'ztf' else 'obj-survey-unselect'}} tw-w-1/4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">ZTF</span>
                 </div>
             </div>
 
@@ -32,28 +41,11 @@
                 <div class="tw-flex tw-items-center tw-gap-2">
                     <p class="tw-font-medium tw-text-lg">Object IDs</p>
 
-                    <div class="tw-relative tw-group tw-flex tw-items-center">
-                        <svg class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960">
-                            <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
-                        </svg>
-
-                        <div class="tw-absolute tw-left-[100%] tw-top-1/2 -tw-translate-y-1/2 tw-ml-2
-                                tw-min-w-max tw-whitespace-nowrap
-                                tw-px-3 tw-py-2
-                                tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded
-                                tw-opacity-0 tw-invisible
-                                group-hover:tw-opacity-100 group-hover:tw-visible
-                                tw-transition-all tw-duration-300 tw-z-50 tw-pointer-events-none">
-
-                                Type or paste up to 200 IDs, separated by spaces, commas or line breaks.
-                                <br>
-                                Press Enter to add them.
-
-                            <div class="tw-absolute tw-right-[100%] tw-top-1/2 -tw-translate-y-1/2
-                                    tw-border-4 tw-border-transparent tw-border-r-gray-900">
-                            </div>
-                        </div>
-                    </div>
+                    {% call help_tip() %}
+                        Type or paste up to 200 IDs, separated by spaces, commas or line breaks.
+                        <br>
+                        Press Enter to add them.
+                    {% endcall %}
                 </div>
 
                 <div class="tw-mt-4 tw-grid tw-grid-cols-12 tw-gap-4">
@@ -78,7 +70,15 @@
 
                 <div id="object_filters_container" class="tw-mx-auto tw-mt-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     <div id="detections range" class="tw-col-span-12 tw-w-full">
-                        <p class="tw-font-medium">Number of detections range</p>
+                        <div class="tw-flex tw-items-center tw-gap-2">
+                            <p class="tw-font-medium">Number of detections range</p>
+
+                            {% call help_tip() %}
+                                How many times the survey detected the object.
+                                <br>
+                                A minimum leaves out objects seen only once or twice.
+                            {% endcall %}
+                        </div>
                         <div id="detections_container" class="tw-flex tw-justify-between">
                             {{customInput(id="min_detections", type="number", placeholder="Min", width="tw-w-1/3")}}
 
@@ -90,7 +90,15 @@
                     <!--Discovery date filters-->
                     <div class="tw-col-span-12 tw-w-full">
                         <div id="discovery_date_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
-                            <p>Discovery date</p>
+                            <div class="tw-flex tw-items-center tw-gap-2">
+                                <p>Discovery date</p>
+
+                                {% call help_tip() %}
+                                    The date of the object's first detection.
+                                    <br>
+                                    Type an MJD or a UTC date (dd/mm/yyyy hh:mm), or pick one in the calendar.
+                                {% endcall %}
+                            </div>
                             <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                         </div>
 
@@ -104,7 +112,15 @@
                     <!--Last alert date filters: object.lastmjd-->
                     <div class="tw-col-span-12 tw-w-full">
                         <div id="last_alert_date_filters" class="tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer">
-                            <p>Last alert date</p>
+                            <div class="tw-flex tw-items-center tw-gap-2">
+                                <p>Last alert date</p>
+
+                                {% call help_tip() %}
+                                    The date of the object's latest detection.
+                                    <br>
+                                    A recent date finds objects that are still active.
+                                {% endcall %}
+                            </div>
                             <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
                         </div>
 
@@ -124,32 +140,13 @@
     
                                 <span class="tw-font-medium">Conesearch</span>
 
-                               <div class="tw-relative tw-group tw-flex tw-items-center">
-    
-                                    <svg id="consearch_info" class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960">
-                                        <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
-                                    </svg>
-
-                                    <div class="tw-absolute tw-left-[100%] tw-top-1/2 -tw-translate-y-1/2 tw-ml-2 
-                                            tw-min-w-max tw-whitespace-nowrap
-                                            tw-px-3 tw-py-2
-                                            tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded 
-                                            tw-opacity-0 tw-invisible
-                                            group-hover:tw-opacity-100 group-hover:tw-visible
-                                            tw-transition-all tw-duration-300 tw-z-50 tw-pointer-events-none">
-                                
-                                            Conesearch is a coordinate search tool with a search radius.
-                                            <br>
-                                            You can input RA/DEC manually or, optionally, give a target name and let Sesame fill in the coordinates.
-                                            <br>
-                                            Formats accepted for HMS/DMS: "23:14:56.3" or "23 14 56.3".
-
-                                        <div class="tw-absolute tw-right-[100%] tw-top-1/2 -tw-translate-y-1/2 
-                                                tw-border-4 tw-border-transparent tw-border-r-gray-900">
-                                        </div>
-                                    </div>
-
-                                </div>
+                                {% call help_tip() %}
+                                    Conesearch is a coordinate search tool with a search radius.
+                                    <br>
+                                    You can input RA/DEC manually or, optionally, give a target name and let Sesame fill in the coordinates.
+                                    <br>
+                                    Formats accepted for HMS/DMS: "23:14:56.3" or "23 14 56.3".
+                                {% endcall %}
                             </div>
 
                             <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
@@ -189,7 +186,17 @@
             <!--Classification filters: they work well together-->
             <div class="obj-form-section tw-w-full">
                 <div id="classification_filters" class="tw-text-[#1976d2] tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium tw-text-lg hover:tw-bg-[#1976d2]/20 hover:tw-cursor-pointer">
-                    <p>Classification</p>
+                    <div class="tw-flex tw-items-center tw-gap-2">
+                        <p>Classification</p>
+
+                        {% call help_tip() %}
+                            Classifier: the ALeRCE model whose predictions you search.
+                            <br>
+                            Stamp classifiers use the images of the first detection; light curve classifiers use the light curve.
+                            <br>
+                            Class: the class that classifier finds most likely for the object.
+                        {% endcall %}
+                    </div>
                     <svg name="arrow_icon" data-direction="up" class="tw-w-[24px] tw-h-[24px] tw-fill-[#1976d2] dark:tw-fill-[#1976d2]" viewBox="0 -960 960 960"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
                 </div>
 
@@ -211,8 +218,15 @@
                         )}}
                     </div>
                     
-                    <div id="probability_container" class="tw-col-span-12">
-                        <label class="tw-font-medium">Probability ≥</label>
+                    <div id="probability_container" class="tw-col-span-12 tw-flex tw-items-center tw-gap-2">
+                        <label class="tw-font-medium tw-whitespace-nowrap">Probability ≥</label>
+
+                        {% call help_tip() %}
+                            Keeps the objects whose most likely class has at least this probability.
+                            <br>
+                            At 0 it keeps them all.
+                        {% endcall %}
+
                         <label id="prob_number" class="tw-inline-block tw-w-[36px]"> 0.00</label>
                         <input id="prob_range" class="" type="range" step="0.01" max="1" value="0.00">
                     </div>
@@ -223,34 +237,17 @@
                             <div class="tw-flex tw-items-center tw-gap-2">
                                 <p>Last detection used by the classifier</p>
 
-                                <div class="tw-relative tw-group tw-flex tw-items-center">
-                                    <svg class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960">
-                                        <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
-                                    </svg>
-
-                                    <div class="tw-absolute tw-left-[100%] tw-top-1/2 -tw-translate-y-1/2 tw-ml-2
-                                            tw-min-w-max tw-whitespace-nowrap
-                                            tw-px-3 tw-py-2
-                                            tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded
-                                            tw-opacity-0 tw-invisible
-                                            group-hover:tw-opacity-100 group-hover:tw-visible
-                                            tw-transition-all tw-duration-300 tw-z-50 tw-pointer-events-none">
-
-                                            The date of the latest detection the selected classifier used for its prediction.
-                                            <br>
-                                            Light curve classifiers use most of an object's detections (quality filters discard some), so it is usually the last detection.
-                                            <br>
-                                            Stamp classifiers use only the first one, so it is usually the discovery date.
-                                            <br>
-                                            It is not when the classification was made: a new classifier run today on a 2018 object gives a 2018 date.
-                                            <br>
-                                            Combined with a class, this filter is much faster than the Discovery Date.
-
-                                        <div class="tw-absolute tw-right-[100%] tw-top-1/2 -tw-translate-y-1/2
-                                                tw-border-4 tw-border-transparent tw-border-r-gray-900">
-                                        </div>
-                                    </div>
-                                </div>
+                                {% call help_tip() %}
+                                    The date of the latest detection the selected classifier used for its prediction.
+                                    <br>
+                                    Light curve classifiers use most of an object's detections (quality filters discard some), so it is usually the last detection.
+                                    <br>
+                                    Stamp classifiers use only the first one, so it is usually the discovery date.
+                                    <br>
+                                    It is not when the classification was made: a new classifier run today on a 2018 object gives a 2018 date.
+                                    <br>
+                                    Combined with a class, this filter is much faster than the Discovery Date.
+                                {% endcall %}
                             </div>
 
                             <svg name="arrow_icon" data-direction="down" class="tw-w-[24px] tw-h-[24px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
@@ -274,13 +271,28 @@
                 hx-swap="outerHTML"
                 hx-target="#objects_table"
                 hx-indicator="#table-objects-loading"
+                hx-disabled-elt="this"
                 hx-vals='js:{...send_form_Data(), ...send_pagination_data()}'
-                class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-full lg:tw-w-1/2 sm:tw-w-full tw-h-[40px]">SEARCH</button>
-                
-                <button 
-                id="clear_form" 
+                class="tw-bg-[#1565C0] tw-text-blue-50 tw-rounded tw-w-full lg:tw-w-1/2 sm:tw-w-full tw-h-[40px]">
+                    <!--While the search runs, htmx disables the button and "Searching…" takes the label's place.
+                        Not through hx-indicator: htmx 2.0.2 never removes its class from an element that is
+                        also its hx-disabled-elt.-->
+                    <span class="obj-search-label">SEARCH</span>
+                    <span class="obj-searching-label tw-items-center tw-justify-center tw-gap-2">
+                        <svg class="tw-animate-spin tw-w-[20px] tw-h-[20px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9" stroke-opacity="0.25"/>
+                            <path d="M21 12a9 9 0 0 0-9-9" stroke-linecap="round"/>
+                        </svg>
+                        SEARCHING…
+                    </span>
+                </button>
+
+                <!--Keeps the survey: a cleared form searches the same one.-->
+                <button
+                id="clear_form"
                 class=" tw-text-black/80 dark:tw-text-[#F5F5F5] tw-rounded tw-w-full tw-bg-[#f5f5f5] dark:tw-bg-[#424242] lg:tw-w-1/4 sm:tw-w-full"
                 hx-get="{{API_URL}}/htmx/search_objects/"
+                hx-vals='js:{survey_id: document.getElementById("survey").dataset.survey}'
                 hx-trigger="click"
                 hx-swap="outerHTML"
                 hx-target="#form-search"

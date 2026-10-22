@@ -105,9 +105,10 @@
         <table class="tw-table-auto tw-border-collapse tw-bg-white tw-text-left tw-w-full dark:tw-bg-[#1e1e1e]">
             <thead class="tw-hidden tw-text-[0.875rem] tw-text-black/60 dark:tw-text-white/70 sm:tw-table-header-group">
                 <tr class="tw-h-[34px]">
-                    <th class="tw-px-4">Object ID</th>
+                    <th class="tw-px-4" title="The object's identifier in the survey. Click a row to open the object.">Object ID</th>
                     <th
                     id="n_det_column"
+                    title="How many times the survey detected the object. Click to sort."
                     name="object_column_name"
                     data-column = "n_det"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -139,6 +140,7 @@
                     </th>
                     <th 
                     id="firstmjd_column"
+                    title="Date of the first detection, as MJD (Modified Julian Date). Click to sort."
                     name="object_column_name"
                     data-column = "firstmjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -171,6 +173,7 @@
                     </th>
                     <th
                     id="lastmjd_column"
+                    title="Date of the latest detection, as MJD (Modified Julian Date). Click to sort."
                     name="object_column_name"
                     data-column = "lastmjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -201,11 +204,12 @@
                     </div>
                     
                     </th>
-                    <th class="tw-px-4">RA/DEC(degrees)</th>
-                    <th class="tw-px-4">Highest Probability Class</th>
+                    <th class="tw-px-4" title="Mean position on the sky: right ascension and declination, in degrees.">RA/DEC(degrees)</th>
+                    <th class="tw-px-4" title="The class that the classifier in &quot;Predictions from&quot; finds most likely for the object.">Highest Probability Class</th>
 {% if classifier_filtered %}
                     <th 
                     id="probability_column"
+                    title="The probability of that class. Click to sort."
                     name="object_column_name"
                     data-column = "probability"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -237,10 +241,11 @@
                     
                     </th>
                     {% else %}
-                    <th class="tw-px-4" title="Sortable with a Classifier filter">Highest Probability</th>
+                    <th class="tw-px-4" title="The probability of that class. Sortable with a Classifier filter.">Highest Probability</th>
                     {% endif %}
                     <th 
                     id="deltamjd_column"
+                    title="Days between the first and the latest detection. Click to sort."
                     name="object_column_name"
                     data-column = "deltamjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"

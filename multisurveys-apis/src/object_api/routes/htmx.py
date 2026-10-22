@@ -103,14 +103,14 @@ def objects_form(request: Request, survey_id: str = None):
     try:
         session = request.app.state.psql_session
 
-        if survey_id is None:
+        if survey_id not in ("lsst", "ztf"):
             survey_id = "lsst"
 
         classifiers = get_website_classifiers(session, survey_id)
 
         return templates.TemplateResponse(
             name="search_form/form.html.jinja",
-            context={"request": request, "classifiers": classifiers},
+            context={"request": request, "classifiers": classifiers, "survey": survey_id},
         )
     except Exception:
         traceback.print_exc()

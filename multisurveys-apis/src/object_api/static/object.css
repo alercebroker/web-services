@@ -239,6 +239,19 @@
   background-color: #424242;
 }
 
+/* The search button shows "Searching…" while htmx keeps it disabled, during its request. */
+.obj-searching-label{
+  display: none;
+}
+
+#search_btn:disabled .obj-search-label{
+  display: none;
+}
+
+#search_btn:disabled .obj-searching-label{
+  display: inline-flex;
+}
+
 .tw-scheme-dark {
   color-scheme: dark;
 }
