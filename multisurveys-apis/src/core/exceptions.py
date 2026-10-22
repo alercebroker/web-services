@@ -1,4 +1,4 @@
-class WrapperException(BaseException):
+class WrapperException(Exception):
     def __init__(self, original_e, subcode=None):
         super().__init__()
         self.original_exception = original_e
@@ -17,7 +17,7 @@ class DatabaseError(WrapperException):
         return f"{self.database} error: {self.original_exception.__str__()}"
 
 
-class ObjectNotFound(BaseException):
+class ObjectNotFound(Exception):
     def __init__(self, object_id) -> None:
         super().__init__()
         self.object_id = object_id
