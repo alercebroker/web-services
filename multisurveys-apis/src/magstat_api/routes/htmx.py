@@ -33,7 +33,8 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
     if survey_id is None:
         survey_id = "ztf"
         warnings.warn(
-            "survey not provided, defaulting to 'ztf'. This will use the legacy ZTF client. This behavior will be deprecated in future versions.",
+            "survey not provided, defaulting to 'ztf'. This will use the legacy ZTF client."
+            " This behavior will be deprecated in future versions.",
             DeprecationWarning,
         )
 

@@ -19,8 +19,9 @@ def get_classifiers(
     """Retrieves all classifiers from the database
 
     Args:
-        session_factory (Callable[..., AbstractContextManager[Session]] | None, optional): A factory function to create a database session. Defaults to None.
-        survey_id (str | None, optional): The survey ID to filter classifiers. Defaults to None.
+        session_factory: A factory function to create a database session.
+            Defaults to None.
+        survey_id: The survey ID to filter classifiers. Defaults to None.
 
     Returns:
         list: List of all classifiers.
@@ -38,8 +39,9 @@ def get_classifier_by_name(
     Retrieves a classifier by its name.
 
     Args:
-        classifier_name (str): The name of the classifier.
-        session_factory (Callable[..., AbstractContextManager[Session]] | None, optional): A factory function to create a database session. Defaults to None.
+        classifier_name: The name of the classifier.
+        session_factory: A factory function to create a database session.
+            Defaults to None.
 
     Returns:
         list: List of classifiers matching the given name.
