@@ -8,6 +8,7 @@ schema's server must be /<api>_api so "Try it out" also goes through it. Static 
 import pytest
 
 from app_client import client_for as api_client
+from core.version import APP_VERSION
 
 # (api, a static file the app serves, as nginx forwards it)
 APIS = [
@@ -47,6 +48,19 @@ def test_schema_lists_the_endpoints_and_the_prefixed_server(client_for, api, _):
     schema = response.json()
     assert len(schema["paths"]) > 0
     assert schema["servers"] == [{"url": f"/{api}"}]
+
+
+@pytest.mark.parametrize("api, _", APIS)
+def test_schema_names_the_api_and_keeps_the_website_routes_apart(client_for, api, _):
+    schema = client_for(api).get("/openapi.json").json()
+
+    assert schema["info"]["title"].startswith("ALeRCE ")
+    assert schema["info"]["version"] == APP_VERSION
+    assert "/metrics" not in schema["paths"]
+    htmx_tags = [
+        op.get("tags") for path, ops in schema["paths"].items() if path.startswith("/htmx") for op in ops.values()
+    ]
+    assert all(tags == ["Browser UI (HTMX)"] for tags in htmx_tags)
 
 
 @pytest.mark.parametrize("api, static_file", [(api, f) for api, f in APIS if f])
