@@ -3,6 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
 from core.concurrency import add_concurrency_limit
+from core.static_files import mount_static
+
+from . import htmx
 from .router import router
 
 # root_path: the prefix nginx strips, so /docs fetches /status_api/openapi.json
@@ -23,3 +26,7 @@ app.add_middleware(
 )
 
 app.include_router(router)
+app.include_router(htmx.router)
+
+mount_static(app, "/static", "src/status_api/static", "static")
+mount_static(app, "/htmx", "src/core/htmx", "htmx")
