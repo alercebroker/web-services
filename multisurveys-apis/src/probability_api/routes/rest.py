@@ -19,10 +19,7 @@ def probability(
     classifier: str | None = None,
     survey_id: str | None = None,
 ):
-    try:
-        master_id = parse_oid(survey_id, oid)
-    except ValueError as error:
-        raise HTTPException(status_code=400, detail=str(error))
+    master_id = parse_oid(survey_id, oid)  # a bad oid is a ValueError: 400 from the central handler
 
     classifiers_list = get_classifiers(session_factory=request.app.state.psql_session)
 

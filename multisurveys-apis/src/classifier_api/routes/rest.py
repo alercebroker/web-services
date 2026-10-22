@@ -28,10 +28,7 @@ def classifiers(
         classifiers = get_classifiers(session_factory=session)
 
     if survey_id is not None:
-        try:
-            tid = get_survey_id(survey_id)
-        except ValueError as error:
-            raise HTTPException(status_code=400, detail=str(error))
+        tid = get_survey_id(survey_id)  # an unknown survey is a ValueError: 400 from the central handler
         # the response's survey_id is the classifier's tid (0 for ZTF, 1 for LSST)
         classifiers = [classifier for classifier in classifiers if classifier.survey_id == tid]
 
