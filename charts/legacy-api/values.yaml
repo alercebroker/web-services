@@ -1,0 +1,104 @@
+# Default values for the ws-api chart.
+# Per-API values files (values-findingchart.yaml, values-stamps-avro.yaml,
+# values-tns.yaml) override what differs. Anything common across the three
+# legacy APIs lives here as a default.
+
+# Canonical name of the API. Used for the Deployment/Service/Ingress/HPA names
+# and the app/name/service labels. Defaults to the Helm release name if unset.
+appName: ""
+
+namespace: web-services
+
+# Whether this release creates the Namespace object. Since all three APIs share the
+# same namespace, enable this on at most ONE release (or leave false and manage the
+# namespace out-of-band) to avoid Helm ownership conflicts.
+namespaceCreate: true
+
+# Node group the pods are pinned to (nodeAffinity key is always "nodegroup").
+# Set to "" to remove the affinity entirely.
+nodegroup: production-ws
+
+image:
+  repository: ""        # per-API, e.g. ghcr.io/alercebroker/tns_api
+  tag: latest
+  pullPolicy: Always
+
+# Names of pre-existing image pull secrets in the namespace.
+imageCredentials:
+  registry: ""
+  username: ""
+  password: ""
+
+# Used only when autoscaling.enabled is false.
+replicaCount: 1
+
+revisionHistoryLimit: 10
+
+strategy:
+  maxSurge: 25%
+  maxUnavailable: 25%
+
+podAnnotations:
+  prometheus.io/scrape: "true"
+
+# Port the app container listens on (nginx proxies to localhost:<containerPort>).
+containerPort: 8000
+
+# Environment for the app container. Pass through verbatim, including
+# valueFrom.secretKeyRef entries.
+env: []
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128M
+  # limits: {}
+
+# nginx sidecar that terminates :80 and proxies to the app container.
+nginx:
+  enabled: true
+  image: nginx
+  pullPolicy: Always
+  port: 80
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64M
+  # API path prefix injected into the default templated nginx config,
+  # e.g. /tns/v1. Ignored when `config` (full override) is set.
+  pathPrefix: ""
+  # Full verbatim nginx default.conf. Set this only for APIs whose config
+  # does not fit the default template; leave empty to use the template.
+  config: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+# One Ingress per API, all sharing the same ALB via group.name.
+ingress:
+  enabled: true
+  className: alb
+  group: web-services-hybrid
+  loadBalancerName: web-services-production
+  scheme: internet-facing
+  targetType: ip
+  tags: Environment=Hybrid
+  certificateArn: arn:aws:acm:us-east-1:031864545038:certificate/860afd79-aabd-447b-8fcc-1d2222d2fbeb  
+  # extraAnnotations: {}
+  hosts: []
+  # - host: example.alerce.online
+  #   paths:
+  #     - path: /
+  #       pathType: Prefix
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 80
+
+# Map of Secret name -> { immutable, type, data: { key: base64value } }.
+# Leave data values empty in committed files and supply real values at deploy time.
+secrets: {}
