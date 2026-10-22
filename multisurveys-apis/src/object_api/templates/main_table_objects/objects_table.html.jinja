@@ -29,7 +29,7 @@
                     <select
                     id="shown_classifier"
                     {% if classifier_filtered %}disabled title="Set by the Classifier filter"{% endif %}
-                    class="tw-appearance-none tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-scheme-light dark:tw-scheme-dark {% if not classifier_filtered %}tw-cursor-pointer{% endif %}"
+                    class="obj-native-select tw-appearance-none tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-scheme-light dark:tw-scheme-dark {% if not classifier_filtered %}tw-cursor-pointer{% endif %}"
                     {% if not classifier_filtered %}style="padding-right: 22px"{% endif %}
                     >
                         {% for c in shown_classifiers %}

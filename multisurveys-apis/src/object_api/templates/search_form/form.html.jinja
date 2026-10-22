@@ -18,7 +18,7 @@
             <div id="search_filters" class="tw-w-full tw-font-medium tw-text-xl">Search Filters</div>
 
             <!--Survey filters-->
-            <div id="survey_container" class="tw-w-full tw-p-4 tw-rounded-md tw-border tw-border-gray-300 tw-bg-[#f5f5f5] dark:tw-border-gray-600 dark:tw-bg-[#1e1e1e]">
+            <div id="survey_container" class="obj-form-section tw-w-full">
                 <p class="tw-font-medium tw-text-lg">Surveys</p>
 
                 <div id="survey" data-survey="lsst" class="tw-w-full tw-mt-4 tw-flex tw-justify-start tw-gap-4">
@@ -28,8 +28,33 @@
             </div>
 
             <!--Object ID: a search by itself-->
-            <div id="object_id_container" class="tw-w-full tw-p-4 tw-rounded-md tw-border tw-border-gray-300 tw-bg-[#f5f5f5] dark:tw-border-gray-600 dark:tw-bg-[#1e1e1e]">
-                <p class="tw-font-medium tw-text-lg">Object IDs</p>
+            <div id="object_id_container" class="obj-form-section tw-w-full">
+                <div class="tw-flex tw-items-center tw-gap-2">
+                    <p class="tw-font-medium tw-text-lg">Object IDs</p>
+
+                    <div class="tw-relative tw-group tw-flex tw-items-center">
+                        <svg class="tw-w-[20px] tw-h-[20px] tw-fill-dark dark:tw-fill-white" viewBox="0 -960 960 960">
+                            <path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+                        </svg>
+
+                        <div class="tw-absolute tw-left-[100%] tw-top-1/2 -tw-translate-y-1/2 tw-ml-2
+                                tw-min-w-max tw-whitespace-nowrap
+                                tw-px-3 tw-py-2
+                                tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded
+                                tw-opacity-0 tw-invisible
+                                group-hover:tw-opacity-100 group-hover:tw-visible
+                                tw-transition-all tw-duration-300 tw-z-50 tw-pointer-events-none">
+
+                                Type or paste up to 200 IDs, separated by spaces, commas or line breaks.
+                                <br>
+                                Press Enter to add them.
+
+                            <div class="tw-absolute tw-right-[100%] tw-top-1/2 -tw-translate-y-1/2
+                                    tw-border-4 tw-border-transparent tw-border-r-gray-900">
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="tw-mt-4 tw-grid tw-grid-cols-12 tw-gap-4">
                     <div class="tw-col-span-12 tw-flex tw-flex-col tw-content-center">
@@ -42,11 +67,10 @@
                         {{customInput(id="objectIds", type="text", placeholder="One or more object IDs")}}
                     </div>
                 </div>
-                <p class="tw-text-sm tw-mt-1 tw-text-black/60 dark:tw-text-white/70">Type or paste up to 200 IDs, separated by spaces, commas or line breaks. Press Enter to add them.</p>
             </div>
 
             <!--Object properties filters-->
-            <div class="tw-w-full tw-p-4 tw-rounded-md tw-border tw-border-gray-300 tw-bg-[#f5f5f5] dark:tw-border-gray-600 dark:tw-bg-[#1e1e1e]">
+            <div class="obj-form-section tw-w-full">
                 <div id="object_filters" class="tw-text-[#1976d2] tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium tw-text-lg hover:tw-bg-[#1976d2]/20 hover:tw-cursor-pointer">
                     <p>Object Properties</p>
                     <svg name="arrow_icon" data-direction="up" class="tw-w-[24px] tw-h-[24px] tw-fill-[#1976d2] dark:tw-fill-[#1976d2]" viewBox="0 -960 960 960"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
@@ -163,7 +187,7 @@
             </div>
 
             <!--Classification filters: they work well together-->
-            <div class="tw-w-full tw-p-4 tw-rounded-md tw-border tw-border-gray-300 tw-bg-[#f5f5f5] dark:tw-border-gray-600 dark:tw-bg-[#1e1e1e]">
+            <div class="obj-form-section tw-w-full">
                 <div id="classification_filters" class="tw-text-[#1976d2] tw-h-[40px] tw-flex tw-items-center tw-justify-between tw-font-medium tw-text-lg hover:tw-bg-[#1976d2]/20 hover:tw-cursor-pointer">
                     <p>Classification</p>
                     <svg name="arrow_icon" data-direction="up" class="tw-w-[24px] tw-h-[24px] tw-fill-[#1976d2] dark:tw-fill-[#1976d2]" viewBox="0 -960 960 960"><path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z"/></svg>
@@ -214,7 +238,7 @@
 
                                             The date of the latest detection the selected classifier used for its prediction.
                                             <br>
-                                            Light curve classifiers use all of an object's detections, so it is usually the last detection.
+                                            Light curve classifiers use most of an object's detections (quality filters discard some), so it is usually the last detection.
                                             <br>
                                             Stamp classifiers use only the first one, so it is usually the discovery date.
                                             <br>

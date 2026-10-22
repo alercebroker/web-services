@@ -67,7 +67,27 @@ def choose_shown_classifier(survey_classifiers: list, classifier: str | None, sh
 
 
 def get_survey_classifiers(session_ms, survey: str) -> list:
-    return [c for c in get_tidy_classifiers(session_ms, survey) if c["survey_id"] == survey]
+    return [c for c in get_website_classifiers(session_ms, survey) if c["survey_id"] == survey]
+
+
+# The classifiers the website offers, by survey, in the order it lists them: the search form's Classifier filter
+# and the results' "Predictions from" selector. The database has others, such as the light curve classifier's
+# sub-models (periodic, stochastic, transient, top), that the website leaves out.
+WEBSITE_CLASSIFIERS = {
+    "ztf": ["lc_classifier_BHRF_forced_phot", "stamp_classifier", "stamp_classifier_2025_beta"],
+    "lsst": ["stamp_classifier_rubin_beta_20260421", "stamp_classifier_rubin_beta"],
+}
+
+
+def get_website_classifiers(session_ms, survey_id: str) -> list:
+    classifiers = {(c["survey_id"], c["classifier_name"]): c for c in get_tidy_classifiers(session_ms, survey_id)}
+
+    return [
+        classifiers[(survey, name)]
+        for survey, names in WEBSITE_CLASSIFIERS.items()
+        for name in names
+        if (survey, name) in classifiers
+    ]
 
 
 def get_classes_list(session_ms):

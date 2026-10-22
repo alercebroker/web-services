@@ -216,6 +216,29 @@
   color: #FFCA28;
 }
 
+/* A section of the search form: a divider line above it, like Vuetify's v-divider in alerce.online.
+   .tw-preflight outweighs the reset's ".tw-preflight * { border-width: 0 }", further down. */
+.tw-preflight .obj-form-section{
+  padding-top: 16px;
+  border-top: thin solid rgba(0, 0, 0, 0.12);
+}
+
+.tw-dark .obj-form-section{
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+/* A native select's options: some browsers draw the list on white whatever the color-scheme, and the
+   options inherit the select's white text in dark mode. */
+.obj-native-select option{
+  color: #000000;
+  background-color: #FFFFFF;
+}
+
+.tw-dark .obj-native-select option{
+  color: #FFFFFF;
+  background-color: #424242;
+}
+
 .tw-scheme-dark {
   color-scheme: dark;
 }

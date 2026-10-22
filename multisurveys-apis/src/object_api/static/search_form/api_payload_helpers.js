@@ -37,13 +37,24 @@ function send_form_Data() {
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
     dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
     radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch : null,
-    // The classifier selector of the results table, once there is one.
-    shown_classifier: document.getElementById('shown_classifier')?.value || null,
+    // The classifier selector of the results table, once there is one. Not while the Classifier filter sets it:
+    // removing that filter goes back to the default, not to the filter's classifier.
+    shown_classifier: get_shown_classifier(),
   }
 
   response = clean_nulls_form(response)
 
   return response
+}
+
+function get_shown_classifier() {
+  let shown_classifier = document.getElementById('shown_classifier')
+
+  if (!shown_classifier || shown_classifier.disabled) {
+    return null
+  }
+
+  return shown_classifier.value
 }
 
 function send_classes_data(){

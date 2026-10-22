@@ -5,14 +5,10 @@ import { draw_classes_options, draw_empty_option } from "../draw_elements.js";
 
 export class Dropdown {
 
+    // The server sends only the classifiers the website offers, each survey's in the order to list them.
     constructor(classifiers) {
         this._classifiers = classifiers;
         this._filtered_classifiers = [];
-        this._priorities_by_survey = {}
-    }
-
-    get priorities_by_survey() {
-        return this._priorities_by_survey;
     }
 
     get filtered_classifiers() {
@@ -20,39 +16,8 @@ export class Dropdown {
     }
 
 
-    set priorities_by_survey(survey_id) {
-        if (survey_id === "ztf") {
-            this._priorities_by_survey = {
-                5: 0,
-                4: 1,
-                2: 2,
-            };
-        }
-        else if (survey_id === "lsst") {
-            this._priorities_by_survey = {
-                3: 0,
-                1: 1,
-            };
-        } else {
-            this._priorities_by_survey = {};
-        }
-
-    }
-
-
     filter_classifiers_by_survey(survey_id) {
         this._filtered_classifiers = this._classifiers.filter(classifier => classifier.survey_id === survey_id);
-    }
-
-    order_by_priority(empty_array) {
-        this._filtered_classifiers.forEach(classifier => {
-            if (classifier.classifier_id in this._priorities_by_survey) {
-                let index = this._priorities_by_survey[classifier.classifier_id];
-                empty_array[index] = classifier;
-            }
-        });
-
-        this._filtered_classifiers = [...empty_array.flat()]
     }
 
 
@@ -77,9 +42,7 @@ export function init_classifiers_dropdown(classifiers_dropdown, survey_id) {
 
 
 function configure_dropdown_by_survey(classifiers_dropdown, survey_id) {
-    classifiers_dropdown.priorities_by_survey = survey_id;
     classifiers_dropdown.filter_classifiers_by_survey(survey_id);
-    classifiers_dropdown.order_by_priority(Array(8));
 }
 
 function dropdown_classifiers_options_configure(classifiers) {

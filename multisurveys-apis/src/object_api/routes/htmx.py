@@ -21,7 +21,7 @@ from core.exceptions import ObjectNotFound
 from object_api.services.object_services import (
     get_object_by_id,
     get_objects_list,
-    get_tidy_classifiers,
+    get_website_classifiers,
     get_survey_classifiers,
     choose_shown_classifier,
 )
@@ -106,7 +106,7 @@ def objects_form(request: Request, survey_id: str = None):
         if survey_id is None:
             survey_id = "lsst"
 
-        classifiers = get_tidy_classifiers(session, survey_id)
+        classifiers = get_website_classifiers(session, survey_id)
 
         return templates.TemplateResponse(
             name="search_form/form.html.jinja",

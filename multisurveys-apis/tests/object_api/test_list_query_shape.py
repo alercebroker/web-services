@@ -316,6 +316,36 @@ def test_classifier_filter_wins_over_the_shown_classifier(route_sql):
     assert "LEFT OUTER JOIN" not in sql
 
 
+def test_website_offers_its_classifiers_in_its_order(monkeypatch):
+    # As the database lists them: alphabetical, with the light curve sub-models and both surveys' classifiers.
+    names = {
+        "ztf": [
+            "lc_classifier_BHRF_forced_phot",
+            "lc_classifier_BHRF_forced_phot_periodic",
+            "lc_classifier_BHRF_forced_phot_top",
+            "stamp_classifier",
+            "stamp_classifier_2025_beta",
+        ],
+        "lsst": ["stamp_classifier_rubin_beta", "stamp_classifier_rubin_beta_20260421"],
+    }
+    database = [{"classifier_name": n, "survey_id": s} for s, survey_names in names.items() for n in survey_names]
+    monkeypatch.setattr(object_services, "get_tidy_classifiers", lambda session, survey_id: database)
+
+    offered = [(c["survey_id"], c["classifier_name"]) for c in object_services.get_website_classifiers(None, "ztf")]
+
+    assert offered == [
+        ("ztf", "lc_classifier_BHRF_forced_phot"),
+        ("ztf", "stamp_classifier"),
+        ("ztf", "stamp_classifier_2025_beta"),
+        ("lsst", "stamp_classifier_rubin_beta_20260421"),
+        ("lsst", "stamp_classifier_rubin_beta"),
+    ]
+    assert [c["classifier_name"] for c in object_services.get_survey_classifiers(None, "lsst")] == [
+        "stamp_classifier_rubin_beta_20260421",
+        "stamp_classifier_rubin_beta",
+    ]
+
+
 def test_rest_still_lists_one_row_per_prediction(route_sql):
     sql = route_sql("/list_objects", classifier=None, class_name=None)
 
@@ -355,6 +385,18 @@ def test_object_without_prediction_keeps_its_row():
         (2, "SN", 0.9, 61300.0),
         (1, None, None, 61300.0),
     ]
+
+
+def test_new_ztf_object_without_stellar_keeps_its_row():
+    from object_api.models.object import ZtfObjectProbability
+
+    # The newest objects, listed now even without a prediction, may not have stellar set yet.
+    row = ZtfObjectProbability(
+        oid=1, tid=0, sid=0, meanra=1.0, meandec=2.0, firstmjd=61000.0, lastmjd=61300.0, deltamjd=300.0, n_det=1,
+        n_forced=0, n_non_det=0, corrected=False, stellar=None,
+    )  # fmt: skip
+
+    assert row.stellar is None and row.class_name is None
 
 
 @pytest.mark.parametrize("order_by", ["ndethist", "not_a_column"])
