@@ -61,7 +61,7 @@ uvicorn = { extras = ["standard"], version = "^0.23.1" }
 memray = "^1.8.1"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.11.12"
+ruff = "^0.17.1"
 
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel", "Cython==0.29.36", "numpy"]
@@ -69,6 +69,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
 line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
 
 [tool.poetry.scripts]
 all = "scripts.run_api:run"
