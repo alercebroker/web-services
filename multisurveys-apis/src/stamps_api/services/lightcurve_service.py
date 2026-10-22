@@ -1,6 +1,9 @@
 from typing import Callable, ContextManager
+
 from sqlalchemy.orm import Session
+
 from core.repository.queries import detections
+
 from .lightcurve_parser import parse_lightcurve
 
 # get ligitcurve with oid and survey

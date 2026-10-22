@@ -1,10 +1,15 @@
-from typing import Callable
 from contextlib import AbstractContextManager
+from typing import Callable
+
 from sqlalchemy.orm import Session
+
 from core.repository.queries.classifiers import (
     get_all_classifiers as db_get_all_classifiers,
+)
+from core.repository.queries.classifiers import (
     get_classifier_by_name as db_get_classifier_by_name,
 )
+
 from .parsers import parse_classifiers
 
 

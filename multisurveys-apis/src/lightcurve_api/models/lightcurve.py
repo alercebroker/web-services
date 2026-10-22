@@ -1,8 +1,9 @@
 from pydantic import BaseModel
+
 from .lightcurve_item import (
     BaseDetection,
-    BaseNonDetection,
     BaseForcedPhotometry,
+    BaseNonDetection,
 )
 
 

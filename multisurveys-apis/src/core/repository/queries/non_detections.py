@@ -1,8 +1,9 @@
-from typing import Any, Callable, List, Sequence, Tuple
 from contextlib import AbstractContextManager
+from typing import Any, Callable, List, Sequence, Tuple
+
 from db_plugins.db.sql.models_pipeline import ZtfNonDetection
-from sqlalchemy.orm import Session
 from sqlalchemy import Row, select
+from sqlalchemy.orm import Session
 
 
 def get_all_unique_non_detections_sql(

@@ -1,7 +1,10 @@
-from typing import Callable
 from contextlib import AbstractContextManager
+from typing import Callable
+
 from sqlalchemy.orm import Session
+
 from core.repository.queries.magstats import get_magstats_by_oid
+
 from .parsers import parse_magstats
 
 

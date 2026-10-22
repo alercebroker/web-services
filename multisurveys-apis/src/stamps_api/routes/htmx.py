@@ -1,12 +1,15 @@
-from fastapi import APIRouter, HTTPException, Request
-from core.idmapper.idmapper import catalog_oid_to_masterid
-from ..services.detections_services import find_first_measurement_id
-from ..s3_handler import handler_selector
-from ..services.lightcurve_service import get_detections
-from ..models.lightcurve import PostRequestInputModel
-from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
 import base64
+
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.templating import Jinja2Templates
+
+from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.static_files import configure_templates
+
+from ..models.lightcurve import PostRequestInputModel
+from ..s3_handler import handler_selector
+from ..services.detections_services import find_first_measurement_id
+from ..services.lightcurve_service import get_detections
 
 router = APIRouter()
 

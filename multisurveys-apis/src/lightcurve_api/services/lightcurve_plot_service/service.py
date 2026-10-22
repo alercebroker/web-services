@@ -1,19 +1,20 @@
 import csv
 import io
 import zipfile
-from core.repository.queries.objects import query_object_by_id
-import lightcurve_api.services.lightcurve_plot_service.plots_utils as plots_utils
 from collections import defaultdict
 from itertools import chain
-from typing import Callable, ContextManager, List, Dict, Any, Tuple
+from typing import Any, Callable, ContextManager, Dict, List, Tuple
 
 import httpx
-from lightcurve_api.models.periodogram import Periodogram
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
-from lightcurve_api.models.detections import ZTFDetectionCSV, LsstDetectionCsv
+import lightcurve_api.services.lightcurve_plot_service.plots_utils as plots_utils
+from core.exceptions import ObjectNotFound
+from core.idmapper import idmapper
+from core.repository.queries.objects import query_object_by_id
+from lightcurve_api.models.detections import LsstDetectionCsv, ZTFDetectionCSV
 from lightcurve_api.models.force_photometry import (
     LsstForcedPhotometryCsv,
     ZtfForcedPhotometryCsv,
@@ -25,16 +26,14 @@ from lightcurve_api.models.lightcurve_item import (
     BaseNonDetection,
 )
 from lightcurve_api.models.non_detections import ZtfNonDetectionsCsv
+from lightcurve_api.models.periodogram import Periodogram
 from lightcurve_api.routes.htmx.parsers import ConfigState
-from lightcurve_api.services.parsers import parse_ztf_dr_detection, parse_ztf_dr_object, _parse_object_common
+from lightcurve_api.services.parsers import _parse_object_common, parse_ztf_dr_detection, parse_ztf_dr_object
 from lightcurve_api.services.period.service import compute_periodogram
 
 from ..conesearch.conesearch import conesearch_oid_lightcurve
 from .chart_point import ChartPoint
 from .result import Result
-from core.exceptions import ObjectNotFound
-from core.idmapper import idmapper
-
 
 DEFAULT_RADIUS = 30 / 3600
 DEFAULT_NEIGHBORS = 2

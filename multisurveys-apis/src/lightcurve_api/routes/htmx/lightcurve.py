@@ -4,19 +4,19 @@ import httpx
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
 from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
 from core.exceptions import ObjectNotFound
 from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.static_files import configure_templates
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
 from lightcurve_api.services.lightcurve_plot_service import (
     service as lightcurve_plot_service,
 )
-from lightcurve_api.services.lightcurve_plot_service.service import get_periodogram_data
 from lightcurve_api.services.lightcurve_plot_service.result import Result
+from lightcurve_api.services.lightcurve_plot_service.service import get_periodogram_data
 from lightcurve_api.services.parsers import parse_ztf_dr_detection
 
 from .parsers import (

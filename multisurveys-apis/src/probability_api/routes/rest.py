@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Request
-from fastapi import HTTPException
-from ..services.probability import get_probability, get_classifiers
+from fastapi import APIRouter, HTTPException, Request
 
+from ..services.probability import get_classifiers, get_probability
 
 router = APIRouter()
 

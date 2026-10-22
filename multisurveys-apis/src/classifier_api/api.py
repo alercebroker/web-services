@@ -1,7 +1,9 @@
 from fastapi import FastAPI
-from core.concurrency import add_concurrency_limit
 from fastapi.middleware.cors import CORSMiddleware
+
+from core.concurrency import add_concurrency_limit
 from core.config.connection import psql_entity
+
 from .routes import rest
 
 app = FastAPI()

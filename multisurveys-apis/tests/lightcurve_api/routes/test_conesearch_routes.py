@@ -1,7 +1,8 @@
-from core.idmapper.idmapper import catalog_oid_to_masterid
 from db_plugins.db.sql.models_pipeline import Object
 from fastapi.testclient import TestClient
 from sqlalchemy import select
+
+from core.idmapper.idmapper import catalog_oid_to_masterid
 
 
 def test_conesearch_objects(client: TestClient, populate_database):

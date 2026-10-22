@@ -2,10 +2,11 @@ import math
 import traceback
 from typing import Optional
 
-from pydantic import BaseModel, model_validator
-from .lightcurve_item import BaseDetection
-from astropy.coordinates import Distance
 import astropy.units as u
+from astropy.coordinates import Distance
+from pydantic import BaseModel, model_validator
+
+from .lightcurve_item import BaseDetection
 
 REDSHIFT = 0.23  # TODO: Instead of a hardcoded REDSHIFT, use the redshift from the object
 

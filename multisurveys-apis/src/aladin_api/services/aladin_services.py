@@ -1,7 +1,8 @@
+from core.repository.queries.objects import query_common_object
 from src.aladin_api.models.object import RawObjectsRequest
 from src.core.idmapper.idmapper import encode_ids
-from ..services.aladin_parser import object_parser, loads_objects_list
-from core.repository.queries.objects import query_common_object
+
+from ..services.aladin_parser import loads_objects_list, object_parser
 
 
 def get_object_by_id(session_ms, oid, survey) -> dict:

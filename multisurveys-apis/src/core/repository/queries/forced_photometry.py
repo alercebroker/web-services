@@ -1,11 +1,12 @@
-from typing import Any, Callable, ContextManager, List, Tuple, Sequence
+from typing import Any, Callable, ContextManager, List, Sequence, Tuple
+
 from db_plugins.db.sql.models_pipeline import (
+    ForcedPhotometry,
     LsstForcedPhotometry,
     ZtfForcedPhotometry,
-    ForcedPhotometry,
 )
+from sqlalchemy import Row, and_, select
 from sqlalchemy.orm import Session
-from sqlalchemy import Row, select, and_
 
 
 def get_unique_forced_photometry_sql(

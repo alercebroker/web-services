@@ -1,8 +1,9 @@
-from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models_pipeline import MagStat, LsstDiaObject
-from sqlalchemy.orm import Session
+from typing import Callable
+
+from db_plugins.db.sql.models_pipeline import LsstDiaObject, MagStat
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 
 def get_magstats_by_oid(

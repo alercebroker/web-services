@@ -1,8 +1,9 @@
-from typing import Callable
 from contextlib import AbstractContextManager
+from typing import Callable
+
 from db_plugins.db.sql.models_pipeline import Classifier, Taxonomy
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 
 def get_classifier_by_name(

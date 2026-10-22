@@ -1,9 +1,10 @@
 from typing import List, cast
-from db_plugins.db.sql.models_pipeline import Object
 
-from lightcurve_api.models.object import ApiObject
-from core.idmapper.idmapper import decode_masterid
+from db_plugins.db.sql.models_pipeline import Object
 from numpy import int64
+
+from core.idmapper.idmapper import decode_masterid
+from lightcurve_api.models.object import ApiObject
 
 
 def survey_id_map(sid: int) -> str:

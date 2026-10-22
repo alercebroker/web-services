@@ -1,11 +1,11 @@
-from fastapi import Request
-from src.probability_api.services.frontend_services import get_classifiers_names_for_front
-from ..services.probability import get_object_probability_model, get_probability_for_frontend
-from fastapi import APIRouter
-from fastapi.templating import Jinja2Templates
+from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
-from core.static_files import configure_templates
+from fastapi.templating import Jinja2Templates
 
+from core.static_files import configure_templates
+from src.probability_api.services.frontend_services import get_classifiers_names_for_front
+
+from ..services.probability import get_object_probability_model, get_probability_for_frontend
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/probability_api/templates", autoescape=True, auto_reload=True)

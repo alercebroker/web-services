@@ -1,8 +1,9 @@
-from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models_pipeline import Taxonomy, Probability
-from sqlalchemy.orm import Session, aliased
+from typing import Callable
+
+from db_plugins.db.sql.models_pipeline import Probability, Taxonomy
 from sqlalchemy import select
+from sqlalchemy.orm import Session, aliased
 
 
 def get_probability_by_oid(

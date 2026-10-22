@@ -1,7 +1,6 @@
-from ..models.lightcurve import detection
-
-
 from datetime import datetime, timedelta, timezone
+
+from ..models.lightcurve import detection
 
 BANDS = {
     1: "g",

@@ -1,8 +1,9 @@
+from numpy import int64
+
 from lightcurve_api.services.conesearch.validation import (
     validate_coordinates_params,
     validate_oid_params,
 )
-from numpy import int64
 
 
 def test_validate_coordinates_params():

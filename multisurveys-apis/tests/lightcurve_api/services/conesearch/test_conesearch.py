@@ -1,8 +1,10 @@
 from typing import Any
+
 from db_plugins.db.sql.models_pipeline import Object
+from numpy import int64
+
 from lightcurve_api.models.object import ApiObject
 from lightcurve_api.services.conesearch import conesearch as conesearch_service
-from numpy import int64
 
 
 def implement_context_manager(mocker, mock):

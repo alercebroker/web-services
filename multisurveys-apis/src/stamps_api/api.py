@@ -1,9 +1,11 @@
 from fastapi import FastAPI
-from core.concurrency import add_concurrency_limit
-from core.static_files import mount_static
 from fastapi.middleware.cors import CORSMiddleware
-from .routes import rest, htmx
+
+from core.concurrency import add_concurrency_limit
 from core.config.connection import psql_entity
+from core.static_files import mount_static
+
+from .routes import htmx, rest
 
 app = FastAPI(openapi_url="/stamps/openapi.json")
 add_concurrency_limit(app)

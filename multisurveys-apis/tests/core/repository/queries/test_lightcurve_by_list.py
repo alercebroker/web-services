@@ -1,18 +1,19 @@
-from core.repository.queries import detections as detection_repository
-from core.repository.queries import non_detections as non_detection_repository
-from core.repository.queries import (
-    forced_photometry as forced_photometry_repository,
-)
 from db_plugins.db.sql.models_pipeline import (
     Detection,
     ForcedPhotometry,
-    ZtfDetection,
-    Object,
     LsstDetection,
+    Object,
+    ZtfDetection,
     ZtfForcedPhotometry,
     ZtfNonDetection,
 )
 from faker import Faker
+
+from core.repository.queries import detections as detection_repository
+from core.repository.queries import (
+    forced_photometry as forced_photometry_repository,
+)
+from core.repository.queries import non_detections as non_detection_repository
 
 
 def test_get_detections_by_list(db, faker: Faker):

@@ -1,7 +1,8 @@
 from typing import Callable, ContextManager, List, Tuple
-from db_plugins.db.sql.models_pipeline import ZtfDetection, Detection, LsstDetection
+
+from db_plugins.db.sql.models_pipeline import Detection, LsstDetection, ZtfDetection
+from sqlalchemy import and_, desc, select, text
 from sqlalchemy.orm import Session
-from sqlalchemy import select, text, and_, desc
 
 
 def get_all_unique_detections_sql(
