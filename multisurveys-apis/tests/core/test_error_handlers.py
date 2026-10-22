@@ -30,11 +30,11 @@ def make_app() -> CORSMiddleware:
 
     @app.get("/timeout-operational")
     def timeout_operational():
-        raise Exception("(psycopg2.errors.QueryCanceled) canceling statement due to statement timeout")
+        raise Exception("(psycopg2.errors.QueryCanceled) canceling statement due to statement timeout")  # noqa: TRY002
 
     @app.get("/timeout-wrapped")
     def timeout_wrapped():
-        raise Exception("statement timeout")
+        raise Exception("statement timeout")  # noqa: TRY002
 
     @app.get("/unexpected")
     def unexpected():
