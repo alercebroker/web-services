@@ -411,3 +411,27 @@ def test_website_oid_list_without_sort_comes_whole(route_sql):
 
     assert "LIMIT" not in sql
     assert "object.oid IN" in sql
+
+
+def test_results_table_carries_the_side_list_of_its_page(monkeypatch):
+    item = {
+        "oid": "ZTF24aaaaaaa",
+        "n_det": 3,
+        "firstmjd": 60000.0,
+        "lastmjd": 60010.0,
+        "deltamjd": 10.0,
+        "meanra": 10.0,
+        "meandec": -20.0,
+        "class_name": "SN",
+        "probability": 0.9,
+    }
+    page = {"next": 3, "has_next": True, "prev": 1, "has_prev": True, "current_page": 2, "items": [item]}
+    monkeypatch.setattr(htmx, "get_objects_list", lambda session_ms, search_params, shown_classifier=None: page)
+    client = object_api_client()
+
+    table = client.get("/htmx/list_objects", params={"survey": "ztf", "page": 2}).text
+    side = client.get("/htmx/side_objects", params={"survey": "ztf", "page": 2}).text
+
+    carried = table[table.index('<template id="side-list-html">') :]
+    for part in ['data-oid="ZTF24aaaaaaa"', 'data-next="3"', 'data-next="1"', 'data-page="2"']:
+        assert part in carried and part in side

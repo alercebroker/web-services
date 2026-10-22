@@ -324,6 +324,12 @@
         </table>
     </div>
 
+    {# The side list of this page, which the Explorer shows beside an object opened from these results
+       without running the search again (side_objects renders the same template). #}
+    <template id="side-list-html">
+        {% include "astronomical_object_list/astronomical_objects_list.html.jinja" %}
+    </template>
+
     {% else %}
         <div class="tw-flex tw-flex-col tw-justify-center tw-content-center">
             {% include "main_table_objects/objects_table_default.html.jinja" %}
