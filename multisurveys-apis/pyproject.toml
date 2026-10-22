@@ -71,7 +71,7 @@ build-backend = "poetry.core.masonry.api"
 line-length = 120
 
 [tool.ruff.lint]
-select = ["E", "F", "I"]
+select = ["E", "F", "FA", "G", "I", "INT", "ISC", "PIE", "PYI", "RSE", "SLOT", "T10", "W", "YTT"]
 
 [tool.poetry.scripts]
 all = "scripts.run_api:run"

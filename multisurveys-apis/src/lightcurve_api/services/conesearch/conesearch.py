@@ -60,7 +60,7 @@ def get_detections(
     result: Lightcurve,
 ):
     def _get(objects: List[ApiObject]) -> Tuple[Lightcurve, dict]:
-        object_ids_by_survey = defaultdict(lambda: [])
+        object_ids_by_survey = defaultdict(list)
         for obj in objects:
             object_ids_by_survey[obj.survey_id].append(obj.objectId)
         for survey_id, object_ids in object_ids_by_survey.items():
@@ -132,7 +132,7 @@ def get_lightcurve_async(
     """
 
     def _get(objects: List[ApiObject]) -> Tuple[Lightcurve, dict]:
-        object_ids_by_survey = defaultdict(lambda: [])
+        object_ids_by_survey = defaultdict(list)
 
         if not objects:
             raise ObjectNotFound(oid)

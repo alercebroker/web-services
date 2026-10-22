@@ -26,7 +26,7 @@ Service
     - get stamps for oid and measurement id
 
 Functions
-    - get (no measurement_id no detections list) 
+    - get (no measurement_id no detections list)
         Get the lightcurve and de stamps for the fist measurement id
         in the list of detections
     - post (with measurement_id with detections list)

@@ -42,13 +42,11 @@ def parse_lightcurve(lightcurve_data):
         lsst_model_dict = row[0].__dict__.copy()
         detection_model_dict = row[1].__dict__.copy()
         model_parsed = detection(
-            **{
-                "mjd": detection_model_dict.get("mjd"),
-                "greg": str(_mjd_to_date(detection_model_dict.get("mjd"))),
-                "measurement_id": lsst_model_dict.get("measurement_id"),
-                "band": parse_band(detection_model_dict.get("band")),
-                "has_stamp": lsst_model_dict.get("has_stamp"),
-            }
+            mjd=detection_model_dict.get("mjd"),
+            greg=str(_mjd_to_date(detection_model_dict.get("mjd"))),
+            measurement_id=lsst_model_dict.get("measurement_id"),
+            band=parse_band(detection_model_dict.get("band")),
+            has_stamp=lsst_model_dict.get("has_stamp"),
         )
         parsed_lighturve.append(model_parsed)
     return parsed_lighturve

@@ -1151,7 +1151,7 @@ def calculate_median(numbers) -> float:
 
 def _extract_series(series_defs: List[Dict[str, Any]], metric: str) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     """Split into normal series and error bars."""
-    series = defaultdict(lambda: {})
+    series = defaultdict(dict)
     error_bars = {}
     for s in series_defs:
         if s.get("error_bar"):
