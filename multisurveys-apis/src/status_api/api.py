@@ -5,7 +5,9 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from core.concurrency import add_concurrency_limit
 from .router import router
 
+# root_path: the prefix nginx strips, so /docs fetches /status_api/openapi.json
 app = FastAPI(
+    root_path="/status_api",
     title="ALeRCE status API",
     description="Is each ALeRCE pipeline up to date, and how many alerts it received and processed recently.",
 )
