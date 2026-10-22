@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Request
-from fastapi import HTTPException
+from fastapi import APIRouter, HTTPException, Request
+
 from core.idmapper.idmapper import catalog_oid_to_masterid
+
 from ..services.magstats import get_magstats
 from .temporal_utils import mag_parser, parse_lsst_dia_objects_to_dict
 

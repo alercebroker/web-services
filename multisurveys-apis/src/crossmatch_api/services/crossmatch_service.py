@@ -1,9 +1,11 @@
 from sqlalchemy.orm import Session
-from crossmatch_api.get_crossmatch_data import get_alerce_data
+
 from core.idmapper.idmapper import encode_ids
 from core.repository.queries.objects import (
     query_object_by_id,
 )
+from crossmatch_api.get_crossmatch_data import get_alerce_data
+
 from ..models.object import Object, ObjectInformation
 from .parsers import parse_object
 

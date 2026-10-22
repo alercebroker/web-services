@@ -1,18 +1,17 @@
 import os
+import warnings
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
 
 from core.exceptions import ObjectNotFound
 from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.static_files import configure_templates
 
 # from core.repository.queries.magstats import get_magstats_by_oid
 from ..services.magstats import get_magstats
 from .temporal_utils import mag_parser, parse_lsst_dia_objects_to_dict
-import warnings
-
 
 router = APIRouter()
 templates = Jinja2Templates(
@@ -34,7 +33,8 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
     if survey_id is None:
         survey_id = "ztf"
         warnings.warn(
-            "survey not provided, defaulting to 'ztf'. This will use the legacy ZTF client. This behavior will be deprecated in future versions.",
+            "survey not provided, defaulting to 'ztf'. This will use the legacy ZTF client."
+            " This behavior will be deprecated in future versions.",
             DeprecationWarning,
         )
 

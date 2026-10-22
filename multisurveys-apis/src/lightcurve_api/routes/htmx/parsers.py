@@ -1,7 +1,6 @@
 import json
 from typing import List
 
-from lightcurve_api.models.object import ApiObject
 from pydantic import BaseModel
 
 from lightcurve_api.models.detections import LsstDetection, ztfDetection
@@ -15,6 +14,7 @@ from lightcurve_api.models.lightcurve_item import (
     BaseNonDetection,
 )
 from lightcurve_api.models.non_detections import ZtfNonDetections
+from lightcurve_api.models.object import ApiObject
 
 
 class BandConfig(BaseModel):

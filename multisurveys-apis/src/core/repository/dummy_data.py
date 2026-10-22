@@ -1,7 +1,6 @@
 import random
 import time
 
-
 object_basic_information_dict = {
     "oid": "12",  # si
     "corrected": "Yes",  # si

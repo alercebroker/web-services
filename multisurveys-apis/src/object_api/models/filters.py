@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from .pagination import PaginationArgs, Order
+
+from .pagination import Order, PaginationArgs
 
 
 class Filters(BaseModel):

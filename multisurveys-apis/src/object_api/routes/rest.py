@@ -1,9 +1,11 @@
 import traceback
 from typing import Annotated
+
 from fastapi import APIRouter, HTTPException, Query, Request
+
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
-from ..services.object_services import get_objects_list, get_object_by_id
+from ..services.object_services import get_object_by_id, get_objects_list
 from ..services.validations import ndets_validation, order_mode_validation
 
 router = APIRouter()

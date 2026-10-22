@@ -5,10 +5,10 @@ from toolz import pipe
 
 from core.idmapper import idmapper
 from core.repository.queries import detections as detection_repository
-from core.repository.queries import non_detections as non_detections_repository
 from core.repository.queries import (
     forced_photometry as forced_photometry_repository,
 )
+from core.repository.queries import non_detections as non_detections_repository
 from lightcurve_api.models.lightcurve_item import (
     BaseDetection,
     BaseForcedPhotometry,

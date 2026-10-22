@@ -1,4 +1,5 @@
 import math
+
 from lightcurve_api.routes.htmx.parsers import ConfigState
 
 

@@ -1,18 +1,19 @@
-from core.repository.queries.classifiers import get_all_classifiers
 from classifier_api.services.classifiers import get_classifiers
+from core.idmapper.idmapper import encode_ids
 from core.idmapper.survey_mapper import get_survey_id
+from core.repository.queries.classifiers import get_all_classifiers
 from core.repository.queries.objects import (
     query_get_objects,
     query_object_by_id,
 )
-from core.idmapper.idmapper import encode_ids
+
 from ..services.parsers import parse_to_json_classifiers
 from .classifier_data_matcher import update_filters
 from .parsers import (
-    parse_params,
-    parse_objects_list_output,
-    parse_unique_object_query,
     parse_classifiers,
+    parse_objects_list_output,
+    parse_params,
+    parse_unique_object_query,
 )
 
 

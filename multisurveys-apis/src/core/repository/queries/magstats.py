@@ -1,8 +1,9 @@
-from typing import Callable
 from contextlib import AbstractContextManager
-from db_plugins.db.sql.models_pipeline import MagStat, LsstDiaObject
-from sqlalchemy.orm import Session
+from typing import Callable
+
+from db_plugins.db.sql.models_pipeline import LsstDiaObject, MagStat
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 
 def get_magstats_by_oid(
@@ -13,8 +14,9 @@ def get_magstats_by_oid(
     """
     Retrieves the magstats for a given object in a given survey.
     Args:
-        oid (str): The object ID.
-        session_factory (Callable[..., AbstractContextManager[Session]] | None, optional): A factory function to create a database session. Defaults to None.
+        oid: The object ID.
+        session_factory: A factory function to create a database session.
+            Defaults to None.
     """
 
     with session_factory() as session:

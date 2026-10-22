@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
 from fastapi.responses import HTMLResponse
-from ..services.crossmatch_service import get_cross_for_frontend
-from ..models.object import ObjectInformation
+from fastapi.templating import Jinja2Templates
 
+from core.static_files import configure_templates
+
+from ..models.object import ObjectInformation
+from ..services.crossmatch_service import get_cross_for_frontend
 
 router = APIRouter()
 templates = Jinja2Templates(directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True)

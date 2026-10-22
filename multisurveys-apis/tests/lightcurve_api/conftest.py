@@ -5,13 +5,13 @@ import pytest
 from db_plugins.db.sql._connection_pipeline import PsqlDatabase
 from db_plugins.db.sql.models_pipeline import (
     Detection,
+    ForcedPhotometry,
     LsstDetection,
+    LsstForcedPhotometry,
     Object,
     ZtfDetection,
-    ZtfNonDetection,
-    ForcedPhotometry,
     ZtfForcedPhotometry,
-    LsstForcedPhotometry,
+    ZtfNonDetection,
 )
 from faker import Faker
 from fastapi.testclient import TestClient

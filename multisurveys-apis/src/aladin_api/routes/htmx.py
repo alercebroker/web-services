@@ -1,12 +1,14 @@
 import traceback
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Request, Form
-from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
-from fastapi.responses import HTMLResponse
-from ..services.aladin_services import prepare_aladin_data
-from ..models.object import RawObjectsRequest
 
+from fastapi import APIRouter, Form, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
+
+from core.static_files import configure_templates
+
+from ..models.object import RawObjectsRequest
+from ..services.aladin_services import prepare_aladin_data
 
 router = APIRouter(prefix="/htmx")
 templates = Jinja2Templates(directory="src/aladin_api/templates", autoescape=True, auto_reload=True)

@@ -4,9 +4,9 @@ matplotlib.use("Agg")
 
 import asyncio
 import os
-import yaml
 
 import uvicorn
+import yaml
 
 
 def config_from_yaml():

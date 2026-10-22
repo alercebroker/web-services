@@ -1,6 +1,7 @@
-from lightcurve_api.services import lightcurve_service
-from db_plugins.db.sql._connection_pipeline import PsqlDatabase
 from conftest import _generate_lsst_detection
+from db_plugins.db.sql._connection_pipeline import PsqlDatabase
+
+from lightcurve_api.services import lightcurve_service
 
 
 def test_get_detections_by_list(populate_database, db_setup: PsqlDatabase, faker):

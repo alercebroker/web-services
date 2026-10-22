@@ -25,7 +25,7 @@ jobs:
         with:
           src: ./multisurveys-apis
           args: "format --check --diff"
-          version: "0.11.13"
+          version: "0.17.1"
   lint:
     runs-on: ubuntu-latest
     continue-on-error: true
@@ -39,4 +39,4 @@ jobs:
         with:
           src: ./multisurveys-apis
           args: "check --output-format=github"
-          version: "0.11.13"
+          version: "0.17.1"

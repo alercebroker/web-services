@@ -6,9 +6,9 @@ from fastapi.testclient import TestClient
 from sqlalchemy.dialects import postgresql
 
 from core.repository.queries.objects import query_get_objects
-from object_api.routes import htmx, rest
 from object_api.models.filters import Consearch, Filters, SearchParams
 from object_api.models.pagination import Order, PaginationArgs
+from object_api.routes import htmx, rest
 from object_api.services.classifier_data_matcher import update_filters
 from object_api.services.parsers import parse_params
 

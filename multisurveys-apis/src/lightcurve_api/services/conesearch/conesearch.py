@@ -7,17 +7,17 @@ from sqlalchemy.orm import Session
 from toolz.functoolz import pipe
 
 import core.repository.queries.conesearch as queries
+from core.exceptions import ObjectNotFound
+from core.idmapper import idmapper
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.object import ApiObject
+from lightcurve_api.services import lightcurve_service
 from lightcurve_api.services.conesearch.validation import (
     validate_coordinates_params,
     validate_oid_params,
 )
 
 from .parser import parsesapi_objects
-from lightcurve_api.services import lightcurve_service
-from core.exceptions import ObjectNotFound
-from core.idmapper import idmapper
 
 
 def conesearch_coordinates(
@@ -60,7 +60,7 @@ def get_detections(
     result: Lightcurve,
 ):
     def _get(objects: List[ApiObject]) -> Tuple[Lightcurve, dict]:
-        object_ids_by_survey = defaultdict(lambda: [])
+        object_ids_by_survey = defaultdict(list)
         for obj in objects:
             object_ids_by_survey[obj.survey_id].append(obj.objectId)
         for survey_id, object_ids in object_ids_by_survey.items():
@@ -132,7 +132,7 @@ def get_lightcurve_async(
     """
 
     def _get(objects: List[ApiObject]) -> Tuple[Lightcurve, dict]:
-        object_ids_by_survey = defaultdict(lambda: [])
+        object_ids_by_survey = defaultdict(list)
 
         if not objects:
             raise ObjectNotFound(oid)

@@ -1,6 +1,6 @@
 import numpy as np
 
-from .ztf import encode_ztf_to_masterid_without_survey, decode_masterid_for_ztf
+from .ztf import decode_masterid_for_ztf, encode_ztf_to_masterid_without_survey
 
 # Constants
 SURVEY_IDS = {

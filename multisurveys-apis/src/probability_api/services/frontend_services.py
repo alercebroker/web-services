@@ -1,4 +1,5 @@
 from src.probability_api.services.lsst_service import priorities_by_survey
+
 from ..models.probability import ObjectProbability
 
 

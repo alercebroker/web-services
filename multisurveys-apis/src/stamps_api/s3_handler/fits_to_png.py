@@ -2,8 +2,8 @@ import gzip
 import io
 
 import astropy.io.fits as fio
-from matplotlib.figure import Figure
 import numpy as np
+from matplotlib.figure import Figure
 from scipy import ndimage
 
 

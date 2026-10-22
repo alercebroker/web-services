@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Request
-from fastapi import HTTPException
+from fastapi import APIRouter, HTTPException, Request
+
 from ..services.classifiers import get_classifier_by_name, get_classifiers
 
 router = APIRouter()

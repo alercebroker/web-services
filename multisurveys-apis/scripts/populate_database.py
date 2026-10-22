@@ -1,8 +1,8 @@
 import argparse
 import os
 import random
-from typing import cast
 import sys
+from typing import cast
 
 import yaml
 from db_plugins.db.sql import models_pipeline

@@ -1,11 +1,13 @@
-import boto3
-from fastapi import HTTPException
-from fastavro import reader
+import gzip
 import io
 import threading
 from abc import abstractmethod
+
+import boto3
+from fastapi import HTTPException
+from fastavro import reader
+
 from .fits_to_png import transform
-import gzip
 
 _clients = {}
 _clients_lock = threading.Lock()

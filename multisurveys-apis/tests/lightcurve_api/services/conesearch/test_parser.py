@@ -1,4 +1,5 @@
 from db_plugins.db.sql.models_pipeline import Object
+
 from lightcurve_api.models.object import ApiObject
 from lightcurve_api.services.conesearch.parser import parse_api_object
 

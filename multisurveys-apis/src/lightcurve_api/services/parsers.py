@@ -3,6 +3,7 @@ from typing import Any, Sequence, Tuple
 from sqlalchemy import Row
 
 from lightcurve_api.models.object import CommonObject
+
 from ..models.detections import LsstDetection, ZtfDataReleaseDetection, ztfDetection
 from ..models.force_photometry import LsstForcedPhotometry, ZtfForcedPhotometry
 from ..models.non_detections import ZtfNonDetections

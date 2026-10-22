@@ -1,11 +1,14 @@
-from typing import Callable
 from contextlib import AbstractContextManager
+from typing import Callable
+
 from sqlalchemy.orm import Session
-from core.repository.queries.probability import get_probability_by_oid
+
 from core.repository.queries.classifiers import get_all_classifiers
+from core.repository.queries.probability import get_probability_by_oid
 from src.core.idmapper.idmapper import encode_ids
-from .parser import parse_grouped_probabilities, parse_probability, parse_classifiers
 from src.probability_api.models.probability import ObjectProbability
+
+from .parser import parse_classifiers, parse_grouped_probabilities, parse_probability
 
 
 def get_object_probability_model(

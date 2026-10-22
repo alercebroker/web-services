@@ -2,11 +2,14 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from prometheus_fastapi_instrumentator import Instrumentator
+
 from core.concurrency import add_concurrency_limit
 from core.static_files import VERSIONED_PREFIX, VersionedStaticFiles
 from core.version import APP_VERSION
+
 from .routes.htmx import lightcurve as htmx_lightcurve
-from .routes.json import conesearch, lightcurve as json_lightcurve
+from .routes.json import conesearch
+from .routes.json import lightcurve as json_lightcurve
 
 API_DESCRIPTION = """
 Serves **lightcurves** — the time series of brightness measurements of an

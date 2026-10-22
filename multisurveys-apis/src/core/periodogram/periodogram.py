@@ -1,7 +1,8 @@
-from lightcurve_api.models.periodogram import Periodogram
 import numpy as np
 import pandas as pd
 from P4J import MultiBandPeriodogram
+
+from lightcurve_api.models.periodogram import Periodogram
 
 
 class PeriodogramComputer:

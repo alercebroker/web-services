@@ -1,5 +1,5 @@
-from ..models.magstats import MagStat
 from ..models.lsst_dia_object import LsstDiaObjectSchema
+from ..models.magstats import MagStat
 
 
 def parse_magstats(magstats_data, survey_id):
