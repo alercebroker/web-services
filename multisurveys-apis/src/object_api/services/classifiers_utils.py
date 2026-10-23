@@ -8,4 +8,5 @@ def format_classifier_name(name):
 
     name = re.sub(r'[$-/:-?{-~!"^_`]', " ", name)
     name = name.title()
+    name = name.replace("Atat", "ATAT").replace("Bhrf", "BHRF")
     return name

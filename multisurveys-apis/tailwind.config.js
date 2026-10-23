@@ -10,6 +10,7 @@ module.exports = {
     "./src/lightcurve_api/routes/htmx/templates/**/*.{html.jinja,html,css}",
     "./src/crossmatch_api/templates/**/*.{html.jinja,html,css}", 
     "./src/stamps_api/templates/**/*.{html.jinja,html,css}",
+    "./src/status_api/templates/**/*.{html.jinja,html,css}",
   ],
   theme: {
     extend: {

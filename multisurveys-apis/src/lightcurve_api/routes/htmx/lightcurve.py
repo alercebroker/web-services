@@ -48,7 +48,12 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
     config_data = result.config_state.model_dump(exclude={"detections", "non_detections", "forced_photometry"})
 
     detections = result.lightcurve.detections
-    not_corrected = detections[0].flux2magnitude(True, False) == 0 if detections else True
+    # "Total" (science) magnitude is only meaningful for corrected data. The server
+    # decides this once, using the same model check the plot relies on, so the
+    # browser doesn't need the raw photometry fields to make the call. An object is
+    # only "not corrected" when none of its detections are: mixed objects show the
+    # corrected ones.
+    not_corrected = not any(d.has_total() for d in detections)
 
     return templates.TemplateResponse(
         name="layout.html.jinja",

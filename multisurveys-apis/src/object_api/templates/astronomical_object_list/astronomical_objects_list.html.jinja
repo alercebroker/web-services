@@ -10,7 +10,8 @@
     <input id="selected_oid_cache" class="tw-hidden" value="{{selected_oid}}">
 
 
-    <div class="tw-w-full tw-h-[95vh] tw-text-[0.875rem] tw-flex tw-flex-col dark:tw-bg-[#424242]">
+    <!-- Scrolls when the rows don't fit, so they never run over the page number below -->
+    <div class="tw-w-full tw-h-[95vh] tw-overflow-y-auto tw-text-[0.875rem] tw-flex tw-flex-col dark:tw-bg-[#424242]">
         <div class="tw-px-4 tw-text-black/60 tw-border-y tw-border-[#616161] dark:tw-text-white/70 tw-min-h-[43px] tw-flex tw-items-center tw-justify-start">Object List</div>
         {% set selected = namespace(found=False) %}
         {% for item in objects_list['items'] %}

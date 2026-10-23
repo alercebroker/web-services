@@ -21,6 +21,14 @@
         <span class="tw-text-gray-500 dark:tw-text-gray-400 tw-animate-pulse">Computing period…</span>
       </div>
 
+      <!-- Shown by JS when fold is on but no period could be found, until the user types one -->
+      <div id="fold-no-period" class="tw-hidden tw-absolute tw-inset-0 tw-z-40 tw-flex tw-items-center tw-justify-center tw-px-4">
+        <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4">
+          <strong class="tw-text-yellow-800 dark:tw-text-yellow-200">Info:</strong>
+          <span id="fold-no-period-text" class="tw-text-yellow-700 dark:tw-text-yellow-300"></span>
+        </div>
+      </div>
+
       <div id="lightcurve-container" class="tw-flex-1 tw-min-h-0 tw-w-full">
         {% include "lightcurve.html.jinja" %}
       </div>
