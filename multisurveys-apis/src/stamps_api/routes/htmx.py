@@ -3,7 +3,7 @@ import base64
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 
-from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.idmapper.idmapper import parse_oid
 from core.static_files import configure_templates
 
 from ..models.lightcurve import PostRequestInputModel
@@ -29,7 +29,7 @@ def get_stamp_card(
 ):
     handler = handler_selector(survey_id)()
     context = {}
-    master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
+    master_id = parse_oid(survey_id, oid)
 
     detections = get_detections(
         oid=master_id,

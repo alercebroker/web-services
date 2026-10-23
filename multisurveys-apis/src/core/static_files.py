@@ -12,7 +12,7 @@ The unversioned paths keep working for anything that links them directly.
 
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -32,9 +32,22 @@ class VersionedStaticFiles(StaticFiles):
 
 
 def mount_static(app: FastAPI, path: str, directory, name: str):
-    """Serve ``directory`` at both ``path`` and its versioned twin ``/v/<version><path>``."""
-    app.mount(path, StaticFiles(directory=directory), name=name)
-    app.mount(f"{VERSIONED_PREFIX}{path}", VersionedStaticFiles(directory=directory), name=f"{name}-versioned")
+    """Serve ``directory`` at both ``path`` and its versioned twin ``/v/<version><path>``.
+
+    Explicit routes, not ``app.mount()``: the APIs set ``root_path`` so their /docs work behind the nginx
+    sidecar, which strips that prefix. A StaticFiles mount resolves files against the accumulated root_path
+    and 404s on the stripped path; a route matches it (see DEPLOYMENT.md, "The root_path / prefix-strip gotcha").
+    """
+    _static_route(app, path, StaticFiles(directory=directory), name)
+    _static_route(app, f"{VERSIONED_PREFIX}{path}", VersionedStaticFiles(directory=directory), f"{name}-versioned")
+
+
+def _static_route(app: FastAPI, prefix: str, files: StaticFiles, name: str):
+    # async because get_response is: it reads the file without blocking, so it doesn't hold a thread
+    async def serve(path: str, request: Request):
+        return await files.get_response(path, request.scope)
+
+    app.add_api_route(f"{prefix}/{{path:path}}", serve, methods=["GET", "HEAD"], name=name, include_in_schema=False)
 
 
 def configure_templates(templates: Jinja2Templates, default_api_url: str):

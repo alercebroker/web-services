@@ -4,6 +4,8 @@ def update_filters(search_params, classes_list):
 
     # If no classifier name is provided, return the original search_params
     if requested_classifier_name is None:
+        if requested_class_name is not None:
+            raise ValueError("class_name needs a classifier: pass classifier too.")
         return search_params
 
     # Find the corresponding IDs for the requested classifier and class names
@@ -19,6 +21,8 @@ def update_filters(search_params, classes_list):
 
     if classifier_id is None:
         raise ValueError(f"Classifier name '{requested_classifier_name}' not found.")
+    if requested_class_name is not None and class_name_id is None:
+        raise ValueError(f"Class '{requested_class_name}' not found in classifier '{requested_classifier_name}'.")
 
     search_params.filter_args.classifier = classifier_id
     if search_params.filter_args.class_name is not None:

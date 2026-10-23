@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 
 from core.static_files import configure_templates
 from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
+from probability_api.services.lsst_service import priorities_by_survey
 
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
@@ -141,6 +142,7 @@ def objects_table(
             oids=oids,
             survey=survey,
             classifier=classifier,
+            classifier_ids=list(priorities_by_survey(survey)),
             class_name=class_name,
             ranking=ranking,
             n_det=n_det,
@@ -235,6 +237,7 @@ def sidebar(
             oids=oids,
             survey=survey,
             classifier=classifier,
+            classifier_ids=list(priorities_by_survey(survey)),
             class_name=class_name,
             ranking=ranking,
             n_det=n_det,

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from core.static_files import configure_templates
 from fastapi.responses import HTMLResponse
@@ -17,7 +17,14 @@ def object_mag_app(request: Request, oid: str, survey_id: str):
 
     object_details = ObjectInformation(oid=oid, survey=survey_id)
 
-    cross, cross_keys = get_cross_for_frontend(object_details, session)
+    unavailable = False
+    try:
+        cross, cross_keys = get_cross_for_frontend(object_details, session)
+    except HTTPException as error:
+        if error.status_code not in (502, 504):
+            raise
+        # catsHTM is down or slow: show the card with "-", like the TNS card does when TNS is
+        cross, cross_keys, unavailable = [], [], True
 
     return templates.TemplateResponse(
         name="crossmatch.html.jinja",
@@ -25,5 +32,6 @@ def object_mag_app(request: Request, oid: str, survey_id: str):
             "request": request,
             "cross": cross,
             "crossKeys": cross_keys,
+            "unavailable": unavailable,
         },
     )

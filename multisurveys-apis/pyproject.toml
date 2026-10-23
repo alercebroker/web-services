@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "multisurveys-apis"
-version = "0.2.18"
+version = "0.2.19"
 description = ""
 authors = ["Demurest <eric.apolonio@hotmail.com>"]
 readme = "README.md"
@@ -13,6 +13,7 @@ packages = [
     { include = "probability_api", from = "src" },
     { include = "stamps_api", from = "src" },
     { include = "aladin_api", from = "src" },
+    { include = "status_api", from = "src" },
     { include = "test_api", from = "src" },
 ]
 
@@ -80,6 +81,8 @@ probability = "scripts.run_api:run_probability"
 crossmatch = "scripts.run_api:run_crossmatch"
 stamp = "scripts.run_api:run_stamp"
 aladin = "scripts.run_api:run_aladin"
+features = "scripts.run_api:run_features"
+status = "scripts.run_api:run_status"
 dbp = "db_plugins.cli.manage:cli"
 initdb = "scripts.initdb:initdb"
 create_q3c_idx = "scripts.initdb:create_q3c_idx_cmd"

@@ -52,6 +52,10 @@ class _FakeDetection:
     def flux2magnitude_err(self, total, absolute):
         return self._error
 
+    def has_total(self):
+        # Always True, so the unusable values below are left to the numeric filter.
+        return True
+
 
 @pytest.mark.parametrize("seed", [0, 1, 2])
 def test_periodogram_peak_is_the_true_period(seed):

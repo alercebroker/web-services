@@ -13,6 +13,7 @@ from ...services.lightcurve_service import (
     get_non_detections_by_list,
 )
 from ...services.validations import survey_validate
+from .missing_values import json_rows
 
 router = APIRouter()
 
@@ -58,9 +59,9 @@ def detections(
     survey_validate(survey_id)
 
     if len(oid) == 1:
-        return get_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+        return json_rows(get_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
-        return get_detections_by_list(oid, survey_id, db.session)
+        return json_rows(get_detections_by_list(oid, survey_id, db.session))
 
 
 @router.get(
@@ -104,9 +105,9 @@ def forced_photometry(
     survey_validate(survey_id)
 
     if len(oid) == 1:
-        return get_forced_photometry(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+        return json_rows(get_forced_photometry(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
-        return get_forced_photometry_by_list(oid, survey_id, db.session)
+        return json_rows(get_forced_photometry_by_list(oid, survey_id, db.session))
 
 
 @router.get(
@@ -138,4 +139,6 @@ def lightcurve(
         response["non_detections"] = get_non_detections_by_list(oid, survey_id, db.session)
         response["forced_photometry"] = get_forced_photometry_by_list(oid, survey_id, db.session)
 
+    response["detections"] = json_rows(response["detections"])
+    response["forced_photometry"] = json_rows(response["forced_photometry"])
     return response

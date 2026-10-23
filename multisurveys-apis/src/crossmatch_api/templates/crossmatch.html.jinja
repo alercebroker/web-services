@@ -76,6 +76,9 @@
             {% endfor %}
 
         </table>
+        {% if unavailable %}
+            <p id="crossmatch-unavailable" class="tw-p-2" title="The catsHTM crossmatch service did not answer"> - </p>
+        {% endif %}
     </div>
 
     <div class="tw-flex tw-justify-between tw-w-[95%] tw-mx-auto tw-font-roboto">

@@ -34,12 +34,12 @@ time, in short:
 
 ## The `root_path` / prefix-strip gotcha
 
-The lightcurve app sets `root_path="/lightcurve_api"` (for OpenAPI docs behind the
-proxy), but nginx strips that prefix, so the app receives `/static/...`, `/htmx/...`.
-A Starlette `StaticFiles` **mount** resolves against the accumulated root_path and
-404s on the stripped path — static files are therefore served from an explicit route
-delegating to `StaticFiles.get_response`. Don't revert to `app.mount("/static", ...)`
-while `root_path` is set. Full explanation in [DEPLOYMENT.md](DEPLOYMENT.md).
+Every app sets `root_path="/<api>_api"` (for its `/docs` behind the proxy), but nginx
+strips that prefix, so the app receives `/static/...`, `/htmx/...`. A Starlette
+`StaticFiles` **mount** resolves against the accumulated root_path and 404s on the
+stripped path — static files are therefore served from explicit routes delegating to
+`StaticFiles.get_response` (`mount_static`, and lightcurve's own two). Don't use
+`app.mount(...)` for static files. Full explanation in [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Concurrency: handlers are plain `def`, and each pod caps requests
 
@@ -60,8 +60,8 @@ HTTP call a `timeout=`.
 Templates reference local JS/CSS as `{{ ASSETS_URL }}/static/...` (also `htmx/`, `libraries/`,
 `chart/`, `htmx-static/`), which is `<API_URL>/v/<version>`. Those paths are served with an
 immutable `Cache-Control`, so each release is fetched fresh and cached forever after. Serve new
-static dirs with `mount_static` from [`core/static_files.py`](src/core/static_files.py) (an
-explicit route in lightcurve, because of the `root_path` gotcha above). A test fails if a
+static dirs with `mount_static` from [`core/static_files.py`](src/core/static_files.py) (explicit
+routes, because of the `root_path` gotcha above). A test fails if a
 template links a local asset through `{{ API_URL }}`.
 
 ## Database sessions are AUTOCOMMIT

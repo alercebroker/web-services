@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
-from core.idmapper.idmapper import catalog_oid_to_masterid
+from core.idmapper.idmapper import parse_oid
 from core.static_files import configure_templates
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
@@ -42,13 +42,18 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
     provides the raw data as JSON embedded in the page.
     """
     survey_id = survey_id.lower()
-    catalog_oid_to_masterid(survey_id, oid, validate=True)
+    parse_oid(survey_id, oid)
     result = lightcurve_plot_service.get_lightcurve_data(oid, survey_id, db.session)
 
     config_data = result.config_state.model_dump(exclude={"detections", "non_detections", "forced_photometry"})
 
     detections = result.lightcurve.detections
-    not_corrected = detections[0].flux2magnitude(True, False) == 0 if detections else True
+    # "Total" (science) magnitude is only meaningful for corrected data. The server
+    # decides this once, using the same model check the plot relies on, so the
+    # browser doesn't need the raw photometry fields to make the call. An object is
+    # only "not corrected" when none of its detections are: mixed objects show the
+    # corrected ones.
+    not_corrected = not any(d.has_total() for d in detections)
 
     return templates.TemplateResponse(
         name="layout.html.jinja",
@@ -77,7 +82,7 @@ def periodogram(oid: str, survey_id: str, db: db_dependency):
     Lomb-Scargle computation on every view.
     """
     survey_id = survey_id.lower()
-    catalog_oid_to_masterid(survey_id, oid, validate=True)
+    parse_oid(survey_id, oid)
     pd = get_periodogram_data(oid, survey_id, db.session)
     payload = pd.model_dump()
     try:
@@ -90,6 +95,8 @@ def periodogram(oid: str, survey_id: str, db: db_dependency):
 @router.get("/external_sources", response_class=HTMLResponse)
 def external_sources(request: Request, oid: str, survey_id: str, meanra: float = None, meandec: float = None):
     """Return an HTML picker of nearby ZTF DR objects for the external-sources feature."""
+    if meanra is None or meandec is None:
+        raise ValueError("meanra and meandec are required")  # answered as 400 by the central handler
     config_state = ConfigState(
         oid=oid,
         survey_id=survey_id,
@@ -140,7 +147,7 @@ def download(oid: str, survey_id: str, db: db_dependency):
     id the caller sent.
     """
     survey_id = survey_id.lower()
-    master_id = catalog_oid_to_masterid(survey_id, oid, validate=True).item()
+    master_id = parse_oid(survey_id, oid)
 
     service_result = pipe(
         Result(

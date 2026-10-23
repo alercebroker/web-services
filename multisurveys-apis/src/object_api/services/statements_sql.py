@@ -127,6 +127,8 @@ def probability_filters(args):
     if args["classifier"] is not None:
         classifier = Probability.classifier_id == args["classifier"]
         filters_prob_dict.append(classifier)
+    elif args.get("classifier_ids"):
+        filters_prob_dict.append(Probability.classifier_id.in_(args["classifier_ids"]))
     if args["class_name"] is not None:
         class_ = Probability.class_id == args["class_name"]
         filters_prob_dict.append(class_)
