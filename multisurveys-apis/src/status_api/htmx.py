@@ -33,7 +33,7 @@ def _count(n: int | None) -> str:
     return "–" if n is None else f"{n:,}"
 
 
-@router.get("/htmx/pipeline_status", response_class=HTMLResponse, include_in_schema=False)
+@router.get("/htmx/pipeline_status", response_class=HTMLResponse)
 def pipeline_status_card(
     request: Request,
     window: str = Query(DEFAULT_WINDOW),

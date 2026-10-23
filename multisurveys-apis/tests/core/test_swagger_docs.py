@@ -21,6 +21,7 @@ APIS = [
     ("stamps_api", "/htmx-static/htmx.min.js"),
     ("aladin_api", "/htmx/htmx.min.js"),
     ("features_api", None),
+    ("status_api", "/static/status.css"),
 ]
 
 
