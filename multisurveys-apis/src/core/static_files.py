@@ -12,6 +12,7 @@ The unversioned paths keep working for anything that links them directly.
 
 import os
 
+import jinja2
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -48,6 +49,16 @@ def _static_route(app: FastAPI, prefix: str, files: StaticFiles, name: str):
         return await files.get_response(path, request.scope)
 
     app.add_api_route(f"{prefix}/{{path:path}}", serve, methods=["GET", "HEAD"], name=name, include_in_schema=False)
+
+
+def html_templates(directory: str) -> Jinja2Templates:
+    """Templates in ``directory``, HTML-escaped and reloaded when they change on disk.
+
+    Built from our own Environment because Starlette's default only escapes names ending in ``.html``, and
+    ours end in ``.html.jinja``: without ``autoescape=True`` they would render unescaped.
+    """
+    env = jinja2.Environment(loader=jinja2.FileSystemLoader(directory), autoescape=True, auto_reload=True)
+    return Jinja2Templates(env=env)
 
 
 def configure_templates(templates: Jinja2Templates, default_api_url: str):

@@ -3,22 +3,17 @@ import warnings
 
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
 from core.exceptions import ObjectNotFound
 from core.idmapper.idmapper import parse_oid
 from core.idmapper.survey_mapper import get_survey_id
-from core.static_files import configure_templates
+from core.static_files import configure_templates, html_templates
 
 from ..services.magstats import get_magstats
 from .temporal_utils import mag_parser, parse_lsst_dia_objects_to_dict
 
 router = APIRouter()
-templates = Jinja2Templates(
-    directory=os.path.abspath("src/magstat_api/templates"),
-    autoescape=True,
-    auto_reload=True,
-)
+templates = html_templates(os.path.abspath("src/magstat_api/templates"))
 configure_templates(templates, "http://localhost:8002")
 
 
@@ -58,6 +53,7 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
     mag_keys = list(mag_stats[0].keys())
 
     return templates.TemplateResponse(
+        request=request,
         name="magstatRebuild.html.jinja",
         context={
             "request": request,

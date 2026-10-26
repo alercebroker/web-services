@@ -155,11 +155,14 @@ def test_success_still_works():
 
 
 def test_error_responses_carry_cors_headers():
-    r = _get("/not-found")
-    assert r.headers["access-control-allow-origin"] == "*"
+    # allow_credentials=True: Starlette 1.x echoes the caller's origin instead of "*"
+    origin = "https://explorer.alerce.online"
 
-    r = _get("/timeout-operational")
-    assert r.headers["access-control-allow-origin"] == "*"
+    r = _get("/not-found", origin)
+    assert r.headers["access-control-allow-origin"] == origin
 
-    r = _get("/unexpected")
-    assert r.headers["access-control-allow-origin"] == "*"
+    r = _get("/timeout-operational", origin)
+    assert r.headers["access-control-allow-origin"] == origin
+
+    r = _get("/unexpected", origin)
+    assert r.headers["access-control-allow-origin"] == origin

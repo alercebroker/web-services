@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
-from core.static_files import configure_templates
+from core.static_files import configure_templates, html_templates
 from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
 from probability_api.services.lsst_service import priorities_by_survey
 
@@ -25,7 +24,7 @@ from ..services.validations import (
 
 router = APIRouter()
 
-templates = Jinja2Templates(directory="src/object_api/templates", autoescape=True, auto_reload=True)
+templates = html_templates("src/object_api/templates")
 configure_templates(templates, "http://localhost:8000")
 
 templates.env.filters["truncate"] = truncate_float
@@ -47,6 +46,7 @@ def object_info_app(request: Request, oid: str, survey_id: str):
     ]
 
     return templates.TemplateResponse(
+        request=request,
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
@@ -71,6 +71,7 @@ def tns_info(request: Request, ra: float, dec: float):
     tns_data, tns_link = get_tns(ra, dec)
 
     return templates.TemplateResponse(
+        request=request,
         name="basic_information/oldTnsInformation.html.jinja",
         context={
             "request": request,
@@ -95,6 +96,7 @@ def objects_form(request: Request, survey_id: str = None):
     classifiers = get_tidy_classifiers(session, survey_id)
 
     return templates.TemplateResponse(
+        request=request,
         name="search_form/form.html.jinja",
         context={"request": request, "classifiers": classifiers},
     )
@@ -181,6 +183,7 @@ def objects_table(
         }
 
     return templates.TemplateResponse(
+        request=request,
         name="main_table_objects/objects_table.html.jinja",
         context={
             "request": request,
@@ -273,6 +276,7 @@ def sidebar(
         }
 
     return templates.TemplateResponse(
+        request=request,
         name="astronomical_object_list/astronomical_objects_list.html.jinja",
         context={
             "request": request,

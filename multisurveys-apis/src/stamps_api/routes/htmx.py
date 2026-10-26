@@ -1,10 +1,9 @@
 import base64
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.templating import Jinja2Templates
 
 from core.idmapper.idmapper import parse_oid
-from core.static_files import configure_templates
+from core.static_files import configure_templates, html_templates
 
 from ..models.lightcurve import PostRequestInputModel
 from ..s3_handler import handler_selector
@@ -13,11 +12,7 @@ from ..services.lightcurve_service import get_detections
 
 router = APIRouter()
 
-templates = Jinja2Templates(
-    directory="src/stamps_api/templates",
-    autoescape=True,
-    auto_reload=True,
-)
+templates = html_templates("src/stamps_api/templates")
 configure_templates(templates, "http://localhost:8007")
 
 
@@ -63,6 +58,7 @@ def get_stamp_card(
         }
     )
     return templates.TemplateResponse(
+        request=request,
         name="stamps_layout.html.jinja",
         context=context,
     )
@@ -75,6 +71,7 @@ def avro(request: Request, oid: str, measurement_id: str, survey_id: str):
     avro_json = handler.get_avro(oid, measurement_id)
 
     return templates.TemplateResponse(
+        request=request,
         name="avro/table_data.html.jinja",
         context={
             "request": request,
@@ -113,6 +110,7 @@ def post_stamp_card(request: Request, post_input: PostRequestInputModel):
     )
 
     return templates.TemplateResponse(
+        request=request,
         name="stamps_card.html.jinja",
         context=context,
     )

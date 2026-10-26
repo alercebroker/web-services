@@ -1,10 +1,8 @@
 from fastapi import APIRouter, Request
-from fastapi.templating import Jinja2Templates
 from ..services.crossmatch_service import get_cross_data
 from ..models.object import ObjectInformation
 
 router = APIRouter()
-templates = Jinja2Templates(directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True)
 
 
 @router.get("/")

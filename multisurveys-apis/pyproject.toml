@@ -22,21 +22,21 @@ python = ">=3.11,<3.12"
 sqlalchemy = { extras = ["asyncio"], version = "^2.0.19" }
 returns = "^0.21.0"
 psycopg2-binary = "^2.9.6"
-prometheus-fastapi-instrumentator = "^6.1.0"
+prometheus-fastapi-instrumentator = "^8.1.0"
 jinja2 = "^3.1.2"
-httpx = "^0.24.1"
+httpx = "^0.28.1"
 db-plugins = {git = "https://github.com/alercebroker/pipeline.git", subdirectory = "libs/db-plugins-multisurvey", branch = "multisurvey"}
 djlint = "^1.35.2"
-fastapi = "^0.115.12"
+fastapi = "^0.162.0"
 pydantic-settings = "^2.10.1"
 pyyaml = "^6.0.2"
 polars = "^1.31.0"
-pyarrow = "^20.0.0"
+pyarrow = "^26.0.0"
 pandas = "^2.3.1"
 toolz = "^1.0.0"
 astropy = "^7.1.0"
 faker = "^37.6.0"
-python-multipart = "^0.0.20"
+python-multipart = "^0.0.32"
 P4J = [
     { platform = "linux", url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-linux_x86_64.whl" },
     { platform = "darwin", url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-macosx_14_0_x86_64.whl" },

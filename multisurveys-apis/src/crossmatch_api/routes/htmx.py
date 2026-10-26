@@ -1,13 +1,12 @@
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.templating import Jinja2Templates
-from core.static_files import configure_templates
+from core.static_files import configure_templates, html_templates
 from fastapi.responses import HTMLResponse
 from ..services.crossmatch_service import get_cross_for_frontend
 from ..models.object import ObjectInformation
 
 
 router = APIRouter()
-templates = Jinja2Templates(directory="src/crossmatch_api/templates", autoescape=True, auto_reload=True)
+templates = html_templates("src/crossmatch_api/templates")
 configure_templates(templates, "http://localhost:8005")
 
 
@@ -27,6 +26,7 @@ def object_mag_app(request: Request, oid: str, survey_id: str):
         cross, cross_keys, unavailable = [], [], True
 
     return templates.TemplateResponse(
+        request=request,
         name="crossmatch.html.jinja",
         context={
             "request": request,

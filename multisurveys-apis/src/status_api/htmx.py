@@ -8,14 +8,13 @@ from datetime import datetime
 
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
-from core.static_files import configure_templates
+from core.static_files import configure_templates, html_templates
 
 from .router import _status
 
 router = APIRouter()
-templates = Jinja2Templates(directory="src/status_api/templates", autoescape=True, auto_reload=True)
+templates = html_templates("src/status_api/templates")
 configure_templates(templates, "http://localhost:8008")
 
 # The windows the card offers, all asked for in one request (the API caches the answer for a minute)

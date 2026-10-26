@@ -3,12 +3,11 @@ from datetime import date
 import httpx
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
-from fastapi.templating import Jinja2Templates
 from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
 from core.idmapper.idmapper import parse_oid
-from core.static_files import configure_templates
+from core.static_files import configure_templates, html_templates
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
 from lightcurve_api.services.lightcurve_plot_service import (
@@ -24,11 +23,7 @@ from .parsers import (
 
 router = APIRouter(prefix="/htmx")
 
-templates = Jinja2Templates(
-    directory="src/lightcurve_api/routes/htmx/templates",
-    autoescape=True,
-    auto_reload=True,
-)
+templates = html_templates("src/lightcurve_api/routes/htmx/templates")
 
 configure_templates(templates, "http://localhost:8001")
 
@@ -56,6 +51,7 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
     not_corrected = not any(d.has_total() for d in detections)
 
     return templates.TemplateResponse(
+        request=request,
         name="layout.html.jinja",
         context={
             "request": request,
@@ -111,6 +107,7 @@ def external_sources(request: Request, oid: str, survey_id: str, meanra: float =
         [],
     )
     return templates.TemplateResponse(
+        request=request,
         name="external_sources.html.jinja",
         context={"request": request, "config_state": result.config_state},
     )
