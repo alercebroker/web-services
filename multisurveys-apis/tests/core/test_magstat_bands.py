@@ -63,3 +63,17 @@ def test_card_labels_each_column_by_its_band(client):
     json_bands = [row["band"] for row in client.get("/magstats", params={"oid": TWO_BANDS, "survey_id": "ztf"}).json()]
 
     assert card_columns(response.text) == [{1: "g", 2: "r"}[band] for band in json_bands]
+
+
+@pytest.mark.parametrize("path", ["/magstats", "/htmx/mag"])
+def test_survey_is_case_insensitive(client, path):
+    response = client.get(path, params={"oid": R_ONLY, "survey_id": "ZTF"})
+
+    assert response.status_code == 200
+
+
+@pytest.mark.parametrize("path", ["/magstats", "/htmx/mag"])
+def test_unknown_survey_answers_400(client, path):
+    response = client.get(path, params={"oid": R_ONLY, "survey_id": "atlas"})
+
+    assert response.status_code == 400

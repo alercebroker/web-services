@@ -7,6 +7,7 @@ from fastapi.templating import Jinja2Templates
 
 from core.exceptions import ObjectNotFound
 from core.idmapper.idmapper import parse_oid
+from core.idmapper.survey_mapper import get_survey_id
 from core.static_files import configure_templates
 
 from ..services.magstats import get_magstats
@@ -36,6 +37,8 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
             DeprecationWarning,
         )
 
+    survey_id = survey_id.lower()
+    get_survey_id(survey_id)
     master_id = parse_oid(survey_id, oid)
     mag_stats_raw = get_magstats(master_id, survey_id, session_factory=request.app.state.psql_session)
 
