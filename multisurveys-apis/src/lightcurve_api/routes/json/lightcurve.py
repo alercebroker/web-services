@@ -82,9 +82,9 @@ def non_detections(
     survey_validate(survey_id)
 
     if len(oid) == 1:
-        return get_non_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+        return json_rows(get_non_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
-        return get_non_detections_by_list(oid, survey_id, db.session)
+        return json_rows(get_non_detections_by_list(oid, survey_id, db.session))
 
 
 @router.get(
@@ -140,5 +140,6 @@ def lightcurve(
         response["forced_photometry"] = get_forced_photometry_by_list(oid, survey_id, db.session)
 
     response["detections"] = json_rows(response["detections"])
+    response["non_detections"] = json_rows(response["non_detections"])
     response["forced_photometry"] = json_rows(response["forced_photometry"])
     return response

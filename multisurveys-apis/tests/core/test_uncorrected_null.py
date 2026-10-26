@@ -54,10 +54,24 @@ def test_uncorrected_ztf_detection_is_null_and_corrected_one_keeps_its_value(cli
 
 
 def test_json_rows_nulls_ztf_forced_photometry_and_leaves_lsst_alone():
-    ztf = {"survey_id": "ztf", "mag": 18.0, "mag_corr": 0, "e_mag_corr": 0, "e_mag_corr_ext": 0}
-    lsst = {"survey_id": "lsst", "psfFlux": 0}
+    ztf = {
+        "oid": 36029005864454959,
+        "survey_id": "ztf",
+        "mag": 18.0,
+        "mag_corr": 0,
+        "e_mag_corr": 0,
+        "e_mag_corr_ext": 0,
+    }
+    lsst = {"oid": 170591527609303944, "survey_id": "lsst", "psfFlux": 0}
 
     assert json_rows([ztf, lsst]) == [
-        {"survey_id": "ztf", "mag": 18.0, "mag_corr": None, "e_mag_corr": None, "e_mag_corr_ext": None},
-        {"survey_id": "lsst", "psfFlux": 0},
+        {
+            "oid": "ZTF26aboikah",
+            "survey_id": "ztf",
+            "mag": 18.0,
+            "mag_corr": None,
+            "e_mag_corr": None,
+            "e_mag_corr_ext": None,
+        },
+        {"oid": 170591527609303944, "survey_id": "lsst", "psfFlux": 0},
     ]

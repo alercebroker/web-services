@@ -2,6 +2,8 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query, Request
 
+from core.idmapper.idmapper import decode_ids
+
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_object_by_id, get_objects_list
@@ -78,9 +80,12 @@ def list_objects(
 def get_object(request: Request, oid: str, survey_id: str, return_survey_extra: bool = False):
     session = request.app.state.psql_session
 
-    return get_object_by_id(
+    response = get_object_by_id(
         session_ms=session,
         oid=oid,
         survey_id=survey_id,
         return_survey_extra=return_survey_extra,
     )
+    if survey_id.lower() == "ztf":
+        decode_ids([response])
+    return response
