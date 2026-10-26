@@ -58,7 +58,7 @@ def test_conesearch_objects_invalid_params(client: TestClient):
             400,
         ),
         (
-            lambda x: x["detail"] == "Unsupported catalog: INVALID_SURVEY",
+            lambda x: x["detail"] == "Unsupported survey: invalid_survey",
             400,
         ),
         (lambda x: x["detail"] == "Radius must be greater than 0", 400),

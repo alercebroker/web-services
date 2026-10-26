@@ -1,5 +1,6 @@
 import numpy as np
 
+from .survey_mapper import get_survey_id
 from .ztf import encode_ztf_to_masterid_without_survey, decode_masterid_for_ztf
 
 # Constants
@@ -23,8 +24,8 @@ def parse_oid(survey: str | None, oid: str | int) -> int:
     as ZTF. Raises ValueError for anything else, so routes can answer 400.
     """
     text = str(oid).strip()
-    if survey is not None and survey.upper() not in SURVEY_IDS:
-        raise ValueError(f"Unsupported catalog: {survey.upper()}")
+    if survey is not None:
+        get_survey_id(survey)
     if text.isdigit():
         return int(text)
     if survey is None and text[:3].upper() == "ZTF":

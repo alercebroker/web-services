@@ -41,6 +41,29 @@ def test_parse_oid_rejects_anything_else(survey, oid):
         parse_oid(survey, oid)
 
 
+@pytest.mark.parametrize("survey", ["atlas", "ls4", "maxsurvey", "ATLAS"])
+@pytest.mark.parametrize("oid", [NAME, NUMBER])
+def test_parse_oid_only_takes_the_surveys_the_apis_serve(survey, oid):
+    with pytest.raises(ValueError, match=rf"^Unsupported survey: {survey.lower()}$"):
+        parse_oid(survey, oid)
+
+
+@pytest.mark.parametrize(
+    "api, path, params",
+    [
+        ("object_api", "/object", {"survey_id": "atlas", "oid": NUMBER}),
+        ("crossmatch_api", "/crossmatch", {"survey_id": "ls4", "oid": NUMBER}),
+        ("magstat_api", "/magstats", {"survey_id": "maxsurvey", "oid": NUMBER}),
+        ("probability_api", "/probability", {"survey_id": "atlas", "oid": NUMBER}),
+    ],
+)
+def test_unsupported_survey_is_400(ztf_objects, api, path, params):
+    response = client_for(api, ztf_objects).get(path, params=params)
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == f"Unsupported survey: {params['survey_id']}"
+
+
 @pytest.mark.parametrize("survey", [None, "ztf"])
 @pytest.mark.parametrize("oid", [NAME.lower(), NAME.upper(), "Ztf20aaelulu"])
 def test_a_ztf_name_wrong_only_in_case_is_rejected_with_a_suggestion(survey, oid):
