@@ -162,3 +162,28 @@ def test_magstats_takes_the_numeric_id(ztf_objects):
     response = client_for("magstat_api", ztf_objects).get("/magstats", params={"survey_id": "ztf", "oid": NUMBER})
 
     assert response.status_code == 404
+
+
+@pytest.mark.parametrize("path", ["/htmx/list_objects", "/htmx/side_objects"])
+@pytest.mark.parametrize("oid", [NAME, NUMBER])
+def test_website_search_finds_a_ztf_object_by_name_or_number(ztf_objects, path, oid):
+    response = client_for("object_api", ztf_objects).get(path, params={"survey": "ztf", "oid": oid})
+
+    assert response.status_code == 200
+    assert NAME in response.text
+
+
+@pytest.mark.parametrize("path", ["/htmx/list_objects", "/htmx/side_objects"])
+@pytest.mark.parametrize(
+    "survey, oid, message",
+    [
+        ("ztf", NAME.lower(), f"Invalid ZTF object ID: {NAME.lower()}. Did you mean {NAME}?"),
+        ("ztf", "abc", "Invalid ZTF object ID: abc. Expected ZTF, two digits and seven lowercase letters"),
+        ("lsst", NAME, f"Invalid oid '{NAME}': expected a numeric id."),
+    ],
+)
+def test_website_search_shows_a_bad_oid_under_the_object_ids_box(ztf_objects, path, survey, oid, message):
+    response = client_for("object_api", ztf_objects).get(path, params={"survey": survey, "oid": oid})
+
+    assert response.status_code == 422
+    assert response.json()["detail"]["objectIds"].startswith(message)

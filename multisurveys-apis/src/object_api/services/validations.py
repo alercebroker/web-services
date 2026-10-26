@@ -1,7 +1,8 @@
 import math
-import re
 
 from fastapi import HTTPException
+
+from core.idmapper.idmapper import encode_ids
 
 
 def ndets_validation_front(n_det_min: int, n_det_max: int):
@@ -79,15 +80,11 @@ def radius_validation(radius):
 
 
 def oids_format_validation(oids, survey):
-    if oids is not None and survey == "ztf":
-        pattern = re.compile(r"(ZTF)\d{2,}\w+|[Ss]upernova")
-
-        for oid in oids:
-            if not pattern.search(oid):
-                raise HTTPException(
-                    status_code=422,
-                    detail={"objectIds": "Oid format is: /(ZTF)d{2,}w+/"},
-                )
+    if oids is not None:
+        try:
+            encode_ids(survey, oids)
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail={"objectIds": str(e)})
 
 
 def oid_lenght_validation(oids):
