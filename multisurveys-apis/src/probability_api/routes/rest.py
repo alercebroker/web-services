@@ -24,12 +24,10 @@ def probability(
     classifiers_list = get_classifiers(session_factory=request.app.state.psql_session)
 
     if classifier:
-        for key, value in classifiers_list.items():
-            if value == classifier:
-                classifiers_list = {key: value}
-                break
-        if len(classifiers_list) != 1:
-            raise HTTPException(status_code=404, detail="Classifier not found")
+        key = next((key for key, value in classifiers_list.items() if value == classifier), None)
+        if key is None:
+            raise HTTPException(status_code=404, detail=f"Classifier '{classifier}' not found")
+        classifiers_list = {key: classifier}
 
     probability = get_probability(master_id, classifiers_list, session_factory=request.app.state.psql_session)
 
