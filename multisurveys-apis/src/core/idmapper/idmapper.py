@@ -11,6 +11,7 @@ SURVEY_IDS = {
     "LS4": 4,
 }
 SURVEY_PREFIX_LEN_BITS = 8
+MAX_OID = 2**63 - 1
 SURVEY_IDS["MAXSURVEY"] = 2**SURVEY_PREFIX_LEN_BITS - 1
 
 REVERSE_SURVEY_IDS = dict((zip(SURVEY_IDS.values(), SURVEY_IDS.keys())))
@@ -27,6 +28,8 @@ def parse_oid(survey: str | None, oid: str | int) -> int:
     if survey is not None:
         get_survey_id(survey)
     if text.isdigit():
+        if int(text) > MAX_OID:
+            raise ValueError(f"Invalid oid '{text}': too large, numeric ids go up to {MAX_OID}.")
         return int(text)
     if survey is None and text[:3].upper() == "ZTF":
         survey = "ztf"

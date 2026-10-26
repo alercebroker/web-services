@@ -41,6 +41,34 @@ def test_parse_oid_rejects_anything_else(survey, oid):
         parse_oid(survey, oid)
 
 
+@pytest.mark.parametrize("survey", ["ztf", "lsst", None])
+def test_parse_oid_takes_the_largest_64_bit_id(survey):
+    assert parse_oid(survey, str(2**63 - 1)) == 2**63 - 1
+
+
+@pytest.mark.parametrize("survey", ["ztf", "lsst", None])
+@pytest.mark.parametrize("oid", [str(2**63), "99999999999999999999"])
+def test_parse_oid_rejects_an_id_too_large_for_64_bits(survey, oid):
+    with pytest.raises(ValueError, match=rf"^Invalid oid '{oid}': too large"):
+        parse_oid(survey, oid)
+
+
+@pytest.mark.parametrize(
+    "api, path, params",
+    [
+        ("object_api", "/object", {"survey_id": "ztf", "oid": str(2**63)}),
+        ("object_api", "/list_objects", {"survey": "ztf", "oid": [str(2**63)]}),
+        ("lightcurve_api", "/detections", {"survey_id": "lsst", "oid": [str(2**63)]}),
+        ("probability_api", "/probability", {"oid": str(2**63)}),
+    ],
+)
+def test_id_too_large_for_64_bits_is_400(ztf_objects, api, path, params):
+    response = client_for(api, ztf_objects).get(path, params=params)
+
+    assert response.status_code == 400
+    assert "too large" in response.json()["detail"]
+
+
 @pytest.mark.parametrize("survey", ["atlas", "ls4", "maxsurvey", "ATLAS"])
 @pytest.mark.parametrize("oid", [NAME, NUMBER])
 def test_parse_oid_only_takes_the_surveys_the_apis_serve(survey, oid):
@@ -203,6 +231,7 @@ def test_website_search_finds_a_ztf_object_by_name_or_number(ztf_objects, path, 
         ("ztf", NAME.lower(), f"Invalid ZTF object ID: {NAME.lower()}. Did you mean {NAME}?"),
         ("ztf", "abc", "Invalid ZTF object ID: abc. Expected ZTF, two digits and seven lowercase letters"),
         ("lsst", NAME, f"Invalid oid '{NAME}': expected a numeric id."),
+        ("ztf", str(2**63), f"Invalid oid '{2**63}': too large"),
     ],
 )
 def test_website_search_shows_a_bad_oid_under_the_object_ids_box(ztf_objects, path, survey, oid, message):
