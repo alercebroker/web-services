@@ -5,9 +5,9 @@ from fastapi import APIRouter, Query
 from core.config.dependencies import db_dependency
 from core.idmapper import idmapper
 
-from ...models.lightcurve import Lightcurve
 from ...models.object import ApiObject
 from ...services.conesearch import conesearch as service
+from .missing_values import json_rows
 
 router = APIRouter(prefix="/conesearch")
 
@@ -71,5 +71,6 @@ def conesearch_oid_lightcurve(
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,
-) -> Lightcurve:
-    return service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)
+):
+    lightcurve = service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)
+    return {key: json_rows(getattr(lightcurve, key)) for key in ("detections", "non_detections", "forced_photometry")}

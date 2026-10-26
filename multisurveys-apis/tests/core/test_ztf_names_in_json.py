@@ -97,3 +97,16 @@ def test_full_lightcurve_answers_the_ztf_name(ztf_object, oid):
     for key in ("detections", "non_detections", "forced_photometry"):
         assert response.json()[key]
         assert {row["oid"] for row in response.json()[key]} == {NAME}
+
+
+def test_conesearch_lightcurve_rows_keep_all_their_fields(ztf_object):
+    response = client_for("lightcurve_api", ztf_object).get(
+        "/conesearch/lightcurve_by_oid", params={"oid": NAME, "survey": "ztf", "radius": 30, "neighbors": 1}
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    for key, field in (("detections", "magpsf"), ("non_detections", "diffmaglim"), ("forced_photometry", "mag")):
+        assert body[key]
+        assert {row["oid"] for row in body[key]} == {NAME}
+        assert field in body[key][0]
