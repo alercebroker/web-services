@@ -41,3 +41,20 @@ def test_website_search_unknown_classifier_is_400(client, path):
     response = client.get(path, params={"survey": "ztf", "classifier": "foo"})
 
     assert response.status_code == 400
+
+
+@pytest.mark.parametrize("path", ["/list_objects", "/htmx/list_objects", "/htmx/side_objects"])
+@pytest.mark.parametrize(
+    "params, message",
+    [
+        ({"page": 0}, "page must be 1 or greater."),
+        ({"page": -1}, "page must be 1 or greater."),
+        ({"page_size": 0}, "page_size must be 1 or greater."),
+        ({"page_size": -5}, "page_size must be 1 or greater."),
+    ],
+)
+def test_page_and_page_size_below_1_are_400(client, path, params, message):
+    response = client.get(path, params={"survey": "ztf", **params})
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == message
