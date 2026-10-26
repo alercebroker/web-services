@@ -77,3 +77,11 @@ def test_unknown_survey_answers_400(client, path):
     response = client.get(path, params={"oid": R_ONLY, "survey_id": "atlas"})
 
     assert response.status_code == 400
+
+
+def test_step_id_corr_is_not_listed(client):
+    rows = client.get("/magstats", params={"oid": TWO_BANDS, "survey_id": "ztf"}).json()
+    card = client.get("/htmx/mag", params={"oid": TWO_BANDS, "survey_id": "ztf"}).text
+
+    assert all("step_id_corr" not in row for row in rows)
+    assert 'id="row-step_id_corr"' not in card
