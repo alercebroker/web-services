@@ -27,7 +27,7 @@ def parse_oid(survey: str | None, oid: str | int) -> int:
         raise ValueError(f"Unsupported catalog: {survey.upper()}")
     if text.isdigit():
         return int(text)
-    if survey is None and text.startswith("ZTF"):
+    if survey is None and text[:3].upper() == "ZTF":
         survey = "ztf"
     if survey is not None and survey.upper() == "ZTF":
         # Raises "Invalid ZTF object ID: ..." for anything that isn't a ZTF name

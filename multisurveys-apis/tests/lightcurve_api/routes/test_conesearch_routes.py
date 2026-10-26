@@ -54,7 +54,7 @@ def test_conesearch_objects_invalid_params(client: TestClient):
     ]
     expected = [
         (
-            lambda x: x["detail"] == "Invalid ZTF object ID: invalid_object",
+            lambda x: x["detail"].startswith("Invalid ZTF object ID: invalid_object."),
             400,
         ),
         (

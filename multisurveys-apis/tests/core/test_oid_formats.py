@@ -41,6 +41,19 @@ def test_parse_oid_rejects_anything_else(survey, oid):
         parse_oid(survey, oid)
 
 
+@pytest.mark.parametrize("survey", [None, "ztf"])
+@pytest.mark.parametrize("oid", [NAME.lower(), NAME.upper(), "Ztf20aaelulu"])
+def test_a_ztf_name_wrong_only_in_case_is_rejected_with_a_suggestion(survey, oid):
+    with pytest.raises(ValueError, match=rf"^Invalid ZTF object ID: {oid}\. Did you mean {NAME}\?$"):
+        parse_oid(survey, oid)
+
+
+@pytest.mark.parametrize("survey, oid", [(None, "ztf20aaelul"), ("ztf", "ZTF2aaaelulu"), ("ztf", "ZTF20aaelul1")])
+def test_a_ztf_name_wrong_in_other_ways_gets_the_format(survey, oid):
+    with pytest.raises(ValueError, match=r"Expected ZTF, two digits and seven lowercase letters, for example"):
+        parse_oid(survey, oid)
+
+
 @pytest.fixture
 def ztf_objects(db):
     objects = [
@@ -120,6 +133,13 @@ def test_probability(ztf_objects, params):
 
     assert response.status_code == 200
     assert len(response.json()) == 1
+
+
+def test_probability_suggests_the_right_spelling_for_a_lowercase_ztf_name(ztf_objects):
+    response = client_for("probability_api", ztf_objects).get("/probability", params={"oid": NAME.lower()})
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == f"Invalid ZTF object ID: {NAME.lower()}. Did you mean {NAME}?"
 
 
 @pytest.mark.parametrize(
