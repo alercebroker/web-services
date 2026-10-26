@@ -33,7 +33,12 @@ def healthcheck():
 )
 def features(
     request: Request,
-    oid: Annotated[str, Query(description="Object id: a ZTF name (ZTF…) or a numeric id.", examples=["ZTF18aarwvbm"])],
+    oid: Annotated[
+        str,
+        Query(
+            description="Object id: a ZTF name (e.g. ZTF18aarwvbm) or an LSST diaObjectId.", examples=["ZTF18aarwvbm"]
+        ),
+    ],
     survey_id: Annotated[str, Query(description="Survey the object belongs to: `ztf` or `lsst`.", examples=["ztf"])],
     name: Annotated[str | None, Query(description="Only this feature (its name).")] = None,
     band: Annotated[int | None, Query(description="Only this band (for ZTF: 1=g, 2=r, 3=i).")] = None,
