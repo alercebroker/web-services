@@ -36,6 +36,8 @@ def parse_oid(survey: str | None, oid: str | int) -> int:
     if survey is not None and survey.upper() == "ZTF":
         # Raises "Invalid ZTF object ID: ..." for anything that isn't a ZTF name
         return int(catalog_oid_to_masterid("ZTF", text, validate=True))
+    if text[:3].upper() == "ZTF":
+        raise ValueError(f"Invalid oid '{text}': it looks like a ZTF name, but LSST ids are numeric.")
     raise ValueError(f"Invalid oid '{text}': expected a numeric id.")
 
 

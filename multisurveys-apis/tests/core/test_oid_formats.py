@@ -230,7 +230,8 @@ def test_website_search_finds_a_ztf_object_by_name_or_number(ztf_objects, path, 
     [
         ("ztf", NAME.lower(), f"Invalid ZTF object ID: {NAME.lower()}. Did you mean {NAME}?"),
         ("ztf", "abc", "Invalid ZTF object ID: abc. Expected ZTF, two digits and seven lowercase letters"),
-        ("lsst", NAME, f"Invalid oid '{NAME}': expected a numeric id."),
+        ("lsst", NAME, f"Invalid oid '{NAME}': it looks like a ZTF name, but LSST ids are numeric."),
+        ("lsst", "abc", "Invalid oid 'abc': expected a numeric id."),
         ("ztf", str(2**63), f"Invalid oid '{2**63}': too large"),
     ],
 )
