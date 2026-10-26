@@ -36,8 +36,9 @@
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
 
   <!-- External sources -->
-  <div class="tw-flex tw-items-center tw-gap-x-2">
+  <div class="tw-flex tw-flex-wrap tw-items-center tw-gap-2">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">External</span>
+    <div class="tw-flex tw-flex-wrap tw-items-center tw-gap-2">
     {{ toggle.toggle("external_sources.enabled", "Off", "On", config.external_sources.enabled, "Show light curves from available external sets: ZTF Data Release 24.") }}
     <button
       type="button"
@@ -53,6 +54,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
       </svg>
     </button>
+    </div>
   </div>
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
