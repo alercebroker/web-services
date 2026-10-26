@@ -2,6 +2,7 @@ import logging
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 
 from core.exceptions import DatabaseError, ObjectNotFound
 
@@ -24,6 +25,12 @@ def add_error_handlers(app: FastAPI):
 
     @app.exception_handler(Exception)
     def handle_unexpected(request: Request, exc: Exception):
+        original = exc.__context__ if type(exc) is Exception else None
+        if isinstance(original, ObjectNotFound):
+            return handle_object_not_found(request, original)
+        if isinstance(original, ValueError) and not isinstance(original, ValidationError):
+            return handle_value_error(request, original)
+
         msg = str(exc)
         # db-plugins wraps OperationalError in a bare Exception
         if "canceling statement" in msg or "statement timeout" in msg:

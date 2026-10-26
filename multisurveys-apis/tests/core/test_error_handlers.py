@@ -3,6 +3,7 @@ import asyncio
 import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import ValidationError
 
 from core.error_handlers import add_error_handlers
 from core.exceptions import DatabaseError, ObjectNotFound
@@ -39,6 +40,24 @@ def make_app() -> CORSMiddleware:
     @app.get("/unexpected")
     def unexpected():
         raise RuntimeError("something broke")
+
+    def raised_in_session(error):
+        try:
+            raise error
+        except Exception as e:
+            raise Exception(e)  # noqa: TRY002
+
+    @app.get("/session-not-found")
+    def session_not_found():
+        raised_in_session(ObjectNotFound("ZTF00abc"))
+
+    @app.get("/session-bad-value")
+    def session_bad_value():
+        raised_in_session(ValueError("Unsupported survey: atlas"))
+
+    @app.get("/session-validation-error")
+    def session_validation_error():
+        raised_in_session(ValidationError.from_exception_data("Model", []))
 
     return CORSMiddleware(app, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
@@ -86,6 +105,24 @@ def test_timeout_from_wrapped_exception_returns_504():
 
 def test_unexpected_error_returns_500():
     r = _get("/unexpected")
+    assert r.status_code == 500
+    assert r.json() == {"detail": "Internal server error"}
+
+
+def test_object_not_found_inside_a_db_session_returns_404():
+    r = _get("/session-not-found")
+    assert r.status_code == 404
+    assert r.json() == {"detail": "Object ZTF00abc not found on the database"}
+
+
+def test_value_error_inside_a_db_session_returns_400():
+    r = _get("/session-bad-value")
+    assert r.status_code == 400
+    assert r.json() == {"detail": "Unsupported survey: atlas"}
+
+
+def test_validation_error_inside_a_db_session_stays_500():
+    r = _get("/session-validation-error")
     assert r.status_code == 500
     assert r.json() == {"detail": "Internal server error"}
 
