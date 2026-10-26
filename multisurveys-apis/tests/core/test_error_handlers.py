@@ -3,7 +3,7 @@ import asyncio
 import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import ValidationError
+from pydantic import BaseModel, ValidationError
 
 from core.error_handlers import add_error_handlers
 from core.exceptions import DatabaseError, ObjectNotFound
@@ -58,6 +58,17 @@ def make_app() -> CORSMiddleware:
     @app.get("/session-validation-error")
     def session_validation_error():
         raised_in_session(ValidationError.from_exception_data("Model", []))
+
+    class Row(BaseModel):
+        stellar: bool
+
+    @app.get("/bad-row")
+    def bad_row():
+        return Row(stellar=None)
+
+    @app.get("/typed")
+    def typed(n: int):
+        return n
 
     return CORSMiddleware(app, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
@@ -125,6 +136,17 @@ def test_validation_error_inside_a_db_session_stays_500():
     r = _get("/session-validation-error")
     assert r.status_code == 500
     assert r.json() == {"detail": "Internal server error"}
+
+
+def test_validation_error_in_our_own_models_returns_500():
+    r = _get("/bad-row")
+    assert r.status_code == 500
+    assert r.json() == {"detail": "Internal server error"}
+
+
+def test_bad_request_parameter_still_returns_422():
+    r = _get("/typed?n=abc")
+    assert r.status_code == 422
 
 
 def test_success_still_works():

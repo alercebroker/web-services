@@ -23,6 +23,11 @@ def add_error_handlers(app: FastAPI):
     def handle_value_error(request: Request, exc: ValueError):
         return JSONResponse(status_code=400, content={"detail": str(exc)})
 
+    @app.exception_handler(ValidationError)
+    def handle_validation_error(request: Request, exc: ValidationError):
+        logger.error("Response model validation failed on %s %s: %s", request.method, request.url.path, exc)
+        return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
     @app.exception_handler(Exception)
     def handle_unexpected(request: Request, exc: Exception):
         original = exc.__context__ if type(exc) is Exception else None
