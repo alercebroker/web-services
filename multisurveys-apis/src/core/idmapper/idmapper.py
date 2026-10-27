@@ -27,7 +27,7 @@ def parse_oid(survey: str | None, oid: str | int) -> int:
     text = str(oid).strip()
     if survey is not None:
         get_survey_id(survey)
-    if text.isdigit():
+    if text.isascii() and text.isdigit():
         if int(text) > MAX_OID:
             raise ValueError(f"Invalid oid '{text}': too large, numeric ids go up to {MAX_OID}.")
         return int(text)

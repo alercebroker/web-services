@@ -34,7 +34,17 @@ def test_parse_oid_accepts_both_formats(survey, oid, expected):
 
 @pytest.mark.parametrize(
     "survey, oid",
-    [("ztf", "ZTF20AAELULU"), ("ztf", "abc"), ("lsst", NAME), ("lsst", "abc"), ("foo", NUMBER), (None, "abc")],
+    [
+        ("ztf", "ZTF20AAELULU"),
+        ("ztf", "abc"),
+        ("lsst", NAME),
+        ("lsst", "abc"),
+        ("foo", NUMBER),
+        (None, "abc"),
+        ("lsst", "\u0661\u0662\u0663"),
+        ("lsst", "\u00b2"),
+        (None, "\u00b2"),
+    ],
 )
 def test_parse_oid_rejects_anything_else(survey, oid):
     with pytest.raises(ValueError):
