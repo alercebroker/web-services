@@ -182,7 +182,9 @@ def _entry(key: str) -> _Entry:
     with _entries_lock:
         if key not in _entries:
             if len(_entries) >= MAX_CACHE_ENTRIES:
-                oldest = min((k for k in _entries if k != "snapshot"), key=lambda k: _entries[k].at, default=None)
+                # Not one being fetched right now: its result would land in an entry no longer in the cache
+                evictable = (k for k, e in _entries.items() if k != "snapshot" and not e.lock.locked())
+                oldest = min(evictable, key=lambda k: _entries[k].at, default=None)
                 _entries.pop(oldest, None)
             _entries[key] = _Entry()
         return _entries[key]

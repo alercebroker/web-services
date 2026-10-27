@@ -405,3 +405,15 @@ def test_cache_size_is_bounded(monkeypatch):
         service.get_status([f"{minutes}m"])
     assert len(service._entries) <= service.MAX_CACHE_ENTRIES
     assert "snapshot" in service._entries
+
+
+def test_an_entry_being_fetched_is_not_evicted(monkeypatch):
+    fake_prometheus(monkeypatch)
+    fetching = service._entry("since:60")
+    assert fetching.lock.acquire(blocking=False)  # a request is fetching it, so it has no value yet (at=0)
+    try:
+        for minutes in range(2, service.MAX_CACHE_ENTRIES + 20):
+            service.get_status([f"{minutes}m"])
+        assert service._entries.get("since:60") is fetching
+    finally:
+        fetching.lock.release()
