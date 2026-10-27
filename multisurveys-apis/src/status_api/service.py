@@ -204,8 +204,10 @@ def _cached(key: str, fetch) -> tuple[object, float]:
         first = entry.value is None
         if entry.lock.acquire(blocking=first, timeout=settings.TIMEOUT_SECONDS * 2 if first else -1):
             try:
-                # Another request may have refreshed it while this one waited.
-                if entry.value is None or time.time() - entry.at >= settings.CACHE_SECONDS:
+                # Another request may have refreshed it, or failed to, while this one waited.
+                stale = entry.value is None or time.time() - entry.at >= settings.CACHE_SECONDS
+                failed_recently = time.time() - entry.failed_at < settings.RETRY_AFTER_FAILURE_SECONDS
+                if stale and not failed_recently:
                     entry.value, entry.at = fetch(), time.time()
             except Exception:
                 entry.failed_at = time.time()

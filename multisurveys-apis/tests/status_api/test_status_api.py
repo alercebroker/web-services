@@ -1,3 +1,6 @@
+import threading
+import time
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -362,6 +365,29 @@ def test_failures_are_not_retried_on_every_request(monkeypatch):
         with pytest.raises(service.StatusUnavailable):
             service.get_status([])
     assert calls["snapshot"] == 1
+
+
+def test_requests_queued_behind_a_failed_fetch_dont_fetch_again(monkeypatch):
+    def slow_fail():
+        time.sleep(0.2)
+        raise RuntimeError("down")
+
+    calls = fake_prometheus(monkeypatch, snapshot=slow_fail)
+    errors = []
+
+    def request():
+        try:
+            service.get_status([])
+        except service.StatusUnavailable as e:
+            errors.append(e)
+
+    threads = [threading.Thread(target=request) for _ in range(5)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    assert calls["snapshot"] == 1
+    assert len(errors) == 5
 
 
 def test_old_answer_is_dropped_after_max_stale(monkeypatch):
