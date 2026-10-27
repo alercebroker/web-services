@@ -22,7 +22,7 @@ def stamp(
     is_compressed: bool = True,
 ):
     handler = handler_selector(survey_id)()
-    # Checked before the download: an invalid value used to fail with 500 after fetching the alert from S3
+    # Validate before the S3 download, so bad input fails fast
     if stamp_type not in handler.valid_stamp_types:
         raise HTTPException(
             status_code=400,

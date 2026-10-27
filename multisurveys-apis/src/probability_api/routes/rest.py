@@ -19,7 +19,7 @@ def probability(
     classifier: str | None = None,
     survey_id: str | None = None,
 ):
-    master_id = parse_oid(survey_id, oid)  # a bad oid is a ValueError: 400 from the central handler
+    master_id = parse_oid(survey_id, oid)
 
     classifiers_list = get_classifiers(session_factory=request.app.state.psql_session)
 

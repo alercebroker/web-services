@@ -1,5 +1,5 @@
-"""ZTF points without a corrected magnitude answer null in the JSON, not 0 (P1-4, its JSON half), and ZTF rows
-carry the ZTF name as oid, not the internal numeric id (P3-7b).
+"""ZTF points without a corrected magnitude answer null in the JSON, not 0, and ZTF rows carry the ZTF name
+as oid, not the internal numeric id.
 
 The models turn the NULL ``*_corr`` columns into 0 (``set_defaults``), and the lightcurve plot relies on that
 0 to tell corrected points from uncorrected ones. So the 0 stays inside the models and becomes null only here,

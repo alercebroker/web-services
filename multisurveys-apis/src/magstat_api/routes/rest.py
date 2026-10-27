@@ -24,7 +24,7 @@ def magstats(request: Request, oid: str, survey_id: str):
     if survey_id == "ztf":
         magstats = mag_parser(mag_stats_raw)
         for d in magstats:
-            d["band"] = d.pop("fid")  # each row says its band (1=g, 2=r, 3=i); it used to be dropped
+            d["band"] = d.pop("fid")  # each row says its band (1=g, 2=r, 3=i)
     elif survey_id == "lsst":
         magstats = parse_lsst_dia_objects_to_dict(mag_stats_raw)
         if magstats:
