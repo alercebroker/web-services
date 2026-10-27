@@ -8,14 +8,27 @@ data:
     server {
       listen 80;
 
+      # Load balancer health check, answered here so it never waits in line behind slow searches in the
+      # app's workers. Whether the app itself is healthy is the job of the probes on port 5001.
+      location = /healthz {
+        default_type text/plain;
+        return 200 'ok';
+      }
+
+      # The app has no metrics page; refuse scrapes here instead of letting each one take a worker.
+      location = /metrics {
+        return 404;
+      }
+
+      # 127.0.0.1 rather than localhost, which nginx also tries over IPv6, where nothing listens.
       location {{ .Values.nginx.pathPrefix }} {
-        proxy_pass http://localhost:5001/;
+        proxy_pass http://127.0.0.1:5001/;
         proxy_redirect off;
         proxy_set_header X-Forwarded-Prefix {{ .Values.nginx.pathPrefix }};
       }
 
       location / {
-        proxy_pass http://localhost:5001/;
+        proxy_pass http://127.0.0.1:5001/;
         proxy_redirect off;
       }
     }

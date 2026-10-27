@@ -38,8 +38,13 @@ nginx:
   image: nginx
   pathPrefix: /catshtm/v1
   tag: 1.31.1-alpine
-podAnnotations:
-  prometheus.io/scrape: 'true'
+# No prometheus.io/scrape here: the app has no metrics page, so scraping it only produced 404s.
+podAnnotations: {}
+# Health probes for the app container. Point them at the app's own port, 5001: nginx on port 80 answers
+# on its own, so a probe there passes even when the app is down. Empty {} = no probe.
+startupProbe: {}
+livenessProbe: {}
+readinessProbe: {}
 replicaCount: 1
 resources: {}
 # Deployment strategy type. Leave empty for the Kubernetes default (RollingUpdate). Set "Recreate" when the
