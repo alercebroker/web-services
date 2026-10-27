@@ -16,14 +16,14 @@ def object_mag_app(request: Request, oid: str, survey_id: str):
 
     object_details = ObjectInformation(oid=oid, survey=survey_id)
 
-    unavailable = False
+    available = True
     try:
         cross, cross_keys = get_cross_for_frontend(object_details, session)
     except HTTPException as error:
         if error.status_code not in (502, 504):
             raise
         # catsHTM is down or slow: show the card with "-" instead of failing the whole card
-        cross, cross_keys, unavailable = [], [], True
+        cross, cross_keys, available = [], [], False
 
     return templates.TemplateResponse(
         request=request,
@@ -32,6 +32,6 @@ def object_mag_app(request: Request, oid: str, survey_id: str):
             "request": request,
             "cross": cross,
             "crossKeys": cross_keys,
-            "unavailable": unavailable,
+            "available": available,
         },
     )

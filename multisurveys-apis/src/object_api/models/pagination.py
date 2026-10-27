@@ -18,7 +18,7 @@ class Pagination:
 
     """
 
-    def __init__(self, page, per_page, items, total=None):
+    def __init__(self, page, per_page, items, total: int | None = None):
         """Set attributes from args.
 
         total_items is the number of rows fetched (the page plus one look-ahead row), used for
@@ -60,8 +60,7 @@ class Pagination:
     @property
     def items_page(self):
         """
-        Return the number of items in the page size
-        if exists a next page, then return 10 items of the 11.
+        The items of this page: the rows fetched without the look-ahead row, when there is a next page.
         """
         if self.has_next:
             return self.items[:-1]
