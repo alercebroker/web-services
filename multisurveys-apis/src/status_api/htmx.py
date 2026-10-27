@@ -25,8 +25,13 @@ DEFAULT_WINDOW = "12h"
 COLORS = {"up_to_date": "#00e676", "processing": "#ffc107", "no_data": "#9e9e9e", "unknown": "#616161"}
 
 
-def _time(iso: str | None) -> str | None:
-    return datetime.fromisoformat(iso).strftime("%H:%M UTC") if iso else None
+def _time(iso: str | None, today: str) -> str | None:
+    """'14:05 UTC' if it was on the same UTC day as `today`, else '2026-10-25 14:05 UTC'."""
+    if not iso:
+        return None
+    when = datetime.fromisoformat(iso)
+    same_day = when.date() == datetime.fromisoformat(today).date()
+    return when.strftime("%H:%M UTC" if same_day else "%Y-%m-%d %H:%M UTC")
 
 
 def _count(n: int | None) -> str:
@@ -63,7 +68,7 @@ def pipeline_status_card(
                 {
                     **p,
                     "color": COLORS.get(p["status"], COLORS["unknown"]),
-                    "last_alert": _time(p["last_alert_received_at"]),
+                    "last_alert": _time(p["last_alert_received_at"], status["updated_at"]),
                     "received": _count(p["activity"][window]["alerts_received"]),
                     "processed": _count(p["activity"][window]["alerts_processed"]),
                 }

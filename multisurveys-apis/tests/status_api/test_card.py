@@ -86,3 +86,20 @@ def test_card_says_when_the_status_is_unavailable(monkeypatch):
     assert 'hx-trigger="every 60s"' in response.text  # keeps trying, and recovers by itself
     assert "window=3h" in response.text
     assert "Prometheus is down" not in response.text
+
+
+@pytest.mark.parametrize(
+    "last_alert, expected",
+    [
+        ("2026-10-27T14:05:00+00:00", "14:05 UTC"),
+        ("2026-10-25T14:05:00+00:00", "2026-10-25 14:05 UTC"),
+        (None, None),
+    ],
+)
+def test_last_alert_has_its_date_when_it_was_not_today(last_alert, expected):
+    assert htmx._time(last_alert, "2026-10-27T20:00:00+00:00") == expected
+
+
+def test_no_data_card_shows_the_date_of_the_last_alert(fake):
+    html = card("?scenario=no_data").text
+    assert re.search(r"Last alert received at \d{4}-\d{2}-\d{2} \d{2}:\d{2} UTC", html)
