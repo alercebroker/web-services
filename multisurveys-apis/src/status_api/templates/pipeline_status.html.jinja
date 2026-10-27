@@ -17,6 +17,11 @@
                 hx-get="{{ card_url }}" hx-target="#pipeline-status-app" hx-select="#pipeline-status-app" hx-swap="outerHTML">&#x21bb;</button>
     </div>
 
+    {% if unavailable %}
+    <div class="tw-text-xs tw-text-gray-600 dark:tw-text-gray-400" id="pipeline-status-unavailable">
+        The pipeline status is temporarily unavailable. This card tries again every minute.
+    </div>
+    {% else %}
     {% for p in pipelines %}
     <div class="tw-flex tw-mb-2" id="pipeline-{{ p.survey }}">
         <span class="tw-inline-block tw-w-3 tw-h-3 tw-rounded-full tw-shrink-0 tw-mr-3 tw-mt-1" style="background: {{ p.color }}"></span>
@@ -56,4 +61,5 @@
         Windows longer than the metrics history are disabled. Updated {{ updated }}.
         {% if simulated %}<strong>Simulated data.</strong>{% endif %}
     </div>
+    {% endif %}
 </div>

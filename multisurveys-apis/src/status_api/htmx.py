@@ -6,12 +6,13 @@ itself (every minute, or with its buttons) by asking this route again.
 
 from datetime import datetime
 
-from fastapi import APIRouter, Query, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse
 
 from core.static_files import configure_templates, html_templates
 
-from .router import Scenario, _status
+from . import service, settings
+from .router import Scenario
 
 router = APIRouter()
 templates = html_templates("src/status_api/templates")
@@ -38,7 +39,17 @@ def pipeline_status_card(
     window: str = Query(DEFAULT_WINDOW),
     scenario: Scenario | None = Query(None, include_in_schema=False),
 ):
-    status = _status(",".join(WINDOWS), scenario)  # 503 when not configured or Prometheus fails
+    if not settings.enabled():
+        raise HTTPException(status_code=503, detail="The status API is not configured")
+    try:
+        status = service.get_status(WINDOWS, scenario if settings.SOURCE == "fake" else None)
+    except service.StatusUnavailable:
+        # A card saying so, not an error: htmx doesn't swap error answers, so the card would stay empty or stale
+        return templates.TemplateResponse(
+            request,
+            "pipeline_status.html.jinja",
+            {"unavailable": True, "window": window, "scenario": scenario},
+        )
     pipelines = status["pipelines"]
     available = [w for w in WINDOWS if any(p["activity"][w]["alerts_received"] is not None for p in pipelines)]
     if window not in available:

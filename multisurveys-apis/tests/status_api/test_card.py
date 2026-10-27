@@ -6,7 +6,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from status_api import htmx, metrics, settings
+from status_api import htmx, metrics, service, settings
 
 
 def card(params=""):
@@ -68,3 +68,21 @@ def test_card_answers_503_when_not_configured(monkeypatch):
     monkeypatch.setattr(settings, "SOURCE", "")
 
     assert card().status_code == 503
+
+
+def test_card_says_when_the_status_is_unavailable(monkeypatch):
+    monkeypatch.setattr(settings, "SOURCE", "prometheus")
+
+    def down():
+        raise RuntimeError("Prometheus is down")
+
+    monkeypatch.setattr(metrics, "snapshot_from_prometheus", down)
+    monkeypatch.setattr("status_api.service.logger.exception", lambda *a, **k: None)
+    service.clear_cache()  # nothing cached from other tests to fall back on
+    response = card("?window=3h")
+
+    assert response.status_code == 200
+    assert "temporarily unavailable" in response.text
+    assert 'hx-trigger="every 60s"' in response.text  # keeps trying, and recovers by itself
+    assert "window=3h" in response.text
+    assert "Prometheus is down" not in response.text
