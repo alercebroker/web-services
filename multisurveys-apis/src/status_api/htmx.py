@@ -11,7 +11,7 @@ from fastapi.responses import HTMLResponse
 
 from core.static_files import configure_templates, html_templates
 
-from .router import _status
+from .router import Scenario, _status
 
 router = APIRouter()
 templates = html_templates("src/status_api/templates")
@@ -36,7 +36,7 @@ def _count(n: int | None) -> str:
 def pipeline_status_card(
     request: Request,
     window: str = Query(DEFAULT_WINDOW),
-    scenario: str | None = Query(None),
+    scenario: Scenario | None = Query(None, include_in_schema=False),
 ):
     status = _status(",".join(WINDOWS), scenario)  # 503 when not configured or Prometheus fails
     pipelines = status["pipelines"]

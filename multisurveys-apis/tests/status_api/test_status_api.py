@@ -1,12 +1,15 @@
 import threading
 import time
 
+import typing
+
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from status_api import metrics, service, settings
-from status_api.router import router
+from core.error_handlers import add_error_handlers
+from status_api.router import Scenario, router
 
 NOW = 1_800_000_000.0
 DAY = 86400
@@ -288,6 +291,31 @@ def test_scenario_is_ignored_outside_fake_mode(monkeypatch):
     monkeypatch.setattr(service, "get_status", lambda since, scenario=None: seen.setdefault("scenario", scenario) or {})
     client().get("/pipeline_status?scenario=no_data")
     assert seen["scenario"] is None
+
+
+def test_an_unexpected_error_is_a_500_not_an_outage(monkeypatch):
+    monkeypatch.setattr(settings, "SOURCE", "prometheus")
+
+    def bug(since, scenario=None):
+        raise KeyError("a bug, not Prometheus")
+
+    monkeypatch.setattr(service, "get_status", bug)
+    app = FastAPI()
+    add_error_handlers(app)
+    app.include_router(router)
+    monkeypatch.setattr("core.error_handlers.logger.exception", lambda *a, **k: None)
+    response = TestClient(app, raise_server_exceptions=False).get("/pipeline_status")
+    assert response.status_code == 500
+
+
+def test_scenario_takes_only_the_simulated_scenarios_and_is_not_in_the_docs(monkeypatch):
+    monkeypatch.setattr(settings, "SOURCE", "fake")
+    assert set(typing.get_args(Scenario)) == set(metrics.FAKE_SCENARIOS)
+    assert client().get("/pipeline_status?scenario=no_data").status_code == 200
+    assert client().get("/pipeline_status?scenario=whatever").status_code == 422
+    app = FastAPI()
+    app.include_router(router)
+    assert "scenario" not in TestClient(app).get("/openapi.json").text
 
 
 def fake_prometheus(monkeypatch, snapshot=metrics.Snapshot, activity=lambda since: metrics.Activity()):

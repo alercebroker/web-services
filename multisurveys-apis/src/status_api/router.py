@@ -1,17 +1,17 @@
-import logging
+from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query
 
 from . import service, settings
 
-logger = logging.getLogger(__name__)
 router = APIRouter()
 
 SINCE_HELP = (
     "Time spans to count alerts in, separated by commas: a number and m (minutes), h (hours) or d (days), "
     f"like `30m`, `6h,24h` or `3d`. Default: `{','.join(settings.DEFAULT_SINCE)}`."
 )
-SCENARIO_HELP = "Only for demos with simulated data: mixed, processing, up_to_date or no_data."
+# Only for demos with simulated data (PIPELINE_STATUS_SOURCE=fake): ignored otherwise, so not in /docs
+Scenario = Literal["mixed", "processing", "up_to_date", "no_data"]
 
 
 @router.get("/healthcheck", include_in_schema=False)
@@ -19,7 +19,7 @@ def healthcheck():
     return "OK"
 
 
-def _status(since: str | None, scenario: str | None) -> dict:
+def _status(since: str | None, scenario: Scenario | None) -> dict:
     if not settings.enabled():
         raise HTTPException(status_code=503, detail="The status API is not configured")
     try:
@@ -31,15 +31,12 @@ def _status(since: str | None, scenario: str | None) -> dict:
     except service.StatusUnavailable:
         # Already logged where it failed. Don't leak Prometheus details (URL, auth errors) to the browser.
         raise HTTPException(status_code=503, detail="Pipeline status is temporarily unavailable")
-    except Exception:
-        logger.exception("status_api: unexpected error")
-        raise HTTPException(status_code=503, detail="Pipeline status is temporarily unavailable")
 
 
 @router.get("/pipeline_status", summary="Is each pipeline up to date, and how many alerts it received and processed")
 def pipeline_status(
     since: str | None = Query(None, description=SINCE_HELP),
-    scenario: str | None = Query(None, description=SCENARIO_HELP),
+    scenario: Scenario | None = Query(None, include_in_schema=False),
 ):
     """For each pipeline (`lsst`, `ztf`):
 
@@ -62,7 +59,7 @@ def pipeline_status(
 def pipeline_status_one(
     survey: str,
     since: str | None = Query(None, description=SINCE_HELP),
-    scenario: str | None = Query(None, description=SCENARIO_HELP),
+    scenario: Scenario | None = Query(None, include_in_schema=False),
 ):
     """The same as `/pipeline_status`, for one survey (`lsst` or `ztf`)."""
     ids = [p.id for p in settings.PIPELINES]
