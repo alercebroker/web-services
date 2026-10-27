@@ -3,7 +3,7 @@
 import re
 
 import pytest
-from db_plugins.db.sql.models_pipeline import MagStat, Object
+from db_plugins.db.sql.models_pipeline import LsstDiaObject, MagStat, Object
 from sqlalchemy import text
 
 from app_client import client_for
@@ -85,3 +85,28 @@ def test_step_id_corr_is_not_listed(client):
 
     assert all("step_id_corr" not in row for row in rows)
     assert 'id="row-step_id_corr"' not in card
+
+
+LSST_OID = 170591527609303944
+
+
+@pytest.fixture
+def lsst_client(db):
+    with db.session() as session:
+        session.add(Object(oid=LSST_OID, tid=1, sid=1, meanra=10.0, meandec=10.0, firstmjd=60000, lastmjd=60010))
+        session.commit()
+        session.add(LsstDiaObject(oid=LSST_OID, validityStartMjdTai=60000, ra=10.0, dec=10.0, nDiaSources=3))
+        session.commit()
+
+    yield client_for("magstat_api", db)
+
+    with db.session() as session:
+        session.execute(text("DELETE FROM lsst_dia_object"))
+        session.commit()
+
+
+def test_lsst_card_column_is_all_bands_not_g(lsst_client):
+    response = lsst_client.get("/htmx/mag", params={"oid": str(LSST_OID), "survey_id": "lsst"})
+
+    assert response.status_code == 200
+    assert card_columns(response.text) == ["All bands"]
