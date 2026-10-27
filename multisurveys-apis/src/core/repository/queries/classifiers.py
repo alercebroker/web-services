@@ -17,10 +17,10 @@ def get_classifier_by_name(
         session_factory (Callable[..., AbstractContextManager[Session]] | None, optional): A factory function to create a database session. Defaults to None.
 
     Returns:
-        list: List of classifiers matching the given name.
+        list: One row per (classifier, class) of the classifiers with that name.
     """
     with session_factory() as session:
-        # The same columns as get_all_classifiers, so parse_classifiers can read both
+        # The columns parse_classifiers reads, as in get_all_classifiers
         stmt = (
             select(
                 Classifier.classifier_id,
@@ -52,7 +52,7 @@ def get_all_classifiers(
         survey_id (str | None, optional): The survey ID to filter classifiers. Defaults to None.
 
     Returns:
-        list: List of all classifiers.
+        list: One row per (classifier, class).
     """
     with session_factory() as session:
         stmt = (

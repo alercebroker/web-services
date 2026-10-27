@@ -31,13 +31,13 @@ def parse_probability(probability_data, classifiers):
 
 def parse_classifiers(classifiers_data):
     """
-    Parses the classifiers data from the database response into a list of classifier IDs.
+    Parses the classifiers data from the database response into a map of classifier id to name.
 
     Args:
-        classifiers_data (list): List of SQLAlchemy model instances representing classifiers.
+        classifiers_data (list): Rows with classifier_id and classifier_name, one per (classifier, class).
 
     Returns:
-        list: List of classifier IDs.
+        dict[int, str]: classifier_id -> classifier_name.
     """
     parsed_classifiers = {}
     for row in classifiers_data:

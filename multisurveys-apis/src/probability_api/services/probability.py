@@ -49,7 +49,7 @@ def get_probability(
 
 def get_classifiers(
     session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
-) -> int | None:
+) -> dict[int, str]:
     result = get_all_classifiers(session_factory)
 
     parsed_result = parse_classifiers(result)
