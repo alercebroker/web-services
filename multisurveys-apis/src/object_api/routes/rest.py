@@ -85,6 +85,7 @@ def list_objects(
 @router.get("/object")
 def get_object(request: Request, oid: str, survey_id: str, return_survey_extra: bool = False):
     session = request.app.state.psql_session
+    survey_id = survey_id.lower()
 
     response = get_object_by_id(
         session_ms=session,
@@ -92,6 +93,6 @@ def get_object(request: Request, oid: str, survey_id: str, return_survey_extra: 
         survey_id=survey_id,
         return_survey_extra=return_survey_extra,
     )
-    if survey_id.lower() == "ztf":
+    if survey_id == "ztf":
         decode_ids([response])
     return response

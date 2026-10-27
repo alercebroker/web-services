@@ -192,11 +192,13 @@ def test_list_objects_by_oid(ztf_objects, oid):
     assert len(response.json()["items"]) == 1
 
 
+@pytest.mark.parametrize("survey_id", ["ztf", "ZTF"])
 @pytest.mark.parametrize("oid", [NAME, NUMBER])
-def test_object(ztf_objects, oid):
-    response = client_for("object_api", ztf_objects).get("/object", params={"survey_id": "ztf", "oid": oid})
+def test_object(ztf_objects, oid, survey_id):
+    response = client_for("object_api", ztf_objects).get("/object", params={"survey_id": survey_id, "oid": oid})
 
     assert response.status_code == 200
+    assert response.json()["oid"] == NAME
 
 
 @pytest.mark.parametrize(
