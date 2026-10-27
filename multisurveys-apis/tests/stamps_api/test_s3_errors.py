@@ -68,3 +68,10 @@ def test_a_good_file_is_read(handler, mocker):
     mocker.patch("stamps_api.s3_handler.base_handler.reader", return_value=iter([{"ok": True}]))
 
     assert handler._get_file_from_s3("1234") == {"ok": True}
+
+
+def test_the_s3_client_has_timeouts_and_bounded_retries(handler):
+    config = handler.client.meta.config
+    assert config.connect_timeout == 5
+    assert config.read_timeout == 15
+    assert config.retries == {"total_max_attempts": 2, "mode": "standard"}

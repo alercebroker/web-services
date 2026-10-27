@@ -1,6 +1,7 @@
 import logging
 
 import boto3
+from botocore.config import Config
 from botocore.exceptions import BotoCoreError, ClientError, ConnectTimeoutError, ReadTimeoutError
 from fastapi import HTTPException
 from fastavro import reader
@@ -14,6 +15,10 @@ logger = logging.getLogger(__name__)
 
 _clients = {}
 _clients_lock = threading.Lock()
+# Worst case 2 attempts x (5 s to connect + 15 s to read) = 40 s, under the ALB's default 60 s idle timeout, so a slow
+# S3 answers our 504 instead of holding one of the pod's request slots for minutes (botocore's defaults are 60 + 60 s,
+# with retries)
+S3_CONFIG = Config(connect_timeout=5, read_timeout=15, retries={"total_max_attempts": 2, "mode": "standard"})
 
 
 def s3_client(bucket_region: str):
@@ -26,7 +31,7 @@ def s3_client(bucket_region: str):
     with _clients_lock:
         client = _clients.get(bucket_region)
         if client is None:
-            client = boto3.session.Session().client("s3", region_name=bucket_region)
+            client = boto3.session.Session().client("s3", region_name=bucket_region, config=S3_CONFIG)
             _clients[bucket_region] = client
         return client
 
