@@ -44,6 +44,14 @@ def test_list_without_order_is_paged(order_by):
     assert "LIMIT 21 OFFSET 40" in list_sql(order_by, page=3)
 
 
+@pytest.mark.parametrize("order_by", ["oid_list", None])
+def test_list_without_order_has_a_stable_order(order_by):
+    sql = list_sql(order_by, page=3)
+
+    assert "ORDER BY tprobability.oid" in sql
+    assert sql.index("ORDER BY") < sql.index("LIMIT")
+
+
 def test_oid_list_is_bounded_by_the_oids_asked_for():
     sql = list_sql("oid_list", oids=[36028797018963968, 36028797018963969])
 

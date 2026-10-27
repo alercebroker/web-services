@@ -112,9 +112,10 @@ def query_get_objects(session_ms, search_params, parsed_params):
             )
 
             # No order column (none, or "oid_list"). With an oid list the rows are bounded by
-            # that list and paged in sort_by_oid_list_and_select_page; without one, page here.
+            # that list and paged in sort_by_oid_list_and_select_page; without one, page here, ordered by
+            # oid so that pages don't repeat or skip objects.
             if search_params.filter_args.oids is None:
-                stmt = add_limits_statements(stmt, pagination_args)
+                stmt = add_limits_statements(stmt.order_by(probability_alias.oid), pagination_args)
 
         items = session.execute(stmt).all()
 
