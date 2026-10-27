@@ -13,6 +13,8 @@ packages = [
     { include = "probability_api", from = "src" },
     { include = "stamps_api", from = "src" },
     { include = "aladin_api", from = "src" },
+    { include = "crossmatch_api", from = "src" },
+    { include = "features_api", from = "src" },
     { include = "status_api", from = "src" },
     { include = "test_api", from = "src" },
 ]
