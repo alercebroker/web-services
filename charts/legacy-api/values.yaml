@@ -54,6 +54,11 @@ resources:
     memory: 128M
   # limits: {}
 
+# Readiness probe for the app container, verbatim. Off by default. With it, a pod only
+# gets traffic once the app answers, so restarts and rollouts don't return 502s.
+# e.g. {httpGet: {path: /, port: 8765}, periodSeconds: 10, timeoutSeconds: 5}
+readinessProbe: {}
+
 # nginx sidecar that terminates :80 and proxies to the app container.
 nginx:
   enabled: true
@@ -67,6 +72,10 @@ nginx:
   # API path prefix injected into the default templated nginx config,
   # e.g. /tns/v1. Ignored when `config` (full override) is set.
   pathPrefix: ""
+  # Where nginx reaches the app container. "localhost" resolves to [::1] and 127.0.0.1;
+  # an app listening only on IPv4 refuses [::1], and after one slow answer from 127.0.0.1
+  # nginx marks both down and returns 502 "no live upstreams" for 10 s. Use 127.0.0.1 then.
+  upstreamHost: localhost
   # Full verbatim nginx default.conf. Set this only for APIs whose config
   # does not fit the default template; leave empty to use the template.
   config: ""
