@@ -36,9 +36,15 @@ def classifiers(
 
 
 @router.get("/classes", summary="Classes of a classifier version")
-def classes(request: Request, classifier_name: str, classifier_version: str):
-    """The classes a classifier version can assign, in taxonomy order, as `[{"name": ...}]`."""
-    class_names = get_classes(classifier_name, classifier_version, session_factory=request.app.state.psql_session)
+def classes(request: Request, classifier_name: str, classifier_version: str, survey_id: str | None = None):
+    """The classes a classifier version can assign, in taxonomy order, as `[{"name": ...}]`.
+
+    Give `survey_id` (`ztf` or `lsst`) when the same classifier name and version exist for both surveys.
+    """
+    sid = get_survey_id(survey_id) if survey_id is not None else None
+    class_names = get_classes(
+        classifier_name, classifier_version, session_factory=request.app.state.psql_session, sid=sid
+    )
 
     if class_names is None:
         raise HTTPException(

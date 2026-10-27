@@ -9,19 +9,18 @@ from .parsers import parse_classifiers
 
 
 def get_classifiers(
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None, survey_id: str | None = None
+    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
     """Retrieves all classifiers from the database
 
     Args:
         session_factory (Callable[..., AbstractContextManager[Session]] | None, optional): A factory function to create a database session. Defaults to None.
-        survey_id (str | None, optional): The survey ID to filter classifiers. Defaults to None.
 
     Returns:
         list: List of all classifiers.
     """
 
-    result = db_get_all_classifiers(session_factory, survey_id)
+    result = db_get_all_classifiers(session_factory)
     return parse_classifiers(result)
 
 
