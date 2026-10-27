@@ -51,6 +51,19 @@ def test_parse_oid_rejects_anything_else(survey, oid):
         parse_oid(survey, oid)
 
 
+@pytest.mark.parametrize(
+    "survey, oid, message",
+    [
+        ("lsst", "abc", "expected a numeric id."),
+        ("lsst", "\u00b2", "expected a numeric id."),
+        (None, "abc", "expected a numeric id or a ZTF name."),
+    ],
+)
+def test_parse_oid_says_what_it_expected(survey, oid, message):
+    with pytest.raises(ValueError, match=rf"^Invalid oid '{oid}': {message}$"):
+        parse_oid(survey, oid)
+
+
 @pytest.mark.parametrize("survey", ["ztf", "lsst", None])
 def test_parse_oid_takes_the_largest_64_bit_id(survey):
     assert parse_oid(survey, str(2**63 - 1)) == 2**63 - 1
