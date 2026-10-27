@@ -12,7 +12,8 @@ The multisurvey and ZTF crossmatch APIs both call it.
 
 Until 10/2026 this chart existed only inside the Helm release. It was extracted from release revision 19,
 checked to re-render the live manifests byte for byte, and then gained the optional `strategyType` value
-(chart 0.1.1, deployed as revision 21).
+(chart 0.1.1, deployed as revision 21). Chart 0.1.2 moved the load balancer health check to nginx and
+added optional probes (below).
 
 ## Deploy
 
@@ -52,3 +53,28 @@ read-back never matches byte for byte.
 - **Check SSM against the live release before deploying.** The SSM copy was once missing the `resources`
   block that had been applied to the release directly. Compare `helm get values ws-catshtm-old -n default`
   with SSM before you edit.
+- **Health checks.** The load balancer checks `/healthz`, which nginx answers by itself: the earlier check on
+  `/` went to the app and waited in line behind slow searches. That check now only
+  says nginx is up, so the probes on the app's port (5001) are what take a broken app out of service. Set
+  them in SSM, for example:
+
+  ```yaml
+  startupProbe:     # allows 5 minutes for the catalog indexes to load
+    httpGet: {path: /, port: 5001}
+    periodSeconds: 10
+    failureThreshold: 30
+  readinessProbe:
+    httpGet: {path: /, port: 5001}
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 6
+  livenessProbe:    # generous, so a busy minute doesn't restart the pod
+    httpGet: {path: /, port: 5001}
+    periodSeconds: 20
+    timeoutSeconds: 10
+    failureThreshold: 9
+  ```
+
+  Don't point them at port 80: nginx answers there even when the app is down.
+- **No metrics.** The app has no `/metrics` page, so nginx answers it with 404 and the pod has no
+  `prometheus.io/scrape` annotation.
