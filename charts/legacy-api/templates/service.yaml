@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ws-api.name" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    service: {{ include "ws-api.name" . }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ include "ws-api.name" . }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+    protocol: TCP
