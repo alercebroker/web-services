@@ -81,7 +81,7 @@ def build_statement_object(model_id, oid):
 def query_get_objects(session_ms, search_params, parsed_params):
     filters_objects = parsed_params["filters_sqlalchemy_statement"]["objects"]
     filters_probability = parsed_params["filters_sqlalchemy_statement"]["probability"]
-    pagination_args = check_pagination_args(search_params.pagination_args)
+    pagination_args = search_params.pagination_args
 
     probability_alias = subquery_probability(filters_probability)
     object_alias = subquery_object(filters_objects, parsed_params)
@@ -224,12 +224,3 @@ def sort_by_oid_list_and_select_page(search_params, items):
     df_items = list(df_items.itertuples(index=False, name=None))
 
     return df_items
-
-
-def check_pagination_args(pagination_args):
-    if pagination_args.page < 1:
-        pagination_args.page = 1
-    if pagination_args.page_size < 0:
-        pagination_args.page_size = 10
-
-    return pagination_args
