@@ -227,6 +227,10 @@ def _available(snapshot: metrics.Snapshot, since: str) -> bool:
     return snapshot.retention_seconds is None or metrics.duration_seconds(since) < snapshot.retention_seconds
 
 
+# Shared by all requests: the activity spans of one request are queried in parallel
+_activity_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="status-activity")
+
+
 def _activity(since: str) -> metrics.Activity | None:
     # Keyed by length, so "60m" and "1h" share an entry.
     try:
@@ -249,7 +253,6 @@ def get_status(since: list[str], scenario: str | None = None) -> dict:
 
     snapshot, updated_at = _cached("snapshot", metrics.snapshot_from_prometheus)
     wanted = [s for s in since if _available(snapshot, s)]
-    with ThreadPoolExecutor(max_workers=4) as pool:
-        counts = dict(zip(wanted, pool.map(_activity, wanted)))
+    counts = dict(zip(wanted, _activity_pool.map(_activity, wanted)))
     activity = {s: counts.get(s) for s in since}
     return build_status(snapshot, activity, updated_at)
