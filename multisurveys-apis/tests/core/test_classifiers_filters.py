@@ -42,6 +42,13 @@ def test_filters(client, params, expected):
     assert names(response) == expected
 
 
-@pytest.mark.parametrize("params, status", [({"classifier_name": "foo"}, 404), ({"survey_id": "foo"}, 400)])
+@pytest.mark.parametrize(
+    "params, status",
+    [
+        ({"classifier_name": "foo"}, 404),
+        ({"survey_id": "foo"}, 400),
+        ({"classifier_name": "foo", "survey_id": "atlas"}, 400),
+    ],
+)
 def test_errors(client, params, status):
     assert client.get("/classifiers", params=params).status_code == status

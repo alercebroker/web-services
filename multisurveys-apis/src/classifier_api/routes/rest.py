@@ -20,6 +20,8 @@ def classifiers(
 ):
     """Every classifier with its classes, as a list. Filter by `classifier_name` and by `survey_id` (`ztf` or `lsst`)."""
     session = request.app.state.psql_session
+    sid = get_survey_id(survey_id) if survey_id is not None else None
+
     if classifier_name:
         classifiers = get_classifier_by_name(classifier_name, session_factory=session)
         if len(classifiers) == 0:
@@ -27,10 +29,8 @@ def classifiers(
     else:
         classifiers = get_classifiers(session_factory=session)
 
-    if survey_id is not None:
-        tid = get_survey_id(survey_id)  # an unknown survey is a ValueError: 400 from the central handler
-        # the response's survey_id is the classifier's tid (0 for ZTF, 1 for LSST)
-        classifiers = [classifier for classifier in classifiers if classifier.survey_id == tid]
+    if sid is not None:
+        classifiers = [classifier for classifier in classifiers if classifier.survey_id == sid]
 
     return classifiers
 
