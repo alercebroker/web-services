@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Request
+from core.exceptions import UpstreamUnavailable
 from core.static_files import configure_templates, html_templates
 from fastapi.responses import HTMLResponse
 from ..services.crossmatch_service import get_cross_for_frontend
@@ -19,9 +20,7 @@ def object_mag_app(request: Request, oid: str, survey_id: str):
     available = True
     try:
         cross, cross_keys = get_cross_for_frontend(object_details, session)
-    except HTTPException as error:
-        if error.status_code not in (502, 504):
-            raise
+    except UpstreamUnavailable:
         # catsHTM is down or slow: show the card with "-" instead of failing the whole card
         cross, cross_keys, available = [], [], False
 

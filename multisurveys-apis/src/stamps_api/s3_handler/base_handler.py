@@ -3,7 +3,8 @@ import logging
 import boto3
 from botocore.config import Config
 from botocore.exceptions import BotoCoreError, ClientError, ConnectTimeoutError, ReadTimeoutError
-from fastapi import HTTPException
+
+from core.exceptions import AlertNotFound, UpstreamTimeout, UpstreamUnavailable
 from fastavro import reader
 import io
 import threading
@@ -55,14 +56,13 @@ class BaseS3Handler:
             file = self.client.get_object(Bucket=self.bucket_name, Key=key)
             body = file["Body"].read()
         except self.client.exceptions.NoSuchKey:
-            raise HTTPException(status_code=404, detail=f"Alert file {key} not found")
-        # Any other S3 failure is S3's, not the caller's: 504 if it was too slow, 502 otherwise
+            raise AlertNotFound(f"Alert file {key} not found")
         except (ConnectTimeoutError, ReadTimeoutError) as error:
             logger.warning("S3 timed out reading %s: %s", key, error)
-            raise HTTPException(status_code=504, detail="S3 did not answer in time")
+            raise UpstreamTimeout("S3 did not answer in time")
         except (ClientError, BotoCoreError) as error:
             logger.warning("S3 failed reading %s: %s", key, error)
-            raise HTTPException(status_code=502, detail="Could not read the alert file from S3")
+            raise UpstreamUnavailable("Could not read the alert file from S3")
         file_io = io.BytesIO(body)
         avro_data = next(reader(file_io))
         return avro_data

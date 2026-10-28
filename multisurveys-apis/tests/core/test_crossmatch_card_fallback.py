@@ -5,10 +5,10 @@ The JSON /crossmatch keeps answering 502/504 (tests/crossmatch_api/test_catshtm_
 
 import pytest
 from db_plugins.db.sql.models_pipeline import Object, ZtfObject
-from fastapi import HTTPException
 from sqlalchemy import text
 
 from app_client import client_for
+from core.exceptions import UpstreamTimeout, UpstreamUnavailable
 from core.idmapper.idmapper import catalog_oid_to_masterid
 
 NAME = "ZTF20aaelulu"
@@ -31,11 +31,11 @@ def client(db):
         session.commit()
 
 
-@pytest.mark.parametrize("status", [502, 504])
-def test_card_shows_the_fallback_when_catshtm_fails(client, mocker, status):
+@pytest.mark.parametrize("error", [UpstreamUnavailable, UpstreamTimeout])
+def test_card_shows_the_fallback_when_catshtm_fails(client, mocker, error):
     mocker.patch(
         "crossmatch_api.services.crossmatch_service.get_alerce_data",
-        side_effect=HTTPException(status_code=status, detail="catsHTM failed"),
+        side_effect=error("catsHTM failed"),
     )
 
     response = client.get("/htmx/crossmatch", params=PARAMS)
@@ -58,7 +58,16 @@ def test_card_has_no_fallback_when_catshtm_answers(client, mocker):
 def test_json_still_answers_the_gateway_error(client, mocker):
     mocker.patch(
         "crossmatch_api.services.crossmatch_service.get_alerce_data",
-        side_effect=HTTPException(status_code=504, detail="catsHTM failed"),
+        side_effect=UpstreamTimeout("catsHTM failed"),
     )
 
     assert client.get("/crossmatch", params=PARAMS).status_code == 504
+
+
+def test_json_answers_502_when_catshtm_fails(client, mocker):
+    mocker.patch(
+        "crossmatch_api.services.crossmatch_service.get_alerce_data",
+        side_effect=UpstreamUnavailable("catsHTM failed"),
+    )
+
+    assert client.get("/crossmatch", params=PARAMS).status_code == 502

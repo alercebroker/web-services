@@ -4,7 +4,13 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
-from core.exceptions import DatabaseError, ObjectNotFound
+from core.exceptions import (
+    AlertNotFound,
+    DatabaseError,
+    ObjectNotFound,
+    UpstreamTimeout,
+    UpstreamUnavailable,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -13,6 +19,15 @@ def add_error_handlers(app: FastAPI):
     @app.exception_handler(ObjectNotFound)
     def handle_object_not_found(request: Request, exc: ObjectNotFound):
         return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+    @app.exception_handler(AlertNotFound)
+    def handle_alert_not_found(request: Request, exc: AlertNotFound):
+        return JSONResponse(status_code=404, content={"detail": str(exc)})
+
+    @app.exception_handler(UpstreamUnavailable)
+    def handle_upstream_unavailable(request: Request, exc: UpstreamUnavailable):
+        status_code = 504 if isinstance(exc, UpstreamTimeout) else 502
+        return JSONResponse(status_code=status_code, content={"detail": str(exc)})
 
     @app.exception_handler(DatabaseError)
     def handle_database_error(request: Request, exc: DatabaseError):

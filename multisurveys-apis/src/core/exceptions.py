@@ -24,3 +24,15 @@ class ObjectNotFound(Exception):
 
     def __str__(self) -> str:
         return f"Object {self.object_id} not found on the database"
+
+
+class AlertNotFound(Exception):
+    """The alert file isn't in storage."""
+
+
+class UpstreamUnavailable(Exception):
+    """An external service (S3, catsHTM) failed or answered with an error."""
+
+
+class UpstreamTimeout(UpstreamUnavailable):
+    """An external service didn't answer in time."""
