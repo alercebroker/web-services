@@ -5,7 +5,10 @@ The models turn the NULL ``*_corr`` columns into 0 (``set_defaults``), and the l
 0 to tell corrected points from uncorrected ones. So the 0 stays inside the models and becomes null only here,
 when the JSON answer is built. A real magnitude or error is never exactly 0, so 0 only ever means "missing".
 The pipeline writes 100 (``NOT_COMPUTED_MAG``) where a value can't be computed, which also becomes null.
+NaN and infinite floats, in any survey, become null too: JSON can't carry them.
 """
+
+import math
 
 from fastapi.encoders import jsonable_encoder
 
@@ -20,6 +23,9 @@ def json_rows(rows) -> list[dict]:
     items = []
     for row in rows:
         item = jsonable_encoder(row)
+        for field, value in item.items():
+            if isinstance(value, float) and not math.isfinite(value):
+                item[field] = None
         if item.get("survey_id") == "ztf":
             for field in CORRECTED_FIELDS:
                 if item.get(field) in (0, NOT_COMPUTED_MAG):

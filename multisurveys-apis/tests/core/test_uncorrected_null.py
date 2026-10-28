@@ -76,6 +76,15 @@ def test_json_rows_nulls_forced_photometry_that_could_not_be_measured():
     ]
 
 
+@pytest.mark.parametrize("survey_id", ["ztf", "lsst"])
+def test_json_rows_nulls_floats_json_cannot_carry(survey_id):
+    row = {"oid": 36029005864454959, "survey_id": survey_id, "psfFlux": float("nan"), "magpsf": float("inf")}
+
+    item = json_rows([row])[0]
+
+    assert (item["psfFlux"], item["magpsf"]) == (None, None)
+
+
 @pytest.mark.parametrize("model, field", [(ztfDetection, "magpsf_corr"), (ZtfForcedPhotometry, "mag_corr")])
 @pytest.mark.parametrize("value, has_total", [(0, False), (18.1, True), (100.0, False)])
 def test_only_computed_corrected_magnitudes_are_plotted_as_total(model, field, value, has_total):
