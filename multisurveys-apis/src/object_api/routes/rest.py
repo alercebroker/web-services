@@ -10,6 +10,7 @@ from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_object_by_id, get_objects_list
 from ..services.validations import (
     ndets_validation,
+    order_by_validation,
     order_mode_validation,
     pagination_validation,
 )
@@ -52,6 +53,7 @@ def list_objects(
     session = request.app.state.psql_session
 
     ndets_validation(n_det)
+    order_by_validation(order_by)
     order_mode_validation(order_mode)
     pagination_validation(page, page_size)
 

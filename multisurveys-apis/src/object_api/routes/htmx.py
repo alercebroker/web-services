@@ -18,6 +18,7 @@ from ..services.validations import (
     ndets_validation_front,
     oid_lenght_validation,
     oids_format_validation,
+    order_by_validation,
     order_mode_validation,
     pagination_validation,
     probability_validation,
@@ -130,6 +131,7 @@ def objects_table(
         oids = _parse_oids_string_to_array(oid)
 
         ndets_validation_front(n_det_min, n_det_max)
+        order_by_validation(order_by)
         order_mode_validation(order_mode)
         pagination_validation(page, page_size)
         consearch_validation(ra, dec, radius)
@@ -227,6 +229,7 @@ def sidebar(
         oids = _parse_oids_string_to_array(oid)
 
         ndets_validation_front(n_det_min, n_det_max)
+        order_by_validation(order_by)
         order_mode_validation(order_mode)
         pagination_validation(page, page_size)
         consearch_validation(ra, dec, radius)

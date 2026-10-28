@@ -1,6 +1,8 @@
 import math
 
+from db_plugins.db.sql.models_pipeline import Object, Probability
 from fastapi import HTTPException
+from sqlalchemy import inspect
 
 from core.idmapper.idmapper import encode_ids
 
@@ -21,6 +23,14 @@ def ndets_validation(ndets: list[int]):
                 status_code=422,
                 detail={"detections_container": "Min value can't be greater than max."},
             )
+
+
+ORDER_BY_COLUMNS = sorted({attr.key for model in (Object, Probability) for attr in inspect(model).column_attrs})
+
+
+def order_by_validation(order_by: str | None):
+    if order_by is not None and order_by != "oid_list" and order_by not in ORDER_BY_COLUMNS:
+        raise ValueError(f"order_by must be oid_list or one of: {', '.join(ORDER_BY_COLUMNS)}.")
 
 
 def pagination_validation(page: int | None, page_size: int | None):
