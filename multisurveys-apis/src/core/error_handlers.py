@@ -25,7 +25,7 @@ def add_error_handlers(app: FastAPI):
 
     @app.exception_handler(ValidationError)
     def handle_validation_error(request: Request, exc: ValidationError):
-        logger.error("Response model validation failed on %s %s: %s", request.method, request.url.path, exc)
+        logger.error("Model validation failed on %s %s: %s", request.method, request.url.path, exc)
         return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
     @app.exception_handler(Exception)

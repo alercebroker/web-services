@@ -7,7 +7,11 @@ from prometheus_client import CollectorRegistry
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel
 
+from db_plugins.db.sql.models_pipeline import Object
+
+from app_client import client_for
 from core.error_handlers import add_error_handlers
+from core.idmapper import idmapper
 from core.exceptions import ObjectNotFound
 
 
@@ -63,3 +67,20 @@ def test_client_errors_inside_a_session_are_counted_as_4xx(client):
     assert 'handler="/not-found",method="GET",status="4xx"' in metrics
     assert 'handler="/bad-value",method="GET",status="4xx"' in metrics
     assert 'status="5xx"' not in metrics
+
+
+def test_aladin_object_missing_a_field_is_400(db):
+    oid = idmapper.catalog_oid_to_masterid("ZTF", "ZTF18abbrrty").item()
+    with db.session() as session:
+        session.add(Object(oid=oid, tid=0, sid=0, meanra=10.0, meandec=10.0, firstmjd=60000, lastmjd=60010))
+        session.commit()
+    client = client_for("aladin_api", db, raise_server_exceptions=False)
+
+    response = client.post(
+        "/htmx/aladin",
+        params={"oid": "ZTF18abbrrty", "survey": "ztf"},
+        data={"objects_arr": "[{'oid': 'ZTF18abbrrty', 'sid': 0}]"},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"].startswith("objects_arr has an invalid object (meanra, meandec)")

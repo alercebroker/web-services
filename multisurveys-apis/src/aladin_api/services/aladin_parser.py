@@ -1,5 +1,6 @@
 import json
 from fastapi.encoders import jsonable_encoder
+from pydantic import ValidationError
 from ..models.object import Object
 
 
@@ -17,10 +18,12 @@ def loads_objects_list(objects) -> list:
 
     res = []
     for object in objects_json:
-        object["oid"] = str(object["oid"])
-        object_model = Object(**object)
-        return_model = object_model.model_dump()
-        res.append(return_model)
+        try:
+            object_model = Object.model_validate(object)
+        except ValidationError as e:
+            fields = ", ".join(".".join(map(str, error["loc"])) or "object" for error in e.errors())
+            raise ValueError(f"objects_arr has an invalid object ({fields}): {object}") from None
+        res.append(object_model.model_dump())
 
     return res
 
