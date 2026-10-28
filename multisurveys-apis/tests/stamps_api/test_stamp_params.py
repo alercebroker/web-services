@@ -1,4 +1,4 @@
-"""P3-6: invalid stamp parameters answer 400 before anything is downloaded; LSST /avro answers 404."""
+"""Invalid stamp parameters answer 422 before anything is downloaded; LSST /avro answers 400."""
 
 import importlib
 import os

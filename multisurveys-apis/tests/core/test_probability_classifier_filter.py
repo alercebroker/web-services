@@ -1,4 +1,4 @@
-"""P3-7: /probability answers 404 for an unknown classifier, also when there is only one classifier."""
+"""/probability answers 404 for an unknown classifier, also when there is only one classifier."""
 
 import pytest
 

@@ -1,4 +1,4 @@
-"""P1-3: ZTF magstats keep their band. The JSON rows say it, and the card labels each column by it, not by position."""
+"""ZTF magstats keep their band. The JSON rows say it, and the card labels each column by it, not by position."""
 
 import re
 

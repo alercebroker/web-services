@@ -1,4 +1,4 @@
-"""P3-5: /classifiers filters by classifier_name (it answered 500) and by survey_id (it was ignored)."""
+"""/classifiers filters by classifier_name (it answered 500) and by survey_id (it was ignored)."""
 
 import pytest
 from sqlalchemy import text

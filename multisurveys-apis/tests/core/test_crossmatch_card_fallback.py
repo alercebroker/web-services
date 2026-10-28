@@ -1,4 +1,4 @@
-"""P2-1, the card half: when catsHTM is down or slow, the crossmatch card shows "-" instead of failing.
+"""When catsHTM is down or slow, the crossmatch card shows "-" instead of failing.
 
 The JSON /crossmatch keeps answering 502/504 (tests/crossmatch_api/test_catshtm_errors.py).
 """

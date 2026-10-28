@@ -1,4 +1,4 @@
-"""N-6: every API serves Prometheus metrics at /metrics, since the chart marks all their services for scraping."""
+"""Every API serves Prometheus metrics at /metrics, since the chart marks all their services for scraping."""
 
 import pytest
 

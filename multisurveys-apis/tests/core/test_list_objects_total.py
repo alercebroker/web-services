@@ -1,4 +1,4 @@
-"""P3-4: list_objects' total is the number of matching rows when count=true, and null otherwise."""
+"""/list_objects' total is the number of matching rows when count=true, and null otherwise."""
 
 import pytest
 from db_plugins.db.sql.models_pipeline import Object, Probability, ZtfObject

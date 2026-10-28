@@ -1,4 +1,4 @@
-"""P2-2: a list with no order column (order_by=oid_list, or none) still respects page_size."""
+"""A list with no order column (order_by=oid_list, or none) still respects page_size."""
 
 from contextlib import contextmanager
 

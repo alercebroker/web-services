@@ -1,4 +1,4 @@
-"""P3-7b: for ZTF, the JSON answers carry the ZTF name as oid, not the internal numeric id."""
+"""For ZTF, the JSON answers carry the ZTF name as oid, not the internal numeric id."""
 
 import pytest
 from db_plugins.db.sql.models_pipeline import (

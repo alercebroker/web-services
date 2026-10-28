@@ -1,4 +1,4 @@
-"""P2-6: bad object-list filters answer 400 with a message, not 500 or a silently dropped filter."""
+"""Bad object-list filters answer 400/422 with a message, not 500 or a silently dropped filter."""
 
 import pytest
 
