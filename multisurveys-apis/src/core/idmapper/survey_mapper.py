@@ -8,6 +8,8 @@ SURVEY_IDS = {
     "lsst": 1,
 }
 
+DEFAULT_SURVEY = "ztf"
+
 
 def _lowercase(value):
     return value.lower() if isinstance(value, str) else value

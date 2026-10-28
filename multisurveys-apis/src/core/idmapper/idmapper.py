@@ -1,9 +1,10 @@
 import numpy as np
 
-from .survey_mapper import get_survey_id
+from .survey_mapper import DEFAULT_SURVEY, get_survey_id
 from .ztf import encode_ztf_to_masterid_without_survey, decode_masterid_for_ztf
 
 # Constants
+# Prefix of each catalog inside a master id. Not the survey id stored in the database (survey_mapper.SURVEY_IDS).
 SURVEY_IDS = {
     "ZTF": 1,
     "ATLAS": 2,
@@ -17,30 +18,47 @@ SURVEY_IDS["MAXSURVEY"] = 2**SURVEY_PREFIX_LEN_BITS - 1
 REVERSE_SURVEY_IDS = dict((zip(SURVEY_IDS.values(), SURVEY_IDS.keys())))
 
 
+def _parse_numeric_oid(text: str) -> int | None:
+    if not (text.isascii() and text.isdigit()):
+        return None
+    if int(text) > MAX_OID:
+        raise ValueError(f"Invalid oid '{text}': too large, numeric ids go up to {MAX_OID}.")
+    return int(text)
+
+
+def _parse_ztf_oid(text: str) -> int:
+    numeric = _parse_numeric_oid(text)
+    if numeric is not None:
+        return numeric
+    # Raises "Invalid ZTF object ID: ..." for anything that isn't a ZTF name
+    return int(catalog_oid_to_masterid("ZTF", text, validate=True))
+
+
+def _parse_lsst_oid(text: str) -> int:
+    numeric = _parse_numeric_oid(text)
+    if numeric is not None:
+        return numeric
+    if text[:3].upper() == "ZTF":
+        raise ValueError(f"Invalid oid '{text}': it looks like a ZTF name, but LSST ids are numeric.")
+    raise ValueError(f"Invalid oid '{text}': expected a numeric id.")
+
+
+OID_PARSERS = {
+    "ztf": _parse_ztf_oid,
+    "lsst": _parse_lsst_oid,
+}
+
+
 def parse_oid(survey: str | None, oid: str | int) -> int:
     """Turn an oid from a request into the multisurvey id stored in the database.
 
-    Accepts a numeric id (a ZTF multisurvey id such as ``36028941599716634``, or an LSST
-    diaObjectId) or a ZTF name (``ZTF18aarwvbm``). Without a survey, a ``ZTF…`` name is read
-    as ZTF. Raises ValueError for anything else, so routes can answer 400.
+    ZTF takes a numeric id (``36028941599716634``) or a ZTF name (``ZTF18aarwvbm``); LSST takes
+    its numeric diaObjectId. Without a survey, the oid is read as ZTF, so queries that didn't
+    send one keep working. Raises ValueError for anything else, so routes can answer 400.
     """
-    text = str(oid).strip()
-    if survey is not None:
-        get_survey_id(survey)
-    if text.isascii() and text.isdigit():
-        if int(text) > MAX_OID:
-            raise ValueError(f"Invalid oid '{text}': too large, numeric ids go up to {MAX_OID}.")
-        return int(text)
-    if survey is None and text[:3].upper() == "ZTF":
-        survey = "ztf"
-    if survey is not None and survey.upper() == "ZTF":
-        # Raises "Invalid ZTF object ID: ..." for anything that isn't a ZTF name
-        return int(catalog_oid_to_masterid("ZTF", text, validate=True))
-    if text[:3].upper() == "ZTF":
-        raise ValueError(f"Invalid oid '{text}': it looks like a ZTF name, but LSST ids are numeric.")
-    if survey is None:
-        raise ValueError(f"Invalid oid '{text}': expected a numeric id or a ZTF name.")
-    raise ValueError(f"Invalid oid '{text}': expected a numeric id.")
+    survey = DEFAULT_SURVEY if survey is None else survey.lower()
+    get_survey_id(survey)
+    return OID_PARSERS[survey](str(oid).strip())
 
 
 def encode_ids(survey, oids):

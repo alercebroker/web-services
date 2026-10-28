@@ -24,6 +24,7 @@ N_DETECTIONS = 3
         ("ztf", NAME, int(NUMBER)),
         ("ztf", NUMBER, int(NUMBER)),
         (None, NAME, int(NUMBER)),
+        (None, NUMBER, int(NUMBER)),  # without a survey, an oid is a ZTF one
         ("lsst", "170591527609303944", 170591527609303944),
         ("ztf", int(NUMBER), int(NUMBER)),
     ],
@@ -56,7 +57,6 @@ def test_parse_oid_rejects_anything_else(survey, oid):
     [
         ("lsst", "abc", "expected a numeric id."),
         ("lsst", "\u00b2", "expected a numeric id."),
-        (None, "abc", "expected a numeric id or a ZTF name."),
     ],
 )
 def test_parse_oid_says_what_it_expected(survey, oid, message):

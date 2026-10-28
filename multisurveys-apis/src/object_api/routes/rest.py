@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query, Request
 
 from core.idmapper.idmapper import decode_ids
-from core.idmapper.survey_mapper import Survey
+from core.idmapper.survey_mapper import DEFAULT_SURVEY, Survey
 
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
@@ -31,7 +31,7 @@ def healthcheck():
 @router.get("/list_objects")
 def list_objects(
     request: Request,
-    survey: Survey,
+    survey: Survey = DEFAULT_SURVEY,
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
     classifier: str | None = None,

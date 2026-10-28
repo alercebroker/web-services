@@ -28,10 +28,11 @@ def test_bad_list_filters_are_400(client, params, message):
     assert message in response.json()["detail"]
 
 
-def test_survey_is_required(client):
+def test_survey_defaults_to_ztf(client):
     response = client.get("/list_objects")
 
-    assert response.status_code == 422
+    assert response.status_code == 200
+    assert response.json() == client.get("/list_objects", params={"survey": "ztf"}).json()
 
 
 @pytest.mark.parametrize("path", ["/list_objects", "/htmx/list_objects", "/htmx/side_objects"])
