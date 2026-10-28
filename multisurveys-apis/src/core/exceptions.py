@@ -36,3 +36,17 @@ class UpstreamUnavailable(Exception):
 
 class UpstreamTimeout(UpstreamUnavailable):
     """An external service didn't answer in time."""
+
+
+class StatusNotConfigured(Exception):
+    """PIPELINE_STATUS_SOURCE is unset: the status API has nowhere to read metrics from."""
+
+    def __str__(self) -> str:
+        return "The status API is not configured"
+
+
+class StatusUnavailable(Exception):
+    """No pipeline status to give right now (Prometheus failing and nothing recent cached)."""
+
+    def __str__(self) -> str:
+        return "Pipeline status is temporarily unavailable"

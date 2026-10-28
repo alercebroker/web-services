@@ -7,8 +7,7 @@ from core.error_handlers import add_error_handlers
 from core.static_files import mount_static
 from core.version import APP_VERSION
 
-from . import htmx
-from .router import router
+from .routes import htmx, rest
 
 # root_path: the prefix nginx strips, so /docs fetches /status_api/openapi.json
 app = FastAPI(
@@ -21,7 +20,7 @@ add_concurrency_limit(app)
 add_error_handlers(app)
 instrumentator = Instrumentator().instrument(app).expose(app, include_in_schema=False)
 
-app.include_router(router)
+app.include_router(rest.router)
 app.include_router(htmx.router, tags=["Browser UI (HTMX)"])
 
 mount_static(app, "/static", "src/status_api/static", "static")

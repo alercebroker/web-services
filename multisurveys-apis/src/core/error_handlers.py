@@ -8,6 +8,8 @@ from core.exceptions import (
     AlertNotFound,
     DatabaseError,
     ObjectNotFound,
+    StatusNotConfigured,
+    StatusUnavailable,
     UpstreamTimeout,
     UpstreamUnavailable,
 )
@@ -42,6 +44,11 @@ def add_error_handlers(app: FastAPI):
     def handle_validation_error(request: Request, exc: ValidationError):
         logger.error("Model validation failed on %s %s: %s", request.method, request.url.path, exc)
         return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
+    @app.exception_handler(StatusNotConfigured)
+    @app.exception_handler(StatusUnavailable)
+    def handle_status_unavailable(request: Request, exc: StatusNotConfigured | StatusUnavailable):
+        return JSONResponse(status_code=503, content={"detail": str(exc)})
 
     @app.exception_handler(Exception)
     def handle_unexpected(request: Request, exc: Exception):
