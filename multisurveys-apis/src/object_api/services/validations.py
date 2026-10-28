@@ -4,7 +4,7 @@ from db_plugins.db.sql.models_pipeline import Object, Probability
 from fastapi import HTTPException
 from sqlalchemy import inspect
 
-from core.idmapper.idmapper import encode_ids
+from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST, encode_ids
 
 
 def ndets_validation_front(n_det_min: int, n_det_max: int):
@@ -94,10 +94,10 @@ def oids_format_validation(oids, survey):
 
 def oid_lenght_validation(oids):
     if oids is not None:
-        if len(oids) > 200:
+        if len(oids) > MAX_OIDS_PER_REQUEST:
             raise HTTPException(
                 status_code=422,
-                detail={"objectIds": "You can only query for 200 object ids."},
+                detail={"objectIds": f"You can only query for {MAX_OIDS_PER_REQUEST} object ids."},
             )
 
 

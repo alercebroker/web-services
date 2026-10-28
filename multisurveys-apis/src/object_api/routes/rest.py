@@ -2,7 +2,7 @@ from typing import Annotated, Literal
 
 from fastapi import APIRouter, Query, Request
 
-from core.idmapper.idmapper import decode_ids
+from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST, decode_ids
 from core.idmapper.survey_mapper import DEFAULT_SURVEY, Survey
 
 from ..models.filters import Consearch, Filters, SearchParams
@@ -32,7 +32,7 @@ def list_objects(
     request: Request,
     survey: Survey = DEFAULT_SURVEY,
     class_name: str | None = None,
-    oid: Annotated[list[str] | None, Query()] = None,
+    oid: Annotated[list[str] | None, Query(max_length=MAX_OIDS_PER_REQUEST)] = None,
     classifier: str | None = None,
     ranking: int | None = Query(default=1),
     n_det: Annotated[list[int] | None, Query()] = None,

@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from core.config.dependencies import db_dependency
+from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST
 from core.idmapper.survey_mapper import SurveyQuery
 
 from ...services.lightcurve_service import (
@@ -21,8 +22,9 @@ router = APIRouter()
 OidQuery = Annotated[
     list[str],
     Query(
+        max_length=MAX_OIDS_PER_REQUEST,
         description="ALeRCE object identifier(s). Repeat the parameter to request "
-        "several objects in a single call (e.g. `?oid=A&oid=B`).",
+        f"several objects in a single call (e.g. `?oid=A&oid=B`), up to {MAX_OIDS_PER_REQUEST}.",
         examples=["170433140619739440"],
     ),
 ]
