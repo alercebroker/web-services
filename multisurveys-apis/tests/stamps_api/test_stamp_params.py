@@ -48,7 +48,8 @@ def test_invalid_stamp_params_are_400_without_download(client, s3_download, para
     s3_download.assert_not_called()
 
 
-def test_lsst_avro_is_404(client):
+def test_lsst_avro_is_400(client):
     response = client.get("/avro", params={"oid": "170591527609303944", "measurement_id": "1", "survey_id": "lsst"})
 
-    assert response.status_code == 404
+    assert response.status_code == 400
+    assert response.json()["detail"] == "The avro of LSST alerts isn't available"
