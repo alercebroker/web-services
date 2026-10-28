@@ -2,7 +2,6 @@ from typing import Any
 from db_plugins.db.sql.models_pipeline import Object
 from lightcurve_api.models.object import ApiObject
 from lightcurve_api.services.conesearch import conesearch as conesearch_service
-from numpy import int64
 
 
 def implement_context_manager(mocker, mock):
@@ -57,7 +56,7 @@ def test_conesearch_oid(mocker):
     implement_context_manager(mocker, mock)
 
     # Call the service
-    result = conesearch_service.conesearch_oid(int64(123), 30.0, 10, mock)
+    result = conesearch_service.conesearch_oid(123, 30.0, 10, mock)
 
     # Assert that the result is as expected
     assert result == [ApiObject(objectId="ZTF00aaaaaet", ra=45.0, dec=45.0, survey_id="ztf")]
@@ -72,7 +71,7 @@ def test_conesearch_oid_db_empty(mocker):
     implement_context_manager(mocker, mock)
 
     # Call the service
-    result = conesearch_service.conesearch_oid(int64(123), 30.0, 10, mock)
+    result = conesearch_service.conesearch_oid(123, 30.0, 10, mock)
 
     # Assert that the result is as expected
     assert result == []

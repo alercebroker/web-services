@@ -9,7 +9,7 @@ from sqlalchemy import Row, select, and_
 
 
 def get_unique_forced_photometry_sql(
-    oid: str,
+    oid: int,
     survey_id: str,
     session_factory: Callable[..., ContextManager[Session]],
 ):

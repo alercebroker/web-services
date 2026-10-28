@@ -6,7 +6,7 @@ from sqlalchemy import Row, select
 
 
 def get_all_unique_non_detections_sql(
-    oid: str,
+    oid: int,
     survey_id: str,
     session_factory: Callable[..., AbstractContextManager[Session]],
 ):

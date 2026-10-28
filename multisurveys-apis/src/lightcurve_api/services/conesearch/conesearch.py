@@ -2,7 +2,6 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, ContextManager, List, Tuple, cast
 
-from numpy import int64
 from sqlalchemy.orm import Session
 from toolz.functoolz import pipe
 
@@ -39,7 +38,7 @@ def conesearch_coordinates(
 
 
 def conesearch_oid(
-    oid: int64,
+    oid: int,
     radius: float,
     neighbors: int,
     session_factory: Callable[..., ContextManager[Session]],

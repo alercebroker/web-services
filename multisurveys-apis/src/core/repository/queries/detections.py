@@ -5,7 +5,7 @@ from sqlalchemy import select, text, and_, desc
 
 
 def get_all_unique_detections_sql(
-    oid: str,
+    oid: int,
     survey_id: str,
     session_factory: Callable[..., ContextManager[Session]],
 ):
