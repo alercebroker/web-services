@@ -23,11 +23,6 @@ def ndets_validation(ndets: list[int]):
             )
 
 
-def survey_validation(survey: str | None):
-    if survey not in ("ztf", "lsst"):
-        raise HTTPException(status_code=400, detail="survey is required: ztf or lsst.")
-
-
 def pagination_validation(page: int | None, page_size: int | None):
     if page is not None and page < 1:
         raise HTTPException(status_code=400, detail="page must be 1 or greater.")

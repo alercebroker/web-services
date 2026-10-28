@@ -57,10 +57,7 @@ def test_conesearch_objects_invalid_params(client: TestClient):
             lambda x: x["detail"].startswith("Invalid ZTF object ID: invalid_object."),
             400,
         ),
-        (
-            lambda x: x["detail"] == "Unsupported survey: invalid_survey",
-            400,
-        ),
+        (lambda x: x["detail"][0]["loc"] == ["query", "survey"], 422),
         (lambda x: x["detail"] == "Radius must be greater than 0", 400),
         (lambda x: x["detail"] == "Neighbors must be greater than 0", 400),
         (

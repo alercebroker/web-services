@@ -108,11 +108,11 @@ def test_parse_oid_only_takes_the_surveys_the_apis_serve(survey, oid):
         ("probability_api", "/probability", {"survey_id": "atlas", "oid": NUMBER}),
     ],
 )
-def test_unsupported_survey_is_400(ztf_objects, api, path, params):
+def test_unsupported_survey_is_422(ztf_objects, api, path, params):
     response = client_for(api, ztf_objects).get(path, params=params)
 
-    assert response.status_code == 400
-    assert response.json()["detail"] == f"Unsupported survey: {params['survey_id']}"
+    assert response.status_code == 422
+    assert [error["loc"] for error in response.json()["detail"]] == [["query", "survey_id"]]
 
 
 @pytest.mark.parametrize("survey", [None, "ztf"])

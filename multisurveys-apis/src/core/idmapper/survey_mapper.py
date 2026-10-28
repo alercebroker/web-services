@@ -1,7 +1,25 @@
+from typing import Annotated, Literal
+
+from fastapi import Query
+from pydantic import BeforeValidator
+
 SURVEY_IDS = {
     "ztf": 0,
     "lsst": 1,
 }
+
+
+def _lowercase(value):
+    return value.lower() if isinstance(value, str) else value
+
+
+Survey = Annotated[Literal["ztf", "lsst"], BeforeValidator(_lowercase)]
+SurveyQuery = Annotated[
+    Survey,
+    Query(
+        description="Survey the object belongs to. Allowed values: `ztf`, `lsst` (case-insensitive).", examples=["ztf"]
+    ),
+]
 
 
 def get_survey_id(survey_name: str):

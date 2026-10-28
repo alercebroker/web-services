@@ -7,6 +7,7 @@ from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
 from core.idmapper.idmapper import parse_oid
+from core.idmapper.survey_mapper import Survey
 from core.static_files import configure_templates, html_templates
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
@@ -29,14 +30,13 @@ configure_templates(templates, "http://localhost:8001")
 
 
 @router.get("/lightcurve", response_class=HTMLResponse)
-def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
+def lightcurve(request: Request, oid: str, survey_id: Survey, db: db_dependency):
     """Return a self-contained HTML widget.
 
     All chart interactions (band toggles, magnitude/flux, fold, period, offsets)
     are handled entirely in the browser via lightcurve-app.js.  The server only
     provides the raw data as JSON embedded in the page.
     """
-    survey_id = survey_id.lower()
     parse_oid(survey_id, oid)
     result = lightcurve_plot_service.get_lightcurve_data(oid, survey_id, db.session)
 
@@ -70,14 +70,13 @@ def lightcurve(request: Request, oid: str, survey_id: str, db: db_dependency):
 
 
 @router.get("/periodogram", response_class=JSONResponse)
-def periodogram(oid: str, survey_id: str, db: db_dependency):
+def periodogram(oid: str, survey_id: Survey, db: db_dependency):
     """Compute and return the periodogram for an object on demand.
 
     Called by lightcurve-app.js the first time the user enables fold mode.
     Keeping this out of the initial page-load request avoids the heavy
     Lomb-Scargle computation on every view.
     """
-    survey_id = survey_id.lower()
     parse_oid(survey_id, oid)
     pd = get_periodogram_data(oid, survey_id, db.session)
     payload = pd.model_dump()
@@ -89,7 +88,7 @@ def periodogram(oid: str, survey_id: str, db: db_dependency):
 
 
 @router.get("/external_sources", response_class=HTMLResponse)
-def external_sources(request: Request, oid: str, survey_id: str, meanra: float = None, meandec: float = None):
+def external_sources(request: Request, oid: str, survey_id: Survey, meanra: float = None, meandec: float = None):
     """Return an HTML picker of nearby ZTF DR objects for the external-sources feature."""
     if meanra is None or meandec is None:
         raise ValueError("meanra and meandec are required")  # answered as 400 by the central handler
@@ -136,14 +135,13 @@ def dr_detections(ra: float, dec: float, oids: str = ""):
     response_class=Response,
     responses={200: {"content": {"application/zip": {}}, "description": "The lightcurve as a ZIP of CSV files."}},
 )
-def download(oid: str, survey_id: str, db: db_dependency):
+def download(oid: str, survey_id: Survey, db: db_dependency):
     """Download the lightcurve as a ZIP archive.
 
     ``oid`` is the survey's own id (the ZTF name, or the numeric LSST id). The rows
     are matched on the internal master id, but the file name and the CSVs keep the
     id the caller sent.
     """
-    survey_id = survey_id.lower()
     master_id = parse_oid(survey_id, oid)
 
     service_result = pipe(

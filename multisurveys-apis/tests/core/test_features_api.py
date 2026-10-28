@@ -79,7 +79,7 @@ def test_feature_filters(client, params, expected):
     [
         ({"oid": "ZTF99zzzzzzz", "survey_id": "ztf"}, 404),
         ({"oid": "abc", "survey_id": "ztf"}, 400),
-        ({"oid": NAME, "survey_id": "foo"}, 400),
+        ({"oid": NAME, "survey_id": "foo"}, 422),
     ],
 )
 def test_features_errors(client, params, status):

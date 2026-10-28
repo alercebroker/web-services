@@ -4,6 +4,7 @@ from ..services.probability import get_object_probability_model, get_probability
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 from core.static_files import configure_templates, html_templates
+from core.idmapper.survey_mapper import Survey
 
 
 router = APIRouter()
@@ -15,7 +16,7 @@ configure_templates(templates, "http://localhost:8004")
 def object_probability_app(
     request: Request,
     oid: str,
-    survey: str,
+    survey: Survey,
 ):
     object_model = get_object_probability_model(
         oid,

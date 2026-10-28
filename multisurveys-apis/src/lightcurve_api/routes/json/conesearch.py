@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from core.config.dependencies import db_dependency
+from core.idmapper.survey_mapper import SurveyQuery
 from core.idmapper import idmapper
 
 from ...models.object import ApiObject
@@ -11,10 +12,6 @@ from .missing_values import json_rows
 
 router = APIRouter(prefix="/conesearch")
 
-SurveyQuery = Annotated[
-    str,
-    Query(description="Survey the object belongs to. Allowed values: `ztf`, `lsst` (case-insensitive)."),
-]
 RadiusQuery = Annotated[float, Query(description="Cone search radius, in degrees.", examples=[0.0083])]
 NeighborsQuery = Annotated[int, Query(description="Maximum number of neighboring sources to return.", examples=[2])]
 

@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from core.config.dependencies import db_dependency
+from core.idmapper.survey_mapper import SurveyQuery
 
 from ...services.lightcurve_service import (
     get_detections,
@@ -17,10 +18,6 @@ from .missing_values import json_rows
 
 router = APIRouter()
 
-SurveyQuery = Annotated[
-    str,
-    Query(description="Survey the object belongs to. Allowed values: `ztf`, `lsst`.", examples=["ztf"]),
-]
 OidQuery = Annotated[
     list[str],
     Query(

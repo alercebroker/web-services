@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from fastapi import HTTPException
 from core.idmapper.idmapper import parse_oid
+from core.idmapper.survey_mapper import Survey
 from ..services.probability import get_probability, get_classifiers
 
 
@@ -17,7 +18,7 @@ def probability(
     request: Request,
     oid: str,
     classifier: str | None = None,
-    survey_id: str | None = None,
+    survey_id: Survey | None = None,
 ):
     master_id = parse_oid(survey_id, oid)
 

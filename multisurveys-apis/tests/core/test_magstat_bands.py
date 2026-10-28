@@ -73,10 +73,10 @@ def test_survey_is_case_insensitive(client, path):
 
 
 @pytest.mark.parametrize("path", ["/magstats", "/htmx/mag"])
-def test_unknown_survey_answers_400(client, path):
+def test_unknown_survey_answers_422(client, path):
     response = client.get(path, params={"oid": R_ONLY, "survey_id": "atlas"})
 
-    assert response.status_code == 400
+    assert response.status_code == 422
 
 
 def test_step_id_corr_is_not_listed(client):

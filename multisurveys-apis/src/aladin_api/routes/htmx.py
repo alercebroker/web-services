@@ -2,6 +2,7 @@ from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse
 
 from core.static_files import configure_templates, html_templates
+from core.idmapper.survey_mapper import Survey
 
 from ..models.object import RawObjectsRequest
 from ..services.aladin_services import prepare_aladin_data
@@ -12,7 +13,7 @@ configure_templates(templates, "http://localhost:8006")
 
 
 @router.post("/aladin", response_class=HTMLResponse)
-def object_probability_app(request: Request, oid: str, survey: str, objects_arr: str | None = Form(None)):
+def object_probability_app(request: Request, oid: str, survey: Survey, objects_arr: str | None = Form(None)):
     session_ms = request.app.state.psql_session
 
     raw_objects_request = RawObjectsRequest(selected_oid=oid, sid=survey, objects=objects_arr)

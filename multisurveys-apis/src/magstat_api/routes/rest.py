@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 
 from core.idmapper.idmapper import parse_oid
-from core.idmapper.survey_mapper import get_survey_id
+from core.idmapper.survey_mapper import Survey
 
 from ..services.magstats import get_magstats
 from .temporal_utils import mag_parser, parse_lsst_dia_objects_to_dict
@@ -15,9 +15,7 @@ def ping():
 
 
 @router.get("/magstats")
-def magstats(request: Request, oid: str, survey_id: str):
-    survey_id = survey_id.lower()
-    get_survey_id(survey_id)
+def magstats(request: Request, oid: str, survey_id: Survey):
     master_id = parse_oid(survey_id, oid)
     mag_stats_raw = get_magstats(master_id, survey_id, session_factory=request.app.state.psql_session)
 

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
 
 from core.static_files import configure_templates, html_templates
+from core.idmapper.survey_mapper import Survey
 from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
 from probability_api.services.lsst_service import priorities_by_survey
 
@@ -31,7 +32,7 @@ templates.env.filters["truncate"] = truncate_float
 
 
 @router.get("/htmx/object_information", response_class=HTMLResponse)
-def object_info_app(request: Request, oid: str, survey_id: str):
+def object_info_app(request: Request, oid: str, survey_id: Survey):
     object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
 
     other_archives = [
@@ -87,7 +88,7 @@ def tns_info(request: Request, ra: float, dec: float):
 
 
 @router.get("/htmx/search_objects/", response_class=HTMLResponse)
-def objects_form(request: Request, survey_id: str = None):
+def objects_form(request: Request, survey_id: Survey | None = None):
     session = request.app.state.psql_session
 
     if survey_id is None:
@@ -107,7 +108,7 @@ def objects_table(
     request: Request,
     class_name: str | None = None,
     oid: str | None = None,
-    survey: str | None = None,
+    survey: Survey | None = None,
     classifier: str | None = None,
     ranking: int | None = Query(default=1),
     n_det_min: int | None = None,
@@ -201,7 +202,7 @@ def objects_table(
 @router.get("/htmx/side_objects", response_class=HTMLResponse)
 def sidebar(
     request: Request,
-    survey: str | None = None,
+    survey: Survey | None = None,
     oid: str | None = None,
     selected_oid: str | None = None,
     classifier: str | None = None,

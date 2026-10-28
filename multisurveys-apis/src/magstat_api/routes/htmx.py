@@ -6,7 +6,7 @@ from fastapi.responses import HTMLResponse
 
 from core.exceptions import ObjectNotFound
 from core.idmapper.idmapper import parse_oid
-from core.idmapper.survey_mapper import get_survey_id
+from core.idmapper.survey_mapper import Survey
 from core.static_files import configure_templates, html_templates
 
 from ..services.magstats import get_magstats
@@ -18,7 +18,7 @@ configure_templates(templates, "http://localhost:8002")
 
 
 @router.get("/htmx/mag", response_class=HTMLResponse)
-def object_mag_app(request: Request, oid: str, survey_id=None):
+def object_mag_app(request: Request, oid: str, survey_id: Survey | None = None):
     bandMapping = {
         1: "g",
         2: "r",
@@ -32,8 +32,6 @@ def object_mag_app(request: Request, oid: str, survey_id=None):
             DeprecationWarning,
         )
 
-    survey_id = survey_id.lower()
-    get_survey_id(survey_id)
     master_id = parse_oid(survey_id, oid)
     mag_stats_raw = get_magstats(master_id, survey_id, session_factory=request.app.state.psql_session)
 

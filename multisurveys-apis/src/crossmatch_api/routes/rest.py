@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+from core.idmapper.survey_mapper import Survey
 from ..services.crossmatch_service import get_cross_data
 from ..models.object import ObjectInformation
 
@@ -16,7 +17,7 @@ def healthcheck():
 
 
 @router.get("/crossmatch")
-def object_mag_app(request: Request, oid: str, survey_id: str):
+def object_mag_app(request: Request, oid: str, survey_id: Survey):
     session = request.app.state.psql_session
 
     object_details = ObjectInformation(oid=oid, survey=survey_id)

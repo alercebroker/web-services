@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Request
 from core.exceptions import UpstreamUnavailable
 from core.static_files import configure_templates, html_templates
+from core.idmapper.survey_mapper import Survey
 from fastapi.responses import HTMLResponse
 from ..services.crossmatch_service import get_cross_for_frontend
 from ..models.object import ObjectInformation
@@ -12,7 +13,7 @@ configure_templates(templates, "http://localhost:8005")
 
 
 @router.get("/htmx/crossmatch", response_class=HTMLResponse)
-def object_mag_app(request: Request, oid: str, survey_id: str):
+def object_mag_app(request: Request, oid: str, survey_id: Survey):
     session = request.app.state.psql_session
 
     object_details = ObjectInformation(oid=oid, survey=survey_id)

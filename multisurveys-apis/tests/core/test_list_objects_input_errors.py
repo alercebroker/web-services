@@ -19,8 +19,6 @@ def client(db):
         ({"survey": "ztf", "classifier": "foo"}, "Classifier name 'foo' not found"),
         ({"survey": "ztf", "class_name": "asteroid"}, "class_name needs a classifier"),
         ({"survey": "ztf", "classifier": CLASSIFIER, "class_name": "SNIa"}, "Class 'SNIa' not found"),
-        ({}, "survey is required"),
-        ({"survey": "foo"}, "survey is required"),
     ],
 )
 def test_bad_list_filters_are_400(client, params, message):
@@ -28,6 +26,20 @@ def test_bad_list_filters_are_400(client, params, message):
 
     assert response.status_code == 400
     assert message in response.json()["detail"]
+
+
+def test_survey_is_required(client):
+    response = client.get("/list_objects")
+
+    assert response.status_code == 422
+
+
+@pytest.mark.parametrize("path", ["/list_objects", "/htmx/list_objects", "/htmx/side_objects"])
+def test_unknown_survey_is_422(client, path):
+    response = client.get(path, params={"survey": "atlas"})
+
+    assert response.status_code == 422
+    assert [error["loc"] for error in response.json()["detail"]] == [["query", "survey"]]
 
 
 def test_good_filters_still_answer(client):

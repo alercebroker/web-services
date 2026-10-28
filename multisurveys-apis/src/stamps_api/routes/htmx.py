@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from core.exceptions import AlertNotFound, UpstreamUnavailable
 from core.idmapper.idmapper import parse_oid
+from core.idmapper.survey_mapper import Survey
 from core.static_files import configure_templates, html_templates
 
 from ..models.lightcurve import PostRequestInputModel
@@ -21,7 +22,7 @@ configure_templates(templates, "http://localhost:8007")
 def get_stamp_card(
     request: Request,
     oid: str,
-    survey_id: str,
+    survey_id: Survey,
 ):
     handler = handler_selector(survey_id)()
     context = {}
@@ -63,7 +64,7 @@ def get_stamp_card(
 
 
 @router.get("/avro")
-def avro(request: Request, oid: str, measurement_id: str, survey_id: str):
+def avro(request: Request, oid: str, measurement_id: str, survey_id: Survey):
     handler = handler_selector(survey_id)()
 
     avro_json = handler.get_avro(oid, measurement_id)

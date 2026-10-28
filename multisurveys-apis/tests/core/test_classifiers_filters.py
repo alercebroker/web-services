@@ -47,8 +47,8 @@ def test_filters(client, params, expected):
     "params, status",
     [
         ({"classifier_name": "foo"}, 404),
-        ({"survey_id": "foo"}, 400),
-        ({"classifier_name": "foo", "survey_id": "atlas"}, 400),
+        ({"survey_id": "foo"}, 422),
+        ({"classifier_name": "foo", "survey_id": "atlas"}, 422),
     ],
 )
 def test_errors(client, params, status):
@@ -104,4 +104,4 @@ def test_classes_of_a_name_and_version_in_two_surveys(client, same_name_for_lsst
     assert client.get("/classes", params=params).status_code == 200
     lsst = client.get("/classes", params={**params, "survey_id": "lsst"})
     assert lsst.json() == [{"name": "only_lsst_a"}, {"name": "only_lsst_b"}]
-    assert client.get("/classes", params={**params, "survey_id": "atlas"}).status_code == 400
+    assert client.get("/classes", params={**params, "survey_id": "atlas"}).status_code == 422

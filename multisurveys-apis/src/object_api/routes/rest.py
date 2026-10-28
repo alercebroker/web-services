@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query, Request
 
 from core.idmapper.idmapper import decode_ids
+from core.idmapper.survey_mapper import Survey
 
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
@@ -11,7 +12,6 @@ from ..services.validations import (
     ndets_validation,
     order_mode_validation,
     pagination_validation,
-    survey_validation,
 )
 from ..services.parameters_parser import parse_oids_to_int
 
@@ -31,9 +31,9 @@ def healthcheck():
 @router.get("/list_objects")
 def list_objects(
     request: Request,
+    survey: Survey,
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query()] = None,
-    survey: str | None = None,
     classifier: str | None = None,
     ranking: int | None = Query(default=1),
     n_det: Annotated[list[int] | None, Query()] = None,
@@ -51,7 +51,6 @@ def list_objects(
 ):
     session = request.app.state.psql_session
 
-    survey_validation(survey)
     ndets_validation(n_det)
     order_mode_validation(order_mode)
     pagination_validation(page, page_size)
@@ -83,9 +82,8 @@ def list_objects(
 
 
 @router.get("/object")
-def get_object(request: Request, oid: str, survey_id: str, return_survey_extra: bool = False):
+def get_object(request: Request, oid: str, survey_id: Survey, return_survey_extra: bool = False):
     session = request.app.state.psql_session
-    survey_id = survey_id.lower()
 
     response = get_object_by_id(
         session_ms=session,
