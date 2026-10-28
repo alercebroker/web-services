@@ -114,17 +114,20 @@ class BaseS3Handler:
 
         return file_name, file, mime
 
-    def get_all_stamps(self, oid: str, measurement_id: str, file_format: str, is_compressed: bool = True):
+    def get_all_stamps(self, oid: str, measurement_id: str, file_formats: list[str], is_compressed: bool = True):
+        """Every stamp type in each of file_formats, from one download of the alert: {format: {stamp_type: ...}}."""
         avro_name = self._get_avro_name(oid, measurement_id)
         avro_data = self._get_file_from_s3(avro_name)
 
         result = {}
-        for stamp_type in self.valid_stamp_types:
-            file_name, file, mime = self._get_stamp(avro_name, avro_data, stamp_type, file_format, is_compressed)
-            result[stamp_type] = {
-                "file_name": file_name,
-                "file": file.getvalue(),
-                "mime": mime,
-            }
+        for file_format in file_formats:
+            result[file_format] = {}
+            for stamp_type in self.valid_stamp_types:
+                file_name, file, mime = self._get_stamp(avro_name, avro_data, stamp_type, file_format, is_compressed)
+                result[file_format][stamp_type] = {
+                    "file_name": file_name,
+                    "file": file.getvalue(),
+                    "mime": mime,
+                }
 
         return result

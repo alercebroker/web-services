@@ -2,6 +2,7 @@ import base64
 
 from fastapi import APIRouter, HTTPException, Request
 
+from core.exceptions import AlertNotFound, UpstreamUnavailable
 from core.idmapper.idmapper import parse_oid
 from core.static_files import configure_templates, html_templates
 
@@ -40,10 +41,7 @@ def get_stamp_card(
     has_stamp_selected_measurement_id = has_stamp_for_measurement_id(detections, selected_measurement_id)
 
     if has_stamp_selected_measurement_id:
-        stamps = handler.get_all_stamps(oid, selected_measurement_id, "png")
-        stamps_fits = handler.get_all_stamps(oid, selected_measurement_id, "fits")
-
-        context = build_image_context(stamps, stamps_fits)
+        context = stamps_context(handler, oid, selected_measurement_id)
 
     context.update(
         {
@@ -92,9 +90,7 @@ def post_stamp_card(request: Request, post_input: PostRequestInputModel):
         selected_measurement_id=post_input.measurement_id,
     )
     if has_stamp_selected_measurement_id:
-        stamps = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "png")
-        stamps_fits = handler.get_all_stamps(post_input.oid, post_input.measurement_id, "fits")
-        context = build_image_context(stamps, stamps_fits)
+        context = stamps_context(handler, post_input.oid, post_input.measurement_id)
 
     context.update(
         {
@@ -114,6 +110,14 @@ def post_stamp_card(request: Request, post_input: PostRequestInputModel):
         name="stamps_card.html.jinja",
         context=context,
     )
+
+
+def stamps_context(handler, oid, measurement_id) -> dict:
+    try:
+        stamps = handler.get_all_stamps(oid, measurement_id, ["png", "fits"])
+    except (AlertNotFound, UpstreamUnavailable):
+        return {"stamps_available": False}
+    return {"stamps_available": True, **build_image_context(stamps["png"], stamps["fits"])}
 
 
 def build_image_context(stamps: dict, stamps_fits: dict) -> dict:
