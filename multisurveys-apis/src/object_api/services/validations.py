@@ -33,13 +33,6 @@ def order_by_validation(order_by: str | None):
         raise ValueError(f"order_by must be oid_list or one of: {', '.join(ORDER_BY_COLUMNS)}.")
 
 
-def pagination_validation(page: int | None, page_size: int | None):
-    if page is not None and page < 1:
-        raise HTTPException(status_code=400, detail="page must be 1 or greater.")
-    if page_size is not None and page_size < 1:
-        raise HTTPException(status_code=400, detail="page_size must be 1 or greater.")
-
-
 def order_mode_validation(order: str):
     available_orders = ["DESC", "ASC"]
 

@@ -58,8 +58,8 @@ def test_conesearch_objects_invalid_params(client: TestClient):
             400,
         ),
         (lambda x: x["detail"][0]["loc"] == ["query", "survey"], 422),
-        (lambda x: x["detail"] == "Radius must be greater than 0", 400),
-        (lambda x: x["detail"] == "Neighbors must be greater than 0", 400),
+        (lambda x: x["detail"][0]["msg"] == "Input should be greater than 0", 422),
+        (lambda x: x["detail"][0]["msg"] == "Input should be greater than 0", 422),
         (
             lambda x: x["detail"][0]["msg"] == "Input should be a valid number, unable to parse string as a number",
             422,

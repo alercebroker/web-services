@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Query, Request
 
@@ -11,8 +11,6 @@ from ..services.object_services import get_object_by_id, get_objects_list
 from ..services.validations import (
     ndets_validation,
     order_by_validation,
-    order_mode_validation,
-    pagination_validation,
 )
 from ..services.parameters_parser import parse_oids_to_int
 
@@ -44,18 +42,16 @@ def list_objects(
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
-    page: int | None = 1,
-    page_size: int | None = 10,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1)] = 10,
     count: bool | None = False,
     order_by: str | None = Query(default="probability"),
-    order_mode: str | None = Query(default="DESC"),
+    order_mode: Literal["ASC", "DESC"] = "DESC",
 ):
     session = request.app.state.psql_session
 
     ndets_validation(n_det)
     order_by_validation(order_by)
-    order_mode_validation(order_mode)
-    pagination_validation(page, page_size)
 
     filters = Filters(
         oids=parse_oids_to_int(oid, survey),

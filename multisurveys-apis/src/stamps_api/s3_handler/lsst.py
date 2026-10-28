@@ -21,10 +21,7 @@ class LSSTS3Handler(BaseS3Handler):
         return f"{oid}_{measurement_id}"
 
     def _get_buffer_from_file(self, file_result, stamp_type):
-        if stamp_type in self.valid_stamp_types:
-            return file_result[stamp_type]
-        else:
-            raise Exception(f"Type {stamp_type} not valid. Valid types are {self.valid_stamp_types}")
+        return file_result[stamp_type]
 
     def get_avro(self, oid: str, measurement_id: str):
         raise ValueError("The avro of LSST alerts isn't available")

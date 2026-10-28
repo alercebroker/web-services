@@ -91,11 +91,9 @@ class BaseS3Handler:
             else:
                 file = io.BytesIO(fit_data)
                 mime = "application/fits"
-        elif file_format == "png":
+        else:
             file = io.BytesIO(transform(fit_data, stamp_type, 2, self.compressed))
             mime = "image/png"
-        else:
-            raise Exception(f"Format {file_format} is not valid. Only png and fits accepted.")
         return file_name, file, mime
 
     @abstractmethod

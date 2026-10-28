@@ -33,18 +33,19 @@ def s3_download(mocker):
 
 
 @pytest.mark.parametrize(
-    "params, message",
+    "params, field",
     [
-        ({"stamp_type": "science", "file_format": "png"}, "Invalid stamp_type 'science'"),
-        ({"stamp_type": "cutoutScience", "file_format": "jpg"}, "Invalid file_format 'jpg'"),
+        ({"stamp_type": "science", "file_format": "png"}, "stamp_type"),
+        ({"stamp_type": "cutoutScience", "file_format": "jpg"}, "file_format"),
+        ({"stamp_type": "cutoutScience", "file_format": "png", "survey_id": "atlas"}, "survey_id"),
     ],
 )
-@pytest.mark.parametrize("survey_id", ["ztf", "lsst"])
-def test_invalid_stamp_params_are_400_without_download(client, s3_download, params, message, survey_id):
+@pytest.mark.parametrize("survey_id", ["ztf", "LSST"])
+def test_invalid_stamp_params_are_422_without_download(client, s3_download, params, field, survey_id):
     response = client.get("/stamp", params={**STAMP, "survey_id": survey_id, **params})
 
-    assert response.status_code == 400
-    assert message in response.json()["detail"]
+    assert response.status_code == 422
+    assert [error["loc"] for error in response.json()["detail"]] == [["query", field]]
     s3_download.assert_not_called()
 
 

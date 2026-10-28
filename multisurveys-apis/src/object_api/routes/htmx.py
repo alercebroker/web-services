@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
 
@@ -20,7 +22,6 @@ from ..services.validations import (
     oids_format_validation,
     order_by_validation,
     order_mode_validation,
-    pagination_validation,
     probability_validation,
 )
 
@@ -120,8 +121,8 @@ def objects_table(
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
-    page: int | None = 1,
-    page_size: int | None = 20,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1)] = 20,
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
@@ -133,7 +134,6 @@ def objects_table(
         ndets_validation_front(n_det_min, n_det_max)
         order_by_validation(order_by)
         order_mode_validation(order_mode)
-        pagination_validation(page, page_size)
         consearch_validation(ra, dec, radius)
         oids_format_validation(oids, survey)
         oid_lenght_validation(oids)
@@ -218,8 +218,8 @@ def sidebar(
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
-    page: int | None = 1,
-    page_size: int | None = 20,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1)] = 20,
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
@@ -231,7 +231,6 @@ def sidebar(
         ndets_validation_front(n_det_min, n_det_max)
         order_by_validation(order_by)
         order_mode_validation(order_mode)
-        pagination_validation(page, page_size)
         consearch_validation(ra, dec, radius)
         oids_format_validation(oids, survey)
         oid_lenght_validation(oids)

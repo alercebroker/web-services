@@ -12,8 +12,10 @@ from .missing_values import json_rows
 
 router = APIRouter(prefix="/conesearch")
 
-RadiusQuery = Annotated[float, Query(description="Cone search radius, in degrees.", examples=[0.0083])]
-NeighborsQuery = Annotated[int, Query(description="Maximum number of neighboring sources to return.", examples=[2])]
+RadiusQuery = Annotated[float, Query(gt=0, description="Cone search radius, in degrees.", examples=[0.0083])]
+NeighborsQuery = Annotated[
+    int, Query(gt=0, description="Maximum number of neighboring sources to return.", examples=[2])
+]
 
 
 @router.get(
@@ -44,8 +46,8 @@ def conesearch(
     ),
 )
 def conesearch_coordinates(
-    ra: Annotated[float, Query(description="Right ascension of the search center (ICRS), in degrees.")],
-    dec: Annotated[float, Query(description="Declination of the search center (ICRS), in degrees.")],
+    ra: Annotated[float, Query(ge=0, le=360, description="Right ascension of the search center (ICRS), in degrees.")],
+    dec: Annotated[float, Query(ge=-90, le=90, description="Declination of the search center (ICRS), in degrees.")],
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,
