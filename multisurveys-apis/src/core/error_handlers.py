@@ -30,16 +30,9 @@ def add_error_handlers(app: FastAPI):
 
     @app.exception_handler(Exception)
     def handle_unexpected(request: Request, exc: Exception):
-        original = exc.__context__ if type(exc) is Exception else None
-        if isinstance(original, ObjectNotFound):
-            return handle_object_not_found(request, original)
-        if isinstance(original, ValueError) and not isinstance(original, ValidationError):
-            return handle_value_error(request, original)
-
         msg = str(exc)
-        # db-plugins wraps OperationalError in a bare Exception
         if "canceling statement" in msg or "statement timeout" in msg:
-            logger.error("Query timeout (wrapped) on %s %s: %s", request.method, request.url.path, msg)
+            logger.error("Query timeout on %s %s: %s", request.method, request.url.path, msg)
             return JSONResponse(status_code=504, content={"detail": "Query timed out"})
         logger.exception("Unhandled error on %s %s", request.method, request.url.path)
         return JSONResponse(status_code=500, content={"detail": "Internal server error"})

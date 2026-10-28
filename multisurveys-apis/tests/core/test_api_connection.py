@@ -35,7 +35,7 @@ def test_singleton_is_built_once_under_concurrent_first_calls(monkeypatch, mocke
         time.sleep(0.05)  # widen the race window
         return object()
 
-    constructor = mocker.patch.object(connection, "PsqlDatabase", side_effect=slow_psql_database)
+    constructor = mocker.patch.object(connection, "ApiPsqlDatabase", side_effect=slow_psql_database)
     instances = []
     threads = [threading.Thread(target=lambda: instances.append(ApiDatabase())) for _ in range(10)]
     for t in threads:

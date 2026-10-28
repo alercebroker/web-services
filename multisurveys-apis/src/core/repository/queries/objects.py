@@ -40,8 +40,6 @@ def query_common_object(session_ms, oid, survey_id):
 
         object_row = session.execute(stmt).one_or_none()
 
-    # Raised after the session closes: db-plugins' session() re-raises anything raised inside it as a bare
-    # Exception, which would turn this 404 into a 500
     if object_row is None:
         raise ObjectNotFound(oid)
     return object_row
@@ -59,8 +57,6 @@ def query_object_by_id(session_ms, oid, survey_id):
 
         object_row = session.execute(stmt).one_or_none()
 
-    # Raised after the session closes: db-plugins' session() re-raises anything raised inside it as a bare
-    # Exception, which would turn this 404 into a 500
     if object_row is None:
         raise ObjectNotFound(oid)
     return object_row
