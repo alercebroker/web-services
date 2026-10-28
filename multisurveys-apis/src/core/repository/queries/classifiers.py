@@ -1,20 +1,21 @@
+from collections.abc import Sequence
 from typing import Callable
 from contextlib import AbstractContextManager
 from db_plugins.db.sql.models_pipeline import Classifier, Taxonomy
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import RowMapping, select
 
 
 def get_classifier_by_name(
     classifier_name: str,
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
-):
+    session_factory: Callable[..., AbstractContextManager[Session]],
+) -> Sequence[RowMapping]:
     """
     Retrieves a classifier by its name.
 
     Args:
         classifier_name (str): The name of the classifier.
-        session_factory (Callable[..., AbstractContextManager[Session]] | None, optional): A factory function to create a database session. Defaults to None.
+        session_factory (Callable[..., AbstractContextManager[Session]]): A factory function to create a database session.
 
     Returns:
         list: One row per (classifier, class) of the classifiers with that name.
@@ -42,13 +43,13 @@ def get_classifier_by_name(
 
 
 def get_all_classifiers(
-    session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
-):
+    session_factory: Callable[..., AbstractContextManager[Session]],
+) -> Sequence[RowMapping]:
     """
     Retrieves all classifiers.
 
     Args:
-        session_factory (Callable[..., AbstractContextManager[Session]] | None, optional): A factory function to create a database session. Defaults to None.
+        session_factory (Callable[..., AbstractContextManager[Session]]): A factory function to create a database session.
 
     Returns:
         list: One row per (classifier, class).

@@ -1,15 +1,19 @@
+from collections.abc import Sequence
+
+from sqlalchemy import RowMapping
+
 from ..models.classifiers import Classifiers
 
 
-def parse_classifiers(classifier_data: list) -> list:
+def parse_classifiers(classifier_data: Sequence[RowMapping]) -> list[Classifiers]:
     """
-    Parses the classifiers data from the database response into a list of Classifiers models.
+    Groups the database rows, one per (classifier, class), into one Classifiers model per classifier id.
 
     Args:
-        classifier_dat (list): List of SQLAlchemy model instances representing classifiers.
+        classifier_data (Sequence[RowMapping]): The rows, one per (classifier, class).
 
     Returns:
-        list: List of Classifiers models.
+        list[Classifiers]: One per classifier id, with its classes.
     """
     grouped_classifiers = {}
     parsed_classifiers = []
