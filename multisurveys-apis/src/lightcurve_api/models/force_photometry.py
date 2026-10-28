@@ -3,7 +3,7 @@ import traceback
 from typing import Optional
 
 from pydantic import BaseModel, model_validator
-from .lightcurve_item import BaseForcedPhotometry, build_plot_variants
+from .lightcurve_item import NOT_COMPUTED_MAG, BaseForcedPhotometry, build_plot_variants
 from astropy.coordinates import Distance
 import astropy.units as u
 
@@ -90,7 +90,7 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
 
     def has_total(self) -> bool:
         # Uncorrected points have a NULL mag_corr, which set_defaults turns into 0.
-        return self.mag_corr > 0
+        return 0 < self.mag_corr < NOT_COMPUTED_MAG
 
     def plot_variants(self) -> dict:
         return build_plot_variants(

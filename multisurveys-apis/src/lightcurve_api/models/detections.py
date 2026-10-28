@@ -3,7 +3,7 @@ import traceback
 from typing import Optional
 
 from pydantic import BaseModel, model_validator
-from .lightcurve_item import BaseDetection
+from .lightcurve_item import NOT_COMPUTED_MAG, BaseDetection
 from astropy.coordinates import Distance
 import astropy.units as u
 
@@ -133,7 +133,7 @@ class ztfDetection(BaseDetection):
 
     def has_total(self) -> bool:
         # Uncorrected detections have a NULL magpsf_corr, which set_defaults turns into 0.
-        return self.magpsf_corr > 0
+        return 0 < self.magpsf_corr < NOT_COMPUTED_MAG
 
 
 class LsstDetection(BaseDetection):

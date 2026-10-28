@@ -2,6 +2,10 @@ from typing import Callable
 
 from pydantic import BaseModel
 
+# The pipeline writes 100 where a magnitude or its error can't be computed (zero flux, or the reference's error
+# larger than the difference's)
+NOT_COMPUTED_MAG = 100.0
+
 
 def build_plot_variants(
     magnitude: Callable[[bool], float],
