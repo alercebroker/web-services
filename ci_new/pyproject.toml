@@ -8,7 +8,7 @@ packages = [{ include = "cli" }, { include = "core" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-dagger-io = "^0.18.9"
+dagger-io = "^0.21.11"
 boto3 = "^1.28.41"
 pyyaml = "^6.0.1"
 typer = "^0.16.0"

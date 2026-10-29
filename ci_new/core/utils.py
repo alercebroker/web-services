@@ -150,8 +150,7 @@ async def build(
 
     print(f"Building image with build-args: {bargs}")
 
-    image_ref = await client.container().build(
-        context=context_dir,
+    image_ref = await context_dir.docker_build(
         dockerfile=f"{package_dir}/Dockerfile",
         build_args=bargs,
     )
