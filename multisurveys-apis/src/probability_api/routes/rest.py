@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request
 from fastapi import HTTPException
 from core.idmapper.idmapper import parse_oid
-from core.idmapper.survey_mapper import Survey
-from ..services.probability import get_probability, get_classifiers
+from core.idmapper.survey_mapper import DEFAULT_SURVEY, Survey
+from ..services.probability import get_classifier_id, get_classifiers, get_probability
 
 
 router = APIRouter()
@@ -21,17 +21,17 @@ def probability(
     survey_id: Survey | None = None,
 ):
     master_id = parse_oid(survey_id, oid)
-
-    classifiers_list = get_classifiers(session_factory=request.app.state.psql_session)
+    session = request.app.state.psql_session
 
     if classifier:
-        ids_by_name = {name: classifier_id for classifier_id, name in classifiers_list.items()}
-        classifier_id = ids_by_name.get(classifier)
+        classifier_id = get_classifier_id(classifier, survey_id or DEFAULT_SURVEY, session_factory=session)
         if classifier_id is None:
             raise HTTPException(status_code=404, detail=f"Classifier '{classifier}' not found")
         classifiers_list = {classifier_id: classifier}
+    else:
+        classifiers_list = get_classifiers(session_factory=session)
 
-    probability = get_probability(master_id, classifiers_list, session_factory=request.app.state.psql_session)
+    probability = get_probability(master_id, classifiers_list, session_factory=session)
 
     if not probability:
         raise HTTPException(status_code=404, detail="Probability not found for the given OID")

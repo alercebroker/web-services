@@ -96,3 +96,31 @@ def db(db_setup):
         session.execute(text("DELETE FROM lsst_forced_photometry"))
         session.execute(text("DELETE FROM object"))
         session.commit()
+
+
+@pytest.fixture
+def same_name_for_lsst(db):
+    """stamp_classifier_ztf registered a second time, for LSST, with the same version and other classes."""
+    with db.session() as session:
+        version = session.execute(
+            text("SELECT classifier_version FROM classifier WHERE classifier_name = 'stamp_classifier_ztf'")
+        ).scalar_one()
+        session.execute(
+            text(
+                "INSERT INTO classifier (classifier_id, classifier_name, classifier_version, tid) "
+                "VALUES (99, 'stamp_classifier_ztf', :version, 1)"
+            ),
+            {"version": version},
+        )
+        session.execute(
+            text(
+                'INSERT INTO taxonomy (class_id, class_name, "order", classifier_id) '
+                "VALUES (0, 'only_lsst_a', 0, 99), (1, 'only_lsst_b', 1, 99)"
+            )
+        )
+        session.commit()
+    yield version
+    with db.session() as session:
+        session.execute(text("DELETE FROM taxonomy WHERE classifier_id = 99"))
+        session.execute(text("DELETE FROM classifier WHERE classifier_id = 99"))
+        session.commit()
