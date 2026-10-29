@@ -35,6 +35,14 @@ def test_survey_defaults_to_ztf(client):
     assert response.json() == client.get("/list_objects", params={"survey": "ztf"}).json()
 
 
+def test_docs_say_the_survey_defaults_to_ztf(client):
+    params = client.get("/openapi.json").json()["paths"]["/list_objects"]["get"]["parameters"]
+    survey = next(p for p in params if p["name"] == "survey")
+
+    assert survey["schema"]["default"] == "ztf"
+    assert "Without it, only ZTF is searched." in survey["description"]
+
+
 @pytest.mark.parametrize("path", ["/list_objects", "/htmx/list_objects", "/htmx/side_objects"])
 def test_unknown_survey_is_422(client, path):
     response = client.get(path, params={"survey": "atlas"})

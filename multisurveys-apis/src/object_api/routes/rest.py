@@ -30,7 +30,10 @@ def healthcheck():
 @router.get("/list_objects")
 def list_objects(
     request: Request,
-    survey: Survey = DEFAULT_SURVEY,
+    survey: Annotated[
+        Survey,
+        Query(description="Survey to search: `ztf` or `lsst` (case-insensitive). Without it, only ZTF is searched."),
+    ] = DEFAULT_SURVEY,
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query(max_length=MAX_OIDS_PER_REQUEST)] = None,
     classifier: str | None = None,
