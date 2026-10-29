@@ -2,15 +2,15 @@ import re
 from datetime import UTC, datetime
 
 _DURATION = re.compile(r"(\d+)([smhdwy])")
+_WHOLE_DURATION = re.compile(r"(?:\d+[smhdwy])+")
 _UNIT_SECONDS = {"s": 1, "m": 60, "h": 3600, "d": 86400, "w": 604800, "y": 31536000}
 
 
-def duration_seconds(text: str) -> float | None:
-    """Seconds in a Prometheus duration ("1h", "15d", "1d12h"). None if there is none."""
-    parts = _DURATION.findall(text or "")
-    if not parts:
-        return None
-    return sum(int(n) * _UNIT_SECONDS[u] for n, u in parts)
+def duration_seconds(text: str) -> float:
+    """Seconds in a Prometheus duration ("1h", "15d", "1d12h"). ValueError if the whole text isn't one."""
+    if not _WHOLE_DURATION.fullmatch(text or ""):
+        raise ValueError(f"Not a Prometheus duration: {text!r}")
+    return sum(int(n) * _UNIT_SECONDS[u] for n, u in _DURATION.findall(text))
 
 
 def human_duration(seconds: float) -> str:

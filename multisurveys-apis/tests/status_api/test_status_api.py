@@ -187,11 +187,21 @@ def test_durations():
     assert formatting.duration_seconds("1h") == 3600
     assert formatting.duration_seconds("15d") == 15 * DAY
     assert formatting.duration_seconds("1d12h") == 36 * 3600
-    assert formatting.duration_seconds("") is None
     assert formatting.human_duration(2 * DAY) == "2 days"
     assert formatting.human_duration(3600) == "1 hour"
     assert formatting.short_duration(5 * DAY) == "5d"
     assert formatting.short_duration(5400) == "90m"
+
+
+@pytest.mark.parametrize("text", ["", "1.5h", "500ms", "100GiB", "1h "])
+def test_a_text_that_isnt_a_whole_duration_raises(text):
+    with pytest.raises(ValueError):
+        formatting.duration_seconds(text)
+
+
+def test_every_offered_span_and_the_no_data_window_are_durations():
+    for text in [*SINCE_SPANS, status.NO_DATA_WINDOW]:
+        assert formatting.duration_seconds(text) > 0
 
 
 @pytest.mark.parametrize("scenario", list(simulation.FAKE_SCENARIOS))
@@ -258,6 +268,14 @@ def check_calls(calls):
         assert call["timeout"]
         # Backslashes would break the PromQL string literals.
         assert "\\" not in call["query"]
+
+
+@pytest.mark.parametrize("retention, seconds", [("15d or 100GiB", 15 * DAY), ("100GiB", None)])
+def test_retention_with_only_a_size_is_unknown(monkeypatch, retention, seconds):
+    recording_prometheus(monkeypatch)
+    monkeypatch.setattr(prometheus.requests, "get", lambda *a, **k: Response({"data": {"storageRetention": retention}}))
+
+    assert prometheus._retention_seconds() == seconds
 
 
 def test_snapshot_queries(monkeypatch):
