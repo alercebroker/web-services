@@ -35,6 +35,10 @@ class ObjectPlusZtfObject(BaseModel):
     g_r_mean_corr: float | None = None
     corrected: bool = False
     stellar: bool | None = None
+    ndethist: int | None = None
+    ncovhist: int | None = None
+    mjdstarthist: float | None = None
+    mjdendhist: float | None = None
     created_date: datetime | None = None
 
 

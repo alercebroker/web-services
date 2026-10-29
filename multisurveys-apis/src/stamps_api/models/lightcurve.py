@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from core.idmapper.survey_mapper import Survey
+
 
 class detection(BaseModel):
     mjd: float
@@ -24,6 +26,6 @@ class LightcurveModel(BaseModel):
 
 class PostRequestInputModel(BaseModel):
     oid: str
-    survey_id: str
+    survey_id: Survey
     measurement_id: int
     detections_list: list[dict]

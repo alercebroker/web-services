@@ -2,7 +2,6 @@ from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from typing import Callable, ContextManager, List, Tuple, cast
 
-from numpy import int64
 from sqlalchemy.orm import Session
 from toolz.functoolz import pipe
 
@@ -39,7 +38,7 @@ def conesearch_coordinates(
 
 
 def conesearch_oid(
-    oid: int64,
+    oid: int,
     radius: float,
     neighbors: int,
     session_factory: Callable[..., ContextManager[Session]],
@@ -108,7 +107,7 @@ def conesearch_oid_lightcurve(
     return cast(
         Lightcurve,
         pipe(
-            idmapper.catalog_oid_to_masterid(survey_id, oid, True),
+            idmapper.parse_oid(survey_id, oid),
             lambda oid: conesearch_oid(oid, radius, neighbors, session_factory),
             get_lightcurve_async(
                 session_factory,

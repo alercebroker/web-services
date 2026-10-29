@@ -8,13 +8,14 @@ from db_plugins.db.sql.models_pipeline import (
     Probability,
 )
 from sqlalchemy.orm import aliased
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func
 from object_api.services.parsers import serialize_items
 from object_api.services.statements_sql import (
     create_order_statement,
     add_limits_statements,
 )
 from object_api.models.pagination import Pagination
+from core.exceptions import ObjectNotFound
 
 
 class ObjectsModels:
@@ -37,9 +38,11 @@ def query_common_object(session_ms, oid, survey_id):
 
         stmt = select(model).where(and_(model.oid == oid)).limit(1)
 
-        object_row = session.execute(stmt).one()
+        object_row = session.execute(stmt).one_or_none()
 
-        return object_row
+    if object_row is None:
+        raise ObjectNotFound(oid)
+    return object_row
 
 
 def query_object_by_id(session_ms, oid, survey_id):
@@ -52,9 +55,11 @@ def query_object_by_id(session_ms, oid, survey_id):
 
         stmt = build_statement_object(model, oid)
 
-        object_row = session.execute(stmt).one()
+        object_row = session.execute(stmt).one_or_none()
 
-        return object_row
+    if object_row is None:
+        raise ObjectNotFound(oid)
+    return object_row
 
 
 def build_statement_object(model_id, oid):
@@ -72,7 +77,7 @@ def build_statement_object(model_id, oid):
 def query_get_objects(session_ms, search_params, parsed_params):
     filters_objects = parsed_params["filters_sqlalchemy_statement"]["objects"]
     filters_probability = parsed_params["filters_sqlalchemy_statement"]["probability"]
-    pagination_args = check_pagination_args(search_params.pagination_args)
+    pagination_args = search_params.pagination_args
 
     probability_alias = subquery_probability(filters_probability)
     object_alias = subquery_object(filters_objects, parsed_params)
@@ -102,21 +107,28 @@ def query_get_objects(session_ms, search_params, parsed_params):
                 )
             )
 
-            order_statement = create_order_statement(stmt, search_params.order_args)
-
-            stmt = stmt.order_by(*order_statement)
-
-            if len(order_statement) > 0:
-                stmt = add_limits_statements(stmt, pagination_args)
+            # No order column (none, or "oid_list"). With an oid list the rows are bounded by
+            # that list and paged in sort_by_oid_list_and_select_page; without one, page here, ordered by
+            # oid so that pages don't repeat or skip objects.
+            if search_params.filter_args.oids is None:
+                stmt = add_limits_statements(stmt.order_by(probability_alias.oid), pagination_args)
 
         items = session.execute(stmt).all()
 
         items = order_by_oid(items, search_params.order_args)
 
-        if search_params.filter_args.oids is not None and search_params.order_args.order_by is None and len(items) > 0:
+        if (
+            search_params.filter_args.oids is not None
+            and search_params.order_args.order_by in (None, "oid_list")
+            and len(items) > 0
+        ):
             items = sort_by_oid_list_and_select_page(search_params, items)
 
-        return Pagination(pagination_args.page, pagination_args.page_size, items)
+        total = None
+        if pagination_args.count:
+            total = session.execute(select(func.count()).select_from(page.subquery())).scalar_one()
+
+        return Pagination(pagination_args.page, pagination_args.page_size, items, total)
 
 
 def page_then_survey_statement(page, page_order, survey_model, order_args, pagination_args):
@@ -209,12 +221,3 @@ def sort_by_oid_list_and_select_page(search_params, items):
     df_items = list(df_items.itertuples(index=False, name=None))
 
     return df_items
-
-
-def check_pagination_args(pagination_args):
-    if pagination_args.page < 1:
-        pagination_args.page = 1
-    if pagination_args.page_size < 0:
-        pagination_args.page_size = 10
-
-    return pagination_args

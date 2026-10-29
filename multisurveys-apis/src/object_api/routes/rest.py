@@ -1,11 +1,18 @@
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Query, Request
+
+from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST, decode_ids
+from core.idmapper.survey_mapper import DEFAULT_SURVEY, Survey
 
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
 from ..services.object_services import get_object_by_id, get_objects_list
-from ..services.validations import ndets_validation, order_mode_validation
+from ..services.validations import (
+    ndets_validation,
+    order_by_validation,
+)
+from ..services.parameters_parser import parse_oids_to_int
 
 router = APIRouter()
 
@@ -23,9 +30,12 @@ def healthcheck():
 @router.get("/list_objects")
 def list_objects(
     request: Request,
+    survey: Annotated[
+        Survey,
+        Query(description="Survey to search: `ztf` or `lsst` (case-insensitive). Without it, only ZTF is searched."),
+    ] = DEFAULT_SURVEY,
     class_name: str | None = None,
-    oid: Annotated[list[str] | None, Query()] = None,
-    survey: str | None = None,
+    oid: Annotated[list[str] | None, Query(max_length=MAX_OIDS_PER_REQUEST)] = None,
     classifier: str | None = None,
     ranking: int | None = Query(default=1),
     n_det: Annotated[list[int] | None, Query()] = None,
@@ -35,19 +45,19 @@ def list_objects(
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
-    page: int | None = 1,
-    page_size: int | None = 10,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1)] = 10,
     count: bool | None = False,
     order_by: str | None = Query(default="probability"),
-    order_mode: str | None = Query(default="DESC"),
+    order_mode: Literal["ASC", "DESC"] = "DESC",
 ):
     session = request.app.state.psql_session
 
     ndets_validation(n_det)
-    order_mode_validation(order_mode)
+    order_by_validation(order_by)
 
     filters = Filters(
-        oids=oid,
+        oids=parse_oids_to_int(oid, survey),
         survey=survey,
         classifier=classifier,
         class_name=class_name,
@@ -73,12 +83,15 @@ def list_objects(
 
 
 @router.get("/object")
-def get_object(request: Request, oid: str, survey_id: str, return_survey_extra: bool = False):
+def get_object(request: Request, oid: str, survey_id: Survey, return_survey_extra: bool = False):
     session = request.app.state.psql_session
 
-    return get_object_by_id(
+    response = get_object_by_id(
         session_ms=session,
         oid=oid,
         survey_id=survey_id,
         return_survey_extra=return_survey_extra,
     )
+    if survey_id == "ztf":
+        decode_ids([response])
+    return response

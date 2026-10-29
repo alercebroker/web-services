@@ -1,7 +1,8 @@
 import logging
 
 import requests
-from fastapi import HTTPException
+
+from core.exceptions import UpstreamTimeout, UpstreamUnavailable
 
 logger = logging.getLogger(__name__)
 
@@ -26,8 +27,9 @@ def get_alerce_data(ra: float, dec: float, radius: int) -> list[dict]:
         A list of per-survey match dictionaries.
 
     Raises:
-        HTTPException: 504 if catsHTM doesn't answer in time, 502 for any other upstream failure (connection
-            error, an error status, or a body that isn't JSON).
+        UpstreamTimeout: catsHTM doesn't answer in time (504).
+        UpstreamUnavailable: any other upstream failure (502): a connection error, an error status, or a body
+            that isn't JSON.
     """
 
     base_url = "https://catshtm.alerce.online/crossmatch_all"
@@ -39,7 +41,7 @@ def get_alerce_data(ra: float, dec: float, radius: int) -> list[dict]:
         return response.json()
     except requests.Timeout as e:
         logger.warning("catsHTM timed out: %s", e)
-        raise HTTPException(status_code=504, detail="The catsHTM crossmatch service did not answer in time")
+        raise UpstreamTimeout("The catsHTM crossmatch service did not answer in time")
     except requests.RequestException as e:
         logger.warning("catsHTM request failed: %s", e)
-        raise HTTPException(status_code=502, detail="The catsHTM crossmatch service failed")
+        raise UpstreamUnavailable("The catsHTM crossmatch service failed")

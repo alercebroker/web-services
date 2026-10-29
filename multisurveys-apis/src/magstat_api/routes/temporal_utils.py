@@ -11,7 +11,6 @@ def mag_parser(mag_list):
         "magsigma": "magsigma",
         "maglast": "maglast",
         "magfirst": "magfirst",
-        "step_id_corr": "step_id_corr",
         "n_det": "ndet",
         "firstmjd": "firstmjd",
         "lastmjd": "lastmjd",

@@ -1,6 +1,7 @@
 import logging
 import os
 import threading
+from contextlib import contextmanager
 
 from db_plugins.db.sql._connection_pipeline import PsqlDatabase, get_db_url
 from sqlalchemy import create_engine
@@ -32,8 +33,29 @@ def build_engine(db_config: dict):
     )
 
 
+class ApiPsqlDatabase(PsqlDatabase):
+    """
+    PsqlDatabase whose sessions re-raise the original exception.
+
+    db-plugins' session() logs a traceback and re-raises anything raised inside it as a bare Exception. Only
+    the catch-all handler can answer that, and Starlette re-raises after it, so a 404 or 400 raised in a
+    session was counted as a 5xx in /metrics and logged as an error.
+    """
+
+    @contextmanager
+    def session(self):
+        session = self._session_factory()
+        try:
+            yield session
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
+
 class ApiDatabase:
-    """Singleton wrapper for PsqlDatabase"""
+    """Singleton wrapper for ApiPsqlDatabase"""
 
     _instance = None
     # Route handlers run in threads, so two first requests could otherwise each build an instance.
@@ -51,7 +73,7 @@ class ApiDatabase:
                         "PORT": os.getenv("PSQL_PORT"),
                         "SCHEMA": os.getenv("SCHEMA"),
                     }
-                    cls._instance = PsqlDatabase(db_config, engine=build_engine(db_config))
+                    cls._instance = ApiPsqlDatabase(db_config, engine=build_engine(db_config))
         return cls._instance
 
 

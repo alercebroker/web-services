@@ -67,7 +67,7 @@ app = FastAPI(
 )
 add_concurrency_limit(app)
 add_error_handlers(app)
-instrumentator = Instrumentator().instrument(app).expose(app)
+instrumentator = Instrumentator().instrument(app).expose(app, include_in_schema=False)
 
 
 app.include_router(json_lightcurve.router, tags=["Photometry"])

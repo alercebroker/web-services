@@ -113,9 +113,16 @@
 </div>
 
 <div class="tw-w-[95%] tw-mx-auto tw-mb-6 tw-flex tw-flex-col tw-items-center">
-  {% if has_stamp_selected_measurement_id %}
+  {% if has_stamp_selected_measurement_id and stamps_available %}
     {% include "stamps_images.html.jinja" %}
     <div class="tw-justify-center"> measurement id: {{ selected_measurement_id }} </div>
+  {% elif has_stamp_selected_measurement_id %}
+    <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
+      <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4 tw-mb-4">
+          <strong class="tw-text-yellow-800 dark:tw-text-yellow-200">Info:</strong>
+          <span id="stamps-unavailable" class="tw-text-yellow-700 dark:tw-text-yellow-300">The stamps for measurement id (candid) {{ selected_measurement_id }} are temporarily unavailable.</span>
+      </div>
+    </div>
   {% else %}
     <div class="tw-h-full tw-flex tw-items-center tw-justify-center">
       <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4 tw-mb-4">

@@ -3,7 +3,7 @@ import numpy as np
 
 def encode_ztf_to_masterid_without_survey(ztf_oid: str, validate: bool) -> np.int64:
     if validate and not is_ztf_oid_valid(ztf_oid):
-        raise ValueError(f"Invalid ZTF object ID: {ztf_oid}")
+        raise ValueError(invalid_ztf_oid_message(ztf_oid))
 
     year = ztf_oid[3:5]
     seq = ztf_oid[5:12]
@@ -16,6 +16,16 @@ def encode_ztf_to_masterid_without_survey(ztf_oid: str, validate: bool) -> np.in
     # Convert the year to a number and add it to the master ID
     master_id += int(year) * 26**7
     return np.int64(master_id)
+
+
+def invalid_ztf_oid_message(ztf_oid: str) -> str:
+    suggestion = ztf_oid[:3].upper() + ztf_oid[3:].lower()
+    if is_ztf_oid_valid(suggestion):
+        return f"Invalid ZTF object ID: {ztf_oid}. Did you mean {suggestion}?"
+    return (
+        f"Invalid ZTF object ID: {ztf_oid}. Expected ZTF, two digits and seven lowercase letters, "
+        "for example ZTF18aarwvbm."
+    )
 
 
 def is_ztf_oid_valid(ztf_oid: str) -> bool:

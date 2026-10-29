@@ -1,5 +1,4 @@
 from typing import Tuple
-from numpy import int64
 
 
 def validate_coordinates_params(
@@ -18,8 +17,8 @@ def validate_coordinates_params(
 
 
 def validate_oid_params(
-    args: Tuple[int64, float, int],
-) -> Tuple[int64, float, int]:
+    args: Tuple[int, float, int],
+) -> Tuple[int, float, int]:
     oid, radius, neighbors = args
     if radius <= 0:
         raise ValueError("Radius must be greater than 0")

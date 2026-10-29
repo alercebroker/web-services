@@ -22,10 +22,7 @@ class ZTFS3Handler(BaseS3Handler):
         return file_name
 
     def _get_buffer_from_file(self, file_result, stamp_type):
-        if stamp_type in self.valid_stamp_types:
-            return file_result[stamp_type]["stampData"]
-        else:
-            raise Exception(f"Type {stamp_type} not valid. Valid types are {self.valid_stamp_types}")
+        return file_result[stamp_type]["stampData"]
 
     def get_avro(self, oid: str, measurement_id: str):
         avro_name = self._get_avro_name(oid, measurement_id)

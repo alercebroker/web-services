@@ -2,6 +2,10 @@ from typing import Callable
 
 from pydantic import BaseModel
 
+# The pipeline writes 100 where a magnitude or its error can't be computed (zero flux, or the reference's error
+# larger than the difference's)
+NOT_COMPUTED_MAG = 100.0
+
 
 def build_plot_variants(
     magnitude: Callable[[bool], float],
@@ -9,6 +13,7 @@ def build_plot_variants(
     flux: Callable[[bool], float],
     flux_err: Callable[[bool], float],
     sign: Callable[[bool], str],
+    has_total: bool = True,
 ) -> dict:
     """Precompute the plotted (y, err, sign) for every flux/total toggle combination.
 
@@ -21,12 +26,15 @@ def build_plot_variants(
 
     Each callable takes the ``total`` flag (corrected vs uncorrected) and returns the
     converted value for that mode.
+
+    Points without a corrected magnitude (``has_total=False``) get ``None`` for both total
+    variants, so the browser skips them instead of plotting a placeholder value.
     """
     return {
         "mag_diff": {"y": magnitude(False), "err": abs(magnitude_err(False)), "sign": sign(False)},
-        "mag_total": {"y": magnitude(True), "err": abs(magnitude_err(True)), "sign": sign(True)},
+        "mag_total": {"y": magnitude(True), "err": abs(magnitude_err(True)), "sign": sign(True)} if has_total else None,
         "flux_diff": {"y": flux(False), "err": abs(flux_err(False)), "sign": sign(False)},
-        "flux_total": {"y": flux(True), "err": abs(flux_err(True)), "sign": sign(True)},
+        "flux_total": {"y": flux(True), "err": abs(flux_err(True)), "sign": sign(True)} if has_total else None,
     }
 
 
@@ -94,6 +102,10 @@ class BaseDetection(BaseModel):
         """Calculate the phase for the given period"""
         return (self.mjd % period) / period
 
+    def has_total(self) -> bool:
+        """Whether this detection has a total (corrected) magnitude to show and use."""
+        return True
+
     def plot_variants(self) -> dict:
         """All (flux, total) variants for this detection. See build_plot_variants."""
         return build_plot_variants(
@@ -102,6 +114,7 @@ class BaseDetection(BaseModel):
             lambda total: self.magnitude2flux(total, False),
             lambda total: self.magnitude2flux_err(total, False),
             lambda total: self.flux_sign(total, False),
+            has_total=self.has_total(),
         )
 
 
@@ -177,6 +190,10 @@ class BaseForcedPhotometry(BaseModel):
     def phase(self, period: float) -> float:
         """Calculate the phase for the given period"""
         return (self.mjd % period) / period
+
+    def has_total(self) -> bool:
+        """Whether this point has a total (corrected) magnitude to show and use."""
+        return True
 
     def plot_variants(self) -> dict:
         """All (flux, total) variants for this point. See build_plot_variants."""

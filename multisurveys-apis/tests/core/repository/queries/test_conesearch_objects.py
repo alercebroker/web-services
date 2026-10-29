@@ -116,14 +116,14 @@ def test_conesearch_oid_few_close_objects(db: PsqlDatabase):
 
     # Execute the conesearch
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((np.int64(123), 30.0 / 3600, 10))
+    result = conesearch((123, 30.0 / 3600, 10))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
 
     # Execute conesearch with more than 10 neighbors
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((np.int64(123), 30.0 / 3600, 20))
+    result = conesearch((123, 30.0 / 3600, 20))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
@@ -183,14 +183,14 @@ def test_conesearch_oid_all_are_close(db: PsqlDatabase):
 
     # Execute the conesearch
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((np.int64(123), 30.0 / 3600, 10))
+    result = conesearch((123, 30.0 / 3600, 10))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
 
     # Execute conesearch with 20 neighbors should return all 20 objects
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((np.int64(123), 30.0 / 3600, 20))
+    result = conesearch((123, 30.0 / 3600, 20))
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 20
@@ -222,7 +222,7 @@ def test_conesearch_oid_none_are_close(db: PsqlDatabase):
 
     # Execute the conesearch
     conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((np.int64(123), 30.0 / 3600, 10))
+    result = conesearch((123, 30.0 / 3600, 10))
 
     # Assert that the conesearch returns the only object
     assert len(result) == 1

@@ -28,7 +28,7 @@ DEFAULT_QUEUE_WAIT_SECONDS = 2.0
 # requests.
 EXTRA_THREADS = 10
 
-EXEMPT_PATHS = {"/", "/healthcheck", "/metrics", "/docs", "/openapi.json"}
+EXEMPT_PATHS = {"/", "/healthcheck", "/metrics", "/docs", "/redoc", "/openapi.json"}
 STATIC_EXTENSIONS = (".js", ".mjs", ".css", ".map", ".woff", ".woff2", ".ttf", ".svg", ".ico")
 
 

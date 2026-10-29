@@ -20,15 +20,25 @@
     {{ toggle.toggle("flux", "Mag", "Flux", config.flux, "Toggle between magnitude and flux.", left_w="3rem", neutral=True) }}
 
     <!-- Difference / Total -->
-    {{ toggle.toggle("total", "Diff", "Total", config.total, "Toggle between difference and total (science) magnitude.", left_w="3rem", neutral=True) }}
+    <div class="tw-flex tw-items-center">
+      {{ toggle.toggle("total", "Diff", "Total", config.total, "Toggle between difference and total (science) magnitude.", left_w="3rem", neutral=True) }}
+      <!-- Shown by JS in Total when some points have no total magnitude and are left out -->
+      <div id="total-hidden-hint" class="tw-hidden tw-relative tw-group tw-ml-2">
+        <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">?</span>
+        <div class="tw-absolute tw-bottom-full tw-right-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
+          <div id="total-hidden-hint-text" class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-min-w-[200px] tw-text-balance"></div>
+        </div>
+      </div>
+    </div>
 
   </div>
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
 
   <!-- External sources -->
-  <div class="tw-flex tw-items-center tw-gap-x-2">
+  <div class="tw-flex tw-flex-wrap tw-items-center tw-gap-2">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">External</span>
+    <div class="tw-flex tw-flex-wrap tw-items-center tw-gap-2">
     {{ toggle.toggle("external_sources.enabled", "Off", "On", config.external_sources.enabled, "Show light curves from available external sets: ZTF Data Release 24.") }}
     <button
       type="button"
@@ -44,6 +54,7 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
       </svg>
     </button>
+    </div>
   </div>
 
   <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>

@@ -2,10 +2,10 @@ import json
 
 import pytest
 import requests
-from fastapi import HTTPException
 
 from crossmatch_api import get_crossmatch_data
 from crossmatch_api.get_crossmatch_data import CATSHTM_TIMEOUT, get_alerce_data
+from core.exceptions import UpstreamTimeout, UpstreamUnavailable
 
 
 def fake_response(status_code=200, body=b"[]"):
@@ -25,19 +25,19 @@ def test_success_returns_the_matches_and_sets_a_timeout(mocker):
 
 
 @pytest.mark.parametrize(
-    "failure, status",
+    "failure, error",
     [
-        (requests.ConnectTimeout("connect timed out"), 504),
-        (requests.ReadTimeout("read timed out"), 504),
-        (requests.ConnectionError("refused"), 502),
+        (requests.ConnectTimeout("connect timed out"), UpstreamTimeout),
+        (requests.ReadTimeout("read timed out"), UpstreamTimeout),
+        (requests.ConnectionError("refused"), UpstreamUnavailable),
     ],
 )
-def test_transport_failures_map_to_gateway_errors(mocker, failure, status):
+def test_transport_failures_are_upstream_errors(mocker, failure, error):
     mocker.patch.object(get_crossmatch_data.requests, "get", side_effect=failure)
 
-    with pytest.raises(HTTPException) as error:
+    with pytest.raises(UpstreamUnavailable) as raised:
         get_alerce_data(150.1, 2.2, 20)
-    assert error.value.status_code == status
+    assert type(raised.value) is error
 
 
 @pytest.mark.parametrize("response", [fake_response(status_code=500), fake_response(body=b"<html>not json</html>")])
@@ -45,6 +45,6 @@ def test_bad_upstream_answers_are_502(mocker, response):
     # Before 0.2.11 these returned an "Error: ..." string where a list was expected, which became a 500.
     mocker.patch.object(get_crossmatch_data.requests, "get", return_value=response)
 
-    with pytest.raises(HTTPException) as error:
+    with pytest.raises(UpstreamUnavailable) as raised:
         get_alerce_data(150.1, 2.2, 20)
-    assert error.value.status_code == 502
+    assert type(raised.value) is UpstreamUnavailable

@@ -3,6 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from core.config.dependencies import db_dependency
+from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST
+from core.idmapper.survey_mapper import SurveyQuery
 
 from ...services.lightcurve_service import (
     get_detections,
@@ -13,18 +15,16 @@ from ...services.lightcurve_service import (
     get_non_detections_by_list,
 )
 from ...services.validations import survey_validate
+from .missing_values import json_rows
 
 router = APIRouter()
 
-SurveyQuery = Annotated[
-    str,
-    Query(description="Survey the object belongs to. Allowed values: `ztf`, `lsst`.", examples=["ztf"]),
-]
 OidQuery = Annotated[
     list[str],
     Query(
+        max_length=MAX_OIDS_PER_REQUEST,
         description="ALeRCE object identifier(s). Repeat the parameter to request "
-        "several objects in a single call (e.g. `?oid=A&oid=B`).",
+        f"several objects in a single call (e.g. `?oid=A&oid=B`), up to {MAX_OIDS_PER_REQUEST}.",
         examples=["170433140619739440"],
     ),
 ]
@@ -58,9 +58,9 @@ def detections(
     survey_validate(survey_id)
 
     if len(oid) == 1:
-        return get_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+        return json_rows(get_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
-        return get_detections_by_list(oid, survey_id, db.session)
+        return json_rows(get_detections_by_list(oid, survey_id, db.session))
 
 
 @router.get(
@@ -81,9 +81,9 @@ def non_detections(
     survey_validate(survey_id)
 
     if len(oid) == 1:
-        return get_non_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+        return json_rows(get_non_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
-        return get_non_detections_by_list(oid, survey_id, db.session)
+        return json_rows(get_non_detections_by_list(oid, survey_id, db.session))
 
 
 @router.get(
@@ -104,9 +104,9 @@ def forced_photometry(
     survey_validate(survey_id)
 
     if len(oid) == 1:
-        return get_forced_photometry(oid=oid[0], survey_id=survey_id, session_factory=db.session)
+        return json_rows(get_forced_photometry(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
-        return get_forced_photometry_by_list(oid, survey_id, db.session)
+        return json_rows(get_forced_photometry_by_list(oid, survey_id, db.session))
 
 
 @router.get(
@@ -138,4 +138,7 @@ def lightcurve(
         response["non_detections"] = get_non_detections_by_list(oid, survey_id, db.session)
         response["forced_photometry"] = get_forced_photometry_by_list(oid, survey_id, db.session)
 
+    response["detections"] = json_rows(response["detections"])
+    response["non_detections"] = json_rows(response["non_detections"])
+    response["forced_photometry"] = json_rows(response["forced_photometry"])
     return response
