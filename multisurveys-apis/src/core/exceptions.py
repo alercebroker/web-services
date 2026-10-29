@@ -24,3 +24,29 @@ class ObjectNotFound(Exception):
 
     def __str__(self) -> str:
         return f"Object {self.object_id} not found on the database"
+
+
+class AlertNotFound(Exception):
+    """The alert file isn't in storage."""
+
+
+class UpstreamUnavailable(Exception):
+    """An external service (S3, catsHTM) failed or answered with an error."""
+
+
+class UpstreamTimeout(UpstreamUnavailable):
+    """An external service didn't answer in time."""
+
+
+class StatusNotConfigured(Exception):
+    """PIPELINE_STATUS_SOURCE is unset: the status API has nowhere to read metrics from."""
+
+    def __str__(self) -> str:
+        return "The status API is not configured"
+
+
+class StatusUnavailable(Exception):
+    """No pipeline status to give right now (Prometheus failing and nothing recent cached)."""
+
+    def __str__(self) -> str:
+        return "Pipeline status is temporarily unavailable"

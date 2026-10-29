@@ -13,7 +13,7 @@
   </div>
   <div class="tw-col-sm-12 tw-mt-2">
     <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Periodogram</span>
-    {{ toggle.toggle("periodogram_enabled", "Off", "On", config.periodogram_enabled, "Show the light curve periodogram. Points on the periodogram can be clicked to update the folded light curve plot.", not config.fold)}}
+    {{ toggle.toggle("periodogram_enabled", "Off", "On", config.periodogram_enabled, "Show the light curve periodogram. Points on the periodogram can be clicked to update the folded light curve plot. Requires Fold to be on.", not config.fold)}}
   </div>
 </div>
 

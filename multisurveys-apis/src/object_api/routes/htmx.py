@@ -1,8 +1,10 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 
-from core.static_files import configure_templates
+from core.idmapper.survey_mapper import Survey
+from core.static_files import configure_templates, html_templates
 from object_api.services.object_services import (
     choose_shown_classifier,
     get_object_by_id,
@@ -10,6 +12,7 @@ from object_api.services.object_services import (
     get_survey_classifiers,
     get_website_classifiers,
 )
+from probability_api.services.lsst_service import priorities_by_survey
 
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import Order, PaginationArgs
@@ -23,6 +26,7 @@ from ..services.validations import (
     ndets_validation_front,
     oid_lenght_validation,
     oids_format_validation,
+    order_by_validation,
     order_mode_validation,
     prob_lastmjd_validation,
     probability_validation,
@@ -30,14 +34,14 @@ from ..services.validations import (
 
 router = APIRouter()
 
-templates = Jinja2Templates(directory="src/object_api/templates", autoescape=True, auto_reload=True)
+templates = html_templates("src/object_api/templates")
 configure_templates(templates, "http://localhost:8000")
 
 templates.env.filters["truncate"] = truncate_float
 
 
 @router.get("/htmx/object_information", response_class=HTMLResponse)
-def object_info_app(request: Request, oid: str, survey_id: str):
+def object_info_app(request: Request, oid: str, survey_id: Survey):
     object_data = get_object_by_id(oid, survey_id, session_ms=request.app.state.psql_session)
 
     other_archives = [
@@ -52,6 +56,7 @@ def object_info_app(request: Request, oid: str, survey_id: str):
     ]
 
     return templates.TemplateResponse(
+        request=request,
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
@@ -76,6 +81,7 @@ def tns_info(request: Request, ra: float, dec: float):
     tns_data, tns_link = get_tns(ra, dec)
 
     return templates.TemplateResponse(
+        request=request,
         name="basic_information/oldTnsInformation.html.jinja",
         context={
             "request": request,
@@ -91,7 +97,7 @@ def tns_info(request: Request, ra: float, dec: float):
 
 
 @router.get("/htmx/search_objects/", response_class=HTMLResponse)
-def objects_form(request: Request, survey_id: str = None):
+def objects_form(request: Request, survey_id: Survey | None = None):
     session = request.app.state.psql_session
 
     if survey_id not in ("lsst", "ztf"):
@@ -100,6 +106,7 @@ def objects_form(request: Request, survey_id: str = None):
     classifiers = get_website_classifiers(session, survey_id)
 
     return templates.TemplateResponse(
+        request=request,
         name="search_form/form.html.jinja",
         context={"request": request, "classifiers": classifiers, "survey": survey_id},
     )
@@ -110,7 +117,7 @@ def objects_table(
     request: Request,
     class_name: str | None = None,
     oid: str | None = None,
-    survey: str | None = None,
+    survey: Survey | None = None,
     classifier: str | None = None,
     ranking: int | None = Query(default=1),
     n_det_min: int | None = None,
@@ -123,8 +130,8 @@ def objects_table(
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
-    page: int | None = 1,
-    page_size: int | None = 20,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1)] = 20,
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
@@ -138,6 +145,7 @@ def objects_table(
         oids = _parse_oids_string_to_array(oid)
 
         ndets_validation_front(n_det_min, n_det_max)
+        order_by_validation(order_by)
         order_mode_validation(order_mode)
         consearch_validation(ra, dec, radius)
         oids_format_validation(oids, survey)
@@ -161,6 +169,7 @@ def objects_table(
             prob_lastmjd_max=prob_lastmjd_max,
             survey=survey,
             classifier=classifier,
+            classifier_ids=list(priorities_by_survey(survey)),
             class_name=class_name,
             ranking=ranking,
             n_det=n_det,
@@ -200,6 +209,7 @@ def objects_table(
         }
 
     return templates.TemplateResponse(
+        request=request,
         name="main_table_objects/objects_table.html.jinja",
         context={
             "request": request,
@@ -220,7 +230,7 @@ def objects_table(
 @router.get("/htmx/side_objects", response_class=HTMLResponse)
 def sidebar(
     request: Request,
-    survey: str | None = None,
+    survey: Survey | None = None,
     oid: str | None = None,
     selected_oid: str | None = None,
     classifier: str | None = None,
@@ -236,8 +246,8 @@ def sidebar(
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
-    page: int | None = 1,
-    page_size: int | None = 20,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1)] = 20,
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
@@ -251,6 +261,7 @@ def sidebar(
         oids = _parse_oids_string_to_array(oid)
 
         ndets_validation_front(n_det_min, n_det_max)
+        order_by_validation(order_by)
         order_mode_validation(order_mode)
         consearch_validation(ra, dec, radius)
         oids_format_validation(oids, survey)
@@ -274,6 +285,7 @@ def sidebar(
             prob_lastmjd_max=prob_lastmjd_max,
             survey=survey,
             classifier=classifier,
+            classifier_ids=list(priorities_by_survey(survey)),
             class_name=class_name,
             ranking=ranking,
             n_det=n_det,
@@ -309,6 +321,7 @@ def sidebar(
         }
 
     return templates.TemplateResponse(
+        request=request,
         name="astronomical_object_list/astronomical_objects_list.html.jinja",
         context={
             "request": request,

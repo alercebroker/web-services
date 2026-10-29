@@ -399,7 +399,7 @@ def test_new_ztf_object_without_stellar_keeps_its_row():
     assert row.stellar is None and row.class_name is None
 
 
-@pytest.mark.parametrize("order_by", ["ndethist", "not_a_column"])
+@pytest.mark.parametrize("order_by", ["ranking", "class_id"])
 def test_website_page_stays_limited_without_an_object_sort_column(route_sql, order_by):
     sql = route_sql("/htmx/list_objects", classifier=None, class_name=None, order_by=order_by)
 

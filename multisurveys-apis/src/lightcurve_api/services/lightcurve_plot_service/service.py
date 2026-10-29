@@ -9,7 +9,6 @@ from typing import Callable, ContextManager, List, Dict, Any, Tuple
 
 import httpx
 from lightcurve_api.models.periodogram import Periodogram
-from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
 
@@ -384,11 +383,11 @@ def get_lightcurve(
 
 
 def get_object_coordinates(result: Result, session_factory: Callable[..., ContextManager[Session]]) -> Result:
-    oid = int(idmapper.catalog_oid_to_masterid(result.config_state.survey_id, result.config_state.oid, True))
+    oid = idmapper.parse_oid(result.config_state.survey_id, result.config_state.oid)
 
     try:
         object = query_object_by_id(session_factory, oid, result.config_state.survey_id)
-    except NoResultFound:
+    except ObjectNotFound:
         raise ObjectNotFound(result.config_state.oid)
     object_model = _parse_object_common(object)
 

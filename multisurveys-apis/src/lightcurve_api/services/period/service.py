@@ -36,6 +36,10 @@ def compute_periodogram(result: Result) -> Result:
 
     computer = PeriodogramComputer()
     df = detections2dataframe(filter_survey_detections(result.lightcurve.detections, result.config_state.survey_id))
+    if df.empty:
+        # No corrected detections to compute it from: same empty periodogram as when no period is found
+        result.periodogram = Periodogram(periods=[], scores=[], best_periods=[], best_periods_index=[])
+        return result
     computed = computer.compute(df)
     result.periodogram = computed
 
@@ -80,6 +84,7 @@ def detections2dataframe(detections: List[BaseDetection]):
     brightness error, and filter ID (fid).
 
     Total magnitude is used instead of difference, since folded lightcurve also uses corrected magnitudes.
+    Detections without a corrected magnitude are left out, as they have no total magnitude to use.
 
     Detections without a usable magnitude are left out: an uncorrected ZTF detection has no corrected
     magnitude and comes as 0 with error 0, and a single error of 0 gets an infinite weight in the
@@ -98,6 +103,8 @@ def detections2dataframe(detections: List[BaseDetection]):
     """
     df_dict = {"mjd": [], "brightness": [], "e_brightness": [], "fid": []}
     for det in detections:
+        if not det.has_total():
+            continue
         df_dict["mjd"].append(det.mjd)
         df_dict["brightness"].append(det.flux2magnitude(True, False))
         df_dict["e_brightness"].append(det.flux2magnitude_err(True, False))

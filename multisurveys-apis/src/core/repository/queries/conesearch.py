@@ -1,6 +1,5 @@
 from typing import Callable, ContextManager, List, Tuple
 from db_plugins.db.sql.models_pipeline import Object
-from numpy import int64
 from sqlalchemy import asc, select, text
 from sqlalchemy.orm import Session, aliased
 
@@ -28,7 +27,7 @@ def _build_statement_coordinates(neighbors: int):
 
 
 def conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
-    def _conesearch(args: Tuple[int64, float, int]) -> List[Object]:
+    def _conesearch(args: Tuple[int, float, int]) -> List[Object]:
         oid, radius, neighbors = args
         stmt = _build_statement_oid(oid, neighbors)
         with session_factory() as session:
@@ -39,9 +38,9 @@ def conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
 
 
 def dummy_conesearch_oid(session_factory: Callable[..., ContextManager[Session]]):
-    def _conesearch(args: Tuple[int64, float, int]) -> List[Object]:
+    def _conesearch(args: Tuple[int, float, int]) -> List[Object]:
         oid, radius, neighbors = args
-        stmt = select(Object).where(Object.oid == oid.item())
+        stmt = select(Object).where(Object.oid == oid)
         with session_factory() as session:
             result = session.execute(stmt, {"radius": radius}).all()
             return [row[0] for row in result]
@@ -49,7 +48,7 @@ def dummy_conesearch_oid(session_factory: Callable[..., ContextManager[Session]]
     return _conesearch
 
 
-def _build_statement_oid(oid: int64, neighbors: int):
+def _build_statement_oid(oid: int, neighbors: int):
     # Create aliases for the Object table
     center_obj = aliased(Object, name="center")
     target_obj = aliased(Object, name="target")
@@ -58,7 +57,7 @@ def _build_statement_oid(oid: int64, neighbors: int):
     return (
         select(target_obj)
         .select_from(center_obj, target_obj)
-        .where(center_obj.oid == oid.item())
+        .where(center_obj.oid == oid)
         .where(text("q3c_radial_query(target.meanra, target.meandec, center.meanra, center.meandec, :radius)"))
         .order_by(asc(text("q3c_dist(target.meanra, target.meandec, center.meanra, center.meandec)")))
         .limit(neighbors)

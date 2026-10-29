@@ -3,20 +3,19 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from core.config.dependencies import db_dependency
+from core.idmapper.survey_mapper import SurveyQuery
 from core.idmapper import idmapper
 
-from ...models.lightcurve import Lightcurve
 from ...models.object import ApiObject
 from ...services.conesearch import conesearch as service
+from .missing_values import json_rows
 
 router = APIRouter(prefix="/conesearch")
 
-SurveyQuery = Annotated[
-    str,
-    Query(description="Survey the object belongs to. Allowed values: `ztf`, `lsst` (case-insensitive)."),
+RadiusQuery = Annotated[float, Query(gt=0, description="Cone search radius, in degrees.", examples=[0.0083])]
+NeighborsQuery = Annotated[
+    int, Query(gt=0, description="Maximum number of neighboring sources to return.", examples=[2])
 ]
-RadiusQuery = Annotated[float, Query(description="Cone search radius, in degrees.", examples=[0.0083])]
-NeighborsQuery = Annotated[int, Query(description="Maximum number of neighboring sources to return.", examples=[2])]
 
 
 @router.get(
@@ -34,7 +33,7 @@ def conesearch(
     neighbors: NeighborsQuery,
     db: db_dependency,
 ) -> list[ApiObject]:
-    id = idmapper.catalog_oid_to_masterid(survey, oid, True)
+    id = idmapper.parse_oid(survey, oid)
     return service.conesearch_oid(id, radius, neighbors, db.session)
 
 
@@ -47,8 +46,8 @@ def conesearch(
     ),
 )
 def conesearch_coordinates(
-    ra: Annotated[float, Query(description="Right ascension of the search center (ICRS), in degrees.")],
-    dec: Annotated[float, Query(description="Declination of the search center (ICRS), in degrees.")],
+    ra: Annotated[float, Query(ge=0, le=360, description="Right ascension of the search center (ICRS), in degrees.")],
+    dec: Annotated[float, Query(ge=-90, le=90, description="Declination of the search center (ICRS), in degrees.")],
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,
@@ -71,5 +70,6 @@ def conesearch_oid_lightcurve(
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,
-) -> Lightcurve:
-    return service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)
+):
+    lightcurve = service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)
+    return {key: json_rows(getattr(lightcurve, key)) for key in ("detections", "non_detections", "forced_photometry")}

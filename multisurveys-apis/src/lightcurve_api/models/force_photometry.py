@@ -3,7 +3,7 @@ import traceback
 from typing import Optional
 
 from pydantic import BaseModel, model_validator
-from .lightcurve_item import BaseForcedPhotometry, build_plot_variants
+from .lightcurve_item import NOT_COMPUTED_MAG, BaseForcedPhotometry, build_plot_variants
 from astropy.coordinates import Distance
 import astropy.units as u
 
@@ -88,6 +88,10 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     def flux2magnitude_err(self, total: bool) -> float:
         return self.e_mag_corr_ext if total else self.e_mag
 
+    def has_total(self) -> bool:
+        # Uncorrected points have a NULL mag_corr, which set_defaults turns into 0.
+        return 0 < self.mag_corr < NOT_COMPUTED_MAG
+
     def plot_variants(self) -> dict:
         return build_plot_variants(
             lambda total: self.flux2magnitude(total),
@@ -95,6 +99,7 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
             lambda total: self.magnitude2flux(total),
             lambda total: self.magnitude2flux_err(total),
             lambda total: "+" if self.isdiffpos > 0 else "-",
+            has_total=self.has_total(),
         )
 
 

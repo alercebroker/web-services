@@ -3,6 +3,9 @@ import asyncio
 import httpx
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from psycopg2.errors import QueryCanceled
+from pydantic import BaseModel
+from sqlalchemy.exc import OperationalError
 
 from core.error_handlers import add_error_handlers
 from core.exceptions import DatabaseError, ObjectNotFound
@@ -28,17 +31,28 @@ def make_app() -> CORSMiddleware:
     def bad_value():
         raise ValueError("n_det must be positive")
 
-    @app.get("/timeout-operational")
-    def timeout_operational():
-        raise Exception("(psycopg2.errors.QueryCanceled) canceling statement due to statement timeout")  # noqa: TRY002
+    @app.get("/timeout")
+    def timeout():
+        raise OperationalError("SELECT 1", {}, QueryCanceled("canceling statement due to statement timeout"))
 
-    @app.get("/timeout-wrapped")
-    def timeout_wrapped():
-        raise Exception("statement timeout")  # noqa: TRY002
+    @app.get("/connection-lost")
+    def connection_lost():
+        raise OperationalError("SELECT 1", {}, RuntimeError("server closed the connection unexpectedly"))
 
     @app.get("/unexpected")
     def unexpected():
         raise RuntimeError("something broke")
+
+    class Row(BaseModel):
+        stellar: bool
+
+    @app.get("/bad-row")
+    def bad_row():
+        return Row(stellar=None)
+
+    @app.get("/typed")
+    def typed(n: int):
+        return n
 
     return CORSMiddleware(app, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
@@ -72,16 +86,16 @@ def test_value_error_returns_400():
     assert r.json() == {"detail": "n_det must be positive"}
 
 
-def test_timeout_from_operational_error_message_returns_504():
-    r = _get("/timeout-operational")
+def test_query_timeout_returns_504():
+    r = _get("/timeout")
     assert r.status_code == 504
     assert r.json() == {"detail": "Query timed out"}
 
 
-def test_timeout_from_wrapped_exception_returns_504():
-    r = _get("/timeout-wrapped")
-    assert r.status_code == 504
-    assert r.json() == {"detail": "Query timed out"}
+def test_other_operational_errors_return_500():
+    r = _get("/connection-lost")
+    assert r.status_code == 500
+    assert r.json() == {"detail": "Internal server error"}
 
 
 def test_unexpected_error_returns_500():
@@ -90,17 +104,31 @@ def test_unexpected_error_returns_500():
     assert r.json() == {"detail": "Internal server error"}
 
 
+def test_validation_error_in_our_own_models_returns_500():
+    r = _get("/bad-row")
+    assert r.status_code == 500
+    assert r.json() == {"detail": "Internal server error"}
+
+
+def test_bad_request_parameter_still_returns_422():
+    r = _get("/typed?n=abc")
+    assert r.status_code == 422
+
+
 def test_success_still_works():
     r = _get("/ok")
     assert r.status_code == 200
 
 
 def test_error_responses_carry_cors_headers():
-    r = _get("/not-found")
-    assert r.headers["access-control-allow-origin"] == "*"
+    # allow_credentials=True: Starlette 1.x echoes the caller's origin instead of "*"
+    origin = "https://explorer.alerce.online"
 
-    r = _get("/timeout-operational")
-    assert r.headers["access-control-allow-origin"] == "*"
+    r = _get("/not-found", origin)
+    assert r.headers["access-control-allow-origin"] == origin
 
-    r = _get("/unexpected")
-    assert r.headers["access-control-allow-origin"] == "*"
+    r = _get("/timeout", origin)
+    assert r.headers["access-control-allow-origin"] == origin
+
+    r = _get("/unexpected", origin)
+    assert r.headers["access-control-allow-origin"] == origin

@@ -1,4 +1,5 @@
 from src.probability_api.services.lsst_service import priorities_by_survey
+from .ztf_service import format_classifiers_name
 from ..models.probability import ObjectProbability
 
 
@@ -35,7 +36,7 @@ def filter_classifiers_by_probabilities(classifiers: list, probabilites: dict) -
 def prepare_classifier_names(classifiers: list) -> list:
     result = []
     for classifier_name in classifiers:
-        parsed_name = classifier_name.replace("_", " ").title()
+        parsed_name = format_classifiers_name(classifier_name)
         aux_dict = {classifier_name: parsed_name}
         result.append(aux_dict)
 

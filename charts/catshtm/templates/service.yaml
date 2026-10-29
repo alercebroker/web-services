@@ -6,8 +6,8 @@ metadata:
   labels:
     {{- include "catshtm-api.labels" . | nindent 4 }}
   annotations:
-    alb.ingress.kubernetes.io/healthcheck-path: /
-    prometheus.io/scrape: "true"
+    # answered by nginx (see configmap-nginx.yaml), not by the app
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
 spec:
   type: {{ .Values.service.type }}
   ports:

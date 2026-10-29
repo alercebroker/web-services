@@ -6,6 +6,7 @@ class Filters(BaseModel):
     oids: list[int] | None = None
     survey: str | None = None
     classifier: str | None = None
+    classifier_ids: list[int] | None = None
     class_name: str | None = None
     ranking: int | None = None
     n_det: list[int] | None = None

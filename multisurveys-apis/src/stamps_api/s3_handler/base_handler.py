@@ -1,5 +1,10 @@
+import logging
+
 import boto3
-from fastapi import HTTPException
+from botocore.config import Config
+from botocore.exceptions import BotoCoreError, ClientError, ConnectTimeoutError, ReadTimeoutError
+
+from core.exceptions import AlertNotFound, UpstreamTimeout, UpstreamUnavailable
 from fastavro import reader
 import io
 import threading
@@ -7,8 +12,14 @@ from abc import abstractmethod
 from .fits_to_png import transform
 import gzip
 
+logger = logging.getLogger(__name__)
+
 _clients = {}
 _clients_lock = threading.Lock()
+# Worst case 2 attempts x (5 s to connect + 15 s to read) = 40 s, under the ALB's default 60 s idle timeout, so a slow
+# S3 answers our 504 instead of holding one of the pod's request slots for minutes (botocore's defaults are 60 + 60 s,
+# with retries)
+S3_CONFIG = Config(connect_timeout=5, read_timeout=15, retries={"total_max_attempts": 2, "mode": "standard"})
 
 
 def s3_client(bucket_region: str):
@@ -21,7 +32,7 @@ def s3_client(bucket_region: str):
     with _clients_lock:
         client = _clients.get(bucket_region)
         if client is None:
-            client = boto3.session.Session().client("s3", region_name=bucket_region)
+            client = boto3.session.Session().client("s3", region_name=bucket_region, config=S3_CONFIG)
             _clients[bucket_region] = client
         return client
 
@@ -43,9 +54,16 @@ class BaseS3Handler:
         key = f"{file_name}.avro"
         try:
             file = self.client.get_object(Bucket=self.bucket_name, Key=key)
+            body = file["Body"].read()
         except self.client.exceptions.NoSuchKey:
-            raise HTTPException(status_code=404, detail=f"Alert file {key} not found")
-        file_io = io.BytesIO(file["Body"].read())
+            raise AlertNotFound(f"Alert file {key} not found")
+        except (ConnectTimeoutError, ReadTimeoutError) as error:
+            logger.warning("S3 timed out reading %s: %s", key, error)
+            raise UpstreamTimeout("S3 did not answer in time")
+        except (ClientError, BotoCoreError) as error:
+            logger.warning("S3 failed reading %s: %s", key, error)
+            raise UpstreamUnavailable("Could not read the alert file from S3")
+        file_io = io.BytesIO(body)
         avro_data = next(reader(file_io))
         return avro_data
 
@@ -73,11 +91,9 @@ class BaseS3Handler:
             else:
                 file = io.BytesIO(fit_data)
                 mime = "application/fits"
-        elif file_format == "png":
+        else:
             file = io.BytesIO(transform(fit_data, stamp_type, 2, self.compressed))
             mime = "image/png"
-        else:
-            raise Exception(f"Format {file_format} is not valid. Only png and fits accepted.")
         return file_name, file, mime
 
     @abstractmethod
@@ -96,17 +112,20 @@ class BaseS3Handler:
 
         return file_name, file, mime
 
-    def get_all_stamps(self, oid: str, measurement_id: str, file_format: str, is_compressed: bool = True):
+    def get_all_stamps(self, oid: str, measurement_id: str, file_formats: list[str], is_compressed: bool = True):
+        """Every stamp type in each of file_formats, from one download of the alert: {format: {stamp_type: ...}}."""
         avro_name = self._get_avro_name(oid, measurement_id)
         avro_data = self._get_file_from_s3(avro_name)
 
         result = {}
-        for stamp_type in self.valid_stamp_types:
-            file_name, file, mime = self._get_stamp(avro_name, avro_data, stamp_type, file_format, is_compressed)
-            result[stamp_type] = {
-                "file_name": file_name,
-                "file": file.getvalue(),
-                "mime": mime,
-            }
+        for file_format in file_formats:
+            result[file_format] = {}
+            for stamp_type in self.valid_stamp_types:
+                file_name, file, mime = self._get_stamp(avro_name, avro_data, stamp_type, file_format, is_compressed)
+                result[file_format][stamp_type] = {
+                    "file_name": file_name,
+                    "file": file.getvalue(),
+                    "mime": mime,
+                }
 
         return result

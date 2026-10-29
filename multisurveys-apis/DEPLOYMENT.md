@@ -25,9 +25,9 @@ an external request to `/<service>_api/...` is forwarded to the app as `/...`
 
 ### The `root_path` / prefix-strip gotcha (why static files 404'd)
 
-The lightcurve app sets `root_path="/lightcurve_api"` so the OpenAPI docs and the
-`servers` block resolve correctly behind the proxy. But nginx **strips**
-`/lightcurve_api` before forwarding, so the app actually receives `/static/...`,
+Every app sets `root_path="/<api>_api"` (e.g. `/lightcurve_api`) so its OpenAPI docs
+and the `servers` block resolve correctly behind the proxy. But nginx **strips**
+that prefix before forwarding, so the app actually receives `/static/...`,
 `/htmx/...`, etc.
 
 - **Normal routes** (routers, `/docs`) match on the already-stripped path → fine.
@@ -35,11 +35,12 @@ The lightcurve app sets `root_path="/lightcurve_api"` so the OpenAPI docs and th
   `root_path` (`/lightcurve_api/static`), so the stripped `/static/...` that
   arrives never matches → **every asset 404s**.
 
-Fix (in [`src/lightcurve_api/api.py`](src/lightcurve_api/api.py)): serve static
-files from an explicit route that delegates to `StaticFiles.get_response`, which
-matches on the post-strip path while keeping ETag/Last-Modified, conditional
-304s, Range, HEAD and traversal-safe lookups. **Do not** revert it to
-`app.mount("/static", ...)` while `root_path` is set.
+Fix (`mount_static` in [`src/core/static_files.py`](src/core/static_files.py), and
+lightcurve's own routes in [`src/lightcurve_api/api.py`](src/lightcurve_api/api.py)):
+serve static files from explicit routes that delegate to `StaticFiles.get_response`,
+which match on the post-strip path while keeping ETag/Last-Modified, conditional
+304s, Range, HEAD and traversal-safe lookups. **Do not** go back to
+`app.mount(...)` for static files while `root_path` is set.
 
 ## Image naming — READ THIS FIRST
 
@@ -143,11 +144,16 @@ the SSM parameter first, then out through `helm upgrade`.
 | aladin | `multisurvey-api-aladin` | `/multisurvey-api/aladin-helm-values` | `multisurvey-api-aladin` |
 | classifier | `multisurvey-api-classifier` | `/multisurvey-api/classifier-helm-values` | `multisurvey-api-classifier` |
 | crossmatch | `multisurvey-api-crossmatch` | `/multisurvey-api/crossmatch-helm-values` | `multisurvey-api-crossmatch` |
+| features | `multisurvey-api-features` | `/multisurvey-api/features-helm-values` | `multisurvey-api-features` (not created yet) |
 | lightcurve | `multisurvey-api-lightcurve` | `/multisurvey-api/lightcurve-helm-values` | `multisurvey-api-lightcurve` |
 | magstat | `multisurvey-api-magstats` | `/multisurvey-api/magstats-helm-values` | `multisurvey-api-magstat` (no `s`) |
 | object | `multisurvey-api-object` | `/multisurvey-api/object-helm-values` | `multisurvey-api-object` |
 | probability | `multisurvey-api-probability` | `/multisurvey-api/probability-helm-values` | `multisurvey-api-probability` |
 | stamp | `multisurvey-api-stamp` | `/multisurvey-api/stamp-helm-values` | `multisurvey-api-stamp` |
+| status | `multisurvey-api-status` | `/multisurvey-api/status-helm-values` | `multisurvey-api-status` (not created yet) |
+
+`features` and `status` are new: their Helm releases and SSM parameters don't exist yet. Create them, with these
+names, before their first deploy (`status` also needs the `PIPELINE_STATUS_*` settings in its values).
 
 ### Deploy: `scripts/upgrade_multisurvey_hybrid.sh`
 

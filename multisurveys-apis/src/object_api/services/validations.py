@@ -1,7 +1,10 @@
 import math
-import re
 
+from db_plugins.db.sql.models_pipeline import Object, Probability
 from fastapi import HTTPException
+from sqlalchemy import inspect
+
+from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST, encode_ids
 
 
 def ndets_validation_front(n_det_min: int, n_det_max: int):
@@ -20,6 +23,14 @@ def ndets_validation(ndets: list[int]):
                 status_code=422,
                 detail={"detections_container": "Min value can't be greater than max."},
             )
+
+
+ORDER_BY_COLUMNS = sorted({attr.key for model in (Object, Probability) for attr in inspect(model).column_attrs})
+
+
+def order_by_validation(order_by: str | None):
+    if order_by is not None and order_by != "oid_list" and order_by not in ORDER_BY_COLUMNS:
+        raise ValueError(f"order_by must be oid_list or one of: {', '.join(ORDER_BY_COLUMNS)}.")
 
 
 def order_mode_validation(order: str):
@@ -74,23 +85,19 @@ def radius_validation(radius):
 
 
 def oids_format_validation(oids, survey):
-    if oids is not None and survey == "ztf":
-        pattern = re.compile(r"(ZTF)\d{2,}\w+|[Ss]upernova")
-
-        for oid in oids:
-            if not pattern.search(oid):
-                raise HTTPException(
-                    status_code=422,
-                    detail={"objectIds": "Oid format is: /(ZTF)d{2,}w+/"},
-                )
+    if oids is not None:
+        try:
+            encode_ids(survey, oids)
+        except ValueError as e:
+            raise HTTPException(status_code=422, detail={"objectIds": str(e)})
 
 
 def oid_lenght_validation(oids):
     if oids is not None:
-        if len(oids) > 200:
+        if len(oids) > MAX_OIDS_PER_REQUEST:
             raise HTTPException(
                 status_code=422,
-                detail={"objectIds": "You can only query for 200 object ids."},
+                detail={"objectIds": f"You can only query for {MAX_OIDS_PER_REQUEST} object ids."},
             )
 
 

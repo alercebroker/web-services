@@ -5,7 +5,13 @@ from fastapi import FastAPI
 from fastapi.templating import Jinja2Templates
 from fastapi.testclient import TestClient
 
-from core.static_files import IMMUTABLE_CACHE_CONTROL, VERSIONED_PREFIX, configure_templates, mount_static
+from core.static_files import (
+    IMMUTABLE_CACHE_CONTROL,
+    VERSIONED_PREFIX,
+    configure_templates,
+    html_templates,
+    mount_static,
+)
 from core.version import APP_VERSION
 
 SRC = pathlib.Path(__file__).resolve().parents[2] / "src"
@@ -37,6 +43,16 @@ def test_configure_templates_sets_the_asset_base(monkeypatch):
 
     assert templates.env.globals["API_URL"] == "https://api.example.org/object_api"
     assert templates.env.globals["ASSETS_URL"] == f"https://api.example.org/object_api{VERSIONED_PREFIX}"
+
+
+def test_html_templates_escape_jinja_suffixed_templates(tmp_path):
+    # Starlette's default env only escapes names ending in .html; ours end in .html.jinja.
+    (tmp_path / "page.html.jinja").write_text("{{ value }}")
+    templates = html_templates(str(tmp_path))
+
+    rendered = templates.get_template("page.html.jinja").render(value="<script>alert(1)</script>")
+
+    assert rendered == "&lt;script&gt;alert(1)&lt;/script&gt;"
 
 
 def test_lightcurve_serves_versioned_static_files():

@@ -98,9 +98,9 @@ def get_classes_list(session_ms):
 
 
 def get_tidy_classifiers(session_ms, survey_id: str):
-    survey_id_mapped = get_survey_id(survey_id)
-
-    classifiers = get_classifiers(session_ms, survey_id_mapped)
+    get_survey_id(survey_id)
+    # Every survey's classifiers: the search form filters them by the survey selected in the browser
+    classifiers = get_classifiers(session_ms)
     classifiers = parse_to_json_classifiers(classifiers)
 
     return classifiers

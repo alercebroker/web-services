@@ -20,7 +20,7 @@ AWS_REGION_PROD="us-east-1"   # where the cluster and the SSM parameters live; s
 HELM_RELEASE_NS="default"   # Helm keeps the release records here; the pods run in multisurvey-api-<api>
 CHART_DIR="charts/multisurvey_api"
 IMAGE_REPO="ghcr.io/alercebroker/multisurvey-api"
-API_NAMES="aladin classifier crossmatch lightcurve magstat object probability stamp"
+API_NAMES="aladin classifier crossmatch features lightcurve magstat object probability stamp status"
 
 usage() {
   cat <<EOF

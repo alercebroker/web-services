@@ -28,7 +28,6 @@ class MagStat(BaseModel):
     magsigma_corr: Optional[float] = None
     maglast_corr: Optional[float] = None
     magfirst_corr: Optional[float] = None
-    step_id_corr: Optional[str] = None
     n_det: Optional[int] = None
     firstmjd: Optional[float] = None
     lastmjd: Optional[float] = None
