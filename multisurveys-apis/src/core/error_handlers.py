@@ -2,7 +2,9 @@ import logging
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+from psycopg2.errors import QueryCanceled
 from pydantic import ValidationError
+from sqlalchemy.exc import OperationalError
 
 from core.exceptions import (
     AlertNotFound,
@@ -50,11 +52,15 @@ def add_error_handlers(app: FastAPI):
     def handle_status_unavailable(request: Request, exc: StatusNotConfigured | StatusUnavailable):
         return JSONResponse(status_code=503, content={"detail": str(exc)})
 
+    @app.exception_handler(OperationalError)
+    def handle_operational_error(request: Request, exc: OperationalError):
+        if isinstance(exc.orig, QueryCanceled):
+            logger.error("Query timeout on %s %s: %s", request.method, request.url.path, exc.orig)
+            return JSONResponse(status_code=504, content={"detail": "Query timed out"})
+        logger.exception("Database error on %s %s", request.method, request.url.path)
+        return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
     @app.exception_handler(Exception)
     def handle_unexpected(request: Request, exc: Exception):
-        msg = str(exc)
-        if "canceling statement" in msg or "statement timeout" in msg:
-            logger.error("Query timeout on %s %s: %s", request.method, request.url.path, msg)
-            return JSONResponse(status_code=504, content={"detail": "Query timed out"})
         logger.exception("Unhandled error on %s %s", request.method, request.url.path)
         return JSONResponse(status_code=500, content={"detail": "Internal server error"})

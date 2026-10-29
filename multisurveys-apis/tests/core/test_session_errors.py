@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from prometheus_client import CollectorRegistry
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel
+from sqlalchemy import text
 
 from db_plugins.db.sql.models_pipeline import Object
 
@@ -35,6 +36,12 @@ def client(db):
         with db.session():
             raise ValueError("Unsupported survey: atlas")
 
+    @app.get("/timeout")
+    def timeout():
+        with db.session() as session:
+            session.execute(text("SET statement_timeout = 1"))
+            session.execute(text("SELECT pg_sleep(1)"))
+
     @app.get("/bad-row")
     def bad_row():
         with db.session():
@@ -48,6 +55,7 @@ def client(db):
     [
         ("/not-found", 404, "Object ZTF00abc not found on the database"),
         ("/bad-value", 400, "Unsupported survey: atlas"),
+        ("/timeout", 504, "Query timed out"),
         ("/bad-row", 500, "Internal server error"),
     ],
 )
@@ -67,6 +75,13 @@ def test_client_errors_inside_a_session_are_counted_as_4xx(client):
     assert 'handler="/not-found",method="GET",status="4xx"' in metrics
     assert 'handler="/bad-value",method="GET",status="4xx"' in metrics
     assert 'status="5xx"' not in metrics
+
+
+def test_a_query_timeout_is_not_re_raised_as_an_unhandled_error(client):
+    # Starlette re-raises whatever reaches the Exception handler; this client raises it too
+    response = TestClient(client.app).get("/timeout")
+
+    assert response.status_code == 504
 
 
 def test_aladin_object_missing_a_field_is_400(db):
