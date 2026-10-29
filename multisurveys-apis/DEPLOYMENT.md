@@ -144,11 +144,16 @@ the SSM parameter first, then out through `helm upgrade`.
 | aladin | `multisurvey-api-aladin` | `/multisurvey-api/aladin-helm-values` | `multisurvey-api-aladin` |
 | classifier | `multisurvey-api-classifier` | `/multisurvey-api/classifier-helm-values` | `multisurvey-api-classifier` |
 | crossmatch | `multisurvey-api-crossmatch` | `/multisurvey-api/crossmatch-helm-values` | `multisurvey-api-crossmatch` |
+| features | `multisurvey-api-features` | `/multisurvey-api/features-helm-values` | `multisurvey-api-features` (not created yet) |
 | lightcurve | `multisurvey-api-lightcurve` | `/multisurvey-api/lightcurve-helm-values` | `multisurvey-api-lightcurve` |
 | magstat | `multisurvey-api-magstats` | `/multisurvey-api/magstats-helm-values` | `multisurvey-api-magstat` (no `s`) |
 | object | `multisurvey-api-object` | `/multisurvey-api/object-helm-values` | `multisurvey-api-object` |
 | probability | `multisurvey-api-probability` | `/multisurvey-api/probability-helm-values` | `multisurvey-api-probability` |
 | stamp | `multisurvey-api-stamp` | `/multisurvey-api/stamp-helm-values` | `multisurvey-api-stamp` |
+| status | `multisurvey-api-status` | `/multisurvey-api/status-helm-values` | `multisurvey-api-status` (not created yet) |
+
+`features` and `status` are new: their Helm releases and SSM parameters don't exist yet. Create them, with these
+names, before their first deploy (`status` also needs the `PIPELINE_STATUS_*` settings in its values).
 
 ### Deploy: `scripts/upgrade_multisurvey_hybrid.sh`
 
