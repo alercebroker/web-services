@@ -16,6 +16,7 @@ from object_api.services.statements_sql import (
 )
 from object_api.models.pagination import Pagination
 from core.exceptions import ObjectNotFound
+from core.idmapper.survey_mapper import get_survey_id
 
 
 class ObjectsModels:
@@ -53,7 +54,7 @@ def query_object_by_id(session_ms, oid, survey_id):
     with session_ms() as session:
         model = ObjectsModels(survey_id).get_model_by_survey()
 
-        stmt = build_statement_object(model, oid)
+        stmt = build_statement_object(model, oid, get_survey_id(survey_id))
 
         object_row = session.execute(stmt).one_or_none()
 
@@ -62,11 +63,11 @@ def query_object_by_id(session_ms, oid, survey_id):
     return object_row
 
 
-def build_statement_object(model_id, oid):
-    # Select both the survey-specific model and the common Object and join them by oid
+def build_statement_object(model_id, oid, sid):
+    # Select both the survey-specific model and the common Object and join them by (oid, sid)
     stmt = (
         select(model_id, Object)
-        .join(Object, and_(Object.oid == model_id.oid))
+        .join(Object, and_(Object.oid == model_id.oid, Object.sid == sid))
         .where(and_(model_id.oid == oid))
         .limit(1)
     )
