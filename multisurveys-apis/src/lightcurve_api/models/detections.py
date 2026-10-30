@@ -30,9 +30,10 @@ class ztfDetection(BaseDetection):
     magapbig: float
     sigmagapbig: float
     rfid: int | None = None
-    magpsf_corr: float
-    sigmapsf_corr: float
-    sigmapsf_corr_ext: float
+    # None for points the pipeline didn't correct
+    magpsf_corr: float | None = None
+    sigmapsf_corr: float | None = None
+    sigmapsf_corr_ext: float | None = None
     corrected: bool
     dubious: bool
     parent_candid: Optional[int] = None
@@ -60,9 +61,6 @@ class ztfDetection(BaseDetection):
             "rbversion": "0",
             "magapbig": 0,
             "sigmagapbig": 0,
-            "magpsf_corr": 0,
-            "sigmapsf_corr": 0,
-            "sigmapsf_corr_ext": 0,
             "corrected": False,
             "dubious": False,
             "has_stamp": False,
@@ -101,7 +99,7 @@ class ztfDetection(BaseDetection):
         Returns:
             Calculated flux error
         """
-        err = self.sigmapsf_corr_ext if total else self.sigmapsf
+        err = self.total_err() if total else self.sigmapsf
         return abs(err) * abs(self.magnitude2flux(total, absolute))
 
     def flux2magnitude(self, total: bool, absolute: bool) -> float:
@@ -126,14 +124,17 @@ class ztfDetection(BaseDetection):
         Returns:
             Magnitude error value
         """
-        return self.sigmapsf_corr_ext if total else self.sigmapsf
+        return self.total_err() if total else self.sigmapsf
 
     def flux_sign(self, total: bool, absolute: bool) -> str:
         return "+" if self.isdiffpos > 0 else "-"
 
     def has_total(self) -> bool:
-        # Uncorrected detections have a NULL magpsf_corr, which set_defaults turns into 0.
-        return 0 < self.magpsf_corr < NOT_COMPUTED_MAG
+        return self.magpsf_corr is not None and 0 < self.magpsf_corr < NOT_COMPUTED_MAG
+
+    def total_err(self) -> float:
+        # A corrected point without its error is plotted without an error bar
+        return self.sigmapsf_corr_ext if self.sigmapsf_corr_ext is not None else 0.0
 
 
 class LsstDetection(BaseDetection):
@@ -444,9 +445,9 @@ class ZTFDetectionCSV(BaseModel):
     isdiffpos: int
     magpsf: float
     sigmapsf: float
-    magpsf_corr: float
-    sigmapsf_corr: float
-    sigmapsf_corr_ext: float
+    magpsf_corr: float | None = None
+    sigmapsf_corr: float | None = None
+    sigmapsf_corr_ext: float | None = None
     pid: int
     diffmaglim: float
     nid: int
