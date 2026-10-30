@@ -38,10 +38,10 @@ def test_survey_defaults_to_ztf(client):
 
 def test_docs_say_the_survey_defaults_to_ztf(client):
     params = client.get("/openapi.json").json()["paths"]["/list_objects"]["get"]["parameters"]
-    survey = next(p for p in params if p["name"] == "survey")
+    survey_id = next(p for p in params if p["name"] == "survey_id")
 
-    assert survey["schema"]["default"] == "ztf"
-    assert "Without it, only ZTF is searched." in survey["description"]
+    # Not a schema default: survey_id would then always win over the deprecated survey
+    assert "Without it, only ZTF is searched." in survey_id["description"]
 
 
 @pytest.mark.parametrize("path", ["/list_objects", "/htmx/list_objects", "/htmx/side_objects"])

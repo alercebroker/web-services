@@ -28,12 +28,12 @@ NeighborsQuery = Annotated[
 )
 def conesearch(
     oid: Annotated[str, Query(description="ALeRCE object identifier to center the search on.")],
-    survey: SurveyQuery,
+    survey_id: SurveyQuery,
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,
 ) -> list[ApiObject]:
-    id = idmapper.parse_oid(survey, oid)
+    id = idmapper.parse_oid(survey_id, oid)
     return service.conesearch_oid(id, radius, neighbors, db.session)
 
 
@@ -66,10 +66,10 @@ def conesearch_coordinates(
 )
 def conesearch_oid_lightcurve(
     oid: Annotated[str, Query(description="ALeRCE object identifier to center the search on.")],
-    survey: SurveyQuery,
+    survey_id: SurveyQuery,
     radius: RadiusQuery,
     neighbors: NeighborsQuery,
     db: db_dependency,
 ):
-    lightcurve = service.conesearch_oid_lightcurve(oid, radius, neighbors, survey, db.session)
+    lightcurve = service.conesearch_oid_lightcurve(oid, radius, neighbors, survey_id, db.session)
     return {key: json_rows(getattr(lightcurve, key)) for key in ("detections", "non_detections", "forced_photometry")}
