@@ -1,12 +1,16 @@
-"""A ZTF point without a corrected magnitude answers null in the JSON, not 0.
+"""A ZTF point without a corrected magnitude answers null in the JSON and is empty in the CSV, not 0.
 
-The models keep their 0 (the lightcurve plot relies on it); only the JSON answer changes.
+The models keep the NULL as None; has_total() tells the plot which points have a corrected magnitude.
 """
 
+import csv
 import importlib
+import io
+import zipfile
 
 import pytest
-from db_plugins.db.sql.models_pipeline import Detection, Object, ZtfDetection
+from db_plugins.db.sql.models_pipeline import Detection, Object, ZtfDetection, ZtfObject
+from sqlalchemy import text
 from fastapi.testclient import TestClient
 
 from core.idmapper.idmapper import catalog_oid_to_masterid
@@ -23,6 +27,7 @@ def client(db):
     with db.session() as session:
         session.add(Object(oid=NUMBER, tid=0, sid=0, meanra=10.0, meandec=10.0, firstmjd=60000, lastmjd=60010))
         session.commit()
+        session.add(ZtfObject(oid=NUMBER, stellar=False, corrected=True))  # the lightcurve card looks it up
         # (magpsf_corr, sigmapsf_corr, sigmapsf_corr_ext): uncorrected, corrected, corrected with an error the
         # pipeline couldn't compute, and the historical uncorrected form
         rows = [(None, None, None), (18.1, 0.05, 0.06), (18.2, 100.0, 0.07), (None, 100.0, 0.0)]
@@ -44,7 +49,11 @@ def client(db):
 
     # Imported here: the app builds its engine at import, from the env the db fixture sets
     app = importlib.import_module("lightcurve_api.api").app
-    return TestClient(app)
+    yield TestClient(app)
+
+    with db.session() as session:
+        session.execute(text("DELETE FROM ztf_object WHERE oid = :o"), {"o": NUMBER})
+        session.commit()
 
 
 @pytest.mark.parametrize("path", ["/detections", "/lightcurve"])
@@ -86,7 +95,7 @@ def test_json_rows_nulls_floats_json_cannot_carry(survey_id):
 
 
 @pytest.mark.parametrize("model, field", [(ztfDetection, "magpsf_corr"), (ZtfForcedPhotometry, "mag_corr")])
-@pytest.mark.parametrize("value, has_total", [(0, False), (18.1, True), (100.0, False)])
+@pytest.mark.parametrize("value, has_total", [(None, False), (0, False), (18.1, True), (100.0, False)])
 def test_only_computed_corrected_magnitudes_are_plotted_as_total(model, field, value, has_total):
     assert model.model_construct(**{field: value}).has_total() is has_total
 
@@ -113,3 +122,40 @@ def test_json_rows_nulls_ztf_forced_photometry_and_leaves_lsst_alone():
         },
         {"oid": 170591527609303944, "survey_id": "lsst", "psfFlux": 0},
     ]
+
+
+def test_the_lightcurve_card_plots_uncorrected_points_without_a_total(client):
+    response = client.get("/htmx/lightcurve", params={"survey_id": "ztf", "oid": NAME})
+
+    assert response.status_code == 200
+
+
+def test_csv_download_leaves_missing_corrected_values_empty(client):
+    response = client.get("/htmx/download", params={"survey_id": "ztf", "oid": NAME})
+
+    assert response.status_code == 200
+    with zipfile.ZipFile(io.BytesIO(response.content)) as archive:
+        name = next(n for n in archive.namelist() if "detection" in n and "non" not in n)
+        rows = {row["measurement_id"]: row for row in csv.DictReader(io.StringIO(archive.read(name).decode()))}
+    assert (rows["0"]["magpsf_corr"], rows["0"]["sigmapsf_corr"], rows["0"]["sigmapsf_corr_ext"]) == ("", "", "")
+    assert rows["1"]["magpsf_corr"] == "18.1"
+
+
+@pytest.mark.parametrize(
+    "fields",
+    [
+        {"magpsf_corr": None, "sigmapsf_corr": None, "sigmapsf_corr_ext": None},
+        # corrected, but without its error: plotted without an error bar
+        {"magpsf_corr": 18.1, "sigmapsf_corr": 0.05, "sigmapsf_corr_ext": None},
+    ],
+)
+def test_plot_variants_with_missing_corrected_values(fields):
+    detection = ztfDetection.model_construct(magpsf=18.0, sigmapsf=0.1, isdiffpos=1, **fields)
+
+    variants = detection.plot_variants()
+
+    assert variants["mag_diff"]["y"] == 18.0
+    if fields["magpsf_corr"] is None:
+        assert variants["mag_total"] is None and variants["flux_total"] is None
+    else:
+        assert variants["mag_total"] == {"y": 18.1, "err": 0.0, "sign": "+"}

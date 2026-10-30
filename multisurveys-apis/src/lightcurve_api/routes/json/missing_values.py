@@ -1,10 +1,9 @@
 """ZTF magnitudes that are missing or couldn't be computed answer null in the JSON, and ZTF rows carry the ZTF
 name as oid, not the internal numeric id.
 
-The models turn the NULL ``*_corr`` columns into 0 (``set_defaults``), and the lightcurve plot relies on that
-0 to tell corrected points from uncorrected ones. So the 0 stays inside the models and becomes null only here,
-when the JSON answer is built. A real magnitude or error is never exactly 0, so 0 only ever means "missing".
-The pipeline writes 100 (``NOT_COMPUTED_MAG``) where a value can't be computed, which also becomes null.
+NULL ``*_corr`` columns are None in the models already. The database also stores a literal 0 in some of them on
+uncorrected points (``sigmapsf_corr_ext``), and a real magnitude or error is never exactly 0, so 0 becomes null
+here too. The pipeline writes 100 (``NOT_COMPUTED_MAG``) where a value can't be computed, which also becomes null.
 NaN and infinite floats, in any survey, become null too: JSON can't carry them.
 """
 
