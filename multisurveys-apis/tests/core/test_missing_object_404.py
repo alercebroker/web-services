@@ -38,3 +38,11 @@ def test_missing_object_is_404(client_for, api, method, path, params):
     response = getattr(client_for(api), method)(path, params=params)
 
     assert response.status_code == 404
+
+
+def test_lightcurve_docs_say_what_a_missing_oid_answers(client_for):
+    parameters = client_for("lightcurve_api").get("/openapi.json").json()["paths"]["/detections"]["get"]["parameters"]
+    oid = next(p for p in parameters if p["name"] == "oid")
+
+    assert "With one oid, an object that doesn't exist answers 404" in oid["description"]
+    assert "the response doesn't say which" in oid["description"]

@@ -25,7 +25,11 @@ OidQuery = Annotated[
     Query(
         max_length=MAX_OIDS_PER_REQUEST,
         description="ALeRCE object identifier(s). Repeat the parameter to request "
-        f"several objects in a single call (e.g. `?oid=A&oid=B`), up to {MAX_OIDS_PER_REQUEST}.",
+        f"several objects in a single call (e.g. `?oid=A&oid=B`), up to {MAX_OIDS_PER_REQUEST}. "
+        "With one oid, an object that doesn't exist answers 404; an object that exists but has no photometry "
+        "of that kind answers an empty list. With several oids, the rows of the objects that exist are returned "
+        "in one list, each with its `oid`, and the ones that don't exist are left out: the response doesn't say "
+        "which. Use `/object` to check whether an object exists.",
         examples=["170433140619739440"],
     ),
 ]
