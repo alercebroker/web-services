@@ -16,6 +16,7 @@ from object_api.services.statements_sql import (
 )
 from object_api.models.pagination import Pagination
 from core.exceptions import ObjectNotFound
+from core.idmapper.survey_mapper import get_survey_id
 
 
 class ObjectsModels:
@@ -30,6 +31,13 @@ class ObjectsModels:
             return LsstDiaObject
         # fallback to generic Object so callers don't break for unknown surveys
         return Object
+
+
+def object_exists(session_ms, oid: int, survey_id: str) -> bool:
+    """Whether the object is in the common object table, for that survey."""
+    with session_ms() as session:
+        stmt = select(Object.oid).where(Object.oid == oid, Object.sid == get_survey_id(survey_id)).limit(1)
+        return session.execute(stmt).first() is not None
 
 
 def query_common_object(session_ms, oid, survey_id):

@@ -7,6 +7,7 @@ from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST
 from core.idmapper.survey_mapper import SurveyQuery
 
 from ...services.lightcurve_service import (
+    ensure_object_exists,
     get_detections,
     get_detections_by_list,
     get_forced_photometry,
@@ -24,7 +25,11 @@ OidQuery = Annotated[
     Query(
         max_length=MAX_OIDS_PER_REQUEST,
         description="ALeRCE object identifier(s). Repeat the parameter to request "
-        f"several objects in a single call (e.g. `?oid=A&oid=B`), up to {MAX_OIDS_PER_REQUEST}.",
+        f"several objects in a single call (e.g. `?oid=A&oid=B`), up to {MAX_OIDS_PER_REQUEST}. "
+        "With one oid, an object that doesn't exist answers 404; an object that exists but has no photometry "
+        "of that kind answers an empty list. With several oids, the rows of the objects that exist are returned "
+        "in one list, each with its `oid`, and the ones that don't exist are left out: the response doesn't say "
+        "which. Use `/object` to check whether an object exists.",
         examples=["170433140619739440"],
     ),
 ]
@@ -58,6 +63,7 @@ def detections(
     survey_validate(survey_id)
 
     if len(oid) == 1:
+        ensure_object_exists(oid[0], survey_id, db.session)
         return json_rows(get_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
         return json_rows(get_detections_by_list(oid, survey_id, db.session))
@@ -81,6 +87,7 @@ def non_detections(
     survey_validate(survey_id)
 
     if len(oid) == 1:
+        ensure_object_exists(oid[0], survey_id, db.session)
         return json_rows(get_non_detections(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
         return json_rows(get_non_detections_by_list(oid, survey_id, db.session))
@@ -104,6 +111,7 @@ def forced_photometry(
     survey_validate(survey_id)
 
     if len(oid) == 1:
+        ensure_object_exists(oid[0], survey_id, db.session)
         return json_rows(get_forced_photometry(oid=oid[0], survey_id=survey_id, session_factory=db.session))
     else:
         return json_rows(get_forced_photometry_by_list(oid, survey_id, db.session))
@@ -130,6 +138,7 @@ def lightcurve(
         "forced_photometry": [],
     }
     if len(oid) == 1:
+        ensure_object_exists(oid[0], survey_id, db.session)
         response["detections"] = get_detections(oid[0], survey_id, db.session)
         response["non_detections"] = get_non_detections(oid[0], survey_id, db.session)
         response["forced_photometry"] = get_forced_photometry(oid[0], survey_id, db.session)
