@@ -27,6 +27,11 @@ def client_for(db):
         ("magstat_api", "get", "/magstats", {"oid": MISSING_LSST, "survey_id": "lsst"}),
         ("magstat_api", "get", "/htmx/mag", {"oid": MISSING_ZTF, "survey_id": "ztf"}),
         ("magstat_api", "get", "/htmx/mag", {"oid": MISSING_LSST, "survey_id": "lsst"}),
+        *[
+            ("lightcurve_api", "get", path, {"oid": oid, "survey_id": survey})
+            for path in ("/detections", "/non_detections", "/forced-photometry", "/lightcurve")
+            for oid, survey in ((MISSING_ZTF, "ztf"), (MISSING_LSST, "lsst"))
+        ],
     ],
 )
 def test_missing_object_is_404(client_for, api, method, path, params):

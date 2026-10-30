@@ -3,7 +3,9 @@ from typing import Callable, ContextManager, List, Tuple, cast
 from sqlalchemy.orm import Session
 from toolz import pipe
 
+from core.exceptions import ObjectNotFound
 from core.idmapper import idmapper
+from core.repository.queries.objects import object_exists
 from core.repository.queries import detections as detection_repository
 from core.repository.queries import non_detections as non_detections_repository
 from core.repository.queries import (
@@ -20,6 +22,16 @@ from .parsers import (
     parse_sql_detection,
     parse_sql_non_detections,
 )
+
+
+def ensure_object_exists(
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., ContextManager[Session]],
+):
+    # An object can exist without photometry of some kind, so an empty list doesn't tell
+    if not object_exists(session_factory, idmapper.parse_oid(survey_id, oid), survey_id):
+        raise ObjectNotFound(oid)
 
 
 def get_detections(

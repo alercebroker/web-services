@@ -265,3 +265,21 @@ def test_website_search_shows_a_bad_oid_under_the_object_ids_box(ztf_objects, pa
 
     assert response.status_code == 422
     assert response.json()["detail"]["objectIds"].startswith(message)
+
+
+@pytest.mark.parametrize("path", ["/non_detections", "/forced-photometry"])
+def test_an_object_without_that_photometry_is_an_empty_list_not_a_404(ztf_objects, path):
+    response = client_for("lightcurve_api", ztf_objects).get(path, params={"survey_id": "ztf", "oid": NAME})
+
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_several_oids_answer_the_ones_that_exist(ztf_objects):
+    response = client_for("lightcurve_api", ztf_objects).get(
+        "/detections", params={"survey_id": "ztf", "oid": [NAME, "ZTF99zzzzzzz"]}
+    )
+
+    assert response.status_code == 200
+    assert {row["oid"] for row in response.json()} == {NAME}
+    assert len(response.json()) == N_DETECTIONS
