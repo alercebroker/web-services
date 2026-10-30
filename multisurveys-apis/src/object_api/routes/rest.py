@@ -6,7 +6,7 @@ from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST, decode_ids
 from core.idmapper.survey_mapper import DEFAULT_SURVEY, Survey
 
 from ..models.filters import Consearch, Filters, SearchParams
-from ..models.pagination import Order, PaginationArgs
+from ..models.pagination import MAX_PAGE_SIZE, Order, PaginationArgs
 from ..services.object_services import get_object_by_id, get_objects_list
 from ..services.validations import (
     ndets_validation,
@@ -46,7 +46,7 @@ def list_objects(
     ra: float | None = None,
     radius: float | None = None,
     page: Annotated[int, Query(ge=1)] = 1,
-    page_size: Annotated[int, Query(ge=1)] = 10,
+    page_size: Annotated[int, Query(ge=1, le=MAX_PAGE_SIZE)] = 10,
     count: bool | None = False,
     order_by: str | None = Query(default="probability"),
     order_mode: Literal["ASC", "DESC"] = "DESC",

@@ -3,6 +3,7 @@
 import pytest
 
 from app_client import client_for
+from object_api.models.pagination import MAX_PAGE_SIZE
 
 CLASSIFIER = "stamp_classifier_2025_beta"  # seeded with SN, AGN, VS, asteroid, bogus, satellite
 
@@ -74,3 +75,11 @@ def test_page_and_page_size_below_1_are_422(client, path, params):
 
     assert response.status_code == 422
     assert [error["loc"] for error in response.json()["detail"]] == [["query", *params]]
+
+
+@pytest.mark.parametrize("path", ["/list_objects", "/htmx/list_objects", "/htmx/side_objects"])
+@pytest.mark.parametrize("page_size, status", [(MAX_PAGE_SIZE, 200), (MAX_PAGE_SIZE + 1, 422), (100_000, 422)])
+def test_page_size_goes_up_to_the_maximum(client, path, page_size, status):
+    response = client.get(path, params={"survey": "ztf", "page_size": page_size})
+
+    assert response.status_code == status
