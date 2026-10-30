@@ -10,8 +10,7 @@ from core.version import APP_VERSION
 
 from .routes import htmx, rest
 
-# root_path: the prefix nginx strips, so /docs fetches /magstat_api/openapi.json (static files: core/static_files.py)
-app = FastAPI(root_path="/magstat_api", title="ALeRCE Magstat API", version=APP_VERSION)
+app = FastAPI(title="ALeRCE Magstat API", version=APP_VERSION)
 add_concurrency_limit(app)
 add_error_handlers(app)
 psql_engine = psql_entity()

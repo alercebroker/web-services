@@ -9,8 +9,7 @@ from core.version import APP_VERSION
 
 from .routes import rest
 
-# root_path: the prefix nginx strips, so /docs fetches /classifier_api/openapi.json (static files: core/static_files.py)
-app = FastAPI(root_path="/classifier_api", title="ALeRCE Classifier API", version=APP_VERSION)
+app = FastAPI(title="ALeRCE Classifier API", version=APP_VERSION)
 add_concurrency_limit(app)
 add_error_handlers(app)
 psql_engine = psql_entity()

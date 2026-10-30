@@ -21,7 +21,8 @@ def client_for(api: str, db=None, **kwargs) -> TestClient:
     app = importlib.import_module(f"{api}.api").app
     if db is not None:
         fastapi_app(app).state.psql_session = db.session
-    return TestClient(app, **kwargs)
+    # The root_path run_api.py gives the server in production
+    return TestClient(app, root_path=f"/{api}", **kwargs)
 
 
 def fastapi_app(app):
