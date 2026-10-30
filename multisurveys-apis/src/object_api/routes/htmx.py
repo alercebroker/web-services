@@ -9,7 +9,7 @@ from object_api.services.object_services import get_object_by_id, get_objects_li
 from probability_api.services.lsst_service import priorities_by_survey
 
 from ..models.filters import Consearch, Filters, SearchParams
-from ..models.pagination import Order, PaginationArgs
+from ..models.pagination import MAX_PAGE_SIZE, Order, PaginationArgs
 from ..services.jinja_tools import truncate_float
 from ..services.parameters_parser import firstmjd_build, ndet_build, parse_oids_to_int, search_order_state
 from ..services.parsers import _parse_oids_string_to_array
@@ -122,7 +122,7 @@ def objects_table(
     ra: float | None = None,
     radius: float | None = None,
     page: Annotated[int, Query(ge=1)] = 1,
-    page_size: Annotated[int, Query(ge=1)] = 20,
+    page_size: Annotated[int, Query(ge=1, le=MAX_PAGE_SIZE)] = 20,
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
@@ -219,7 +219,7 @@ def sidebar(
     ra: float | None = None,
     radius: float | None = None,
     page: Annotated[int, Query(ge=1)] = 1,
-    page_size: Annotated[int, Query(ge=1)] = 20,
+    page_size: Annotated[int, Query(ge=1, le=MAX_PAGE_SIZE)] = 20,
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
