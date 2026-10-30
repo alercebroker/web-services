@@ -25,7 +25,8 @@ an external request to `/<service>_api/...` is forwarded to the app as `/...`
 
 ### The `root_path` / prefix-strip gotcha (why static files 404'd)
 
-Every app sets `root_path="/<api>_api"` (e.g. `/lightcurve_api`) so its OpenAPI docs
+Every app runs with `root_path="/<api>_api"` (e.g. `/lightcurve_api`), given to the uvicorn server by
+`scripts/run_api.py` (not `FastAPI(root_path=...)`, deprecated since FastAPI 0.162), so its OpenAPI docs
 and the `servers` block resolve correctly behind the proxy. But nginx **strips**
 that prefix before forwarding, so the app actually receives `/static/...`,
 `/htmx/...`, etc.

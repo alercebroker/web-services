@@ -58,7 +58,6 @@ TAGS_METADATA = [
 ]
 
 app = FastAPI(
-    root_path="/lightcurve_api",
     title="ALeRCE Lightcurve API",
     version=APP_VERSION,
     description=API_DESCRIPTION,
@@ -75,7 +74,7 @@ app.include_router(conesearch.router, tags=["Cone search"])
 app.include_router(htmx_lightcurve.router, tags=["Browser UI (HTMX)"])
 
 # Static files are served via an explicit route rather than app.mount() because
-# the app sets root_path="/lightcurve_api" while the nginx sidecar strips that
+# the server runs it with root_path="/lightcurve_api" while the nginx sidecar strips that
 # prefix before forwarding. A StaticFiles *mount* resolves files against the
 # accumulated root_path ("/lightcurve_api/static"), so the stripped path
 # "/static/..." that actually arrives never matches and 404s. A normal route
