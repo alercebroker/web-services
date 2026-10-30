@@ -26,7 +26,7 @@ def get_probability_for_frontend(
     object: ObjectProbability,
     session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ) -> dict:
-    probabilities = get_probability(object.oid, object.classifiers, session_factory=session_factory)
+    probabilities = get_probability(object.oid, object.classifiers, object.survey, session_factory=session_factory)
 
     parsed_probabilities = parse_grouped_probabilities(probabilities)
 
@@ -36,13 +36,14 @@ def get_probability_for_frontend(
 def get_probability(
     oid,
     classifiers: dict,
+    survey: str,
     session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ) -> dict:
     classifier_id = None
     if len(classifiers) == 1:
         classifier_id = list(classifiers.keys())[0]
 
-    result = get_probability_by_oid(oid, classifier_id, session_factory=session_factory)
+    result = get_probability_by_oid(oid, classifier_id, get_survey_id(survey), session_factory=session_factory)
 
     parsed_result = parse_probability(result, classifiers)
     return parsed_result
