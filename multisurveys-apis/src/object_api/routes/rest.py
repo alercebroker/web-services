@@ -30,10 +30,18 @@ def healthcheck():
 @router.get("/list_objects")
 def list_objects(
     request: Request,
-    survey: Annotated[
-        Survey,
+    survey_id: Annotated[
+        Survey | None,
         Query(description="Survey to search: `ztf` or `lsst` (case-insensitive). Without it, only ZTF is searched."),
-    ] = DEFAULT_SURVEY,
+    ] = None,
+    survey: Annotated[
+        Survey | None,
+        Query(
+            deprecated=True,
+            description="Deprecated, use `survey_id`. Still read for clients that send it; `survey_id` wins if both "
+            "are sent.",
+        ),
+    ] = None,
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query(max_length=MAX_OIDS_PER_REQUEST)] = None,
     classifier: str | None = None,
@@ -52,6 +60,8 @@ def list_objects(
     order_mode: Literal["ASC", "DESC"] = "DESC",
 ):
     session = request.app.state.psql_session
+    # Without the alias, a client sending survey=lsst would silently get ZTF objects (the default)
+    survey = survey_id or survey or DEFAULT_SURVEY
 
     ndets_validation(n_det)
     order_by_validation(order_by)
