@@ -3,15 +3,21 @@ from typing import Annotated
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
 
-from core.static_files import configure_templates, html_templates
 from core.idmapper.survey_mapper import Survey
-from object_api.services.object_services import get_object_by_id, get_objects_list, get_tidy_classifiers
+from core.static_files import configure_templates, html_templates
+from object_api.services.object_services import (
+    choose_shown_classifier,
+    get_object_by_id,
+    get_objects_list,
+    get_survey_classifiers,
+    get_website_classifiers,
+)
 from probability_api.services.lsst_service import priorities_by_survey
 
 from ..models.filters import Consearch, Filters, SearchParams
 from ..models.pagination import MAX_PAGE_SIZE, Order, PaginationArgs
 from ..services.jinja_tools import truncate_float
-from ..services.parameters_parser import firstmjd_build, ndet_build, parse_oids_to_int, search_order_state
+from ..services.parameters_parser import mjd_range_build, ndet_build, parse_oids_to_int, search_order_state
 from ..services.parsers import _parse_oids_string_to_array
 from ..services.tns_service import get_tns
 from ..services.validations import (
@@ -22,6 +28,7 @@ from ..services.validations import (
     oids_format_validation,
     order_by_validation,
     order_mode_validation,
+    prob_lastmjd_validation,
     probability_validation,
 )
 
@@ -93,15 +100,15 @@ def tns_info(request: Request, ra: float, dec: float):
 def objects_form(request: Request, survey_id: Survey | None = None):
     session = request.app.state.psql_session
 
-    if survey_id is None:
+    if survey_id not in ("lsst", "ztf"):
         survey_id = "lsst"
 
-    classifiers = get_tidy_classifiers(session, survey_id)
+    classifiers = get_website_classifiers(session, survey_id)
 
     return templates.TemplateResponse(
         request=request,
         name="search_form/form.html.jinja",
-        context={"request": request, "classifiers": classifiers},
+        context={"request": request, "classifiers": classifiers, "survey": survey_id},
     )
 
 
@@ -118,6 +125,8 @@ def objects_table(
     probability: float | None = None,
     firstmjd_min: float | None = None,
     firstmjd_max: float | None = None,
+    lastmjd_min: float | None = None,
+    lastmjd_max: float | None = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
@@ -126,7 +135,11 @@ def objects_table(
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
+    prob_lastmjd_min: float | None = None,
+    prob_lastmjd_max: float | None = None,
+    shown_classifier: str | None = None,
 ):
+    survey_classifiers = []
     if survey is not None:
         session = request.app.state.psql_session
         oids = _parse_oids_string_to_array(oid)
@@ -139,14 +152,21 @@ def objects_table(
         oid_lenght_validation(oids)
         probability_validation(probability, classifier, class_name)
         date_validation(firstmjd_min, firstmjd_max)
+        date_validation(lastmjd_min, lastmjd_max, "last_alert_date_filters_container")
+        prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
 
-        order_by = search_order_state(oids, order_by)
+        order_by = search_order_state(oids, order_by, classifier)
+        survey_classifiers = get_survey_classifiers(session, survey)
+        shown_classifier = choose_shown_classifier(survey_classifiers, classifier, shown_classifier)
         oids = parse_oids_to_int(oids, survey)
         n_det = ndet_build(n_det_min, n_det_max)
-        firstmjd = firstmjd_build(firstmjd_min, firstmjd_max)
+        firstmjd = mjd_range_build(firstmjd_min, firstmjd_max)
+        lastmjd = mjd_range_build(lastmjd_min, lastmjd_max)
 
         filters = Filters(
             oids=oids,
+            prob_lastmjd_min=prob_lastmjd_min,
+            prob_lastmjd_max=prob_lastmjd_max,
             survey=survey,
             classifier=classifier,
             classifier_ids=list(priorities_by_survey(survey)),
@@ -155,6 +175,7 @@ def objects_table(
             n_det=n_det,
             probability=probability,
             firstmjd=firstmjd,
+            lastmjd=lastmjd,
         )
 
         conesearch = Consearch(dec=dec, ra=ra, radius=radius)
@@ -170,7 +191,9 @@ def objects_table(
             order_args=order,
         )
 
-        object_list = get_objects_list(session_ms=session, search_params=search_params)
+        object_list = get_objects_list(
+            session_ms=session, search_params=search_params, shown_classifier=shown_classifier
+        )
 
         if oid is not None and order_by is None and object_list["items"] != []:
             order_by = "oid_list"
@@ -197,6 +220,9 @@ def objects_table(
             "has_prev": object_list["has_prev"],
             "actual_order_by": order_by,
             "actual_order_mode": order_mode,
+            "shown_classifiers": survey_classifiers,
+            "shown_classifier": shown_classifier,
+            "classifier_filtered": classifier is not None,
         },
     )
 
@@ -215,6 +241,8 @@ def sidebar(
     probability: float | None = None,
     firstmjd_min: float | None = None,
     firstmjd_max: float | None = None,
+    lastmjd_min: float | None = None,
+    lastmjd_max: float | None = None,
     dec: float | None = None,
     ra: float | None = None,
     radius: float | None = None,
@@ -223,7 +251,11 @@ def sidebar(
     count: bool | None = False,
     order_by: str | None = None,
     order_mode: str | None = Query(default="DESC"),
+    prob_lastmjd_min: float | None = None,
+    prob_lastmjd_max: float | None = None,
+    shown_classifier: str | None = None,
 ):
+    survey_classifiers = []
     if survey is not None:
         session = request.app.state.psql_session
         oids = _parse_oids_string_to_array(oid)
@@ -236,14 +268,21 @@ def sidebar(
         oid_lenght_validation(oids)
         probability_validation(probability, classifier, class_name)
         date_validation(firstmjd_min, firstmjd_max)
+        date_validation(lastmjd_min, lastmjd_max, "last_alert_date_filters_container")
+        prob_lastmjd_validation(prob_lastmjd_min, prob_lastmjd_max, classifier)
 
-        order_by = search_order_state(oids, order_by)
+        order_by = search_order_state(oids, order_by, classifier)
+        survey_classifiers = get_survey_classifiers(session, survey)
+        shown_classifier = choose_shown_classifier(survey_classifiers, classifier, shown_classifier)
         oids = parse_oids_to_int(oids, survey)
         n_det = ndet_build(n_det_min, n_det_max)
-        firstmjd = firstmjd_build(firstmjd_min, firstmjd_max)
+        firstmjd = mjd_range_build(firstmjd_min, firstmjd_max)
+        lastmjd = mjd_range_build(lastmjd_min, lastmjd_max)
 
         filters = Filters(
             oids=oids,
+            prob_lastmjd_min=prob_lastmjd_min,
+            prob_lastmjd_max=prob_lastmjd_max,
             survey=survey,
             classifier=classifier,
             classifier_ids=list(priorities_by_survey(survey)),
@@ -252,6 +291,7 @@ def sidebar(
             n_det=n_det,
             probability=probability,
             firstmjd=firstmjd,
+            lastmjd=lastmjd,
         )
         conesearch = Consearch(dec=dec, ra=ra, radius=radius)
         pagination = PaginationArgs(page=page, page_size=page_size, count=count)
@@ -263,7 +303,9 @@ def sidebar(
             order_args=order,
         )
 
-        object_list = get_objects_list(session_ms=session, search_params=search_params)
+        object_list = get_objects_list(
+            session_ms=session, search_params=search_params, shown_classifier=shown_classifier
+        )
 
         if oid is not None and order_by is None and object_list["items"] != []:
             order_by = "oid_list"

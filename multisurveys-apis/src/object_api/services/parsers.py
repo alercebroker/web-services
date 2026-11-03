@@ -97,6 +97,9 @@ def serialize_items(data):
     for sql_row in data:
         item_dict = {}
         for sql_model in sql_row:
+            # An object without a prediction from the shown classifier has None for its probability row.
+            if sql_model is None:
+                continue
             model_data = sql_model.__dict__.copy()
             item_dict.update(model_data)
 

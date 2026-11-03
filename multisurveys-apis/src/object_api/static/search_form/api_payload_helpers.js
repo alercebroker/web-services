@@ -5,6 +5,10 @@ function send_form_Data() {
   let ndet_arr = get_values_array_fields(["min_detections", "max_detections"])
   let min_mjd = document.getElementById("min_mjd").value
   let max_mjd = document.getElementById("max_mjd").value
+  let min_lastmjd = document.getElementById("min_lastmjd").value
+  let max_lastmjd = document.getElementById("max_lastmjd").value
+  let min_prob_lastmjd = document.getElementById("min_prob_lastmjd").value
+  let max_prob_lastmjd = document.getElementById("max_prob_lastmjd").value
   let probability_value = parseFloat(document.getElementById("prob_range").value);
   let class_selected = document.getElementById("class_selected")
   let classifier_selected = document.getElementById("classifiers_selected")
@@ -26,14 +30,31 @@ function send_form_Data() {
     n_det_max: ndet_arr.length > 1 && ndet_arr[1] !== null ? parseInt(ndet_arr[1]) : null,
     firstmjd_min: min_mjd != '' ? parseFloat(min_mjd) : null,
     firstmjd_max: max_mjd != '' ? parseFloat(max_mjd) : null,
+    lastmjd_min: min_lastmjd != '' ? parseFloat(min_lastmjd) : null,
+    lastmjd_max: max_lastmjd != '' ? parseFloat(max_lastmjd) : null,
+    prob_lastmjd_min: min_prob_lastmjd != '' ? parseFloat(min_prob_lastmjd) : null,
+    prob_lastmjd_max: max_prob_lastmjd != '' ? parseFloat(max_prob_lastmjd) : null,
     ra: !isNaN(parseFloat(ra_consearch)) ? ra_consearch : null,
     dec: !isNaN(parseFloat(dec_consearch)) ? dec_consearch : null,
     radius: !isNaN(parseFloat(radius_consearch)) ? radius_consearch : null,
+    // The classifier selector of the results table, once there is one. Not while the Classifier filter sets it:
+    // removing that filter goes back to the default, not to the filter's classifier.
+    shown_classifier: get_shown_classifier(),
   }
 
   response = clean_nulls_form(response)
 
   return response
+}
+
+function get_shown_classifier() {
+  let shown_classifier = document.getElementById('shown_classifier')
+
+  if (!shown_classifier || shown_classifier.disabled) {
+    return null
+  }
+
+  return shown_classifier.value
 }
 
 function send_classes_data(){

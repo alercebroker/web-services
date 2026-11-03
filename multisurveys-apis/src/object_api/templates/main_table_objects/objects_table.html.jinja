@@ -6,7 +6,46 @@
 <div id="objects_table" class="tw-preflight tw-text-black tw-bg-white dark:tw-bg-[#1e1e1e] dark:tw-text-white">
 
 
-    <div id="pagination" class="tw-flex tw-justify-end tw-items-center tw-text-base  tw-h-[48px] tw-bg-white tw-text-black dark:tw-bg-[#1e1e1e]/95 dark:tw-text-white">
+    <div id="pagination" class="tw-flex tw-justify-between tw-items-center tw-text-base  tw-h-[48px] tw-bg-white tw-text-black dark:tw-bg-[#1e1e1e]/95 dark:tw-text-white">
+        <!--Whose predictions the rows show: one row per object. Set by the Classifier filter when there is one.-->
+        {% if shown_classifiers %}
+            <span
+            name="objects_table_btn_page"
+            hx-get="{{API_URL}}/htmx/list_objects"
+            hx-trigger="change"
+            hx-swap="outerHTML"
+            hx-target="#objects_table"
+            hx-indicator="#table-objects-loading"
+            hx-vals='js:{
+            ...send_form_Data(),
+            ...send_pagination_data({{objects_list['current_page']}}),
+            {% if actual_order_by %}order_by: "{{actual_order_by}}",{% endif %}
+            order_mode: "{{actual_order_mode}}"}'
+            class="tw-flex tw-items-center tw-gap-2 tw-px-4 tw-text-sm"
+            >
+                <label for="shown_classifier" class="tw-text-black/60 dark:tw-text-white/70">Predictions from</label>
+                <!--Own arrow: the host page's styles can hide the native one. Shown only when the user can change it.-->
+                <span class="tw-relative tw-inline-flex tw-items-center">
+                    <select
+                    id="shown_classifier"
+                    {% if classifier_filtered %}disabled title="Set by the Classifier filter"{% endif %}
+                    class="obj-native-select tw-appearance-none tw-bg-transparent tw-border-b tw-border-b-[#757575] tw-scheme-light dark:tw-scheme-dark {% if not classifier_filtered %}tw-cursor-pointer{% endif %}"
+                    {% if not classifier_filtered %}style="padding-right: 22px"{% endif %}
+                    >
+                        {% for c in shown_classifiers %}
+                            <option value="{{c['classifier_name']}}" {% if c['classifier_name'] == shown_classifier %}selected{% endif %}>{{c['formated_name']}} ({{c['classifier_version']}})</option>
+                        {% endfor %}
+                    </select>
+                    {% if not classifier_filtered %}
+                        <svg class="tw-absolute tw-right-0 tw-top-1/2 -tw-translate-y-1/2 tw-w-[20px] tw-h-[20px] tw-pointer-events-none tw-fill-current dark:tw-fill-white" viewBox="0 -960 960 960" aria-hidden="true"><path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z"/></svg>
+                    {% endif %}
+                </span>
+            </span>
+        {% else %}
+            <span></span>
+        {% endif %}
+
+        <div class="tw-flex tw-items-center">
         {% if has_prev %}
             <span 
             id="prev_page"
@@ -52,6 +91,7 @@
             </svg>
             </span>
         {%endif%}
+        </div>
     </div>
 
     <div class="loader">
@@ -65,9 +105,10 @@
         <table class="tw-table-auto tw-border-collapse tw-bg-white tw-text-left tw-w-full dark:tw-bg-[#1e1e1e]">
             <thead class="tw-hidden tw-text-[0.875rem] tw-text-black/60 dark:tw-text-white/70 sm:tw-table-header-group">
                 <tr class="tw-h-[34px]">
-                    <th class="tw-px-4">Object ID</th>
+                    <th class="tw-px-4" title="The object's identifier in the survey. Click a row to open the object.">Object ID</th>
                     <th
                     id="n_det_column"
+                    title="How many times the survey detected the object. Click to sort."
                     name="object_column_name"
                     data-column = "n_det"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -99,6 +140,7 @@
                     </th>
                     <th 
                     id="firstmjd_column"
+                    title="Date of the first detection, as MJD (Modified Julian Date). Click to sort."
                     name="object_column_name"
                     data-column = "firstmjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -131,6 +173,7 @@
                     </th>
                     <th
                     id="lastmjd_column"
+                    title="Date of the latest detection, as MJD (Modified Julian Date). Click to sort."
                     name="object_column_name"
                     data-column = "lastmjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -161,10 +204,12 @@
                     </div>
                     
                     </th>
-                    <th class="tw-px-4">RA/DEC(degrees)</th>
-                    <th class="tw-px-4">Highest Probability Class</th>
+                    <th class="tw-px-4" title="Mean position on the sky: right ascension and declination, in degrees.">RA/Dec (degrees)</th>
+                    <th class="tw-px-4" title="The class that the classifier in &quot;Predictions from&quot; finds most likely for the object.">Highest Probability Class</th>
+{% if classifier_filtered %}
                     <th 
                     id="probability_column"
+                    title="The probability of that class. Click to sort."
                     name="object_column_name"
                     data-column = "probability"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -195,8 +240,12 @@
                     </div>
                     
                     </th>
+                    {% else %}
+                    <th class="tw-px-4" title="The probability of that class. Sortable with a Classifier filter.">Highest Probability</th>
+                    {% endif %}
                     <th 
                     id="deltamjd_column"
+                    title="Days between the first and the latest detection. Click to sort."
                     name="object_column_name"
                     data-column = "deltamjd"
                     class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
@@ -224,28 +273,6 @@
                                 fill="#e3e3e3">
                                 <path d="{% if actual_order_by == 'deltamjd' and actual_order_mode == 'ASC' %}M440-160v-487L216-423l-56-57 320-320 320 320-56 57-224-224v487h-80Z{% else %}M440-800v487L216-537l-56 57 320 320 320-320-56-57-224 224v-487h-80Z{% endif %}"/>
                             </svg>
-                        </div>
-                    </th>
-                    <th 
-                    id="classifier_column"
-                    name="object_column_name"
-                    class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
-                    >
-                        <div id="classifier" class="tw-group tw-flex tw-items-center tw-gap-1.5 tw-cursor-pointer">
-                            <span class="placeholder-span">
-                                Classifier
-                            </span>
-                        </div>
-                    </th>
-                    <th 
-                    id="classifier_version_column"
-                    name="object_column_name"
-                    class="tw-px-4 hover:tw-bg-[#b2b2b2] hover:tw-cursor-pointer"
-                    >
-                        <div id="classifier_version" class="tw-group tw-flex tw-items-center tw-gap-1.5 tw-cursor-pointer">
-                            <span class="placeholder-span">
-                                Classifier Version
-                            </span>
                         </div>
                     </th>
                 </tr>
@@ -280,31 +307,28 @@
 
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">Highest Probability Class</span>
-                            <span name="class_name">{{item['class_name']}}</span>
+                            <span name="class_name">{{item['class_name'] if item['class_name'] is not none else '—'}}</span>
                         </td>
                         
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">Highest Probability</span>
-                            <span name="probability">{{"%.3f" | format(item['probability'])}}</span>
+                            <span name="probability">{{"%.3f" | format(item['probability']) if item['probability'] is not none else '—'}}</span>
                         </td>
                         <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
                             <span class="tw-font-semibold sm:tw-hidden">DeltaMJD (days)</span>
                             <span name="deltamjd">{{"%.3f" | format(item['deltamjd'])}}</span>
-                        </td>
-                        
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
-                            <span class="tw-font-semibold sm:tw-hidden">Classifier</span>
-                            <span name="classifier" class="">{{item['classifier_name'] | replace('_', ' ') }}</span>
-                        </td>
-                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]">
-                            <span class="tw-font-semibold sm:tw-hidden">Classifier version</span>
-                            <span name="classifier_version">{{item['classifier_version']}}</span>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+
+    {# The side list of this page, which the Explorer shows beside an object opened from these results
+       without running the search again (side_objects renders the same template). #}
+    <template id="side-list-html">
+        {% include "astronomical_object_list/astronomical_objects_list.html.jinja" %}
+    </template>
 
     {% else %}
         <div class="tw-flex tw-flex-col tw-justify-center tw-content-center">

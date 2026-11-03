@@ -13,6 +13,8 @@ class Filters(BaseModel):
     probability: float | None = None
     firstmjd: list[float] | None = None
     lastmjd: list[float] | None = None
+    prob_lastmjd_min: float | None = None
+    prob_lastmjd_max: float | None = None
 
 
 class Consearch(BaseModel):

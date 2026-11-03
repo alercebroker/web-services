@@ -207,6 +207,51 @@
   background-color: rgb(190 40 40 / 0.2);
 }
 
+.custom-warning{
+  color: #8D6E00;
+  background-color: rgb(255 193 7 / 0.2);
+}
+
+.tw-dark .custom-warning{
+  color: #FFCA28;
+}
+
+/* A section of the search form: a divider line above it, like Vuetify's v-divider in alerce.online.
+   .tw-preflight outweighs the reset's ".tw-preflight * { border-width: 0 }", further down. */
+.tw-preflight .obj-form-section{
+  padding-top: 16px;
+  border-top: thin solid rgba(0, 0, 0, 0.12);
+}
+
+.tw-dark .obj-form-section{
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+
+/* A native select's options: some browsers draw the list on white whatever the color-scheme, and the
+   options inherit the select's white text in dark mode. */
+.obj-native-select option{
+  color: #000000;
+  background-color: #FFFFFF;
+}
+
+.tw-dark .obj-native-select option{
+  color: #FFFFFF;
+  background-color: #424242;
+}
+
+/* The search button shows "Searching…" while htmx keeps it disabled, during its request. */
+.obj-searching-label{
+  display: none;
+}
+
+#search_btn:disabled .obj-search-label{
+  display: none;
+}
+
+#search_btn:disabled .obj-searching-label{
+  display: inline-flex;
+}
+
 .tw-scheme-dark {
   color-scheme: dark;
 }
