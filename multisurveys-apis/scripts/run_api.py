@@ -163,6 +163,14 @@ async def run_async():
         task.cancel("Shutting down")
 
 
+def root_path(config_dict: dict) -> str:
+    """The prefix nginx strips before forwarding, so /docs asks for /<api>/openapi.json through it.
+
+    It is the API's package name, which source_folder must be for the app to import.
+    """
+    return f"/{config_dict['source_folder']}"
+
+
 async def async_run_service(
     config_dict: dict = {},
 ):
@@ -174,6 +182,7 @@ async def async_run_service(
         # put the db config
         f"{config_dict['source_folder']}.api:app",
         port=config_dict["port"],
+        root_path=root_path(config_dict),
         workers=uvicorn_config.get("workers", 2),
         reload=config_dict.get("reload", False),
         reload_dirs=[".", "../libs"],
@@ -207,6 +216,7 @@ def run_service(
     uvicorn.run(
         f"src.{config_dict['source_folder']}.api:app",
         port=config_dict["port"],
+        root_path=root_path(config_dict),
         reload=config_dict.get("reload", True),
         reload_dirs=[".", "../libs"],
     )

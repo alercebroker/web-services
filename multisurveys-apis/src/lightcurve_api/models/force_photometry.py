@@ -18,9 +18,10 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     pid: int
     mag: float
     e_mag: float
-    mag_corr: float
-    e_mag_corr: float
-    e_mag_corr_ext: float
+    # None for points the pipeline didn't correct
+    mag_corr: float | None = None
+    e_mag_corr: float | None = None
+    e_mag_corr_ext: float | None = None
     isdiffpos: int
     corrected: bool
     dubious: bool
@@ -60,9 +61,6 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
     def set_defaults(cls, values: dict) -> dict:
         defaults = {
             "pid": 0,
-            "mag_corr": 0,
-            "e_mag_corr": 0,
-            "e_mag_corr_ext": 0,
         }
 
         for field, default_value in defaults.items():
@@ -79,18 +77,21 @@ class ZtfForcedPhotometry(BaseForcedPhotometry):
         return flux * 1000  # convert to nJy
 
     def magnitude2flux_err(self, total: bool) -> float:
-        err = self.e_mag_corr_ext if total else self.e_mag
+        err = self.total_err() if total else self.e_mag
         return abs(err) * abs(self.magnitude2flux(total))
 
     def flux2magnitude(self, total: bool) -> float:
         return self.mag_corr if total else self.mag
 
     def flux2magnitude_err(self, total: bool) -> float:
-        return self.e_mag_corr_ext if total else self.e_mag
+        return self.total_err() if total else self.e_mag
 
     def has_total(self) -> bool:
-        # Uncorrected points have a NULL mag_corr, which set_defaults turns into 0.
-        return 0 < self.mag_corr < NOT_COMPUTED_MAG
+        return self.mag_corr is not None and 0 < self.mag_corr < NOT_COMPUTED_MAG
+
+    def total_err(self) -> float:
+        # A corrected point without its error is plotted without an error bar
+        return self.e_mag_corr_ext if self.e_mag_corr_ext is not None else 0.0
 
     def plot_variants(self) -> dict:
         return build_plot_variants(
@@ -237,9 +238,9 @@ class ZtfForcedPhotometryCsv(BaseModel):
     band_name: str
     mag: float
     e_mag: float
-    mag_corr: float
-    e_mag_corr: float
-    e_mag_corr_ext: float
+    mag_corr: float | None = None
+    e_mag_corr: float | None = None
+    e_mag_corr_ext: float | None = None
     isdiffpos: int
     corrected: bool
     dubious: bool

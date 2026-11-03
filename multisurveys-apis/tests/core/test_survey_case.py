@@ -75,3 +75,39 @@ def test_object_takes_the_survey_in_any_case(client, survey):
 
     assert response.status_code == 200
     assert response.json()["oid"] == ZTF_NAME
+
+
+def oids(response):
+    assert response.status_code == 200
+    return [item["oid"] for item in response.json()["items"]]
+
+
+@pytest.mark.parametrize("survey, oid", [("ztf", ZTF_NAME), ("lsst", LSST_OID)])
+def test_list_objects_takes_survey_id(client, survey, oid):
+    assert oids(client.get("/list_objects", params={"survey_id": survey})) == [oid]
+
+
+def test_list_objects_still_reads_the_deprecated_survey(client):
+    # alerce client 2.3.1 sends survey: without the alias it would silently get ZTF objects
+    assert oids(client.get("/list_objects", params={"survey": "lsst"})) == [LSST_OID]
+
+
+def test_survey_id_wins_over_the_deprecated_survey(client):
+    assert oids(client.get("/list_objects", params={"survey_id": "lsst", "survey": "ztf"})) == [LSST_OID]
+
+
+def test_without_a_survey_list_objects_searches_ztf(client):
+    assert oids(client.get("/list_objects")) == [ZTF_NAME]
+
+
+@pytest.mark.parametrize("param", ["survey_id", "survey"])
+def test_an_unknown_survey_is_422_in_either_parameter(client, param):
+    assert client.get("/list_objects", params={param: "atlas"}).status_code == 422
+
+
+def test_docs_mark_survey_as_deprecated(client):
+    parameters = client.get("/openapi.json").json()["paths"]["/list_objects"]["get"]["parameters"]
+    by_name = {p["name"]: p for p in parameters}
+
+    assert by_name["survey"].get("deprecated") is True
+    assert not by_name["survey_id"].get("deprecated")

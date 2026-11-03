@@ -6,7 +6,7 @@ from core.idmapper.idmapper import MAX_OIDS_PER_REQUEST, decode_ids
 from core.idmapper.survey_mapper import DEFAULT_SURVEY, Survey
 
 from ..models.filters import Consearch, Filters, SearchParams
-from ..models.pagination import Order, PaginationArgs
+from ..models.pagination import MAX_PAGE_SIZE, Order, PaginationArgs
 from ..services.object_services import get_object_by_id, get_objects_list
 from ..services.validations import (
     ndets_validation,
@@ -30,10 +30,18 @@ def healthcheck():
 @router.get("/list_objects")
 def list_objects(
     request: Request,
-    survey: Annotated[
-        Survey,
+    survey_id: Annotated[
+        Survey | None,
         Query(description="Survey to search: `ztf` or `lsst` (case-insensitive). Without it, only ZTF is searched."),
-    ] = DEFAULT_SURVEY,
+    ] = None,
+    survey: Annotated[
+        Survey | None,
+        Query(
+            deprecated=True,
+            description="Deprecated, use `survey_id`. Still read for clients that send it; `survey_id` wins if both "
+            "are sent.",
+        ),
+    ] = None,
     class_name: str | None = None,
     oid: Annotated[list[str] | None, Query(max_length=MAX_OIDS_PER_REQUEST)] = None,
     classifier: str | None = None,
@@ -46,12 +54,14 @@ def list_objects(
     ra: float | None = None,
     radius: float | None = None,
     page: Annotated[int, Query(ge=1)] = 1,
-    page_size: Annotated[int, Query(ge=1)] = 10,
+    page_size: Annotated[int, Query(ge=1, le=MAX_PAGE_SIZE)] = 10,
     count: bool | None = False,
     order_by: str | None = Query(default="probability"),
     order_mode: Literal["ASC", "DESC"] = "DESC",
 ):
     session = request.app.state.psql_session
+    # Without the alias, a client sending survey=lsst would silently get ZTF objects (the default)
+    survey = survey_id or survey or DEFAULT_SURVEY
 
     ndets_validation(n_det)
     order_by_validation(order_by)

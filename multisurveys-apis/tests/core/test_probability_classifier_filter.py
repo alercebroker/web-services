@@ -15,7 +15,7 @@ def client(db, monkeypatch):
 
     asked = []
 
-    def fake_get_probability(master_id, classifiers, session_factory=None):
+    def fake_get_probability(master_id, classifiers, survey, session_factory=None):
         asked.append(classifiers)
         return [{"classifier_name": name, "class_name": "SN", "probability": 1.0} for name in classifiers.values()]
 

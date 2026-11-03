@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+MAX_PAGE_SIZE = 200
+
 
 class PaginationArgs(BaseModel):
     page: int

@@ -2,6 +2,7 @@ from fastapi.testclient import TestClient
 
 
 def test_detections_single_oid(client: TestClient, populate_database):
+    populate_database(n=1)
     response = client.get("/detections", params={"survey_id": "lsst", "oid": ["1234"]})
     assert response.status_code == 200
 

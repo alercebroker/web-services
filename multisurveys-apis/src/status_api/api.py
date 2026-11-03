@@ -9,9 +9,7 @@ from core.version import APP_VERSION
 
 from .routes import htmx, rest
 
-# root_path: the prefix nginx strips, so /docs fetches /status_api/openapi.json
 app = FastAPI(
-    root_path="/status_api",
     title="ALeRCE Status API",
     version=APP_VERSION,
     description="Is each ALeRCE pipeline up to date, and how many alerts it received and processed recently.",

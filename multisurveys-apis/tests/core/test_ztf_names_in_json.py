@@ -101,7 +101,7 @@ def test_full_lightcurve_answers_the_ztf_name(ztf_object, oid):
 
 def test_conesearch_lightcurve_rows_keep_all_their_fields(ztf_object):
     response = client_for("lightcurve_api", ztf_object).get(
-        "/conesearch/lightcurve_by_oid", params={"oid": NAME, "survey": "ztf", "radius": 30, "neighbors": 1}
+        "/conesearch/lightcurve_by_oid", params={"oid": NAME, "survey_id": "ztf", "radius": 30, "neighbors": 1}
     )
 
     assert response.status_code == 200

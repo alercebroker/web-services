@@ -10,7 +10,7 @@ def test_conesearch_objects(client: TestClient, populate_database):
         "/conesearch/objects_by_oid",
         params={
             "oid": "ZTF20aaelulu",
-            "survey": "ZTF",
+            "survey_id": "ZTF",
             "radius": "30",
             "neighbors": "10",
         },
@@ -23,31 +23,31 @@ def test_conesearch_objects_invalid_params(client: TestClient):
     params = [
         {
             "oid": "invalid_object",
-            "survey": "ZTF",
+            "survey_id": "ZTF",
             "radius": "30",
             "neighbors": "10",
         },
         {
             "oid": "ZTF20aaelulu",
-            "survey": "invalid_survey",
+            "survey_id": "invalid_survey",
             "radius": "30",
             "neighbors": "10",
         },
         {
             "oid": "ZTF20aaelulu",
-            "survey": "ZTF",
+            "survey_id": "ZTF",
             "radius": "-5",
             "neighbors": "10",
         },
         {
             "oid": "ZTF20aaelulu",
-            "survey": "ZTF",
+            "survey_id": "ZTF",
             "radius": "30",
             "neighbors": "0",
         },
         {
             "oid": "ZTF20aaelulu",
-            "survey": "ZTF",
+            "survey_id": "ZTF",
             "radius": "text",
             "neighbors": "1",
         },
@@ -57,7 +57,7 @@ def test_conesearch_objects_invalid_params(client: TestClient):
             lambda x: x["detail"].startswith("Invalid ZTF object ID: invalid_object."),
             400,
         ),
-        (lambda x: x["detail"][0]["loc"] == ["query", "survey"], 422),
+        (lambda x: x["detail"][0]["loc"] == ["query", "survey_id"], 422),
         (lambda x: x["detail"][0]["msg"] == "Input should be greater than 0", 422),
         (lambda x: x["detail"][0]["msg"] == "Input should be greater than 0", 422),
         (
@@ -100,7 +100,7 @@ def test_oid_lightcurve(client: TestClient, populate_database):
         "/conesearch/lightcurve_by_oid",
         params={
             "oid": "ZTF20aaelulu",
-            "survey": "ZTF",
+            "survey_id": "ZTF",
             "radius": "30",
             "neighbors": "10",
         },

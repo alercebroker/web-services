@@ -9,9 +9,7 @@ from core.version import APP_VERSION
 
 from .routes import rest
 
-# root_path: the prefix nginx strips, so /docs fetches /features_api/openapi.json (static files: core/static_files.py)
 app = FastAPI(
-    root_path="/features_api",
     title="ALeRCE Features API",
     version=APP_VERSION,
     description="Light-curve features of ZTF and LSST objects, the input of the light-curve classifier.",

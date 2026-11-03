@@ -31,7 +31,7 @@ def probability(
     else:
         classifiers_list = get_classifiers(session_factory=session)
 
-    probability = get_probability(master_id, classifiers_list, session_factory=session)
+    probability = get_probability(master_id, classifiers_list, survey_id or DEFAULT_SURVEY, session_factory=session)
 
     if not probability:
         raise HTTPException(status_code=404, detail="Probability not found for the given OID")

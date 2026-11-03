@@ -67,3 +67,10 @@ def test_schema_names_the_api_and_keeps_the_website_routes_apart(client_for, api
 @pytest.mark.parametrize("api, static_file", [(api, f) for api, f in APIS if f])
 def test_static_files_still_load(client_for, api, static_file):
     assert client_for(api).get(static_file).status_code == 200
+
+
+@pytest.mark.parametrize("api, _", APIS)
+def test_the_server_gives_each_api_its_prefix_as_root_path(api, _):
+    from scripts.run_api import root_path
+
+    assert root_path({"source_folder": api}) == f"/{api}"

@@ -34,7 +34,8 @@ time, in short:
 
 ## The `root_path` / prefix-strip gotcha
 
-Every app sets `root_path="/<api>_api"` (for its `/docs` behind the proxy), but nginx
+Every app runs with `root_path="/<api>_api"`, which [`scripts/run_api.py`](scripts/run_api.py) gives the
+uvicorn server (for its `/docs` behind the proxy; tests pass it to the `TestClient`), but nginx
 strips that prefix, so the app receives `/static/...`, `/htmx/...`. A Starlette
 `StaticFiles` **mount** resolves against the accumulated root_path and 404s on the
 stripped path — static files are therefore served from explicit routes delegating to

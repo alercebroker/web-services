@@ -8,6 +8,7 @@ from sqlalchemy import select
 def get_probability_by_oid(
     oid: str,
     classifier_id: int | None,
+    sid: int,
     session_factory: Callable[..., AbstractContextManager[Session]] | None = None,
 ):
     with session_factory() as session:
@@ -19,13 +20,9 @@ def get_probability_by_oid(
             & (TaxonomyAlias.classifier_id == Probability.classifier_id),
         )
 
+        stmt = stmt.where(Probability.oid == oid, Probability.sid == sid)
         if classifier_id:
-            stmt = stmt.where(
-                Probability.oid == oid,
-                Probability.classifier_id == classifier_id,
-            )
-        else:
-            stmt = stmt.where(Probability.oid == oid)
+            stmt = stmt.where(Probability.classifier_id == classifier_id)
 
         stmt = stmt.order_by(TaxonomyAlias.order.asc())
 
