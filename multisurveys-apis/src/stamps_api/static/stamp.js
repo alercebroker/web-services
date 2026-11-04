@@ -76,16 +76,21 @@ export function init() {
   // Zoom button eventListeners
   zoomStamps.addEventListener('click', () => {
     toggleZoom()
-    if (!stampsContainer.classList.contains('hide-crosshairs')) {
-      stampsContainer.classList.toggle('hide-crosshairs')
-    }
+    syncToolButtons(zoomStamps, crossHair, stampsContainer)
   })
 
   // Crosshair buttom eventListeners
   crossHair.addEventListener('click', () => {
     stampsContainer.classList.toggle('hide-crosshairs')
-    toggleZoom(true)
+    syncToolButtons(zoomStamps, crossHair, stampsContainer)
   })
+}
+
+// Light the zoom / crosshair buttons that are on (styled by aria-pressed in main.css), so the mode shows without
+// hovering over the stamps
+function syncToolButtons(zoomButton, crossHairButton, stampsContainer) {
+  zoomButton.setAttribute('aria-pressed', isZoomOn())
+  crossHairButton.setAttribute('aria-pressed', !stampsContainer.classList.contains('hide-crosshairs'))
 }
 
 function set_arrow_direction(container) {
@@ -129,25 +134,38 @@ function makeZoomWork(imagesZoom) {
       templateZoom.style.setProperty('--zoom-y', pointer.y + '%');
       differenceZoom.style.setProperty('--zoom-y', pointer.y + '%');
 
+      // The zoom shows the stamp at 2x, shifted so the point under the pointer stays put; that moves the stamp's
+      // centre (the alert) to 100% minus the pointer's position, so the crosshair follows it there
+      let crossHairAt = isZoomOn() ? { x: 100 - pointer.x, y: 100 - pointer.y } : { x: 50, y: 50 }
+      for (let element of [scienceZoom, templateZoom, differenceZoom]) {
+        element.style.setProperty('--cross-x', crossHairAt.x + '%');
+        element.style.setProperty('--cross-y', crossHairAt.y + '%');
+      }
+
     })
     zoomElement.addEventListener('mouseleave', () => {
       scienceZoom.style.setProperty('--display', 'none');
       templateZoom.style.setProperty('--display', 'none');
       differenceZoom.style.setProperty('--display', 'none');
+      for (let element of [scienceZoom, templateZoom, differenceZoom]) {
+        element.style.setProperty('--cross-x', '50%');
+        element.style.setProperty('--cross-y', '50%');
+      }
     })
 
   }
 }
 
-function toggleZoom(crossFlag = false) {
+function isZoomOn() {
+  return parseInt(getComputedStyle(scienceZoom).getPropertyValue('--z-index')) > 0
+}
 
-  let currentVal = getComputedStyle(scienceZoom).getPropertyValue('--z-index').trim();
+function toggleZoom() {
 
-  if (parseInt(currentVal) > 0 || crossFlag) {
+  if (isZoomOn()) {
     scienceZoom.style.setProperty('--z-index', -1)
     templateZoom.style.setProperty('--z-index', -1)
     differenceZoom.style.setProperty('--z-index', -1)
-    crossFlag = false
   } else {
     scienceZoom.style.setProperty('--z-index', 1)
     templateZoom.style.setProperty('--z-index', 1)

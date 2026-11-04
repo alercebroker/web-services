@@ -1,6 +1,9 @@
 import base64
+from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Form, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from pydantic import ValidationError
 
 from core.exceptions import AlertNotFound, UpstreamUnavailable
 from core.idmapper.idmapper import parse_oid
@@ -23,6 +26,7 @@ def get_stamp_card(
     request: Request,
     oid: str,
     survey_id: Survey,
+    north_up: bool = True,
 ):
     handler = handler_selector(survey_id)()
     context = {}
@@ -42,7 +46,7 @@ def get_stamp_card(
     has_stamp_selected_measurement_id = has_stamp_for_measurement_id(detections, selected_measurement_id)
 
     if has_stamp_selected_measurement_id:
-        context = stamps_context(handler, oid, selected_measurement_id)
+        context = stamps_context(handler, oid, selected_measurement_id, north_up)
 
     context.update(
         {
@@ -54,6 +58,7 @@ def get_stamp_card(
             "prv_measurement_id": str(selected_measurement_id),
             "nxt_measurement_id": str(next_measurement_id),
             "has_stamp_selected_measurement_id": has_stamp_selected_measurement_id,
+            "north_up": north_up,
         }
     )
     return templates.TemplateResponse(
@@ -80,7 +85,12 @@ def avro(request: Request, oid: str, measurement_id: str, survey_id: Survey):
 
 
 @router.post("/update_stamp_card")
-def post_stamp_card(request: Request, post_input: PostRequestInputModel):
+def post_stamp_card(request: Request, payload: Annotated[str, Form()]):
+    # A form field holding JSON, sent with hx-vals rather than as a JSON body: see stampPayload in stamps_layout
+    try:
+        post_input = PostRequestInputModel.model_validate_json(payload)
+    except ValidationError as error:
+        raise RequestValidationError(error.errors(include_url=False))
     handler = handler_selector(post_input.survey_id)()
     context = {}
     has_stamp_selected_measurement_id = has_stamp_for_measurement_id(
@@ -91,7 +101,7 @@ def post_stamp_card(request: Request, post_input: PostRequestInputModel):
         selected_measurement_id=post_input.measurement_id,
     )
     if has_stamp_selected_measurement_id:
-        context = stamps_context(handler, post_input.oid, post_input.measurement_id)
+        context = stamps_context(handler, post_input.oid, post_input.measurement_id, post_input.north_up)
 
     context.update(
         {
@@ -103,6 +113,7 @@ def post_stamp_card(request: Request, post_input: PostRequestInputModel):
             "prv_measurement_id": str(prv_measurement_id),
             "nxt_measurement_id": str(nxt_measurement_id),
             "has_stamp_selected_measurement_id": has_stamp_selected_measurement_id,
+            "north_up": post_input.north_up,
         }
     )
 
@@ -113,9 +124,9 @@ def post_stamp_card(request: Request, post_input: PostRequestInputModel):
     )
 
 
-def stamps_context(handler, oid, measurement_id) -> dict:
+def stamps_context(handler, oid, measurement_id, north_up) -> dict:
     try:
-        stamps = handler.get_all_stamps(oid, measurement_id, ["png", "fits"])
+        stamps = handler.get_all_stamps(oid, measurement_id, ["png", "fits"], north_up=north_up)
     except (AlertNotFound, UpstreamUnavailable):
         return {"stamps_available": False}
     return {"stamps_available": True, **build_image_context(stamps["png"], stamps["fits"])}

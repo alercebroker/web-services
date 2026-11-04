@@ -2,6 +2,7 @@
 
 import gzip
 import io
+import json
 
 import astropy.io.fits as fio
 import numpy as np
@@ -35,7 +36,7 @@ def client(db, monkeypatch):
 def test_card_says_the_stamps_are_unavailable_when_s3_fails(client, mocker, error):
     mocker.patch.object(ZTFS3Handler, "_get_file_from_s3", side_effect=error("S3 failed"))
 
-    response = client.post("/htmx/update_stamp_card", json=BODY)
+    response = client.post("/htmx/update_stamp_card", data={"payload": json.dumps(BODY)})
 
     assert response.status_code == 200
     assert 'id="stamps-unavailable"' in response.text
@@ -46,7 +47,7 @@ def test_card_downloads_the_alert_once_for_png_and_fits(client, mocker):
     avro = {stamp: {"stampData": fits()} for stamp in ("cutoutScience", "cutoutTemplate", "cutoutDifference")}
     download = mocker.patch.object(ZTFS3Handler, "_get_file_from_s3", return_value=avro)
 
-    response = client.post("/htmx/update_stamp_card", json=BODY)
+    response = client.post("/htmx/update_stamp_card", data={"payload": json.dumps(BODY)})
 
     assert response.status_code == 200
     assert download.call_count == 1

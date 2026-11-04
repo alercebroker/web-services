@@ -35,6 +35,7 @@
   align-items: center;
   padding: 0;
   margin: 0;
+  overflow: hidden; /* the crosshair follows the zoomed stamp off its edges */
 }
 
 #stampsContainer.hide-crosshairs .crossHair {
@@ -45,8 +46,8 @@
   content:'';
   display: var(--crossHair);
   position:absolute;
-  top: 50%;
-  left: 50%;
+  top: var(--cross-y, 50%);
+  left: var(--cross-x, 50%);
   transform: translate(-50%, -50%);
 /*  z-index: var(--z-index); */
   z-index: 40;
@@ -81,4 +82,69 @@
   background-size: var(--grosor) 100%, 100% var(--grosor);
   background-position: center;
   background-repeat: no-repeat;
+}
+
+/* Zoom, crosshair and North-up buttons. Boxed explicitly: the explorer's reset (Vuetify) strips a button's default
+   background and border, so they used to look boxed on their own and bare when embedded. Lit while on.
+   Under .tw-preflight to outrank `.tw-preflight button`, the Tailwind preflight of the other htmx components (object,
+   magstat, ...) that the explorer loads on the same page and that reaches this card too. */
+.tw-preflight .stamp-tool {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #9ca3af;
+  border-radius: 4px;
+  background-color: transparent;
+  color: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tw-preflight .stamp-tool:hover {
+  background-color: rgba(156, 163, 175, 0.25);
+}
+
+.tw-preflight .stamp-tool[aria-pressed="true"] {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.tw-preflight .stamp-tool[aria-pressed="true"] svg {
+  fill: #fff;
+}
+
+/* The header row's other controls match the tool buttons' height, so the row lines up: the date dropdown, its arrows
+   (square, like the tool buttons) and ZTF's AVRO button. By id, to outrank the Tailwind sizes in their classes. */
+.tw-preflight #measurement_id,
+.tw-preflight #prevDate,
+.tw-preflight #nextDate,
+.tw-preflight #avro-btn-modal {
+  box-sizing: border-box;
+  height: 36px;
+}
+
+/* A select is as wide as its longest option, and " (no stamps)" would push the tools to a second line.
+   Fit the date alone; the open list still shows the whole label. */
+.tw-preflight #measurement_id {
+  padding-top: 0;
+  padding-bottom: 0;
+  width: 320px;
+  text-overflow: ellipsis;
+}
+
+.tw-preflight #prevDate,
+.tw-preflight #nextDate {
+  width: 36px;
+}
+
+/* Right-aligned also when a narrow card wraps them onto a line of their own */
+.tw-preflight .stamp-tools {
+  margin-left: auto;
 }

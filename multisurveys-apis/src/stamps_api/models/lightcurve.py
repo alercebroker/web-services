@@ -29,3 +29,4 @@ class PostRequestInputModel(BaseModel):
     survey_id: Survey
     measurement_id: int
     detections_list: list[dict]
+    north_up: bool = True
