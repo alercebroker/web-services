@@ -29,24 +29,27 @@
         STAMP_CONFIG.detections_list = {{ detections | tojson | safe }};
     }
 
-    htmx.defineExtension('final-payload', {
-        encodeParameters: function(xhr, parameters, elt) {
-            let rawId;
-            
-            if (elt.tagName === 'SELECT') {
-                rawId = elt.value;
-            } else {
-                rawId = elt.getAttribute('data-measurement-id');
-            }
-
-            let payload = {
-                oid: STAMP_CONFIG.oid,
-                survey_id: STAMP_CONFIG.survey_id,
-                measurement_id: rawId,
-                detections_list: STAMP_CONFIG.detections_list
-            };
-            
-            return JSON.stringify(payload);
+    // The body of an update_stamp_card request, sent by the card's controls through hx-vals. Not an htmx extension:
+    // in the explorer every htmx card loads its own copy of htmx, each replacing window.htmx, so an extension
+    // registered here could land on a different instance than the one handling the card (a 422 without a body).
+    // Takes the control's id: what `this` is in an hx-vals expression differs between htmx versions.
+    window.stampPayload = function (controlId) {
+        const elt = document.getElementById(controlId);
+        // The N↑ button carries the orientation it switches to, and shows the current one
+        const northUpButton = document.getElementById('northUpStamps');
+        let northUp = true;
+        if (elt.hasAttribute('data-north-up')) {
+            northUp = elt.getAttribute('data-north-up') === 'true';
+        } else if (northUpButton) {
+            northUp = northUpButton.getAttribute('aria-pressed') === 'true';
         }
-    });
+
+        return JSON.stringify({
+            oid: STAMP_CONFIG.oid,
+            survey_id: STAMP_CONFIG.survey_id,
+            measurement_id: elt.tagName === 'SELECT' ? elt.value : elt.getAttribute('data-measurement-id'),
+            detections_list: STAMP_CONFIG.detections_list,
+            north_up: northUp
+        });
+    };
 </script>

@@ -24,7 +24,7 @@ def _mjd_to_date(mjd):
     days_from_epoch = float(mjd) - 40587
     date_obj = datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(days=days_from_epoch)
 
-    return date_obj.strftime("%a, %d %b %Y %H:%M:%S UT")
+    return date_obj.strftime("%d %b %Y %H:%M:%S UT")
 
 
 def parse_lightcurve(lightcurve_data):

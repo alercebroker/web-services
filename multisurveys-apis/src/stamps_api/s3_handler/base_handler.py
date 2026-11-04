@@ -78,6 +78,7 @@ class BaseS3Handler:
         stamp_type: str,
         file_format: str,
         is_compressed: bool,
+        north_up: bool = False,
     ):
         file_name = f"{avro_name}_{stamp_type}.{file_format}"
 
@@ -92,7 +93,7 @@ class BaseS3Handler:
                 file = io.BytesIO(fit_data)
                 mime = "application/fits"
         else:
-            file = io.BytesIO(transform(fit_data, stamp_type, 2, self.compressed))
+            file = io.BytesIO(transform(fit_data, stamp_type, 2, self.compressed, north_up))
             mime = "image/png"
         return file_name, file, mime
 
@@ -112,8 +113,19 @@ class BaseS3Handler:
 
         return file_name, file, mime
 
-    def get_all_stamps(self, oid: str, measurement_id: str, file_formats: list[str], is_compressed: bool = True):
-        """Every stamp type in each of file_formats, from one download of the alert: {format: {stamp_type: ...}}."""
+    def get_all_stamps(
+        self,
+        oid: str,
+        measurement_id: str,
+        file_formats: list[str],
+        is_compressed: bool = True,
+        north_up: bool = False,
+    ):
+        """
+        Every stamp type in each of file_formats, from one download of the alert: {format: {stamp_type: ...}}.
+
+        north_up rotates the PNGs so North is up; the FITS are always the raw data.
+        """
         avro_name = self._get_avro_name(oid, measurement_id)
         avro_data = self._get_file_from_s3(avro_name)
 
@@ -121,7 +133,9 @@ class BaseS3Handler:
         for file_format in file_formats:
             result[file_format] = {}
             for stamp_type in self.valid_stamp_types:
-                file_name, file, mime = self._get_stamp(avro_name, avro_data, stamp_type, file_format, is_compressed)
+                file_name, file, mime = self._get_stamp(
+                    avro_name, avro_data, stamp_type, file_format, is_compressed, north_up
+                )
                 result[file_format][stamp_type] = {
                     "file_name": file_name,
                     "file": file.getvalue(),
