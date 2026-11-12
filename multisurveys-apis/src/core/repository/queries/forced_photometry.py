@@ -42,6 +42,9 @@ def build_query(model_id, oid):
     return stmt
 
 
+# TODO: takes its inputs as one positional tuple (oids, survey_id) so it fits a toolz pipe. That is error-prone: the
+# values can be swapped without any error, and the type checker can't follow them. Change it to named
+# parameters, like conesearch_oid in core/repository/queries/conesearch.py.
 def get_forced_photometry_by_list(
     session_factory: Callable[..., ContextManager[Session]],
 ):

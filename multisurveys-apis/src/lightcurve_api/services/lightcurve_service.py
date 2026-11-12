@@ -47,6 +47,9 @@ def get_detections(
     return result
 
 
+# TODO: its pipe passes (oids, survey_id) from step to step as one positional tuple. That is error-prone: the
+# values can be swapped without any error, and the type checker can't follow them. Call the steps with
+# named parameters instead, like conesearch_oid in core/repository/queries/conesearch.py.
 def get_detections_by_list(
     oids: List[str],
     survey_id: str,
@@ -63,6 +66,9 @@ def get_detections_by_list(
     )
 
 
+# TODO: takes its inputs as one positional tuple (oids, survey_id) so it fits a toolz pipe. That is error-prone: the
+# values can be swapped without any error, and the type checker can't follow them. Change it to named
+# parameters, like conesearch_oid in core/repository/queries/conesearch.py.
 def convert_oid_list_to_int(
     args: Tuple[List[int] | List[str], str],
 ) -> Tuple[List[int], str]:
@@ -90,6 +96,9 @@ def get_non_detections(
     return result_parsed
 
 
+# TODO: its pipe passes (oids, survey_id) from step to step as one positional tuple. That is error-prone: the
+# values can be swapped without any error, and the type checker can't follow them. Call the steps with
+# named parameters instead, like conesearch_oid in core/repository/queries/conesearch.py.
 def get_non_detections_by_list(
     oids: List[str],
     survey_id: str,
@@ -125,6 +134,9 @@ def get_forced_photometry(
     return result_parsed
 
 
+# TODO: its pipe passes (oids, survey_id) from step to step as one positional tuple. That is error-prone: the
+# values can be swapped without any error, and the type checker can't follow them. Call the steps with
+# named parameters instead, like conesearch_oid in core/repository/queries/conesearch.py.
 def get_forced_photometry_by_list(
     oids: List[str],
     survey_id: str,

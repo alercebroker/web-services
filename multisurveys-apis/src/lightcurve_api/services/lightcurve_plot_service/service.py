@@ -373,11 +373,11 @@ def get_lightcurve(
     session_factory: Callable[..., ContextManager[Session]],
 ):
     result.lightcurve = conesearch_oid_lightcurve(
-        oid,
-        DEFAULT_RADIUS,
-        DEFAULT_NEIGHBORS,
-        survey_id,
         session_factory,
+        oid=oid,
+        survey_id=survey_id,
+        radius=DEFAULT_RADIUS,
+        neighbors=DEFAULT_NEIGHBORS,
     )
     return result
 

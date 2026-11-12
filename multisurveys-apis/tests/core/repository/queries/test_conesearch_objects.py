@@ -115,15 +115,13 @@ def test_conesearch_oid_few_close_objects(db: PsqlDatabase):
         assert len(all_objects) == nobjects * 2
 
     # Execute the conesearch
-    conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((123, 30.0 / 3600, 10))
+    result = queries.conesearch_oid(db.session, oid=123, sid=1, radius=30.0 / 3600, neighbors=10)
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
 
     # Execute conesearch with more than 10 neighbors
-    conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((123, 30.0 / 3600, 20))
+    result = queries.conesearch_oid(db.session, oid=123, sid=1, radius=30.0 / 3600, neighbors=20)
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
@@ -182,15 +180,13 @@ def test_conesearch_oid_all_are_close(db: PsqlDatabase):
         assert len(all_objects) == nobjects
 
     # Execute the conesearch
-    conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((123, 30.0 / 3600, 10))
+    result = queries.conesearch_oid(db.session, oid=123, sid=1, radius=30.0 / 3600, neighbors=10)
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 10
 
     # Execute conesearch with 20 neighbors should return all 20 objects
-    conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((123, 30.0 / 3600, 20))
+    result = queries.conesearch_oid(db.session, oid=123, sid=1, radius=30.0 / 3600, neighbors=20)
 
     # Assert that the conesearch returns only the 10 close objects
     assert len(result) == 20
@@ -221,8 +217,7 @@ def test_conesearch_oid_none_are_close(db: PsqlDatabase):
         session.commit()
 
     # Execute the conesearch
-    conesearch = queries.conesearch_oid(db.session)
-    result = conesearch((123, 30.0 / 3600, 10))
+    result = queries.conesearch_oid(db.session, oid=123, sid=1, radius=30.0 / 3600, neighbors=10)
 
     # Assert that the conesearch returns the only object
     assert len(result) == 1
@@ -413,3 +408,38 @@ def test_conesearch_coordinates_none_are_close(db: PsqlDatabase):
 
     # Assert that the conesearch returns the only object
     assert len(result) == 1
+
+
+def test_conesearch_oid_centers_on_the_given_survey(db: PsqlDatabase):
+    """The same oid is an object in two surveys, far apart. The search centers on the requested survey's object."""
+
+    def make_object(oid, sid, ra):
+        return Object(
+            oid=oid,
+            tid=sid,
+            sid=sid,
+            meanra=ra,
+            meandec=45.0,
+            firstmjd=59000.0,
+            lastmjd=59001.0,
+            deltamjd=1.0,
+            n_det=1,
+            n_forced=1,
+            n_non_det=1,
+        )
+
+    with db.session() as session:
+        # oid 123 in each survey, 10 degrees apart, each with one neighbor of its own survey (oid 1 or 2) nearby
+        session.add_all(
+            [
+                make_object(123, 0, 45.0),
+                make_object(1, 0, 45.001),
+                make_object(123, 1, 55.0),
+                make_object(2, 1, 55.001),
+            ]
+        )
+        session.commit()
+
+    for sid, expected in [(0, {(123, 0), (1, 0)}), (1, {(123, 1), (2, 1)})]:
+        result = queries.conesearch_oid(db.session, oid=123, sid=sid, radius=30.0 / 3600, neighbors=10)
+        assert {(obj.oid, obj.sid) for obj in result} == expected

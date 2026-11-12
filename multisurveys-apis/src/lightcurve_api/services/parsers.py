@@ -9,6 +9,9 @@ from ..models.non_detections import ZtfNonDetections
 from ..models.object import ZtfDrObject
 
 
+# TODO: takes its inputs as one positional tuple (rows, survey_id) so it fits a toolz pipe. That is error-prone: the
+# values can be swapped without any error, and the type checker can't follow them. Change it to named
+# parameters, like conesearch_oid in core/repository/queries/conesearch.py.
 def parse_sql_detection(args: Tuple[Sequence[Row[Any]], str]):
     sql_response, survey_id = args
 
@@ -26,6 +29,9 @@ def parse_sql_detection(args: Tuple[Sequence[Row[Any]], str]):
     return data_parsed
 
 
+# TODO: takes its inputs as one positional tuple (rows, survey_id) so it fits a toolz pipe. That is error-prone: the
+# values can be swapped without any error, and the type checker can't follow them. Change it to named
+# parameters, like conesearch_oid in core/repository/queries/conesearch.py.
 def parse_sql_non_detections(args: Tuple[Sequence[Row[Any]], str]):
     sql_response, survey_id = args
 
@@ -35,6 +41,9 @@ def parse_sql_non_detections(args: Tuple[Sequence[Row[Any]], str]):
     return ModelsParser(ZtfNonDetections, sql_response, survey_id).parse_data_arr()
 
 
+# TODO: takes its inputs as one positional tuple (rows, survey_id) so it fits a toolz pipe. That is error-prone: the
+# values can be swapped without any error, and the type checker can't follow them. Change it to named
+# parameters, like conesearch_oid in core/repository/queries/conesearch.py.
 def parse_forced_photometry(args: Tuple[Sequence[Row[Any]], str]):
     sql_response, survey_id = args
 
