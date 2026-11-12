@@ -5,18 +5,14 @@ from .ztf import encode_ztf_to_masterid_without_survey, decode_masterid_for_ztf
 
 # Constants
 # Prefix of each catalog inside a master id. Not the survey id stored in the database (survey_mapper.SURVEY_IDS).
+# Only ZTF names are encoded. Objects are keyed by (oid, sid) and an oid is unique only within its
+# survey, so other surveys' oids are stored as they come (see parse_oid).
 SURVEY_IDS = {
     "ZTF": 1,
-    "ATLAS": 2,
-    "LSST": 3,
-    "LS4": 4,
 }
 SURVEY_PREFIX_LEN_BITS = 8
 MAX_OID = 2**63 - 1
 MAX_OIDS_PER_REQUEST = 200
-SURVEY_IDS["MAXSURVEY"] = 2**SURVEY_PREFIX_LEN_BITS - 1
-
-REVERSE_SURVEY_IDS = dict((zip(SURVEY_IDS.values(), SURVEY_IDS.keys())))
 
 
 def _parse_numeric_oid(text: str) -> int | None:
@@ -81,33 +77,28 @@ def catalog_oid_to_masterid(
     validate: bool = False,
 ) -> np.int64:
     """
-    Convert a catalog object ID to a master ID.
+    Convert a ZTF object name to a master ID.
 
     Parameters
     ----------
     catalog : str
-        The name of the catalog (e.g., "ZTF").
+        The name of the catalog. Only "ZTF" is supported.
     catalog_oid : str
-        The ZTF object ID.
+        The ZTF object name, e.g. "ZTF18aarwvbm".
     validate: bool
-        If True, validate the ztf_oid before conversion.
+        If True, validate the ZTF name before conversion.
     Returns
     -------
-    str
+    np.int64
         The master ID.
     """
     catalog = catalog.upper()
-    if catalog not in SURVEY_IDS.keys():
-        raise ValueError(f"Unsupported catalog: {catalog}")
+    if catalog not in SURVEY_IDS:
+        raise ValueError(f"Unsupported catalog: {catalog}. Only ZTF names are encoded.")
 
-    # Add the survey ID to the master ID
-    master_id = SURVEY_IDS[catalog] << (63 - SURVEY_PREFIX_LEN_BITS)
-    master_id = np.int64(master_id)
-
-    if catalog == "ZTF":
-        master_id += encode_ztf_to_masterid_without_survey(str(catalog_oid), validate)
-    elif catalog == "LSST":
-        return np.int64(catalog_oid)
+    # Add the survey prefix to the master ID
+    master_id = np.int64(SURVEY_IDS[catalog] << (63 - SURVEY_PREFIX_LEN_BITS))
+    master_id += encode_ztf_to_masterid_without_survey(str(catalog_oid), validate)
 
     return master_id
 
