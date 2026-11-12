@@ -1,16 +1,14 @@
 import numpy as np
 
-from .survey_mapper import DEFAULT_SURVEY, get_survey_id
+from .survey_mapper import DEFAULT_SURVEY, SURVEY_IDS, get_survey_id
 from .ztf import encode_ztf_to_masterid_without_survey, decode_masterid_for_ztf
 
-# Constants
-# Prefix of each catalog inside a master id. Not the survey id stored in the database (survey_mapper.SURVEY_IDS).
 # Only ZTF names are encoded. Objects are keyed by (oid, sid) and an oid is unique only within its
 # survey, so other surveys' oids are stored as they come (see parse_oid).
-SURVEY_IDS = {
-    "ZTF": 1,
-}
-SURVEY_PREFIX_LEN_BITS = 8
+# A ZTF oid is the encoded ZTF name with a prefix in its top 8 bits. The prefix is sid + 1, so every
+# stored ZTF oid has prefix 1. Same rule as the pipeline's idmapper (libs/idmapper/idmapper/mapper.py).
+PREFIX_SHIFT = 63 - 8
+ZTF_PREFIX = SURVEY_IDS["ztf"] + 1
 MAX_OID = 2**63 - 1
 MAX_OIDS_PER_REQUEST = 200
 
@@ -55,6 +53,8 @@ def parse_oid(survey: str | None, oid: str | int) -> int:
     """
     survey = DEFAULT_SURVEY if survey is None else survey.lower()
     get_survey_id(survey)
+    if survey not in OID_PARSERS:
+        raise ValueError(f"Unsupported survey: {survey}")
     return OID_PARSERS[survey](str(oid).strip())
 
 
@@ -92,32 +92,23 @@ def catalog_oid_to_masterid(
     np.int64
         The master ID.
     """
-    catalog = catalog.upper()
-    if catalog not in SURVEY_IDS:
+    if catalog.upper() != "ZTF":
         raise ValueError(f"Unsupported catalog: {catalog}. Only ZTF names are encoded.")
 
-    # Add the survey prefix to the master ID
-    master_id = np.int64(SURVEY_IDS[catalog] << (63 - SURVEY_PREFIX_LEN_BITS))
-    master_id += encode_ztf_to_masterid_without_survey(str(catalog_oid), validate)
-
-    return master_id
+    payload = encode_ztf_to_masterid_without_survey(str(catalog_oid), validate)
+    return np.int64((ZTF_PREFIX << PREFIX_SHIFT) + int(payload))
 
 
-def decode_masterid(masterid: np.int64) -> tuple[str, str | np.int64]:
+def decode_masterid(masterid: int | np.integer) -> tuple[str, str]:
     """
-    Decode a master ID into its components.
+    Convert a ZTF oid back to ("ZTF", ZTF object name).
 
-    Parameters
-    ----------
-    masterid : np.int64
-        The master ID.
-    Returns
-    -------
-    tuple[str, str]
-        The survey of the object and the original oid.
+    Raises ValueError if the oid doesn't carry the ZTF prefix, so another survey's oid is never
+    decoded into a made-up ZTF name.
     """
-    # Extract the survey from the master ID
-    # survey_id = masterid >> (63 - SURVEY_PREFIX_LEN_BITS)
-
-    masterid_without_survey = np.bitwise_and(masterid, ((1 << (63 - SURVEY_PREFIX_LEN_BITS)) - 1))
-    return "ZTF", decode_masterid_for_ztf(masterid_without_survey)
+    masterid = int(masterid)
+    prefix = masterid >> PREFIX_SHIFT
+    if prefix != ZTF_PREFIX:
+        raise ValueError(f"{masterid} is not a ZTF oid: prefix {prefix}, expected {ZTF_PREFIX}.")
+    payload = masterid & ((1 << PREFIX_SHIFT) - 1)
+    return "ZTF", decode_masterid_for_ztf(np.int64(payload))
