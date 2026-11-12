@@ -3,9 +3,13 @@ from typing import Annotated, Literal
 from fastapi import Query
 from pydantic import BeforeValidator
 
+# Survey ids as stored in the database (table sid_lut, column object.sid). Copied from the pipeline's
+# idmapper (libs/idmapper/idmapper/mapper.py) and permanent: every stored row carries one of these values.
+# Use these names in code instead of the numbers. "lsst" is the LSST DIA Object, "lsst_ss" the LSST SS Object.
 SURVEY_IDS = {
     "ztf": 0,
     "lsst": 1,
+    "lsst_ss": 2,
 }
 
 DEFAULT_SURVEY = "ztf"

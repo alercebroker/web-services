@@ -2,6 +2,10 @@ from typing import Any
 from db_plugins.db.sql.models_pipeline import Object
 from lightcurve_api.models.object import ApiObject
 from lightcurve_api.services.conesearch import conesearch as conesearch_service
+from core.idmapper.idmapper import catalog_oid_to_masterid
+
+# Stored oid of ZTF00aaaaaet: the ZTF prefix plus the encoded name (123)
+ZTF_OID = int(catalog_oid_to_masterid("ZTF", "ZTF00aaaaaet"))
 
 
 def implement_context_manager(mocker, mock):
@@ -24,7 +28,7 @@ def test_conesearch_coordinates(mocker):
     # Setup the database mock
     # Result has to be a list of tuples
     # where the first element is the object
-    mock = database_mock(mocker, [(Object(oid=123, meanra=45.0, meandec=45.0, sid=0),)])
+    mock = database_mock(mocker, [(Object(oid=ZTF_OID, meanra=45.0, meandec=45.0, sid=0),)])
     implement_context_manager(mocker, mock)
 
     # Call the service
@@ -52,7 +56,7 @@ def test_conesearch_oid(mocker):
     # Setup the database mock
     # Result has to be a list of tuples
     # where the first element is the object
-    mock = database_mock(mocker, [(Object(oid=123, meanra=45.0, meandec=45.0, sid=0),)])
+    mock = database_mock(mocker, [(Object(oid=ZTF_OID, meanra=45.0, meandec=45.0, sid=0),)])
     implement_context_manager(mocker, mock)
 
     # Call the service

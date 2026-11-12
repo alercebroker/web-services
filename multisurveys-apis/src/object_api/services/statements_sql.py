@@ -1,6 +1,8 @@
 from db_plugins.db.sql.models_pipeline import Object, Probability
 from sqlalchemy import text
 
+from core.idmapper.survey_mapper import get_survey_id
+
 
 def convert_conesearch_args(args):
     try:
@@ -112,12 +114,7 @@ def object_filters(args):
         filters_dict.append(oids)
 
     if args["survey"] is not None:
-        if args["survey"] == "ztf":
-            survey = Object.sid == 0
-            filters_dict.append(survey)
-        if args["survey"] == "lsst":
-            survey = Object.sid == 1
-            filters_dict.append(survey)
+        filters_dict.append(Object.sid == get_survey_id(args["survey"]))
 
     return filters_dict
 
@@ -146,12 +143,7 @@ def probability_filters(args):
         filters_prob_dict.append(ranking)
 
     if args["survey"] is not None:
-        if args["survey"] == "ztf":
-            survey = Probability.sid == 0
-            filters_prob_dict.append(survey)
-        if args["survey"] == "lsst":
-            survey = Probability.sid == 1
-            filters_prob_dict.append(survey)
+        filters_prob_dict.append(Probability.sid == get_survey_id(args["survey"]))
 
     filters_prob_dict.extend(probability_lastmjd_filters(args))
 
