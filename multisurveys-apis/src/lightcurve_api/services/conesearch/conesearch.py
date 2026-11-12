@@ -17,8 +17,12 @@ from .parser import parsesapi_objects
 from lightcurve_api.services import lightcurve_service
 from core.exceptions import ObjectNotFound
 from core.idmapper import idmapper
+from core.idmapper.survey_mapper import get_survey_id
 
 
+# TODO: takes its inputs as one positional tuple so it fits a toolz pipe. That is error-prone: values of the same
+# type can be swapped without any error, and the type checker can't catch it. Change it to named parameters, like
+# conesearch_oid.
 def conesearch_coordinates(
     ra: float,
     dec: float,
@@ -38,22 +42,24 @@ def conesearch_coordinates(
 
 
 def conesearch_oid(
+    session_factory: Callable[..., ContextManager[Session]],
+    *,
     oid: int,
+    survey_id: str,
     radius: float,
     neighbors: int,
-    session_factory: Callable[..., ContextManager[Session]],
 ) -> List[ApiObject]:
-    return cast(
-        List[ApiObject],
-        pipe(
-            (oid, radius, neighbors),
-            validate_oid_params,
-            queries.dummy_conesearch_oid(session_factory),
-            parsesapi_objects,
-        ),
-    )
+    """The object `oid` of survey `survey_id`, found through the object table.
+
+    `radius` and `neighbors` are validated but not used yet: the query is a placeholder
+    (dummy_conesearch_oid) that returns only the object itself, not its neighbors.
+    """
+    validate_oid_params(radius=radius, neighbors=neighbors)
+    objects = queries.dummy_conesearch_oid(session_factory, oid=oid, sid=get_survey_id(survey_id))
+    return parsesapi_objects(objects)
 
 
+# TODO: returns (result, ids) as one tuple for the next step of a toolz pipe. Return named values instead.
 def get_detections(
     session_factory: Callable[..., ContextManager[Session]],
     result: Lightcurve,
@@ -71,6 +77,9 @@ def get_detections(
     return _get
 
 
+# TODO: takes its inputs as one positional tuple so it fits a toolz pipe. That is error-prone: values of the same
+# type can be swapped without any error, and the type checker can't catch it. Change it to named parameters, like
+# conesearch_oid. It also hands on (result, ids) as a tuple.
 def get_non_detections(session_factory: Callable[..., ContextManager[Session]]):
     def _get(args: Tuple[Lightcurve, dict]) -> Tuple[Lightcurve, dict]:
         result, object_ids_by_survey = args
@@ -85,6 +94,9 @@ def get_non_detections(session_factory: Callable[..., ContextManager[Session]]):
     return _get
 
 
+# TODO: takes its inputs as one positional tuple so it fits a toolz pipe. That is error-prone: values of the same
+# type can be swapped without any error, and the type checker can't catch it. Change it to named parameters, like
+# conesearch_oid. It also hands on (result, ids) as a tuple.
 def get_forced_photometry(session_factory: Callable[..., ContextManager[Session]]):
     def _get(args: Tuple[Lightcurve, dict]) -> Tuple[Lightcurve, dict]:
         result, object_ids_by_survey = args
@@ -98,25 +110,24 @@ def get_forced_photometry(session_factory: Callable[..., ContextManager[Session]
 
 
 def conesearch_oid_lightcurve(
+    session_factory: Callable[..., ContextManager[Session]],
+    *,
     oid: str,
+    survey_id: str,
     radius: float,
     neighbors: int,
-    survey_id: str,
-    session_factory: Callable[..., ContextManager[Session]],
 ) -> Lightcurve:
-    return cast(
-        Lightcurve,
-        pipe(
-            idmapper.parse_oid(survey_id, oid),
-            lambda oid: conesearch_oid(oid, radius, neighbors, session_factory),
-            get_lightcurve_async(
-                session_factory,
-                Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
-                oid,
-            ),
-            lambda result: result[0],  # here we only care about result object, and discard the object ids dictionary
-        ),
+    """The lightcurve of the object `oid` of survey `survey_id`. See conesearch_oid."""
+    objects = conesearch_oid(
+        session_factory,
+        oid=idmapper.parse_oid(survey_id, oid),
+        survey_id=survey_id,
+        radius=radius,
+        neighbors=neighbors,
     )
+    empty = Lightcurve(detections=[], non_detections=[], forced_photometry=[])
+    lightcurve, _ = get_lightcurve_async(session_factory, empty, oid)(objects)
+    return lightcurve
 
 
 def get_lightcurve_async(
@@ -125,6 +136,9 @@ def get_lightcurve_async(
     oid: str,
 ):
     """
+    TODO: returns (result, ids) as one tuple, a leftover from when it was a toolz pipe step. Return named values,
+    or only the lightcurve, which is all conesearch_oid_lightcurve uses.
+
     This is a synchronous function thay run 3 sync funciontions in an asynchronous way.
     It mantains the functions intgerface for the get conesearch_oid_lightcurve pipe, but
     runs the get_detections, get_non_etections and get_forced_photometry queries with threads.

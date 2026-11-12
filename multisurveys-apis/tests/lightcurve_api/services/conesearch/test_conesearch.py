@@ -60,13 +60,13 @@ def test_conesearch_oid(mocker):
     implement_context_manager(mocker, mock)
 
     # Call the service
-    result = conesearch_service.conesearch_oid(123, 30.0, 10, mock)
+    result = conesearch_service.conesearch_oid(mock, oid=123, survey_id="ztf", radius=30.0, neighbors=10)
 
     # Assert that the result is as expected
     assert result == [ApiObject(objectId="ZTF00aaaaaet", ra=45.0, dec=45.0, survey_id="ztf")]
     mock.execute.assert_called_once()
-    call_args = mock.execute.call_args[0]
-    assert call_args[1] == {"radius": 30.0}
+    params = mock.execute.call_args[0][0].compile().params
+    assert (params["oid_1"], params["sid_1"]) == (123, 0)
 
 
 def test_conesearch_oid_db_empty(mocker):
@@ -75,14 +75,13 @@ def test_conesearch_oid_db_empty(mocker):
     implement_context_manager(mocker, mock)
 
     # Call the service
-    result = conesearch_service.conesearch_oid(123, 30.0, 10, mock)
+    result = conesearch_service.conesearch_oid(mock, oid=123, survey_id="ztf", radius=30.0, neighbors=10)
 
     # Assert that the result is as expected
     assert result == []
     mock.execute.assert_called_once()
-    call_args = mock.execute.call_args[0]
-    assert call_args[1] == {"radius": 30.0}
-    assert "123" == str(call_args[0].compile().params["oid_1"])
+    params = mock.execute.call_args[0][0].compile().params
+    assert (params["oid_1"], params["sid_1"]) == (123, 0)  # the survey is part of the object's key
 
 
 def skip_test_conesearch_oid_lightcurve(mocker):
@@ -119,7 +118,7 @@ def skip_test_conesearch_oid_lightcurve(mocker):
     mock.execute.side_effect = execute_side_effect
     implement_context_manager(mocker, mock)
 
-    result = conesearch_service.conesearch_oid_lightcurve(123, 30.0, 10, "LSST", mock)
+    result = conesearch_service.conesearch_oid_lightcurve(mock, oid="123", survey_id="lsst", radius=30.0, neighbors=10)
     assert len(result.detections) == 0
     assert len(result.non_detections) == 0
     assert len(result.forced_photometry) == 0

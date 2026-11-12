@@ -2,7 +2,15 @@
 ZTF object and an LSST object. Each survey only sees its own."""
 
 import pytest
-from db_plugins.db.sql.models_pipeline import LsstDiaObject, Object, Probability, ZtfObject
+from db_plugins.db.sql.models_pipeline import (
+    Detection,
+    LsstDetection,
+    LsstDiaObject,
+    Object,
+    Probability,
+    ZtfDetection,
+    ZtfObject,
+)
 from sqlalchemy import text
 
 from app_client import client_for
@@ -69,3 +77,66 @@ def test_probabilities_come_from_their_survey(db_with_both, survey):
 
     assert response.status_code == 200
     assert {row["classifier_name"] for row in response.json()} == {names[classifier_id]}
+
+
+# The object each survey's conesearch must return: ZTF oids come back as ZTF names, LSST oids as numbers
+OBJECT_IDS = {"ztf": NAME, "lsst": str(OID)}
+
+
+@pytest.mark.parametrize("survey", SURVEYS)
+def test_conesearch_by_oid_finds_only_its_survey(db_with_both, survey):
+    _, meanra, _ = SURVEYS[survey]
+    response = client_for("lightcurve_api", db_with_both).get(
+        "/conesearch/objects_by_oid",
+        params={"oid": str(OID), "survey_id": survey, "radius": 30, "neighbors": 10},
+    )
+
+    assert response.status_code == 200
+    assert [(row["survey_id"], row["objectId"], row["ra"]) for row in response.json()] == [
+        (survey, OBJECT_IDS[survey], meanra)
+    ]
+
+
+@pytest.fixture
+def db_with_both_detections(db_with_both):
+    """One detection per survey, with different measurement ids, so only the survey decides which one is read."""
+    with db_with_both.session() as session:
+        session.add(Detection(oid=OID, sid=0, measurement_id=1, mjd=60001, ra=11.0, dec=10.0, band=1))
+        session.add(Detection(oid=OID, sid=1, measurement_id=2, mjd=60002, ra=22.0, dec=10.0, band=1))
+        session.add(ZtfDetection(oid=OID, measurement_id=1, magpsf=18.0, sigmapsf=0.1))
+        session.add(
+            LsstDetection(
+                oid=OID,
+                sid=1,
+                measurement_id=2,
+                visit=1,
+                detector=1,
+                x=1,
+                y=1,
+                timeProcessedMjdTai=1,
+                psfFlux=100.0,
+                psfFluxErr=1.0,
+                scienceFlux=100.0,
+                scienceFluxErr=1.0,
+                has_stamp=False,
+            )
+        )
+        session.commit()
+
+    yield db_with_both
+
+    with db_with_both.session() as session:
+        for table in ("ztf_detection", "lsst_detection", "detection"):
+            session.execute(text(f"DELETE FROM {table} WHERE oid = :o"), {"o": OID})
+        session.commit()
+
+
+@pytest.mark.parametrize("survey", SURVEYS)
+def test_conesearch_lightcurve_comes_from_its_survey(db_with_both_detections, survey):
+    response = client_for("lightcurve_api", db_with_both_detections).get(
+        "/conesearch/lightcurve_by_oid",
+        params={"oid": str(OID), "survey_id": survey, "radius": 30, "neighbors": 10},
+    )
+
+    assert response.status_code == 200
+    assert [row["survey_id"] for row in response.json()["detections"]] == [survey]

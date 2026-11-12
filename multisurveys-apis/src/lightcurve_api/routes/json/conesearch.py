@@ -34,7 +34,7 @@ def conesearch(
     db: db_dependency,
 ) -> list[ApiObject]:
     id = idmapper.parse_oid(survey_id, oid)
-    return service.conesearch_oid(id, radius, neighbors, db.session)
+    return service.conesearch_oid(db.session, oid=id, survey_id=survey_id, radius=radius, neighbors=neighbors)
 
 
 @router.get(
@@ -71,5 +71,7 @@ def conesearch_oid_lightcurve(
     neighbors: NeighborsQuery,
     db: db_dependency,
 ):
-    lightcurve = service.conesearch_oid_lightcurve(oid, radius, neighbors, survey_id, db.session)
+    lightcurve = service.conesearch_oid_lightcurve(
+        db.session, oid=oid, survey_id=survey_id, radius=radius, neighbors=neighbors
+    )
     return {key: json_rows(getattr(lightcurve, key)) for key in ("detections", "non_detections", "forced_photometry")}

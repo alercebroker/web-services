@@ -1,8 +1,9 @@
+import pytest
+
 from lightcurve_api.services.conesearch.validation import (
     validate_coordinates_params,
     validate_oid_params,
 )
-from numpy import int64
 
 
 def test_validate_coordinates_params():
@@ -30,18 +31,16 @@ def test_validate_coordinates_params():
 
 
 def test_validate_oid_params():
-    params = [
-        (int64(123), 30.0, 10),
-        (int64(123), 30.0, 0),
-        (int64(123), -30, 1),
-    ]
-    expected = [
-        (int64(123), 30.0, 10),
-        "Neighbors must be greater than 0",
-        "Radius must be greater than 0",
-    ]
-    for param, exp in zip(params, expected):
-        try:
-            assert exp == validate_oid_params(param)
-        except ValueError as e:
-            assert str(e) == exp
+    validate_oid_params(radius=30.0, neighbors=10)  # valid: no error
+
+
+@pytest.mark.parametrize(
+    "radius, neighbors, message",
+    [
+        (30.0, 0, "Neighbors must be greater than 0"),
+        (-30, 1, "Radius must be greater than 0"),
+    ],
+)
+def test_validate_oid_params_rejects(radius, neighbors, message):
+    with pytest.raises(ValueError, match=message):
+        validate_oid_params(radius=radius, neighbors=neighbors)
