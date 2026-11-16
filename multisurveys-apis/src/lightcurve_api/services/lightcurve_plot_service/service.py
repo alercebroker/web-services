@@ -737,12 +737,12 @@ def _group_chart_points_by_survey_band(chart_points: List[ChartPoint], config_st
 
 
 def _get_max_and_min_brightness(config_state: ConfigState):
-    max_brightness = 999999 if config_state.flux else 99
-    min_brightness = -999999 if config_state.flux else 0
+    max_brightness = 99999999 if config_state.flux else 99
+    min_brightness = -99999999 if config_state.flux else 0
 
     if config_state.survey_id == "lsst":
-        max_brightness = 9999999 if config_state.flux else 99
-        min_brightness = -9999999 if config_state.flux else 0
+        max_brightness = 99999999 if config_state.flux else 99
+        min_brightness = -99999999 if config_state.flux else 0
 
     return max_brightness, min_brightness
 

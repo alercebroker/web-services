@@ -111,9 +111,8 @@ function pointValue(item, cfg) {
 
 // ─── Validity filter ──────────────────────────────────────────────────────────
 function validPoint(y, surveyId, cfg) {
-    const lsst = surveyId.toLowerCase() === 'lsst';
     if (cfg.flux) {
-        const lim = lsst ? 9_999_999 : 999_999;
+        const lim = 99_999_999;
         return y > -lim && y < lim;
     }
     return y > 0 && y < 99;
