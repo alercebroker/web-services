@@ -741,8 +741,8 @@ def _get_max_and_min_brightness(config_state: ConfigState):
     min_brightness = -99999999 if config_state.flux else 0
 
     if config_state.survey_id == "lsst":
-        max_brightness = 999999999 if config_state.flux else 99
-        min_brightness = -999999999 if config_state.flux else 0
+        max_brightness = 99999999 if config_state.flux else 99
+        min_brightness = -99999999 if config_state.flux else 0
 
     return max_brightness, min_brightness
 
