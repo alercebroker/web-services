@@ -121,3 +121,26 @@ def test_group_photometry_rejects_bad_objects(client: TestClient):
     response = client.get("/htmx/group_photometry", params={"objects": "atlas:1"})
 
     assert response.status_code == 400
+
+
+def test_aladin_panel_gets_the_other_members_at_their_mean_position(db_setup, group, monkeypatch):
+    """The Aladin API marks the group too (aladin_api/services/aladin_services.py); it shares these tables."""
+    from aladin_api.services.aladin_services import get_group_objects
+    from db_plugins.db.sql.models_pipeline import Object
+
+    from core.idmapper.idmapper import parse_oid
+
+    lsst_x = int(group["lsst_x"])
+    with db_setup.session() as session:
+        lsst_row = session.execute(select(Object).where(Object.oid == lsst_x, Object.sid == 1)).scalar_one()
+
+    from_ztf = get_group_objects(db_setup.session, parse_oid("ztf", group["ztf_a"]), 0)
+    from_lsst = get_group_objects(db_setup.session, lsst_x, 1)
+
+    assert from_ztf == [
+        {"oid": group["lsst_x"], "sid": 1, "meanra": lsst_row.meanra, "meandec": lsst_row.meandec, "associated": True}
+    ]
+    assert [obj["oid"] for obj in from_lsst] == [group["ztf_a"]]  # the ZTF name, not the internal number
+
+    monkeypatch.delenv("ASSOCIATION_SCHEMA")
+    assert get_group_objects(db_setup.session, lsst_x, 1) == []

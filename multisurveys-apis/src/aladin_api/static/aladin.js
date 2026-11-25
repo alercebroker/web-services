@@ -88,13 +88,17 @@ function check_objects_array(objects, selected_object){
 
 function create_source(aladin){
   let new_source = []
+  let label_row = 0
 
   aladin.objects.forEach((object) => {
     new_source.push(
       A.source(object.meanra, object.meandec, {
         name: object.oid,
         size: 2,
-        class: object["class"]? object["class"] : '' 
+        // Other members of the object's association group, drawn in their own color (see draw).
+        associated: object.associated ?? false,
+        label_row: object.associated ? label_row++ : 0,
+        class: object["class"]? object["class"] : ''
       })
     )  
   })

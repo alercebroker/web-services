@@ -74,12 +74,12 @@ def get_pairs_touching(
 
 
 def get_object_stats(session_factory: SessionFactory, objects: Iterable[tuple[int, int]]) -> dict[tuple[int, int], Row]:
-    """n_det, firstmjd and lastmjd of each of ``objects`` ((oid, sid) tuples) found in the object table."""
+    """n_det, firstmjd, lastmjd, meanra and meandec of each of ``objects`` ((oid, sid) tuples) found in the object table."""
     objects = list(objects)
     if not objects:
         return {}
-    stmt = select(Object.oid, Object.sid, Object.n_det, Object.firstmjd, Object.lastmjd).where(
-        tuple_(Object.oid, Object.sid).in_(objects)
-    )
+    stmt = select(
+        Object.oid, Object.sid, Object.n_det, Object.firstmjd, Object.lastmjd, Object.meanra, Object.meandec
+    ).where(tuple_(Object.oid, Object.sid).in_(objects))
     with session_factory() as session:
         return {(row.oid, row.sid): row for row in session.execute(stmt).all()}
