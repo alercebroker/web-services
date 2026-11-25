@@ -15,6 +15,7 @@ window.__LC_DATA__ = {
     periodogram:     {{ periodogram | tojson }},
     config:          {{ config | tojson }},
     notCorrected:    {{ not_corrected | tojson }},
+    group:           {{ (group or none) | tojson }},
     apiUrl:          {{ API_URL | tojson }}
 };
 </script>

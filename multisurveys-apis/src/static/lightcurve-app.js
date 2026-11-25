@@ -38,6 +38,12 @@ let periodUserModified = false;
 let settingPeriodProgrammatically = false;
 // ZTF Data-Release detections loaded on demand (external sources feature).
 let drDetections = [];
+// Object group (association): the members and nearby objects listed in the config panel, or null.
+let groupInfo = null;
+// Photometry of other objects of the group, fetched on demand: key "survey:oid" → { detections, forcedPhotometry }.
+let groupPhot = new Map();
+// Keys being fetched right now, so a second change doesn't fetch them twice.
+let groupLoading = new Set();
 
 // Load (or reload) all per-object state from the data the layout template embedded.
 // Called by boot() on first load and again on every HTMX swap of a new object.
@@ -54,6 +60,11 @@ function loadState() {
     periodUserModified            = false;
     settingPeriodProgrammatically = false;
     drDetections                  = [];
+    groupInfo                     = data.group ?? null;
+    groupPhot                     = new Map();
+    groupLoading                  = new Set();
+    // Members start on, nearby objects off, as the checkboxes are rendered.
+    config.group_selected         = (groupInfo?.members ?? []).filter(m => !m.is_self).map(m => m.key);
 }
 
 // Bound to `document` exactly once per page (see init()); survives re-inits.
@@ -119,13 +130,23 @@ function validPoint(y, surveyId, cfg) {
 }
 
 // ─── ECharts series factories ─────────────────────────────────────────────────
+// Points of other objects of the group carry that object's id at index 7 and are drawn hollow, so the
+// object being viewed stays filled. They share its series (survey + band), so the legend doesn't grow.
+const POINT_OBJECT = 7;
+
 function makeSeries(type, survey, band, data) {
     const sk = survey.toLowerCase();
+    const color = COLORS[sk]?.[band] ?? '#888888';
     return {
         name:       `${type} ${survey.toUpperCase()}: ${band}`,
         type:       'scatter',
         data,
-        color:      COLORS[sk]?.[band] ?? '#888888',
+        color,
+        itemStyle:  {
+            borderColor: color,
+            borderWidth: 1.5,
+            color: p => (p?.value?.[POINT_OBJECT] ? 'rgba(0,0,0,0)' : color),
+        },
         symbol:     SYMBOLS[sk]?.[type]  ?? 'circle',
         symbolSize: 9,
         survey:     sk,
@@ -193,9 +214,23 @@ function groupedToSeries(type, grouped, grouped_err) {
 }
 
 // ─── Series builders ──────────────────────────────────────────────────────────
+// Points of the other objects of the group that are switched on and already fetched.
+function groupPoints(kind, cfg) {
+    const out = [];
+    for (const key of cfg.group_selected ?? []) {
+        const phot = groupPhot.get(key);
+        if (phot) out.push(...phot[kind]);
+    }
+    return out;
+}
+
 function buildDetectionSeries(cfg) {
     if (!(cfg.data_types ?? ['detections']).includes('detections')) return [];
-    const all     = [...rawDetections, ...(cfg.external_sources?.enabled ? drDetections : [])];
+    const all     = [
+        ...rawDetections,
+        ...groupPoints('detections', cfg),
+        ...(cfg.external_sources?.enabled ? drDetections : []),
+    ];
     const maxErr  = cfg.flux ? 99_999 : 1;
     const pts     = [], errPts = [];
 
@@ -216,7 +251,7 @@ function buildDetectionSeries(cfg) {
         const objId   = det.objectid       ?? null;
         const field   = det.field          ?? null;
 
-        const ptArr  = [x, v.y, measId, objId, field, capped, v.sign ?? '+'];
+        const ptArr  = [x, v.y, measId, objId, field, capped, v.sign ?? '+', det.oid ?? null];
         const errArr = [x, v.y - capped, v.y + capped];
 
         pts.push(   { survey: det.survey_id, band: bn, pt: ptArr  });
@@ -267,7 +302,7 @@ function buildForcedPhotSeries(cfg) {
     const maxErr = cfg.flux ? 99_999 : 1;
     const pts = [], errPts = [];
 
-    for (const fp of rawForcedPhotometry) {
+    for (const fp of [...rawForcedPhotometry, ...groupPoints('forcedPhotometry', cfg)]) {
         const survey = fp.survey_id.toLowerCase();
         const bn     = fp.band;
 
@@ -282,7 +317,7 @@ function buildForcedPhotSeries(cfg) {
         const capped = Math.min(v.err, maxErr);
         const measId = fp.measurement_id ?? null;
 
-        const ptArr  = [x, v.y, measId, null, fp.field ?? null, capped, v.sign ?? '+'];
+        const ptArr  = [x, v.y, measId, null, fp.field ?? null, capped, v.sign ?? '+', fp.oid ?? null];
         const errArr = [x, v.y - capped, v.y + capped];
 
         pts.push(   { survey: fp.survey_id, band: bn, pt: ptArr  });
@@ -411,6 +446,7 @@ function buildTooltip() {
             table.style.cssText = 'min-width:340px;padding:0 16px';
 
             const rows = [
+                value[POINT_OBJECT] != null ? ['Object', value[POINT_OBJECT]] : null,
                 value[2] != null ? ['Measurement id', value[2]] : null,
                 value[3] != null ? ['objectid',        value[3]] : null,
                 value[4] != null ? ['field',            value[4]] : null,
@@ -660,8 +696,8 @@ function updateTotalHiddenHint() {
     const parts = [];
     if (config.total && !isNotCorrected()) {
         for (const [items, type, label] of [
-            [rawDetections,       'detections',        'detections'],
-            [rawForcedPhotometry, 'forced_photometry', 'forced photometry points'],
+            [[...rawDetections, ...groupPoints('detections', config)],             'detections',        'detections'],
+            [[...rawForcedPhotometry, ...groupPoints('forcedPhotometry', config)], 'forced_photometry', 'forced photometry points'],
         ]) {
             if (!(config.data_types ?? [type]).includes(type)) continue;
             const missing = items.filter(p => !pointValue(p, config)).length;
@@ -696,7 +732,8 @@ function syncTotalToggle(form) {
     const el = form.querySelector('[name="total"]');
     if (!el) return;
     const needsTotal = (form.querySelector('[name="fold"]')?.checked ?? false)
-        || (form.querySelector('[name="external_sources.enabled"]')?.checked ?? false);
+        || (form.querySelector('[name="external_sources.enabled"]')?.checked ?? false)
+        || form.querySelector('[name="group.objects[]"]:checked') != null;
 
     if (needsTotal && !el.disabled) {
         el.dataset.checkedBeforeLock = String(el.checked);
@@ -704,7 +741,8 @@ function syncTotalToggle(form) {
     } else if (!needsTotal && el.disabled) {
         el.checked = el.dataset.checkedBeforeLock !== 'false';
     }
-    setToggleLocked(el, needsTotal, 'Fold and external sources use total magnitude. Turn them off to switch back to Diff.');
+    setToggleLocked(el, needsTotal,
+        'Fold, external sources and other objects of the group use total magnitude. Turn them off to switch back to Diff.');
 }
 
 // ─── Non-detections toggle ────────────────────────────────────────────────────
@@ -763,6 +801,39 @@ function readConfigFromForm() {
     config.bands.ztf_dr = [...form.querySelectorAll('[name="bands.ztf_dr[]"]:checked')].map(el => el.value);
     syncNonDetectionsToggle(form);
     config.data_types   = [...form.querySelectorAll('[name="data_types[]"]:checked')]  .map(el => el.value);
+    if (groupInfo) {
+        config.group_selected = [...form.querySelectorAll('[name="group.objects[]"]:checked')].map(el => el.value);
+    }
+}
+
+// ─── Object group: fetch other objects' photometry on demand ─────────────────
+// Members are on by default, so their photometry is fetched right after the first render; a nearby object's
+// is fetched the first time it's turned on. A failure only leaves that object out of the chart.
+async function loadGroupPhotometry() {
+    const missing = (config.group_selected ?? []).filter(k => !groupPhot.has(k) && !groupLoading.has(k));
+    if (!missing.length) return;
+    missing.forEach(k => groupLoading.add(k));
+    const status = document.getElementById('group-status');
+    status?.classList.remove('tw-hidden');
+    const infoAtStart = groupInfo;
+    try {
+        const apiUrl = window.__LC_DATA__.apiUrl;
+        const resp = await fetch(`${apiUrl}/htmx/group_photometry?objects=${encodeURIComponent(missing.join(','))}`);
+        if (!resp.ok) throw new Error(`group photometry: ${resp.status}`);
+        const data = await resp.json();
+        if (groupInfo !== infoAtStart) return;  // another object was loaded meanwhile
+        for (const key of missing) groupPhot.set(key, { detections: [], forcedPhotometry: [] });
+        const keyOf = p => `${p.survey_id.toLowerCase()}:${p.oid}`;
+        for (const d of data.detections)        groupPhot.get(keyOf(d))?.detections.push(d);
+        for (const f of data.forced_photometry) groupPhot.get(keyOf(f))?.forcedPhotometry.push(f);
+    } catch (e) {
+        console.error('Failed to load the photometry of the group:', e);
+    } finally {
+        missing.forEach(k => groupLoading.delete(k));
+        if (!groupLoading.size) status?.classList.add('tw-hidden');
+        updateTotalHiddenHint();
+        updateChart();
+    }
 }
 
 // ─── External sources: load ZTF DR detections via fetch ──────────────────────
@@ -838,6 +909,9 @@ async function loadPeriodogram() {
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function init() {
+    // With other objects of the group on, the form locks Total: read it before the first render, so the
+    // chart doesn't draw Diff and switch once the members arrive.
+    if (groupInfo && document.getElementById('config-form')) readConfigFromForm();
     initChart();
     updateVisibility();
 
@@ -900,6 +974,8 @@ function init() {
             drDetections = [];
         }
         prevExtEnabled = extNow;
+
+        if (e?.target?.name === 'group.objects[]') loadGroupPhotometry();
     }
     function onFormInput(e) {
         if (e.target.name === 'period' || e.target.id === 'period-slider' || e.target.name === 'offset_num') {
@@ -921,6 +997,9 @@ function init() {
 
     form.addEventListener('change', onFormChange);
     form.addEventListener('input',  onFormInput);
+
+    // The group's members are on by default: fetch them now. The chart above already shows this object.
+    loadGroupPhotometry();
 
     // Period selection from periodogram click — counts as a manual change.
     // Bound on `document` once per page: init() runs again on every HTMX swap, but

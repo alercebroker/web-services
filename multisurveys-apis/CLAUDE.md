@@ -72,3 +72,11 @@ template links a local asset through `{{ API_URL }}`.
 instead of three (no `BEGIN`/`ROLLBACK`). Writes through `ApiDatabase` (local data loading,
 test fixtures) still work, but each statement commits on its own. Don't move this into
 db-plugins: the pipeline uses that library and needs atomic multi-statement writes.
+
+## Object groups (association) are behind `ASSOCIATION_SCHEMA`
+
+The light curve's group panel reads the association tables, which aren't in db-plugins yet: their models live
+in [`core/repository/association_models.py`](src/core/repository/association_models.py), with the schema read
+from `ASSOCIATION_SCHEMA` at import. The panel only shows where that variable is set, and a failed group lookup
+must never break the widget (the route catches it and renders the object alone). Ids leave the API as strings
+(`survey:oid`): they don't fit in a JavaScript number. See the README section "Object groups in the light curve".

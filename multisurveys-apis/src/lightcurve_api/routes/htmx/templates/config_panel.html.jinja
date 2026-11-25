@@ -8,6 +8,8 @@
 -->
 <form id="config-form" class="tw-max-h-fit tw-w-full" autocomplete="off">
 
+  {% if group %}{% include "group_panel.html.jinja" %}{% endif %}
+
   <div class="tw-flex tw-justify-center">
     {% include "band_toggles.html.jinja" %}
   </div>

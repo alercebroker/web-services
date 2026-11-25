@@ -37,6 +37,48 @@ services:
 
 The run_all command will attempt to run all the apis that are included in the services list.
 
+## Object groups in the light curve (demo, off by default)
+
+The multisurvey association pipeline links objects that are the same astrophysical source, within and across
+surveys. Pairs of objects get a score, and objects linked by pairs that score at least the method's threshold
+form a group. The light curve widget can show the other objects of the viewed object's group:
+
+- A **Same source** panel lists the group's members, checked, with the distance and score of each pair. Below
+  them, **Nearby, not in the group** lists a few objects whose pairs scored below the threshold, unchecked.
+- The checked objects' points are drawn hollow in the series of their survey and band. The viewed object stays
+  filled, and the tooltip names each point's object.
+- With other objects shown, the Diff/Total switch is locked to Total. Difference magnitudes of different
+  objects come from different reference images and can't be compared.
+
+It is only enabled where `ASSOCIATION_SCHEMA` names the schema that holds the association tables. Nothing else
+changes otherwise, and if the group lookup fails the widget still shows the object on its own. To try it
+locally, add the variable to the light curve API's entry in `config.yaml`:
+
+```yaml
+  lightcurve_api:
+    environment:
+      ASSOCIATION_SCHEMA: <schema with the association tables>
+```
+
+How it is served:
+
+- `GET /htmx/lightcurve` embeds the group (members and nearby objects) next to the object's own photometry.
+  Objects are named by survey and that survey's id (`ztf:ZTF18abvkqpo`, `lsst:<diaObjectId>`), always as
+  strings, because these ids don't fit in a JavaScript number.
+- `GET /htmx/group_photometry?objects=ztf:<oid>,lsst:<oid>` returns the detections and forced photometry of up
+  to 20 objects, each record tagged with its `oid`. The widget calls it right after the first render for the
+  members, and again when a nearby object is turned on, as it does for the ZTF data release overlay.
+
+Code: models in `src/core/repository/association_models.py` (the tables aren't in db-plugins yet), queries in
+`src/core/repository/queries/association.py`, logic in `src/lightcurve_api/services/group_service.py`, panel in
+`src/lightcurve_api/routes/htmx/templates/group_panel.html.jinja`.
+
+To see it in the Explorer, run the Explorer locally with its light curve API pointing at this API
+(`LIGHTCURVE_API_BASE_URL`, e.g. `http://localhost:8001/` with the example config above) and its other API URLs at any running instance.
+
+Not covered yet: the periodogram, fold and download still use the viewed object only, and the association
+tables are a test schema whose final layout is still under review.
+
 ## Colors of this project
 vuetify colors:
 

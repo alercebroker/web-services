@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 
 import httpx
@@ -14,6 +15,7 @@ from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
 from lightcurve_api.services.lightcurve_plot_service import (
     service as lightcurve_plot_service,
 )
+from lightcurve_api.services import group_service
 from lightcurve_api.services.lightcurve_plot_service.result import Result
 from lightcurve_api.services.lightcurve_plot_service.service import get_periodogram_data
 from lightcurve_api.services.parsers import parse_ztf_dr_detection
@@ -21,6 +23,8 @@ from lightcurve_api.services.parsers import parse_ztf_dr_detection
 from .parsers import (
     ConfigState,
 )
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/htmx")
 
@@ -65,8 +69,36 @@ def lightcurve(request: Request, oid: str, survey_id: Survey, db: db_dependency)
             "periodogram": result.periodogram.model_dump(),
             "config": config_data,
             "not_corrected": not_corrected,
+            "group": _group_info(oid, survey_id, db.session),
         },
     )
+
+
+def _group_info(oid: str, survey_id: str, session_factory) -> dict | None:
+    """The object's group for the members panel, or None where groups aren't available.
+
+    The association tables are still a test schema, so a failure here only hides the panel: the object's own
+    light curve is shown either way.
+    """
+    if not group_service.association_enabled():
+        return None
+    try:
+        info = group_service.get_group_info(oid, survey_id, session_factory)
+    except Exception:
+        logger.warning("Could not read the group of %s %s", survey_id, oid, exc_info=True)
+        return None
+    return info.to_dict() if info else None
+
+
+@router.get("/group_photometry", response_class=JSONResponse)
+def group_photometry(objects: str, db: db_dependency):
+    """Detections and forced photometry of other objects, for the group panel of the light curve.
+
+    ``objects`` is a comma-separated list of ``<survey>:<oid>`` (``ztf:ZTF19aaxlmra,lsst:313853798223069211``),
+    at most 20. Each record carries ``oid``, the object it belongs to. Called by lightcurve-app.js for the
+    members shown by default and for each nearby object the user turns on.
+    """
+    return group_service.get_group_photometry(objects, db.session)
 
 
 @router.get("/periodogram", response_class=JSONResponse)
