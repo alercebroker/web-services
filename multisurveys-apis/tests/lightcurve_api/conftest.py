@@ -1,6 +1,8 @@
 import os
+import time
 from typing import Tuple
 
+import psycopg2
 import pytest
 from db_plugins.db.sql._connection_pipeline import PsqlDatabase
 from db_plugins.db.sql.models_pipeline import (
@@ -27,10 +29,31 @@ from core.repository.queries.create_q3c_index import create_q3c_idx
 from lightcurve_api.api import app
 
 
+def _wait_for_postgres(host, port, timeout=30):
+    """Poll until a real connection succeeds.
+
+    Postgres logs "ready to accept connections" twice on a fresh container: once for the temporary server that
+    runs the init scripts, then for the real one after a restart. Connecting after the first one hits the
+    restart ("server closed the connection unexpectedly"). Same as tests/core/conftest.py.
+    """
+    deadline = time.time() + timeout
+    while True:
+        try:
+            psycopg2.connect(
+                host=host, port=port, user="alerce", password="alerce", dbname="multistream", connect_timeout=2
+            ).close()
+            return
+        except psycopg2.OperationalError:
+            if time.time() > deadline:
+                raise
+            time.sleep(0.5)
+
+
 @pytest.fixture(scope="session")
 def db_setup():
+    # Its own directory as build context: "." would send the whole repo, .venv included, to the Docker daemon.
     with DockerImage(
-        path=".",
+        path="tests/docker",
         dockerfile_path="Dockerfile-psql",
         tag="base-psql:latest",
         clean_up=False,
@@ -45,7 +68,7 @@ def db_setup():
             wait_for_logs(
                 container,
                 "ready to accept connections",
-                timeout=10,
+                timeout=30,
             )
 
             host = container.get_container_host_ip()
@@ -54,6 +77,7 @@ def db_setup():
             os.environ["PSQL_DATABASE"] = "multistream"
             os.environ["PSQL_HOST"] = host
             os.environ["PSQL_PORT"] = str(container.get_exposed_port("5432/tcp"))
+            _wait_for_postgres(host, int(os.environ["PSQL_PORT"]))
             db = ApiDatabase()
             db.create_db()
             create_q3c_idx(db)

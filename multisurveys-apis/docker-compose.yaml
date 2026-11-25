@@ -1,7 +1,7 @@
 services:
   postgres:
     build:
-      context: .
+      context: tests/docker
       dockerfile: Dockerfile-psql
     environment:
       POSTGRES_DB: multistream

@@ -44,8 +44,9 @@ def _wait_for_postgres(host, port, user, password, database, timeout=30):
 
 @pytest.fixture(scope="session")
 def db_setup():
+    # Its own directory as build context: "." would send the whole repo, .venv included, to the Docker daemon.
     with DockerImage(
-        path=".",
+        path="tests/docker",
         dockerfile_path="Dockerfile-psql",
         tag="base-psql:latest",
         clean_up=False,
