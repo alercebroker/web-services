@@ -439,34 +439,43 @@ function buildTooltip() {
             let dateStr = '';
             try { dateStr = jdToDate(mjd).toUTCString().slice(0, -3) + 'UTC'; } catch (_) {}
 
-            const table = document.createElement('div');
-            table.style.cssText = 'min-width:340px;padding:0 16px';
+            // Series are named "<type> <SURVEY>: <band>" (makeSeries). The point's object: another
+            // member of the group, a ZTF DR object, or else the object being viewed.
+            const [, kind, survey] = seriesName.match(/^(det|lim\. mag|f\. phot) ([^:]+):/) ?? [];
+            const object = value[POINT_OBJECT] ?? value[3] ?? window.__LC_DATA__.objectName ?? config.oid;
+            const KINDS = { 'det': 'Detection', 'f. phot': 'Forced photometry', 'lim. mag': 'Upper limit' };
+
+            const box = document.createElement('div');
+            box.style.cssText = 'font-size:12px;line-height:1.4';
+            const head = document.createElement('div');
+            head.style.cssText = 'font-weight:600;margin-bottom:3px';
+            head.textContent = `${object} (${survey})`;
+            box.appendChild(head);
 
             const rows = [
-                value[POINT_OBJECT] != null ? ['Object', value[POINT_OBJECT]] : null,
-                value[2] != null ? ['Measurement id', value[2]] : null,
-                value[3] != null ? ['objectid',        value[3]] : null,
-                value[4] != null ? ['field',            value[4]] : null,
+                kind ? ['Type', KINDS[kind]] : null,
                 [band, `${sign} ${plotValue} ± ${plotError}`],
-                ['MJD',  mjd],
+                ['MJD',  Number(mjd).toFixed(5)],
                 ['Date', dateStr],
+                value[2] != null ? ['Measurement id', value[2]] : null,
+                value[4] != null ? ['Field',          value[4]] : null,
             ].filter(Boolean);
 
+            const grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:auto auto;column-gap:10px';
             for (const [label, val] of rows) {
-                const row = document.createElement('div');
-                row.style.cssText = 'display:flex;flex-direction:row;justify-content:flex-start;gap:16px;font-size:13px;width:100%;margin:8px 0';
-                const lEl = document.createElement('div');
-                lEl.style.width = '40%';
-                lEl.textContent = `${label} : `;
-                const vEl = document.createElement('div');
-                vEl.style.cssText = 'width:60%;font-weight:bold';
+                const lEl = document.createElement('span');
+                lEl.style.opacity = '0.7';
+                lEl.textContent = label;
+                const vEl = document.createElement('span');
+                vEl.style.fontWeight = '600';
                 vEl.textContent = String(val);
-                row.appendChild(lEl);
-                row.appendChild(vEl);
-                table.appendChild(row);
+                grid.append(lEl, vEl);
             }
-            return table;
+            box.appendChild(grid);
+            return box;
         },
+        padding: [6, 10],
     };
 }
 
@@ -533,7 +542,7 @@ function buildPeriodogramOptions() {
         grid:     { left: 70, right: '25%', top: 60, bottom: 40 },
         legend:   { left: 'right', top: 'middle', height: '80%', orient: 'vertical' },
         textStyle: { fontFamily: CHART_FONT },
-        xAxis:    { type: 'log', name: 'Period', scale: true, splitLine: false, min: '0.05', max: '500' },
+        xAxis:    { type: 'log', name: 'Period [days]', scale: true, splitLine: false, min: '0.05', max: '500' },
         yAxis:    { type: 'value', name: 'Score', scale: true, splitLine: false },
         series:   [
             { name: 'periods',      type: 'scatter', data: regular },
