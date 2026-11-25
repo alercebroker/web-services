@@ -1,0 +1,479 @@
+/*
+ * Light curve widget: layout and side panel.
+ *
+ * Hand-written, scoped to #main-app, so it needs no Tailwind rebuild. The look follows the
+ * Explorer (Vuetify, Roboto, primary blue.darken2) and the other cards: small uppercase labels,
+ * thin dividers, compact switches and chips. Dark mode follows the .tw-dark class the Explorer
+ * sets on #main-app.
+ */
+
+#main-app {
+    --lc-font: Roboto, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    --lc-primary: #1976d2;
+    --lc-primary-hover: #1565c0;
+    --lc-primary-soft: rgba(25, 118, 210, 0.12);
+    --lc-primary-text: #1565c0;
+    --lc-primary-track: rgba(25, 118, 210, 0.5);
+    --lc-text: rgba(0, 0, 0, 0.87);
+    --lc-text-2: rgba(0, 0, 0, 0.6);
+    --lc-outline: rgba(0, 0, 0, 0.24);
+    --lc-divider: rgba(0, 0, 0, 0.12);
+    --lc-track: rgba(0, 0, 0, 0.38);
+    --lc-thumb: #fafafa;
+    --lc-bg: #ffffff;
+    --lc-warn: #ffc107;
+    font-family: var(--lc-font);
+}
+
+#main-app.tw-dark {
+    --lc-primary-soft: rgba(25, 118, 210, 0.28);
+    --lc-primary-text: #90caf9;
+    --lc-text: #ffffff;
+    --lc-text-2: rgba(255, 255, 255, 0.7);
+    --lc-outline: rgba(255, 255, 255, 0.24);
+    --lc-divider: rgba(255, 255, 255, 0.12);
+    --lc-track: rgba(255, 255, 255, 0.3);
+    --lc-thumb: #bdbdbd;
+    --lc-bg: #1e1e1e;
+}
+
+/* Rules below set display; keep the JS show/hide class stronger than them. */
+#main-app .tw-hidden {
+    display: none !important;
+}
+
+/* ─── Layout: chart + side panel ───────────────────────────────────────────── */
+/* Phones: stacked, the chart 320px high and the panel below it at its own height.
+   From 768px: side by side, 500px high, the panel scrolling if it doesn't fit (a large group,
+   the nearby objects open). */
+#main-app .lc-widget {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+#main-app .lc-main {
+    min-width: 0;
+}
+
+#main-app .lc-side {
+    padding: 8px 10px 8px 12px;
+    font-size: 13px;
+    color: var(--lc-text);
+    text-align: left;
+    border-top: 1px solid var(--lc-divider);
+}
+
+@media (min-width: 768px) {
+    #main-app .lc-widget {
+        grid-template-columns: minmax(0, 1fr) 270px;
+        height: 500px;
+    }
+
+    #main-app .lc-main,
+    #main-app .lc-side {
+        height: 100%;
+        min-height: 0;
+    }
+
+    #main-app .lc-side {
+        overflow-x: hidden;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        border-top: 0;
+        border-left: 1px solid var(--lc-divider);
+    }
+}
+
+/* ─── Sections and rows ────────────────────────────────────────────────────── */
+#main-app .lc-section {
+    padding: 5px 0;
+    border-top: 1px solid var(--lc-divider);
+}
+
+#main-app .lc-section:first-child {
+    border-top: 0;
+    padding-top: 0;
+}
+
+#main-app .lc-section > * + * {
+    margin-top: 4px;
+}
+
+#main-app .lc-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+/* Row label: Vuetify "overline" style, as in the other cards' headers */
+#main-app .lc-label,
+#main-app .lc-title {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--lc-text-2);
+    white-space: nowrap;
+}
+
+#main-app .lc-label {
+    flex: 0 0 56px;
+}
+
+#main-app .lc-label[data-tip],
+#main-app .lc-title[data-tip] {
+    cursor: help;
+    text-decoration: underline dotted var(--lc-outline);
+    text-underline-offset: 3px;
+}
+
+#main-app .lc-ctl {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+#main-app .lc-muted {
+    font-size: 11px;
+    color: var(--lc-text-2);
+}
+
+#main-app .lc-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+#main-app .lc-side input[type="checkbox"],
+#main-app .lc-side input[type="range"] {
+    accent-color: var(--lc-primary);
+}
+
+/* ─── Chips: bands (colored like their series) and data types ──────────────── */
+#main-app .lc-chip {
+    display: inline-flex;
+    cursor: pointer;
+}
+
+#main-app .lc-chip > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    height: 20px;
+    padding: 0 7px;
+    border: 1px solid var(--lc-outline);
+    border-radius: 10px;
+    font-size: 12px;
+    line-height: 1;
+    color: var(--lc-text-2);
+    user-select: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+#main-app .lc-band > span {
+    min-width: 22px;
+    padding: 0;
+    border-color: var(--lc-band, var(--lc-outline));
+}
+
+#main-app .lc-band input:checked + span {
+    background: var(--lc-band, var(--lc-primary));
+    color: var(--lc-band-fg, #ffffff);
+    font-weight: 500;
+}
+
+#main-app .lc-type input:checked + span {
+    background: var(--lc-primary-soft);
+    border-color: var(--lc-primary);
+    color: var(--lc-text);
+}
+
+#main-app .lc-chip input:focus-visible + span {
+    outline: 2px solid var(--lc-primary);
+    outline-offset: 1px;
+}
+
+#main-app .lc-chip input:disabled + span {
+    cursor: not-allowed;
+}
+
+#main-app .lc-marker {
+    width: 8px;
+    height: 8px;
+    flex-shrink: 0;
+}
+
+/* ─── Switch (Vuetify-like, compact) ───────────────────────────────────────── */
+#main-app .lc-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 20px;
+    cursor: pointer;
+}
+
+#main-app .lc-switch-track {
+    position: relative;
+    width: 28px;
+    height: 12px;
+    margin: 0 3px;
+    border-radius: 6px;
+    background: var(--lc-track);
+    transition: background 0.15s;
+}
+
+#main-app .lc-switch-track::after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--lc-thumb);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s, background 0.15s;
+}
+
+#main-app .lc-switch input:checked + .lc-switch-track {
+    background: var(--lc-primary-track);
+}
+
+#main-app .lc-switch input:checked + .lc-switch-track::after {
+    transform: translateX(16px);
+    background: var(--lc-primary);
+}
+
+#main-app .lc-switch input:focus-visible + .lc-switch-track::after {
+    outline: 2px solid var(--lc-primary);
+    outline-offset: 2px;
+}
+
+#main-app .lc-switch-text {
+    font-size: 12px;
+    color: var(--lc-text);
+}
+
+/* ─── Segmented two-way choice (Mag | Flux, Diff | Total) ──────────────────── */
+#main-app .lc-seg {
+    display: inline-flex;
+    border: 1px solid var(--lc-outline);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+#main-app .lc-seg button {
+    height: 20px;
+    padding: 0 5px;
+    border: 0;
+    background: transparent;
+    color: var(--lc-text-2);
+    font: 500 11px/1 var(--lc-font);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+#main-app .lc-seg button + button {
+    border-left: 1px solid var(--lc-outline);
+}
+
+#main-app .lc-seg input:not(:checked) ~ .lc-seg-off,
+#main-app .lc-seg input:checked ~ .lc-seg-on {
+    background: var(--lc-primary-soft);
+    color: var(--lc-primary-text);
+}
+
+#main-app .lc-seg input:disabled ~ button {
+    cursor: not-allowed;
+}
+
+#main-app .lc-seg button:focus-visible {
+    outline: 2px solid var(--lc-primary);
+    outline-offset: -2px;
+}
+
+/* ─── Buttons and inputs ───────────────────────────────────────────────────── */
+#main-app .lc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 22px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: var(--lc-primary);
+    color: #ffffff;
+    font: 500 11px/1 var(--lc-font);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+#main-app .lc-btn:hover {
+    background: var(--lc-primary-hover);
+}
+
+#main-app .lc-btn-outline {
+    background: transparent;
+    border-color: var(--lc-outline);
+    color: var(--lc-text-2);
+}
+
+#main-app .lc-btn-outline:hover {
+    background: var(--lc-primary-soft);
+}
+
+#main-app .lc-btn-block {
+    width: 100%;
+    height: 24px;
+}
+
+#main-app .lc-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+#main-app .lc-input {
+    height: 22px;
+    padding: 0 6px;
+    border: 1px solid var(--lc-outline);
+    border-radius: 4px;
+    background: var(--lc-bg);
+    color: var(--lc-text);
+    font: 12px var(--lc-font);
+}
+
+#main-app .lc-input:focus {
+    outline: none;
+    border-color: var(--lc-primary);
+}
+
+#main-app .lc-range {
+    flex: 1;
+    min-width: 40px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* "!" next to Diff/Total when some points have no total magnitude */
+#main-app .lc-hint {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--lc-warn);
+    color: #1e1e1e;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: help;
+}
+
+/* ─── Object group ─────────────────────────────────────────────────────────── */
+#main-app .lc-side summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+    cursor: pointer;
+    user-select: none;
+}
+
+#main-app .lc-side summary::-webkit-details-marker {
+    display: none;
+}
+
+#main-app .lc-side summary::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 5px solid var(--lc-text-2);
+    transition: transform 0.15s;
+}
+
+#main-app .lc-side details[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+#main-app .lc-objects {
+    max-height: 9rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+#main-app .lc-obj {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 18px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#main-app .lc-obj-survey {
+    flex: 0 0 26px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+}
+
+#main-app .lc-obj-id {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+#main-app .lc-obj-score {
+    margin-left: auto;
+    padding-left: 4px;
+    font-size: 11px;
+    color: var(--lc-text-2);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+#main-app .lc-pulse {
+    animation: lc-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes lc-pulse {
+    50% {
+        opacity: 0.4;
+    }
+}
+
+/* ─── Help tooltip ─────────────────────────────────────────────────────────── */
+/* One floating box on <body>, positioned by lightcurve-app.js for any [data-tip], so the
+   scrolling panel never clips it. Same look as Vuetify's tooltips. */
+#lc-tip {
+    position: fixed;
+    z-index: 10000;
+    display: none;
+    max-width: 240px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(97, 97, 97, 0.95);
+    color: #ffffff;
+    font: 12px/1.4 Roboto, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    pointer-events: none;
+}

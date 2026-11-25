@@ -2,7 +2,7 @@
 
 import pytest
 
-from core.idmapper.idmapper import ZTF_PREFIX, catalog_oid_to_masterid, decode_masterid, parse_oid
+from core.idmapper.idmapper import ZTF_PREFIX, catalog_oid_to_masterid, decode_masterid, parse_oid, public_oid
 from core.idmapper.survey_mapper import SURVEY_IDS, get_survey_name
 
 # Same pair as the pipeline's idmapper tests: the encoding must not change, or stored ZTF oids stop matching.
@@ -40,3 +40,13 @@ def test_lsst_ss_has_a_name_but_no_oid_parser():
     assert get_survey_name(2) == "lsst_ss"
     with pytest.raises(ValueError, match="Unsupported survey"):
         parse_oid("lsst_ss", "1")
+
+
+@pytest.mark.parametrize("oid", [ZTF_NAME, str(ZTF_OID), ZTF_OID])
+def test_public_oid_shows_the_ztf_name(oid):
+    # The numeric id is accepted in URLs, but pages show the ZTF name
+    assert public_oid("ztf", oid) == ZTF_NAME
+
+
+def test_public_oid_keeps_other_surveys_ids():
+    assert public_oid("lsst", str(LSST_OID)) == str(LSST_OID)

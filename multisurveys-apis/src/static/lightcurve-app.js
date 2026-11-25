@@ -78,6 +78,9 @@ const COLORS = {
     'empty':  { empty: '#00CBFF' },
 };
 
+// Same font as the Explorer and the side panel (static/lightcurve-panel.css)
+const CHART_FONT = 'Roboto, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
+
 const NDL_SYMBOL =
     'path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,' +
     '11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z';
@@ -403,20 +406,14 @@ function applyOffsetBands(series, cfg) {
 }
 
 // ─── Legend ───────────────────────────────────────────────────────────────────
+// The band and type toggles of the side panel carry each series' color and marker,
+// so the chart has no legend of its own. It comes back with the band offset on,
+// to show how much each band was shifted ("det LSST: g (+2)").
 function buildLegend(cfg) {
     return {
+        show: !!cfg.offset_bands,
         left: 'right', top: 'middle', height: '80%', orient: 'vertical',
         selectedMode: false, itemWidth: 20,
-        data: cfg.offset_bands ? null : [
-            { name: 'det ZTF: g' },      { name: 'det ZTF: r' },      { name: 'det ZTF: i' },
-            { name: 'lim. mag ZTF: g' }, { name: 'lim. mag ZTF: r' }, { name: 'lim. mag ZTF: i' },
-            { name: 'f. phot ZTF: g' },  { name: 'f. phot ZTF: r' },  { name: 'f. phot ZTF: i' },
-            { name: 'det LSST: u' },     { name: 'det LSST: g' },     { name: 'det LSST: r' },
-            { name: 'det LSST: i' },     { name: 'det LSST: z' },     { name: 'det LSST: y' },
-            { name: 'f. phot LSST: u' }, { name: 'f. phot LSST: g' }, { name: 'f. phot LSST: r' },
-            { name: 'f. phot LSST: i' }, { name: 'f. phot LSST: z' }, { name: 'f. phot LSST: y' },
-            { name: 'det ZTF DR: g' },   { name: 'det ZTF DR: r' },   { name: 'det ZTF DR: i' },
-        ],
     };
 }
 
@@ -485,9 +482,10 @@ function buildOptions(cfg) {
     const series  = [...offset, ...limits];
 
     return {
-        title:  { show: true, text: cfg.oid },
+        title:  { show: true, text: window.__LC_DATA__.objectName ?? cfg.oid, textStyle: { fontSize: 15, fontWeight: 500 } },
+        textStyle: { fontFamily: CHART_FONT },
         tooltip: {},
-        grid:   { left: 70, right: '25%', top: 60, bottom: 40 },
+        grid:   { left: 70, right: cfg.offset_bands ? '25%' : 30, top: 60, bottom: 40 },
         legend: buildLegend(cfg),
         xAxis:  { type: 'value', name: cfg.fold ? 'Phase' : 'MJD', scale: true, splitLine: false },
         yAxis:  {
@@ -520,6 +518,7 @@ function buildPeriodogramOptions() {
         tooltip:  { axisPointer: { type: 'cross' }, formatter: params => `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}` },
         grid:     { left: 70, right: '25%', top: 60, bottom: 40 },
         legend:   { left: 'right', top: 'middle', height: '80%', orient: 'vertical' },
+        textStyle: { fontFamily: CHART_FONT },
         xAxis:    { type: 'log', name: 'Period', scale: true, splitLine: false, min: '0.05', max: '500' },
         yAxis:    { type: 'value', name: 'Score', scale: true, splitLine: false },
         series:   [
@@ -691,8 +690,7 @@ function updateFoldNoPeriod() {
 // they don't silently disappear.
 function updateTotalHiddenHint() {
     const hint = document.getElementById('total-hidden-hint');
-    const text = document.getElementById('total-hidden-hint-text');
-    if (!hint || !text) return;
+    if (!hint) return;
     const parts = [];
     if (config.total && !isNotCorrected()) {
         for (const [items, type, label] of [
@@ -704,7 +702,7 @@ function updateTotalHiddenHint() {
             if (missing) parts.push(`${missing} of ${items.length} ${label}`);
         }
     }
-    text.textContent = parts.length ? `${parts.join(' and ')} have no total magnitude, so they are not shown.` : '';
+    hint.dataset.tip = parts.length ? `${parts.join(' and ')} have no total magnitude, so they are not shown.` : '';
     hint.classList.toggle('tw-hidden', !parts.length);
 }
 
@@ -722,7 +720,8 @@ function setToggleLocked(el, locked, reason) {
     }
     label.classList.toggle('tw-cursor-pointer', !locked);
     label.classList.toggle('tw-cursor-not-allowed', locked);
-    label.title = locked ? reason : '';
+    if (locked) label.dataset.tipLocked = reason;
+    else delete label.dataset.tipLocked;
 }
 
 // ─── Diff/Total toggle ────────────────────────────────────────────────────────
@@ -768,7 +767,8 @@ function syncNonDetectionsToggle(form) {
         node?.classList.toggle('tw-cursor-not-allowed', fluxOn);
     }
     label?.classList.toggle('tw-opacity-50', fluxOn);
-    if (label) label.title = fluxOn ? 'Limiting magnitudes are only shown in magnitude view.' : '';
+    if (label && fluxOn) label.dataset.tipLocked = 'Limiting magnitudes are only shown in magnitude view.';
+    else if (label) delete label.dataset.tipLocked;
 }
 
 // ─── Read config from form ────────────────────────────────────────────────────
@@ -907,8 +907,70 @@ async function loadPeriodogram() {
     }
 }
 
+// ─── Side panel legend ────────────────────────────────────────────────────────
+// The band chips stand in for the chart legend: each one gets the color of its
+// series, from COLORS, so the colors live in one place. The text on a filled chip
+// is dark or white, whichever reads better on that color.
+function paintBandChips() {
+    for (const el of document.querySelectorAll('.lc-band[data-survey][data-band]')) {
+        const color = COLORS[el.dataset.survey]?.[el.dataset.band] ?? '#888888';
+        const [r, g, b] = [1, 3, 5].map(i => parseInt(color.slice(i, i + 2), 16));
+        el.style.setProperty('--lc-band', color);
+        el.style.setProperty('--lc-band-fg', 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#1e1e1e' : '#ffffff');
+    }
+}
+
+// ─── Two-way choices (Mag | Flux, Diff | Total) ───────────────────────────────
+// Each button sets its side of the hidden checkbox, then fires the form's usual
+// `change`. A locked (disabled) checkbox ignores them.
+function onSegmentClick(e) {
+    const button = e.target.closest('.lc-seg [data-seg]');
+    if (!button) return;
+    const input = button.closest('.lc-seg')?.querySelector('input[type="checkbox"]');
+    if (!input || input.disabled) return;
+    const checked = button.dataset.seg === 'on';
+    if (input.checked === checked) return;
+    input.checked = checked;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+// ─── Help tooltips ────────────────────────────────────────────────────────────
+// Any [data-tip] in the widget shows its text in one floating box on <body>, so
+// the scrolling side panel never clips it. A locked control shows why instead
+// (data-tip-locked, see setToggleLocked).
+function bindTooltips() {
+    let box = document.getElementById('lc-tip');
+    if (!box) {
+        box = document.createElement('div');
+        box.id = 'lc-tip';
+        box.setAttribute('role', 'tooltip');
+        document.body.appendChild(box);
+    }
+    const show = e => {
+        const el = e.target.closest?.('#main-app [data-tip], #main-app [data-tip-locked]');
+        const text = el && (el.dataset.tipLocked || el.dataset.tip);
+        if (!text) { box.style.display = 'none'; return; }
+        box.textContent = text;
+        box.style.display = 'block';
+        const r = el.getBoundingClientRect();
+        const w = box.offsetWidth, h = box.offsetHeight;
+        const below = r.bottom + 6 + h <= window.innerHeight;
+        box.style.top  = `${below ? r.bottom + 6 : Math.max(4, r.top - 6 - h)}px`;
+        box.style.left = `${Math.min(Math.max(4, r.left), window.innerWidth - w - 4)}px`;
+    };
+    const hide = () => { box.style.display = 'none'; };
+    document.addEventListener('mouseover', show);
+    document.addEventListener('focusin', show);
+    document.addEventListener('mouseout', e => {
+        if (!e.relatedTarget || !e.target.closest?.('[data-tip], [data-tip-locked]')?.contains(e.relatedTarget)) hide();
+    });
+    document.addEventListener('focusout', hide);
+    document.addEventListener('scroll', hide, true);
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function init() {
+    paintBandChips();
     // With other objects of the group on, the form locks Total: read it before the first render, so the
     // chart doesn't draw Diff and switch once the members arrive.
     if (groupInfo && document.getElementById('config-form')) readConfigFromForm();
@@ -997,6 +1059,7 @@ function init() {
 
     form.addEventListener('change', onFormChange);
     form.addEventListener('input',  onFormInput);
+    form.addEventListener('click',  onSegmentClick);
 
     // The group's members are on by default: fetch them now. The chart above already shows this object.
     loadGroupPhotometry();
@@ -1007,6 +1070,7 @@ function init() {
     // the swap) would otherwise stack up an extra copy per object change.
     if (!documentListenersBound) {
         documentListenersBound = true;
+        bindTooltips();
         document.addEventListener('periodogram:periodSelected', e => {
             config.period = parseFloat(e.detail.period);
             periodUserModified = true;

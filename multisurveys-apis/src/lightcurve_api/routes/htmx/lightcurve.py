@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingRes
 from toolz import curry, pipe
 
 from core.config.dependencies import db_dependency
-from core.idmapper.idmapper import parse_oid
+from core.idmapper.idmapper import parse_oid, public_oid
 from core.idmapper.survey_mapper import Survey
 from core.static_files import configure_templates, html_templates
 from lightcurve_api.models.lightcurve import Lightcurve
@@ -69,6 +69,8 @@ def lightcurve(request: Request, oid: str, survey_id: Survey, db: db_dependency)
             "periodogram": result.periodogram.model_dump(),
             "config": config_data,
             "not_corrected": not_corrected,
+            # Chart title: the ZTF name, also when the URL has the numeric id
+            "object_name": public_oid(survey_id, oid),
             "group": _group_info(oid, survey_id, db.session),
         },
     )

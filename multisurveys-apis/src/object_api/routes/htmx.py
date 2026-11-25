@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
 
+from core.idmapper.idmapper import public_oid
 from core.idmapper.survey_mapper import Survey
 from core.static_files import configure_templates, html_templates
 from object_api.services.object_services import (
@@ -60,7 +61,8 @@ def object_info_app(request: Request, oid: str, survey_id: Survey):
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
-            "object": str(oid),
+            # The ZTF name, also when the URL has the numeric id
+            "object": public_oid(survey_id, oid),
             "survey_id": survey_id,
             "corrected": "=",
             "stellar": "-",

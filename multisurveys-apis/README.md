@@ -43,8 +43,9 @@ The multisurvey association pipeline links objects that are the same astrophysic
 surveys. Pairs of objects get a score, and objects linked by pairs that score at least the method's threshold
 form a group. The light curve widget can show the other objects of the viewed object's group:
 
-- A **Same source** panel lists the group's members, checked, with the distance and score of each pair. Below
-  them, **Nearby, not in the group** lists a few objects whose pairs scored below the threshold, unchecked.
+- A **Same source** panel lists the group's members, checked, one per line with the score of each pair (the
+  distance shows on hover). Below them, **Nearby, not in the group** lists a few objects whose pairs scored below
+  the threshold, unchecked and folded. The panel is folded when the object has no other member.
 - The checked objects' points are drawn hollow in the series of their survey and band. The viewed object stays
   filled, and the tooltip names each point's object.
 - With other objects shown, the Diff/Total switch is locked to Total. Difference magnitudes of different

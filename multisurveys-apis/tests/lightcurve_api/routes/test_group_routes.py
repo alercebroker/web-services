@@ -79,7 +79,7 @@ def test_widget_lists_members_and_nearby_objects(client: TestClient, group):
     assert [n["key"] for n in embedded["nearby"]] == [f"ztf:{group['ztf_c']}"]
     # The member is a checked checkbox, the nearby object an unchecked one
     assert re.search(rf'value="lsst:{group["lsst_x"]}"\s+checked', response.text)
-    assert re.search(rf'value="ztf:{group["ztf_c"]}"\s+class', response.text)
+    assert re.search(rf'value="ztf:{group["ztf_c"]}"\s*>', response.text)
 
 
 def test_widget_without_association_schema_has_no_group(client: TestClient, group, monkeypatch):

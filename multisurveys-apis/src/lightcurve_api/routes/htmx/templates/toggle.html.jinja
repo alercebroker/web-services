@@ -1,20 +1,30 @@
-{% macro toggle(name, left, right, checked=False, tooltip="", disable=False, left_w="", neutral=False) -%}
-<label class="tw-inline-flex tw-items-center tw-cursor-pointer">
-  {% if tooltip %}
-  <div class="tw-relative tw-group tw-mr-2">
-    <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">
-      ?
-    </span>
-    <div class="tw-absolute tw-bottom-full tw-left-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
-      <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-min-w-[200px] tw-text-balance">
-        {{ tooltip }}
-      </div>
-    </div>
-  </div>
-  {% endif %}
-  <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100{% if left_w %} tw-inline-block tw-text-right{% endif %}"{% if left_w %} style="width:{{ left_w }}"{% endif %}>{{ left }}</span>
-  <input type="checkbox" name="{{ name }}" class="tw-sr-only tw-peer" {% if checked %}checked{% endif %} {% if disable %}disabled{% endif %}>
-  <div class="tw-relative tw-w-11 tw-h-6 tw-bg-gray-200 peer-focus:tw-outline-none tw-rounded-full tw-peer dark:tw-bg-gray-700 peer-checked:after:tw-translate-x-full rtl:peer-checked:after:-tw-translate-x-full after:tw-content-[''] after:tw-absolute after:tw-top-[2px] after:tw-start-[2px] after:tw-bg-white after:tw-border-gray-300 after:tw-border after:tw-rounded-full after:tw-h-5 after:tw-w-5 after:tw-transition-all dark:tw-border-gray-600{% if not neutral %} peer-checked:after:tw-border-white peer-checked:tw-bg-gray-600 dark:peer-checked:tw-bg-gray-600{% endif %}"></div>
-  <span class="tw-font-semibold tw-ml-3 tw-text-gray-900 dark:tw-text-gray-100">{{ right }}</span>
+{#
+  Controls of the side panel, styled by static/lightcurve-panel.css. Help texts go in data-tip:
+  lightcurve-app.js shows them in a floating tooltip. A control locked by the script (setToggleLocked)
+  shows its reason the same way.
+#}
+
+{# Row label, uppercase, with an optional help text #}
+{% macro label(text, tip="") -%}
+<span class="lc-label"{% if tip %} data-tip="{{ tip }}" tabindex="0"{% endif %}>{{ text }}</span>
+{%- endmacro %}
+
+{# On/off switch #}
+{% macro switch(name, checked=False, disable=False, text="", tip="") -%}
+<label class="lc-switch"{% if tip %} data-tip="{{ tip }}"{% endif %}>
+  <input type="checkbox" name="{{ name }}" class="lc-sr" {% if checked %}checked{% endif %} {% if disable %}disabled{% endif %}>
+  <span class="lc-switch-track" aria-hidden="true"></span>
+  {% if text %}<span class="lc-switch-text">{{ text }}</span>{% endif %}
+</label>
+{%- endmacro %}
+
+{#
+  Two-way choice over one checkbox (unchecked = left, checked = right). Each button sets its side
+  (lightcurve-app.js, bindSegmented), so clicking the side already chosen keeps it.
+#}
+{% macro segmented(name, off, on, checked=False, tip="") -%}
+<label class="lc-seg"{% if tip %} data-tip="{{ tip }}"{% endif %}>
+  <input type="checkbox" name="{{ name }}" class="lc-sr" tabindex="-1" {% if checked %}checked{% endif %}>
+  <button type="button" class="lc-seg-off" data-seg="off">{{ off }}</button><button type="button" class="lc-seg-on" data-seg="on">{{ on }}</button>
 </label>
 {%- endmacro %}

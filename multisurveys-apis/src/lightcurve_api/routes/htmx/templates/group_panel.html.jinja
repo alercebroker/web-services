@@ -2,46 +2,44 @@
   Object group (association): the objects that are the same source as this one, and nearby objects that
   scored below the threshold. lightcurve-app.js fetches each checked object's photometry on demand and draws
   it hollow in the series of its survey and band. Values are "survey:oid" (see group_service.GroupObject.key).
-  Only classes already in lightcurve.css are used; the rest is inline.
+  Kept compact for the side panel: one line per object with the distance in its tooltip, a scroll past about
+  8 members, the section folded when the object is alone, and the nearby objects always folded.
 #}
-{% macro object_row(obj, checked, threshold) %}
-<label class="tw-flex tw-flex-wrap tw-items-center tw-gap-2 tw-text-sm tw-cursor-pointer tw-w-full" style="padding:2px 0;row-gap:0"
-       title="{% if obj.score is not none %}Score {{ '%.3f' | format(obj.score) }} at {{ '%.2f' | format(obj.dist) }}″{% if obj.linked_via %} from {{ obj.linked_via }}{% endif %}{% endif %}">
+{% macro object_row(obj, checked) %}
+<label class="lc-obj"
+       data-tip="{{ obj.survey_id | upper }} {{ obj.oid }}{% if obj.is_self %}: this object{% elif obj.score is not none %}. Score {{ '%.3f' | format(obj.score) }} at {{ '%.2f' | format(obj.dist) }}″{% if obj.linked_via %}, linked through {{ obj.linked_via }}{% endif %}{% endif %}">
   {% if obj.is_self %}
   <input type="checkbox" checked disabled>
   {% else %}
-  <input type="checkbox" name="group.objects[]" value="{{ obj.key }}" {% if checked %}checked{% endif %} class="tw-cursor-pointer">
+  <input type="checkbox" name="group.objects[]" value="{{ obj.key }}" {% if checked %}checked{% endif %}>
   {% endif %}
-  <span class="tw-text-xs tw-font-semibold" style="min-width:2.6rem;color:{{ '#C0610E' if obj.survey_id == 'ztf' else '#0B827E' }}">{{ obj.survey_id | upper }}</span>
-  <span class="tw-text-gray-900 dark:tw-text-gray-100" style="font-family:ui-monospace,monospace;font-size:12px;white-space:nowrap">{{ obj.oid }}</span>
-  <span class="tw-text-xs tw-text-gray-400" style="margin-left:auto;white-space:nowrap">
-    {% if obj.is_self %}this object{% elif obj.score is not none %}{{ '%.2f' | format(obj.dist) }}″ · {{ '%.2f' | format(obj.score) }}{% if obj.linked_via %} ↗{% endif %}{% endif %}
+  <span class="lc-obj-survey" style="color:{{ '#C0610E' if obj.survey_id == 'ztf' else '#0B827E' }}">{{ obj.survey_id | upper }}</span>
+  <span class="lc-obj-id">{{ obj.oid }}</span>
+  <span class="lc-obj-score">
+    {%- if obj.is_self %}this{% elif obj.score is not none %}{{ '%.2f' | format(obj.score) }}{% if obj.linked_via %} ↗{% endif %}{% endif -%}
   </span>
 </label>
 {% endmacro %}
 
-<div id="group-panel" class="tw-flex tw-flex-col tw-items-start tw-text-left tw-w-full" style="row-gap:2px">
-  <div class="tw-flex tw-items-center tw-gap-2 tw-w-full tw-mb-1">
-    <span class="tw-font-semibold tw-text-gray-900 dark:tw-text-gray-100">Same source</span>
-    {% if group.group_id is not none %}
-    <span class="tw-text-xs tw-text-gray-400">group {{ group.group_id }} · v{{ group.group_version }}</span>
+{% set others = group.members | length - 1 %}
+<details id="group-panel" class="lc-section" {% if others > 0 %}open{% endif %}>
+  <summary>
+    <span class="lc-title" data-tip="Objects the association links to this one, with the score of each pair. Others are drawn hollow, in total magnitude.{% if group.group_id is not none %} Group {{ group.group_id }}, version {{ group.group_version }}.{% endif %}">Same source</span>
+    <span class="lc-muted">{{ others + 1 }} object{{ 's' if others else '' }}</span>
+    <span id="group-status" class="lc-muted lc-pulse tw-hidden">loading…</span>
+  </summary>
+
+  <div class="lc-objects">
+    {% for obj in group.members %}{{ object_row(obj, True) }}{% endfor %}
+    {% if not others %}
+    <span class="lc-muted">No other object scored {{ group.threshold }} or more.</span>
     {% endif %}
-    <span id="group-status" class="tw-hidden tw-text-xs tw-text-gray-400 tw-animate-pulse" style="margin-left:auto">loading…</span>
   </div>
 
-  {% for obj in group.members %}{{ object_row(obj, True, group.threshold) }}{% endfor %}
-  {% if group.members | length == 1 %}
-  <span class="tw-text-xs tw-text-gray-400">No other object scored {{ group.threshold }} or more.</span>
-  {% endif %}
-
   {% if group.nearby %}
-  <span class="tw-font-semibold tw-text-gray-900 dark:tw-text-gray-100 tw-mt-2 tw-mb-1">Nearby, not in the group</span>
-  {% for obj in group.nearby %}{{ object_row(obj, False, group.threshold) }}{% endfor %}
+  <details>
+    <summary><span class="lc-muted">Nearby, not in the group ({{ group.nearby | length }})</span></summary>
+    {% for obj in group.nearby %}{{ object_row(obj, False) }}{% endfor %}
+  </details>
   {% endif %}
-
-  <span class="tw-text-xs tw-text-gray-400 tw-mt-1">
-    Filled: this object. Hollow: the others, in total magnitude. Distance and score of each pair; ↗ linked through another object.
-  </span>
-</div>
-
-<div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
+</details>
