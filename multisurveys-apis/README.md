@@ -54,10 +54,12 @@ form a group. The light curve widget can show the other objects of the viewed ob
   dates, from the `object` table.
 - With other objects shown, the Diff/Total switch is locked to Total. Difference magnitudes of different
   objects come from different reference images and can't be compared.
+- The Aladin panel marks the group's other members at their mean position, in teal, named by their survey's id.
 
 It is only enabled where `ASSOCIATION_SCHEMA` names the schema that holds the association tables. Nothing else
 changes otherwise, and if the group lookup fails the widget still shows the object on its own. To try it
-locally, add the variable to the light curve API's entry in `config.yaml`:
+locally, add the variable to the light curve API's entry in `config.yaml`, and to the Aladin API's for the
+markers:
 
 ```yaml
   lightcurve_api:
