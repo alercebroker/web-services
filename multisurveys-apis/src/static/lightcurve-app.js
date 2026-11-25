@@ -504,15 +504,29 @@ function buildOptions(cfg) {
 }
 
 // ─── Periodogram options ──────────────────────────────────────────────────────
+// The periodogram can have ~100k periods, far more than the chart has pixels, and ECharts
+// draws a scatter that big a few hundred points per frame (10 s or more). Keep the highest
+// score in each of PERIODOGRAM_BINS bins, even in log period like the axis: the peaks, and
+// the periods a click on them picks, are unchanged. It stays under ECharts' progressive
+// threshold (3000 points), so the scatter is drawn in one frame.
+const PERIODOGRAM_BINS = 1500;
+
 function buildPeriodogramOptions() {
     const p           = rawPeriodogram;
     const bestSet     = new Set(p.best_periods_index ?? []);
-    const regular     = [];
+    const periods     = p.periods ?? [];
     const best        = [];
+    const binned      = new Map();
+    let lo = Infinity, hi = -Infinity;
+    for (const period of periods) { lo = Math.min(lo, period); hi = Math.max(hi, period); }
+    const logLo = Math.log(lo), binWidth = (Math.log(hi) - logLo) / PERIODOGRAM_BINS || 1;
 
-    for (let i = 0; i < (p.periods ?? []).length; i++) {
-        (bestSet.has(i) ? best : regular).push([p.periods[i], p.scores[i]]);
+    for (let i = 0; i < periods.length; i++) {
+        if (bestSet.has(i)) { best.push([periods[i], p.scores[i]]); continue; }
+        const bin = Math.floor((Math.log(periods[i]) - logLo) / binWidth);
+        if (!(binned.get(bin)?.[1] >= p.scores[i])) binned.set(bin, [periods[i], p.scores[i]]);
     }
+    const regular = [...binned.values()];
 
     const opts = {
         tooltip:  { axisPointer: { type: 'cross' }, formatter: params => `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}` },
@@ -554,8 +568,9 @@ function initChart() {
     opts.tooltip = buildTooltip();
     myChart.setOption(opts);
 
-    const grid = document.getElementById('plot-grid');
-    if (grid) new ResizeObserver(() => myChart?.resize()).observe(grid);
+    // Watch the chart's own box, not the plot grid: showing the periodogram shrinks the
+    // light curve's container without changing the grid, and the canvas must follow it.
+    new ResizeObserver(() => myChart?.resize()).observe(dom);
 
     document.getElementById('toggle-theme-lc')?.addEventListener('click', () => {
         myChart?.dispose();
