@@ -1,17 +1,25 @@
 {% import 'toggle.html.jinja' as ui %}
+{#
+  Period controls. The ‹ › and « » buttons (and the arrow keys in the period box, Shift for the larger step)
+  change the period by a step sized to the light curve's time span, so each click slides the fold the same
+  fraction of a cycle at any period: see lightcurve-app.js, nudgePeriod.
+#}
 <div class="lc-row">
   {{ ui.label("Fold", "The period folded light curve, where time is transformed to time modulo the period (phase). Period is computed automatically when you enable Fold.") }}
   <div class="lc-ctl" style="flex-wrap:nowrap">
     {{ ui.switch("fold", config.fold) }}
-    <input name="period" value="{{config.period}}" class="lc-input" style="width:56px;margin-left:auto" aria-label="Period (days)" data-tip="Period, in days">
-    <button type="button" name="x2" class="lc-btn lc-btn-outline" data-tip="Double the period">×2</button>
-    <button type="button" name="div2" class="lc-btn lc-btn-outline" data-tip="Halve the period">/2</button>
+    <input name="period" value="{{config.period}}" class="lc-input" style="width:96px;margin-left:auto" aria-label="Period (days)" data-tip="Period, in days. The up and down arrow keys change it a little, with Shift a little more.">
   </div>
 </div>
 <div class="lc-row">
   <span class="lc-label"></span>
-  <div class="lc-ctl">
-    <input id="period-slider" type="range" min="0.05" max="500" value="{{config.period}}" class="lc-range" aria-label="Period (days)">
+  <div class="lc-ctl lc-period-steps">
+    <button type="button" class="lc-btn lc-btn-outline" data-period-step="-0.1" data-tip="Shorter period: the fold slides a tenth of a cycle across the light curve">«</button>
+    <button type="button" class="lc-btn lc-btn-outline" data-period-step="-0.02" data-tip="Slightly shorter period: the fold slides 2% of a cycle across the light curve">‹</button>
+    <button type="button" class="lc-btn lc-btn-outline" data-period-step="0.02" data-tip="Slightly longer period: the fold slides 2% of a cycle across the light curve">›</button>
+    <button type="button" class="lc-btn lc-btn-outline" data-period-step="0.1" data-tip="Longer period: the fold slides a tenth of a cycle across the light curve">»</button>
+    <button type="button" class="lc-btn lc-btn-outline" data-period-factor="2" data-tip="Double the period" style="margin-left:auto">×2</button>
+    <button type="button" class="lc-btn lc-btn-outline" data-period-factor="0.5" data-tip="Halve the period">/2</button>
   </div>
 </div>
 <div class="lc-row">
@@ -20,36 +28,3 @@
     {{ ui.switch("periodogram_enabled", config.periodogram_enabled, not config.fold, "Periodogram", "Show the light curve periodogram. Click a point on it to fold at that period.") }}
   </div>
 </div>
-
-<script>
-var slider = document.querySelector('#period-slider');
-var input = document.querySelector('input[name="period"]');
-var x2 = document.querySelector('[name="x2"]');
-var div2 = document.querySelector('[name="div2"]');
-
-slider.addEventListener('input', function(e) {
-  input.value = e.target.value;
-})
-
-input.addEventListener('change', function(e) {
-  slider.value = e.target.value;
-})
-
-x2.addEventListener('click', function(e) {
-  input.value = input.value * 2;
-  if (input.value > 500) input.value = 500
-
-  input.dispatchEvent(new Event('change', { bubbles: true }));
-})
-
-div2.addEventListener('click', function(e) {
-  input.value = input.value / 2;
-  if (input.value > 500) input.value = 500
-  input.dispatchEvent(new Event('change', { bubbles: true }));
-})
-
-document.addEventListener('periodogram:periodSelected', function(event) {
-  input.value = event.detail.period;
-  input.dispatchEvent(new Event('change', { bubbles: true }));
-});
-</script>

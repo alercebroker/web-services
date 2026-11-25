@@ -31,6 +31,7 @@ router = APIRouter(prefix="/htmx")
 templates = html_templates("src/lightcurve_api/routes/htmx/templates")
 
 configure_templates(templates, "http://localhost:8001")
+templates.env.filters["mjd_date"] = group_service.mjd_to_date
 
 
 @router.get("/lightcurve", response_class=HTMLResponse)

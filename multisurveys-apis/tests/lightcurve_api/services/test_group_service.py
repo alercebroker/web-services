@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import pytest
 
 from core.idmapper import idmapper
-from lightcurve_api.services.group_service import build_group_info, display_oid, parse_object_keys
+from lightcurve_api.services.group_service import build_group_info, display_oid, mjd_to_date, parse_object_keys
 
 ZTF_A = idmapper.catalog_oid_to_masterid("ZTF", "ZTF18abvkqpo").item()
 ZTF_B = idmapper.catalog_oid_to_masterid("ZTF", "ZTF19aaxlmra").item()
@@ -50,6 +50,24 @@ def test_nearby_objects_are_non_members_strongest_pair_first():
     assert [n.oid for n in info.nearby] == ["ZTF20acwxyzq"]  # once, and never the solar-system object
     assert (info.nearby[0].score, info.nearby[0].linked_via) == (0.3, "ZTF18abvkqpo")
     assert not info.nearby[0].in_group
+
+
+def test_objects_carry_their_detections_when_known():
+    a, x, c = (ZTF_A, 0), (LSST_X, 1), (ZTF_C, 0)
+    stats = {
+        x: SimpleNamespace(n_det=12, firstmjd=60900.0, lastmjd=60950.5),
+        c: SimpleNamespace(n_det=3, firstmjd=58400.0, lastmjd=58410.0),
+    }
+    info = build(x, [a, x], [pair(x, a, 0.25, 0.98), pair(x, c, 2.1, 0.01)], stats=stats)
+
+    assert (info.members[0].n_det, info.members[0].firstmjd, info.members[0].lastmjd) == (12, 60900.0, 60950.5)
+    assert info.members[1].n_det is None  # not in the object table
+    assert info.nearby[0].n_det == 3
+
+
+def test_mjd_to_date():
+    assert mjd_to_date(51544.5) == "2000-01-01"  # J2000.0
+    assert mjd_to_date(None) == ""
 
 
 def test_ungrouped_object_has_only_itself_and_its_neighbours():

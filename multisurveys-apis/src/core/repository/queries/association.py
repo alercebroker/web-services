@@ -2,6 +2,7 @@
 
 from typing import Callable, ContextManager, Iterable
 
+from db_plugins.db.sql.models_pipeline import Object
 from sqlalchemy import Row, func, select, tuple_, union_all
 from sqlalchemy.orm import Session
 
@@ -70,3 +71,15 @@ def get_pairs_touching(
     for row in rows:
         unique[(row.oid_a, row.sid_a, row.oid_b, row.sid_b)] = row
     return list(unique.values())
+
+
+def get_object_stats(session_factory: SessionFactory, objects: Iterable[tuple[int, int]]) -> dict[tuple[int, int], Row]:
+    """n_det, firstmjd and lastmjd of each of ``objects`` ((oid, sid) tuples) found in the object table."""
+    objects = list(objects)
+    if not objects:
+        return {}
+    stmt = select(Object.oid, Object.sid, Object.n_det, Object.firstmjd, Object.lastmjd).where(
+        tuple_(Object.oid, Object.sid).in_(objects)
+    )
+    with session_factory() as session:
+        return {(row.oid, row.sid): row for row in session.execute(stmt).all()}

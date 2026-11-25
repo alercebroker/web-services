@@ -1,8 +1,8 @@
 """Object groups in the light curve: which objects are the same source as this one, and their photometry.
 
 A group is a set of objects, possibly from different surveys, linked by pairs that score at least the method's
-threshold (0.95). The light curve lists the group's members, on by default, and a few nearby objects whose
-pairs scored below the threshold, off by default. Their photometry is fetched separately, on demand
+threshold (0.95). The light curve lists the group's members and a few nearby objects whose pairs scored below
+the threshold, all off until the user turns them on. Their photometry is fetched separately, on demand
 (see ``get_group_photometry``), so the object's own light curve never waits for it.
 
 Every object here is named by its survey and that survey's id, as users name it: the ZTF name or the LSST
@@ -11,6 +11,7 @@ numeric id, as a string. ``group_id`` is internal and only shown for reference.
 
 import logging
 import os
+from datetime import datetime, timedelta
 from dataclasses import asdict, dataclass, field
 from typing import Callable, ContextManager, Iterable
 
@@ -33,6 +34,7 @@ DEFAULT_THRESHOLD = 0.95
 NEARBY_LIMIT = 5
 MAX_OBJECTS_PER_REQUEST = 20
 SUPPORTED_SIDS = (get_survey_id("ztf"), get_survey_id("lsst"))
+MJD_EPOCH = datetime(1858, 11, 17)
 
 
 def association_enabled() -> bool:
@@ -49,6 +51,9 @@ class GroupObject:
     dist: float | None = None  # arcseconds, of the pair shown in `score`
     score: float | None = None
     linked_via: str | None = None  # the other end of that pair, when it isn't the object being viewed
+    n_det: int | None = None  # None: the object isn't in the object table
+    firstmjd: float | None = None
+    lastmjd: float | None = None
 
     @property
     def key(self) -> str:
@@ -69,6 +74,11 @@ class GroupInfo:
         data["members"] = [{**asdict(m), "key": m.key} for m in self.members]
         data["nearby"] = [{**asdict(n), "key": n.key} for n in self.nearby]
         return data
+
+
+def mjd_to_date(mjd: float | None) -> str:
+    """An MJD as an ISO date (2018-11-02), or "" for None."""
+    return "" if mjd is None else (MJD_EPOCH + timedelta(days=mjd)).date().isoformat()
 
 
 def display_oid(oid: int, sid: int) -> str:
@@ -95,6 +105,10 @@ def get_group_info(oid: str, survey_id: str, session_factory: SessionFactory) ->
 
     threshold = (method.params or {}).get("groups", {}).get("threshold", DEFAULT_THRESHOLD)
     pairs = association_repository.get_pairs_touching(session_factory, members, method.method_version)
+    objects = set(members) | {(master_id, sid)}
+    for pair in pairs:
+        objects |= {(pair.oid_a, pair.sid_a), (pair.oid_b, pair.sid_b)}
+    stats = association_repository.get_object_stats(session_factory, objects)
     return build_group_info(
         self_key=(master_id, sid),
         members=members,
@@ -103,6 +117,7 @@ def get_group_info(oid: str, survey_id: str, session_factory: SessionFactory) ->
         method_version=method.method_version,
         group_id=group.group_id if group else None,
         group_version=group.group_version if group else None,
+        stats=stats,
     )
 
 
@@ -115,14 +130,16 @@ def build_group_info(
     group_id: int | None = None,
     group_version: int | None = None,
     nearby_limit: int = NEARBY_LIMIT,
+    stats: dict | None = None,
 ) -> GroupInfo:
     """Describe each member by its pair with the viewed object, and pick the strongest nearby non-members.
 
     ``pairs`` are rows with oid_a, sid_a, oid_b, sid_b, dist and score, each touching at least one member.
     A member that isn't paired with the viewed object directly (it joined through another member) is
     described by its strongest pair inside the group. A nearby object is described by its strongest pair
-    with any member.
+    with any member. ``stats`` maps (oid, sid) to a row with n_det, firstmjd and lastmjd.
     """
+    stats = stats or {}
     member_set = set(members) | {self_key}
     direct: dict = {}  # member -> pair with the viewed object
     best_inside: dict = {}  # member -> (pair, the other member)
@@ -144,8 +161,14 @@ def build_group_info(
             if outsider not in best_nearby or pair.score > best_nearby[outsider][0].score:
                 best_nearby[outsider] = (pair, member)
 
+    def with_stats(obj, key):
+        row = stats.get(key)
+        if row is not None:
+            obj.n_det, obj.firstmjd, obj.lastmjd = row.n_det, row.firstmjd, row.lastmjd
+        return obj
+
     def describe(key, pair, via, in_group):
-        return GroupObject(
+        obj = GroupObject(
             oid=display_oid(*key),
             survey_id=get_survey_name(key[1]),
             in_group=in_group,
@@ -153,6 +176,7 @@ def build_group_info(
             score=float(pair.score) if pair is not None else None,
             linked_via=display_oid(*via) if via is not None and via != self_key else None,
         )
+        return with_stats(obj, key)
 
     others = []
     for key in member_set - {self_key}:
@@ -166,7 +190,7 @@ def build_group_info(
             others.append(describe(key, None, None, True))
     others.sort(key=lambda m: (m.linked_via is not None, -(m.score or 0), m.dist or 0))
 
-    me = GroupObject(oid=display_oid(*self_key), survey_id=get_survey_name(self_key[1]), is_self=True)
+    me = with_stats(GroupObject(oid=display_oid(*self_key), survey_id=get_survey_name(self_key[1]), is_self=True), self_key)
 
     nearby = [describe(key, pair, via, False) for key, (pair, via) in best_nearby.items()]
     nearby.sort(key=lambda n: (-(n.score or 0), n.dist or 0))

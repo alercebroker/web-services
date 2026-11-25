@@ -29,7 +29,7 @@ let config;
 let periodogramLoading = false;
 // Outcome of the last periodogram fetch that brought no periods: 'empty' or 'failed'.
 let periodogramStatus = null;
-// True once the user has manually changed the period (slider / input / X2 / /2 /
+// True once the user has manually changed the period (input / step buttons / X2 / /2 /
 // periodogram click). Once set, we stop overriding the period with the periodogram's
 // best candidate.
 let periodUserModified = false;
@@ -63,8 +63,8 @@ function loadState() {
     groupInfo                     = data.group ?? null;
     groupPhot                     = new Map();
     groupLoading                  = new Set();
-    // Members start on, nearby objects off, as the checkboxes are rendered.
-    config.group_selected         = (groupInfo?.members ?? []).filter(m => !m.is_self).map(m => m.key);
+    // Nothing of the group is drawn until the user turns on "Show on the light curve".
+    config.group_selected         = [];
 }
 
 // Bound to `document` exactly once per page (see init()); survives re-inits.
@@ -732,7 +732,7 @@ function syncTotalToggle(form) {
     if (!el) return;
     const needsTotal = (form.querySelector('[name="fold"]')?.checked ?? false)
         || (form.querySelector('[name="external_sources.enabled"]')?.checked ?? false)
-        || form.querySelector('[name="group.objects[]"]:checked') != null;
+        || (groupEnabled(form) && form.querySelector('[name="group.objects[]"]:checked') != null);
 
     if (needsTotal && !el.disabled) {
         el.dataset.checkedBeforeLock = String(el.checked);
@@ -742,6 +742,19 @@ function syncTotalToggle(form) {
     }
     setToggleLocked(el, needsTotal,
         'Fold, external sources and other objects of the group use total magnitude. Turn them off to switch back to Diff.');
+}
+
+// ─── Object group switch ──────────────────────────────────────────────────────
+// "Show on the light curve" gates the whole group: while it's off the checkboxes are disabled and faded,
+// keeping what the user checked for when it's turned back on.
+function groupEnabled(form) {
+    return form.querySelector('[name="group.enabled"]')?.checked ?? false;
+}
+
+function syncGroupPanel(form) {
+    const on = groupEnabled(form);
+    for (const el of form.querySelectorAll('[name="group.objects[]"]')) el.disabled = !on;
+    document.getElementById('group-panel')?.classList.toggle('lc-group-off', !on);
 }
 
 // ─── Non-detections toggle ────────────────────────────────────────────────────
@@ -778,6 +791,7 @@ function readConfigFromForm() {
 
     const bool = name => form.querySelector(`[name="${name}"]`)?.checked ?? false;
 
+    syncGroupPanel(form);
     syncTotalToggle(form);
     config.flux               = bool('flux');
     config.total              = bool('total');
@@ -802,13 +816,15 @@ function readConfigFromForm() {
     syncNonDetectionsToggle(form);
     config.data_types   = [...form.querySelectorAll('[name="data_types[]"]:checked')]  .map(el => el.value);
     if (groupInfo) {
-        config.group_selected = [...form.querySelectorAll('[name="group.objects[]"]:checked')].map(el => el.value);
+        config.group_selected = groupEnabled(form)
+            ? [...form.querySelectorAll('[name="group.objects[]"]:checked')].map(el => el.value)
+            : [];
     }
 }
 
 // ─── Object group: fetch other objects' photometry on demand ─────────────────
-// Members are on by default, so their photometry is fetched right after the first render; a nearby object's
-// is fetched the first time it's turned on. A failure only leaves that object out of the chart.
+// An object's photometry is fetched the first time it's drawn: when the group switch is turned on (the checked
+// members), or when its checkbox is checked afterwards. A failure only leaves that object out of the chart.
 async function loadGroupPhotometry() {
     const missing = (config.group_selected ?? []).filter(k => !groupPhot.has(k) && !groupLoading.has(k));
     if (!missing.length) return;
@@ -876,9 +892,7 @@ function applyBestCandidatePeriod() {
     settingPeriodProgrammatically = true;
     try {
         const periodEl = document.querySelector('[name="period"]');
-        const sliderEl = document.getElementById('period-slider');
         if (periodEl) periodEl.value = config.period;
-        if (sliderEl) sliderEl.value  = config.period;
     } finally {
         settingPeriodProgrammatically = false;
     }
@@ -934,6 +948,59 @@ function onSegmentClick(e) {
     input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
+// ─── Period steps ─────────────────────────────────────────────────────────────
+// Folding is very sensitive to the period: an error dP shifts the phase by about T·dP/P² across a light
+// curve that spans T days. So a step is a fraction of a cycle across the light curve, not a fraction of the
+// period: dP = cycles·P²/T. ‹ › slide the fold 2% of a cycle, « » a tenth, at any period and time span.
+function shownTimeSpan() {
+    let min = Infinity, max = -Infinity;
+    for (const list of [rawDetections, rawForcedPhotometry,
+                        groupPoints('detections', config), groupPoints('forcedPhotometry', config)]) {
+        for (const p of list ?? []) {
+            if (p.mjd < min) min = p.mjd;
+            if (p.mjd > max) max = p.mjd;
+        }
+    }
+    return max > min ? max - min : 0;
+}
+
+function setPeriodFromControl(input, period) {
+    if (!(period > 0)) return;
+    input.value = String(Number(period.toPrecision(8)));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+function nudgePeriod(input, cycles) {
+    const period = parseFloat(input.value);
+    if (!(period > 0)) return;
+    // Below one period of span, a cycle across the light curve is a cycle of the period itself.
+    const span = Math.max(shownTimeSpan(), period);
+    setPeriodFromControl(input, period + cycles * period * period / span);
+}
+
+function onPeriodButtonClick(e) {
+    const button = e.target.closest('[data-period-step], [data-period-factor]');
+    const input  = e.currentTarget.querySelector('[name="period"]');
+    if (!button || !input) return;
+    if (button.dataset.periodStep) nudgePeriod(input, parseFloat(button.dataset.periodStep));
+    else setPeriodFromControl(input, parseFloat(input.value) * parseFloat(button.dataset.periodFactor));
+}
+
+function onPeriodKeydown(e) {
+    if (e.target.name !== 'period' || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+    e.preventDefault();
+    nudgePeriod(e.target, (e.key === 'ArrowUp' ? 1 : -1) * (e.shiftKey ? 0.1 : 0.02));
+}
+
+// ─── Group details ────────────────────────────────────────────────────────────
+// "Details" shows a second line under each object: the pair's score and distance, and the object's detections.
+function onGroupDetailsClick(e) {
+    const button = e.target.closest('[data-group-details]');
+    if (!button) return;
+    const shown = document.getElementById('group-panel')?.classList.toggle('lc-show-meta') ?? false;
+    button.setAttribute('aria-expanded', String(shown));
+}
+
 // ─── Help tooltips ────────────────────────────────────────────────────────────
 // Any [data-tip] in the widget shows its text in one floating box on <body>, so
 // the scrolling side panel never clips it. A locked control shows why instead
@@ -971,9 +1038,6 @@ function bindTooltips() {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function init() {
     paintBandChips();
-    // With other objects of the group on, the form locks Total: read it before the first render, so the
-    // chart doesn't draw Diff and switch once the members arrive.
-    if (groupInfo && document.getElementById('config-form')) readConfigFromForm();
     initChart();
     updateVisibility();
 
@@ -990,9 +1054,9 @@ function init() {
 
     function onFormChange(e) {
         // The period input fires a bubbling `change` for direct edits and for the
-        // X2 / /2 buttons (which dispatch change on the input). Treat those as manual
-        // period changes — unless we set the value programmatically.
-        if (e && (e.target?.name === 'period' || e.target?.id === 'period-slider') && !settingPeriodProgrammatically) {
+        // step and X2 / /2 buttons (which dispatch change on the input). Treat those as
+        // manual period changes — unless we set the value programmatically.
+        if (e && e.target?.name === 'period' && !settingPeriodProgrammatically) {
             periodUserModified = true;
         }
 
@@ -1037,13 +1101,13 @@ function init() {
         }
         prevExtEnabled = extNow;
 
-        if (e?.target?.name === 'group.objects[]') loadGroupPhotometry();
+        if (e?.target?.name === 'group.objects[]' || e?.target?.name === 'group.enabled') loadGroupPhotometry();
     }
     function onFormInput(e) {
-        if (e.target.name === 'period' || e.target.id === 'period-slider' || e.target.name === 'offset_num') {
+        if (e.target.name === 'period' || e.target.name === 'offset_num') {
             // A user-driven period change pins the period — stop auto-adopting the
             // periodogram candidate. Programmatic updates set a guard so they don't.
-            if ((e.target.name === 'period' || e.target.id === 'period-slider') && !settingPeriodProgrammatically) {
+            if (e.target.name === 'period' && !settingPeriodProgrammatically) {
                 periodUserModified = true;
             }
             clearTimeout(debounceTimer);
@@ -1060,9 +1124,9 @@ function init() {
     form.addEventListener('change', onFormChange);
     form.addEventListener('input',  onFormInput);
     form.addEventListener('click',  onSegmentClick);
-
-    // The group's members are on by default: fetch them now. The chart above already shows this object.
-    loadGroupPhotometry();
+    form.addEventListener('click',  onPeriodButtonClick);
+    form.addEventListener('click',  onGroupDetailsClick);
+    form.addEventListener('keydown', onPeriodKeydown);
 
     // Period selection from periodogram click — counts as a manual change.
     // Bound on `document` once per page: init() runs again on every HTMX swap, but
@@ -1077,9 +1141,7 @@ function init() {
             settingPeriodProgrammatically = true;
             try {
                 const periodEl = document.querySelector('[name="period"]');
-                const sliderEl = document.getElementById('period-slider');
                 if (periodEl) periodEl.value = config.period;
-                if (sliderEl) sliderEl.value  = config.period;
             } finally {
                 settingPeriodProgrammatically = false;
             }

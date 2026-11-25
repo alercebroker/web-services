@@ -362,6 +362,13 @@
     border-color: var(--lc-primary);
 }
 
+/* ‹ › « » ×2 /2 under the period */
+#main-app .lc-period-steps .lc-btn {
+    min-width: 26px;
+    padding: 0 6px;
+    font-size: 12px;
+}
+
 #main-app .lc-range {
     flex: 1;
     min-width: 40px;
@@ -421,11 +428,74 @@
 
 #main-app .lc-obj {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 5px;
-    height: 18px;
+    column-gap: 5px;
+    min-height: 18px;
     font-size: 12px;
     cursor: pointer;
+}
+
+/* "Show on the light curve" off: the other objects are faded and can't be checked */
+#main-app .lc-group-off .lc-obj:not(.lc-obj-self) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#main-app .lc-group-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+/* Text button, with a caret that turns when its section is shown */
+#main-app .lc-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--lc-primary);
+    font: 500 11px/20px var(--lc-font);
+    cursor: pointer;
+}
+
+#main-app .lc-link::after {
+    content: " ▸";
+}
+
+#main-app .lc-link[aria-expanded="true"]::after {
+    content: " ▾";
+}
+
+/* Second line of an object, under "Details": the pair's score and distance, the object's detections.
+   Each part wraps as a whole, so a narrow panel breaks the line between parts, never inside one. */
+#main-app .lc-obj-meta {
+    display: none;
+    flex-basis: 100%;
+    padding: 0 0 3px 18px;
+    font-size: 11px;
+    line-height: 15px;
+    color: var(--lc-text-2);
+    font-variant-numeric: tabular-nums;
+}
+
+/* With the details, the list is three times as tall: let the panel scroll instead of the list */
+#main-app .lc-show-meta .lc-objects {
+    max-height: none;
+}
+
+#main-app .lc-show-meta .lc-obj-meta {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 9px;
+}
+
+#main-app .lc-obj-meta > span {
+    white-space: nowrap;
+}
+
+#main-app .lc-obj-meta > span[data-tip] {
+    cursor: help;
 }
 
 #main-app .lc-obj-survey {
