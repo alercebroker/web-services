@@ -275,6 +275,9 @@
                             </svg>
                         </div>
                     </th>
+                    {% if counterparts is not none %}
+                    <th class="tw-px-4" title="The same source as this object, in another survey or duplicated in this one, as found by the association method. Click a survey to list them; hover it for distances and scores.">Also seen as</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody class="tw-text-[0.875rem] tw-text-black dark:tw-text-white">
@@ -318,6 +321,29 @@
                             <span class="tw-font-semibold sm:tw-hidden">DeltaMJD (days)</span>
                             <span name="deltamjd">{{"%.3f" | format(item['deltamjd'])}}</span>
                         </td>
+                        {% if counterparts is not none %}
+                        <!--Clicks inside stay here: the row's own click opens the listed object.-->
+                        <td class="tw-px-4 tw-h-[48px] tw-flex tw-justify-between tw-items-center sm:tw-table-cell sm:tw-h-[32px]" onclick="event.stopPropagation()">
+                            <span class="tw-font-semibold sm:tw-hidden">Also seen as</span>
+                            <span name="counterparts" class="tw-inline-flex tw-flex-wrap tw-gap-1">
+                                {% for found in counterparts.get(item['oid']|string, []) %}
+                                    <details name="counterpart_survey" data-survey="{{found.survey_id}}">
+                                        <summary title="{{found.title}}" class="tw-cursor-pointer tw-rounded-full tw-border tw-border-[#757575] tw-px-2 tw-text-xs tw-whitespace-nowrap">{{found.label}} ×{{found.count}}</summary>
+                                        <span class="tw-block tw-mt-1 tw-text-xs">
+                                            {% for member in found.members %}
+                                                <a class="tw-block tw-underline tw-whitespace-nowrap" href="/object/{{member.oid}}?survey={{member.survey_id}}" title="{{member.description}}">{{member.oid}}</a>
+                                            {% endfor %}
+                                            {% if found.count > found.members|length %}
+                                                <span class="tw-block tw-text-black/60 dark:tw-text-white/70">… and {{found.count - found.members|length}} more</span>
+                                            {% endif %}
+                                        </span>
+                                    </details>
+                                {% else %}
+                                    <span class="tw-text-black/60 dark:tw-text-white/70">—</span>
+                                {% endfor %}
+                            </span>
+                        </td>
+                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>

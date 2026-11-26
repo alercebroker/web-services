@@ -3,8 +3,8 @@
 from typing import Callable, ContextManager, Iterable
 
 from db_plugins.db.sql.models_pipeline import Object
-from sqlalchemy import Row, func, select, tuple_, union_all
-from sqlalchemy.orm import Session
+from sqlalchemy import Row, and_, func, or_, select, tuple_, union_all
+from sqlalchemy.orm import Session, aliased
 
 from core.repository.association_models import AssociationMethod, ObjectAssociation, ObjectGroup
 
@@ -23,6 +23,53 @@ def get_group_members(session_factory: SessionFactory, group_id: int) -> list[tu
     with session_factory() as session:
         stmt = select(ObjectGroup.oid, ObjectGroup.sid).where(ObjectGroup.group_id == group_id)
         return [(row.oid, row.sid) for row in session.execute(stmt).all()]
+
+
+def get_counterpart_rows(session_factory: SessionFactory, objects: Iterable[tuple[int, int]]) -> list[Row]:
+    """Every other member of the groups of ``objects`` ((oid, sid) tuples), in one statement.
+
+    One row per (listed object, member): ``listed_oid``, ``listed_sid``, ``oid``, ``sid``, the ``dist`` and
+    ``score`` of their direct pair (None when the member joined the group through another member) and the
+    member's ``n_det`` (None when it isn't in the object table). Objects without a group give no rows.
+
+    A pair is stored once, in either order, so it is looked up in both: each join uses its own index (the
+    primary key starts with (oid_a, sid_a); (oid_b, sid_b) has an index of its own).
+    """
+    objects = list(objects)
+    if not objects:
+        return []
+    listed = aliased(ObjectGroup)
+    member = aliased(ObjectGroup)
+    forward = aliased(ObjectAssociation)
+    backward = aliased(ObjectAssociation)
+
+    def pair_between(pair, a, b):
+        return and_(
+            pair.oid_a == a.oid,
+            pair.sid_a == a.sid,
+            pair.oid_b == b.oid,
+            pair.sid_b == b.sid,
+            pair.method_version == listed.method_version,
+        )
+
+    stmt = (
+        select(
+            listed.oid.label("listed_oid"),
+            listed.sid.label("listed_sid"),
+            member.oid,
+            member.sid,
+            func.coalesce(forward.dist, backward.dist).label("dist"),
+            func.coalesce(forward.score, backward.score).label("score"),
+            Object.n_det,
+        )
+        .join(member, and_(member.group_id == listed.group_id, or_(member.oid != listed.oid, member.sid != listed.sid)))
+        .outerjoin(forward, pair_between(forward, listed, member))
+        .outerjoin(backward, pair_between(backward, member, listed))
+        .outerjoin(Object, and_(Object.oid == member.oid, Object.sid == member.sid))
+        .where(tuple_(listed.oid, listed.sid).in_(objects))
+    )
+    with session_factory() as session:
+        return session.execute(stmt).all()
 
 
 def get_method(session_factory: SessionFactory, method_version: int | None = None) -> AssociationMethod | None:
