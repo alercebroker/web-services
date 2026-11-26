@@ -1,18 +1,23 @@
 import copy
-from typing import List
+from typing import List, Sequence
 
 import numpy as np
 import pandas as pd
 from toolz import curry, pipe
 
+from core.periodogram.barycentric import bjd_tdb_times
 from core.periodogram.periodogram import PeriodogramComputer
-from lightcurve_api.models.lightcurve_item import BaseDetection
+from lightcurve_api.models.lightcurve_item import BaseDetection, BaseForcedPhotometry
 
 from ...models.periodogram import NoPeriodError, Periodogram
 from ..lightcurve_plot_service.result import Result
 
 
-def compute_periodogram(result: Result) -> Result:
+def compute_periodogram(
+    result: Result,
+    member_detections: Sequence[BaseDetection] = (),
+    member_forced_photometry: Sequence[BaseForcedPhotometry] = (),
+) -> Result:
     """Compute periodogram for lightcurve data and update result with period information.
 
     This function computes a periodogram using the lightcurve detections and updates
@@ -21,6 +26,10 @@ def compute_periodogram(result: Result) -> Result:
 
     Args:
         result: The result object containing lightcurve data and configuration
+        member_detections: Detections of other objects of the viewed object's group that the user drew, of
+            any survey, searched together with the object's own. Each survey's band is a band of its own
+            (see band_key), so offsets between surveys don't hide the period.
+        member_forced_photometry: Their forced photometry, only for the ZTF exposure times
 
     Returns:
         A new result object with periodogram data added
@@ -35,7 +44,12 @@ def compute_periodogram(result: Result) -> Result:
         return result
 
     computer = PeriodogramComputer()
-    df = detections2dataframe(filter_survey_detections(result.lightcurve.detections, result.config_state.survey_id))
+    detections = filter_survey_detections(result.lightcurve.detections, result.config_state.survey_id)
+    detections += member_detections
+    forced_photometry = [*result.lightcurve.forced_photometry, *member_forced_photometry]
+    # The times the browser folds on (see core.periodogram.barycentric)
+    times, _ = bjd_tdb_times(detections, forced_photometry, result.config_state.meanra, result.config_state.meandec)
+    df = detections2dataframe(detections, times)
     if df.empty:
         # No corrected detections to compute it from: same empty periodogram as when no period is found
         result.periodogram = Periodogram(periods=[], scores=[], best_periods=[], best_periods_index=[])
@@ -58,6 +72,20 @@ def compute_periodogram(result: Result) -> Result:
         return result
 
 
+SURVEY_BAND_OFFSET = {"ztf": 0, "lsst": 100}
+
+# Smallest magnitude error when the search mixes surveys. Points weigh 1/error², and LSST's errors (photon noise
+# only, a few mmag) would otherwise outweigh ZTF's and pull the period off. One survey alone keeps its errors.
+MIXED_SURVEYS_MIN_ERROR = 0.03
+
+
+def band_key(detection: BaseDetection) -> int:
+    """The band of a detection for the periodogram, one per survey and band: ZTF g and LSST g are different bands
+    (and their numbers overlap: g is 1 in both). The periodogram fits each band around its own mean, so a constant
+    offset between surveys, as their total magnitudes have, doesn't count against a period."""
+    return SURVEY_BAND_OFFSET.get(detection.survey_id.lower(), 0) + detection.band
+
+
 def filter_survey_detections(detections: List[BaseDetection], survey_id: str) -> List[BaseDetection]:
     """Filter detections to include only those from a specific survey.
 
@@ -77,11 +105,12 @@ def filter_survey_detections(detections: List[BaseDetection], survey_id: str) ->
     return [d for d in detections if d.survey_id.lower() == survey_id.lower()]
 
 
-def detections2dataframe(detections: List[BaseDetection]):
+def detections2dataframe(detections: List[BaseDetection], times: Sequence[float | None] | None = None):
     """Convert a list of detections to a pandas DataFrame suitable for periodogram analysis.
 
     The DataFrame contains columns for MJD (Modified Julian Date), brightness (magnitude),
-    brightness error, and filter ID (fid).
+    brightness error, and filter ID (fid). ``times``, one per detection, replace the observed
+    MJDs where given: the BJD_TDB times, as MJDs, so short periods aren't blurred by Earth's orbit.
 
     Total magnitude is used instead of difference, since folded lightcurve also uses corrected magnitudes.
     Detections without a corrected magnitude are left out, as they have no total magnitude to use.
@@ -89,6 +118,9 @@ def detections2dataframe(detections: List[BaseDetection]):
     Detections without a usable magnitude are left out: an uncorrected ZTF detection has no corrected
     magnitude and comes as 0 with error 0, and a single error of 0 gets an infinite weight in the
     periodogram, turning every score into NaN.
+
+    When the detections come from more than one survey, errors below MIXED_SURVEYS_MIN_ERROR are raised to
+    it, so no survey takes over the search by its small errors alone.
 
     Args:
         detections: List of lightcurve detections
@@ -101,23 +133,30 @@ def detections2dataframe(detections: List[BaseDetection]):
         >>> df.columns
         Index(['mjd', 'brightness', 'e_brightness', 'fid'], dtype='object')
     """
-    df_dict = {"mjd": [], "brightness": [], "e_brightness": [], "fid": []}
-    for det in detections:
-        if not det.has_total():
-            continue
-        df_dict["mjd"].append(det.mjd)
-        df_dict["brightness"].append(det.flux2magnitude(True, False))
-        df_dict["e_brightness"].append(det.flux2magnitude_err(True, False))
-        df_dict["fid"].append(det.band)
-    df = pd.DataFrame(df_dict, columns=list(df_dict)).astype(float)
-    df["fid"] = df["fid"].astype(int)
+    times = times if times is not None else [None] * len(detections)
+    rows = [
+        {
+            "mjd": det.mjd if time is None else time,
+            "brightness": det.flux2magnitude(True, False),
+            "e_brightness": det.flux2magnitude_err(True, False),
+            "fid": band_key(det),
+            "survey": det.survey_id.lower(),
+        }
+        for det, time in zip(detections, times)
+        if det.has_total()
+    ]
+    df = pd.DataFrame(rows, columns=["mjd", "brightness", "e_brightness", "fid", "survey"])
+    df = df.astype({"mjd": float, "brightness": float, "e_brightness": float, "fid": int})
     usable = (
         np.isfinite(df["brightness"])
         & (df["brightness"] != 0)
         & np.isfinite(df["e_brightness"])
         & (df["e_brightness"] > 0)
     )
-    return df[usable].reset_index(drop=True)
+    df = df[usable].reset_index(drop=True)
+    if df["survey"].nunique() > 1:
+        df["e_brightness"] = np.maximum(df["e_brightness"], MIXED_SURVEYS_MIN_ERROR)
+    return df.drop(columns="survey")
 
 
 def default_echart_options():

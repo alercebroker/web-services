@@ -28,9 +28,10 @@ from lightcurve_api.api import app
 
 
 @pytest.fixture(scope="session")
-def db_setup():
+def db_setup(wait_for_postgres):
+    # Its own directory as build context: "." would send the whole repo, .venv included, to the Docker daemon.
     with DockerImage(
-        path=".",
+        path="tests/docker",
         dockerfile_path="Dockerfile-psql",
         tag="base-psql:latest",
         clean_up=False,
@@ -45,7 +46,7 @@ def db_setup():
             wait_for_logs(
                 container,
                 "ready to accept connections",
-                timeout=10,
+                timeout=30,
             )
 
             host = container.get_container_host_ip()
@@ -54,6 +55,7 @@ def db_setup():
             os.environ["PSQL_DATABASE"] = "multistream"
             os.environ["PSQL_HOST"] = host
             os.environ["PSQL_PORT"] = str(container.get_exposed_port("5432/tcp"))
+            wait_for_postgres(host, int(os.environ["PSQL_PORT"]))
             db = ApiDatabase()
             db.create_db()
             create_q3c_idx(db)

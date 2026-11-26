@@ -5,15 +5,18 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from toolz import curry, pipe
 
+from core.association import association_enabled, safe_lookup
 from core.config.dependencies import db_dependency
-from core.idmapper.idmapper import parse_oid
+from core.idmapper.idmapper import parse_oid, public_oid
 from core.idmapper.survey_mapper import Survey
+from core.periodogram.barycentric import bjd_tdb_times
 from core.static_files import configure_templates, html_templates
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
 from lightcurve_api.services.lightcurve_plot_service import (
     service as lightcurve_plot_service,
 )
+from lightcurve_api.services import group_service
 from lightcurve_api.services.lightcurve_plot_service.result import Result
 from lightcurve_api.services.lightcurve_plot_service.service import get_periodogram_data
 from lightcurve_api.services.parsers import parse_ztf_dr_detection
@@ -27,6 +30,7 @@ router = APIRouter(prefix="/htmx")
 templates = html_templates("src/lightcurve_api/routes/htmx/templates")
 
 configure_templates(templates, "http://localhost:8001")
+templates.env.filters["mjd_date"] = group_service.mjd_to_date
 
 
 @router.get("/lightcurve", response_class=HTMLResponse)
@@ -50,35 +54,79 @@ def lightcurve(request: Request, oid: str, survey_id: Survey, db: db_dependency)
     # corrected ones.
     not_corrected = not any(d.has_total() for d in detections)
 
+    forced_photometry = result.lightcurve.forced_photometry
+    det_times, fp_times = bjd_tdb_times(
+        detections, forced_photometry, result.config_state.meanra, result.config_state.meandec
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="layout.html.jinja",
         context={
             "request": request,
-            "detections": [lightcurve_plot_service.detection_plot_record(d) for d in detections],
+            "detections": [lightcurve_plot_service.detection_plot_record(d, t) for d, t in zip(detections, det_times)],
             "non_detections": [
                 lightcurve_plot_service.non_detection_plot_record(d) for d in result.lightcurve.non_detections
             ],
             "forced_photometry": [
-                lightcurve_plot_service.forced_photometry_plot_record(d) for d in result.lightcurve.forced_photometry
+                lightcurve_plot_service.forced_photometry_plot_record(d, t) for d, t in zip(forced_photometry, fp_times)
             ],
             "periodogram": result.periodogram.model_dump(),
             "config": config_data,
             "not_corrected": not_corrected,
+            # Chart title: the ZTF name, also when the URL has the numeric id
+            "object_name": public_oid(survey_id, oid),
+            "group": _group_info(oid, survey_id, db.session),
         },
     )
 
 
+def _group_info(oid: str, survey_id: str, session_factory) -> dict | None:
+    """The object's group for the members panel, or None where groups aren't available or the lookup failed:
+    the object's own light curve is shown either way."""
+    if not association_enabled():
+        return None
+    info = safe_lookup(
+        lambda: group_service.get_group_info(oid, survey_id, session_factory), None, f"the group of {survey_id} {oid}"
+    )
+    return info.to_dict() if info else None
+
+
+@router.get("/group_photometry", response_class=JSONResponse)
+def group_photometry(objects: str, db: db_dependency, ra: float | None = None, dec: float | None = None):
+    """Detections and forced photometry of other objects, for the group panel of the light curve.
+
+    ``objects`` is a comma-separated list of ``<survey>:<oid>`` (``ztf:ZTF19aaxlmra,lsst:313853798223069211``),
+    at most 20. Each record carries ``oid``, the object it belongs to. Called by lightcurve-app.js for the
+    members shown by default and for each nearby object the user turns on. ``ra``/``dec``, the viewed object's
+    mean position, give the records' ``bjd_tdb`` the same sky position as the viewed object's own points.
+    """
+    return group_service.get_group_photometry(objects, db.session, ra, dec)
+
+
 @router.get("/periodogram", response_class=JSONResponse)
-def periodogram(oid: str, survey_id: Survey, db: db_dependency):
+def periodogram(
+    oid: str,
+    survey_id: Survey,
+    db: db_dependency,
+    ra: float | None = None,
+    dec: float | None = None,
+    objects: str = "",
+):
     """Compute and return the periodogram for an object on demand.
 
-    Called by lightcurve-app.js the first time the user enables fold mode.
-    Keeping this out of the initial page-load request avoids the heavy
-    Lomb-Scargle computation on every view.
+    Called by lightcurve-app.js the first time the user enables fold mode, and again when the user asks to
+    recompute it for the objects drawn. Keeping this out of the initial page-load request avoids the heavy
+    computation on every view. It runs on the BJD_TDB times of the detections, from the object's mean
+    position ``ra``/``dec`` (else the mean of its detections), the times the browser folds on.
+
+    ``objects``, as in /htmx/group_photometry (``ztf:ZTF19aaxlmra,lsst:313853798223069211``), adds the detections
+    of other objects of its group, the ones drawn on the light curve. Each survey's bands are separate bands of
+    the periodogram.
     """
-    parse_oid(survey_id, oid)
-    pd = get_periodogram_data(oid, survey_id, db.session)
+    viewed = (survey_id.lower(), parse_oid(survey_id, oid))
+    members, members_fp = group_service.load_photometry(objects, db.session, exclude=viewed)
+    pd = get_periodogram_data(oid, survey_id, db.session, ra, dec, members, members_fp)
     payload = pd.model_dump()
     try:
         payload["best_candidate_period"] = pd.get_best_candidate_period()
@@ -127,7 +175,9 @@ def dr_detections(ra: float, dec: float, oids: str = ""):
             params={"ra": ra, "dec": dec, "radius": 1.5},
         ).json()
     detections = parse_ztf_dr_detection(raw, selected)
-    return [lightcurve_plot_service.detection_plot_record(d) for d in detections]
+    # hmjd is already heliocentric: bjd_tdb_times adds only the Sun's offset from the barycentre
+    times, _ = bjd_tdb_times(detections, [], ra, dec)
+    return [lightcurve_plot_service.detection_plot_record(d, t) for d, t in zip(detections, times)]
 
 
 @router.get(

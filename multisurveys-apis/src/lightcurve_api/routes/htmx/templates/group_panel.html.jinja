@@ -1,0 +1,68 @@
+{% import 'toggle.html.jinja' as ui %}
+{#
+  Object group (association): the objects associated with this one, and nearby objects that scored below the
+  threshold. Nothing is drawn until the user turns on "Show on the light curve"; then lightcurve-app.js fetches
+  each checked object's photometry and draws it darker and translucent, in the colors and markers of its
+  survey and band, and in the view (Mag/Flux, Diff/Total) the user chose. Members start
+  checked, nearby objects unchecked. Values are "survey:oid" (see group_service.GroupObject.key).
+  Kept compact for the side panel: one line per object, a second line with the pair's score and distance and
+  the object's detections under "Details", a scroll past about 8 members, the section folded when the object
+  is alone, and the nearby objects always folded.
+#}
+{% macro object_row(obj, checked) %}
+<label class="lc-obj{% if obj.is_self %} lc-obj-self{% endif %}"
+       data-tip="{{ obj.survey_id | upper }} {{ obj.oid }}{% if obj.is_self %}: this object{% endif %}">
+  {% if obj.is_self %}
+  <input type="checkbox" checked disabled>
+  {% else %}
+  <input type="checkbox" name="group.objects[]" value="{{ obj.key }}" {% if checked %}checked{% endif %} disabled>
+  {% endif %}
+  <span class="lc-obj-survey" data-survey="{{ obj.survey_id }}">{{ obj.survey_id | upper }}</span>
+  <span class="lc-obj-id">{{ obj.oid }}</span>
+  {% if obj.is_self %}<span class="lc-obj-score">this</span>{% endif %}
+  <span class="lc-obj-meta">
+    {%- if obj.score is not none -%}
+    <span data-tip="Association score of the pair, from 0 to 1. Objects linked by a score of {{ group.threshold }} or more are in the group.">score {{ '%.3f' | format(obj.score) }}</span>
+    <span data-tip="Distance between the two objects">{{ '%.2f' | format(obj.dist) }}″</span>
+    {%- endif -%}
+    {%- if obj.linked_via -%}
+    <span data-tip="This object has no pair with the one you are viewing: the score and distance are of its pair with {{ obj.linked_via }}">via {{ obj.linked_via }}</span>
+    {%- endif -%}
+    {%- if obj.n_det is not none -%}
+    <span data-tip="Number of detections">{{ obj.n_det }} det</span>
+    <span data-tip="First and last detection (MJD {{ '%.1f' | format(obj.firstmjd) }} to {{ '%.1f' | format(obj.lastmjd) }})">{{ obj.firstmjd | mjd_date }} → {{ obj.lastmjd | mjd_date }}</span>
+    {%- endif -%}
+  </span>
+</label>
+{% endmacro %}
+
+{% set others = group.members | length - 1 %}
+<details id="group-panel" class="lc-section lc-group-off" {% if others > 0 %}open{% endif %}>
+  <summary>
+    <span class="lc-title" data-tip="Objects the association links to this one: other detections of the same astrophysical source, in this or another survey. They are drawn darker and translucent.{% if group.group_id is not none %} Group {{ group.group_id }}, version {{ group.group_version }}.{% endif %}">Associated objects</span>
+    <span class="lc-muted">{{ others + 1 }} object{{ 's' if others else '' }}</span>
+  </summary>
+
+  {% if others or group.nearby %}
+  <div class="lc-group-bar">
+    {{ ui.switch("group.enabled", False, False, "Show on the light curve", "Draw the checked objects in the light curve, darker and translucent, in the current view.") }}
+    <button type="button" class="lc-link" data-group-details aria-expanded="false">Details</button>
+  </div>
+  <!-- What the current Diff/Total view means across surveys; filled by lightcurve-app.js while objects are drawn -->
+  <p id="group-mode-note" class="lc-group-note tw-hidden"></p>
+  {% endif %}
+
+  <div class="lc-objects">
+    {% for obj in group.members %}{{ object_row(obj, True) }}{% endfor %}
+    {% if not others %}
+    <span class="lc-muted">No other object scored {{ group.threshold }} or more.</span>
+    {% endif %}
+  </div>
+
+  {% if group.nearby %}
+  <details>
+    <summary><span class="lc-muted">Nearby, not associated ({{ group.nearby | length }})</span></summary>
+    {% for obj in group.nearby %}{{ object_row(obj, False) }}{% endfor %}
+  </details>
+  {% endif %}
+</details>

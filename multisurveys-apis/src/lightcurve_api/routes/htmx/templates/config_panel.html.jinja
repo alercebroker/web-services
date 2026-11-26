@@ -1,98 +1,78 @@
-{% import 'toggle.html.jinja' as toggle %}
-
-<div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-mb-3"></div>
+{% import 'toggle.html.jinja' as ui %}
 
 <!--
   Config form – all changes are handled client-side by lightcurve-app.js.
   No server POST on change; the form has no action/method.
 -->
-<form id="config-form" class="tw-max-h-fit tw-w-full" autocomplete="off">
+<form id="config-form" autocomplete="off">
 
-  <div class="tw-flex tw-justify-center">
+  {% if group %}{% include "group_panel.html.jinja" %}{% endif %}
+
+  <div class="lc-section">
     {% include "band_toggles.html.jinja" %}
   </div>
 
-  <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
-
-  <div class="tw-flex tw-flex-col tw-items-start tw-gap-y-3">
-
-    <!-- Magnitude / Flux -->
-    {{ toggle.toggle("flux", "Mag", "Flux", config.flux, "Toggle between magnitude and flux.", left_w="3rem", neutral=True) }}
-
-    <!-- Difference / Total -->
-    <div class="tw-flex tw-items-center">
-      {{ toggle.toggle("total", "Diff", "Total", config.total, "Toggle between difference and total (science) magnitude.", left_w="3rem", neutral=True) }}
-      <!-- Shown by JS in Total when some points have no total magnitude and are left out -->
-      <div id="total-hidden-hint" class="tw-hidden tw-relative tw-group tw-ml-2">
-        <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-sm">?</span>
-        <div class="tw-absolute tw-bottom-full tw-right-0 tw-mb-2 tw-hidden group-hover:tw-block tw-z-10">
-          <div id="total-hidden-hint-text" class="tw-bg-gray-900 tw-text-white tw-text-xs tw-rounded tw-py-1 tw-px-2 tw-min-w-[200px] tw-text-balance"></div>
-        </div>
+  <div class="lc-section">
+    <div class="lc-row">
+      {{ ui.label("View", "Magnitude or flux; difference or total (science) magnitude.") }}
+      <div class="lc-ctl">
+        {{ ui.segmented("flux", "Mag", "Flux", config.flux) }}
+        {{ ui.segmented("total", "Diff", "Total", config.total) }}
+        <!-- Shown by JS in Total when some points have no total magnitude and are left out -->
+        <span id="total-hidden-hint" class="lc-hint tw-hidden" tabindex="0">!</span>
       </div>
     </div>
 
-  </div>
-
-  <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
-
-  <!-- External sources -->
-  <div class="tw-flex tw-flex-wrap tw-items-center tw-gap-2">
-    <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">External</span>
-    <div class="tw-flex tw-flex-wrap tw-items-center tw-gap-2">
-    {{ toggle.toggle("external_sources.enabled", "Off", "On", config.external_sources.enabled, "Show light curves from available external sets: ZTF Data Release 24.") }}
-    <button
-      type="button"
-      class="tw-ml-2 tw-h-6 tw-w-6 tw-flex tw-items-center tw-justify-center tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded hover:tw-bg-gray-50 dark:hover:tw-bg-gray-700 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2 dark:focus:tw-ring-offset-gray-800 tw-shrink-0"
-      aria-label="Filter external sources"
-      hx-get="{{ API_URL }}/htmx/external_sources"
-      hx-target="#dr-picker-container"
-      hx-swap="innerHTML"
-      hx-on::after-request="document.getElementById('dr-picker-container').classList.remove('tw-hidden')"
-      hx-vals='{"oid": "{{ config.oid }}", "survey_id": "{{ config.survey_id }}", "meanra": {{ config.meanra }}, "meandec": {{ config.meandec }}}'
-    >
-      <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
-      </svg>
-    </button>
+    <div class="lc-row">
+      {{ ui.label("External", "Show light curves from available external sets: ZTF Data Release 24.") }}
+      <div class="lc-ctl">
+        {{ ui.switch("external_sources.enabled", config.external_sources.enabled) }}
+        <button
+          type="button"
+          class="lc-btn lc-btn-outline lc-btn-icon"
+          aria-label="Filter external sources"
+          data-tip="Choose which ZTF Data Release objects to show"
+          hx-get="{{ API_URL }}/htmx/external_sources"
+          hx-target="#dr-picker-container"
+          hx-swap="innerHTML"
+          hx-on::after-request="document.getElementById('dr-picker-container').classList.remove('tw-hidden')"
+          hx-vals='{"oid": "{{ config.oid }}", "survey_id": "{{ config.survey_id }}", "meanra": {{ config.meanra }}, "meandec": {{ config.meandec }}}'
+        >
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.707A1 1 0 013 7V4z"></path>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 
-  <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
-
-  <div class="tw-mt-2">
+  <div class="lc-section">
     {% include "fold_controls.html.jinja" %}
   </div>
 
-  <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
-
-  <div class="tw-flex tw-flex-col tw-items-start tw-gap-y-2">
-    <div>
-      <span class="tw-font-semibold tw-mr-3 tw-text-gray-900 dark:tw-text-gray-100">Offset</span>
-      {{ toggle.toggle("offset_bands", "Off", "On", config.offset_bands, "Apply a magnitude or flux offset between bands.") }}
-    </div>
-    <div class="tw-flex tw-items-center tw-gap-x-2 tw-mt-2 tw-ml-1">
-      <input name="offset_num" type="range" min="1" max="10" value="{{ config.offset_num }}"
-             class="tw-w-24 tw-h-2 tw-bg-gray-200 tw-rounded-lg tw-appearance-none tw-cursor-pointer dark:tw-bg-gray-700">
-      <select name="offset_metric" class="tw-border tw-border-gray-300 dark:tw-border-gray-600 tw-rounded-md tw-px-2 tw-py-1 tw-text-sm tw-bg-white dark:tw-bg-gray-800 tw-text-gray-900 dark:tw-text-gray-100">
-        <option value="avg"    {% if config.offset_metric == "avg"    %}selected{% endif %}>avg</option>
-        <option value="min"    {% if config.offset_metric == "min"    %}selected{% endif %}>min</option>
-        <option value="max"    {% if config.offset_metric == "max"    %}selected{% endif %}>max</option>
-        <option value="median" {% if config.offset_metric == "median" %}selected{% endif %}>median</option>
-      </select>
+  <div class="lc-section">
+    <div class="lc-row">
+      {{ ui.label("Offset", "Shift the bands apart by a magnitude or flux step, ordered by the chosen statistic.") }}
+      <div class="lc-ctl lc-ctl-nowrap">
+        {{ ui.switch("offset_bands", config.offset_bands) }}
+        <input name="offset_num" type="range" min="1" max="10" value="{{ config.offset_num }}" class="lc-range" aria-label="Offset step">
+        <select name="offset_metric" class="lc-input" aria-label="Offset statistic">
+          <option value="avg"    {% if config.offset_metric == "avg"    %}selected{% endif %}>avg</option>
+          <option value="min"    {% if config.offset_metric == "min"    %}selected{% endif %}>min</option>
+          <option value="max"    {% if config.offset_metric == "max"    %}selected{% endif %}>max</option>
+          <option value="median" {% if config.offset_metric == "median" %}selected{% endif %}>median</option>
+        </select>
+      </div>
     </div>
   </div>
 
-  <div class="tw-w-full tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600 tw-my-3"></div>
-
-  <a
-    href="{{ API_URL }}/htmx/download?oid={{ config.oid }}&survey_id={{ config.survey_id }}"
-    class="tw-flex tw-items-center tw-justify-center tw-gap-2 tw-px-3 tw-py-1.5 tw-bg-blue-600 tw-text-white tw-rounded-md hover:tw-bg-blue-700 dark:hover:tw-bg-blue-800 focus:tw-outline-none focus:tw-ring-2 focus:tw-ring-blue-500 focus:tw-ring-offset-2 dark:focus:tw-ring-offset-gray-800 tw-transition-colors tw-duration-200 tw-text-sm"
-    download
-  >
-    <svg class="tw-w-4 tw-h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-    </svg>
-    Download
-  </a>
+  <div class="lc-section">
+    <a href="{{ API_URL }}/htmx/download?oid={{ config.oid }}&survey_id={{ config.survey_id }}" class="lc-btn lc-btn-block" download>
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+      </svg>
+      Download
+    </a>
+  </div>
 
 </form>

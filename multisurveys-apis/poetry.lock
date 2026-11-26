@@ -1820,25 +1820,6 @@ description = "Periodic light curve analysis tools based on Information Theory"
 optional = false
 python-versions = "*"
 groups = ["main"]
-markers = "sys_platform == \"linux\""
-files = [
-    {file = "P4J-1.2.0-cp311-cp311-linux_x86_64.whl", hash = "sha256:f5c87598e88f2f81b55eec2f79365dae2669294e6a51a1c243c59136f276e134"},
-]
-
-[package.dependencies]
-numpy = ">=1.9.0"
-
-[package.source]
-type = "url"
-url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-linux_x86_64.whl"
-
-[[package]]
-name = "P4J"
-version = "1.2.0"
-description = "Periodic light curve analysis tools based on Information Theory"
-optional = false
-python-versions = "*"
-groups = ["main"]
 markers = "sys_platform == \"darwin\""
 files = [
     {file = "P4J-1.2.0-cp311-cp311-macosx_14_0_x86_64.whl", hash = "sha256:1939e0fe21fe7c499d94bfc12391b9e3206697c5002a9c25434ad7d3060fefa8"},
@@ -1850,6 +1831,25 @@ numpy = ">=1.9.0"
 [package.source]
 type = "url"
 url = "https://github.com/alercebroker/pipeline/releases/download/P4J-24.3.1/P4J-1.2.0-cp311-cp311-macosx_14_0_x86_64.whl"
+
+[[package]]
+name = "P4J"
+version = "1.2.1"
+description = "Periodic light curve analysis tools based on Information Theory"
+optional = false
+python-versions = "*"
+groups = ["main"]
+markers = "sys_platform == \"linux\""
+files = [
+    {file = "p4j-1.2.1-cp311-cp311-linux_x86_64.whl", hash = "sha256:5e1d62e4c3222ea6fa176a72b05236e3a588d6653b52248acd0e4fb2f87119bb"},
+]
+
+[package.dependencies]
+numpy = ">=1.9.0"
+
+[package.source]
+type = "url"
+url = "https://github.com/alercebroker/pipeline/releases/download/P4J-1.2.1/p4j-1.2.1-cp311-cp311-linux_x86_64.whl"
 
 [[package]]
 name = "packaging"
@@ -3794,4 +3794,4 @@ dev = ["pytest", "setuptools"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11,<3.12"
-content-hash = "7132f5bba732405ad15b21e5c7e0cc3f2eb840a69c5993e93fe34e1f04aafeb0"
+content-hash = "28ed075ed06d663cb4e5b31aa8e03865bf4c8a52b64c8159936af3b56b527820"

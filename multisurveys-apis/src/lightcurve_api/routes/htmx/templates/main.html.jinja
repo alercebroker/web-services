@@ -1,10 +1,11 @@
-<div class="tw-relative tw-grid tw-grid-cols-12 tw-h-full tw-bg-white dark:tw-bg-[#1e1e1e]">
+<!-- Layout in static/lightcurve-panel.css: stacked on phones, chart + 270px side panel and 500px high from 768px -->
+<div class="lc-widget tw-relative tw-bg-white dark:tw-bg-[#1e1e1e]">
 
   <!-- External sources picker overlay – populated by HTMX on demand -->
   <div id="dr-picker-container" class="tw-hidden tw-absolute tw-inset-0 tw-z-50 tw-bg-white dark:tw-bg-[#1e1e1e] tw-overflow-auto tw-p-4">
   </div>
 
-  <div class="tw-col-span-full tw-order-first tw-h-full md:tw-col-span-9 md:tw-order-none">
+  <div class="lc-main">
 
     <!-- Warning shown by JS when corrected magnitudes are unavailable in Total mode -->
     <div id="not-corrected-warning" class="tw-hidden tw-h-full tw-flex tw-items-center tw-justify-center">
@@ -20,6 +21,10 @@
       <div id="fold-loading" class="tw-hidden tw-absolute tw-inset-0 tw-z-40 tw-flex tw-items-center tw-justify-center tw-bg-white/70 dark:tw-bg-[#1e1e1e]/70">
         <span class="tw-text-gray-500 dark:tw-text-gray-400 tw-animate-pulse">Computing period…</span>
       </div>
+
+      <!-- Small note over the chart while something it will draw is on its way (lightcurve-app.js, updateChartStatus):
+           the associated objects' photometry, or a new period. It doesn't cover the chart. -->
+      <div id="chart-status" class="lc-chart-status lc-pulse tw-hidden" role="status" aria-live="polite"></div>
 
       <!-- Shown by JS when fold is on but no period could be found, until the user types one -->
       <div id="fold-no-period" class="tw-hidden tw-absolute tw-inset-0 tw-z-40 tw-flex tw-items-center tw-justify-center tw-px-4">
@@ -41,7 +46,7 @@
 
   </div>
 
-  <div class="tw-col-span-full tw-order-last tw-py-4 tw-text-center tw-mx-3 md:tw-col-span-3 md:tw-order-none">
+  <div class="lc-side">
     {% include "config_panel.html.jinja" %}
   </div>
 

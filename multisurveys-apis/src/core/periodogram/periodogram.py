@@ -61,8 +61,12 @@ class PeriodogramComputer:
         # trim_lightcurve walks the times in order: unsorted, it keeps the whole light curve.
         trimmed_lightcurve = self.trim_lightcurve(lightcurve.sort_values("mjd", kind="stable"))
 
+        # Times from the first day rather than MJD 0: P4J builds that fold in 32-bit floats (1.2.0, still the macOS
+        # wheel) lose much less precision. Shifting the times doesn't change the periods.
+        mjds = np.array(trimmed_lightcurve.mjd)
+        reference_day = np.floor(mjds.min()) if len(mjds) else 0.0
         self.periodogram_computer.set_data(
-            mjds=np.array(trimmed_lightcurve.mjd),
+            mjds=mjds - reference_day,
             mags=np.array(trimmed_lightcurve.brightness),
             errs=np.array(trimmed_lightcurve.e_brightness),
             fids=np.array(trimmed_lightcurve.fid),

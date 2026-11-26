@@ -1,80 +1,63 @@
-{# Reusable row macro: fixed-width label column + checkbox group #}
-{% macro band_row(label, tooltip) %}
-<div class="tw-relative tw-group tw-flex tw-items-center tw-gap-1 tw-w-16 tw-shrink-0">
-  <span class="tw-cursor-help tw-text-gray-400 hover:tw-text-gray-600 dark:hover:tw-text-gray-300 tw-text-xs">?</span>
-  <div class="tw-absolute tw-top-full tw-left-0 tw-mt-1 tw-hidden group-hover:tw-block tw-z-10">
-    <div class="tw-bg-gray-900 tw-text-white tw-text-xs tw-min-w-[200px] tw-rounded tw-py-1 tw-px-2 tw-text-balance">{{ tooltip }}</div>
-  </div>
-  <span class="tw-font-semibold tw-text-gray-900 dark:tw-text-gray-100 tw-text-sm">{{ label }}</span>
-</div>
-{% endmacro %}
+{#
+  Bands and data types. The chips double as the chart's legend: each band chip takes the color of its
+  series (set by lightcurve-app.js from its COLORS table), and each type chip shows the markers it is
+  drawn with (SYMBOLS in lightcurve-app.js).
+#}
+{% import 'toggle.html.jinja' as ui %}
 
-{# Reusable checkbox macro #}
-{% macro cb(name, value, checked) %}
-<label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
-  <input type="checkbox" name="{{ name }}" value="{{ value }}" {% if checked %}checked{% endif %} class="tw-cursor-pointer">
-  <span class="tw-text-gray-900 dark:tw-text-gray-100">{{ value }}</span>
+{% macro band_chip(name, survey, band, checked) -%}
+<label class="lc-chip lc-band" data-survey="{{ survey }}" data-band="{{ band }}">
+  <input type="checkbox" name="{{ name }}" value="{{ band }}" class="lc-sr" {% if checked %}checked{% endif %}>
+  <span>{{ band }}</span>
 </label>
-{% endmacro %}
+{%- endmacro %}
 
-<div class="tw-flex tw-flex-col tw-gap-2">
+{% macro marker(shape, title) -%}
+<svg class="lc-marker" viewBox="0 0 10 10" role="img" aria-label="{{ title }}"><title>{{ title }}</title>
+  {%- if shape == 'circle' %}<circle cx="5" cy="5" r="4.5" fill="currentColor"/>
+  {%- elif shape == 'roundRect' %}<rect x="0.5" y="0.5" width="9" height="9" rx="2.5" fill="currentColor"/>
+  {%- elif shape == 'square' %}<rect x="0.5" y="0.5" width="9" height="9" fill="currentColor"/>
+  {%- elif shape == 'diamond' %}<path d="M5 0 L10 5 L5 10 L0 5 Z" fill="currentColor"/>
+  {%- elif shape == 'triangle' %}<path d="M0 1 H10 L5 10 Z" fill="currentColor"/>
+  {%- elif shape == 'openTriangleDown' %}<path d="M1 1.5 H9 L5 9 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+  {%- elif shape == 'openTriangleUp' %}<path d="M1 8.5 H9 L5 1 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+  {%- endif %}</svg>
+{%- endmacro %}
 
-  <!-- ZTF bands -->
-  <div class="tw-flex tw-items-center tw-gap-x-3">
-    {{ band_row("ZTF", "Toggle individual ZTF bands in the light curve.") }}
-    <div class="tw-grid tw-grid-cols-3 tw-gap-2">
-      {{ cb("bands.ztf[]", "g", 'g' in config.bands.ztf) }}
-      {{ cb("bands.ztf[]", "r", 'r' in config.bands.ztf) }}
-      {{ cb("bands.ztf[]", "i", 'i' in config.bands.ztf) }}
-    </div>
+{% macro type_chip(value, text, checked, markers) -%}
+<label class="lc-chip lc-type">
+  <input type="checkbox" name="data_types[]" value="{{ value }}" class="lc-sr" {% if checked %}checked{% endif %}>
+  <span>{% for shape, title in markers %}{{ marker(shape, title) }}{% endfor %}{{ text }}</span>
+</label>
+{%- endmacro %}
+
+<div class="lc-row">
+  {{ ui.label("ZTF", "ZTF bands. Each chip has the color of its points, the same as the band's in LSST.") }}
+  <div class="lc-ctl">
+    {% for b in ['g','r','i'] %}{{ band_chip("bands.ztf[]", "ztf", b, b in config.bands.ztf) }}{% endfor %}
   </div>
+</div>
 
-  <!-- LSST bands (6 bands in a fixed 3-column grid: u g r / i z y) -->
-  <div class="tw-flex tw-items-start tw-gap-x-3">
-    <div class="tw-mt-0.5">
-      {{ band_row("LSST", "Toggle individual LSST bands in the light curve.") }}
-    </div>
-    <div class="tw-grid tw-grid-cols-3 tw-gap-2">
-      {% for b in ['u','g','r','i','z','y'] %}
-      <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
-        <input type="checkbox" name="bands.lsst[]" value="{{ b }}" {% if b in config.bands.lsst %}checked{% endif %} class="tw-cursor-pointer">
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">{{ b }}</span>
-      </label>
-      {% endfor %}
-    </div>
+<div class="lc-row">
+  {{ ui.label("LSST", "LSST bands. Each chip has the color of its points, the same as the band's in ZTF.") }}
+  <div class="lc-ctl">
+    {% for b in ['u','g','r','i','z','y'] %}{{ band_chip("bands.lsst[]", "lsst", b, b in config.bands.lsst) }}{% endfor %}
   </div>
+</div>
 
-  <!-- ZTF DR bands (shown only when external sources enabled) -->
-  <div class="tw-flex tw-items-center tw-gap-x-3 ztf-dr-bands-row {% if not config.external_sources.enabled %}tw-hidden{% endif %}">
-    {{ band_row("ZTF DR", "Toggle individual ZTF Data Release bands in the light curve.") }}
-    <div class="tw-grid tw-grid-cols-3 tw-gap-2">
-      {{ cb("bands.ztf_dr[]", "g", 'g' in config.bands.ztf_dr) }}
-      {{ cb("bands.ztf_dr[]", "r", 'r' in config.bands.ztf_dr) }}
-      {{ cb("bands.ztf_dr[]", "i", 'i' in config.bands.ztf_dr) }}
-    </div>
+<!-- ZTF DR bands (shown only when external sources are on) -->
+<div class="lc-row ztf-dr-bands-row {% if not config.external_sources.enabled %}tw-hidden{% endif %}">
+  {{ ui.label("ZTF DR", "ZTF Data Release bands.") }}
+  <div class="lc-ctl">
+    {% for b in ['g','r','i'] %}{{ band_chip("bands.ztf_dr[]", "ztf dr", b, b in config.bands.ztf_dr) }}{% endfor %}
   </div>
+</div>
 
-  <div class="tw-h-px tw-bg-gray-200 dark:tw-bg-gray-600"></div>
-
-  <!-- Data types (det / lim. mag / f. phot) -->
-  <div class="tw-flex tw-items-start tw-gap-x-3">
-    <div class="tw-mt-0.5">
-      {{ band_row("Type", "Toggle detections, limiting magnitudes, and forced photometry points.") }}
-    </div>
-    <div class="tw-flex tw-flex-wrap tw-gap-x-4 tw-gap-y-1">
-      <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
-        <input type="checkbox" name="data_types[]" value="detections" {% if 'detections' in config.data_types %}checked{% endif %} class="tw-cursor-pointer">
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">det</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
-        <input type="checkbox" name="data_types[]" value="non_detections" {% if 'non_detections' in config.data_types %}checked{% endif %} class="tw-cursor-pointer">
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">lim. mag</span>
-      </label>
-      <label class="tw-flex tw-items-center tw-gap-1 tw-text-sm tw-cursor-pointer">
-        <input type="checkbox" name="data_types[]" value="forced_photometry" {% if 'forced_photometry' in config.data_types %}checked{% endif %} class="tw-cursor-pointer">
-        <span class="tw-text-gray-900 dark:tw-text-gray-100">f. phot</span>
-      </label>
-    </div>
+<div class="lc-row">
+  {{ ui.label("Type", "Detections, limiting magnitudes and forced photometry. Color is the band and the marker the survey. Detections are filled squares for ZTF and circles for LSST; forced photometry is a hollow triangle, pointing down for ZTF and up for LSST; limiting magnitudes are filled faint triangles.") }}
+  <div class="lc-ctl">
+    {{ type_chip("detections", "det", 'detections' in config.data_types, [("square", "ZTF"), ("circle", "LSST")]) }}
+    {{ type_chip("non_detections", "lim. mag", 'non_detections' in config.data_types, [("triangle", "ZTF")]) }}
+    {{ type_chip("forced_photometry", "f. phot", 'forced_photometry' in config.data_types, [("openTriangleDown", "ZTF"), ("openTriangleUp", "LSST")]) }}
   </div>
-
 </div>

@@ -11,7 +11,8 @@ export function draw(source, canvasCtx, viewParams) {
       false
     )
     canvasCtx.closePath()
-    canvasCtx.strokeStyle = '#c38'
+    // Members of the viewed object's association group in teal, the other objects in magenta.
+    canvasCtx.strokeStyle = source.data.associated ? '#2bb' : '#c38'
     canvasCtx.lineWidth = 3
     canvasCtx.globalAlpha = 0.7
     canvasCtx.stroke()
@@ -24,6 +25,15 @@ export function draw(source, canvasCtx, viewParams) {
     canvasCtx.globalAlpha = 1
     const xShift = 20
     canvasCtx.font = '15px Arial'
+    // Group members are usually within an arcsecond of each other and of the viewed object, so their
+    // names go on the left of the marker, one line each (label_row, from create_source), in teal.
+    if (source.data.associated) {
+      canvasCtx.fillStyle = '#2bb'
+      canvasCtx.textAlign = 'right'
+      canvasCtx.fillText(source.data.name, source.x - xShift, source.y - 4 + 16 * source.data.label_row)
+      canvasCtx.textAlign = 'left'
+      return
+    }
     canvasCtx.fillStyle = '#eee'
     canvasCtx.fillText(source.data.name, source.x + xShift, source.y - 4)
     // object type is displayed only if fov<2°

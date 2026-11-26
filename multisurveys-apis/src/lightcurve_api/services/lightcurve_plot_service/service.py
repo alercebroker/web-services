@@ -5,7 +5,7 @@ from core.repository.queries.objects import query_object_by_id
 import lightcurve_api.services.lightcurve_plot_service.plots_utils as plots_utils
 from collections import defaultdict
 from itertools import chain
-from typing import Callable, ContextManager, List, Dict, Any, Tuple
+from typing import Callable, ContextManager, List, Dict, Any, Sequence, Tuple
 
 import httpx
 from lightcurve_api.models.periodogram import Periodogram
@@ -224,7 +224,7 @@ def default_echarts_options(config_state: ConfigState):
     }
 
 
-def detection_plot_record(det: BaseDetection) -> dict:
+def detection_plot_record(det: BaseDetection, bjd_tdb: float | None = None) -> dict:
     """Compact, render-ready record for one detection.
 
     Carries the band as a resolved name and every flux/total variant precomputed by
@@ -240,10 +240,11 @@ def detection_plot_record(det: BaseDetection) -> dict:
         "objectid": getattr(det, "objectid", None),
         "field": getattr(det, "field", None),
         "variants": det.plot_variants(),
+        "bjd_tdb": bjd_tdb,
     }
 
 
-def forced_photometry_plot_record(fphot: BaseForcedPhotometry) -> dict:
+def forced_photometry_plot_record(fphot: BaseForcedPhotometry, bjd_tdb: float | None = None) -> dict:
     """Compact, render-ready record for one forced-photometry point. See detection_plot_record."""
     return {
         "survey_id": fphot.survey_id,
@@ -252,6 +253,7 @@ def forced_photometry_plot_record(fphot: BaseForcedPhotometry) -> dict:
         "measurement_id": getattr(fphot, "measurement_id", None),
         "field": getattr(fphot, "field", None),
         "variants": fphot.plot_variants(),
+        "bjd_tdb": bjd_tdb,
     }
 
 
@@ -286,24 +288,29 @@ def get_lightcurve_data(oid: str, survey_id: str, session_factory: Callable[...,
 
 
 def get_periodogram_data(
-    oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]
+    oid: str,
+    survey_id: str,
+    session_factory: Callable[..., ContextManager[Session]],
+    ra: float | None = None,
+    dec: float | None = None,
+    member_detections: Sequence[BaseDetection] = (),
+    member_forced_photometry: Sequence[BaseForcedPhotometry] = (),
 ) -> Periodogram:
     """Compute the periodogram for an object on demand.
 
     Called by the /htmx/periodogram endpoint when the user first enables fold
     mode, keeping heavy LSomb-Scargle computation out of the initial page load.
+    ``ra``/``dec`` is the object's mean position, for the BJD_TDB times (see compute_periodogram).
+    ``member_*`` is the photometry of other objects of its group, searched together with its own.
     """
     empty = Result(
         {},
         Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
-        config_state=ConfigState(oid=oid, survey_id=survey_id, fold=True),
+        config_state=ConfigState(oid=oid, survey_id=survey_id, fold=True, meanra=ra, meandec=dec),
         periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
-    result = pipe(
-        get_lightcurve(empty, oid, survey_id, session_factory),
-        compute_periodogram,
-    )
-    return result.periodogram
+    result = get_lightcurve(empty, oid, survey_id, session_factory)
+    return compute_periodogram(result, member_detections, member_forced_photometry).periodogram
 
 
 def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:

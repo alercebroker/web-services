@@ -58,6 +58,16 @@ def parse_oid(survey: str | None, oid: str | int) -> int:
     return OID_PARSERS[survey](str(oid).strip())
 
 
+def public_oid(survey: str | None, oid: str | int) -> str:
+    """The id people know an object by: the ZTF name (``ZTF18aarwvbm``) even when the request sent the
+    numeric id, or the oid as given for other surveys. Raises ValueError like ``parse_oid``.
+    """
+    master_id = parse_oid(survey, oid)
+    if (DEFAULT_SURVEY if survey is None else survey.lower()) == "ztf":
+        return decode_masterid(master_id)[1]
+    return str(oid).strip()
+
+
 def encode_ids(survey, oids):
     return [parse_oid(survey, oid) for oid in oids]
 

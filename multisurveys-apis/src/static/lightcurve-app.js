@@ -29,7 +29,7 @@ let config;
 let periodogramLoading = false;
 // Outcome of the last periodogram fetch that brought no periods: 'empty' or 'failed'.
 let periodogramStatus = null;
-// True once the user has manually changed the period (slider / input / X2 / /2 /
+// True once the user has manually changed the period (input / step buttons / X2 / /2 /
 // periodogram click). Once set, we stop overriding the period with the periodogram's
 // best candidate.
 let periodUserModified = false;
@@ -38,6 +38,17 @@ let periodUserModified = false;
 let settingPeriodProgrammatically = false;
 // ZTF Data-Release detections loaded on demand (external sources feature).
 let drDetections = [];
+// Object group (association): the members and nearby objects listed in the config panel, or null.
+let groupInfo = null;
+// Photometry of other objects of the group, fetched on demand: key "survey:oid" → { detections, forcedPhotometry }.
+let groupPhot = new Map();
+// Keys being fetched right now, so a second change doesn't fetch them twice.
+let groupLoading = new Set();
+// Other objects the current periodogram was searched on, besides the viewed one: their sorted keys. Compared with
+// the objects drawn now to offer "Recompute" (updatePeriodSource).
+let periodogramObjects = [];
+// Incremented by loadState(): a fetch that finds it changed answers for an object that is no longer shown.
+let loadGeneration = 0;
 
 // Load (or reload) all per-object state from the data the layout template embedded.
 // Called by boot() on first load and again on every HTMX swap of a new object.
@@ -54,33 +65,74 @@ function loadState() {
     periodUserModified            = false;
     settingPeriodProgrammatically = false;
     drDetections                  = [];
+    groupInfo                     = data.group ?? null;
+    groupPhot                     = new Map();
+    groupLoading                  = new Set();
+    periodogramObjects            = [];
+    loadGeneration               += 1;
+    // Nothing of the group is drawn until the user turns on "Show on the light curve".
+    config.group_selected         = [];
 }
 
 // Bound to `document` exactly once per page (see init()); survives re-inits.
 let documentListenersBound = false;
 
 // ─── Visual constants ─────────────────────────────────────────────────────────
-const COLORS = {
-    'ztf':    { g: '#56E03A', r: '#D42F4B', i: '#F4D617' },
-    'lsst':   { u: '#56B4E9', g: '#009E73', r: '#D55E00', i: '#E69F00', z: '#CC79A7', y: '#0072B2' },
-    'ztf dr': { g: '#ADA3A3', r: '#377EB8', i: '#FF7F00' },
-    'empty':  { empty: '#00CBFF' },
-};
+// Color says the band and the marker says the survey (SYMBOLS), as in the experimental explorer: g is
+// the same green in ZTF and LSST, so the two surveys of a band read as one curve.
+const BAND_COLORS = { u: '#56B4E9', g: '#009E73', r: '#D55E00', i: '#E69F00', z: '#CC79A7', y: '#0072B2' };
+
+function bandColor(band) {
+    return BAND_COLORS[band] ?? '#888888';
+}
+
+// Same font as the Explorer and the side panel (static/lightcurve-panel.css)
+const CHART_FONT = 'Roboto, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif';
 
 const NDL_SYMBOL =
     'path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,' +
     '11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z';
 
+// Detections are filled: squares for ZTF, circles for LSST. Forced photometry is a hollow triangle, pointing
+// down for ZTF and up for LSST (SYMBOL_ROTATE). ZTF DR points are small faint hollow squares.
 const SYMBOLS = {
-    'ztf':    { det: 'circle',   'lim. mag': NDL_SYMBOL, 'f. phot': 'square' },
-    'lsst':   { det: 'roundRect',                         'f. phot': 'diamond' },
-    'ztf dr': { det: 'circle',   'lim. mag': NDL_SYMBOL, 'f. phot': 'square' },
-    'empty':  { empty: 'none' },
+    'ztf':    { det: 'rect',   'lim. mag': NDL_SYMBOL, 'f. phot': 'triangle' },
+    'lsst':   { det: 'circle',                         'f. phot': 'triangle' },
+    'ztf dr': { det: 'rect',   'lim. mag': NDL_SYMBOL, 'f. phot': 'triangle' },
 };
+const SYMBOL_ROTATE = { 'ztf': { 'f. phot': 180 }, 'ztf dr': { 'f. phot': 180 } };
+const HOLLOW = new Set(['f. phot']);
+
+// Other objects of the group are drawn darker and translucent, so the object being viewed stands out.
+const MEMBER_DARKEN  = 0.7;
+const MEMBER_OPACITY = 0.5;
+
+function hexToRgb(hex) {
+    return [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+}
+
+function darken(hex, factor) {
+    return '#' + hexToRgb(hex).map(v => Math.round(v * factor).toString(16).padStart(2, '0')).join('');
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function phase(mjd, period) {
     return (mjd % period) / period;
+}
+
+// ─── Fold times ───────────────────────────────────────────────────────────────
+// The server sends each point's BJD_TDB (`bjd_tdb`): the time at the Solar System barycentre, on one clock and
+// at mid-exposure, whatever the survey (core/periodogram/barycentric.py). Folding on the observed MJD instead
+// blurs short periods by up to ±8.3 min over the year (Earth's orbit) and shifts ZTF from LSST by about 52 s;
+// ZTF DR points come heliocentric already. The periodogram uses the same times. The fold uses BJD_TDB only when
+// every point drawn has it, else the observed MJD for all: never a mix of the two.
+function foldsOnBjd(cfg) {
+    if (!cfg.fold) return false;
+    return [...drawnDetections(cfg), ...drawnForcedPhotometry(cfg)].every(p => Number.isFinite(p.bjd_tdb));
+}
+
+function xValue(point, cfg, foldOnBjd) {
+    return cfg.fold ? phase(foldOnBjd ? point.bjd_tdb : point.mjd, cfg.period) : point.mjd;
 }
 
 function isDark() {
@@ -119,24 +171,45 @@ function validPoint(y, surveyId, cfg) {
 }
 
 // ─── ECharts series factories ─────────────────────────────────────────────────
-function makeSeries(type, survey, band, data) {
-    const sk = survey.toLowerCase();
+// Each point is a data item { value: [x, y], point }, where `point` holds what the tooltip shows: its type
+// (`kind`), survey, band and object, error, sign, observed MJD, BJD_TDB (only when the fold uses it),
+// measurement id, field, and the band offset applied to y. Points of other objects of the group go in series
+// of their own (`member`), drawn darker and translucent, with the same name as the viewed object's series of
+// that survey, type and band, so the band offset and the legend treat them as one.
+function seriesColor(band, member) {
+    const color = bandColor(band);
+    return member ? darken(color, MEMBER_DARKEN) : color;
+}
+
+function makeSeries(type, survey, band, data, member = false) {
+    const sk     = survey.toLowerCase();
+    const color  = seriesColor(band, member);
+    const dr     = sk === 'ztf dr';
+    const hollow = HOLLOW.has(type) || dr;
     return {
         name:       `${type} ${survey.toUpperCase()}: ${band}`,
         type:       'scatter',
         data,
-        color:      COLORS[sk]?.[band] ?? '#888888',
-        symbol:     SYMBOLS[sk]?.[type]  ?? 'circle',
-        symbolSize: 9,
-        survey:     sk,
-        z:          sk === 'ztf dr' ? 2 : 10,
+        color,
+        itemStyle:  {
+            color:       hollow ? 'rgba(0,0,0,0)' : color,
+            borderColor: color,
+            borderWidth: hollow ? 1.5 : 0,
+            opacity:     member ? MEMBER_OPACITY : dr ? 0.6 : 1,
+        },
+        symbol:       SYMBOLS[sk]?.[type]  ?? 'circle',
+        symbolRotate: SYMBOL_ROTATE[sk]?.[type] ?? 0,
+        symbolSize:   dr ? 6 : 8,
+        survey:       sk,
+        z:            dr ? 2 : member ? 5 : 10,
         band,
+        member,
     };
 }
 
-function makeErrorBarSeries(type, survey, band, errData) {
+function makeErrorBarSeries(type, survey, band, errData, member = false) {
     const sk    = survey.toLowerCase();
-    const color = COLORS[sk]?.[band] ?? '#888888';
+    const color = seriesColor(band, member);
     const name  = `${type} ${survey.toUpperCase()}: ${band}`;
 
     let minPt = null, maxPt = null;
@@ -157,78 +230,108 @@ function makeErrorBarSeries(type, survey, band, errData) {
                 { coord: [p[0], p[1]], symbol: 'none' },
                 { coord: [p[0], p[2]], symbol: 'none' },
             ]),
-            lineStyle: { color, type: 'solid' },
+            lineStyle: { color, type: 'solid', opacity: member ? MEMBER_OPACITY : 1 },
         },
         error_bar:      true,
         min_plot_error: minPt,
         max_plot_error: maxPt,
         survey:         sk,
         band,
+        member,
     };
 }
 
 // ─── Point grouping ───────────────────────────────────────────────────────────
+// One group per survey, band and whether the points are of another member of the group.
 function groupByBand(points) {
     const g = {};
-    for (const { survey, band, pt } of points) {
-        (g[survey] ??= {})[band] ??= [];
-        g[survey][band].push(pt);
+    for (const { survey, band, pt, member = false } of points) {
+        (g[`${survey}|${band}|${member}`] ??= { survey, band, member, data: [] }).data.push(pt);
     }
-    return g;
+    return Object.values(g);
 }
 
 function groupedToSeries(type, grouped, grouped_err) {
+    return [
+        ...grouped.map(g => makeSeries(type, g.survey, g.band, g.data, g.member)),
+        ...grouped_err.map(g => makeErrorBarSeries(type, g.survey, g.band, g.data, g.member)),
+    ];
+}
+
+// ─── Series builders ──────────────────────────────────────────────────────────
+// Points of the other objects of the group that are switched on and already fetched.
+function groupPoints(kind, cfg) {
     const out = [];
-    for (const [surv, bands] of Object.entries(grouped)) {
-        for (const [band, data] of Object.entries(bands)) {
-            out.push(makeSeries(type, surv, band, data));
-        }
-    }
-    for (const [surv, bands] of Object.entries(grouped_err)) {
-        for (const [band, data] of Object.entries(bands)) {
-            out.push(makeErrorBarSeries(type, surv, band, data));
-        }
+    for (const key of cfg.group_selected ?? []) {
+        const phot = groupPhot.get(key);
+        if (phot) out.push(...phot[kind]);
     }
     return out;
 }
 
-// ─── Series builders ──────────────────────────────────────────────────────────
-function buildDetectionSeries(cfg) {
-    if (!(cfg.data_types ?? ['detections']).includes('detections')) return [];
-    const all     = [...rawDetections, ...(cfg.external_sources?.enabled ? drDetections : [])];
-    const maxErr  = cfg.flux ? 99_999 : 1;
-    const pts     = [], errPts = [];
+// Everything drawn of each type: the object's own points, the group's and the ZTF data release's.
+function drawnDetections(cfg) {
+    return [
+        ...rawDetections,
+        ...groupPoints('detections', cfg),
+        ...(cfg.external_sources?.enabled ? drDetections : []),
+    ];
+}
 
-    for (const det of all) {
-        const survey = det.survey_id.toLowerCase();
-        const bn     = det.band;
+function drawnForcedPhotometry(cfg) {
+    return [...rawForcedPhotometry, ...groupPoints('forcedPhotometry', cfg)];
+}
 
-        if (survey === 'ztf'    && !cfg.bands.ztf.includes(bn))    continue;
-        if (survey === 'lsst'   && !cfg.bands.lsst.includes(bn))   continue;
-        if (survey === 'ztf dr' && !cfg.bands.ztf_dr.includes(bn)) continue;
+const BAND_SETTINGS = { 'ztf': 'ztf', 'lsst': 'lsst', 'ztf dr': 'ztf_dr' };
 
-        const v = pointValue(det, cfg);
+function bandShown(survey, band, cfg) {
+    const shown = cfg.bands[BAND_SETTINGS[survey]];
+    return !shown || shown.includes(band);
+}
+
+// Detections and forced photometry: a point and an error bar per measurement, twice when folded (at the phase
+// and one cycle later).
+function buildMeasurementSeries(kind, items, cfg, foldOnBjd) {
+    const maxErr = cfg.flux ? 99_999 : 1;
+    const pts = [], errPts = [];
+
+    for (const item of items) {
+        const survey = item.survey_id.toLowerCase();
+        if (!bandShown(survey, item.band, cfg)) continue;
+
+        const v = pointValue(item, cfg);
         if (!v || !validPoint(v.y, survey, cfg)) continue;
 
-        const x       = cfg.fold ? phase(det.mjd, cfg.period) : det.mjd;
-        const capped  = Math.min(v.err, maxErr);
-        const measId  = det.measurement_id ?? null;
-        const objId   = det.objectid       ?? null;
-        const field   = det.field          ?? null;
-
-        const ptArr  = [x, v.y, measId, objId, field, capped, v.sign ?? '+'];
-        const errArr = [x, v.y - capped, v.y + capped];
-
-        pts.push(   { survey: det.survey_id, band: bn, pt: ptArr  });
-        errPts.push({ survey: det.survey_id, band: bn, pt: errArr });
-
-        if (cfg.fold) {
-            pts.push(   { survey: det.survey_id, band: bn, pt: [x + 1, ...ptArr.slice(1)]  });
-            errPts.push({ survey: det.survey_id, band: bn, pt: [x + 1, errArr[1], errArr[2]] });
+        const x      = xValue(item, cfg, foldOnBjd);
+        const err    = Math.min(v.err, maxErr);
+        const member = item.oid != null;
+        const point  = {
+            kind, survey, band: item.band,
+            object:        item.oid ?? item.objectid ?? null,
+            err,
+            sign:          v.sign ?? '+',
+            mjd:           item.mjd,
+            bjd:           foldOnBjd ? item.bjd_tdb : null,
+            measurementId: item.measurement_id ?? null,
+            field:         item.field ?? null,
+        };
+        for (const px of cfg.fold ? [x, x + 1] : [x]) {
+            pts.push(   { survey: item.survey_id, band: item.band, member, pt: { value: [px, v.y], point } });
+            errPts.push({ survey: item.survey_id, band: item.band, member, pt: [px, v.y - err, v.y + err] });
         }
     }
 
-    return groupedToSeries('det', groupByBand(pts), groupByBand(errPts));
+    return groupedToSeries(kind, groupByBand(pts), groupByBand(errPts));
+}
+
+function buildDetectionSeries(cfg, foldOnBjd) {
+    if (!(cfg.data_types ?? ['detections']).includes('detections')) return [];
+    return buildMeasurementSeries('det', drawnDetections(cfg), cfg, foldOnBjd);
+}
+
+function buildForcedPhotSeries(cfg, foldOnBjd) {
+    if (!(cfg.data_types ?? ['forced_photometry']).includes('forced_photometry')) return [];
+    return buildMeasurementSeries('f. phot', drawnForcedPhotometry(cfg), cfg, foldOnBjd);
 }
 
 function buildNonDetectionSeries(cfg) {
@@ -240,61 +343,21 @@ function buildNonDetectionSeries(cfg) {
     const pts = [];
     for (const nd of rawNonDetections) {
         const survey = nd.survey_id.toLowerCase();
-        const bn     = nd.band;
-
-        if (survey === 'ztf'    && !cfg.bands.ztf.includes(bn))    continue;
-        if (survey === 'ztf dr' && !cfg.bands.ztf_dr.includes(bn)) continue;
+        if (!bandShown(survey, nd.band, cfg)) continue;
 
         const y = nd.mag;
         if (!validPoint(y, survey, cfg)) continue;
 
-        pts.push({ survey: nd.survey_id, band: bn, pt: [nd.mjd, y, null, null, null, 0, '+'] });
+        const point = { kind: 'lim. mag', survey, band: nd.band, object: null, err: 0, sign: '+', mjd: nd.mjd, bjd: null };
+        pts.push({ survey: nd.survey_id, band: nd.band, pt: { value: [nd.mjd, y], point } });
     }
 
-    const out = [];
-    for (const [surv, bands] of Object.entries(groupByBand(pts))) {
-        for (const [band, data] of Object.entries(bands)) {
-            // Fainter than the detections (ECharts' default 0.8), as in alerce.online, which drew
-            // them in a 50% transparent band color: 0.5 × 0.8.
-            out.push({ ...makeSeries('lim. mag', surv, band, data), itemStyle: { opacity: 0.4 } });
-        }
-    }
-    return out;
-}
-
-function buildForcedPhotSeries(cfg) {
-    if (!(cfg.data_types ?? ['forced_photometry']).includes('forced_photometry')) return [];
-    const maxErr = cfg.flux ? 99_999 : 1;
-    const pts = [], errPts = [];
-
-    for (const fp of rawForcedPhotometry) {
-        const survey = fp.survey_id.toLowerCase();
-        const bn     = fp.band;
-
-        if (survey === 'lsst'   && !cfg.bands.lsst.includes(bn))   continue;
-        if (survey === 'ztf'    && !cfg.bands.ztf.includes(bn))     continue;
-        if (survey === 'ztf dr' && !cfg.bands.ztf_dr.includes(bn)) continue;
-
-        const v = pointValue(fp, cfg);
-        if (!v || !validPoint(v.y, survey, cfg)) continue;
-
-        const x      = cfg.fold ? phase(fp.mjd, cfg.period) : fp.mjd;
-        const capped = Math.min(v.err, maxErr);
-        const measId = fp.measurement_id ?? null;
-
-        const ptArr  = [x, v.y, measId, null, fp.field ?? null, capped, v.sign ?? '+'];
-        const errArr = [x, v.y - capped, v.y + capped];
-
-        pts.push(   { survey: fp.survey_id, band: bn, pt: ptArr  });
-        errPts.push({ survey: fp.survey_id, band: bn, pt: errArr });
-
-        if (cfg.fold) {
-            pts.push(   { survey: fp.survey_id, band: bn, pt: [x + 1, ...ptArr.slice(1)]  });
-            errPts.push({ survey: fp.survey_id, band: bn, pt: [x + 1, errArr[1], errArr[2]] });
-        }
-    }
-
-    return groupedToSeries('f. phot', groupByBand(pts), groupByBand(errPts));
+    // Fainter than the detections (ECharts' default 0.8), as in alerce.online, which drew
+    // them in a 50% transparent band color: 0.5 × 0.8.
+    return groupByBand(pts).map(g => {
+        const s = makeSeries('lim. mag', g.survey, g.band, g.data);
+        return { ...s, itemStyle: { ...s.itemStyle, opacity: 0.4 } };
+    });
 }
 
 // Invisible series that forces the Y-axis to include error-bar extremes.
@@ -328,14 +391,16 @@ function applyOffsetBands(series, cfg) {
     if (!cfg.offset_bands) return series;
 
     const normal   = series.filter(s => !s.error_bar);
-    const errBars  = Object.fromEntries(series.filter(s => s.error_bar).map(s => [s.name, s]));
+    // The viewed object's series and the other members' share a name: tell their error bars apart.
+    const errKey   = s => `${s.name}|${!!s.member}`;
+    const errBars  = Object.fromEntries(series.filter(s => s.error_bar).map(s => [errKey(s), s]));
     const groups   = {};
 
     for (const s of normal) {
         const key = `${s.survey}::${s.band}`;
         const g   = (groups[key] ??= { series: [], metric: 0 });
         g.series.push(s);
-        g.metric = computeMetric(cfg.offset_metric, g.series.flatMap(x => x.data.map(d => d[1])));
+        g.metric = computeMetric(cfg.offset_metric, g.series.flatMap(x => x.data.map(d => d.value[1])));
     }
 
     const sorted  = Object.values(groups).sort((a, b) => a.metric - b.metric);
@@ -345,9 +410,12 @@ function applyOffsetBands(series, cfg) {
         const offset = i * cfg.offset_num;
         for (const s of group.series) {
             const newName = offset > 0 ? `${s.name} (+${offset})` : s.name;
-            out.push({ ...s, name: newName, data: s.data.map(p => [p[0], p[1] + offset, ...p.slice(2)]) });
+            out.push({
+                ...s, name: newName,
+                data: s.data.map(d => ({ value: [d.value[0], d.value[1] + offset], point: { ...d.point, offset } })),
+            });
 
-            const eb = errBars[s.name];
+            const eb = errBars[errKey(s)];
             if (eb) {
                 out.push({
                     ...eb, name: newName,
@@ -368,92 +436,94 @@ function applyOffsetBands(series, cfg) {
 }
 
 // ─── Legend ───────────────────────────────────────────────────────────────────
+// The band and type toggles of the side panel carry each series' color and marker,
+// so the chart has no legend of its own. It comes back with the band offset on,
+// to show how much each band was shifted ("det LSST: g (+2)").
 function buildLegend(cfg) {
     return {
+        show: !!cfg.offset_bands,
         left: 'right', top: 'middle', height: '80%', orient: 'vertical',
         selectedMode: false, itemWidth: 20,
-        data: cfg.offset_bands ? null : [
-            { name: 'det ZTF: g' },      { name: 'det ZTF: r' },      { name: 'det ZTF: i' },
-            { name: 'lim. mag ZTF: g' }, { name: 'lim. mag ZTF: r' }, { name: 'lim. mag ZTF: i' },
-            { name: 'f. phot ZTF: g' },  { name: 'f. phot ZTF: r' },  { name: 'f. phot ZTF: i' },
-            { name: 'det LSST: u' },     { name: 'det LSST: g' },     { name: 'det LSST: r' },
-            { name: 'det LSST: i' },     { name: 'det LSST: z' },     { name: 'det LSST: y' },
-            { name: 'f. phot LSST: u' }, { name: 'f. phot LSST: g' }, { name: 'f. phot LSST: r' },
-            { name: 'f. phot LSST: i' }, { name: 'f. phot LSST: z' }, { name: 'f. phot LSST: y' },
-            { name: 'det ZTF DR: g' },   { name: 'det ZTF DR: r' },   { name: 'det ZTF DR: i' },
-        ],
     };
 }
 
 // ─── Tooltip ──────────────────────────────────────────────────────────────────
-function buildTooltip() {
+const KIND_NAMES = { 'det': 'Detection', 'f. phot': 'Forced photometry', 'lim. mag': 'Upper limit' };
+
+function buildTooltip(cfg) {
     return {
         trigger: 'item',
         formatter(params) {
-            const { seriesName, value } = params;
-            if (!value || value.length < 7) return '';
+            // Only measurement points carry a `point` (see buildMeasurementSeries); error bars and limits don't.
+            const p = params.data?.point;
+            if (!p) return '';
+            const [x, y] = params.data.value;
 
-            const isOffset = seriesName.includes('(+');
-            const slide    = seriesName.includes('+') || seriesName.includes('*') ? -5 : -1;
-            const band     = seriesName.includes('DR')
-                ? seriesName.slice(slide) + ' DR'
-                : seriesName.slice(slide);
-
-            const plotValue = Number(value[1]).toFixed(3);
-            const plotError = Number(value[5]).toFixed(3);
-            const sign      = value[6] === '-' ? '(-)' : '(+)';
-            const mjd       = value[0];
-
+            const bandLabel = `${p.band}${p.survey === 'ztf dr' ? ' DR' : ''}${p.offset ? ` (+${p.offset})` : ''}`;
+            const sign      = p.sign === '-' ? '(-)' : '(+)';
             let dateStr = '';
-            try { dateStr = jdToDate(mjd).toUTCString().slice(0, -3) + 'UTC'; } catch (_) {}
+            try { dateStr = jdToDate(p.mjd).toUTCString().slice(0, -3) + 'UTC'; } catch (_) {}
 
-            const table = document.createElement('div');
-            table.style.cssText = 'min-width:340px;padding:0 16px';
+            // The point's object: another member of the group, a ZTF DR object, or else the object being viewed.
+            const object = p.object ?? window.__LC_DATA__.objectName ?? cfg.oid;
+            const box = document.createElement('div');
+            box.style.cssText = 'font-size:12px;line-height:1.4';
+            const head = document.createElement('div');
+            head.style.cssText = 'font-weight:600;margin-bottom:3px';
+            head.textContent = `${object} (${p.survey.toUpperCase()})`;
+            box.appendChild(head);
 
             const rows = [
-                value[2] != null ? ['Measurement id', value[2]] : null,
-                value[3] != null ? ['objectid',        value[3]] : null,
-                value[4] != null ? ['field',            value[4]] : null,
-                [band, `${sign} ${plotValue} ± ${plotError}`],
-                ['MJD',  mjd],
+                ['Type', KIND_NAMES[p.kind]],
+                [bandLabel, `${sign} ${Number(y).toFixed(3)} ± ${Number(p.err).toFixed(3)}`],
+                ['MJD',  Number(p.mjd).toFixed(5)],
                 ['Date', dateStr],
+                cfg.fold ? ['Phase', Number(x % 1).toFixed(4)] : null,
+                p.bjd != null ? ['BJD_TDB', Number(p.bjd).toFixed(6)] : null,
+                p.measurementId != null ? ['Measurement id', p.measurementId] : null,
+                p.field != null ? ['Field', p.field] : null,
             ].filter(Boolean);
 
+            const grid = document.createElement('div');
+            grid.style.cssText = 'display:grid;grid-template-columns:auto auto;column-gap:10px';
             for (const [label, val] of rows) {
-                const row = document.createElement('div');
-                row.style.cssText = 'display:flex;flex-direction:row;justify-content:flex-start;gap:16px;font-size:13px;width:100%;margin:8px 0';
-                const lEl = document.createElement('div');
-                lEl.style.width = '40%';
-                lEl.textContent = `${label} : `;
-                const vEl = document.createElement('div');
-                vEl.style.cssText = 'width:60%;font-weight:bold';
+                const lEl = document.createElement('span');
+                lEl.style.opacity = '0.7';
+                lEl.textContent = label;
+                const vEl = document.createElement('span');
+                vEl.style.fontWeight = '600';
                 vEl.textContent = String(val);
-                row.appendChild(lEl);
-                row.appendChild(vEl);
-                table.appendChild(row);
+                grid.append(lEl, vEl);
             }
-            return table;
+            box.appendChild(grid);
+            return box;
         },
+        padding: [6, 10],
     };
 }
 
 // ─── Full ECharts options ─────────────────────────────────────────────────────
 function buildOptions(cfg) {
+    const foldOnBjd = foldsOnBjd(cfg);
     const raw = [
-        ...buildDetectionSeries(cfg),
+        ...buildDetectionSeries(cfg, foldOnBjd),
         ...buildNonDetectionSeries(cfg),
-        ...buildForcedPhotSeries(cfg),
+        ...buildForcedPhotSeries(cfg, foldOnBjd),
     ];
     const offset  = applyOffsetBands(raw, cfg);
     const limits  = buildLimitSeries(offset.length ? offset : raw);
     const series  = [...offset, ...limits];
 
     return {
-        title:  { show: true, text: cfg.oid },
-        tooltip: {},
-        grid:   { left: 70, right: '25%', top: 60, bottom: 40 },
+        title:  { show: true, text: window.__LC_DATA__.objectName ?? cfg.oid, textStyle: { fontSize: 15, fontWeight: 500 } },
+        textStyle: { fontFamily: CHART_FONT },
+        tooltip: buildTooltip(cfg),
+        grid:   { left: 70, right: cfg.offset_bands ? '25%' : 30, top: 60, bottom: 40 },
         legend: buildLegend(cfg),
-        xAxis:  { type: 'value', name: cfg.fold ? 'Phase' : 'MJD', scale: true, splitLine: false },
+        xAxis:  {
+            type: 'value', scale: true, splitLine: false,
+            name: cfg.fold ? (foldOnBjd ? 'Phase (BJD_TDB)' : 'Phase (MJD)') : 'MJD',
+        },
         yAxis:  {
             type: 'value', name: cfg.flux ? 'Flux [nJy]' : 'Magnitude',
             scale: true, inverse: !cfg.flux,
@@ -470,21 +540,36 @@ function buildOptions(cfg) {
 }
 
 // ─── Periodogram options ──────────────────────────────────────────────────────
+// The periodogram can have ~100k periods, far more than the chart has pixels, and ECharts
+// draws a scatter that big a few hundred points per frame (10 s or more). Keep the highest
+// score in each of PERIODOGRAM_BINS bins, even in log period like the axis: the peaks, and
+// the periods a click on them picks, are unchanged. It stays under ECharts' progressive
+// threshold (3000 points), so the scatter is drawn in one frame.
+const PERIODOGRAM_BINS = 1500;
+
 function buildPeriodogramOptions() {
     const p           = rawPeriodogram;
     const bestSet     = new Set(p.best_periods_index ?? []);
-    const regular     = [];
+    const periods     = p.periods ?? [];
     const best        = [];
+    const binned      = new Map();
+    let lo = Infinity, hi = -Infinity;
+    for (const period of periods) { lo = Math.min(lo, period); hi = Math.max(hi, period); }
+    const logLo = Math.log(lo), binWidth = (Math.log(hi) - logLo) / PERIODOGRAM_BINS || 1;
 
-    for (let i = 0; i < (p.periods ?? []).length; i++) {
-        (bestSet.has(i) ? best : regular).push([p.periods[i], p.scores[i]]);
+    for (let i = 0; i < periods.length; i++) {
+        if (bestSet.has(i)) { best.push([periods[i], p.scores[i]]); continue; }
+        const bin = Math.floor((Math.log(periods[i]) - logLo) / binWidth);
+        if (!(binned.get(bin)?.[1] >= p.scores[i])) binned.set(bin, [periods[i], p.scores[i]]);
     }
+    const regular = [...binned.values()];
 
     const opts = {
         tooltip:  { axisPointer: { type: 'cross' }, formatter: params => `<b>Period:</b> ${params.data[0]} <b>Score:</b> ${params.data[1]}` },
         grid:     { left: 70, right: '25%', top: 60, bottom: 40 },
         legend:   { left: 'right', top: 'middle', height: '80%', orient: 'vertical' },
-        xAxis:    { type: 'log', name: 'Period', scale: true, splitLine: false, min: '0.05', max: '500' },
+        textStyle: { fontFamily: CHART_FONT },
+        xAxis:    { type: 'log', name: 'Period [days]', scale: true, splitLine: false, min: '0.05', max: '500' },
         yAxis:    { type: 'value', name: 'Score', scale: true, splitLine: false },
         series:   [
             { name: 'periods',      type: 'scatter', data: regular },
@@ -515,19 +600,16 @@ function initChart() {
     myChart?.dispose();
     myChart = echarts.init(dom, currentTheme());
 
-    const opts = buildOptions(config);
-    opts.tooltip = buildTooltip();
-    myChart.setOption(opts);
+    myChart.setOption(buildOptions(config));
 
-    const grid = document.getElementById('plot-grid');
-    if (grid) new ResizeObserver(() => myChart?.resize()).observe(grid);
+    // Watch the chart's own box, not the plot grid: showing the periodogram shrinks the
+    // light curve's container without changing the grid, and the canvas must follow it.
+    new ResizeObserver(() => myChart?.resize()).observe(dom);
 
     document.getElementById('toggle-theme-lc')?.addEventListener('click', () => {
         myChart?.dispose();
         myChart = echarts.init(dom, currentTheme());
-        const o = buildOptions(config);
-        o.tooltip = buildTooltip();
-        myChart.setOption(o);
+        myChart.setOption(buildOptions(config));
         // Rebuild the scatter so it picks up the new theme (and re-binds its click
         // handler — the single builder below guarantees the handler survives).
         initPeriodogram();
@@ -567,9 +649,7 @@ function updateChart() {
     const foldPending = config.fold && !(rawPeriodogram?.periods?.length) && !periodUserModified;
     if (foldPending) return;
 
-    const opts = buildOptions(config);
-    opts.tooltip = buildTooltip();
-    myChart.setOption(opts, true);
+    myChart.setOption(buildOptions(config), true);
 }
 
 // ─── Visibility management ────────────────────────────────────────────────────
@@ -596,8 +676,7 @@ function updateVisibility() {
     setToggleLocked(document.querySelector('[name="periodogram_enabled"]'), !config.fold,
         'Turn on Fold to see the periodogram.');
 
-    updateFoldNoPeriod();
-    updateTotalHiddenHint();
+    refreshStatus();
 
     if (pdContainer) {
         pdContainer.classList.toggle('tw-hidden', !showPd);
@@ -623,6 +702,16 @@ function updateVisibility() {
     );
 }
 
+// ─── Status lines ─────────────────────────────────────────────────────────────
+// The messages that depend on what is loaded and drawn: refreshed together whenever either changes.
+function refreshStatus() {
+    updateFoldNoPeriod();
+    updateTotalHiddenHint();
+    updateGroupModeNote();
+    updatePeriodSource();
+    updateChartStatus();
+}
+
 // ─── Fold without a period ────────────────────────────────────────────────────
 // When the periodogram finds no period (or fails), the fold has nothing to use. Say so
 // over the plot instead of leaving the previous chart on screen, until the user types
@@ -640,8 +729,10 @@ function updateFoldNoPeriod() {
             text.textContent = `The period could not be computed. ${manual}`;
         } else {
             const survey = config.survey_id.toLowerCase();
-            const n = rawDetections.filter(d => d.survey_id.toLowerCase() === survey && d.variants?.mag_total).length;
-            text.textContent = `No period found for this object (${n} detection${n === 1 ? '' : 's'} with total magnitude). ${manual}`;
+            const n = rawDetections.filter(d => d.survey_id.toLowerCase() === survey && d.variants?.mag_total).length
+                + periodogramObjects.reduce((sum, k) => sum + (groupPhot.get(k)?.detections ?? []).filter(d => d.variants?.mag_total).length, 0);
+            const which = objectsText(periodogramObjects, 'this object');
+            text.textContent = `No period found for ${which} (${plural(n, 'detection')} with total magnitude). ${manual}`;
         }
     }
     box?.classList.toggle('tw-hidden', !show);
@@ -655,20 +746,19 @@ function updateFoldNoPeriod() {
 // they don't silently disappear.
 function updateTotalHiddenHint() {
     const hint = document.getElementById('total-hidden-hint');
-    const text = document.getElementById('total-hidden-hint-text');
-    if (!hint || !text) return;
+    if (!hint) return;
     const parts = [];
     if (config.total && !isNotCorrected()) {
         for (const [items, type, label] of [
-            [rawDetections,       'detections',        'detections'],
-            [rawForcedPhotometry, 'forced_photometry', 'forced photometry points'],
+            [[...rawDetections, ...groupPoints('detections', config)],             'detections',        'detections'],
+            [[...rawForcedPhotometry, ...groupPoints('forcedPhotometry', config)], 'forced_photometry', 'forced photometry points'],
         ]) {
             if (!(config.data_types ?? [type]).includes(type)) continue;
             const missing = items.filter(p => !pointValue(p, config)).length;
             if (missing) parts.push(`${missing} of ${items.length} ${label}`);
         }
     }
-    text.textContent = parts.length ? `${parts.join(' and ')} have no total magnitude, so they are not shown.` : '';
+    hint.dataset.tip = parts.length ? `${parts.join(' and ')} have no total magnitude, so they are not shown.` : '';
     hint.classList.toggle('tw-hidden', !parts.length);
 }
 
@@ -686,12 +776,15 @@ function setToggleLocked(el, locked, reason) {
     }
     label.classList.toggle('tw-cursor-pointer', !locked);
     label.classList.toggle('tw-cursor-not-allowed', locked);
-    label.title = locked ? reason : '';
+    if (locked) label.dataset.tipLocked = reason;
+    else delete label.dataset.tipLocked;
 }
 
 // ─── Diff/Total toggle ────────────────────────────────────────────────────────
 // Fold and external sources only work with total magnitude, so while either is on the
 // switch is forced to Total and locked. Turning both off restores the user's choice.
+// The other objects of the group don't lock it: they are drawn in whatever the user chose,
+// with a warning of what each choice means across surveys (updateGroupModeNote).
 function syncTotalToggle(form) {
     const el = form.querySelector('[name="total"]');
     if (!el) return;
@@ -704,7 +797,39 @@ function syncTotalToggle(form) {
     } else if (!needsTotal && el.disabled) {
         el.checked = el.dataset.checkedBeforeLock !== 'false';
     }
-    setToggleLocked(el, needsTotal, 'Fold and external sources use total magnitude. Turn them off to switch back to Diff.');
+    setToggleLocked(el, needsTotal,
+        'Fold and external sources use total magnitude. Turn them off to switch back to Diff.');
+}
+
+// ─── Object group: what Diff and Total mean across objects ────────────────────
+// Neither view lines up exactly across surveys, so while other objects of the group are drawn, a note under
+// the group switch says what to expect from the current one.
+const GROUP_MODE_NOTES = {
+    diff:  'Diff: each survey, and each ZTF field, subtracts its own template, so constant offsets between '
+         + 'objects are expected. This is the view for transients.',
+    total: 'Total: each survey measures with a different PSF, which takes in a different amount of host-galaxy '
+         + 'light, so steps between surveys are expected for AGN and extended sources. For transients, use Diff.',
+};
+
+function updateGroupModeNote() {
+    const note = document.getElementById('group-mode-note');
+    if (!note) return;
+    const shown = (config.group_selected?.length ?? 0) > 0;
+    note.textContent = shown ? GROUP_MODE_NOTES[config.total ? 'total' : 'diff'] : '';
+    note.classList.toggle('tw-hidden', !shown);
+}
+
+// ─── Object group switch ──────────────────────────────────────────────────────
+// "Show on the light curve" gates the whole group: while it's off the checkboxes are disabled and faded,
+// keeping what the user checked for when it's turned back on.
+function groupEnabled(form) {
+    return form.querySelector('[name="group.enabled"]')?.checked ?? false;
+}
+
+function syncGroupPanel(form) {
+    const on = groupEnabled(form);
+    for (const el of form.querySelectorAll('[name="group.objects[]"]')) el.disabled = !on;
+    document.getElementById('group-panel')?.classList.toggle('lc-group-off', !on);
 }
 
 // ─── Non-detections toggle ────────────────────────────────────────────────────
@@ -730,7 +855,8 @@ function syncNonDetectionsToggle(form) {
         node?.classList.toggle('tw-cursor-not-allowed', fluxOn);
     }
     label?.classList.toggle('tw-opacity-50', fluxOn);
-    if (label) label.title = fluxOn ? 'Limiting magnitudes are only shown in magnitude view.' : '';
+    if (label && fluxOn) label.dataset.tipLocked = 'Limiting magnitudes are only shown in magnitude view.';
+    else if (label) delete label.dataset.tipLocked;
 }
 
 // ─── Read config from form ────────────────────────────────────────────────────
@@ -740,6 +866,7 @@ function readConfigFromForm() {
 
     const bool = name => form.querySelector(`[name="${name}"]`)?.checked ?? false;
 
+    syncGroupPanel(form);
     syncTotalToggle(form);
     config.flux               = bool('flux');
     config.total              = bool('total');
@@ -763,6 +890,54 @@ function readConfigFromForm() {
     config.bands.ztf_dr = [...form.querySelectorAll('[name="bands.ztf_dr[]"]:checked')].map(el => el.value);
     syncNonDetectionsToggle(form);
     config.data_types   = [...form.querySelectorAll('[name="data_types[]"]:checked')]  .map(el => el.value);
+    if (groupInfo) {
+        config.group_selected = groupEnabled(form)
+            ? [...form.querySelectorAll('[name="group.objects[]"]:checked')].map(el => el.value)
+            : [];
+    }
+}
+
+// ─── Requests ─────────────────────────────────────────────────────────────────
+function apiUrl(path, params) {
+    const query = new URLSearchParams();
+    for (const [name, value] of Object.entries(params)) {
+        if (value != null && value !== '') query.set(name, value);
+    }
+    return `${window.__LC_DATA__.apiUrl}${path}?${query}`;
+}
+
+// The viewed object's position, so every point's BJD_TDB, its own and the group's, uses the same one.
+function viewedPosition() {
+    return config.meanra != null ? { ra: config.meanra, dec: config.meandec } : {};
+}
+
+// ─── Object group: fetch other objects' photometry on demand ─────────────────
+// An object's photometry is fetched the first time it's drawn: when the group switch is turned on (the checked
+// members), or when its checkbox is checked afterwards. A failure only leaves that object out of the chart.
+async function loadGroupPhotometry() {
+    const missing = (config.group_selected ?? []).filter(k => !groupPhot.has(k) && !groupLoading.has(k));
+    if (!missing.length) return;
+    missing.forEach(k => groupLoading.add(k));
+    updateChartStatus();
+    const generation = loadGeneration;
+    try {
+        const resp = await fetch(apiUrl('/htmx/group_photometry', { objects: missing.join(','), ...viewedPosition() }));
+        if (!resp.ok) throw new Error(`group photometry: ${resp.status}`);
+        const data = await resp.json();
+        if (generation !== loadGeneration) return;
+        for (const key of missing) groupPhot.set(key, { detections: [], forcedPhotometry: [] });
+        const keyOf = p => `${p.survey_id.toLowerCase()}:${p.oid}`;
+        for (const d of data.detections)        groupPhot.get(keyOf(d))?.detections.push(d);
+        for (const f of data.forced_photometry) groupPhot.get(keyOf(f))?.forcedPhotometry.push(f);
+    } catch (e) {
+        console.error('Failed to load the photometry of the group:', e);
+    } finally {
+        if (generation === loadGeneration) {
+            missing.forEach(k => groupLoading.delete(k));
+            refreshStatus();
+            updateChart();
+        }
+    }
 }
 
 // ─── External sources: load ZTF DR detections via fetch ──────────────────────
@@ -805,39 +980,229 @@ function applyBestCandidatePeriod() {
     settingPeriodProgrammatically = true;
     try {
         const periodEl = document.querySelector('[name="period"]');
-        const sliderEl = document.getElementById('period-slider');
         if (periodEl) periodEl.value = config.period;
-        if (sliderEl) sliderEl.value  = config.period;
     } finally {
         settingPeriodProgrammatically = false;
     }
 }
 
 // ─── Lazy periodogram loader ──────────────────────────────────────────────────
-async function loadPeriodogram() {
-    // One-shot: don't refetch if we already have the data or a fetch is in flight.
-    if (rawPeriodogram?.periods?.length || periodogramLoading) return;
+// The associated objects drawn now, sorted, as the periodogram request names them.
+function drawnObjects() {
+    return [...(config.group_selected ?? [])].sort();
+}
+
+function sameObjects(a, b) {
+    return a.length === b.length && a.every((key, i) => key === b[i]);
+}
+
+// "this object and 2 other objects", or `alone` when `objects` is empty.
+function objectsText(objects, alone) {
+    return objects.length ? `this object and ${plural(objects.length, 'other object')}` : alone;
+}
+
+// The periodogram is searched on the detections of the viewed object and of the other objects drawn at that moment.
+// Fetched once, when Fold (or the periodogram) is first turned on; again only when the user asks ("Recompute",
+// after changing the objects drawn). A recompute keeps the current periodogram and fold on screen until the new
+// one arrives, and then folds at its best period, even over a period the user typed.
+async function loadPeriodogram({ recompute = false } = {}) {
+    if (periodogramLoading) return;
+    if (!recompute && rawPeriodogram?.periods?.length) return;
+    if (recompute) periodUserModified = false;
     periodogramLoading = true;
+    const objects = drawnObjects();
+    const generation = loadGeneration;
     updateVisibility();
     try {
-        const apiUrl = window.__LC_DATA__.apiUrl;
-        const r = await fetch(`${apiUrl}/htmx/periodogram?oid=${config.oid}&survey_id=${config.survey_id}`);
+        const r = await fetch(apiUrl('/htmx/periodogram', {
+            oid: config.oid, survey_id: config.survey_id, objects: objects.join(','), ...viewedPosition(),
+        }));
         if (!r.ok) throw new Error(r.status);
-        rawPeriodogram = await r.json();
+        const data = await r.json();
+        if (generation !== loadGeneration) return;
+        rawPeriodogram = data;
+        periodogramObjects = objects;
         periodogramStatus = rawPeriodogram?.periods?.length ? null : 'empty';
         applyBestCandidatePeriod();
     } catch (e) {
         console.error('Periodogram load failed:', e);
-        periodogramStatus = 'failed';
+        if (generation === loadGeneration) periodogramStatus = 'failed';
     } finally {
-        periodogramLoading = false;
-        updateVisibility();
-        updateChart();
+        if (generation === loadGeneration) {
+            periodogramLoading = false;
+            updateVisibility();
+            updateChart();
+        }
     }
+}
+
+function plural(n, word) {
+    return `${n} ${word}${n === 1 ? '' : 's'}`;
+}
+
+// ─── Period source ────────────────────────────────────────────────────────────
+// With a group, a line under the periodogram switch says which objects the period was searched on, and offers
+// "Recompute" once the objects drawn differ from those.
+function updatePeriodSource() {
+    const row = document.getElementById('period-source-row');
+    if (!row) return;
+    const text   = document.getElementById('period-source');
+    const button = document.getElementById('period-recompute');
+    const hasPeriods = (rawPeriodogram?.periods?.length ?? 0) > 0;
+    const searched   = periodogramLoading || hasPeriods || periodogramStatus != null;
+    const hasOthers  = (groupInfo?.members?.length ?? 0) > 1 || (groupInfo?.nearby?.length ?? 0) > 0;
+    const show = Boolean(config.fold && hasOthers && searched);
+    row.classList.toggle('tw-hidden', !show);
+    if (!show) return;
+
+    const drawn = drawnObjects();
+    if (periodogramLoading) {
+        text.textContent = `Searching the period on ${objectsText(drawn, 'this object')}…`;
+    } else {
+        const failed = periodogramStatus === 'failed' ? ' (recompute failed)' : '';
+        text.textContent = `Period from ${objectsText(periodogramObjects, 'this object only')}${failed}`;
+    }
+    text.classList.toggle('lc-pulse', periodogramLoading);
+    // Offered when the objects drawn changed, or to retry after a failure
+    const stale = !sameObjects(drawn, periodogramObjects) || periodogramStatus === 'failed';
+    button.classList.toggle('tw-hidden', periodogramLoading || !stale);
+}
+
+// ─── Chart status ─────────────────────────────────────────────────────────────
+// A small badge over the chart while something it will draw is on its way: the photometry of other objects, or a
+// recomputed period (a first period has the full "Computing period…" overlay instead).
+function updateChartStatus() {
+    const el = document.getElementById('chart-status');
+    if (!el) return;
+    const messages = [];
+    if (groupLoading.size) messages.push(`Loading ${plural(groupLoading.size, 'other object')}…`);
+    if (config.fold && periodogramLoading && rawPeriodogram?.periods?.length) messages.push('Recomputing the period…');
+    el.textContent = messages.join(' · ');
+    el.classList.toggle('tw-hidden', !messages.length);
+}
+
+function onRecomputeClick(e) {
+    if (!e.target.closest('#period-recompute')) return;
+    loadPeriodogram({ recompute: true });
+}
+
+// ─── Side panel legend ────────────────────────────────────────────────────────
+// The band chips stand in for the chart legend: each one gets the color of its
+// series, from BAND_COLORS, so the colors live in one place. The text on a filled chip
+// is dark or white, whichever reads better on that color.
+function paintBandChips() {
+    for (const el of document.querySelectorAll('.lc-band[data-band]')) {
+        const color = bandColor(el.dataset.band);
+        const [r, g, b] = hexToRgb(color);
+        el.style.setProperty('--lc-band', color);
+        el.style.setProperty('--lc-band-fg', 0.299 * r + 0.587 * g + 0.114 * b > 150 ? '#1e1e1e' : '#ffffff');
+    }
+}
+
+// ─── Two-way choices (Mag | Flux, Diff | Total) ───────────────────────────────
+// Each button sets its side of the hidden checkbox, then fires the form's usual
+// `change`. A locked (disabled) checkbox ignores them.
+function onSegmentClick(e) {
+    const button = e.target.closest('.lc-seg [data-seg]');
+    if (!button) return;
+    const input = button.closest('.lc-seg')?.querySelector('input[type="checkbox"]');
+    if (!input || input.disabled) return;
+    const checked = button.dataset.seg === 'on';
+    if (input.checked === checked) return;
+    input.checked = checked;
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+// ─── Period steps ─────────────────────────────────────────────────────────────
+// Folding is very sensitive to the period: an error dP shifts the phase by about T·dP/P² across a light
+// curve that spans T days. So a step is a fraction of a cycle across the light curve, not a fraction of the
+// period: dP = cycles·P²/T. ‹ › slide the fold 2% of a cycle, « » a tenth, at any period and time span.
+function shownTimeSpan() {
+    let min = Infinity, max = -Infinity;
+    for (const list of [rawDetections, rawForcedPhotometry,
+                        groupPoints('detections', config), groupPoints('forcedPhotometry', config)]) {
+        for (const p of list ?? []) {
+            if (p.mjd < min) min = p.mjd;
+            if (p.mjd > max) max = p.mjd;
+        }
+    }
+    return max > min ? max - min : 0;
+}
+
+function setPeriodFromControl(input, period) {
+    if (!(period > 0)) return;
+    input.value = String(Number(period.toPrecision(8)));
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+function nudgePeriod(input, cycles) {
+    const period = parseFloat(input.value);
+    if (!(period > 0)) return;
+    // Below one period of span, a cycle across the light curve is a cycle of the period itself.
+    const span = Math.max(shownTimeSpan(), period);
+    setPeriodFromControl(input, period + cycles * period * period / span);
+}
+
+function onPeriodButtonClick(e) {
+    const button = e.target.closest('[data-period-step], [data-period-factor]');
+    const input  = e.currentTarget.querySelector('[name="period"]');
+    if (!button || !input) return;
+    if (button.dataset.periodStep) nudgePeriod(input, parseFloat(button.dataset.periodStep));
+    else setPeriodFromControl(input, parseFloat(input.value) * parseFloat(button.dataset.periodFactor));
+}
+
+function onPeriodKeydown(e) {
+    if (e.target.name !== 'period' || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+    e.preventDefault();
+    nudgePeriod(e.target, (e.key === 'ArrowUp' ? 1 : -1) * (e.shiftKey ? 0.1 : 0.02));
+}
+
+// ─── Group details ────────────────────────────────────────────────────────────
+// "Details" shows a second line under each object: the pair's score and distance, and the object's detections.
+function onGroupDetailsClick(e) {
+    const button = e.target.closest('[data-group-details]');
+    if (!button) return;
+    const shown = document.getElementById('group-panel')?.classList.toggle('lc-show-meta') ?? false;
+    button.setAttribute('aria-expanded', String(shown));
+}
+
+// ─── Help tooltips ────────────────────────────────────────────────────────────
+// Any [data-tip] in the widget shows its text in one floating box on <body>, so
+// the scrolling side panel never clips it. A locked control shows why instead
+// (data-tip-locked, see setToggleLocked).
+function bindTooltips() {
+    let box = document.getElementById('lc-tip');
+    if (!box) {
+        box = document.createElement('div');
+        box.id = 'lc-tip';
+        box.setAttribute('role', 'tooltip');
+        document.body.appendChild(box);
+    }
+    const show = e => {
+        const el = e.target.closest?.('#main-app [data-tip], #main-app [data-tip-locked]');
+        const text = el && (el.dataset.tipLocked || el.dataset.tip);
+        if (!text) { box.style.display = 'none'; return; }
+        box.textContent = text;
+        box.style.display = 'block';
+        const r = el.getBoundingClientRect();
+        const w = box.offsetWidth, h = box.offsetHeight;
+        const below = r.bottom + 6 + h <= window.innerHeight;
+        box.style.top  = `${below ? r.bottom + 6 : Math.max(4, r.top - 6 - h)}px`;
+        box.style.left = `${Math.min(Math.max(4, r.left), window.innerWidth - w - 4)}px`;
+    };
+    const hide = () => { box.style.display = 'none'; };
+    document.addEventListener('mouseover', show);
+    document.addEventListener('focusin', show);
+    document.addEventListener('mouseout', e => {
+        if (!e.relatedTarget || !e.target.closest?.('[data-tip], [data-tip-locked]')?.contains(e.relatedTarget)) hide();
+    });
+    document.addEventListener('focusout', hide);
+    document.addEventListener('scroll', hide, true);
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 function init() {
+    paintBandChips();
     initChart();
     updateVisibility();
 
@@ -854,9 +1219,9 @@ function init() {
 
     function onFormChange(e) {
         // The period input fires a bubbling `change` for direct edits and for the
-        // X2 / /2 buttons (which dispatch change on the input). Treat those as manual
-        // period changes — unless we set the value programmatically.
-        if (e && (e.target?.name === 'period' || e.target?.id === 'period-slider') && !settingPeriodProgrammatically) {
+        // step and X2 / /2 buttons (which dispatch change on the input). Treat those as
+        // manual period changes — unless we set the value programmatically.
+        if (e && e.target?.name === 'period' && !settingPeriodProgrammatically) {
             periodUserModified = true;
         }
 
@@ -900,12 +1265,14 @@ function init() {
             drDetections = [];
         }
         prevExtEnabled = extNow;
+
+        if (e?.target?.name === 'group.objects[]' || e?.target?.name === 'group.enabled') loadGroupPhotometry();
     }
     function onFormInput(e) {
-        if (e.target.name === 'period' || e.target.id === 'period-slider' || e.target.name === 'offset_num') {
+        if (e.target.name === 'period' || e.target.name === 'offset_num') {
             // A user-driven period change pins the period — stop auto-adopting the
             // periodogram candidate. Programmatic updates set a guard so they don't.
-            if ((e.target.name === 'period' || e.target.id === 'period-slider') && !settingPeriodProgrammatically) {
+            if (e.target.name === 'period' && !settingPeriodProgrammatically) {
                 periodUserModified = true;
             }
             clearTimeout(debounceTimer);
@@ -921,6 +1288,11 @@ function init() {
 
     form.addEventListener('change', onFormChange);
     form.addEventListener('input',  onFormInput);
+    form.addEventListener('click',  onSegmentClick);
+    form.addEventListener('click',  onPeriodButtonClick);
+    form.addEventListener('click',  onGroupDetailsClick);
+    form.addEventListener('click',  onRecomputeClick);
+    form.addEventListener('keydown', onPeriodKeydown);
 
     // Period selection from periodogram click — counts as a manual change.
     // Bound on `document` once per page: init() runs again on every HTMX swap, but
@@ -928,15 +1300,14 @@ function init() {
     // the swap) would otherwise stack up an extra copy per object change.
     if (!documentListenersBound) {
         documentListenersBound = true;
+        bindTooltips();
         document.addEventListener('periodogram:periodSelected', e => {
             config.period = parseFloat(e.detail.period);
             periodUserModified = true;
             settingPeriodProgrammatically = true;
             try {
                 const periodEl = document.querySelector('[name="period"]');
-                const sliderEl = document.getElementById('period-slider');
                 if (periodEl) periodEl.value = config.period;
-                if (sliderEl) sliderEl.value  = config.period;
             } finally {
                 settingPeriodProgrammatically = false;
             }

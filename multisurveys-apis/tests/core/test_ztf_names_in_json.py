@@ -110,3 +110,23 @@ def test_conesearch_lightcurve_rows_keep_all_their_fields(ztf_object):
         assert body[key]
         assert {row["oid"] for row in body[key]} == {NAME}
         assert field in body[key][0]
+
+
+# The pages too: the Explorer may link an object by its numeric id, but people know it by its ZTF name
+@pytest.mark.parametrize("oid", [NAME, str(NUMBER)])
+def test_object_card_shows_the_ztf_name(ztf_object, oid):
+    response = client_for("object_api", ztf_object).get(
+        "/htmx/object_information", params={"oid": oid, "survey_id": "ztf"}
+    )
+
+    assert response.status_code == 200
+    assert f'"object": "{NAME}"' in response.text
+    assert str(NUMBER) not in response.text
+
+
+@pytest.mark.parametrize("oid", [NAME, str(NUMBER)])
+def test_lightcurve_widget_titles_the_ztf_name(ztf_object, oid):
+    response = client_for("lightcurve_api", ztf_object).get("/htmx/lightcurve", params={"oid": oid, "survey_id": "ztf"})
+
+    assert response.status_code == 200
+    assert f'objectName:      "{NAME}"' in response.text

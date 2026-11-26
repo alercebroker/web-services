@@ -3,6 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
 
+from core.association import association_enabled, safe_lookup
+from core.idmapper.idmapper import public_oid
 from core.idmapper.survey_mapper import Survey
 from core.static_files import configure_templates, html_templates
 from object_api.services.object_services import (
@@ -12,6 +14,7 @@ from object_api.services.object_services import (
     get_survey_classifiers,
     get_website_classifiers,
 )
+from object_api.services import counterpart_service
 from probability_api.services.lsst_service import priorities_by_survey
 
 from ..models.filters import Consearch, Filters, SearchParams
@@ -60,7 +63,8 @@ def object_info_app(request: Request, oid: str, survey_id: Survey):
         name="basic_information/basicInformationPreview.html.jinja",
         context={
             "request": request,
-            "object": str(oid),
+            # The ZTF name, also when the URL has the numeric id
+            "object": public_oid(survey_id, oid),
             "survey_id": survey_id,
             "corrected": "=",
             "stellar": "-",
@@ -140,6 +144,7 @@ def objects_table(
     shown_classifier: str | None = None,
 ):
     survey_classifiers = []
+    counterparts = None
     if survey is not None:
         session = request.app.state.psql_session
         oids = _parse_oids_string_to_array(oid)
@@ -198,6 +203,8 @@ def objects_table(
         if oid is not None and order_by is None and object_list["items"] != []:
             order_by = "oid_list"
 
+        counterparts = _counterparts(session, survey, [item["oid"] for item in object_list["items"]])
+
     else:
         object_list = {
             "next": False,
@@ -223,7 +230,20 @@ def objects_table(
             "shown_classifiers": survey_classifiers,
             "shown_classifier": shown_classifier,
             "classifier_filtered": classifier is not None,
+            "counterparts": counterparts,
         },
+    )
+
+
+def _counterparts(session_factory, survey: str, oids: list) -> dict | None:
+    """The "Also seen as" column's data: None where it isn't shown (no association data configured), and empty
+    when the lookup fails, so the results are shown either way."""
+    if not association_enabled():
+        return None
+    return safe_lookup(
+        lambda: counterpart_service.get_counterparts(session_factory, survey, oids),
+        {},
+        f"the counterparts of a {survey} results page",
     )
 
 
