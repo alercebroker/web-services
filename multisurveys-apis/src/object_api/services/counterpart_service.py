@@ -10,10 +10,9 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Iterable
 
-from core.idmapper.idmapper import parse_oid
+from core.idmapper.idmapper import parse_oid, public_oid
 from core.idmapper.survey_mapper import get_survey_id, get_survey_name
 from core.repository.queries import association as association_repository
-from lightcurve_api.services.group_service import display_oid
 
 MAX_LISTED_PER_SURVEY = 10  # links shown in a chip's list; the chip still counts them all
 
@@ -28,7 +27,14 @@ class Counterpart:
 
     @property
     def description(self) -> str:
-        return describe(self)
+        parts = [self.oid]
+        if self.score is not None:
+            parts.append(f'{self.dist:.2f}", score {self.score:.2f}')
+        else:
+            parts.append("linked through another member")
+        if self.n_det is not None:
+            parts.append(f"{self.n_det} detections")
+        return " · ".join(parts)
 
 
 @dataclass
@@ -45,21 +51,10 @@ class SurveyCounterparts:
     def title(self) -> str:
         """The tooltip of the chip: the members it lists, one per line."""
         lines = [f"Same source in {self.label} (association score ≥ threshold):"]
-        lines += [f"  {describe(member)}" for member in self.members]
+        lines += [f"  {member.description}" for member in self.members]
         if self.count > len(self.members):
             lines.append(f"  … and {self.count - len(self.members)} more")
         return "\n".join(lines)
-
-
-def describe(member: Counterpart) -> str:
-    parts = [member.oid]
-    if member.score is not None:
-        parts.append(f'{member.dist:.2f}", score {member.score:.2f}')
-    else:
-        parts.append("linked through another member")
-    if member.n_det is not None:
-        parts.append(f"{member.n_det} detections")
-    return " · ".join(parts)
 
 
 def get_counterparts(session_factory, survey: str, oids: Iterable[str]) -> dict[str, list[SurveyCounterparts]]:
@@ -86,7 +81,7 @@ def build_survey_counterparts(listed_sid: int, rows: list) -> list[SurveyCounter
     for row in rows:
         by_sid[row.sid].append(
             Counterpart(
-                oid=display_oid(row.oid, row.sid),
+                oid=public_oid(get_survey_name(row.sid), row.oid),
                 survey_id=get_survey_name(row.sid),
                 dist=row.dist,
                 score=row.score,

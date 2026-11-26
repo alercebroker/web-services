@@ -6,8 +6,9 @@ import re
 import pytest
 from db_plugins.db.sql.models_pipeline import LsstDetection, ZtfDetection, ZtfObject
 from fastapi.testclient import TestClient
-from sqlalchemy import select, text
+from sqlalchemy import event, select, text
 
+from core import association as association_setting
 from core.idmapper.idmapper import decode_masterid
 from core.repository.association_models import (
     ASSOCIATION_SCHEMA,
@@ -23,7 +24,7 @@ N_POINTS = 4
 
 @pytest.fixture
 def association_tables(db_setup, monkeypatch):
-    monkeypatch.setenv("ASSOCIATION_SCHEMA", ASSOCIATION_SCHEMA)
+    monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", ASSOCIATION_SCHEMA)
     with db_setup.session() as session:
         session.execute(text(f"CREATE SCHEMA IF NOT EXISTS {ASSOCIATION_SCHEMA}"))
         session.commit()
@@ -85,8 +86,27 @@ def test_widget_lists_members_and_nearby_objects(client: TestClient, group):
     assert all(o["n_det"] is not None and o["firstmjd"] is not None for o in embedded["members"] + embedded["nearby"])
 
 
+def test_the_group_panel_costs_one_statement(client: TestClient, group, db_setup, monkeypatch):
+    """Each query is a round trip to a distant database in production, so the panel must stay one statement."""
+    statements = []
+    listener = lambda *args: statements.append(args[2])  # noqa: E731  (args[2] is the SQL)
+    params = {"oid": group["ztf_a"], "survey_id": "ztf"}
+    event.listen(db_setup._engine, "before_cursor_execute", listener)
+    try:
+        client.get("/htmx/lightcurve", params=params)
+        with_panel = len(statements)
+        statements.clear()
+        monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", None)
+        client.get("/htmx/lightcurve", params=params)
+        without_panel = len(statements)
+    finally:
+        event.remove(db_setup._engine, "before_cursor_execute", listener)
+
+    assert with_panel - without_panel == 1
+
+
 def test_widget_without_association_schema_has_no_group(client: TestClient, group, monkeypatch):
-    monkeypatch.delenv("ASSOCIATION_SCHEMA")
+    monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", None)
     response = client.get("/htmx/lightcurve", params={"oid": group["ztf_a"], "survey_id": "ztf"})
 
     assert response.status_code == 200
@@ -185,5 +205,5 @@ def test_aladin_panel_gets_the_other_members_at_their_mean_position(db_setup, gr
     ]
     assert [obj["oid"] for obj in from_lsst] == [group["ztf_a"]]  # the ZTF name, not the internal number
 
-    monkeypatch.delenv("ASSOCIATION_SCHEMA")
+    monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", None)
     assert get_group_objects(db_setup.session, lsst_x, 1) == []

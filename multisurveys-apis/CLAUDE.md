@@ -75,8 +75,11 @@ db-plugins: the pipeline uses that library and needs atomic multi-statement writ
 
 ## Object groups (association) are behind `ASSOCIATION_SCHEMA`
 
-The light curve's group panel reads the association tables, which aren't in db-plugins yet: their models live
-in [`core/repository/association_models.py`](src/core/repository/association_models.py), with the schema read
-from `ASSOCIATION_SCHEMA` at import. The panel only shows where that variable is set, and a failed group lookup
-must never break the widget (the route catches it and renders the object alone). Ids leave the API as strings
-(`survey:oid`): they don't fit in a JavaScript number. See the README section "Object groups in the light curve".
+The light curve's group panel, the Aladin markers and the results table's "Also seen as" column read the
+association tables, which aren't in db-plugins yet: their models live in
+[`core/repository/association_models.py`](src/core/repository/association_models.py). The switch and the shared
+helpers are in [`core/association.py`](src/core/association.py): `ASSOCIATION_SCHEMA` is read once at import,
+everything is off unless it is set, and a failed lookup must never break the page (`safe_lookup` logs it and
+leaves that part out). Tests turn it on and off by patching `core.association.ASSOCIATION_SCHEMA`, not the
+environment. Ids leave the API as strings (`survey:oid`): they don't fit in a JavaScript number. See the README
+section "Object groups in the light curve".

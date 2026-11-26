@@ -1,9 +1,12 @@
-"""Read queries on the object association tables (see core/repository/association_models.py)."""
+"""Read queries on the object association tables (see core/repository/association_models.py).
+
+Each function is one statement: every query is a round trip to a distant database.
+"""
 
 from typing import Callable, ContextManager, Iterable
 
 from db_plugins.db.sql.models_pipeline import Object
-from sqlalchemy import Row, and_, func, or_, select, tuple_, union_all
+from sqlalchemy import BigInteger, Row, SmallInteger, and_, func, literal, or_, select, true, tuple_, union
 from sqlalchemy.orm import Session, aliased
 
 from core.repository.association_models import AssociationMethod, ObjectAssociation, ObjectGroup
@@ -11,26 +14,13 @@ from core.repository.association_models import AssociationMethod, ObjectAssociat
 SessionFactory = Callable[..., ContextManager[Session]]
 
 
-def get_object_group(session_factory: SessionFactory, oid: int, sid: int) -> ObjectGroup | None:
-    """The group row of one object, or None when the object has no group."""
-    with session_factory() as session:
-        stmt = select(ObjectGroup).where(ObjectGroup.oid == oid, ObjectGroup.sid == sid)
-        return session.execute(stmt).scalar_one_or_none()
-
-
-def get_group_members(session_factory: SessionFactory, group_id: int) -> list[tuple[int, int]]:
-    """(oid, sid) of every member of a group."""
-    with session_factory() as session:
-        stmt = select(ObjectGroup.oid, ObjectGroup.sid).where(ObjectGroup.group_id == group_id)
-        return [(row.oid, row.sid) for row in session.execute(stmt).all()]
-
-
 def get_counterpart_rows(session_factory: SessionFactory, objects: Iterable[tuple[int, int]]) -> list[Row]:
-    """Every other member of the groups of ``objects`` ((oid, sid) tuples), in one statement.
+    """Every other member of the groups of ``objects`` ((oid, sid) tuples).
 
     One row per (listed object, member): ``listed_oid``, ``listed_sid``, ``oid``, ``sid``, the ``dist`` and
     ``score`` of their direct pair (None when the member joined the group through another member) and the
-    member's ``n_det`` (None when it isn't in the object table). Objects without a group give no rows.
+    member's ``n_det``, ``meanra`` and ``meandec`` (None when it isn't in the object table). Objects without a
+    group give no rows.
 
     A pair is stored once, in either order, so it is looked up in both: each join uses its own index (the
     primary key starts with (oid_a, sid_a); (oid_b, sid_b) has an index of its own).
@@ -61,6 +51,8 @@ def get_counterpart_rows(session_factory: SessionFactory, objects: Iterable[tupl
             func.coalesce(forward.dist, backward.dist).label("dist"),
             func.coalesce(forward.score, backward.score).label("score"),
             Object.n_det,
+            Object.meanra,
+            Object.meandec,
         )
         .join(member, and_(member.group_id == listed.group_id, or_(member.oid != listed.oid, member.sid != listed.sid)))
         .outerjoin(forward, pair_between(forward, listed, member))
@@ -72,61 +64,87 @@ def get_counterpart_rows(session_factory: SessionFactory, objects: Iterable[tupl
         return session.execute(stmt).all()
 
 
-def get_method(session_factory: SessionFactory, method_version: int | None = None) -> AssociationMethod | None:
-    """One method version, or the newest one when none is given."""
-    with session_factory() as session:
-        stmt = select(AssociationMethod)
-        if method_version is None:
-            newest = select(func.max(AssociationMethod.method_version)).scalar_subquery()
-            stmt = stmt.where(AssociationMethod.method_version == newest)
-        else:
-            stmt = stmt.where(AssociationMethod.method_version == method_version)
-        return session.execute(stmt).scalar_one_or_none()
+def get_group_neighbourhood(session_factory: SessionFactory, oid: int, sid: int) -> list[Row]:
+    """What the light curve's group panel shows about one object: its group, and the pairs around it.
 
+    The neighbourhood is the object, the other members of its group, and every object paired with a member. One
+    row per object of the neighbourhood and pair with that object on its ``a`` side, so each pair comes once:
 
-def get_pairs_touching(
-    session_factory: SessionFactory, objects: Iterable[tuple[int, int]], method_version: int
-) -> list[Row]:
-    """Every pair, of one method version, with at least one side among ``objects`` ((oid, sid) tuples).
+    - the object: ``oid``, ``sid``, ``is_member``, and its ``n_det``, ``firstmjd`` and ``lastmjd`` (None when it
+      isn't in the object table);
+    - the pair: ``oid_a``, ``sid_a``, ``oid_b``, ``sid_b``, ``dist``, ``score`` (None when the object has no pair
+      on its ``a`` side);
+    - on every row, the group's ``group_id`` and ``group_version`` (None without a group) and the
+      ``method_version`` and ``params`` of its method, or of the newest one for an object without a group.
 
-    Two selects, one per side, so each uses its own index: the primary key starts with (oid_a, sid_a), and
-    (oid_b, sid_b) has an index of its own. A pair between two of the objects comes back once.
+    No rows when there is no method at all.
     """
-    objects = list(objects)
-    if not objects:
-        return []
-    columns = [
-        ObjectAssociation.oid_a,
-        ObjectAssociation.sid_a,
-        ObjectAssociation.oid_b,
-        ObjectAssociation.sid_b,
-        ObjectAssociation.dist,
-        ObjectAssociation.score,
-    ]
-    side_a = select(*columns).where(
-        tuple_(ObjectAssociation.oid_a, ObjectAssociation.sid_a).in_(objects),
-        ObjectAssociation.method_version == method_version,
+    viewed = (
+        select(ObjectGroup.group_id, ObjectGroup.group_version, ObjectGroup.method_version)
+        .where(ObjectGroup.oid == oid, ObjectGroup.sid == sid)
+        .cte("viewed")
     )
-    side_b = select(*columns).where(
-        tuple_(ObjectAssociation.oid_b, ObjectAssociation.sid_b).in_(objects),
-        ObjectAssociation.method_version == method_version,
+    newest_method = select(func.max(AssociationMethod.method_version)).correlate(None).scalar_subquery()
+    method = (
+        select(AssociationMethod.method_version, AssociationMethod.params)
+        .where(
+            AssociationMethod.method_version
+            == func.coalesce(select(viewed.c.method_version).scalar_subquery(), newest_method)
+        )
+        .cte("method")
+    )
+    members = union(
+        select(ObjectGroup.oid, ObjectGroup.sid).where(
+            ObjectGroup.group_id == select(viewed.c.group_id).scalar_subquery()
+        ),
+        select(literal(oid, BigInteger).label("oid"), literal(sid, SmallInteger).label("sid")),
+    ).cte("members")
+
+    # Pairs with a member on either side, of the method's version. Each side joins through its own index.
+    pair = ObjectAssociation
+    pair_columns = [pair.oid_a, pair.sid_a, pair.oid_b, pair.sid_b, pair.dist, pair.score]
+    of_method = pair.method_version == select(method.c.method_version).scalar_subquery()
+    pairs = union(
+        select(*pair_columns)
+        .join(members, and_(pair.oid_a == members.c.oid, pair.sid_a == members.c.sid))
+        .where(of_method),
+        select(*pair_columns)
+        .join(members, and_(pair.oid_b == members.c.oid, pair.sid_b == members.c.sid))
+        .where(of_method),
+    ).cte("pairs")
+
+    nodes = union(
+        select(members.c.oid, members.c.sid),
+        select(pairs.c.oid_a, pairs.c.sid_a),
+        select(pairs.c.oid_b, pairs.c.sid_b),
+    ).cte("nodes")
+    member = members.alias("member")
+
+    stmt = (
+        select(
+            nodes.c.oid,
+            nodes.c.sid,
+            member.c.oid.is_not(None).label("is_member"),
+            Object.n_det,
+            Object.firstmjd,
+            Object.lastmjd,
+            pairs.c.oid_a,
+            pairs.c.sid_a,
+            pairs.c.oid_b,
+            pairs.c.sid_b,
+            pairs.c.dist,
+            pairs.c.score,
+            viewed.c.group_id,
+            viewed.c.group_version,
+            method.c.method_version,
+            method.c.params,
+        )
+        .select_from(nodes)
+        .join(method, true())
+        .outerjoin(viewed, true())
+        .outerjoin(member, and_(member.c.oid == nodes.c.oid, member.c.sid == nodes.c.sid))
+        .outerjoin(Object, and_(Object.oid == nodes.c.oid, Object.sid == nodes.c.sid))
+        .outerjoin(pairs, and_(pairs.c.oid_a == nodes.c.oid, pairs.c.sid_a == nodes.c.sid))
     )
     with session_factory() as session:
-        rows = session.execute(union_all(side_a, side_b)).all()
-
-    unique = {}
-    for row in rows:
-        unique[(row.oid_a, row.sid_a, row.oid_b, row.sid_b)] = row
-    return list(unique.values())
-
-
-def get_object_stats(session_factory: SessionFactory, objects: Iterable[tuple[int, int]]) -> dict[tuple[int, int], Row]:
-    """n_det, firstmjd, lastmjd, meanra and meandec of each of ``objects`` ((oid, sid) tuples) found in the object table."""
-    objects = list(objects)
-    if not objects:
-        return {}
-    stmt = select(
-        Object.oid, Object.sid, Object.n_det, Object.firstmjd, Object.lastmjd, Object.meanra, Object.meandec
-    ).where(tuple_(Object.oid, Object.sid).in_(objects))
-    with session_factory() as session:
-        return {(row.oid, row.sid): row for row in session.execute(stmt).all()}
+        return session.execute(stmt).all()

@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import pytest
 
 from core.idmapper import idmapper
-from lightcurve_api.services.group_service import build_group_info, display_oid, mjd_to_date, parse_object_keys
+from lightcurve_api.services.group_service import build_group_info, mjd_to_date, parse_object_keys
 
 ZTF_A = idmapper.catalog_oid_to_masterid("ZTF", "ZTF18abvkqpo").item()
 ZTF_B = idmapper.catalog_oid_to_masterid("ZTF", "ZTF19aaxlmra").item()
@@ -94,15 +94,10 @@ def test_keys_and_json_ids_are_strings():
     assert member["oid"] == str(LSST_X) and member["key"] == f"lsst:{LSST_X}"
 
 
-def test_display_oid():
-    assert display_oid(ZTF_A, 0) == "ZTF18abvkqpo"
-    assert display_oid(LSST_X, 1) == str(LSST_X)
-
-
-def test_parse_object_keys_groups_by_survey():
+def test_parse_object_keys_gives_the_stored_oids_by_survey():
     assert parse_object_keys(f"ztf:ZTF18abvkqpo, LSST:{LSST_X},ztf:{ZTF_B}") == {
-        "ztf": ["ZTF18abvkqpo", str(ZTF_B)],
-        "lsst": [str(LSST_X)],
+        "ztf": [ZTF_A, ZTF_B],
+        "lsst": [LSST_X],
     }
     assert parse_object_keys("") == {}
 

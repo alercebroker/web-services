@@ -1,13 +1,10 @@
-import logging
-
 from aladin_api.models.object import RawObjectsRequest
-from core.idmapper.idmapper import encode_ids
+from core.idmapper.idmapper import encode_ids, public_oid
 from ..services.aladin_parser import object_parser, loads_objects_list
+from core.association import association_enabled, safe_lookup
+from core.idmapper.survey_mapper import get_survey_name
 from core.repository.queries import association as association_repository
 from core.repository.queries.objects import query_common_object
-from lightcurve_api.services.group_service import association_enabled, display_oid
-
-logger = logging.getLogger(__name__)
 
 
 def get_object_by_id(session_ms, oid, survey) -> dict:
@@ -35,29 +32,26 @@ def prepare_aladin_data(session_ms, raw_objects_request: RawObjectsRequest) -> t
 def get_group_objects(session_ms, oid: int, sid: int) -> list[dict]:
     """The other members of the object's association group, at their mean position, marked ``associated``.
 
-    Named by their survey's own id (the ZTF name, the LSST number). Empty without association data or a group;
-    the association tables are still a test schema, so a failure only leaves them out of the panel.
+    Named by their survey's own id (the ZTF name, the LSST number). Empty without association data, a group, or
+    when the lookup fails.
     """
     if not association_enabled():
         return []
-    try:
-        group = association_repository.get_object_group(session_ms, oid, sid)
-        if group is None:
-            return []
-        members = [m for m in association_repository.get_group_members(session_ms, group.group_id) if m != (oid, sid)]
-        positions = association_repository.get_object_stats(session_ms, members)
-    except Exception:
-        logger.warning("Could not read the group of %s (sid %s)", oid, sid, exc_info=True)
-        return []
+    rows = safe_lookup(
+        lambda: association_repository.get_counterpart_rows(session_ms, [(oid, sid)]),
+        [],
+        f"the group of {oid} (sid {sid})",
+    )
     return [
         {
-            "oid": display_oid(m_oid, m_sid),
-            "sid": m_sid,
+            "oid": public_oid(get_survey_name(row.sid), row.oid),
+            "sid": row.sid,
             "meanra": row.meanra,
             "meandec": row.meandec,
             "associated": True,
         }
-        for (m_oid, m_sid), row in positions.items()
+        for row in rows
+        if row.meanra is not None
     ]
 
 

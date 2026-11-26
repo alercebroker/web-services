@@ -1,15 +1,13 @@
 import csv
 import io
-import logging
 import zipfile
 from core.repository.queries.objects import query_object_by_id
 import lightcurve_api.services.lightcurve_plot_service.plots_utils as plots_utils
 from collections import defaultdict
 from itertools import chain
-from typing import Callable, ContextManager, List, Dict, Any, Tuple
+from typing import Callable, ContextManager, List, Dict, Any, Sequence, Tuple
 
 import httpx
-from core.periodogram.barycentric import bjd_tdb_of, mean_position, ztf_exposure_times
 from lightcurve_api.models.periodogram import Periodogram
 from sqlalchemy.orm.session import Session
 from toolz import curry, pipe, reduce
@@ -35,8 +33,6 @@ from .chart_point import ChartPoint
 from .result import Result
 from core.exceptions import ObjectNotFound
 from core.idmapper import idmapper
-
-logger = logging.getLogger(__name__)
 
 
 DEFAULT_RADIUS = 30 / 3600
@@ -261,32 +257,6 @@ def forced_photometry_plot_record(fphot: BaseForcedPhotometry, bjd_tdb: float | 
     }
 
 
-def bjd_tdb_times(
-    detections: List[BaseDetection],
-    forced_photometry: List[BaseForcedPhotometry],
-    ra: float | None = None,
-    dec: float | None = None,
-) -> Tuple[List[float | None], List[float | None]]:
-    """BJD_TDB of each detection and forced photometry point, for the fold and the periodogram.
-
-    ``mjd`` stays the observed time; ``bjd_tdb`` is the time on one scale for every survey, with Earth's orbit
-    removed (see core.periodogram.barycentric). ``ra``/``dec`` is the object's mean position, the same for all its
-    points (and for the other objects of its group); without it, the mean of the detections' positions is used.
-    A failed conversion gives None for every point, and the browser then folds on ``mjd`` for all of them.
-    """
-    none = [None] * len(detections), [None] * len(forced_photometry)
-    if ra is None or dec is None:
-        if not detections:
-            return none
-        ra, dec = mean_position([d.ra for d in detections], [d.dec for d in detections])
-    try:
-        exptimes = ztf_exposure_times(forced_photometry)
-        return bjd_tdb_of(detections, ra, dec, exptimes), bjd_tdb_of(forced_photometry, ra, dec, exptimes)
-    except Exception:
-        logger.warning("Could not convert the observation times to BJD_TDB", exc_info=True)
-        return none
-
-
 def non_detection_plot_record(ndet: BaseNonDetection) -> dict:
     """Compact record for one non-detection (limiting magnitude); no flux/total variants."""
     return {
@@ -323,8 +293,8 @@ def get_periodogram_data(
     session_factory: Callable[..., ContextManager[Session]],
     ra: float | None = None,
     dec: float | None = None,
-    member_detections: List[BaseDetection] = (),
-    member_forced_photometry: List[BaseForcedPhotometry] = (),
+    member_detections: Sequence[BaseDetection] = (),
+    member_forced_photometry: Sequence[BaseForcedPhotometry] = (),
 ) -> Periodogram:
     """Compute the periodogram for an object on demand.
 
@@ -336,17 +306,11 @@ def get_periodogram_data(
     empty = Result(
         {},
         Lightcurve(detections=[], non_detections=[], forced_photometry=[]),
-        # Only a given position: ConfigState's fields are typed float, and their None default isn't validated
-        config_state=ConfigState(
-            oid=oid, survey_id=survey_id, fold=True, **({"meanra": ra, "meandec": dec} if ra is not None else {})
-        ),
+        config_state=ConfigState(oid=oid, survey_id=survey_id, fold=True, meanra=ra, meandec=dec),
         periodogram=Periodogram(periods=[], scores=[], best_periods_index=[], best_periods=[]),
     )
-    result = pipe(
-        get_lightcurve(empty, oid, survey_id, session_factory),
-        lambda r: compute_periodogram(r, member_detections, member_forced_photometry),
-    )
-    return result.periodogram
+    result = get_lightcurve(empty, oid, survey_id, session_factory)
+    return compute_periodogram(result, member_detections, member_forced_photometry).periodogram
 
 
 def lightcurve_plot(oid: str, survey_id: str, session_factory: Callable[..., ContextManager[Session]]) -> Result:

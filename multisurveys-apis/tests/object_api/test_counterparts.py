@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 import pytest
 
+from core import association as association_setting
 from core.idmapper.idmapper import catalog_oid_to_masterid
 from object_api.routes import htmx
 from object_api.services import counterpart_service
@@ -91,13 +92,13 @@ def test_an_lsst_listing_is_keyed_by_the_numeric_id(repository):
 
 
 def test_the_column_is_off_without_association_schema(monkeypatch):
-    monkeypatch.delenv("ASSOCIATION_SCHEMA", raising=False)
+    monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", None)
 
     assert htmx._counterparts(None, "ztf", [ZTF_A]) is None
 
 
 def test_a_failed_lookup_leaves_the_column_empty(monkeypatch):
-    monkeypatch.setenv("ASSOCIATION_SCHEMA", "association")
+    monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", "association")
 
     def broken(*args):
         raise RuntimeError("no such schema")

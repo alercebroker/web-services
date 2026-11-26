@@ -7,7 +7,7 @@ The raw times differ by survey, so each point is converted by its own survey:
   exposure time. Forced photometry carries it (``exptime``, seconds); a detection takes the one of the forced
   photometry point of the same exposure (``pid``), which the light curve already has. Only where neither exists
   (about 60% of detections, from before ZTF sent forced photometry) the standard ``ZTF_DEFAULT_EXPTIME`` is
-  assumed. The data-quality table also has it, but for few detections, and a cold join on it took 0.5 s.
+  assumed.
 - LSST: ``midpointMjdTai``, already mid-exposure, in TAI.
 - ZTF data release: ``hmjd``, heliocentric (the Earth-orbit delay is already removed, relative to the Sun's
   centre) and mid-exposure, assumed UTC. Only the Sun's offset from the barycentre is added, so the orbit term
@@ -22,6 +22,7 @@ Results are MJDs on the BJD_TDB scale. Use one sky position for all the points o
 mean position): members of an association group a few arcseconds apart differ by at most about 12 ms.
 """
 
+import logging
 import warnings
 from collections import defaultdict
 from typing import Iterable, Sequence
@@ -34,9 +35,13 @@ from astropy.utils import iers
 from astropy.utils.exceptions import AstropyWarning
 from scipy.interpolate import CubicSpline
 
+logger = logging.getLogger(__name__)
+
 ZTF_DEFAULT_EXPTIME = 30.0  # seconds: the standard ZTF exposure, 99% of them
 SECONDS_PER_DAY = 86400.0
 LIGHT_SECONDS_PER_AU = (1 * u.au).to_value(u.lightsecond)
+# Grid of the interpolated part of the conversion: errors under 0.4 ms (Earth's annual orbit and its monthly wobble)
+GRID_STEP_DAYS = 5.0
 
 # survey → (time scale of its raw times, True if they are already heliocentric)
 _SURVEY_TIMES = {
@@ -105,11 +110,6 @@ def bjd_tdb(
     return tt + spline(tt) / SECONDS_PER_DAY
 
 
-GRID_STEP_DAYS = (
-    5.0  # interpolation error under 0.4 ms (Earth's annual orbit and its monthly wobble); 55 ms for 8 years
-)
-
-
 def _remainder_seconds(tt_mjd: np.ndarray, ra: float, dec: float, heliocentric: bool) -> np.ndarray:
     """BJD_TDB − TT, in seconds, at TT times: the TDB − TT clock term plus the light delay to the barycentre."""
     t = Time(tt_mjd, format="mjd", scale="tt").tdb
@@ -160,3 +160,25 @@ def bjd_tdb_of(points: Iterable, ra: float, dec: float, exptime_by_pid: dict[int
         for i, value in zip(indexes, converted):
             times[i] = float(value)
     return times
+
+
+def bjd_tdb_times(
+    detections: Sequence, forced_photometry: Sequence, ra: float | None = None, dec: float | None = None
+) -> tuple[list[float | None], list[float | None]]:
+    """BJD_TDB of each detection and forced photometry point of a light curve, for the fold and the periodogram.
+
+    ``ra``/``dec`` is the object's mean position, the same for all its points (and for the other objects of its
+    group); without it, the mean of the detections' positions. A failed conversion gives None for every point, so
+    callers fall back to the observed MJDs for all of them, never a mix of the two.
+    """
+    none = [None] * len(detections), [None] * len(forced_photometry)
+    if ra is None or dec is None:
+        if not detections:
+            return none
+        ra, dec = mean_position([d.ra for d in detections], [d.dec for d in detections])
+    try:
+        exptimes = ztf_exposure_times(forced_photometry)
+        return bjd_tdb_of(detections, ra, dec, exptimes), bjd_tdb_of(forced_photometry, ra, dec, exptimes)
+    except Exception:
+        logger.warning("Could not convert the observation times to BJD_TDB", exc_info=True)
+        return none

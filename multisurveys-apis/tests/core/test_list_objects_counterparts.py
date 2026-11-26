@@ -5,6 +5,7 @@ from db_plugins.db.sql.models_pipeline import Object, Probability, ZtfObject
 from sqlalchemy import event, text
 
 from app_client import client_for
+from core import association as association_setting
 from core.idmapper.idmapper import catalog_oid_to_masterid
 from core.repository.association_models import (
     ASSOCIATION_SCHEMA,
@@ -22,7 +23,7 @@ LSST_X = 170441932397871511
 @pytest.fixture
 def objects(db, monkeypatch):
     """Two ZTF objects in the results; the first is in a group with an LSST object."""
-    monkeypatch.setenv("ASSOCIATION_SCHEMA", ASSOCIATION_SCHEMA)
+    monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", ASSOCIATION_SCHEMA)
     with db.session() as session:
         session.execute(text(f"CREATE SCHEMA IF NOT EXISTS {ASSOCIATION_SCHEMA}"))
         session.commit()
@@ -92,7 +93,7 @@ def test_a_grouped_object_links_to_its_counterpart(objects):
 
 
 def test_no_column_without_association_schema(objects, monkeypatch):
-    monkeypatch.delenv("ASSOCIATION_SCHEMA")
+    monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", None)
 
     response = client_for("object_api", objects).get("/htmx/list_objects", params={"survey": "ztf"})
 
@@ -125,7 +126,7 @@ def test_the_column_costs_one_statement(objects, monkeypatch):
         client.get("/htmx/list_objects", params={"survey": "ztf"})
         with_column = len(statements)
         statements.clear()
-        monkeypatch.delenv("ASSOCIATION_SCHEMA")
+        monkeypatch.setattr(association_setting, "ASSOCIATION_SCHEMA", None)
         client.get("/htmx/list_objects", params={"survey": "ztf"})
         without_column = len(statements)
     finally:

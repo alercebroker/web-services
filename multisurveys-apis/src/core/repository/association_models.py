@@ -1,19 +1,19 @@
 """Read-only models for the multisurvey object association tables.
 
 The association pipeline writes these tables; the APIs only read them. They aren't in db-plugins yet, so they
-are declared here on their own metadata. Their schema comes from ``ASSOCIATION_SCHEMA``, read once at import
-(``association`` when unset; the group panel is off then anyway, see lightcurve_api/services/group_service.py).
+are declared here on their own metadata, in the schema ``ASSOCIATION_SCHEMA`` names (see core/association.py;
+``association`` when unset, and nothing reads them then).
 
 Objects are always named by ``(oid, sid)``. ``group_id`` is internal: it can change when groups merge or split.
 """
-
-import os
 
 from sqlalchemy import BigInteger, DateTime, Float, Integer, SmallInteger, String
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-ASSOCIATION_SCHEMA = os.getenv("ASSOCIATION_SCHEMA") or "association"
+from core.association import ASSOCIATION_SCHEMA as CONFIGURED_SCHEMA
+
+ASSOCIATION_SCHEMA = CONFIGURED_SCHEMA or "association"
 
 
 class AssociationBase(DeclarativeBase):

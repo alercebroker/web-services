@@ -57,8 +57,8 @@ class ConfigState(BaseModel):
     # additional context
     oid: str = ""
     survey_id: str = ""
-    meanra: float = None
-    meandec: float = None
+    meanra: float | None = None
+    meandec: float | None = None
 
 
 def parse_detections(raw_detections: List[str]) -> List[BaseDetection]:

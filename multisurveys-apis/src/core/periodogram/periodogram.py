@@ -61,9 +61,8 @@ class PeriodogramComputer:
         # trim_lightcurve walks the times in order: unsorted, it keeps the whole light curve.
         trimmed_lightcurve = self.trim_lightcurve(lightcurve.sort_values("mjd", kind="stable"))
 
-        # P4J 1.2.0 folds times in 32-bit floats: from a recent reference day instead of MJD 0, much less
-        # precision is lost (2.3–2.9 times stronger peaks at 1.4 h). 1.2.1, pinned on Linux, folds in 64-bit floats,
-        # but macOS still has 1.2.0. Shifting the times doesn't change the periods.
+        # Times from the first day rather than MJD 0: P4J builds that fold in 32-bit floats (1.2.0, still the macOS
+        # wheel) lose much less precision. Shifting the times doesn't change the periods.
         mjds = np.array(trimmed_lightcurve.mjd)
         reference_day = np.floor(mjds.min()) if len(mjds) else 0.0
         self.periodogram_computer.set_data(

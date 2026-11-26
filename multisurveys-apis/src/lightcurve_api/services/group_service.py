@@ -9,38 +9,27 @@ Every object here is named by its survey and that survey's id, as users name it:
 numeric id, as a string. ``group_id`` is internal and only shown for reference.
 """
 
-import logging
-import os
-from datetime import datetime, timedelta
 from dataclasses import asdict, dataclass, field
-from typing import Callable, ContextManager, Iterable
+from datetime import datetime, timedelta
+from typing import Iterable
 
-from sqlalchemy.orm import Session
-
-from core.idmapper.idmapper import decode_masterid, parse_oid
+from core.idmapper.idmapper import parse_oid, public_oid
 from core.idmapper.survey_mapper import get_survey_id, get_survey_name
+from core.periodogram.barycentric import bjd_tdb_times
 from core.repository.queries import association as association_repository
+from core.repository.queries.association import SessionFactory
 from lightcurve_api.services import lightcurve_service
 from lightcurve_api.services.lightcurve_plot_service.service import (
-    bjd_tdb_times,
     detection_plot_record,
     forced_photometry_plot_record,
 )
 
-logger = logging.getLogger(__name__)
-
-SessionFactory = Callable[..., ContextManager[Session]]
-
 DEFAULT_THRESHOLD = 0.95
 NEARBY_LIMIT = 5
 MAX_OBJECTS_PER_REQUEST = 20
-SUPPORTED_SIDS = (get_survey_id("ztf"), get_survey_id("lsst"))
+SUPPORTED_SURVEYS = ("ztf", "lsst")
+SUPPORTED_SIDS = tuple(get_survey_id(survey) for survey in SUPPORTED_SURVEYS)
 MJD_EPOCH = datetime(1858, 11, 17)
-
-
-def association_enabled() -> bool:
-    """Groups are shown only where ASSOCIATION_SCHEMA is set (local demo); production doesn't have the tables yet."""
-    return bool(os.getenv("ASSOCIATION_SCHEMA"))
 
 
 @dataclass
@@ -82,43 +71,27 @@ def mjd_to_date(mjd: float | None) -> str:
     return "" if mjd is None else (MJD_EPOCH + timedelta(days=mjd)).date().isoformat()
 
 
-def display_oid(oid: int, sid: int) -> str:
-    """The id users know an object by: the ZTF name, or the numeric id of other surveys."""
-    if sid == get_survey_id("ztf"):
-        return decode_masterid(oid)[1]
-    return str(oid)
+def _public_oid(key: tuple[int, int]) -> str:
+    oid, sid = key
+    return public_oid(get_survey_name(sid), oid)
 
 
 def get_group_info(oid: str, survey_id: str, session_factory: SessionFactory) -> GroupInfo | None:
-    """The object's group and nearby objects, or None when there is no association data at all."""
-    master_id = parse_oid(survey_id, oid)
-    sid = get_survey_id(survey_id)
-
-    group = association_repository.get_object_group(session_factory, master_id, sid)
-    if group is not None:
-        method = association_repository.get_method(session_factory, group.method_version)
-        members = association_repository.get_group_members(session_factory, group.group_id)
-    else:
-        method = association_repository.get_method(session_factory)
-        members = [(master_id, sid)]
-    if method is None:
+    """The object's group and nearby objects, in one statement, or None when there is no association data."""
+    self_key = (parse_oid(survey_id, oid), get_survey_id(survey_id))
+    rows = association_repository.get_group_neighbourhood(session_factory, *self_key)
+    if not rows:
         return None
-
-    threshold = (method.params or {}).get("groups", {}).get("threshold", DEFAULT_THRESHOLD)
-    pairs = association_repository.get_pairs_touching(session_factory, members, method.method_version)
-    objects = set(members) | {(master_id, sid)}
-    for pair in pairs:
-        objects |= {(pair.oid_a, pair.sid_a), (pair.oid_b, pair.sid_b)}
-    stats = association_repository.get_object_stats(session_factory, objects)
+    first = rows[0]
     return build_group_info(
-        self_key=(master_id, sid),
-        members=members,
-        pairs=pairs,
-        threshold=threshold,
-        method_version=method.method_version,
-        group_id=group.group_id if group else None,
-        group_version=group.group_version if group else None,
-        stats=stats,
+        self_key=self_key,
+        members=[(row.oid, row.sid) for row in rows if row.is_member],
+        pairs=[row for row in rows if row.oid_b is not None],
+        threshold=(first.params or {}).get("groups", {}).get("threshold", DEFAULT_THRESHOLD),
+        method_version=first.method_version,
+        group_id=first.group_id,
+        group_version=first.group_version,
+        stats={(row.oid, row.sid): row for row in rows},
     )
 
 
@@ -162,40 +135,33 @@ def build_group_info(
             if outsider not in best_nearby or pair.score > best_nearby[outsider][0].score:
                 best_nearby[outsider] = (pair, member)
 
-    def with_stats(obj, key):
+    def describe(key, in_group, is_self=False, pair=None, via=None):
+        obj = GroupObject(
+            oid=_public_oid(key),
+            survey_id=get_survey_name(key[1]),
+            is_self=is_self,
+            in_group=in_group,
+            dist=float(pair.dist) if pair is not None else None,
+            score=float(pair.score) if pair is not None else None,
+            linked_via=_public_oid(via) if via not in (None, self_key) else None,
+        )
         row = stats.get(key)
         if row is not None:
             obj.n_det, obj.firstmjd, obj.lastmjd = row.n_det, row.firstmjd, row.lastmjd
         return obj
-
-    def describe(key, pair, via, in_group):
-        obj = GroupObject(
-            oid=display_oid(*key),
-            survey_id=get_survey_name(key[1]),
-            in_group=in_group,
-            dist=float(pair.dist) if pair is not None else None,
-            score=float(pair.score) if pair is not None else None,
-            linked_via=display_oid(*via) if via is not None and via != self_key else None,
-        )
-        return with_stats(obj, key)
 
     others = []
     for key in member_set - {self_key}:
         if key[1] not in SUPPORTED_SIDS:
             continue
         if key in direct:
-            others.append(describe(key, direct[key], self_key, True))
-        elif key in best_inside:
-            others.append(describe(key, *best_inside[key], True))
+            pair, via = direct[key], self_key
         else:
-            others.append(describe(key, None, None, True))
+            pair, via = best_inside.get(key, (None, None))
+        others.append(describe(key, in_group=True, pair=pair, via=via))
     others.sort(key=lambda m: (m.linked_via is not None, -(m.score or 0), m.dist or 0))
 
-    me = with_stats(
-        GroupObject(oid=display_oid(*self_key), survey_id=get_survey_name(self_key[1]), is_self=True), self_key
-    )
-
-    nearby = [describe(key, pair, via, False) for key, (pair, via) in best_nearby.items()]
+    nearby = [describe(key, in_group=False, pair=pair, via=via) for key, (pair, via) in best_nearby.items()]
     nearby.sort(key=lambda n: (-(n.score or 0), n.dist or 0))
 
     return GroupInfo(
@@ -203,46 +169,38 @@ def build_group_info(
         group_version=group_version,
         method_version=method_version,
         threshold=threshold,
-        members=[me, *others],
+        members=[describe(self_key, in_group=True, is_self=True), *others],
         nearby=nearby[:nearby_limit],
     )
 
 
-def parse_object_keys(objects: str) -> dict[str, list[str]]:
-    """Parse ``ztf:ZTF19aaxlmra,lsst:313853798223069211`` into oids per survey, validating each one."""
+def parse_object_keys(objects: str) -> dict[str, list[int]]:
+    """Parse ``ztf:ZTF19aaxlmra,lsst:313853798223069211`` into the stored oids of each survey."""
     keys = [k.strip() for k in objects.split(",") if k.strip()]
     if len(keys) > MAX_OBJECTS_PER_REQUEST:
         raise ValueError(f"Too many objects: {len(keys)}, at most {MAX_OBJECTS_PER_REQUEST} per request.")
-    by_survey: dict[str, list[str]] = {}
+    by_survey: dict[str, list[int]] = {}
     for key in keys:
         survey, sep, oid = key.partition(":")
         survey = survey.lower()
-        if not sep or survey not in ("ztf", "lsst"):
+        if not sep or survey not in SUPPORTED_SURVEYS:
             raise ValueError(f"Invalid object '{key}': expected <survey>:<oid>, with survey ztf or lsst.")
-        parse_oid(survey, oid)  # raises ValueError for an invalid id
-        by_survey.setdefault(survey, []).append(oid)
+        by_survey.setdefault(survey, []).append(parse_oid(survey, oid))  # ValueError for an invalid id
     return by_survey
 
 
-def load_photometry(objects: str, session_factory: SessionFactory, exclude: str | None = None) -> tuple[list, list]:
-    """Detections and forced photometry of several objects (``objects`` as in parse_object_keys), as
-    ``(model, sid)`` pairs: two statements per survey. ``exclude`` is a key (``ztf:ZTF18…``) to leave out, the
-    object being viewed, whose photometry the caller already has."""
+def load_photometry(
+    objects: str, session_factory: SessionFactory, exclude: tuple[str, int] | None = None
+) -> tuple[list, list]:
+    """Detections and forced photometry of several objects (``objects`` as in parse_object_keys): two statements
+    per survey. ``exclude``, a (survey, stored oid) pair, leaves out the object being viewed, whose photometry the
+    caller already has."""
     detections, forced = [], []
     for survey, oids in parse_object_keys(objects).items():
-        if exclude:
-            oids = [oid for oid in oids if f"{survey}:{oid}" != exclude]
-            if not oids:
-                continue
-        sid = get_survey_id(survey)
-        seen = set()
-        for det in lightcurve_service.get_detections_by_list(oids, survey, session_factory):
-            key = (det.oid, getattr(det, "measurement_id", None))
-            if key in seen:
-                continue
-            seen.add(key)
-            detections.append((det, sid))
-        forced += [(fp, sid) for fp in lightcurve_service.get_forced_photometry_by_list(oids, survey, session_factory)]
+        oids = [oid for oid in oids if (survey, oid) != exclude]
+        if oids:
+            detections += lightcurve_service.get_detections_by_list(oids, survey, session_factory)
+            forced += lightcurve_service.get_forced_photometry_by_list(oids, survey, session_factory)
     return detections, forced
 
 
@@ -256,14 +214,14 @@ def get_group_photometry(
     ``ra``/``dec`` (the viewed object's), else the mean of all these detections.
     """
     detections, forced = load_photometry(objects, session_factory)
-    det_times, fp_times = bjd_tdb_times([d for d, _ in detections], [f for f, _ in forced], ra, dec)
+    det_times, fp_times = bjd_tdb_times(detections, forced, ra, dec)
     return {
         "detections": [
-            {**detection_plot_record(det, t), "oid": display_oid(det.oid, sid)}
-            for (det, sid), t in zip(detections, det_times)
+            {**detection_plot_record(det, t), "oid": public_oid(det.survey_id, det.oid)}
+            for det, t in zip(detections, det_times)
         ],
         "forced_photometry": [
-            {**forced_photometry_plot_record(fp, t), "oid": display_oid(fp.oid, sid)}
-            for (fp, sid), t in zip(forced, fp_times)
+            {**forced_photometry_plot_record(fp, t), "oid": public_oid(fp.survey_id, fp.oid)}
+            for fp, t in zip(forced, fp_times)
         ],
     }

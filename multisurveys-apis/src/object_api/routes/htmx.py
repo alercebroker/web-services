@@ -1,9 +1,9 @@
-import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Query, Request
 from fastapi.responses import HTMLResponse
 
+from core.association import association_enabled, safe_lookup
 from core.idmapper.idmapper import public_oid
 from core.idmapper.survey_mapper import Survey
 from core.static_files import configure_templates, html_templates
@@ -14,7 +14,6 @@ from object_api.services.object_services import (
     get_survey_classifiers,
     get_website_classifiers,
 )
-from lightcurve_api.services.group_service import association_enabled
 from object_api.services import counterpart_service
 from probability_api.services.lsst_service import priorities_by_survey
 
@@ -35,8 +34,6 @@ from ..services.validations import (
     prob_lastmjd_validation,
     probability_validation,
 )
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -239,17 +236,15 @@ def objects_table(
 
 
 def _counterparts(session_factory, survey: str, oids: list) -> dict | None:
-    """The "Also seen as" column's data, or None where it isn't shown (no association data configured).
-
-    The association tables are still a test schema, so a failure only leaves the column empty.
-    """
+    """The "Also seen as" column's data: None where it isn't shown (no association data configured), and empty
+    when the lookup fails, so the results are shown either way."""
     if not association_enabled():
         return None
-    try:
-        return counterpart_service.get_counterparts(session_factory, survey, oids)
-    except Exception:
-        logger.warning("Could not read the counterparts of a %s results page", survey, exc_info=True)
-        return {}
+    return safe_lookup(
+        lambda: counterpart_service.get_counterparts(session_factory, survey, oids),
+        {},
+        f"the counterparts of a {survey} results page",
+    )
 
 
 @router.get("/htmx/side_objects", response_class=HTMLResponse)

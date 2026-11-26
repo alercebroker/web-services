@@ -1,4 +1,3 @@
-import logging
 from datetime import date
 
 import httpx
@@ -6,9 +5,11 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response, StreamingResponse
 from toolz import curry, pipe
 
+from core.association import association_enabled, safe_lookup
 from core.config.dependencies import db_dependency
 from core.idmapper.idmapper import parse_oid, public_oid
 from core.idmapper.survey_mapper import Survey
+from core.periodogram.barycentric import bjd_tdb_times
 from core.static_files import configure_templates, html_templates
 from lightcurve_api.models.lightcurve import Lightcurve
 from lightcurve_api.models.periodogram import NoPeriodError, Periodogram
@@ -23,8 +24,6 @@ from lightcurve_api.services.parsers import parse_ztf_dr_detection
 from .parsers import (
     ConfigState,
 )
-
-logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/htmx")
 
@@ -56,7 +55,7 @@ def lightcurve(request: Request, oid: str, survey_id: Survey, db: db_dependency)
     not_corrected = not any(d.has_total() for d in detections)
 
     forced_photometry = result.lightcurve.forced_photometry
-    det_times, fp_times = lightcurve_plot_service.bjd_tdb_times(
+    det_times, fp_times = bjd_tdb_times(
         detections, forced_photometry, result.config_state.meanra, result.config_state.meandec
     )
 
@@ -83,18 +82,13 @@ def lightcurve(request: Request, oid: str, survey_id: Survey, db: db_dependency)
 
 
 def _group_info(oid: str, survey_id: str, session_factory) -> dict | None:
-    """The object's group for the members panel, or None where groups aren't available.
-
-    The association tables are still a test schema, so a failure here only hides the panel: the object's own
-    light curve is shown either way.
-    """
-    if not group_service.association_enabled():
+    """The object's group for the members panel, or None where groups aren't available or the lookup failed:
+    the object's own light curve is shown either way."""
+    if not association_enabled():
         return None
-    try:
-        info = group_service.get_group_info(oid, survey_id, session_factory)
-    except Exception:
-        logger.warning("Could not read the group of %s %s", survey_id, oid, exc_info=True)
-        return None
+    info = safe_lookup(
+        lambda: group_service.get_group_info(oid, survey_id, session_factory), None, f"the group of {survey_id} {oid}"
+    )
     return info.to_dict() if info else None
 
 
@@ -130,11 +124,9 @@ def periodogram(
     of other objects of its group, the ones drawn on the light curve. Each survey's bands are separate bands of
     the periodogram.
     """
-    parse_oid(survey_id, oid)
-    members, members_fp = group_service.load_photometry(objects, db.session, exclude=f"{survey_id.lower()}:{oid}")
-    pd = get_periodogram_data(
-        oid, survey_id, db.session, ra, dec, [det for det, _ in members], [fp for fp, _ in members_fp]
-    )
+    viewed = (survey_id.lower(), parse_oid(survey_id, oid))
+    members, members_fp = group_service.load_photometry(objects, db.session, exclude=viewed)
+    pd = get_periodogram_data(oid, survey_id, db.session, ra, dec, members, members_fp)
     payload = pd.model_dump()
     try:
         payload["best_candidate_period"] = pd.get_best_candidate_period()
@@ -184,7 +176,7 @@ def dr_detections(ra: float, dec: float, oids: str = ""):
         ).json()
     detections = parse_ztf_dr_detection(raw, selected)
     # hmjd is already heliocentric: bjd_tdb_times adds only the Sun's offset from the barycentre
-    times, _ = lightcurve_plot_service.bjd_tdb_times(detections, [], ra, dec)
+    times, _ = bjd_tdb_times(detections, [], ra, dec)
     return [lightcurve_plot_service.detection_plot_record(d, t) for d, t in zip(detections, times)]
 
 

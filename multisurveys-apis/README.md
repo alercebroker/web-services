@@ -41,33 +41,15 @@ The run_all command will attempt to run all the apis that are included in the se
 
 The multisurvey association pipeline links objects that are the same astrophysical source, within and across
 surveys. Pairs of objects get a score, and objects linked by pairs that score at least the method's threshold
-form a group. The light curve widget can show the other objects of the viewed object's group:
+form a group. Where it is enabled:
 
-- An **Associated objects** panel lists the group's members, checked, one per line. Below them, **Nearby, not
-  associated** lists a few objects whose pairs scored below the threshold, unchecked and folded. The panel is
-  folded when the object has no other member.
-- Nothing is drawn until the user turns on **Show on the light curve**. Then the checked objects' points are
-  drawn darker and translucent, with the markers of their survey and the colors of their band. Color is the
-  band in every survey (ZTF g and LSST g are the same green) and the marker is the survey: detections are
-  filled squares (ZTF) or circles (LSST), and forced photometry hollow triangles pointing down (ZTF) or up
-  (LSST). The tooltip names each point's object.
-- **Details** adds a second line under each object: the score and distance of its pair (with the member it is
-  paired with, when that isn't the viewed object), and its number of detections and first and last detection
-  dates, from the `object` table.
-- Other objects follow the current view (Mag/Flux, Diff/Total), and a note under the switch says what to
-  expect from it: in Diff, each survey and ZTF field subtracts its own template, so constant offsets between
-  objects are expected (the view for transients); in Total, each survey's PSF takes in a different amount of
-  host-galaxy light, so steps between surveys are expected for AGN and extended sources. Their limiting
-  magnitudes aren't drawn.
-- The Aladin panel marks the group's other members at their mean position, in teal, named by their survey's id.
-- While their photometry loads, a small badge over the chart says so ("Loading 3 other objects…").
-- The period is searched on the objects drawn: the viewed object's detections and those of the checked objects
-  when Fold is first turned on. Each survey's bands are bands of their own in the periodogram (ZTF g and LSST g
-  apart), each fitted around its own mean, so offsets between surveys don't hide the period. When the search mixes
-  surveys, magnitude errors below 0.03 are raised to 0.03: LSST's errors, a few thousandths of a magnitude, would
-  otherwise outweigh ZTF's points hundreds of times and pull the period off. A line under the
-  periodogram switch says which objects the period came from, and offers **Recompute** once the objects drawn
-  change; a recompute keeps the current fold until the new period arrives, then folds at it.
+- The light curve widget lists the viewed object's group, and a few nearby objects that scored below the
+  threshold, and can draw their photometry next to the object's own, on demand.
+- With Fold on, the period is searched on the objects drawn. Each survey's bands are bands of their own in the
+  periodogram, and when the search mixes surveys, magnitude errors below 0.03 are raised to 0.03, so LSST's very
+  small errors don't outweigh ZTF's points.
+- The Aladin panel marks the group's other members, and the website's results table gets an "Also seen as"
+  column.
 
 It is only enabled where `ASSOCIATION_SCHEMA` names the schema that holds the association tables. Nothing else
 changes otherwise, and if the group lookup fails the widget still shows the object on its own. To try it
@@ -82,7 +64,8 @@ markers:
 
 How it is served:
 
-- `GET /htmx/lightcurve` embeds the group (members and nearby objects) next to the object's own photometry.
+- `GET /htmx/lightcurve` embeds the group (members and nearby objects, one more statement) next to the object's
+  own photometry.
   Objects are named by survey and that survey's id (`ztf:ZTF18abvkqpo`, `lsst:<diaObjectId>`), always as
   strings, because these ids don't fit in a JavaScript number.
 - `GET /htmx/group_photometry?objects=ztf:<oid>,lsst:<oid>` returns the detections and forced photometry of up
@@ -91,7 +74,8 @@ How it is served:
 - `GET /htmx/periodogram?oid=…&survey_id=…&objects=ztf:<oid>,lsst:<oid>` searches the period on the object and
   those others (two more statements per survey).
 
-Code: models in `src/core/repository/association_models.py` (the tables aren't in db-plugins yet), queries in
+Code: the switch in `src/core/association.py`, models in `src/core/repository/association_models.py` (the
+tables aren't in db-plugins yet), queries in
 `src/core/repository/queries/association.py`, logic in `src/lightcurve_api/services/group_service.py`, panel in
 `src/lightcurve_api/routes/htmx/templates/group_panel.html.jinja`.
 
