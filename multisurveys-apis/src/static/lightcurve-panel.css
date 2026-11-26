@@ -531,6 +531,42 @@
     font-variant-numeric: tabular-nums;
 }
 
+/* Over the chart, top left: something it will draw is still loading. Small and translucent, it never blocks the
+   chart. */
+#main-app .lc-chart-status {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 30;
+    padding: 1px 8px;
+    border-radius: 10px;
+    background: var(--lc-primary-soft);
+    color: var(--lc-primary-text);
+    font: 500 11px/18px var(--lc-font);
+    pointer-events: none;
+}
+
+/* Under the periodogram switch: which objects the period comes from, and "Recompute" */
+#main-app .lc-period-source {
+    flex-wrap: wrap;
+    column-gap: 8px;
+    font-size: 11px;
+    line-height: 16px;
+}
+
+#main-app .lc-action {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--lc-primary);
+    font: 500 11px/16px var(--lc-font);
+    cursor: pointer;
+}
+
+#main-app .lc-action:hover {
+    text-decoration: underline;
+}
+
 #main-app .lc-pulse {
     animation: lc-pulse 1.5s ease-in-out infinite;
 }

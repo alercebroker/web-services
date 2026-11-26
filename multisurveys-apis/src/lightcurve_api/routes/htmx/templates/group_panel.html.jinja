@@ -41,7 +41,6 @@
   <summary>
     <span class="lc-title" data-tip="Objects the association links to this one: other detections of the same astrophysical source, in this or another survey. They are drawn darker and translucent.{% if group.group_id is not none %} Group {{ group.group_id }}, version {{ group.group_version }}.{% endif %}">Associated objects</span>
     <span class="lc-muted">{{ others + 1 }} object{{ 's' if others else '' }}</span>
-    <span id="group-status" class="lc-muted lc-pulse tw-hidden">loading…</span>
   </summary>
 
   {% if others or group.nearby %}

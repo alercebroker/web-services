@@ -22,6 +22,7 @@ from core.idmapper.survey_mapper import get_survey_id, get_survey_name
 from core.repository.queries import association as association_repository
 from lightcurve_api.services import lightcurve_service
 from lightcurve_api.services.lightcurve_plot_service.service import (
+    bjd_tdb_times,
     detection_plot_record,
     forced_photometry_plot_record,
 )
@@ -190,7 +191,9 @@ def build_group_info(
             others.append(describe(key, None, None, True))
     others.sort(key=lambda m: (m.linked_via is not None, -(m.score or 0), m.dist or 0))
 
-    me = with_stats(GroupObject(oid=display_oid(*self_key), survey_id=get_survey_name(self_key[1]), is_self=True), self_key)
+    me = with_stats(
+        GroupObject(oid=display_oid(*self_key), survey_id=get_survey_name(self_key[1]), is_self=True), self_key
+    )
 
     nearby = [describe(key, pair, via, False) for key, (pair, via) in best_nearby.items()]
     nearby.sort(key=lambda n: (-(n.score or 0), n.dist or 0))
@@ -221,14 +224,16 @@ def parse_object_keys(objects: str) -> dict[str, list[str]]:
     return by_survey
 
 
-def get_group_photometry(objects: str, session_factory: SessionFactory) -> dict:
-    """Detections and forced photometry of several objects, as plot records tagged with their object.
-
-    Non-detections are left out: limiting magnitudes of other objects would crowd the difference view, and the
-    light curve only draws those of the object being viewed.
-    """
+def load_photometry(objects: str, session_factory: SessionFactory, exclude: str | None = None) -> tuple[list, list]:
+    """Detections and forced photometry of several objects (``objects`` as in parse_object_keys), as
+    ``(model, sid)`` pairs: two statements per survey. ``exclude`` is a key (``ztf:ZTF18…``) to leave out, the
+    object being viewed, whose photometry the caller already has."""
     detections, forced = [], []
     for survey, oids in parse_object_keys(objects).items():
+        if exclude:
+            oids = [oid for oid in oids if f"{survey}:{oid}" != exclude]
+            if not oids:
+                continue
         sid = get_survey_id(survey)
         seen = set()
         for det in lightcurve_service.get_detections_by_list(oids, survey, session_factory):
@@ -236,7 +241,29 @@ def get_group_photometry(objects: str, session_factory: SessionFactory) -> dict:
             if key in seen:
                 continue
             seen.add(key)
-            detections.append({**detection_plot_record(det), "oid": display_oid(det.oid, sid)})
-        for fp in lightcurve_service.get_forced_photometry_by_list(oids, survey, session_factory):
-            forced.append({**forced_photometry_plot_record(fp), "oid": display_oid(fp.oid, sid)})
-    return {"detections": detections, "forced_photometry": forced}
+            detections.append((det, sid))
+        forced += [(fp, sid) for fp in lightcurve_service.get_forced_photometry_by_list(oids, survey, session_factory)]
+    return detections, forced
+
+
+def get_group_photometry(
+    objects: str, session_factory: SessionFactory, ra: float | None = None, dec: float | None = None
+) -> dict:
+    """Detections and forced photometry of several objects, as plot records tagged with their object.
+
+    Non-detections are left out: limiting magnitudes of other objects would crowd the difference view, and the
+    light curve only draws those of the object being viewed. Each record has its ``bjd_tdb``, from the sky position
+    ``ra``/``dec`` (the viewed object's), else the mean of all these detections.
+    """
+    detections, forced = load_photometry(objects, session_factory)
+    det_times, fp_times = bjd_tdb_times([d for d, _ in detections], [f for f, _ in forced], ra, dec)
+    return {
+        "detections": [
+            {**detection_plot_record(det, t), "oid": display_oid(det.oid, sid)}
+            for (det, sid), t in zip(detections, det_times)
+        ],
+        "forced_photometry": [
+            {**forced_photometry_plot_record(fp, t), "oid": display_oid(fp.oid, sid)}
+            for (fp, sid), t in zip(forced, fp_times)
+        ],
+    }

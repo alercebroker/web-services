@@ -44,6 +44,9 @@ let groupInfo = null;
 let groupPhot = new Map();
 // Keys being fetched right now, so a second change doesn't fetch them twice.
 let groupLoading = new Set();
+// Other objects the current periodogram was searched on, besides the viewed one: their sorted keys, comma-joined
+// ('' for none). Compared with the objects drawn now to offer "Recompute" (updatePeriodSource).
+let periodogramObjects = '';
 
 // Load (or reload) all per-object state from the data the layout template embedded.
 // Called by boot() on first load and again on every HTMX swap of a new object.
@@ -63,6 +66,7 @@ function loadState() {
     groupInfo                     = data.group ?? null;
     groupPhot                     = new Map();
     groupLoading                  = new Set();
+    periodogramObjects            = '';
     // Nothing of the group is drawn until the user turns on "Show on the light curve".
     config.group_selected         = [];
 }
@@ -113,6 +117,26 @@ function phase(mjd, period) {
     return (mjd % period) / period;
 }
 
+// ─── Fold times ───────────────────────────────────────────────────────────────
+// The server sends each point's BJD_TDB (`bjd_tdb`): the time at the Solar System barycentre, on one clock and
+// at mid-exposure, whatever the survey (core/periodogram/barycentric.py). Folding on the observed MJD instead
+// blurs short periods by up to ±8.3 min over the year (Earth's orbit) and shifts ZTF from LSST by about 52 s;
+// ZTF DR points come heliocentric already. The periodogram uses the same times. The fold uses BJD_TDB only when
+// every point drawn has it, else the observed MJD for all: never a mix of the two.
+function foldsOnBjd(cfg) {
+    if (!cfg.fold) return false;
+    const drawn = [
+        ...rawDetections, ...rawForcedPhotometry,
+        ...groupPoints('detections', cfg), ...groupPoints('forcedPhotometry', cfg),
+        ...(cfg.external_sources?.enabled ? drDetections : []),
+    ];
+    return drawn.every(p => Number.isFinite(p.bjd_tdb));
+}
+
+function xValue(point, cfg) {
+    return cfg.fold ? phase(cfg.fold_on_bjd ? point.bjd_tdb : point.mjd, cfg.period) : point.mjd;
+}
+
 function isDark() {
     return document.getElementById('main-app')?.classList.contains('tw-dark') ?? false;
 }
@@ -149,6 +173,9 @@ function validPoint(y, surveyId, cfg) {
 }
 
 // ─── ECharts series factories ─────────────────────────────────────────────────
+// Points carry their observed MJD at index 8 and their BJD_TDB at index 9 (the x is the phase when folded).
+const POINT_MJD = 8;
+const POINT_BJD = 9;
 // Points of other objects of the group carry that object's id at index 7. They go in series of their own
 // (`member`), drawn darker and translucent, with the same name as the viewed object's series of that survey,
 // type and band, so the band offset and the legend treat them as one.
@@ -268,13 +295,13 @@ function buildDetectionSeries(cfg) {
         const v = pointValue(det, cfg);
         if (!v || !validPoint(v.y, survey, cfg)) continue;
 
-        const x       = cfg.fold ? phase(det.mjd, cfg.period) : det.mjd;
+        const x       = xValue(det, cfg);
         const capped  = Math.min(v.err, maxErr);
         const measId  = det.measurement_id ?? null;
         const objId   = det.objectid       ?? null;
         const field   = det.field          ?? null;
 
-        const ptArr  = [x, v.y, measId, objId, field, capped, v.sign ?? '+', det.oid ?? null];
+        const ptArr  = [x, v.y, measId, objId, field, capped, v.sign ?? '+', det.oid ?? null, det.mjd, det.bjd_tdb ?? null];
         const errArr = [x, v.y - capped, v.y + capped];
 
         const member = det.oid != null;
@@ -334,11 +361,11 @@ function buildForcedPhotSeries(cfg) {
         const v = pointValue(fp, cfg);
         if (!v || !validPoint(v.y, survey, cfg)) continue;
 
-        const x      = cfg.fold ? phase(fp.mjd, cfg.period) : fp.mjd;
+        const x      = xValue(fp, cfg);
         const capped = Math.min(v.err, maxErr);
         const measId = fp.measurement_id ?? null;
 
-        const ptArr  = [x, v.y, measId, null, fp.field ?? null, capped, v.sign ?? '+', fp.oid ?? null];
+        const ptArr  = [x, v.y, measId, null, fp.field ?? null, capped, v.sign ?? '+', fp.oid ?? null, fp.mjd, fp.bjd_tdb ?? null];
         const errArr = [x, v.y - capped, v.y + capped];
 
         const member = fp.oid != null;
@@ -455,7 +482,8 @@ function buildTooltip() {
             const plotValue = Number(value[1]).toFixed(3);
             const plotError = Number(value[5]).toFixed(3);
             const sign      = value[6] === '-' ? '(-)' : '(+)';
-            const mjd       = value[0];
+            const mjd       = value[POINT_MJD] ?? value[0];
+            const bjd       = value[POINT_BJD];
 
             let dateStr = '';
             try { dateStr = jdToDate(mjd).toUTCString().slice(0, -3) + 'UTC'; } catch (_) {}
@@ -478,6 +506,8 @@ function buildTooltip() {
                 [band, `${sign} ${plotValue} ± ${plotError}`],
                 ['MJD',  Number(mjd).toFixed(5)],
                 ['Date', dateStr],
+                config.fold ? ['Phase', Number(value[0] % 1).toFixed(4)] : null,
+                config.fold && config.fold_on_bjd && bjd != null ? ['BJD_TDB', Number(bjd).toFixed(6)] : null,
                 value[2] != null ? ['Measurement id', value[2]] : null,
                 value[4] != null ? ['Field',          value[4]] : null,
             ].filter(Boolean);
@@ -502,6 +532,7 @@ function buildTooltip() {
 
 // ─── Full ECharts options ─────────────────────────────────────────────────────
 function buildOptions(cfg) {
+    cfg.fold_on_bjd = foldsOnBjd(cfg);
     const raw = [
         ...buildDetectionSeries(cfg),
         ...buildNonDetectionSeries(cfg),
@@ -517,7 +548,10 @@ function buildOptions(cfg) {
         tooltip: {},
         grid:   { left: 70, right: cfg.offset_bands ? '25%' : 30, top: 60, bottom: 40 },
         legend: buildLegend(cfg),
-        xAxis:  { type: 'value', name: cfg.fold ? 'Phase' : 'MJD', scale: true, splitLine: false },
+        xAxis:  {
+            type: 'value', scale: true, splitLine: false,
+            name: cfg.fold ? (cfg.fold_on_bjd ? 'Phase (BJD_TDB)' : 'Phase (MJD)') : 'MJD',
+        },
         yAxis:  {
             type: 'value', name: cfg.flux ? 'Flux [nJy]' : 'Magnitude',
             scale: true, inverse: !cfg.flux,
@@ -679,6 +713,8 @@ function updateVisibility() {
     updateFoldNoPeriod();
     updateTotalHiddenHint();
     updateGroupModeNote();
+    updatePeriodSource();
+    updateChartStatus();
 
     if (pdContainer) {
         pdContainer.classList.toggle('tw-hidden', !showPd);
@@ -721,8 +757,11 @@ function updateFoldNoPeriod() {
             text.textContent = `The period could not be computed. ${manual}`;
         } else {
             const survey = config.survey_id.toLowerCase();
-            const n = rawDetections.filter(d => d.survey_id.toLowerCase() === survey && d.variants?.mag_total).length;
-            text.textContent = `No period found for this object (${n} detection${n === 1 ? '' : 's'} with total magnitude). ${manual}`;
+            const members = periodogramObjects ? periodogramObjects.split(',') : [];
+            const n = rawDetections.filter(d => d.survey_id.toLowerCase() === survey && d.variants?.mag_total).length
+                + members.reduce((sum, k) => sum + (groupPhot.get(k)?.detections ?? []).filter(d => d.variants?.mag_total).length, 0);
+            const which = members.length ? `this object and ${plural(members.length, 'other object')}` : 'this object';
+            text.textContent = `No period found for ${which} (${plural(n, 'detection')} with total magnitude). ${manual}`;
         }
     }
     box?.classList.toggle('tw-hidden', !show);
@@ -894,12 +933,13 @@ async function loadGroupPhotometry() {
     const missing = (config.group_selected ?? []).filter(k => !groupPhot.has(k) && !groupLoading.has(k));
     if (!missing.length) return;
     missing.forEach(k => groupLoading.add(k));
-    const status = document.getElementById('group-status');
-    status?.classList.remove('tw-hidden');
+    updateChartStatus();
     const infoAtStart = groupInfo;
     try {
         const apiUrl = window.__LC_DATA__.apiUrl;
-        const resp = await fetch(`${apiUrl}/htmx/group_photometry?objects=${encodeURIComponent(missing.join(','))}`);
+        // The viewed object's position, so the members' BJD_TDB use the same one as its own points
+        const position = config.meanra != null ? `&ra=${config.meanra}&dec=${config.meandec}` : '';
+        const resp = await fetch(`${apiUrl}/htmx/group_photometry?objects=${encodeURIComponent(missing.join(','))}${position}`);
         if (!resp.ok) throw new Error(`group photometry: ${resp.status}`);
         const data = await resp.json();
         if (groupInfo !== infoAtStart) return;  // another object was loaded meanwhile
@@ -911,7 +951,8 @@ async function loadGroupPhotometry() {
         console.error('Failed to load the photometry of the group:', e);
     } finally {
         missing.forEach(k => groupLoading.delete(k));
-        if (!groupLoading.size) status?.classList.add('tw-hidden');
+        updateChartStatus();
+        updatePeriodSource();
         updateTotalHiddenHint();
         updateChart();
     }
@@ -964,26 +1005,99 @@ function applyBestCandidatePeriod() {
 }
 
 // ─── Lazy periodogram loader ──────────────────────────────────────────────────
-async function loadPeriodogram() {
-    // One-shot: don't refetch if we already have the data or a fetch is in flight.
-    if (rawPeriodogram?.periods?.length || periodogramLoading) return;
+// The associated objects drawn now, as the periodogram request names them.
+function drawnObjectsKey() {
+    return [...(config.group_selected ?? [])].sort().join(',');
+}
+
+// The periodogram is searched on the detections of the viewed object and of the other objects drawn at that moment.
+// Fetched once, when Fold (or the periodogram) is first turned on; again only when the user asks ("Recompute",
+// after changing the objects drawn). A recompute keeps the current periodogram and fold on screen until the new
+// one arrives, and then folds at its best period, even over a period the user typed.
+async function loadPeriodogram({ recompute = false } = {}) {
+    if (periodogramLoading) return;
+    if (!recompute && rawPeriodogram?.periods?.length) return;
+    if (recompute) periodUserModified = false;
     periodogramLoading = true;
+    const objects = drawnObjectsKey();
+    const dataAtStart = window.__LC_DATA__;
     updateVisibility();
     try {
         const apiUrl = window.__LC_DATA__.apiUrl;
-        const r = await fetch(`${apiUrl}/htmx/periodogram?oid=${config.oid}&survey_id=${config.survey_id}`);
+        const position = config.meanra != null ? `&ra=${config.meanra}&dec=${config.meandec}` : '';
+        const members = objects ? `&objects=${encodeURIComponent(objects)}` : '';
+        const r = await fetch(`${apiUrl}/htmx/periodogram?oid=${config.oid}&survey_id=${config.survey_id}${position}${members}`);
         if (!r.ok) throw new Error(r.status);
-        rawPeriodogram = await r.json();
+        const data = await r.json();
+        if (window.__LC_DATA__ !== dataAtStart) return;  // another object was loaded meanwhile
+        rawPeriodogram = data;
+        periodogramObjects = objects;
         periodogramStatus = rawPeriodogram?.periods?.length ? null : 'empty';
         applyBestCandidatePeriod();
     } catch (e) {
         console.error('Periodogram load failed:', e);
-        periodogramStatus = 'failed';
+        if (window.__LC_DATA__ === dataAtStart) periodogramStatus = 'failed';
     } finally {
-        periodogramLoading = false;
-        updateVisibility();
-        updateChart();
+        if (window.__LC_DATA__ === dataAtStart) {
+            periodogramLoading = false;
+            updateVisibility();
+            updateChart();
+        }
     }
+}
+
+function plural(n, word) {
+    return `${n} ${word}${n === 1 ? '' : 's'}`;
+}
+
+// ─── Period source ────────────────────────────────────────────────────────────
+// With a group, a line under the periodogram switch says which objects the period was searched on, and offers
+// "Recompute" once the objects drawn differ from those.
+function updatePeriodSource() {
+    const row = document.getElementById('period-source-row');
+    if (!row) return;
+    const text   = document.getElementById('period-source');
+    const button = document.getElementById('period-recompute');
+    const hasPeriods = (rawPeriodogram?.periods?.length ?? 0) > 0;
+    const searched   = periodogramLoading || hasPeriods || periodogramStatus != null;
+    const hasOthers  = (groupInfo?.members?.length ?? 0) > 1 || (groupInfo?.nearby?.length ?? 0) > 0;
+    const show = Boolean(config.fold && hasOthers && searched);
+    row.classList.toggle('tw-hidden', !show);
+    if (!show) return;
+
+    const objectsText = (key, alone) => {
+        const n = key ? key.split(',').length : 0;
+        return n ? `this object and ${plural(n, 'other object')}` : alone;
+    };
+    const drawn = drawnObjectsKey();
+    if (periodogramLoading) {
+        text.textContent = `Searching the period on ${objectsText(drawn, 'this object')}…`;
+    } else {
+        const failed = periodogramStatus === 'failed' ? ' (recompute failed)' : '';
+        text.textContent = `Period from ${objectsText(periodogramObjects, 'this object only')}${failed}`;
+    }
+    text.classList.toggle('lc-pulse', periodogramLoading);
+    // Offered when the objects drawn changed, or to retry after a failure
+    const stale = drawn !== periodogramObjects || periodogramStatus === 'failed';
+    button.classList.toggle('tw-hidden', periodogramLoading || !stale);
+}
+
+// ─── Chart status ─────────────────────────────────────────────────────────────
+// A small badge over the chart while something it will draw is on its way: the photometry of other objects, or a
+// recomputed period (a first period has the full "Computing period…" overlay instead).
+function updateChartStatus() {
+    const el = document.getElementById('chart-status');
+    if (!el) return;
+    const messages = [];
+    if (groupLoading.size) messages.push(`Loading ${plural(groupLoading.size, 'other object')}…`);
+    if (config.fold && periodogramLoading && rawPeriodogram?.periods?.length) messages.push('Recomputing the period…');
+    el.textContent = messages.join(' · ');
+    el.classList.toggle('tw-hidden', !messages.length);
+}
+
+function onRecomputeClick(e) {
+    if (!e.target.closest('#period-recompute')) return;
+    loadPeriodogram({ recompute: true });
 }
 
 // ─── Side panel legend ────────────────────────────────────────────────────────
@@ -1191,6 +1305,7 @@ function init() {
     form.addEventListener('click',  onSegmentClick);
     form.addEventListener('click',  onPeriodButtonClick);
     form.addEventListener('click',  onGroupDetailsClick);
+    form.addEventListener('click',  onRecomputeClick);
     form.addEventListener('keydown', onPeriodKeydown);
 
     // Period selection from periodogram click — counts as a manual change.

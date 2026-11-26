@@ -117,6 +117,49 @@ def test_group_photometry_tags_each_point_with_its_object(client: TestClient, gr
     assert {f["oid"] for f in body["forced_photometry"]} == {group["lsst_x"], group["ztf_c"]}
 
 
+def test_group_photometry_times_are_barycentric(client: TestClient, group):
+    # Every point gets its BJD_TDB for the fold, at most the Earth-orbit delay (8.3 min) plus the clock and
+    # exposure offsets (about a minute) away from its observed time
+    objects = f"lsst:{group['lsst_x']},ztf:{group['ztf_c']}"
+    response = client.get("/htmx/group_photometry", params={"objects": objects, "ra": 10.0, "dec": 20.0})
+
+    points = response.json()["detections"] + response.json()["forced_photometry"]
+    assert points
+    assert all(abs(p["bjd_tdb"] - p["mjd"]) * 86400 < 600 for p in points)
+
+
+def test_periodogram_searches_the_drawn_objects_too(client: TestClient, group, monkeypatch):
+    # The viewed object's own detections and those of the objects named in `objects`, the viewed one only once
+    from lightcurve_api.models.periodogram import Periodogram
+    from lightcurve_api.services.period import service as period_service
+
+    searched = []
+    to_dataframe = period_service.detections2dataframe
+    monkeypatch.setattr(
+        period_service, "detections2dataframe", lambda dets, times=None: searched.append(dets) or to_dataframe(dets)
+    )
+    empty = Periodogram(periods=[], scores=[], best_periods=[], best_periods_index=[])
+    monkeypatch.setattr(period_service.PeriodogramComputer, "compute", lambda self, df: empty)
+
+    params = {"oid": group["ztf_a"], "survey_id": "ztf"}  # no ra/dec: the mean of the detections
+    alone = client.get("/htmx/periodogram", params=params)
+    objects = f"lsst:{group['lsst_x']},ztf:{group['ztf_a']}"
+    with_member = client.get("/htmx/periodogram", params={**params, "objects": objects})
+
+    assert alone.status_code == with_member.status_code == 200
+    own, combined = searched
+    assert own and {d.survey_id.lower() for d in own} == {"ztf"}
+    members = [d for d in combined if d.survey_id.lower() == "lsst"]
+    assert {d.oid for d in members} == {int(group["lsst_x"])}
+    assert len(combined) == len(own) + len(members) == len(own) + N_POINTS
+
+
+def test_periodogram_rejects_bad_objects(client: TestClient):
+    response = client.get("/htmx/periodogram", params={"oid": "ZTF18abvkqpo", "survey_id": "ztf", "objects": "atlas:1"})
+
+    assert response.status_code == 400
+
+
 def test_group_photometry_rejects_bad_objects(client: TestClient):
     response = client.get("/htmx/group_photometry", params={"objects": "atlas:1"})
 

@@ -28,3 +28,13 @@
     {{ ui.switch("periodogram_enabled", config.periodogram_enabled, not config.fold, "Periodogram", "Show the light curve periodogram. Click a point on it to fold at that period.") }}
   </div>
 </div>
+<!-- With associated objects: which objects the period was searched on, and a link to search it again on the ones
+     drawn now. Filled and shown by lightcurve-app.js (updatePeriodSource). -->
+<div id="period-source-row" class="lc-row tw-hidden">
+  <span class="lc-label"></span>
+  <div class="lc-ctl lc-period-source">
+    <span id="period-source" class="lc-muted"></span>
+    <button type="button" id="period-recompute" class="lc-action tw-hidden"
+            data-tip="Search the period again on the detections of this object and of the associated objects drawn now. Each survey's bands are searched as bands of their own, so offsets between surveys don't hide the period.">Recompute</button>
+  </div>
+</div>

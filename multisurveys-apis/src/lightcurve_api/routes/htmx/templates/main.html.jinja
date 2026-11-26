@@ -22,6 +22,10 @@
         <span class="tw-text-gray-500 dark:tw-text-gray-400 tw-animate-pulse">Computing period…</span>
       </div>
 
+      <!-- Small note over the chart while something it will draw is on its way (lightcurve-app.js, updateChartStatus):
+           the associated objects' photometry, or a new period. It doesn't cover the chart. -->
+      <div id="chart-status" class="lc-chart-status lc-pulse tw-hidden" role="status" aria-live="polite"></div>
+
       <!-- Shown by JS when fold is on but no period could be found, until the user types one -->
       <div id="fold-no-period" class="tw-hidden tw-absolute tw-inset-0 tw-z-40 tw-flex tw-items-center tw-justify-center tw-px-4">
         <div class="tw-bg-yellow-50 dark:tw-bg-yellow-900 tw-border tw-border-yellow-200 dark:tw-border-yellow-700 tw-rounded-md tw-p-4">
