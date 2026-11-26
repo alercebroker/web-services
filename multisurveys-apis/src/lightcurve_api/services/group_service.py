@@ -224,8 +224,8 @@ def parse_object_keys(objects: str) -> dict[str, list[str]]:
 def get_group_photometry(objects: str, session_factory: SessionFactory) -> dict:
     """Detections and forced photometry of several objects, as plot records tagged with their object.
 
-    Non-detections are left out: they are limiting magnitudes, only shown in difference magnitude, and a
-    group is always shown in total magnitude.
+    Non-detections are left out: limiting magnitudes of other objects would crowd the difference view, and the
+    light curve only draws those of the object being viewed.
     """
     detections, forced = [], []
     for survey, oids in parse_object_keys(objects).items():

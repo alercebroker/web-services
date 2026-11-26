@@ -2,7 +2,8 @@
 {#
   Object group (association): the objects associated with this one, and nearby objects that scored below the
   threshold. Nothing is drawn until the user turns on "Show on the light curve"; then lightcurve-app.js fetches
-  each checked object's photometry and draws it hollow in the series of its survey and band. Members start
+  each checked object's photometry and draws it darker and translucent, in the colors and markers of its
+  survey and band, and in the view (Mag/Flux, Diff/Total) the user chose. Members start
   checked, nearby objects unchecked. Values are "survey:oid" (see group_service.GroupObject.key).
   Kept compact for the side panel: one line per object, a second line with the pair's score and distance and
   the object's detections under "Details", a scroll past about 8 members, the section folded when the object
@@ -38,16 +39,18 @@
 {% set others = group.members | length - 1 %}
 <details id="group-panel" class="lc-section lc-group-off" {% if others > 0 %}open{% endif %}>
   <summary>
-    <span class="lc-title" data-tip="Objects the association links to this one: other detections of the same astrophysical source, in this or another survey. They are drawn hollow, in total magnitude.{% if group.group_id is not none %} Group {{ group.group_id }}, version {{ group.group_version }}.{% endif %}">Associated objects</span>
+    <span class="lc-title" data-tip="Objects the association links to this one: other detections of the same astrophysical source, in this or another survey. They are drawn darker and translucent.{% if group.group_id is not none %} Group {{ group.group_id }}, version {{ group.group_version }}.{% endif %}">Associated objects</span>
     <span class="lc-muted">{{ others + 1 }} object{{ 's' if others else '' }}</span>
     <span id="group-status" class="lc-muted lc-pulse tw-hidden">loading…</span>
   </summary>
 
   {% if others or group.nearby %}
   <div class="lc-group-bar">
-    {{ ui.switch("group.enabled", False, False, "Show on the light curve", "Draw the checked objects in the light curve, hollow and in total magnitude.") }}
+    {{ ui.switch("group.enabled", False, False, "Show on the light curve", "Draw the checked objects in the light curve, darker and translucent, in the current view.") }}
     <button type="button" class="lc-link" data-group-details aria-expanded="false">Details</button>
   </div>
+  <!-- What the current Diff/Total view means across surveys; filled by lightcurve-app.js while objects are drawn -->
+  <p id="group-mode-note" class="lc-group-note tw-hidden"></p>
   {% endif %}
 
   <div class="lc-objects">

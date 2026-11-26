@@ -442,6 +442,15 @@
     cursor: not-allowed;
 }
 
+/* Under the group switch: what the current Diff/Total view means across surveys */
+#main-app .lc-group-note {
+    margin: 2px 0 4px;
+    padding-left: 6px;
+    border-left: 2px solid var(--lc-warn);
+    font-size: 11px;
+    line-height: 1.35;
+}
+
 #main-app .lc-group-bar {
     display: flex;
     align-items: center;

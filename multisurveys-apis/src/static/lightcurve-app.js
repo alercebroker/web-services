@@ -71,10 +71,13 @@ function loadState() {
 let documentListenersBound = false;
 
 // ─── Visual constants ─────────────────────────────────────────────────────────
+// Color says the band and the marker says the survey (SYMBOLS), as in the experimental explorer: g is
+// the same green in ZTF and LSST, so the two surveys of a band read as one curve.
+const BAND_COLORS = { u: '#56B4E9', g: '#009E73', r: '#D55E00', i: '#E69F00', z: '#CC79A7', y: '#0072B2' };
 const COLORS = {
-    'ztf':    { g: '#56E03A', r: '#D42F4B', i: '#F4D617' },
-    'lsst':   { u: '#56B4E9', g: '#009E73', r: '#D55E00', i: '#E69F00', z: '#CC79A7', y: '#0072B2' },
-    'ztf dr': { g: '#ADA3A3', r: '#377EB8', i: '#FF7F00' },
+    'ztf':    BAND_COLORS,
+    'lsst':   BAND_COLORS,
+    'ztf dr': BAND_COLORS,
     'empty':  { empty: '#00CBFF' },
 };
 
@@ -85,12 +88,25 @@ const NDL_SYMBOL =
     'path://M0,49.017c0-13.824,11.207-25.03,25.03-25.03h438.017c13.824,0,25.029,' +
     '11.207,25.029,25.03L262.81,455.745c0,0-18.772,18.773-37.545,0C206.494,436.973,0,49.017,0,49.017z';
 
+// Detections are filled: squares for ZTF, circles for LSST. Forced photometry is a hollow triangle, pointing
+// down for ZTF and up for LSST (SYMBOL_ROTATE). ZTF DR points are small faint hollow squares.
 const SYMBOLS = {
-    'ztf':    { det: 'circle',   'lim. mag': NDL_SYMBOL, 'f. phot': 'square' },
-    'lsst':   { det: 'roundRect',                         'f. phot': 'diamond' },
-    'ztf dr': { det: 'circle',   'lim. mag': NDL_SYMBOL, 'f. phot': 'square' },
+    'ztf':    { det: 'rect',   'lim. mag': NDL_SYMBOL, 'f. phot': 'triangle' },
+    'lsst':   { det: 'circle',                         'f. phot': 'triangle' },
+    'ztf dr': { det: 'rect',   'lim. mag': NDL_SYMBOL, 'f. phot': 'triangle' },
     'empty':  { empty: 'none' },
 };
+const SYMBOL_ROTATE = { 'ztf': { 'f. phot': 180 }, 'ztf dr': { 'f. phot': 180 } };
+const HOLLOW = new Set(['f. phot']);
+
+// Other objects of the group are drawn darker and translucent, so the object being viewed stands out.
+const MEMBER_DARKEN  = 0.7;
+const MEMBER_OPACITY = 0.5;
+
+function darken(hex, factor) {
+    const rgb = [1, 3, 5].map(i => Math.round(parseInt(hex.slice(i, i + 2), 16) * factor));
+    return '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function phase(mjd, period) {
@@ -133,34 +149,45 @@ function validPoint(y, surveyId, cfg) {
 }
 
 // ─── ECharts series factories ─────────────────────────────────────────────────
-// Points of other objects of the group carry that object's id at index 7 and are drawn hollow, so the
-// object being viewed stays filled. They share its series (survey + band), so the legend doesn't grow.
+// Points of other objects of the group carry that object's id at index 7. They go in series of their own
+// (`member`), drawn darker and translucent, with the same name as the viewed object's series of that survey,
+// type and band, so the band offset and the legend treat them as one.
 const POINT_OBJECT = 7;
 
-function makeSeries(type, survey, band, data) {
-    const sk = survey.toLowerCase();
+function seriesColor(sk, band, member) {
     const color = COLORS[sk]?.[band] ?? '#888888';
+    return member ? darken(color, MEMBER_DARKEN) : color;
+}
+
+function makeSeries(type, survey, band, data, member = false) {
+    const sk     = survey.toLowerCase();
+    const color  = seriesColor(sk, band, member);
+    const dr     = sk === 'ztf dr';
+    const hollow = HOLLOW.has(type) || dr;
     return {
         name:       `${type} ${survey.toUpperCase()}: ${band}`,
         type:       'scatter',
         data,
         color,
         itemStyle:  {
+            color:       hollow ? 'rgba(0,0,0,0)' : color,
             borderColor: color,
-            borderWidth: 1.5,
-            color: p => (p?.value?.[POINT_OBJECT] ? 'rgba(0,0,0,0)' : color),
+            borderWidth: hollow ? 1.5 : 0,
+            opacity:     member ? MEMBER_OPACITY : dr ? 0.6 : 1,
         },
-        symbol:     SYMBOLS[sk]?.[type]  ?? 'circle',
-        symbolSize: 9,
-        survey:     sk,
-        z:          sk === 'ztf dr' ? 2 : 10,
+        symbol:       SYMBOLS[sk]?.[type]  ?? 'circle',
+        symbolRotate: SYMBOL_ROTATE[sk]?.[type] ?? 0,
+        symbolSize:   dr ? 6 : 8,
+        survey:       sk,
+        z:            dr ? 2 : member ? 5 : 10,
         band,
+        member,
     };
 }
 
-function makeErrorBarSeries(type, survey, band, errData) {
+function makeErrorBarSeries(type, survey, band, errData, member = false) {
     const sk    = survey.toLowerCase();
-    const color = COLORS[sk]?.[band] ?? '#888888';
+    const color = seriesColor(sk, band, member);
     const name  = `${type} ${survey.toUpperCase()}: ${band}`;
 
     let minPt = null, maxPt = null;
@@ -181,39 +208,32 @@ function makeErrorBarSeries(type, survey, band, errData) {
                 { coord: [p[0], p[1]], symbol: 'none' },
                 { coord: [p[0], p[2]], symbol: 'none' },
             ]),
-            lineStyle: { color, type: 'solid' },
+            lineStyle: { color, type: 'solid', opacity: member ? MEMBER_OPACITY : 1 },
         },
         error_bar:      true,
         min_plot_error: minPt,
         max_plot_error: maxPt,
         survey:         sk,
         band,
+        member,
     };
 }
 
 // ─── Point grouping ───────────────────────────────────────────────────────────
+// One group per survey, band and whether the points are of another member of the group.
 function groupByBand(points) {
     const g = {};
-    for (const { survey, band, pt } of points) {
-        (g[survey] ??= {})[band] ??= [];
-        g[survey][band].push(pt);
+    for (const { survey, band, pt, member = false } of points) {
+        (g[`${survey}|${band}|${member}`] ??= { survey, band, member, data: [] }).data.push(pt);
     }
-    return g;
+    return Object.values(g);
 }
 
 function groupedToSeries(type, grouped, grouped_err) {
-    const out = [];
-    for (const [surv, bands] of Object.entries(grouped)) {
-        for (const [band, data] of Object.entries(bands)) {
-            out.push(makeSeries(type, surv, band, data));
-        }
-    }
-    for (const [surv, bands] of Object.entries(grouped_err)) {
-        for (const [band, data] of Object.entries(bands)) {
-            out.push(makeErrorBarSeries(type, surv, band, data));
-        }
-    }
-    return out;
+    return [
+        ...grouped.map(g => makeSeries(type, g.survey, g.band, g.data, g.member)),
+        ...grouped_err.map(g => makeErrorBarSeries(type, g.survey, g.band, g.data, g.member)),
+    ];
 }
 
 // ─── Series builders ──────────────────────────────────────────────────────────
@@ -257,12 +277,13 @@ function buildDetectionSeries(cfg) {
         const ptArr  = [x, v.y, measId, objId, field, capped, v.sign ?? '+', det.oid ?? null];
         const errArr = [x, v.y - capped, v.y + capped];
 
-        pts.push(   { survey: det.survey_id, band: bn, pt: ptArr  });
-        errPts.push({ survey: det.survey_id, band: bn, pt: errArr });
+        const member = det.oid != null;
+        pts.push(   { survey: det.survey_id, band: bn, member, pt: ptArr  });
+        errPts.push({ survey: det.survey_id, band: bn, member, pt: errArr });
 
         if (cfg.fold) {
-            pts.push(   { survey: det.survey_id, band: bn, pt: [x + 1, ...ptArr.slice(1)]  });
-            errPts.push({ survey: det.survey_id, band: bn, pt: [x + 1, errArr[1], errArr[2]] });
+            pts.push(   { survey: det.survey_id, band: bn, member, pt: [x + 1, ...ptArr.slice(1)]  });
+            errPts.push({ survey: det.survey_id, band: bn, member, pt: [x + 1, errArr[1], errArr[2]] });
         }
     }
 
@@ -289,15 +310,12 @@ function buildNonDetectionSeries(cfg) {
         pts.push({ survey: nd.survey_id, band: bn, pt: [nd.mjd, y, null, null, null, 0, '+'] });
     }
 
-    const out = [];
-    for (const [surv, bands] of Object.entries(groupByBand(pts))) {
-        for (const [band, data] of Object.entries(bands)) {
-            // Fainter than the detections (ECharts' default 0.8), as in alerce.online, which drew
-            // them in a 50% transparent band color: 0.5 × 0.8.
-            out.push({ ...makeSeries('lim. mag', surv, band, data), itemStyle: { opacity: 0.4 } });
-        }
-    }
-    return out;
+    // Fainter than the detections (ECharts' default 0.8), as in alerce.online, which drew
+    // them in a 50% transparent band color: 0.5 × 0.8.
+    return groupByBand(pts).map(g => {
+        const s = makeSeries('lim. mag', g.survey, g.band, g.data);
+        return { ...s, itemStyle: { ...s.itemStyle, opacity: 0.4 } };
+    });
 }
 
 function buildForcedPhotSeries(cfg) {
@@ -323,12 +341,13 @@ function buildForcedPhotSeries(cfg) {
         const ptArr  = [x, v.y, measId, null, fp.field ?? null, capped, v.sign ?? '+', fp.oid ?? null];
         const errArr = [x, v.y - capped, v.y + capped];
 
-        pts.push(   { survey: fp.survey_id, band: bn, pt: ptArr  });
-        errPts.push({ survey: fp.survey_id, band: bn, pt: errArr });
+        const member = fp.oid != null;
+        pts.push(   { survey: fp.survey_id, band: bn, member, pt: ptArr  });
+        errPts.push({ survey: fp.survey_id, band: bn, member, pt: errArr });
 
         if (cfg.fold) {
-            pts.push(   { survey: fp.survey_id, band: bn, pt: [x + 1, ...ptArr.slice(1)]  });
-            errPts.push({ survey: fp.survey_id, band: bn, pt: [x + 1, errArr[1], errArr[2]] });
+            pts.push(   { survey: fp.survey_id, band: bn, member, pt: [x + 1, ...ptArr.slice(1)]  });
+            errPts.push({ survey: fp.survey_id, band: bn, member, pt: [x + 1, errArr[1], errArr[2]] });
         }
     }
 
@@ -366,7 +385,9 @@ function applyOffsetBands(series, cfg) {
     if (!cfg.offset_bands) return series;
 
     const normal   = series.filter(s => !s.error_bar);
-    const errBars  = Object.fromEntries(series.filter(s => s.error_bar).map(s => [s.name, s]));
+    // The viewed object's series and the other members' share a name: tell their error bars apart.
+    const errKey   = s => `${s.name}|${!!s.member}`;
+    const errBars  = Object.fromEntries(series.filter(s => s.error_bar).map(s => [errKey(s), s]));
     const groups   = {};
 
     for (const s of normal) {
@@ -385,7 +406,7 @@ function applyOffsetBands(series, cfg) {
             const newName = offset > 0 ? `${s.name} (+${offset})` : s.name;
             out.push({ ...s, name: newName, data: s.data.map(p => [p[0], p[1] + offset, ...p.slice(2)]) });
 
-            const eb = errBars[s.name];
+            const eb = errBars[errKey(s)];
             if (eb) {
                 out.push({
                     ...eb, name: newName,
@@ -657,6 +678,7 @@ function updateVisibility() {
 
     updateFoldNoPeriod();
     updateTotalHiddenHint();
+    updateGroupModeNote();
 
     if (pdContainer) {
         pdContainer.classList.toggle('tw-hidden', !showPd);
@@ -751,12 +773,13 @@ function setToggleLocked(el, locked, reason) {
 // ─── Diff/Total toggle ────────────────────────────────────────────────────────
 // Fold and external sources only work with total magnitude, so while either is on the
 // switch is forced to Total and locked. Turning both off restores the user's choice.
+// The other objects of the group don't lock it: they are drawn in whatever the user chose,
+// with a warning of what each choice means across surveys (updateGroupModeNote).
 function syncTotalToggle(form) {
     const el = form.querySelector('[name="total"]');
     if (!el) return;
     const needsTotal = (form.querySelector('[name="fold"]')?.checked ?? false)
-        || (form.querySelector('[name="external_sources.enabled"]')?.checked ?? false)
-        || (groupEnabled(form) && form.querySelector('[name="group.objects[]"]:checked') != null);
+        || (form.querySelector('[name="external_sources.enabled"]')?.checked ?? false);
 
     if (needsTotal && !el.disabled) {
         el.dataset.checkedBeforeLock = String(el.checked);
@@ -765,7 +788,25 @@ function syncTotalToggle(form) {
         el.checked = el.dataset.checkedBeforeLock !== 'false';
     }
     setToggleLocked(el, needsTotal,
-        'Fold, external sources and other objects of the group use total magnitude. Turn them off to switch back to Diff.');
+        'Fold and external sources use total magnitude. Turn them off to switch back to Diff.');
+}
+
+// ─── Object group: what Diff and Total mean across objects ────────────────────
+// Neither view lines up exactly across surveys, so while other objects of the group are drawn, a note under
+// the group switch says what to expect from the current one.
+const GROUP_MODE_NOTES = {
+    diff:  'Diff: each survey, and each ZTF field, subtracts its own template, so constant offsets between '
+         + 'objects are expected. This is the view for transients.',
+    total: 'Total: each survey measures with a different PSF, which takes in a different amount of host-galaxy '
+         + 'light, so steps between surveys are expected for AGN and extended sources. For transients, use Diff.',
+};
+
+function updateGroupModeNote() {
+    const note = document.getElementById('group-mode-note');
+    if (!note) return;
+    const shown = (config.group_selected?.length ?? 0) > 0;
+    note.textContent = shown ? GROUP_MODE_NOTES[config.total ? 'total' : 'diff'] : '';
+    note.classList.toggle('tw-hidden', !shown);
 }
 
 // ─── Object group switch ──────────────────────────────────────────────────────

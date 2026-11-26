@@ -19,6 +19,8 @@
   {%- elif shape == 'square' %}<rect x="0.5" y="0.5" width="9" height="9" fill="currentColor"/>
   {%- elif shape == 'diamond' %}<path d="M5 0 L10 5 L5 10 L0 5 Z" fill="currentColor"/>
   {%- elif shape == 'triangle' %}<path d="M0 1 H10 L5 10 Z" fill="currentColor"/>
+  {%- elif shape == 'openTriangleDown' %}<path d="M1 1.5 H9 L5 9 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
+  {%- elif shape == 'openTriangleUp' %}<path d="M1 8.5 H9 L5 1 Z" fill="none" stroke="currentColor" stroke-width="1.4"/>
   {%- endif %}</svg>
 {%- endmacro %}
 
@@ -30,14 +32,14 @@
 {%- endmacro %}
 
 <div class="lc-row">
-  {{ ui.label("ZTF", "ZTF bands. Each chip has the color of its points.") }}
+  {{ ui.label("ZTF", "ZTF bands. Each chip has the color of its points, the same as the band's in LSST.") }}
   <div class="lc-ctl">
     {% for b in ['g','r','i'] %}{{ band_chip("bands.ztf[]", "ztf", b, b in config.bands.ztf) }}{% endfor %}
   </div>
 </div>
 
 <div class="lc-row">
-  {{ ui.label("LSST", "LSST bands. Each chip has the color of its points.") }}
+  {{ ui.label("LSST", "LSST bands. Each chip has the color of its points, the same as the band's in ZTF.") }}
   <div class="lc-ctl">
     {% for b in ['u','g','r','i','z','y'] %}{{ band_chip("bands.lsst[]", "lsst", b, b in config.bands.lsst) }}{% endfor %}
   </div>
@@ -52,10 +54,10 @@
 </div>
 
 <div class="lc-row">
-  {{ ui.label("Type", "Detections, limiting magnitudes and forced photometry. Markers: ZTF detections are circles and LSST ones rounded squares; forced photometry is a square for ZTF and a diamond for LSST; limiting magnitudes are triangles.") }}
+  {{ ui.label("Type", "Detections, limiting magnitudes and forced photometry. Color is the band and the marker the survey. Detections are filled squares for ZTF and circles for LSST; forced photometry is a hollow triangle, pointing down for ZTF and up for LSST; limiting magnitudes are filled faint triangles.") }}
   <div class="lc-ctl">
-    {{ type_chip("detections", "det", 'detections' in config.data_types, [("circle", "ZTF"), ("roundRect", "LSST")]) }}
+    {{ type_chip("detections", "det", 'detections' in config.data_types, [("square", "ZTF"), ("circle", "LSST")]) }}
     {{ type_chip("non_detections", "lim. mag", 'non_detections' in config.data_types, [("triangle", "ZTF")]) }}
-    {{ type_chip("forced_photometry", "f. phot", 'forced_photometry' in config.data_types, [("square", "ZTF"), ("diamond", "LSST")]) }}
+    {{ type_chip("forced_photometry", "f. phot", 'forced_photometry' in config.data_types, [("openTriangleDown", "ZTF"), ("openTriangleUp", "LSST")]) }}
   </div>
 </div>

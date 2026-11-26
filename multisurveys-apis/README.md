@@ -47,13 +47,18 @@ form a group. The light curve widget can show the other objects of the viewed ob
   associated** lists a few objects whose pairs scored below the threshold, unchecked and folded. The panel is
   folded when the object has no other member.
 - Nothing is drawn until the user turns on **Show on the light curve**. Then the checked objects' points are
-  drawn hollow in the series of their survey and band. The viewed object stays filled, and the tooltip names
-  each point's object.
+  drawn darker and translucent, with the markers of their survey and the colors of their band. Color is the
+  band in every survey (ZTF g and LSST g are the same green) and the marker is the survey: detections are
+  filled squares (ZTF) or circles (LSST), and forced photometry hollow triangles pointing down (ZTF) or up
+  (LSST). The tooltip names each point's object.
 - **Details** adds a second line under each object: the score and distance of its pair (with the member it is
   paired with, when that isn't the viewed object), and its number of detections and first and last detection
   dates, from the `object` table.
-- With other objects shown, the Diff/Total switch is locked to Total. Difference magnitudes of different
-  objects come from different reference images and can't be compared.
+- Other objects follow the current view (Mag/Flux, Diff/Total), and a note under the switch says what to
+  expect from it: in Diff, each survey and ZTF field subtracts its own template, so constant offsets between
+  objects are expected (the view for transients); in Total, each survey's PSF takes in a different amount of
+  host-galaxy light, so steps between surveys are expected for AGN and extended sources. Their limiting
+  magnitudes aren't drawn.
 - The Aladin panel marks the group's other members at their mean position, in teal, named by their survey's id.
 
 It is only enabled where `ASSOCIATION_SCHEMA` names the schema that holds the association tables. Nothing else
