@@ -11,13 +11,13 @@
 #}
 {% macro object_row(obj, checked) %}
 <label class="lc-obj{% if obj.is_self %} lc-obj-self{% endif %}"
-       data-tip="{{ obj.survey_id | upper }} {{ obj.oid }}{% if obj.is_self %}: this object{% elif obj.score is not none %}. Score {{ '%.3f' | format(obj.score) }} at {{ '%.2f' | format(obj.dist) }}″{% if obj.linked_via %}, linked through {{ obj.linked_via }}{% endif %}{% endif %}">
+       data-tip="{{ obj.survey_id | upper }} {{ obj.oid }}{% if obj.is_self %}: this object{% endif %}">
   {% if obj.is_self %}
   <input type="checkbox" checked disabled>
   {% else %}
   <input type="checkbox" name="group.objects[]" value="{{ obj.key }}" {% if checked %}checked{% endif %} disabled>
   {% endif %}
-  <span class="lc-obj-survey" style="color:{{ '#C0610E' if obj.survey_id == 'ztf' else '#0B827E' }}">{{ obj.survey_id | upper }}</span>
+  <span class="lc-obj-survey" data-survey="{{ obj.survey_id }}">{{ obj.survey_id | upper }}</span>
   <span class="lc-obj-id">{{ obj.oid }}</span>
   {% if obj.is_self %}<span class="lc-obj-score">this</span>{% endif %}
   <span class="lc-obj-meta">

@@ -137,6 +137,15 @@
     gap: 4px;
 }
 
+#main-app .lc-ctl-nowrap {
+    flex-wrap: nowrap;
+}
+
+/* Pushes a control, and the ones after it, to the right end of its row */
+#main-app .lc-push-right {
+    margin-left: auto;
+}
+
 #main-app .lc-muted {
     font-size: 11px;
     color: var(--lc-text-2);
@@ -362,6 +371,16 @@
     border-color: var(--lc-primary);
 }
 
+#main-app .lc-period-input {
+    width: 96px;
+}
+
+/* A square button holding only an icon */
+#main-app .lc-btn-icon {
+    width: 22px;
+    padding: 0;
+}
+
 /* ‹ › « » ×2 /2 under the period */
 #main-app .lc-period-steps .lc-btn {
     min-width: 26px;
@@ -512,6 +531,14 @@
     font-size: 10px;
     font-weight: 500;
     letter-spacing: 0.04em;
+}
+
+#main-app .lc-obj-survey[data-survey="ztf"] {
+    color: #c0610e;
+}
+
+#main-app .lc-obj-survey[data-survey="lsst"] {
+    color: #0b827e;
 }
 
 #main-app .lc-obj-id {

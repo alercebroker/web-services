@@ -6,9 +6,9 @@
 #}
 <div class="lc-row">
   {{ ui.label("Fold", "The period folded light curve, where time is transformed to time modulo the period (phase). Period is computed automatically when you enable Fold.") }}
-  <div class="lc-ctl" style="flex-wrap:nowrap">
+  <div class="lc-ctl lc-ctl-nowrap">
     {{ ui.switch("fold", config.fold) }}
-    <input name="period" value="{{config.period}}" class="lc-input" style="width:96px;margin-left:auto" aria-label="Period (days)" data-tip="Period, in days. The up and down arrow keys change it a little, with Shift a little more.">
+    <input name="period" value="{{config.period}}" class="lc-input lc-period-input lc-push-right" aria-label="Period (days)" data-tip="Period, in days. The up and down arrow keys change it a little, with Shift a little more.">
   </div>
 </div>
 <div class="lc-row">
@@ -18,7 +18,7 @@
     <button type="button" class="lc-btn lc-btn-outline" data-period-step="-0.02" data-tip="Slightly shorter period: the fold slides 2% of a cycle across the light curve">‹</button>
     <button type="button" class="lc-btn lc-btn-outline" data-period-step="0.02" data-tip="Slightly longer period: the fold slides 2% of a cycle across the light curve">›</button>
     <button type="button" class="lc-btn lc-btn-outline" data-period-step="0.1" data-tip="Longer period: the fold slides a tenth of a cycle across the light curve">»</button>
-    <button type="button" class="lc-btn lc-btn-outline" data-period-factor="2" data-tip="Double the period" style="margin-left:auto">×2</button>
+    <button type="button" class="lc-btn lc-btn-outline lc-push-right" data-period-factor="2" data-tip="Double the period">×2</button>
     <button type="button" class="lc-btn lc-btn-outline" data-period-factor="0.5" data-tip="Halve the period">/2</button>
   </div>
 </div>

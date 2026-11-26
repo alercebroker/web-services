@@ -29,8 +29,7 @@
         {{ ui.switch("external_sources.enabled", config.external_sources.enabled) }}
         <button
           type="button"
-          class="lc-btn lc-btn-outline"
-          style="width:22px;padding:0"
+          class="lc-btn lc-btn-outline lc-btn-icon"
           aria-label="Filter external sources"
           data-tip="Choose which ZTF Data Release objects to show"
           hx-get="{{ API_URL }}/htmx/external_sources"
@@ -54,7 +53,7 @@
   <div class="lc-section">
     <div class="lc-row">
       {{ ui.label("Offset", "Shift the bands apart by a magnitude or flux step, ordered by the chosen statistic.") }}
-      <div class="lc-ctl" style="flex-wrap:nowrap">
+      <div class="lc-ctl lc-ctl-nowrap">
         {{ ui.switch("offset_bands", config.offset_bands) }}
         <input name="offset_num" type="range" min="1" max="10" value="{{ config.offset_num }}" class="lc-range" aria-label="Offset step">
         <select name="offset_metric" class="lc-input" aria-label="Offset statistic">
