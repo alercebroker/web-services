@@ -24,6 +24,21 @@ Monorepo of ALeRCE web service APIs.
   rollout status) is fine.
 - `scripts/` — ops tooling run by hand, not from CI.
 
+## The database is far from the APIs: count round trips
+
+In production the APIs and the database are geographically apart, so **every round trip to the database
+costs about 150 ms**. A PgBouncer instance next to the APIs keeps the connections to the database open and
+reuses them, so opening a session is cheap (a local connection; that's why the multisurvey engine can use
+`NullPool`). Every query still pays the full trip, so latency, not query time, usually dominates a request:
+
+- Count the statements a request runs: four small indexed queries cost about 600 ms. Fetch what a request
+  needs in as few statements as possible (joins, `IN (...)` / `tuple_(...).in_(...)`, `union_all`, CTEs),
+  never one query per object, per step or inside a loop.
+- Sharing one session between queries saves nothing in production: PgBouncer already reuses the connection.
+  Only fewer statements help.
+- Timings from a laptop are misleading: there each new session also opens a connection to the remote
+  database, which production doesn't pay. Count statements (e.g. with SQLAlchemy's `echo`) instead.
+
 ## After recreating an Ingress or TargetGroupBinding
 
 The `hybrid_webservices_health` CloudWatch dashboard keys every series on the ALB **target
