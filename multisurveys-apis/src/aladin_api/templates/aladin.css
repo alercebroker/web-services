@@ -15,3 +15,23 @@
     visibility: visible;
     transition: opacity 200ms ease-in;
 }
+/* Keep Aladin Lite (latest) UI controls inside the container */
+#aladin-lite-div,
+#aladin-lite-div .aladin-container,
+#aladin-lite-div .aladin-imageCanvas,
+#aladin-lite-div .aladin-gridCanvas,
+#aladin-lite-div .aladin-catalogCanvas{
+    max-width: 100%;
+    max-height: 100%;
+    box-sizing: border-box;
+}
+
+#aladin-lite-div{
+    overflow: hidden;
+}
+
+#aladin-lite-div *,
+#aladin-lite-div *::before,
+#aladin-lite-div *::after{
+    box-sizing: border-box;
+}
