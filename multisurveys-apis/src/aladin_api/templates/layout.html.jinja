@@ -2,6 +2,8 @@
 <meta name="htmx-config" content='{"selfRequestsOnly": false}'>
 <link rel="stylesheet" href="{{ ASSETS_URL }}/static/aladin.css">
 
-<div id="aladin-app" class="tw-preflight tw-w-full tw-bg-white tw-text-black tw-relative dark:tw-bg-[#1e1e1e] dark:tw-text-white" style="height:100%;">
-    {% include 'main.html.jinja' %}
+<div id="aladin-container" style="position:relative; width:100%; height:100%; overflow:hidden; box-sizing:border-box;">
+    <div id="aladin-app" class="tw-preflight tw-w-full tw-bg-white tw-text-black tw-relative dark:tw-bg-[#1e1e1e] dark:tw-text-white" style="height:100%;">
+        {% include 'main.html.jinja' %}
+    </div>
 </div>
